@@ -1,0 +1,1537 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistemas Nacionais de Inovação · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Rachel Nogueira Calcagno Horta (PPGA Mackenzie, 2026) sobre a sofisticação dos sistemas nacionais de inovação, explicada em 16 telas interativas.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2214%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>SNI</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<style>
+  /* ---------- Paleta do AI Lab Mackenzie ---------- */
+  :root{
+    color-scheme: light;
+    --bg:#ffffff;
+    --bg-soft:#f8fafc;
+    --card:#ffffff;
+    --ink:#0f172a;
+    --ink-2:#334155;
+    --muted:#64748b;
+    --border:#e2e8f0;
+    --red:hsl(348 94% 47%);
+    --act:#1f3b73;          /* atores */
+    --sys:var(--red);       /* o sistema como um todo, destaques */
+    --proc:#334155;         /* ciclo de inovação */
+    --neutral:#cbd5e1;
+    --shadow:0 18px 40px -20px rgb(15 23 42 / .25);
+    --serif:'Merriweather', Georgia, 'Times New Roman', serif;
+    --sans:'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; scroll-snap-type:y proximity;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden;}
+  h1,h2,h3{font-family:var(--serif); line-height:1.25; margin:0;}
+  p{margin:0 0 14px; color:var(--muted);}
+  strong{color:var(--ink); font-weight:600;}
+  button{font:inherit; color:inherit;}
+  .act-t{color:var(--act); font-weight:600;}
+  .sys-t{color:var(--sys); font-weight:600;}
+
+  /* ---------- Barra superior, progresso, navegação ---------- */
+  .topbar{
+    position:fixed; inset:0 0 auto 0; height:56px; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:0 20px; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .brand{display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--red); font-family:var(--serif); font-weight:700; line-height:1.05; font-size:.95rem;}
+  .brand .sq{width:30px; height:30px; border-radius:6px; background:var(--red); color:#fff; display:flex; align-items:center; justify-content:center; font-size:.72rem; font-family:var(--sans); font-weight:700; letter-spacing:.02em;}
+  .counter{font-size:.8rem; color:var(--muted); font-variant-numeric:tabular-nums; display:flex; align-items:center; gap:14px;}
+  .counter .nav-btn{border:1px solid var(--border); background:var(--card); border-radius:8px; width:30px; height:30px; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .counter .nav-btn:hover{border-color:var(--red); color:var(--red);}
+  .progress{position:fixed; top:56px; left:0; height:3px; background:var(--red); width:0; z-index:51; transition:width .15s linear;}
+
+  .dots{position:fixed; right:18px; top:50%; transform:translateY(-50%); z-index:40; display:flex; flex-direction:column; gap:10px;}
+  .dots button{width:10px; height:10px; border-radius:50%; border:1.5px solid var(--muted); background:transparent; padding:0; cursor:pointer; position:relative; transition:all .2s;}
+  .dots button.on{background:var(--red); border-color:var(--red); transform:scale(1.25);}
+  .dots button::after{
+    content:attr(data-label); position:absolute; right:20px; top:50%; transform:translateY(-50%); white-space:nowrap;
+    font-size:.72rem; background:var(--ink); color:var(--bg); padding:3px 8px; border-radius:6px; opacity:0; pointer-events:none; transition:opacity .15s;
+  }
+  .dots button:hover::after{opacity:1;}
+  @media (max-width:760px){ .dots{display:none;} }
+
+  /* ---------- Slides ---------- */
+  .slide{min-height:100vh; min-height:100svh; display:flex; align-items:center; padding:96px 28px 72px; scroll-snap-align:start; position:relative; overflow:hidden;}
+  .slide:nth-of-type(even){background:var(--bg-soft);}
+  .inner{max-width:1120px; width:100%; margin:0 auto;}
+  .grid2{display:grid; grid-template-columns:1fr; gap:40px; align-items:center;}
+  @media (min-width:920px){ .grid2{grid-template-columns:1fr 1fr; gap:64px;} .grid2.wide-right{grid-template-columns:.85fr 1.15fr;} }
+  .kicker{display:flex; align-items:center; gap:10px; font-size:.74rem; letter-spacing:.12em; text-transform:uppercase; font-weight:600; color:var(--red); margin-bottom:14px;}
+  .kicker .n{font-family:var(--serif); font-size:1rem; letter-spacing:0;}
+  .slide h2{font-size:clamp(1.6rem, 3.4vw, 2.5rem); margin-bottom:18px; color:var(--ink);}
+  .lede{font-size:1.08rem; color:var(--muted);}
+  .hint{font-size:.8rem; color:var(--muted); display:flex; gap:8px; align-items:center; margin-top:10px;}
+  .hint::before{content:""; width:16px; height:1px; background:var(--muted);}
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+
+  /* animações de entrada */
+  .rv{opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1); transition-delay:var(--d,0s);}
+  .slide.in .rv{opacity:1; transform:none;}
+
+  /* ---------- Capa ---------- */
+  #capa{background:linear-gradient(90deg, var(--bg) 55%, color-mix(in srgb, var(--red) 38%, var(--bg)) 100%);}
+  @media (max-width:919px){ #capa{background:linear-gradient(180deg, var(--bg) 55%, color-mix(in srgb, var(--red) 30%, var(--bg)) 100%);} }
+  #capa h1{font-size:clamp(2rem, 4.2vw, 3rem); color:var(--red); font-weight:900; margin-bottom:22px;}
+  #capa .sub{font-size:clamp(1.05rem, 1.6vw, 1.25rem); color:var(--muted); max-width:34em;}
+  .orig{font-size:.8rem; font-style:italic; color:var(--muted); margin-top:14px;}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .btn{display:inline-flex; align-items:center; gap:8px; padding:12px 20px; border-radius:8px; border:1px solid var(--red); background:var(--red); color:#fff; font-weight:500; font-size:.92rem; cursor:pointer; text-decoration:none; transition:transform .15s, box-shadow .15s;}
+  .btn:hover{transform:translateY(-1px); box-shadow:var(--shadow);}
+  .btn.ghost{background:transparent; color:var(--ink); border-color:var(--ink);}
+  .btn.small{padding:8px 14px; font-size:.84rem;}
+  .ctas{display:flex; gap:12px; flex-wrap:wrap; margin-top:30px;}
+  .scroll-cue{position:absolute; bottom:26px; left:50%; transform:translateX(-50%); font-size:.75rem; color:var(--muted); display:flex; flex-direction:column; align-items:center; gap:6px; letter-spacing:.1em; text-transform:uppercase;}
+  .scroll-cue span{width:1px; height:34px; background:linear-gradient(var(--muted), transparent); animation:cue 1.8s infinite;}
+  @keyframes cue{0%{transform:scaleY(0); transform-origin:top;} 50%{transform:scaleY(1); transform-origin:top;} 51%{transform-origin:bottom;} 100%{transform:scaleY(0); transform-origin:bottom;}}
+  .cap-legend{display:flex; gap:16px; justify-content:center; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:6px;}
+  .cap-legend i{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+
+  /* ---------- Motor 3D (caixas em CSS) ---------- */
+  .fit-wrap{width:100%; position:relative;}
+  .fit-wrap > [data-fit]{position:absolute; left:0; top:0;}
+  .grid2 > *, .sim > *{min-width:0;}
+  .scene{position:relative; perspective:1400px; touch-action:pan-y; user-select:none; -webkit-user-select:none;}
+  .scene.draggable{cursor:grab;}
+  .scene.draggable:active{cursor:grabbing;}
+  .stage{position:absolute; left:50%; top:var(--ay,70%); transform-style:preserve-3d; transform:translate(-50%,-50%) rotateX(var(--rx,60deg)) rotateZ(var(--rz,-35deg));}
+  .floor{position:absolute; inset:-40%; border-radius:50%; background:radial-gradient(closest-side, rgb(15 23 42 / .16), transparent 75%); transform:translateZ(-1px); pointer-events:none;}
+  .slab{position:absolute; transform-style:preserve-3d; transform:translate3d(var(--ox,0px), var(--oy,0px), calc(var(--z,0px) + var(--oz,0px))); transition:transform .55s cubic-bezier(.2,.8,.2,1), opacity .5s;}
+  .slab > i{position:absolute; display:block; background:var(--face); transition:background .35s, box-shadow .35s;}
+  .slab .f-top{inset:0; transform:translateZ(var(--h)); --face:color-mix(in srgb, var(--c) 72%, white);}
+  .slab .f-front{left:0; top:calc(100% - var(--h)); width:100%; height:var(--h); transform-origin:bottom; transform:rotateX(-90deg); --face:var(--c);}
+  .slab .f-back{left:0; bottom:100%; width:100%; height:var(--h); transform-origin:bottom; transform:rotateX(-90deg); --face:color-mix(in srgb, var(--c) 78%, black);}
+  .slab .f-left{top:0; right:100%; width:var(--h); height:100%; transform-origin:right; transform:rotateY(90deg); --face:color-mix(in srgb, var(--c) 82%, black);}
+  .slab .f-right{top:0; left:100%; width:var(--h); height:100%; transform-origin:left; transform:rotateY(-90deg); --face:color-mix(in srgb, var(--c) 68%, black);}
+  .slab.active{--oz:16px;}
+  .slab.active .f-top{--face:color-mix(in srgb, var(--c) 45%, white); box-shadow:inset 0 0 0 2px #fff;}
+  .slab.off > i{--face:color-mix(in srgb, var(--c) 7%, transparent); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--c) 55%, transparent);}
+  .slab .f-front .face-label{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:13px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;}
+  .slab .f-top .top-label{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:15px;}
+  .floor-label{position:absolute; font-size:13px; font-weight:700; color:var(--ink-2); text-align:center; pointer-events:none; line-height:1.15;}
+
+  /* ---------- Componentes comuns ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 22px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.86rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip.on, .chip[aria-pressed="true"]{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px 22px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.15rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.93rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .stats{display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; margin-top:20px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.6rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.8rem; color:var(--muted);}
+  .callout{margin-top:22px; padding:18px 20px; border-left:4px solid var(--red); background:var(--card); border-radius:0 12px 12px 0; box-shadow:var(--shadow);}
+  .callout p{margin:0; color:var(--ink); font-family:var(--serif); font-size:1.05rem; line-height:1.5;}
+  .toggle{display:inline-flex; align-items:center; gap:10px; cursor:pointer; font-size:.86rem; color:var(--ink-2); border:1px solid var(--border); background:var(--card); padding:7px 14px; border-radius:999px;}
+  .toggle .sw{width:30px; height:17px; border-radius:999px; background:var(--neutral); position:relative; transition:background .2s;}
+  .toggle .sw::after{content:""; position:absolute; width:13px; height:13px; border-radius:50%; background:#fff; top:2px; left:2px; transition:left .2s;}
+  .toggle[aria-pressed="true"] .sw{background:var(--red);}
+  .toggle[aria-pressed="true"] .sw::after{left:15px;}
+  .flag{display:inline-block; margin-top:10px; font-size:.78rem; font-weight:600; color:var(--red); background:color-mix(in srgb, var(--red) 10%, transparent); padding:4px 10px; border-radius:6px;}
+
+  /* ---------- 02 · Orquestra ---------- */
+  .who{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:6px 0 16px;}
+  .who button{text-align:left; border:1px solid var(--border); background:var(--card); border-radius:10px; padding:9px 12px; font-size:.86rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .who button:hover{border-color:var(--act);}
+  .who button.on{border-color:var(--act); background:var(--act); color:#fff;}
+  .net{width:100%; height:auto; overflow:visible; display:block;}
+  .net line{stroke:var(--act); stroke-width:2; opacity:0; stroke-dasharray:240; stroke-dashoffset:240; transition:opacity .4s, stroke-dashoffset 1s ease;}
+  .net.linked line{opacity:.35; stroke-dashoffset:0;}
+  .net .nd circle{fill:var(--card); stroke:var(--act); stroke-width:2; transition:fill .3s;}
+  .net .nd text{font-size:12px; fill:var(--ink-2); text-anchor:middle; font-family:var(--sans); font-weight:600;}
+  .net .nd.on circle{fill:var(--act);}
+  .net .nd.on text.num{fill:#fff;}
+  .net .nd text.num{font-size:14px; font-weight:700; fill:var(--act);}
+  .net .core{fill:color-mix(in srgb, var(--sys) 12%, white); stroke:var(--sys); stroke-width:2; opacity:0; transition:opacity .6s .5s;}
+  .net.linked .core{opacity:1;}
+  .net .core-t{font-family:var(--serif); font-weight:900; font-size:16px; fill:var(--sys); text-anchor:middle; opacity:0; transition:opacity .6s .6s;}
+  .net.linked .core-t{opacity:1;}
+  .who-msg{min-height:6.5em;}
+
+  /* ---------- 03 · Linha do tempo ---------- */
+  .tl{position:relative; height:140px; margin:26px 16px 0;}
+  .tl .track{position:absolute; left:0; right:0; height:2px; background:var(--border);}
+  .tl .track span{position:absolute; left:0; top:-30px; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700;}
+  .tl .t-main{top:44px;} .tl .t-main span{color:var(--act);}
+  .tl .t-adj{top:100px;} .tl .t-adj span{color:var(--muted);}
+  .tl .ev{position:absolute; width:14px; height:14px; margin:-7px 0 0 -7px; border-radius:50%; border:2px solid var(--act); background:var(--card); cursor:pointer; padding:0; transition:transform .2s, background .2s;}
+  .tl .ev.adj{border-color:var(--muted);}
+  .tl .ev.on{background:var(--red); border-color:var(--red); transform:scale(1.5);}
+  .tl .yr{position:absolute; top:124px; font-size:.68rem; color:var(--muted); transform:translateX(-50%); white-space:nowrap;}
+  @media (max-width:520px){ .tl .ev{width:11px; height:11px; margin:-5.5px 0 0 -5.5px; border-width:1.5px;} }
+  .tl-range{width:100%; accent-color:var(--red); margin:4px 0 14px;}
+  .tl-card .yy{font-family:var(--serif); font-weight:900; font-size:2.2rem; color:var(--red); line-height:1;}
+  .tl-card .kind{display:inline-block; font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; padding:2px 8px; border-radius:6px; margin-left:8px; vertical-align:middle;}
+  .tl-card .kind.m{background:var(--act); color:#fff;}
+  .tl-card .kind.a{background:var(--neutral); color:var(--ink);}
+  .tl-card .wk{font-style:italic; font-size:.84rem; color:var(--muted); margin:6px 0 8px;}
+
+  /* ---------- 04 · Camadas desalinhadas ---------- */
+  .lay-scene{position:relative; perspective:1200px; height:400px;}
+  .lay-stage{position:absolute; left:50%; top:52%; width:260px; height:170px; margin:-85px 0 0 -130px; transform-style:preserve-3d; transform:rotateX(58deg) rotateZ(-30deg);}
+  .layer{position:absolute; inset:0; border-radius:14px; border:1.5px solid color-mix(in srgb, var(--act) 60%, white); background:color-mix(in srgb, var(--act) 9%, transparent); display:flex; align-items:flex-start; justify-content:flex-start; padding:10px 14px; font-weight:700; font-size:13px; color:var(--act);
+    transform:translate3d(var(--dx), var(--dy), var(--lz)) rotateZ(var(--rot)); transition:transform 1s cubic-bezier(.2,.8,.2,1), opacity .6s, background .6s;}
+  .layers.aligned .layer{--dx:0px !important; --dy:0px !important; --rot:0deg !important; opacity:.45;}
+  .layer.core{border-color:var(--sys); background:color-mix(in srgb, var(--sys) 16%, white); color:var(--sys); opacity:0; align-items:center; justify-content:center; text-align:center; font-size:14px;}
+  .layers.aligned .layer.core{opacity:1;}
+
+  /* ---------- 05 · Funil ---------- */
+  .disc{position:absolute; border-radius:50%; transform-style:preserve-3d; transform:translateZ(var(--z)); transition:transform .5s cubic-bezier(.2,.8,.2,1), opacity .6s;}
+  .disc .top, .disc .under{position:absolute; inset:0; border-radius:50%;}
+  .disc .top{background:radial-gradient(circle at 40% 35%, color-mix(in srgb, var(--dc) 55%, white), var(--dc)); transform:translateZ(8px); box-shadow:inset 0 0 0 1px rgb(255 255 255 / .35); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-weight:900; color:#fff; text-shadow:0 1px 2px rgb(0 0 0 / .25);}
+  .disc .under{background:color-mix(in srgb, var(--dc) 70%, black);}
+  .disc.hl{transform:translateZ(calc(var(--z) + 18px));}
+  .slide:not(.in) .disc{opacity:0; transform:translateZ(calc(var(--z) + 120px));}
+  .steps{list-style:none; margin:0; padding:0; display:grid; gap:4px;}
+  .steps li{display:grid; grid-template-columns:86px 1fr; gap:14px; align-items:baseline; padding:12px 14px; border-radius:10px; cursor:default; transition:background .2s;}
+  .steps li:hover, .steps li.hl{background:var(--card); box-shadow:var(--shadow);}
+  .steps .num{font-family:var(--serif); font-weight:900; font-size:1.5rem; color:var(--ink); text-align:right; font-variant-numeric:tabular-nums;}
+  .steps li:last-child .num{color:var(--red);}
+  .steps p{margin:0; font-size:.94rem;}
+
+  /* ---------- 06 · Barras empilhadas ---------- */
+  .stack{display:flex; align-items:flex-end; gap:12px; height:230px; padding:0 4px; border-bottom:1px solid var(--border);}
+  .stack .col{flex:1; display:flex; flex-direction:column-reverse; cursor:pointer; position:relative; border-radius:6px 6px 0 0; overflow:hidden; transition:transform .2s;}
+  .stack .col:hover, .stack .col.on{transform:translateY(-4px);}
+  .stack .col i{display:block; width:100%;}
+  .stack .col .tot{position:absolute; left:0; right:0; text-align:center; font-size:.78rem; font-weight:700; color:var(--ink);}
+  .stack-x{display:flex; gap:12px; padding:6px 4px 0;}
+  .stack-x span{flex:1; text-align:center; font-size:.7rem; color:var(--muted);}
+  .stack-legend{display:flex; gap:14px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:12px;}
+  .stack-legend i{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:5px; vertical-align:-1px;}
+  .stack-info{font-size:.88rem; color:var(--ink-2); margin-top:10px; min-height:2.8em;}
+  .stack-wrap{position:relative;}
+
+  /* ---------- 07 · Barras 3D ---------- */
+  #bars-scene{perspective:3200px;}
+  #bars-scene .face-label{font-size:12px; letter-spacing:0; align-items:flex-start; padding-top:8px; color:var(--ink);}
+  #bars-scene .slab.hl .face-label{color:#fff;}
+  .bar-info{text-align:center; font-size:.92rem; color:var(--ink-2); min-height:3.2em; margin-top:4px;}
+
+  /* ---------- 08 · Jogo ---------- */
+  .game{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:22px; box-shadow:var(--shadow);}
+  .game-top{display:flex; justify-content:space-between; font-size:.78rem; color:var(--muted); margin-bottom:8px;}
+  .game-theme{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted);}
+  .flip{perspective:1200px; margin:10px 0 16px; min-height:175px;}
+  .flip-in{position:relative; transform-style:preserve-3d; transition:transform .8s cubic-bezier(.2,.8,.2,1); min-height:175px;}
+  .flip.turned .flip-in{transform:rotateY(180deg);}
+  .flip-face{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:12px; padding:18px 20px; display:flex; flex-direction:column; justify-content:center;}
+  .flip-face.front{background:var(--bg-soft); border:1px solid var(--border);}
+  .flip-face.front p{font-family:var(--serif); font-size:1.12rem; color:var(--ink); margin:0; line-height:1.45;}
+  .flip-face.back{transform:rotateY(180deg); background:color-mix(in srgb, var(--red) 7%, white); border:1px solid color-mix(in srgb, var(--red) 35%, white);}
+  .flip-face.back .row{font-size:.9rem; color:var(--ink-2); margin:3px 0;}
+  .flip-face.back .row b{display:block; font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);}
+  .flip-face.back .row.found b{color:var(--red);}
+  .cats{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;}
+  .cat{border:2px solid var(--border); background:var(--bg); border-radius:12px; padding:10px 8px; cursor:pointer; text-align:center; transition:all .2s;}
+  .cat b{display:block; font-family:var(--serif); font-size:1rem; color:var(--ink);}
+  .cat span{font-size:.72rem; color:var(--muted); line-height:1.3; display:block; margin-top:2px;}
+  .cat:hover:not(:disabled){border-color:var(--ink); transform:translateY(-2px);}
+  .cat:disabled{cursor:default;}
+  .cat.right{border-color:var(--act); background:color-mix(in srgb, var(--act) 8%, white);}
+  .cat.wrong{border-color:var(--neutral); opacity:.6;}
+  .game-msg{min-height:3em; font-size:.9rem; color:var(--ink-2); margin-top:12px;}
+  .game-msg b{color:var(--ink);}
+  .game-actions{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:8px; flex-wrap:wrap;}
+  .all-list{display:none; margin-top:18px; gap:12px; grid-template-columns:1fr;}
+  .all-list.on{display:grid;}
+  @media (min-width:820px){ .all-list{grid-template-columns:repeat(3, 1fr);} }
+  .all-list div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px;}
+  .all-list h3{font-family:var(--sans); font-size:.74rem; letter-spacing:.12em; text-transform:uppercase; margin-bottom:8px;}
+  .all-list ul{margin:0; padding-left:18px; font-size:.84rem; color:var(--ink-2); display:grid; gap:6px;}
+
+  /* ---------- 09 · Framework em camadas ---------- */
+  .fw-disc{position:absolute; border-radius:50%; transform-style:preserve-3d; transform:translateZ(var(--z,0px)); transition:transform .9s cubic-bezier(.2,.8,.2,1), opacity .5s;}
+  .fw-base{inset:0; background:color-mix(in srgb, var(--act) 8%, white); border:1.5px solid color-mix(in srgb, var(--act) 40%, white);}
+  .fw-cycle{background:conic-gradient(from -90deg, #475569 0 25%, #64748b 25% 50%, #94a3b8 50% 75%, #334155 75% 100%); box-shadow:inset 0 0 0 2px #fff;}
+  .fw-cycle .q{position:absolute; font-size:13px; font-weight:700; color:#fff; width:110px; text-align:center; margin-left:-55px; margin-top:-9px;}
+  .fw-layer{transition:opacity .4s;}
+  .dimmed .fw-layer:not(.focus){opacity:.22;}
+  .fw-tabs{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;}
+  .fw-list{display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:12px;}
+  .fw-list button{display:flex; gap:8px; align-items:center; text-align:left; border:1px solid var(--border); background:var(--card); border-radius:8px; padding:6px 10px; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .fw-list button b{width:20px; height:20px; border-radius:5px; background:var(--act); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:.72rem; flex:none;}
+  .fw-list button.on{border-color:var(--act); box-shadow:inset 3px 0 0 var(--act);}
+
+  /* ---------- 10 · Fluxos entre países ---------- */
+  .flows{width:100%; height:auto; overflow:visible; display:block;}
+  .flows .big{fill:color-mix(in srgb, var(--sys) 8%, white); stroke:var(--sys); stroke-width:2.5;}
+  .flows .other{fill:var(--bg-soft); stroke:#94a3b8; stroke-width:2;}
+  .flows .lab{font-family:var(--serif); font-weight:700; font-size:15px; text-anchor:middle;}
+  .flows .lab.s{fill:var(--sys);} .flows .lab.o{fill:var(--ink-2); font-size:13px;}
+  .flows .dot{fill:var(--act);}
+  .flows path{fill:none; stroke-width:3; stroke-linecap:round; stroke-dasharray:6 9; opacity:.12; transition:opacity .4s;}
+  .flows path.in{stroke:var(--act);} .flows path.out{stroke:var(--sys);} .flows path.ex{stroke:#64748b;}
+  .flows path.on{opacity:1; animation:flow 1s linear infinite;}
+  .flows.closed path{opacity:0 !important;}
+  @keyframes flow{to{stroke-dashoffset:-15;}}
+  .flows .wall{fill:none; stroke:var(--ink); stroke-width:5; opacity:0; transition:opacity .4s;}
+  .flows.closed .wall{opacity:.8;}
+
+  /* ---------- 11 · Ranking × régua ---------- */
+  .versus{display:grid; grid-template-columns:1fr; gap:14px; position:relative;}
+  @media (min-width:700px){ .versus{grid-template-columns:1fr 56px 1fr; align-items:stretch;} }
+  .vcard{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px 24px 28px; box-shadow:var(--shadow); min-height:170px; border-top:4px solid var(--vc);}
+  .vcard .lab{font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; font-weight:700; margin-bottom:12px; color:var(--vc);}
+  .vcard .val{font-family:var(--serif); font-size:clamp(1.1rem, 2vw, 1.4rem); color:var(--ink); line-height:1.4; transition:opacity .25s, transform .25s;}
+  .vcard .val.swap{opacity:0; transform:translateY(8px);}
+  .vs{display:flex; align-items:center; justify-content:center;}
+  .vs span{width:46px; height:46px; border-radius:50%; background:var(--bg); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-style:italic; color:var(--muted);}
+
+  /* ---------- 12 · Matriz ---------- */
+  .mx-info .src{font-size:.8rem; color:var(--muted); margin-top:8px;}
+  .mx-info .src b{color:var(--ink-2);}
+  .dims{display:flex; flex-wrap:wrap; gap:6px; margin:14px 0 0;}
+  .dims button{font-size:.76rem; border:1px solid var(--border); border-radius:999px; padding:5px 11px; cursor:pointer; background:var(--card); color:var(--ink-2);}
+  .dims button.on{background:var(--act); border-color:var(--act); color:#fff;}
+  #mx-scene .slab{cursor:pointer;}
+  #mx-scene .slab.active, #fw-scene .slab.active{--c:var(--sys) !important;}
+
+  /* ---------- 13 · Conversão ---------- */
+  .lk{display:grid; grid-template-columns:repeat(7, 1fr); gap:6px; margin:8px 0 6px;}
+  .lk button{border:1px solid var(--border); background:var(--card); border-radius:8px; padding:10px 0; cursor:pointer; font-weight:700; color:var(--ink-2); font-variant-numeric:tabular-nums;}
+  .lk button.on{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .lk-ends{display:flex; justify-content:space-between; font-size:.72rem; color:var(--muted);}
+  .lvls{display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; margin-top:16px;}
+  .lvls div{border-radius:10px; padding:10px 8px; text-align:center; border:2px solid transparent; background:var(--bg-soft); transition:all .3s;}
+  .lvls div b{display:block; font-family:var(--serif); font-size:1.4rem; color:var(--ink);}
+  .lvls div span{font-size:.72rem; color:var(--muted);}
+  .lvls div.on{border-color:var(--red); background:color-mix(in srgb, var(--red) 8%, white);}
+  .ex-row{display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center; padding:7px 0; border-top:1px dashed var(--border); font-size:.88rem; color:var(--ink-2);}
+  .stepper{display:flex; gap:4px;}
+  .stepper button{width:30px; height:30px; border-radius:7px; border:1px solid var(--border); background:var(--card); cursor:pointer; font-weight:700; color:var(--muted);}
+  .stepper button.on{background:var(--act); color:#fff; border-color:var(--act);}
+  .calc{margin-top:14px; font-size:.95rem; color:var(--ink-2);}
+  .calc b{font-family:var(--serif); font-size:1.9rem; color:var(--red); display:block; line-height:1.2;}
+  .meter{height:8px; background:var(--border); border-radius:6px; overflow:hidden; margin:10px 0 4px;}
+  .meter i{display:block; height:100%; width:0; border-radius:6px; background:var(--red); transition:width .5s cubic-bezier(.2,.8,.2,1);}
+
+  /* ---------- 14 · Simulador ---------- */
+  .sim{display:grid; grid-template-columns:1fr; gap:22px; align-items:start;}
+  @media (min-width:920px){ .sim{grid-template-columns:1fr 1.1fr;} }
+  .sliders{display:grid; gap:4px;}
+  .sl{display:grid; grid-template-columns:150px 1fr 52px; gap:10px; align-items:center; font-size:.84rem; color:var(--ink-2); padding:4px 8px; border-radius:8px;}
+  .sl.weak{background:color-mix(in srgb, var(--red) 8%, transparent);}
+  .sl input{width:100%; accent-color:var(--act);}
+  .sl output{text-align:right; font-weight:700; font-variant-numeric:tabular-nums; color:var(--ink);}
+  @media (max-width:480px){ .sl{grid-template-columns:110px 1fr 46px; font-size:.78rem;} }
+  .score{font-family:var(--serif); font-weight:900; font-size:2.4rem; line-height:1; font-variant-numeric:tabular-nums; color:var(--red);}
+  .score small{font-family:var(--sans); font-size:.75rem; font-weight:500; color:var(--muted); margin-left:4px;}
+  .sim-head{display:flex; justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap;}
+  .sim-head h3{font-family:var(--sans); font-size:.76rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);}
+  .presets{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:4px 0 14px;}
+  .presets span{font-size:.8rem; color:var(--muted); margin-right:4px;}
+  .sim-msg{margin-top:14px; padding:14px 18px; border-radius:12px; background:var(--bg-soft); border:1px solid var(--border); font-size:.92rem; color:var(--ink-2);}
+  .sim-msg b{color:var(--ink);}
+  .disclaimer{font-size:.76rem; color:var(--muted); margin-top:12px;}
+  #sim-scene{perspective:2600px;}
+  #sim-scene .face-label{font-size:11px; letter-spacing:0; align-items:flex-start; padding-top:6px;}
+
+  /* ---------- 15 · Prática ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:16px; margin-top:12px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  .pcard{background:var(--card); border-radius:14px; padding:22px; box-shadow:var(--shadow); transition:transform .2s;}
+  .pcard:hover{transform:translateY(-3px);}
+  .pcard .ic{width:44px; height:44px; border-radius:50%; background:color-mix(in srgb, var(--red) 10%, transparent); color:var(--red); display:flex; align-items:center; justify-content:center; margin-bottom:12px;}
+  .pcard .ic svg{width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
+  .pcard h3{font-size:1.06rem; margin-bottom:8px; color:var(--ink);}
+  .pcard p{font-size:.9rem; margin:0;}
+  .pcard .src{display:block; margin-top:10px; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--muted);}
+
+  /* ---------- 16 · Créditos ---------- */
+  .limits{display:grid; gap:10px; margin:12px 0 0; padding:0; list-style:none;}
+  .limits li{padding:12px 16px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.88rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .cite{font-size:.86rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 20px; line-height:1.6;}
+  .cite b{color:var(--ink);}
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    .rv{transition:none; opacity:1; transform:none;}
+    *{animation:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <span id="count">01 / 16</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2026</div>
+      <h1 class="rv" style="--d:.1s">Como saber se um país inova como um sistema?</h1>
+      <p class="sub rv" style="--d:.2s">A pesquisa reuniu 34 anos de artigos sobre <strong>sistemas nacionais de inovação</strong>, separou o que é consenso do que é disputa e criou uma <strong>régua de maturidade</strong> para avaliar quão bem esses sistemas funcionam. Explicada em 16 telas.</p>
+      <p class="orig rv" style="--d:.25s">Título original: Assessing National Innovation System Sophistication: an integrated framework and maturity-based scale</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autora:</b> Rachel Nogueira Calcagno Horta</span>
+        <span><b>Orientador:</b> Prof. Dr. Fellipe Silva Martins</span>
+        <span><b>Coorientador:</b> Prof. Dr. Manuel Anibal Portugal (Politécnico de Leiria)</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#orquestra">Começar →</a>
+        <a class="btn ghost" href="#simulador">Ir direto ao simulador</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="460x440"></div></div>
+      <div class="cap-legend"><span><i style="background:var(--act)"></i>os sete atores</span><span><i style="background:var(--sys)"></i>o sistema que eles formam</span></div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · ORQUESTRA -->
+<section class="slide" id="orquestra" data-label="Quem inova">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O ponto de partida</div>
+      <h2 class="rv" style="--d:.1s">Inovação é orquestra, não solista</h2>
+      <p class="lede rv" style="--d:.15s">Quem faz a inovação de um país? Escolha um ator.</p>
+      <div class="who rv" id="who" style="--d:.2s"></div>
+      <div class="panel who-msg rv" id="who-msg" style="--d:.25s"><p>Cada escolha revela o papel daquele ator e o que ele sozinho não consegue fazer.</p></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg class="net" id="net" viewBox="0 0 420 400" aria-hidden="true"></svg>
+      <p class="note"><b>Comparação nossa.</b> A imagem da orquestra e as frases sobre o que cada ator não faz sozinho são desta versão interativa. A ideia vem da tese: a inovação nacional nasce da interação contínua entre atores interdependentes, e não de um ator isolado.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · LINHA DO TEMPO -->
+<section class="slide" id="historia" data-label="De 1841 a 2023">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">03</span> A história do conceito</div>
+    <h2 class="rv" style="--d:.1s">De 1841 a 2023, o conceito só cresceu</h2>
+    <p class="lede rv" style="--d:.15s">A expressão "sistema nacional de inovação" surgiu em 1987, mas suas raízes são mais antigas. Depois, ganhou vizinhos: hélices, sistemas regionais, biomas. Desde então, apareceu em mais de 1.300 artigos acadêmicos. Arraste o cursor ou clique nos pontos.</p>
+    <div class="rv" style="--d:.2s">
+      <div class="tl" id="tl">
+        <div class="track t-main"><span>Linha principal</span></div>
+        <div class="track t-adj"><span>Teorias vizinhas</span></div>
+      </div>
+      <input type="range" class="tl-range" id="tl-range" min="0" max="18" value="2" aria-label="Escolha um marco da linha do tempo">
+    </div>
+    <div class="panel tl-card rv" id="tl-card" style="--d:.25s"></div>
+    <p class="note rv" style="--d:.3s">Os pontos estão igualmente espaçados para caber na tela; o ano de cada marco aparece embaixo. Fonte: Apêndice C da tese.</p>
+  </div>
+</section>
+
+<!-- 04 · REIFICAÇÃO -->
+<section class="slide" id="reificacao" data-label="O problema">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> O problema</div>
+      <h2 class="rv" style="--d:.1s">Cresceu tanto que perdeu a forma</h2>
+      <p class="rv" style="--d:.15s">A tese parte de um diagnóstico: o conceito sofreu <strong>reificação</strong>. A palavra é difícil, mas a ideia é simples: passou a ser usado como se fosse uma coisa pronta e bem definida, enquanto cada estudo o entendia de um jeito.</p>
+      <p class="rv" style="--d:.2s">Nacional, regional, setorial, tecnológico, hélice tripla, bioma… Cerca de <strong>43% dos estudos</strong> ligam o sistema nacional a outros tipos de sistema. Sem uma base comum, fica difícil comparar, medir ou melhorar os sistemas.</p>
+      <div class="rv" style="--d:.25s; margin-top:8px">
+        <button class="toggle" id="align-btn" aria-pressed="false"><span class="sw"></span>Alinhar o que é consenso</button>
+      </div>
+      <div class="callout rv" id="align-msg" style="--d:.3s"><p>A tese não descarta o conceito. Ela o reorganiza para que volte a ser útil.</p></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="lay-scene" id="lay-scene" data-fit="440x400">
+        <div class="lay-stage layers" id="layers"></div>
+      </div></div>
+      <p class="note"><b>Metáfora visual nossa.</b> As camadas são os recortes citados na tese (Seção 2.2); o núcleo comum é o que a revisão encontrou de forma consistente (Seção 2.7).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · FUNIL -->
+<section class="slide" id="revisao" data-label="126 artigos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Estudo 1 · Revisão da literatura</div>
+      <h2 class="rv" style="--d:.1s">2.225 artigos encontrados, 126 lidos a fundo</h2>
+      <p class="rv" style="--d:.15s">A pesquisadora vasculhou duas grandes bases científicas, Web of Science e Scopus, em busca de tudo o que foi publicado sobre o tema entre 1990 e 2024. Passe o mouse em cada camada do funil.</p>
+      <ul class="steps rv" id="steps" style="--d:.2s">
+        <li data-i="0"><span class="num">2.225</span><p>registros encontrados com a expressão "sistema nacional de inovação"</p></li>
+        <li data-i="1"><span class="num">1.397</span><p>restaram após tirar duplicados e registros incompletos</p></li>
+        <li data-i="2"><span class="num">285</span><p>publicados nos 11 periódicos de referência que mais tratam do tema (lista ABS 2024, mais de 10 artigos cada)</p></li>
+        <li data-i="3"><span class="num">126</span><p>tratavam de fato do sistema nacional de inovação, com texto acessível, e foram lidos e codificados</p></li>
+      </ul>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="fit-wrap"><div class="scene" id="funnel-scene" data-fit="420x420"></div></div>
+      <div class="callout"><p>O método segue o protocolo PRISMA: cada etapa de exclusão é registrada, para que outra pessoa possa refazer o caminho.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · NÚMEROS -->
+<section class="slide" id="numeros" data-label="34 anos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Estudo 1 · O retrato da literatura</div>
+      <h2 class="rv" style="--d:.1s">34 anos de pesquisa, quase toda depois de 2000</h2>
+      <p class="rv" style="--d:.15s">Mais de 90% dos 126 artigos saíram a partir dos anos 2000. A maioria é empírica: mede algo num país real. Poucos discutem o que o conceito significa.</p>
+      <div class="stats rv" style="--d:.2s">
+        <div class="stat"><b>40+</b><span>países estudados, cerca de 20% das nações, de líderes em inovação a economias emergentes</span></div>
+        <div class="stat"><b>52%</b><span>dos estudos olham um só país; 45% comparam países</span></div>
+        <div class="stat"><b>76%</b><span>são empíricos; 22% conceituais; 2% os dois</span></div>
+        <div class="stat"><b>36%</b><span>citam juntos os três pais do conceito: Freeman, Lundvall e Nelson</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel">
+        <div class="tag">Artigos por período e tipo</div>
+        <div class="stack-wrap"><div class="stack" id="stack"></div></div>
+        <div class="stack-x" id="stack-x"></div>
+        <div class="stack-legend"><span><i style="background:var(--act)"></i>Empíricos</span><span><i style="background:#94a3b8"></i>Conceituais</span><span><i style="background:var(--red)"></i>Os dois</span></div>
+        <div class="stack-info" id="stack-info"></div>
+      </div>
+      <p class="note">Fonte: Apêndice D e Figura 2.2 da tese. Passe o mouse em cada período.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · ATORES CITADOS -->
+<section class="slide" id="atores" data-label="Quem é citado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Estudo 1 · Os atores</div>
+      <h2 class="rv" style="--d:.1s">Todo mundo fala do governo; quase ninguém, do dinheiro</h2>
+      <p class="rv" style="--d:.15s">A revisão contou em quantos dos 126 artigos cada ator aparece. Governo e universidades dominam a conversa. <strong class="sys-t">Sociedade civil</strong> e <strong class="sys-t">setor financeiro</strong> quase não aparecem, embora a própria literatura reconheça que eles importam.</p>
+      <p class="rv" style="--d:.2s">Para a tese, esse desequilíbrio é um sinal de que a pesquisa costuma olhar só para uma parte do sistema e deixa de fora boa parte das interdependências.</p>
+      <p class="note rv" style="--d:.25s">Um artigo pode citar vários atores, por isso a soma passa de 100%. Fonte: Apêndice E.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="bars-scene" data-fit="600x420"></div></div>
+      <div class="bar-info" id="bar-info"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · JOGO -->
+<section class="slide" id="jogo" data-label="Consenso ou surpresa">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Estudo 1 · A análise crítica</div>
+      <h2 class="rv" style="--d:.1s">Consenso, disputa ou surpresa?</h2>
+      <p class="rv" style="--d:.15s">A pesquisadora cruzou os achados dos 126 artigos e separou cada um em três grupos:</p>
+      <div class="panel rv" style="--d:.2s">
+        <p><strong>Consenso</strong>: aparece com frequência e se confirma de estudo para estudo.</p>
+        <p><strong>Disputa</strong>: os autores divergem e o debate não avança de forma cumulativa.</p>
+        <p><strong>Surpresa</strong>: contraria o que a teoria esperava.</p>
+      </div>
+      <p class="rv" style="--d:.25s; margin-top:16px">Faça a mesma triagem ao lado. Nas surpresas, o cartão vira e mostra o que se esperava e o que a literatura encontrou.</p>
+      <p class="rv" style="--d:.3s">É do <strong>consenso</strong> que a tese constrói o modelo das próximas telas.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="game" id="game">
+        <div class="game-top"><span id="g-step"></span><span class="game-theme" id="g-theme"></span></div>
+        <div class="flip" id="g-flip"><div class="flip-in">
+          <div class="flip-face front"><p id="g-text"></p></div>
+          <div class="flip-face back"><div class="row"><b>O que se esperava</b><span id="g-exp"></span></div><div class="row found"><b>O que a literatura encontrou</b><span id="g-found"></span></div></div>
+        </div></div>
+        <div class="cats" id="g-cats">
+          <button class="cat" data-c="c"><b>Consenso</b><span>se repete e se confirma</span></button>
+          <button class="cat" data-c="d"><b>Disputa</b><span>autores divergem</span></button>
+          <button class="cat" data-c="s"><b>Surpresa</b><span>contraria o esperado</span></button>
+        </div>
+        <div class="game-msg" id="g-msg">Em qual grupo a tese colocou este achado?</div>
+        <div class="game-actions">
+          <button class="toggle" id="g-all" aria-pressed="false"><span class="sw"></span>Ver todos</button>
+          <button class="btn small" id="g-next" style="display:none">Próximo →</button>
+        </div>
+      </div>
+    </div>
+    <div class="all-list" id="all-list" style="grid-column:1/-1"></div>
+  </div>
+</section>
+
+<!-- 09 · FRAMEWORK -->
+<section class="slide" id="framework" data-label="O modelo">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Estudo 2 · O modelo integrador</div>
+      <h2 class="rv" style="--d:.1s">Sete atores, um ciclo, um motor</h2>
+      <p class="rv" style="--d:.15s">Juntando só o que é consenso, a tese desenha o sistema nacional de inovação em três camadas. Separe as camadas e explore cada uma.</p>
+      <div class="fw-tabs rv" id="fw-tabs" style="--d:.2s"></div>
+      <div class="panel rv" id="fw-info" style="--d:.25s"></div>
+      <div class="fw-list rv" id="fw-list" style="--d:.3s"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="fw-scene" data-fit="460x520"></div></div>
+      <div style="text-align:center"><button class="toggle" id="fw-explode" aria-pressed="true"><span class="sw"></span>Camadas separadas</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · O PAÍS COMO ATOR -->
+<section class="slide" id="fronteiras" data-label="O país como ator">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Estudo 2 · Além das fronteiras</div>
+      <h2 class="rv" style="--d:.1s">O país também é um ator</h2>
+      <p class="rv" style="--d:.15s">Os sete atores, juntos, formam o sistema nacional. E o sistema, por sua vez, troca conhecimento com os sistemas de outros países: recebe, compartilha e devolve inovação.</p>
+      <div class="chips rv" id="fl-tabs" style="--d:.2s"></div>
+      <div class="panel rv" id="fl-info" style="--d:.25s"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg class="flows" id="flows" viewBox="0 0 520 380" role="img" aria-label="Um sistema nacional trocando fluxos de conhecimento com dois outros sistemas">
+        <defs>
+          <marker id="ar-in" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1f3b73"/></marker>
+          <marker id="ar-out" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#e80734"/></marker>
+        </defs>
+        <circle class="other" cx="430" cy="85" r="58"/><text class="lab o" x="430" y="90">Outro país</text>
+        <circle class="other" cx="430" cy="295" r="58"/><text class="lab o" x="430" y="300">Outro país</text>
+        <path class="in" data-k="abs" d="M378,62 C320,40 270,60 240,95" marker-end="url(#ar-in)"/>
+        <path class="in" data-k="abs" d="M378,318 C320,340 270,320 240,285" marker-end="url(#ar-in)"/>
+        <path class="ex" data-k="tro" d="M372,110 C330,140 300,160 282,175"/>
+        <path class="ex" data-k="tro" d="M372,270 C330,240 300,220 282,205"/>
+        <path class="out" data-k="dif" d="M262,110 C300,95 340,92 372,100" marker-end="url(#ar-out)"/>
+        <path class="out" data-k="dif" d="M262,270 C300,285 340,288 372,280" marker-end="url(#ar-out)"/>
+        <circle class="big" cx="180" cy="190" r="110"/>
+        <g id="fl-dots"></g>
+        <text class="lab s" x="180" y="320">Sistema nacional</text>
+        <circle class="wall" cx="180" cy="190" r="122"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · RANKING × RÉGUA -->
+<section class="slide" id="regua" data-label="Ranking × régua">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> Estudo 3 · Por que uma nova medida</div>
+    <h2 class="rv" style="--d:.1s">Rankings contam o que sai; a régua olha como funciona</h2>
+    <p class="lede rv" style="--d:.15s">Índices globais como o Índice Global de Inovação (GII), o de Competitividade (GCI) e o de Desenvolvimento Humano (IDH) são úteis, mas cada um olha uma parte. Escolha um aspecto e compare.</p>
+    <div class="chips rv" id="aspects" style="--d:.2s"></div>
+    <div class="versus rv" style="--d:.3s">
+      <div class="vcard" style="--vc:#64748b"><div class="lab">Índices tradicionais</div><div class="val" id="v-a"></div></div>
+      <div class="vs"><span>vs</span></div>
+      <div class="vcard" style="--vc:var(--red)"><div class="lab">Régua de maturidade da tese</div><div class="val" id="v-b"></div></div>
+    </div>
+    <p class="note rv" style="--d:.35s">A régua não joga os índices fora: usa-os, junto com bases como V-Dem, Banco Mundial, OCDE e OMPI, como apoio para criar seus indicadores.</p>
+  </div>
+</section>
+
+<!-- 12 · MATRIZ -->
+<section class="slide" id="matriz" data-label="31 peças">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">12</span> Estudo 3 · A régua</div>
+      <h2 class="rv" style="--d:.1s">Uma régua com 31 peças</h2>
+      <p class="rv" style="--d:.15s">A régua tem <strong>8 dimensões</strong>: os sete atores e o próprio sistema. Cada dimensão é avaliada nas etapas do ciclo (entrada, colaboração, saída e impacto), e cada combinação vira um <strong>fator</strong> com uma afirmação que especialistas avaliam. Clique num bloco.</p>
+      <div class="panel mx-info rv" id="mx-info" style="--d:.2s"></div>
+      <div class="dims rv" id="mx-dims" style="--d:.25s"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="mx-scene" data-fit="620x380"></div></div>
+      <p class="note">O bloco vazado é o impacto da dimensão "sistema", que não aparece na tabela da tese. Por isso são 31 fatores, e não 32. Fonte: Tabela 4.2 e Apêndice F.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 13 · CONVERSÃO -->
+<section class="slide" id="calculo" data-label="A conta">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">13</span> Estudo 3 · Como se calcula</div>
+      <h2 class="rv" style="--d:.1s">De "concordo" a nível de maturidade</h2>
+      <p class="rv" style="--d:.15s">Especialistas em inovação (acadêmicos, pesquisadores, empreendedores e gestores públicos) dizem o quanto concordam com cada afirmação, numa escala de 1 a 7. A resposta vira um nível de 0 a 3. Clique numa resposta.</p>
+      <div class="panel rv" style="--d:.2s">
+        <div class="tag">Resposta do especialista</div>
+        <div class="lk" id="lk"></div>
+        <div class="lk-ends"><span>discordo totalmente</span><span>concordo totalmente</span></div>
+        <div class="lvls" id="lvls"></div>
+      </div>
+      <p class="note rv" style="--d:.25s">Os especialistas também ordenam as dimensões da mais à menos importante. Com isso, o método Fuzzy AHP pode dar pesos diferentes a cada dimensão. Fonte: Tabela 4.1 e Seção 4.3.3.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel">
+        <div class="tag">Exemplo da própria tese · uma dimensão com 5 fatores</div>
+        <div id="ex-rows"></div>
+        <div class="calc" id="calc"></div>
+        <div class="meter"><i id="calc-meter"></i></div>
+        <p style="font-size:.84rem; margin-top:10px">A maturidade de uma dimensão é a soma dos níveis dividida pelo máximo possível (3 pontos por fator). A <strong>sofisticação</strong> do sistema é a média das dimensões. No exemplo da tese, três dimensões com 90%, 70% e 60% resultam em <strong>73,3%</strong>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 · SIMULADOR -->
+<section class="slide" id="simulador" data-label="Simulador">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">14</span> Simulador</div>
+    <h2 class="rv" style="--d:.1s">Avalie um sistema de inovação</h2>
+    <p class="lede rv" style="--d:.15s">Pense num país e mova os controles: cada um é o nível médio dos fatores de uma dimensão, de 0 (ausente) a 3 (plenamente desenvolvido). As torres mostram a maturidade de cada dimensão contra o ideal (contorno), e o índice é a média.</p>
+    <div class="presets rv" id="presets" style="--d:.2s"><span>Começar de:</span></div>
+    <div class="sim rv" style="--d:.25s">
+      <div class="panel">
+        <div class="sliders" id="sliders"></div>
+      </div>
+      <div class="panel">
+        <div class="sim-head"><h3>Sofisticação do sistema</h3><div class="score" id="score">0<small>%</small></div></div>
+        <div class="meter"><i id="score-meter"></i></div>
+        <div class="fit-wrap"><div class="scene draggable" id="sim-scene" data-fit="560x330"></div></div>
+        <div class="sim-msg" id="sim-msg"></div>
+      </div>
+    </div>
+    <p class="disclaimer"><b>Ferramenta ilustrativa.</b> A tese ainda não aplicou a régua a nenhum país; as notas aqui são suas. Na régua real, cada dimensão reúne de 3 a 4 fatores avaliados por especialistas, e os pesos podem vir do Fuzzy AHP; aqui todas as dimensões pesam igual. As mensagens sobre ponto fraco e equilíbrio são leitura nossa, inspirada na ideia de que um sistema sofisticado tem desempenho alto e harmonioso.</p>
+  </div>
+</section>
+
+<!-- 15 · PRÁTICA -->
+<section class="slide" id="pratica" data-label="Na prática">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">15</span> Por que isso importa</div>
+    <h2 class="rv" style="--d:.1s">Do ranking ao diagnóstico</h2>
+    <p class="lede rv" style="--d:.15s">Para a tese, melhorar a inovação de um país não é só investir mais ou produzir mais patentes. É aumentar a capacidade do sistema de <strong>coordenar, aprender e se adaptar</strong>.</p>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.2s">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></svg></div>
+        <h3>Para quem formula políticas</h3>
+        <p>Em vez de só saber a posição num ranking, ver onde o sistema é forte ou fraco e decidir onde alocar recursos. É a passagem da comparação para o diagnóstico e a estratégia.</p>
+        <span class="src">Conclusões da tese</span>
+      </div>
+      <div class="pcard rv" style="--d:.25s">
+        <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+        <h3>Para países emergentes</h3>
+        <p>Economias com limitações estruturais podem inovar por meio de vínculos externos e estratégias adaptativas. Uma régua de maturidade consegue captar esse movimento, em vez de ignorá-lo.</p>
+        <span class="src">Conclusões da tese</span>
+      </div>
+      <div class="pcard rv" style="--d:.3s">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <h3>Para cada ator do sistema</h3>
+        <p>Empresas, bancos, universidades e organizações sociais podem se ver na sua própria linha da régua e perguntar: em que etapa do ciclo estamos fracos? Com quem precisamos nos conectar?</p>
+        <span class="src">Leitura nossa</span>
+      </div>
+      <div class="pcard rv" style="--d:.35s">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6L4 20a1 1 0 0 0 .9 1.5h14.2A1 1 0 0 0 20 20L14 9V3"/></svg></div>
+        <h3>Para pesquisadores</h3>
+        <p>Próximos passos: aplicar a régua em vários países, validá-la com técnicas estatísticas e acompanhar ao longo do tempo como os sistemas respondem a políticas e mudanças tecnológicas.</p>
+        <span class="src">Estudos futuros apontados na tese</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 · CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Créditos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">16</span> Limites e créditos</div>
+      <h2 class="rv" style="--d:.1s">O que esta pesquisa não diz</h2>
+      <ul class="limits rv" style="--d:.15s">
+        <li><b>A régua ainda não foi aplicada a países.</b> Ela foi validada no conteúdo por especialistas (em duas rodadas), mas falta a validação empírica e estatística.</li>
+        <li><b>As avaliações são percepções.</b> Respostas de especialistas trazem uma dose de subjetividade.</li>
+        <li><b>O modelo simplifica.</b> Oito dimensões não captam todas as particularidades de cada país, e o modelo integrador ainda não foi testado empiricamente.</li>
+        <li><b>A revisão tem recortes.</b> Ficou restrita aos 11 periódicos de referência com mais artigos sobre o tema e deixou de fora a literatura não publicada em periódicos.</li>
+      </ul>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="cite">
+        <b>Como citar</b><br>
+        HORTA, Rachel Nogueira Calcagno. <em>Assessing National Innovation System Sophistication: an integrated framework and maturity-based scale.</em> Tese (Doutorado em Administração de Empresas) — Programa de Pós-Graduação em Administração de Empresas, Universidade Presbiteriana Mackenzie, São Paulo, 2026. Orientador: Prof. Dr. Fellipe Silva Martins. Coorientador: Prof. Dr. Manuel Anibal Portugal.
+      </div>
+      <p style="margin-top:16px; font-size:.86rem">Banca: Prof. Dr. Gilberto Perez (Mackenzie), Prof. Dr. Leonardo Vils (Uninove) e Prof. Dr. Ivano Ribeiro (Unioeste). Pesquisa com apoio da CAPES, incluindo doutorado sanduíche no Politécnico de Leiria, em Portugal.</p>
+      <p style="font-size:.86rem">A tese foi escrita em inglês. Esta versão interativa simplifica o trabalho para o público em geral; o referencial teórico, as fórmulas e as discussões completas estão no texto original.</p>
+      <div class="ctas" style="margin-top:18px">
+        <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+        <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+        <a class="btn ghost" href="../../">Outras pesquisas</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var fmt = function(n, d){ return n.toFixed(d === undefined ? 1 : d).replace('.', ','); };
+  var $ = function(id){ return document.getElementById(id); };
+  var each = function(list, fn){ Array.prototype.forEach.call(list, fn); };
+
+  /* ================= DADOS DA TESE ================= */
+  // Os sete atores do modelo (Cap. 3) e quantos dos 126 artigos citam cada um (Apêndice E)
+  var ACTORS = [
+    {n:"Políticas e instituições públicas", s:"Políticas públicas", rev:"Governo", k:115, p:91, d:"Cria o ambiente de regras e as políticas que orientam a inovação, e coordena os demais atores.", alone:"Sem empresas e centros de pesquisa, a política fica no papel."},
+    {n:"Centros de pesquisa", s:"Centros de pesquisa", rev:"Universidades", k:110, p:87, d:"Produzem conhecimento científico e formam pessoas: universidades, institutos e centros de P&D.", alone:"Sem quem aplique e financie, o conhecimento fica na prateleira."},
+    {n:"Empresas", s:"Empresas", rev:"Empresas", k:77, p:61, d:"Fazem pesquisa aplicada e levam novas tecnologias ao mercado.", alone:"Sem ciência, crédito e regras estáveis, inovam pouco e devagar."},
+    {n:"Setor industrial", s:"Setor industrial", rev:"Setor industrial", k:35, p:28, d:"Dá escala: capacidade de produção e infraestrutura para a inovação chegar à economia.", alone:"Sem novas ideias para produzir, a capacidade fica ociosa."},
+    {n:"Intermediários", s:"Intermediários", rev:"Intermediários", k:30, p:23, d:"Conectam atores, regiões e outros países, e preenchem as lacunas entre eles (dinâmica regional e internacional).", alone:"Sem atores para ligar, não há ponte a construir."},
+    {n:"Sociedade civil", s:"Sociedade civil", rev:"Sociedade civil", k:16, p:12, d:"Garante que a inovação atenda às necessidades sociais, de forma ética, inclusiva e sustentável.", alone:"Sem os demais, as demandas sociais não viram soluções."},
+    {n:"Setor financeiro", s:"Setor financeiro", rev:"Setor financeiro", k:11, p:8, d:"Oferece capital e instrumentos para lidar com o risco de inovar, sobretudo no começo e na hora de crescer.", alone:"Sem projetos e conhecimento, o dinheiro não tem onde render inovação."}
+  ];
+
+  // Linha do tempo (Apêndice C): m = linha principal, a = teoria vizinha
+  var TL = [
+    [1841,"m","Friedrich List","The National System of Political Economy","Mostra como as instituições de um país podem impulsionar o crescimento e o avanço tecnológico."],
+    [1934,"m","Joseph Schumpeter","The Theory of Economic Development","As \"novas combinações\" de recursos como motor do desenvolvimento econômico."],
+    [1987,"m","Christopher Freeman","Technology Policy and Economic Performance: Lessons from Japan","Usa a expressão \"sistema nacional de inovação\" ao estudar o sucesso do Japão."],
+    [1992,"m","Bengt-Åke Lundvall","National Systems of Innovation","A inovação como aprendizagem interativa entre os atores. Um dos autores mais citados."],
+    [1993,"m","Richard R. Nelson","National Innovation Systems: A Comparative Analysis","Compara como diferentes países organizam a inovação."],
+    [1994,"m","Patel & Pavitt","The Nature and Economic Importance of National Innovation Systems","Propõe medidas para os sistemas nacionais de inovação."],
+    [1995,"m","Stanley Metcalfe","Technology Systems and Technology Policy in an Evolutionary Framework","Introduz a ideia de falha do sistema."],
+    [1997,"a","Teece, Pisano & Shuen","Dynamic Capabilities and Strategic Management","Capacidades dinâmicas: como as empresas se reconfiguram em ambientes instáveis."],
+    [1997,"m","Charles Edquist","Systems of Innovation","Estende a ideia a sistemas regionais, setoriais e tecnológicos."],
+    [1997,"m","OCDE","National Innovation Systems","Populariza o conceito com indicadores e comparações entre países."],
+    [1998,"a","Cooke & Morgan","The Associational Economy","Desenvolve os sistemas regionais de inovação."],
+    [2000,"m","Jorge Niosi","Canada's National System of Innovation","Analisa a interação entre empresas, universidades e governo."],
+    [2000,"a","Etzkowitz & Leydesdorff","The Dynamics of Innovation","Hélice tripla: universidade, indústria e governo."],
+    [2002,"a","Franco Malerba","Sectoral Systems of Innovation and Production","Sistemas setoriais de inovação."],
+    [2005,"m","Fagerberg, Mowery & Nelson","The Oxford Handbook of Innovation","Liga a inovação ao desempenho econômico dos países."],
+    [2009,"a","Carayannis & Campbell","Mode 3 Knowledge Production in Quadruple Helix Innovation Systems","Hélice quádrupla: acrescenta a sociedade civil."],
+    [2013,"a","Owen, Stilgoe e outros","Developing a Framework for Responsible Innovation","Inovação responsável, social e sustentável."],
+    [2018,"a","Schot & Steinmueller","Three Frames for Innovation Policy","Inovação transformadora, voltada a desafios da sociedade."],
+    [2023,"a","Ghazinoory e outros","National Innovation Biome","O \"bioma nacional de inovação\": um sistema orgânico e adaptativo."]
+  ];
+
+  // Funil PRISMA (Figura 2.1)
+  var FUNNEL = [2225, 1397, 285, 126];
+
+  // Tipos de estudo por período (Apêndice D): [período, empíricos, conceituais, ambos]
+  var PERIODS = [["1990–99",5,2,1],["2000–05",16,7,1],["2006–10",18,4,0],["2011–15",25,8,1],["2016–20",24,2,0],["2021–24",9,3,0]];
+
+  // Achados da Tabela 2.5: c = consenso (compatível), d = disputa (contraditório), s = surpresa (contraintuitivo)
+  var FINDINGS = [
+    {c:"c", t:"Instituições", x:"Regulação forte, políticas coerentes e instituições robustas melhoram o desempenho do sistema de inovação."},
+    {c:"s", t:"Instituições", x:"Em alguns casos, muito investimento público em P&D não se traduz em mais comercialização.", e:"Mais dinheiro público em pesquisa gera mais produtos no mercado.", f:"Nem sempre: o investimento alto, sozinho, não garante comercialização."},
+    {c:"d", t:"Evolução teórica", x:"Basta analisar o país como um todo, ou é preciso dar o mesmo peso às dimensões regional e setorial?"},
+    {c:"s", t:"Evolução teórica", x:"Algumas economias em desenvolvimento, com sistemas fragmentados, conseguiram dar saltos de inovação graças a influências externas.", e:"Sem um sistema completo e maduro, não há salto de inovação.", f:"Vínculos externos podem compensar limitações internas."},
+    {c:"c", t:"Resultados", x:"Patentes, publicações científicas e criação de startups seguem sendo as medidas-padrão de resultado da inovação."},
+    {c:"s", t:"Instituições", x:"A desregulação às vezes atrapalha a inovação.", e:"Desregular estimula a competição e, com ela, a inovação.", f:"Pode abrir espaço a monopólios e enfraquecer a coordenação das políticas."},
+    {c:"d", t:"Intermediários", x:"Governo, universidades e empresas já explicam o essencial, ou intermediários são mesmo necessários?"},
+    {c:"c", t:"Intermediários", x:"Atores intermediários são essenciais para ligar governo, academia e indústria."},
+    {c:"s", t:"Intermediários", x:"A globalização não desmontou os sistemas nacionais.", e:"A globalização fragmentaria os sistemas nacionais de inovação.", f:"O global convive com o nacional e, às vezes, até fortalece as capacidades locais."},
+    {c:"d", t:"Resultados", x:"Muitas patentes e publicações nem sempre andam junto com impacto econômico ou sucesso no mercado; os estudos chegam a resultados mistos."},
+    {c:"s", t:"Resultados", x:"Alguns sistemas com menos patentes e publicações têm desempenho econômico melhor.", e:"Quem produz mais patentes e artigos se sai melhor na economia.", f:"Estratégias de comercialização e integração ao mercado podem pesar mais."},
+    {c:"c", t:"Instituições", x:"Mesmo com integração regional e internacional, o nível nacional continua sendo decisivo."},
+    {c:"s", t:"Intermediários", x:"Em alguns casos, intermediários criam redundância e ineficiência.", e:"Quanto mais intermediários, mais conexão e melhor o sistema.", f:"O que importa é como eles se encaixam no sistema, não a quantidade."},
+    {c:"d", t:"Evolução teórica", x:"É preciso uma teoria única e rigorosa, ou é melhor manter o conceito flexível?"},
+    {c:"s", t:"Instituições", x:"Mais integração política ou econômica, como na Europa, nem sempre resulta em mais inovação.", e:"Integrar países soma forças e aumenta a inovação.", f:"Escalar políticas nacionais é mais complexo do que parece."}
+  ];
+  var CAT = {c:"Consenso", d:"Disputa", s:"Surpresa"};
+
+  // Régua de maturidade (Tabela 4.2 / Apêndice F): 8 dimensões × 4 etapas
+  var STAGES = ["Entrada", "Colaboração", "Saída", "Impacto"];
+  var DIMS = [
+    {n:"Sociedade civil", ab:"Soc.", f:[
+      ["Articulação da demanda social","O país abre espaço para a participação ativa da população no processo de inovação.","V-Dem"],
+      ["Inclusão social na inovação","As pessoas participam do processo público de inovação e se sentem confiantes para dar opinião.","WVS e V-Dem"],
+      ["Inovação social","A inovação no país busca atender necessidades sociais, inclusão e desenvolvimento sustentável.","GEM"],
+      ["Bem-estar social","A sociedade percebe a inovação alinhada às necessidades sociais, à inclusão e ao desenvolvimento sustentável.","PNUD e Banco Mundial (Gini)"]]},
+    {n:"Setor financeiro", ab:"Fin.", f:[
+      ["Disponibilidade de capital","O setor financeiro apoia financeiramente as atividades de inovação.","OCDE, Banco Mundial e UNESCO"],
+      ["Intermediação financeira","O setor financeiro distribui recursos com fluidez entre os atores.","Banco Mundial, OCDE e GII"],
+      ["Financiamento da inovação","O setor financeiro consegue financiar e dar escala às atividades de inovação.","Crunchbase e OCDE"],
+      ["Profundidade e eficiência financeira","O setor financeiro sustenta o sistema de inovação do país.","FMI e Banco Mundial"]]},
+    {n:"Empresas", ab:"Emp.", f:[
+      ["Aquisição de conhecimento","As empresas conseguem adquirir conhecimento, dentro e fora de casa.","OCDE e Banco Mundial"],
+      ["Inovação aberta","As empresas se engajam e trocam conhecimento com outros atores.","GII e OCDE"],
+      ["Resultado de inovação","As empresas transformam conhecimento em produtos e serviços inovadores.","Banco Mundial, OMPI e GII"],
+      ["Competitividade","As empresas têm bom desempenho econômico e vantagem competitiva.","Banco Mundial e OCDE"]]},
+    {n:"Setor industrial", ab:"Ind.", f:[
+      ["Capacidade industrial","A indústria consegue absorver a produção do país em escala.","Banco Mundial e WEF"],
+      ["Integração às cadeias de valor","A indústria interage com redes globais de produção e conhecimento.","OCDE (TiVA)"],
+      ["Inovação industrial","A indústria transforma inovação em produção.","UNIDO e Banco Mundial"],
+      ["Desenvolvimento estrutural","A indústria é uma estrutura que melhora continuamente o processo de inovação.","Atlas de Complexidade (Harvard) e Banco Mundial"]]},
+    {n:"Intermediários", ab:"Int.", f:[
+      ["Infraestrutura de redes","Os atores reconhecem um ambiente estruturado que permite a interação no sistema.","WEF (GCI) e GII"],
+      ["Fluidez do conhecimento","Os intermediários fazem o conhecimento circular entre atores e outros países.","OCDE e Scopus"],
+      ["Resultados de colaboração","O país melhora seu ambiente de inovação colaborativa.","OCDE e OMPI"],
+      ["Integração global","Há integração dentro do sistema e com sistemas externos.","Scopus, OCDE e OMPI"]]},
+    {n:"Políticas e instituições públicas", ab:"Pol.", f:[
+      ["Qualidade institucional","O setor público consegue articular os atores e implementar políticas de inovação.","Banco Mundial (WGI)"],
+      ["Coordenação de políticas","O setor público coordena os atores com as políticas de inovação existentes.","Banco Mundial (WGI) e OCDE"],
+      ["Efetividade das políticas","As políticas transformam regulação em mecanismos de apoio à inovação.","GII"],
+      ["Desempenho da governança","A governança é estável e sustentável e dá previsibilidade ao processo de inovação.","Banco Mundial (WGI)"]]},
+    {n:"Centros de pesquisa", ab:"Pesq.", f:[
+      ["Geração de conhecimento","Os centros têm recursos financeiros e humanos para produzir conhecimento científico.","OCDE e UNESCO"],
+      ["Difusão do conhecimento","Os centros disseminam conhecimento entre os atores e para outros países.","OCDE e Scopus"],
+      ["Produção científica","Produção e impacto do conhecimento gerado, como patentes e artigos.","Scimago (Scopus)"],
+      ["Conhecimento científico","O país tem produção científica de alta qualidade.","Banco Mundial e UNESCO"]]},
+    {n:"Sistema nacional (SNI)", ab:"SNI", f:[
+      ["Absorção de conhecimento externo","O sistema absorve conhecimento de fora e cria um ambiente de inovação entre os atores.","Banco Mundial"],
+      ["Troca global de conhecimento","Os atores participam do sistema do país dentro de uma rede global.","OCDE, Scopus e OMPI"],
+      ["Difusão da inovação","O sistema consegue exportar e importar inovação.","Banco Mundial"],
+      null]}
+  ];
+
+  // Conversão da escala (Tabela 4.1)
+  var LIKERT_TO_LEVEL = [0, 0, 1, 2, 2, 3, 3];  // respostas 1 a 7
+  var LEVELS = [["0","ausente"],["1","baixa"],["2","moderada"],["3","plena"]];
+  var EXAMPLE = [2, 3, 1, 2, 2];                // exemplo numérico da Seção 4.3.3.2
+
+  /* ================= UTILITÁRIOS 3D ================= */
+  function box(o){
+    var s = document.createElement('div');
+    s.className = 'slab' + (o.cls ? ' ' + o.cls : '');
+    s.style.width = o.w + 'px'; s.style.height = o.d + 'px';
+    s.style.left = (o.x || 0) + 'px'; s.style.top = (o.y || 0) + 'px';
+    s.style.setProperty('--z', (o.z || 0) + 'px');
+    s.style.setProperty('--h', o.h + 'px');
+    s.style.setProperty('--c', o.c);
+    s.innerHTML = '<i class="f-back"></i><i class="f-right"></i><i class="f-left"></i><i class="f-front">' + (o.label ? '<span class="face-label">' + o.label + '</span>' : '') + '</i><i class="f-top">' + (o.top ? '<span class="top-label">' + o.top + '</span>' : '') + '</i>';
+    return s;
+  }
+  function makeStage(scene, w, d, opts){
+    opts = opts || {};
+    var st = document.createElement('div');
+    st.className = 'stage';
+    st.style.width = w + 'px'; st.style.height = d + 'px';
+    if (opts.ay) st.style.setProperty('--ay', opts.ay);
+    if (opts.rx) st.style.setProperty('--rx', opts.rx);
+    if (opts.floor !== false){ var f = document.createElement('div'); f.className = 'floor'; st.appendChild(f); }
+    scene.appendChild(st);
+    return st;
+  }
+  function ramp(base, i, n){ // tons mais claros conforme i cresce
+    var pct = Math.round(100 - (i / Math.max(1, n - 1)) * 48);
+    return 'color-mix(in srgb, ' + base + ' ' + pct + '%, white)';
+  }
+  function flatLabel(st, text, x, y, w, extra){
+    var l = document.createElement('div');
+    l.className = 'floor-label';
+    l.style.left = x + 'px'; l.style.top = y + 'px'; l.style.width = w + 'px';
+    if (extra) l.style.cssText += extra;
+    l.textContent = text;
+    st.appendChild(l);
+    return l;
+  }
+
+  // rotação: arrastar + oscilação suave enquanto a tela está visível
+  var rotators = [];
+  function rotatable(scene, stage, base, amp){
+    var r = {scene:scene, stage:stage, base:base, amp:amp || 12, rz:base, auto:!reduce, visible:false, moved:false};
+    rotators.push(r);
+    stage.style.setProperty('--rz', base + 'deg');
+    var drag = null;
+    scene.addEventListener('pointerdown', function(e){ drag = {x:e.clientX, rz:r.rz}; r.moved = false; });
+    window.addEventListener('pointermove', function(e){
+      if (!drag) return;
+      var dx = e.clientX - drag.x;
+      if (Math.abs(dx) > 4){ r.moved = true; r.auto = false; }
+      if (r.moved){ r.rz = drag.rz + dx * 0.5; stage.style.setProperty('--rz', r.rz + 'deg'); }
+    });
+    window.addEventListener('pointerup', function(){ drag = null; setTimeout(function(){ r.moved = false; }, 0); });
+    new IntersectionObserver(function(es){ es.forEach(function(en){ r.visible = en.isIntersecting; }); }).observe(scene);
+    return r;
+  }
+  function wasDrag(sc){ var r = rotators.filter(function(x){ return x.scene === sc; })[0]; return r && r.moved; }
+  var t0 = performance.now();
+  function tick(now){
+    var t = (now - t0) / 1000;
+    rotators.forEach(function(r){
+      if (r.auto && r.visible){ r.rz = r.base + Math.sin(t * 0.5) * r.amp; r.stage.style.setProperty('--rz', r.rz + 'deg'); }
+    });
+    requestAnimationFrame(tick);
+  }
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene');
+    var st = makeStage(sc, 300, 300, {ay:'62%'});
+    var R = 118, cx = 150, cy = 150, s = 46;
+    ACTORS.forEach(function(a, i){
+      var ang = -Math.PI / 2 + i * 2 * Math.PI / ACTORS.length;
+      st.appendChild(box({w:s, d:s, x:cx + R * Math.cos(ang) - s / 2, y:cy + R * Math.sin(ang) - s / 2, h:44, c:ramp('var(--act)', i % 3, 4)}));
+    });
+    st.appendChild(box({w:96, d:96, x:cx - 48, y:cy - 48, h:120, c:'var(--sys)', label:'SNI'}));
+    rotatable(sc, st, -35, 30);
+  })();
+
+  /* ================= 02 · ORQUESTRA ================= */
+  (function(){
+    var svg = $('net'), cx = 210, cy = 200, R = 150, pts = [];
+    ACTORS.forEach(function(_, i){ var a = -Math.PI / 2 + i * 2 * Math.PI / ACTORS.length; pts.push([cx + R * Math.cos(a), cy + R * Math.sin(a)]); });
+    var lines = '';
+    for (var i = 0; i < pts.length; i++) for (var j = i + 1; j < pts.length; j++)
+      lines += '<line x1="' + pts[i][0].toFixed(1) + '" y1="' + pts[i][1].toFixed(1) + '" x2="' + pts[j][0].toFixed(1) + '" y2="' + pts[j][1].toFixed(1) + '"/>';
+    var html = lines + '<circle class="core" cx="' + cx + '" cy="' + cy + '" r="52"/><text class="core-t" x="' + cx + '" y="' + (cy - 2) + '">um</text><text class="core-t" x="' + cx + '" y="' + (cy + 17) + '">sistema</text>';
+    ACTORS.forEach(function(a, i){
+      var p = pts[i], ty = p[1] < cy - 20 ? p[1] - 30 : p[1] + 40;
+      html += '<g class="nd" data-i="' + i + '"><circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="20"/><text class="num" x="' + p[0].toFixed(1) + '" y="' + (p[1] + 5).toFixed(1) + '">' + (i + 1) + '</text><text x="' + p[0].toFixed(1) + '" y="' + ty.toFixed(1) + '">' + a.s + '</text></g>';
+    });
+    svg.innerHTML = html;
+    var who = $('who'), msg = $('who-msg'), btns = [];
+    ACTORS.forEach(function(a, i){
+      var b = document.createElement('button');
+      b.textContent = (i + 1) + '. ' + a.n;
+      b.addEventListener('click', function(){ pick(i); });
+      who.appendChild(b); btns.push(b);
+    });
+    var timer;
+    function pick(i){
+      var a = ACTORS[i];
+      btns.forEach(function(b, j){ b.classList.toggle('on', i === j); });
+      each(svg.querySelectorAll('.nd'), function(g){ g.classList.toggle('on', +g.dataset.i === i); });
+      svg.classList.remove('linked');
+      clearTimeout(timer);
+      timer = setTimeout(function(){ svg.classList.add('linked'); }, reduce ? 0 : 450);
+      msg.innerHTML = '<div class="tag">' + a.n + '</div><p><strong>Papel:</strong> ' + a.d + '</p><p><strong>Sozinho:</strong> ' + a.alone + '</p><p>Para a tese, a inovação de um país surge da interação de todos: é um processo coletivo, em que cada ator se fortalece com os outros.</p>';
+    }
+  })();
+
+  /* ================= 03 · LINHA DO TEMPO ================= */
+  (function(){
+    var tl = $('tl'), range = $('tl-range'), card = $('tl-card'), dots = [], n = TL.length;
+    TL.forEach(function(e, i){
+      var x = (i / (n - 1) * 100) + '%';
+      var b = document.createElement('button');
+      b.className = 'ev' + (e[1] === 'a' ? ' adj' : '');
+      b.style.left = x; b.style.top = (e[1] === 'm' ? 45 : 101) + 'px';
+      b.setAttribute('aria-label', e[0] + ', ' + e[2]);
+      b.addEventListener('click', function(){ show(i); });
+      tl.appendChild(b); dots.push(b);
+      if (i === 0 || i === 2 || i === 7 || i === 12 || i === 15 || i === n - 1){
+        var y = document.createElement('span'); y.className = 'yr'; y.style.left = x; y.textContent = e[0]; tl.appendChild(y);
+      }
+    });
+    function show(i){
+      var e = TL[i];
+      range.value = i;
+      dots.forEach(function(d, j){ d.classList.toggle('on', i === j); });
+      card.innerHTML = '<div><span class="yy">' + e[0] + '</span><span class="kind ' + e[1] + '">' + (e[1] === 'm' ? 'linha principal' : 'teoria vizinha') + '</span></div><h3 style="margin-top:10px">' + e[2] + '</h3><div class="wk">' + e[3] + '</div><p>' + e[4] + '</p>';
+    }
+    range.addEventListener('input', function(){ show(+range.value); });
+    show(2);
+  })();
+
+  /* ================= 04 · CAMADAS DESALINHADAS ================= */
+  (function(){
+    var L = ["Nacional","Regional","Setorial","Tecnológico","Hélices (tripla, quádrupla)","Capacidades das empresas","Bioma e ecossistema"];
+    var OFF = [[0,0,0],[38,-26,9],[-44,18,-12],[30,34,15],[-36,-30,-8],[50,6,-16],[-24,40,11]];
+    var wrap = $('layers');
+    L.forEach(function(t, i){
+      var d = document.createElement('div');
+      d.className = 'layer';
+      d.style.setProperty('--dx', OFF[i][0] + 'px'); d.style.setProperty('--dy', OFF[i][1] + 'px'); d.style.setProperty('--rot', OFF[i][2] + 'deg');
+      d.style.setProperty('--lz', (i * 24) + 'px');
+      d.textContent = t;
+      wrap.appendChild(d);
+    });
+    var core = document.createElement('div');
+    core.className = 'layer core';
+    core.style.setProperty('--dx', '0px'); core.style.setProperty('--dy', '0px'); core.style.setProperty('--rot', '0deg');
+    core.style.setProperty('--lz', (L.length * 24 + 20) + 'px');
+    core.textContent = 'Núcleo comum: instituições, coordenação de políticas e interação entre atores';
+    wrap.appendChild(core);
+    var btn = $('align-btn'), msg = $('align-msg');
+    btn.addEventListener('click', function(){
+      var on = btn.getAttribute('aria-pressed') !== 'true';
+      btn.setAttribute('aria-pressed', on);
+      wrap.classList.toggle('aligned', on);
+      msg.innerHTML = on
+        ? '<p>Alguns elementos resistiram a 34 anos de pesquisa: <strong>o papel das instituições, a coordenação das políticas e a interação entre atores</strong>. São a base do modelo da tese.</p>'
+        : '<p>A tese não descarta o conceito. Ela o reorganiza para que volte a ser útil.</p>';
+    });
+  })();
+
+  /* ================= 05 · FUNIL ================= */
+  (function(){
+    var sc = $('funnel-scene');
+    var st = makeStage(sc, 320, 320, {ay:'70%', rx:'64deg', floor:false});
+    st.style.setProperty('--rz', '0deg');
+    var discs = [], max = FUNNEL[0], last = FUNNEL.length - 1;
+    FUNNEL.forEach(function(n, i){
+      var size = Math.max(34, Math.round(Math.sqrt(n / max) * 300)); // área proporcional ao número
+      var d = document.createElement('div');
+      d.className = 'disc';
+      d.style.width = size + 'px'; d.style.height = size + 'px';
+      d.style.left = (320 - size) / 2 + 'px'; d.style.top = (320 - size) / 2 + 'px';
+      d.style.setProperty('--z', ((last - i) * 72) + 'px');
+      d.style.setProperty('--dc', i === last ? 'var(--red)' : 'color-mix(in srgb, #334155 ' + (40 + i * 18) + '%, #94a3b8)');
+      d.style.transitionDelay = (i * 0.12) + 's';
+      d.innerHTML = '<div class="under"></div><div class="top" style="font-size:' + Math.max(15, Math.min(32, size / 7)) + 'px">' + n.toLocaleString('pt-BR') + '</div>';
+      st.appendChild(d); discs.push(d);
+    });
+    var items = document.querySelectorAll('#steps li');
+    function hl(i){
+      discs.forEach(function(d, j){ d.classList.toggle('hl', i === j); d.style.transitionDelay = '0s'; });
+      each(items, function(li, j){ li.classList.toggle('hl', i === j); });
+    }
+    each(items, function(li){
+      li.addEventListener('mouseenter', function(){ hl(+li.dataset.i); });
+      li.addEventListener('mouseleave', function(){ hl(-1); });
+    });
+    discs.forEach(function(d, i){
+      d.addEventListener('mouseenter', function(){ hl(i); });
+      d.addEventListener('mouseleave', function(){ hl(-1); });
+    });
+  })();
+
+  /* ================= 06 · BARRAS EMPILHADAS ================= */
+  (function(){
+    var stack = $('stack'), xs = $('stack-x'), info = $('stack-info'), H = 200, maxT = 0, cols = [];
+    PERIODS.forEach(function(p){ maxT = Math.max(maxT, p[1] + p[2] + p[3]); });
+    PERIODS.forEach(function(p, i){
+      var tot = p[1] + p[2] + p[3], c = document.createElement('div');
+      c.className = 'col';
+      c.style.height = (tot / maxT * H) + 'px';
+      c.innerHTML = '<i style="background:var(--act); height:' + (p[1] / tot * 100) + '%"></i><i style="background:#94a3b8; height:' + (p[2] / tot * 100) + '%"></i><i style="background:var(--red); height:' + (p[3] / tot * 100) + '%"></i>';
+      c.addEventListener('mouseenter', function(){ say(i); });
+      c.addEventListener('click', function(){ say(i); });
+      stack.appendChild(c); cols.push(c);
+      var t = document.createElement('div'); t.className = 'tot'; t.textContent = tot;
+      t.style.bottom = (tot / maxT * H + 4) + 'px'; t.style.left = 'calc(' + (i / PERIODS.length * 100) + '% + 4px)'; t.style.width = 'calc(' + (100 / PERIODS.length) + '% - 12px)';
+      t.style.position = 'absolute';
+      stack.parentElement.appendChild(t);
+      var s = document.createElement('span'); s.textContent = p[0]; xs.appendChild(s);
+    });
+    function say(i){
+      var p = PERIODS[i];
+      cols.forEach(function(c, j){ c.classList.toggle('on', i === j); });
+      info.innerHTML = '<strong>' + p[0] + ':</strong> ' + (p[1] + p[2] + p[3]) + ' artigos · ' + p[1] + ' empíricos, ' + p[2] + ' conceituais' + (p[3] ? ', ' + p[3] + ' com os dois' : '') + '.';
+    }
+    say(3);
+  })();
+
+  /* ================= 07 · BARRAS 3D DOS ATORES ================= */
+  (function(){
+    var sc = $('bars-scene');
+    var st = makeStage(sc, 520, 120, {ay:'76%'});
+    var info = $('bar-info');
+    function say(i){
+      var a = ACTORS[i];
+      info.innerHTML = '<strong>' + a.rev + '</strong> aparece em <strong>' + a.k + ' dos 126 artigos (' + a.p + '%)</strong>' + (a.rev !== a.n ? '<br><span style="font-size:.82rem">No modelo da tese, vira "' + a.n.toLowerCase() + '".</span>' : '');
+    }
+    ACTORS.forEach(function(a, i){
+      var low = i >= ACTORS.length - 2;
+      var b = box({w:44, d:44, x:i * 74, y:20, h:a.p * 2.9, c:low ? 'var(--sys)' : 'var(--neutral)', cls:low ? 'hl' : '', label:a.p + '%'});
+      b.dataset.i = i;
+      st.appendChild(b);
+      flatLabel(st, a.rev, i * 74 - 14, 76, 72, 'font-size:11px;');
+    });
+    rotatable(sc, st, -5, 5);
+    sc.addEventListener('pointerover', function(e){ var s = e.target.closest('.slab'); if (s) say(+s.dataset.i); });
+    sc.addEventListener('click', function(e){ var s = e.target.closest('.slab'); if (s) say(+s.dataset.i); });
+    say(ACTORS.length - 1);
+  })();
+
+  /* ================= 08 · JOGO: CONSENSO, DISPUTA OU SURPRESA ================= */
+  (function(){
+    var i = 0, hits = 0, done = false;
+    var flip = $('g-flip'), cats = document.querySelectorAll('#g-cats .cat'), msg = $('g-msg'), next = $('g-next');
+    function render(){
+      var f = FINDINGS[i];
+      done = false;
+      $('g-step').textContent = 'Achado ' + (i + 1) + ' de ' + FINDINGS.length;
+      $('g-theme').textContent = f.t;
+      $('g-text').textContent = f.x;
+      $('g-exp').textContent = f.e || '';
+      $('g-found').textContent = f.f || '';
+      flip.classList.remove('turned');
+      each(cats, function(b){ b.disabled = false; b.classList.remove('right', 'wrong'); });
+      msg.innerHTML = 'Em qual grupo a tese colocou este achado?';
+      next.style.display = 'none';
+    }
+    each(cats, function(b){
+      b.addEventListener('click', function(){
+        if (done) return;
+        done = true;
+        var f = FINDINGS[i], ok = b.dataset.c === f.c;
+        if (ok) hits++;
+        each(cats, function(x){ x.disabled = true; x.classList.add(x.dataset.c === f.c ? 'right' : 'wrong'); });
+        if (f.c === 's') flip.classList.add('turned');
+        msg.innerHTML = (ok ? '<b>Isso mesmo: ' + CAT[f.c].toLowerCase() + '.</b> ' : '<b>A tese classificou como ' + CAT[f.c].toLowerCase() + '.</b> ') +
+          (f.c === 'c' ? 'É um dos pontos firmes que entram no modelo.' : f.c === 'd' ? 'A literatura ainda não chegou a um acordo.' : 'O cartão virou: veja o que se esperava.');
+        if (i === FINDINGS.length - 1){ msg.innerHTML += '<br><br>Você concordou com a tese em <b>' + hits + ' de ' + FINDINGS.length + '</b> achados.'; next.textContent = 'Recomeçar'; }
+        else next.textContent = 'Próximo →';
+        next.style.display = 'inline-flex';
+      });
+    });
+    next.addEventListener('click', function(){ if (i < FINDINGS.length - 1) i++; else { i = 0; hits = 0; } render(); });
+    // lista completa (alternativa acessível)
+    var all = $('all-list'), html = '';
+    ['c', 'd', 's'].forEach(function(k){
+      html += '<div><h3 class="' + (k === 's' ? 'sys-t' : 'act-t') + '">' + CAT[k] + '</h3><ul>';
+      FINDINGS.forEach(function(f){ if (f.c === k) html += '<li>' + f.x + (f.e ? ' <em>(esperava-se: ' + f.e.charAt(0).toLowerCase() + f.e.slice(1, -1) + ')</em>' : '') + '</li>'; });
+      html += '</ul></div>';
+    });
+    all.innerHTML = html;
+    var tg = $('g-all');
+    tg.addEventListener('click', function(){ var on = tg.getAttribute('aria-pressed') !== 'true'; tg.setAttribute('aria-pressed', on); all.classList.toggle('on', on); });
+    render();
+  })();
+
+  /* ================= 09 · FRAMEWORK EM CAMADAS ================= */
+  (function(){
+    var sc = $('fw-scene'), W = 340, C = W / 2;
+    var st = makeStage(sc, W, W, {ay:'74%', rx:'62deg', floor:false});
+    var base = document.createElement('div'); base.className = 'fw-disc fw-base fw-layer'; base.dataset.l = 'a';
+    st.appendChild(base);
+    var actorBoxes = [], R = 132, s = 42;
+    ACTORS.forEach(function(a, i){
+      var ang = -Math.PI / 2 + i * 2 * Math.PI / ACTORS.length;
+      var b = box({w:s, d:s, x:C + R * Math.cos(ang) - s / 2, y:C + R * Math.sin(ang) - s / 2, h:30, c:'var(--act)', label:String(i + 1), cls:'fw-layer'});
+      b.dataset.l = 'a'; b.dataset.i = i;
+      st.appendChild(b); actorBoxes.push(b);
+    });
+    var cyc = document.createElement('div'); cyc.className = 'fw-disc fw-cycle fw-layer'; cyc.dataset.l = 'c';
+    var D = 200; cyc.style.width = D + 'px'; cyc.style.height = D + 'px'; cyc.style.left = (C - D / 2) + 'px'; cyc.style.top = (C - D / 2) + 'px';
+    [["Entrada",.72,.28],["Colaboração",.72,.72],["Saída",.28,.72],["Impacto",.28,.28]].forEach(function(q){
+      var e = document.createElement('div'); e.className = 'q'; e.textContent = q[0];
+      e.style.left = (q[1] * D) + 'px'; e.style.top = (q[2] * D) + 'px'; cyc.appendChild(e);
+    });
+    st.appendChild(cyc);
+    var core = box({w:84, d:84, x:C - 42, y:C - 42, h:34, c:'var(--sys)', label:'motor', top:'GC', cls:'fw-layer'});
+    core.dataset.l = 'm';
+    st.appendChild(core);
+    rotatable(sc, st, -30, 18);
+
+    var exploded = true;
+    function layout(){
+      cyc.style.setProperty('--z', (exploded ? 120 : 34) + 'px');
+      core.style.setProperty('--z', (exploded ? 240 : 40) + 'px');
+    }
+    layout();
+    $('fw-explode').addEventListener('click', function(){
+      exploded = !exploded; this.setAttribute('aria-pressed', exploded);
+      this.lastChild.textContent = exploded ? 'Camadas separadas' : 'Camadas juntas';
+      layout();
+    });
+
+    var TABS = [
+      {k:'a', n:'Os 7 atores', h:'Camada 1 · Os sete atores', p:'<p>Cada ator inova junto com os outros, mas também tem seus próprios processos: empresas inovam com objetivo comercial, centros de pesquisa buscam avanço científico e a sociedade civil cria soluções a partir de necessidades vividas.</p><p><strong>Dois nomes mudaram.</strong> "Governo" virou <em>políticas e instituições públicas</em>, porque a governança da inovação vai além do Estado. "Universidades" virou <em>centros de pesquisa</em>, para incluir institutos e organizações de P&D.</p>'},
+      {k:'c', n:'O ciclo', h:'Camada 2 · O ciclo da inovação', p:'<p><strong>Entrada:</strong> pessoas qualificadas, investimento em P&D, conhecimento, instituições.</p><p><strong>Colaboração:</strong> redes, parcerias entre universidade e empresa, troca de conhecimento.</p><p><strong>Saída:</strong> patentes, publicações, startups, inovações que se sustentam.</p><p><strong>Impacto:</strong> crescimento, empregos, sustentabilidade, inclusão.</p>'},
+      {k:'m', n:'O motor', h:'Camada 3 · O motor: gestão do conhecimento (GC)', p:'<p>No centro de tudo está a gestão do conhecimento, que alterna dois movimentos: <strong>exploração</strong> (buscar o que é novo) e <strong>explotação</strong> (aproveitar e refinar o que já se sabe).</p><p>É ela que faz o ciclo girar dentro de cada ator e entre eles.</p>'},
+      {k:'*', n:'Tudo junto', h:'Um organismo vivo e aberto', p:'<p>O sistema nacional não é uma estrutura fixa: é uma configuração em movimento, com conhecimento circulando o tempo todo e aprendizagem constante.</p><p>Os sete atores e seus processos, juntos, <strong>são</strong> o sistema. E o sistema, como um todo, também troca com outros países (próxima tela).</p>'}
+    ];
+    var tabs = $('fw-tabs'), info = $('fw-info'), list = $('fw-list');
+    TABS.forEach(function(t, i){
+      var b = document.createElement('button'); b.className = 'chip'; b.textContent = t.n;
+      b.addEventListener('click', function(){ setTab(i); });
+      tabs.appendChild(b);
+    });
+    ACTORS.forEach(function(a, i){
+      var b = document.createElement('button'); b.innerHTML = '<b>' + (i + 1) + '</b>' + a.n;
+      b.addEventListener('click', function(){ setActor(i); });
+      list.appendChild(b);
+    });
+    function focus(k){
+      sc.classList.toggle('dimmed', k !== '*');
+      each(st.querySelectorAll('.fw-layer'), function(el){ el.classList.toggle('focus', k === '*' || el.dataset.l === k); });
+    }
+    function setTab(i){
+      var t = TABS[i];
+      each(tabs.children, function(c, j){ c.classList.toggle('on', i === j); });
+      each(list.children, function(c){ c.classList.remove('on'); });
+      actorBoxes.forEach(function(b){ b.classList.remove('active'); });
+      focus(t.k);
+      info.innerHTML = '<h3>' + t.h + '</h3>' + t.p;
+    }
+    function setActor(i){
+      var a = ACTORS[i];
+      each(tabs.children, function(c, j){ c.classList.toggle('on', j === 0); });
+      each(list.children, function(c, j){ c.classList.toggle('on', i === j); });
+      actorBoxes.forEach(function(b, j){ b.classList.toggle('active', i === j); });
+      focus('a');
+      info.innerHTML = '<div class="tag">Ator ' + (i + 1) + ' de 7</div><h3>' + a.n + '</h3><p>' + a.d + '</p>';
+    }
+    sc.addEventListener('click', function(e){
+      if (wasDrag(sc)) return;
+      var s = e.target.closest('.slab'); if (!s) return;
+      if (s.dataset.i !== undefined) setActor(+s.dataset.i);
+      else if (s.dataset.l === 'm') setTab(2);
+    });
+    cyc.addEventListener('click', function(){ if (!wasDrag(sc)) setTab(1); });
+    setTab(3);
+  })();
+
+  /* ================= 10 · FLUXOS ENTRE PAÍSES ================= */
+  (function(){
+    var svg = $('flows'), g = $('fl-dots'), R = 70, html = '';
+    ACTORS.forEach(function(_, i){
+      var a = -Math.PI / 2 + i * 2 * Math.PI / ACTORS.length;
+      html += '<circle class="dot" cx="' + (180 + R * Math.cos(a)).toFixed(1) + '" cy="' + (190 + R * Math.sin(a)).toFixed(1) + '" r="11"/>';
+    });
+    g.innerHTML = html;
+    var T = [
+      {k:'abs', n:'Absorver', h:'Absorção de conhecimento externo', p:'O sistema traz conhecimento e tecnologia de fora e os espalha entre seus atores. É uma das entradas da dimensão "sistema" na régua da tese.'},
+      {k:'tro', n:'Trocar', h:'Troca global de conhecimento', p:'Os atores do país participam de redes globais: parcerias internacionais, coautorias, cadeias de valor.'},
+      {k:'dif', n:'Difundir', h:'Difusão da inovação', p:'O sistema exporta inovação, como bens e serviços intensivos em conhecimento, e também a importa.'},
+      {k:'all', n:'Tudo junto', h:'Um sistema aberto', p:'Para a tese, o sistema nacional é aberto: cresce na relação com outros sistemas. A literatura também mostra que a globalização não enfraqueceu os sistemas nacionais; o global convive com o nacional.'},
+      {k:'off', n:'Fechar as fronteiras', h:'E se o país se fechar?', p:'O sistema perde uma fonte de aprendizado. A revisão encontrou economias com sistemas fragmentados que avançaram justamente graças a fluxos externos de conhecimento. Ter um sistema completo não é condição necessária para inovar.'}
+    ];
+    var tabs = $('fl-tabs'), info = $('fl-info');
+    T.forEach(function(t, i){
+      var b = document.createElement('button'); b.className = 'chip'; b.textContent = t.n;
+      b.addEventListener('click', function(){ show(i); });
+      tabs.appendChild(b);
+    });
+    function show(i){
+      var t = T[i];
+      each(tabs.children, function(c, j){ c.classList.toggle('on', i === j); });
+      svg.classList.toggle('closed', t.k === 'off');
+      each(svg.querySelectorAll('path[data-k]'), function(p){ p.classList.toggle('on', t.k === 'all' || p.dataset.k === t.k); });
+      info.innerHTML = '<h3>' + t.h + '</h3><p>' + t.p + '</p>';
+    }
+    show(3);
+  })();
+
+  /* ================= 11 · RANKING × RÉGUA ================= */
+  (function(){
+    var ASPECTS = [
+      ["O que olham", "Indicadores separados: gasto em P&D, patentes, escolaridade, qualidade das instituições.", "Como os atores se coordenam e fazem o conhecimento circular pelo sistema."],
+      ["Foco", "Os resultados, ou um lado só: a empresa, ou a política.", "O sistema inteiro, no nível nacional, do insumo ao impacto."],
+      ["Pergunta que respondem", "Em que posição o país está?", "Por que o país está ali, e onde agir?"],
+      ["O que é inovar", "Produzir conhecimento.", "Transformar e aplicar conhecimento, de forma coordenada."],
+      ["Para que servem", "Comparar países num ranking.", "Comparar e também orientar onde alocar recursos para melhorar."]
+    ];
+    var wrap = $('aspects');
+    ASPECTS.forEach(function(a, i){
+      var b = document.createElement('button');
+      b.className = 'chip' + (i === 0 ? ' on' : '');
+      b.textContent = a[0];
+      b.addEventListener('click', function(){ showAspect(i); });
+      wrap.appendChild(b);
+    });
+    function showAspect(i){
+      each(wrap.children, function(c, j){ c.classList.toggle('on', i === j); });
+      [$('v-a'), $('v-b')].forEach(function(el, k){
+        el.classList.add('swap');
+        setTimeout(function(){ el.textContent = ASPECTS[i][k + 1]; el.classList.remove('swap'); }, 220);
+      });
+    }
+    $('v-a').textContent = ASPECTS[0][1];
+    $('v-b').textContent = ASPECTS[0][2];
+  })();
+
+  /* ================= 12 · MATRIZ DA RÉGUA ================= */
+  (function(){
+    var sc = $('mx-scene'), step = 56, s = 42, nD = DIMS.length;
+    var st = makeStage(sc, nD * step, STAGES.length * step, {ay:'52%', rx:'58deg'});
+    var cells = [];
+    DIMS.forEach(function(d, i){
+      STAGES.forEach(function(_, j){
+        var f = d.f[j];
+        var b = box({w:s, d:s, x:i * step, y:j * step, h:f ? 26 : 26, c:ramp('var(--act)', j, 4), cls:f ? '' : 'off'});
+        b.dataset.i = i; b.dataset.j = j;
+        st.appendChild(b); cells.push(b);
+      });
+      flatLabel(st, d.ab, i * step - 8, STAGES.length * step - 4, s + 16);
+    });
+    STAGES.forEach(function(t, j){ flatLabel(st, t, -112, j * step + 12, 104, 'text-align:right;'); });
+    rotatable(sc, st, -18, 8);
+    var info = $('mx-info'), dims = $('mx-dims');
+    DIMS.forEach(function(d, i){
+      var b = document.createElement('button'); b.textContent = d.n;
+      b.addEventListener('click', function(){ show(i, 0); });
+      dims.appendChild(b);
+    });
+    function show(i, j){
+      var d = DIMS[i], f = d.f[j];
+      cells.forEach(function(c){ c.classList.toggle('active', +c.dataset.i === i && +c.dataset.j === j); });
+      each(dims.children, function(c, k){ c.classList.toggle('on', i === k); });
+      var stepsNav = STAGES.map(function(t, k){ return '<button class="chip' + (k === j ? ' on' : '') + '" data-k="' + k + '" style="padding:4px 10px; font-size:.76rem">' + t + '</button>'; }).join('');
+      info.innerHTML = '<div class="tag">' + d.n + ' · ' + STAGES[j] + '</div>' +
+        (f ? '<h3>' + f[0] + '</h3><p>"' + f[1] + '"</p><div class="src"><b>Bases de apoio:</b> ' + f[2] + '</div>'
+           : '<h3>Não definido</h3><p>A tabela da tese não traz um fator de impacto para a dimensão "sistema".</p>') +
+        '<div class="chips" style="margin:12px 0 0">' + stepsNav + '</div>';
+      each(info.querySelectorAll('.chip'), function(b){ b.addEventListener('click', function(){ show(i, +b.dataset.k); }); });
+    }
+    sc.addEventListener('click', function(e){
+      if (wasDrag(sc)) return;
+      var c = e.target.closest('.slab'); if (c) show(+c.dataset.i, +c.dataset.j);
+    });
+    show(1, 0);
+  })();
+
+  /* ================= 13 · CONVERSÃO E EXEMPLO ================= */
+  (function(){
+    var lk = $('lk'), lv = $('lvls');
+    LEVELS.forEach(function(l){ var d = document.createElement('div'); d.innerHTML = '<b>' + l[0] + '</b><span>' + l[1] + '</span>'; lv.appendChild(d); });
+    for (var k = 1; k <= 7; k++){
+      (function(k){
+        var b = document.createElement('button'); b.textContent = k;
+        b.addEventListener('click', function(){ pickLikert(k); });
+        lk.appendChild(b);
+      })(k);
+    }
+    function pickLikert(k){
+      each(lk.children, function(b, j){ b.classList.toggle('on', j === k - 1); });
+      var L = LIKERT_TO_LEVEL[k - 1];
+      each(lv.children, function(d, j){ d.classList.toggle('on', j === L); });
+    }
+    pickLikert(5);
+
+    var vals = EXAMPLE.slice(), rows = $('ex-rows');
+    vals.forEach(function(v, i){
+      var r = document.createElement('div'); r.className = 'ex-row';
+      var html = '<span>Fator ' + (i + 1) + '</span><span class="stepper">';
+      for (var n = 0; n <= 3; n++) html += '<button data-n="' + n + '" aria-label="Fator ' + (i + 1) + ', nível ' + n + '">' + n + '</button>';
+      r.innerHTML = html + '</span>';
+      each(r.querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ vals[i] = +b.dataset.n; calc(); }); });
+      rows.appendChild(r);
+    });
+    function calc(){
+      each(rows.children, function(r, i){ each(r.querySelectorAll('button'), function(b){ b.classList.toggle('on', +b.dataset.n === vals[i]); }); });
+      var sum = vals.reduce(function(a, b){ return a + b; }, 0), max = 3 * vals.length, m = sum / max * 100;
+      var same = vals.join() === EXAMPLE.join();
+      $('calc').innerHTML = vals.join(' + ') + ' = ' + sum + ' de ' + max + ' pontos possíveis<b>' + fmt(m) + '% de maturidade</b>' + (same ? '<span style="font-size:.8rem; color:var(--muted)">exatamente o resultado do exemplo da tese</span>' : '');
+      $('calc-meter').style.width = m + '%';
+    }
+    calc();
+  })();
+
+  /* ================= 14 · SIMULADOR ================= */
+  (function(){
+    var vals = DIMS.map(function(){ return 2; });
+    var sc = $('sim-scene'), step = 64, w = 40, H = 220;
+    var st = makeStage(sc, DIMS.length * step, 80, {ay:'80%'});
+    var bars = [];
+    DIMS.forEach(function(d, i){
+      st.appendChild(box({w:w, d:w, x:i * step, y:20, h:H, c:'#94a3b8', cls:'off'}));  // ideal: 100%
+      var b = box({w:w - 6, d:w - 6, x:i * step + 3, y:23, h:H * 2 / 3, c:'var(--act)', label:''});
+      st.appendChild(b); bars.push(b);
+      flatLabel(st, d.ab, i * step - 10, 72, w + 20, 'font-size:12px;');
+    });
+    rotatable(sc, st, -6, 5);
+    var wrap = $('sliders'), rows = [];
+    DIMS.forEach(function(d, i){
+      var r = document.createElement('label'); r.className = 'sl';
+      r.innerHTML = '<span>' + d.n + '</span><input type="range" min="0" max="3" step="0.25" value="2"><output></output>';
+      var inp = r.querySelector('input');
+      inp.addEventListener('input', function(){ vals[i] = +inp.value; update(); });
+      wrap.appendChild(r); rows.push(r);
+    });
+    var PRESETS = [
+      {n:"Tudo moderado", v:[2,2,2,2,2,2,2,2]},
+      {n:"Tudo pleno", v:[3,3,3,3,3,3,3,3]},
+      {n:"Desequilibrado", v:[0.75,1,3,2.5,1,3,3,1.5]},
+      {n:"Zerar", v:[0,0,0,0,0,0,0,0]}
+    ];
+    var pw = $('presets');
+    PRESETS.forEach(function(p, idx){
+      var b = document.createElement('button'); b.className = 'chip' + (idx === 0 ? ' on' : ''); b.textContent = p.n;
+      b.addEventListener('click', function(){
+        each(pw.querySelectorAll('.chip'), function(c){ c.classList.toggle('on', c === b); });
+        vals = p.v.slice();
+        rows.forEach(function(r, i){ r.querySelector('input').value = vals[i]; });
+        update(true);
+      });
+      pw.appendChild(b);
+    });
+    function update(fromPreset){
+      if (!fromPreset) each(pw.querySelectorAll('.chip'), function(c){ c.classList.remove('on'); });
+      var m = vals.map(function(v){ return v / 3 * 100; });
+      var idx = m.reduce(function(a, b){ return a + b; }, 0) / m.length;
+      var lo = Math.min.apply(null, m), hi = Math.max.apply(null, m), weakI = m.indexOf(lo);
+      bars.forEach(function(b, i){
+        b.style.setProperty('--h', Math.max(1, H * m[i] / 100) + 'px');
+        b.querySelector('.f-front').innerHTML = m[i] >= 14 ? '<span class="face-label">' + Math.round(m[i]) + '%</span>' : '';
+        b.style.setProperty('--c', i === weakI && hi - lo > 0.01 ? 'var(--sys)' : 'var(--act)');
+      });
+      rows.forEach(function(r, i){ r.querySelector('output').textContent = fmt(m[i], 0) + '%'; r.classList.toggle('weak', i === weakI && hi - lo > 0.01); });
+      $('score').innerHTML = fmt(idx) + '<small>%</small>';
+      $('score-meter').style.width = idx + '%';
+      var gap = hi - lo, msg;
+      if (idx === 0) msg = '<b>Nenhuma dimensão presente.</b> Mova os controles para começar.';
+      else if (gap < 0.01) msg = '<b>Sistema equilibrado.</b> Todas as dimensões estão no mesmo nível. Para subir o índice, o sistema precisa avançar como um todo.';
+      else msg = '<b>Ponto mais fraco: ' + DIMS[weakI].n.toLowerCase() + ' (' + fmt(lo, 0) + '%).</b> Diferença de ' + fmt(gap, 0) + ' pontos entre a dimensão mais forte e a mais fraca. ' +
+        (gap >= 50 ? 'Um sistema muito desigual: atores fortes ficam sem par para interagir.' : 'É por aqui que um diagnóstico começaria.');
+      $('sim-msg').innerHTML = msg;
+    }
+    update(true);
+  })();
+
+  /* ================= ESCALA RESPONSIVA ================= */
+  function fit(){
+    document.querySelectorAll('[data-fit]').forEach(function(el){
+      var wh = el.dataset.fit.split('x').map(Number), w = wh[0], h = wh[1];
+      var parent = el.parentElement, avail = parent.clientWidth;
+      var s = Math.min(1, avail / w);
+      el.style.width = w + 'px'; el.style.height = h + 'px';
+      el.style.transformOrigin = 'top left';
+      el.style.transform = 'scale(' + s + ')';
+      el.style.marginLeft = Math.max(0, (avail - w * s) / 2) + 'px';
+      parent.style.height = (h * s) + 'px';
+    });
+  }
+  fit();
+  window.addEventListener('resize', fit);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+
+  /* ================= NAVEGAÇÃO ================= */
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var dots = $('dots'), cur = 0, total = slides.length;
+  slides.forEach(function(s, i){
+    var b = document.createElement('button');
+    b.dataset.label = s.dataset.label; b.setAttribute('aria-label', s.dataset.label);
+    b.addEventListener('click', function(){ go(i); });
+    dots.appendChild(b);
+  });
+  function go(i){ i = Math.max(0, Math.min(total - 1, i)); slides[i].scrollIntoView({behavior: reduce ? 'auto' : 'smooth'}); }
+  function mark(i){
+    cur = i;
+    $('count').textContent = String(i + 1).padStart(2, '0') + ' / ' + total;
+    each(dots.children, function(d, j){ d.classList.toggle('on', i === j); });
+  }
+  var midObs = new IntersectionObserver(function(es){
+    es.forEach(function(en){ if (en.isIntersecting) mark(slides.indexOf(en.target)); });
+  }, {rootMargin:'-45% 0px -45% 0px'});
+  slides.forEach(function(s){ midObs.observe(s); });
+  var inObs = new IntersectionObserver(function(es){
+    es.forEach(function(en){ if (en.isIntersecting) en.target.classList.add('in'); });
+  }, {threshold:0.18});
+  slides.forEach(function(s){ inObs.observe(s); });
+
+  $('prev').addEventListener('click', function(){ go(cur - 1); });
+  $('next').addEventListener('click', function(){ go(cur + 1); });
+  document.addEventListener('keydown', function(e){
+    var tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || tag === 'button' || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' '){ e.preventDefault(); go(cur + 1); }
+    else if (e.key === 'ArrowUp' || e.key === 'PageUp'){ e.preventDefault(); go(cur - 1); }
+    else if (e.key === 'Home'){ e.preventDefault(); go(0); }
+    else if (e.key === 'End'){ e.preventDefault(); go(total - 1); }
+  });
+  var bar = $('progress');
+  function prog(){
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', prog, {passive:true});
+  prog(); mark(0);
+
+  requestAnimationFrame(tick);
+
+  /* Link para o texto completo: usa o PDF ou o link do meta.json, se existirem */
+  if (window.fetch){
+    fetch('meta.json').then(function(r){ return r.json(); }).then(function(m){
+      var url = m.pdf || m.link;
+      if (url){ var a = $('full-text'); a.href = url; a.style.display = ''; }
+    }).catch(function(){});
+  }
+})();
+</script>
+</body>
+</html>
