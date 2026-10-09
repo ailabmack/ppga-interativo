@@ -1,0 +1,1241 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reputação x Legitimidade · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Pablo Turbuk Garrán (PPGA Mackenzie, 2025) sobre reputação e legitimidade institucional, explicada em 14 telas interativas.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2216%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>RL</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<style>
+  /* ---------- Paleta do AI Lab Mackenzie ---------- */
+  :root{
+    color-scheme: light;
+    --bg:#ffffff;
+    --bg-soft:#f8fafc;
+    --card:#ffffff;
+    --ink:#0f172a;
+    --ink-2:#334155;
+    --muted:#64748b;
+    --border:#e2e8f0;
+    --red:hsl(348 94% 47%);
+    --rep:#2563eb;
+    --leg:var(--red);
+    --neutral:#cbd5e1;
+    --shadow:0 18px 40px -20px rgb(15 23 42 / .25);
+    --serif:'Merriweather', Georgia, 'Times New Roman', serif;
+    --sans:'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; scroll-snap-type:y proximity;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden;}
+  h1,h2,h3{font-family:var(--serif); line-height:1.25; margin:0;}
+  p{margin:0 0 14px; color:var(--muted);}
+  strong{color:var(--ink); font-weight:600;}
+  button{font:inherit; color:inherit;}
+  .rep-t{color:var(--rep); font-weight:600;}
+  .leg-t{color:var(--leg); font-weight:600;}
+
+  /* ---------- Barra superior, progresso, navegação ---------- */
+  .topbar{
+    position:fixed; inset:0 0 auto 0; height:56px; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:0 20px; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .brand{display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--red); font-family:var(--serif); font-weight:700; line-height:1.05; font-size:.95rem;}
+  .brand .sq{width:30px; height:30px; border-radius:6px; background:var(--red); color:#fff; display:flex; align-items:center; justify-content:center; font-size:.72rem; font-family:var(--sans); font-weight:700; letter-spacing:.02em;}
+  .counter{font-size:.8rem; color:var(--muted); font-variant-numeric:tabular-nums; display:flex; align-items:center; gap:14px;}
+  .counter .nav-btn{border:1px solid var(--border); background:var(--card); border-radius:8px; width:30px; height:30px; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .counter .nav-btn:hover{border-color:var(--red); color:var(--red);}
+  .progress{position:fixed; top:56px; left:0; height:3px; background:var(--red); width:0; z-index:51; transition:width .15s linear;}
+
+  .dots{position:fixed; right:18px; top:50%; transform:translateY(-50%); z-index:40; display:flex; flex-direction:column; gap:10px;}
+  .dots button{width:10px; height:10px; border-radius:50%; border:1.5px solid var(--muted); background:transparent; padding:0; cursor:pointer; position:relative; transition:all .2s;}
+  .dots button.on{background:var(--red); border-color:var(--red); transform:scale(1.25);}
+  .dots button::after{
+    content:attr(data-label); position:absolute; right:20px; top:50%; transform:translateY(-50%); white-space:nowrap;
+    font-size:.72rem; background:var(--ink); color:var(--bg); padding:3px 8px; border-radius:6px; opacity:0; pointer-events:none; transition:opacity .15s;
+  }
+  .dots button:hover::after{opacity:1;}
+  @media (max-width:760px){ .dots{display:none;} }
+
+  /* ---------- Slides ---------- */
+  .slide{min-height:100vh; min-height:100svh; display:flex; align-items:center; padding:96px 28px 72px; scroll-snap-align:start; position:relative; overflow:hidden;}
+  .slide:nth-of-type(even){background:var(--bg-soft);}
+  .inner{max-width:1120px; width:100%; margin:0 auto;}
+  .grid2{display:grid; grid-template-columns:1fr; gap:40px; align-items:center;}
+  @media (min-width:920px){ .grid2{grid-template-columns:1fr 1fr; gap:64px;} .grid2.wide-right{grid-template-columns:.85fr 1.15fr;} }
+  .kicker{display:flex; align-items:center; gap:10px; font-size:.74rem; letter-spacing:.12em; text-transform:uppercase; font-weight:600; color:var(--red); margin-bottom:14px;}
+  .kicker .n{font-family:var(--serif); font-size:1rem; letter-spacing:0;}
+  .slide h2{font-size:clamp(1.6rem, 3.4vw, 2.5rem); margin-bottom:18px; color:var(--ink);}
+  .lede{font-size:1.08rem; color:var(--muted);}
+  .hint{font-size:.8rem; color:var(--muted); display:flex; gap:8px; align-items:center; margin-top:10px;}
+  .hint::before{content:""; width:16px; height:1px; background:var(--muted);}
+
+  /* animações de entrada */
+  .rv{opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1); transition-delay:var(--d,0s);}
+  .slide.in .rv{opacity:1; transform:none;}
+
+  /* ---------- Capa ---------- */
+  #capa{background:linear-gradient(90deg, var(--bg) 55%, color-mix(in srgb, var(--red) 38%, var(--bg)) 100%);}
+  @media (max-width:919px){ #capa{background:linear-gradient(180deg, var(--bg) 55%, color-mix(in srgb, var(--red) 30%, var(--bg)) 100%);} }
+  #capa h1{font-size:clamp(2.1rem, 5vw, 3.6rem); color:var(--red); font-weight:900; margin-bottom:22px;}
+  #capa .sub{font-size:clamp(1.05rem, 1.6vw, 1.25rem); color:var(--muted); max-width:34em;}
+  .meta{display:grid; gap:4px; margin-top:28px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .btn{display:inline-flex; align-items:center; gap:8px; padding:12px 20px; border-radius:8px; border:1px solid var(--red); background:var(--red); color:#fff; font-weight:500; font-size:.92rem; cursor:pointer; text-decoration:none; transition:transform .15s, box-shadow .15s;}
+  .btn:hover{transform:translateY(-1px); box-shadow:var(--shadow);}
+  .btn.ghost{background:transparent; color:var(--ink); border-color:var(--ink);}
+  .btn.small{padding:8px 14px; font-size:.84rem;}
+  .ctas{display:flex; gap:12px; flex-wrap:wrap; margin-top:32px;}
+  .scroll-cue{position:absolute; bottom:26px; left:50%; transform:translateX(-50%); font-size:.75rem; color:var(--muted); display:flex; flex-direction:column; align-items:center; gap:6px; letter-spacing:.1em; text-transform:uppercase;}
+  .scroll-cue span{width:1px; height:34px; background:linear-gradient(var(--muted), transparent); animation:cue 1.8s infinite;}
+  @keyframes cue{0%{transform:scaleY(0); transform-origin:top;} 50%{transform:scaleY(1); transform-origin:top;} 51%{transform-origin:bottom;} 100%{transform:scaleY(0); transform-origin:bottom;}}
+
+  /* ---------- Motor 3D (caixas em CSS) ---------- */
+  .fit-wrap{width:100%; position:relative;}
+  .fit-wrap > [data-fit]{position:absolute; left:0; top:0;}
+  .grid2 > *, .sim > *{min-width:0;}
+  .scene{position:relative; perspective:1400px; touch-action:pan-y; user-select:none; -webkit-user-select:none;}
+  .scene.draggable{cursor:grab;}
+  .scene.draggable:active{cursor:grabbing;}
+  .stage{position:absolute; left:50%; top:var(--ay,70%); transform-style:preserve-3d; transform:translate(-50%,-50%) rotateX(var(--rx,60deg)) rotateZ(var(--rz,-35deg));}
+  .floor{position:absolute; inset:-40%; border-radius:50%; background:radial-gradient(closest-side, rgb(15 23 42 / .16), transparent 75%); transform:translateZ(-1px); pointer-events:none;}
+  .slab{position:absolute; transform-style:preserve-3d; transform:translate3d(var(--ox,0px), var(--oy,0px), var(--z,0px)); transition:transform .55s cubic-bezier(.2,.8,.2,1), opacity .5s;}
+  .slab > i{position:absolute; display:block; background:var(--face); transition:background .35s, box-shadow .35s;}
+  .slab .f-top{inset:0; transform:translateZ(var(--h)); --face:color-mix(in srgb, var(--c) 72%, white);}
+  .slab .f-front{left:0; top:calc(100% - var(--h)); width:100%; height:var(--h); transform-origin:bottom; transform:rotateX(-90deg); --face:var(--c);}
+  .slab .f-back{left:0; bottom:100%; width:100%; height:var(--h); transform-origin:bottom; transform:rotateX(-90deg); --face:color-mix(in srgb, var(--c) 78%, black);}
+  .slab .f-left{top:0; right:100%; width:var(--h); height:100%; transform-origin:right; transform:rotateY(90deg); --face:color-mix(in srgb, var(--c) 82%, black);}
+  .slab .f-right{top:0; left:100%; width:var(--h); height:100%; transform-origin:left; transform:rotateY(-90deg); --face:color-mix(in srgb, var(--c) 68%, black);}
+  .slab.active{--ox:46px;}
+  .slab.active .f-top{--face:color-mix(in srgb, var(--c) 45%, white); box-shadow:inset 0 0 0 2px #fff;}
+  .slab.off > i{--face:color-mix(in srgb, var(--c) 7%, transparent); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--c) 55%, transparent);}
+  .slab .f-front .face-label{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:13px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;}
+
+  /* ---------- 02 · Moeda ---------- */
+  .coin-scene{perspective:1100px; position:relative; cursor:grab; touch-action:pan-y; user-select:none;}
+  .coin{position:absolute; left:30px; top:30px; width:280px; height:280px; transform-style:preserve-3d; transform:rotateX(12deg) rotateY(var(--cy,0deg)); transition:transform .9s cubic-bezier(.2,.8,.2,1);}
+  .coin.dragging{transition:none;}
+  .coin .ring{position:absolute; inset:0; border-radius:50%; background:color-mix(in srgb, var(--ink) 35%, var(--bg));}
+  .coin-face{position:absolute; inset:0; border-radius:50%; backface-visibility:hidden; -webkit-backface-visibility:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; color:#fff; padding:40px; box-shadow:inset 0 0 0 12px rgb(255 255 255 / .16), inset 0 0 0 13px rgb(255 255 255 / .35);}
+  .coin-face.front{background:radial-gradient(circle at 32% 26%, color-mix(in srgb, var(--rep) 50%, white), var(--rep) 55%, color-mix(in srgb, var(--rep) 65%, black)); transform:translateZ(10px);}
+  .coin-face.back{background:radial-gradient(circle at 32% 26%, color-mix(in srgb, var(--leg) 50%, white), var(--leg) 55%, color-mix(in srgb, var(--leg) 65%, black)); transform:rotateY(180deg) translateZ(10px);}
+  .coin-face small{font-size:.7rem; letter-spacing:.18em; text-transform:uppercase; opacity:.9; font-weight:600;}
+  .coin-face b{font-family:var(--serif); font-size:2.1rem; margin:8px 0; font-weight:900;}
+  .coin-face span{font-size:.82rem; opacity:.9; max-width:16ch;}
+  .coin-shadow{position:absolute; left:70px; right:70px; bottom:6px; height:26px; border-radius:50%; background:radial-gradient(closest-side, rgb(15 23 42 / .22), transparent);}
+  .showing{display:flex; gap:8px; justify-content:center; margin-top:8px;}
+  .pill{font-size:.75rem; padding:4px 12px; border-radius:999px; border:1px solid var(--border); color:var(--muted); background:var(--card); transition:all .25s;}
+  .pill.on.rep{background:var(--rep); border-color:var(--rep); color:#fff;}
+  .pill.on.leg{background:var(--leg); border-color:var(--leg); color:#fff;}
+  .legend-q{display:grid; gap:12px; margin-top:22px;}
+  .legend-q div{display:grid; grid-template-columns:14px 1fr; gap:12px; align-items:start;}
+  .legend-q i{width:14px; height:14px; border-radius:50%; margin-top:5px;}
+
+  /* ---------- 03 · Lado a lado ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 26px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.86rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip.on{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+  .versus{display:grid; grid-template-columns:1fr; gap:14px; position:relative;}
+  @media (min-width:700px){ .versus{grid-template-columns:1fr 56px 1fr; align-items:stretch;} }
+  .vcard{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:26px 26px 30px; box-shadow:var(--shadow); min-height:190px;}
+  .vcard.rep{border-top:4px solid var(--rep);}
+  .vcard.leg{border-top:4px solid var(--leg);}
+  .vcard .lab{font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; font-weight:700; margin-bottom:12px;}
+  .vcard.rep .lab{color:var(--rep);} .vcard.leg .lab{color:var(--leg);}
+  .vcard .val{font-family:var(--serif); font-size:clamp(1.15rem, 2vw, 1.45rem); color:var(--ink); line-height:1.4; transition:opacity .25s, transform .25s;}
+  .vcard .val.swap{opacity:0; transform:translateY(8px);}
+  .vs{display:flex; align-items:center; justify-content:center;}
+  .vs span{width:46px; height:46px; border-radius:50%; background:var(--bg); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-style:italic; color:var(--muted);}
+
+  /* ---------- 04 · Funil ---------- */
+  .disc{position:absolute; border-radius:50%; transform-style:preserve-3d; transform:translateZ(var(--z)); transition:transform .5s cubic-bezier(.2,.8,.2,1), opacity .6s;}
+  .disc .top, .disc .under{position:absolute; inset:0; border-radius:50%;}
+  .disc .top{background:radial-gradient(circle at 40% 35%, color-mix(in srgb, var(--dc) 55%, white), var(--dc)); transform:translateZ(8px); box-shadow:inset 0 0 0 1px rgb(255 255 255 / .35); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-weight:900; color:#fff; text-shadow:0 1px 2px rgb(0 0 0 / .25);}
+  .disc .under{background:color-mix(in srgb, var(--dc) 70%, black);}
+  .disc.hl{transform:translateZ(calc(var(--z) + 18px));}
+  .slide:not(.in) .disc{opacity:0; transform:translateZ(calc(var(--z) + 120px));}
+  .steps{list-style:none; margin:0; padding:0; display:grid; gap:4px;}
+  .steps li{display:grid; grid-template-columns:78px 1fr; gap:14px; align-items:baseline; padding:12px 14px; border-radius:10px; cursor:default; transition:background .2s;}
+  .steps li:hover, .steps li.hl{background:var(--card); box-shadow:var(--shadow);}
+  .steps .num{font-family:var(--serif); font-weight:900; font-size:1.6rem; color:var(--ink); text-align:right; font-variant-numeric:tabular-nums;}
+  .steps li:last-child .num{color:var(--red);}
+  .steps p{margin:0; font-size:.94rem;}
+  .callout{margin-top:22px; padding:18px 20px; border-left:4px solid var(--red); background:var(--card); border-radius:0 12px 12px 0; box-shadow:var(--shadow);}
+  .callout p{margin:0; color:var(--ink); font-family:var(--serif); font-size:1.08rem; line-height:1.5;}
+
+  /* ---------- 05 · Palavras ---------- */
+  .wall{perspective:900px; margin-top:8px;}
+  .wall-inner{display:grid; grid-template-columns:1fr; gap:22px; transform-style:preserve-3d; transform:rotateX(var(--wx,0deg)) rotateY(var(--wy,0deg)); transition:transform .25s ease-out;}
+  @media (min-width:820px){ .wall-inner{grid-template-columns:1fr 1fr;} }
+  .cloud{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:22px 22px 26px; transform-style:preserve-3d; box-shadow:var(--shadow);}
+  .cloud h3{font-family:var(--sans); font-size:.74rem; letter-spacing:.14em; text-transform:uppercase; margin-bottom:12px;}
+  .cloud .words{display:flex; flex-wrap:wrap; gap:4px 14px; align-items:baseline; transform-style:preserve-3d; min-height:150px;}
+  .w{display:inline-block; font-family:var(--serif); font-weight:700; line-height:1.15; transform:translateZ(var(--tz)); cursor:default; transition:color .2s, opacity .2s, transform .3s;}
+  .cloud.rep .w{color:color-mix(in srgb, var(--rep) var(--k), var(--muted));}
+  .cloud.leg .w{color:color-mix(in srgb, var(--leg) var(--k), var(--muted));}
+  .w sup{font-family:var(--sans); font-size:.55em; font-weight:500; color:var(--muted); margin-left:2px;}
+  .shared-on .w:not(.shared){opacity:.22;}
+  .shared-on .w.shared{transform:translateZ(calc(var(--tz) + 30px)); text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:4px;}
+  .w.hot{transform:translateZ(calc(var(--tz) + 30px));}
+  .defs{display:grid; grid-template-columns:1fr; gap:16px; margin-top:22px;}
+  @media (min-width:820px){ .defs{grid-template-columns:1fr 1fr;} }
+  .def{font-size:.94rem; color:var(--ink-2); line-height:1.65; padding-left:16px; border-left:3px solid var(--border);}
+  .def.rep{border-color:var(--rep);} .def.leg{border-color:var(--leg);}
+  .def mark{background:transparent; color:inherit; border-bottom:2px solid transparent; transition:all .2s; padding:0 1px;}
+  .def mark.on{background:color-mix(in srgb, var(--hl) 16%, transparent); border-color:var(--hl);}
+  .def.rep{--hl:var(--rep);} .def.leg{--hl:var(--leg);}
+  .toggle{display:inline-flex; align-items:center; gap:10px; cursor:pointer; font-size:.86rem; color:var(--ink-2); border:1px solid var(--border); background:var(--card); padding:7px 14px; border-radius:999px;}
+  .toggle .sw{width:30px; height:17px; border-radius:999px; background:var(--neutral); position:relative; transition:background .2s;}
+  .toggle .sw::after{content:""; position:absolute; width:13px; height:13px; border-radius:50%; background:#fff; top:2px; left:2px; transition:left .2s;}
+  .toggle[aria-pressed="true"] .sw{background:var(--red);}
+  .toggle[aria-pressed="true"] .sw::after{left:15px;}
+
+  /* ---------- 06 · Arquétipos ---------- */
+  .tabs{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px;}
+  .tab{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:9px 14px; cursor:pointer; font-family:var(--serif); font-weight:700; font-size:1rem; color:var(--ink-2); transition:all .2s; min-width:74px;}
+  .tab.on{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+  .arch-stage{position:relative;}
+  .sphere{position:absolute; width:140px; height:140px; border-radius:50%; top:60px; margin-left:-70px; display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-weight:900; font-size:2.6rem; color:#fff; transition:left .9s cubic-bezier(.2,.8,.2,1), opacity .5s; opacity:.9; text-shadow:0 2px 6px rgb(0 0 0 / .2);}
+  .sphere.r{background:radial-gradient(circle at 34% 28%, color-mix(in srgb, var(--rep) 40%, white), var(--rep) 52%, color-mix(in srgb, var(--rep) 55%, black)); z-index:2;}
+  .sphere.l{background:radial-gradient(circle at 34% 28%, color-mix(in srgb, var(--leg) 40%, white), var(--leg) 52%, color-mix(in srgb, var(--leg) 55%, black)); z-index:1;}
+  .sphere-shadow{position:absolute; top:218px; width:150px; height:22px; margin-left:-75px; border-radius:50%; background:radial-gradient(closest-side, rgb(15 23 42 / .2), transparent); transition:left .9s cubic-bezier(.2,.8,.2,1);}
+  .arch-svg{position:absolute; inset:0; pointer-events:none; overflow:visible;}
+  .arch-svg g{opacity:0; transition:opacity .5s .35s;}
+  .arch-svg g.on{opacity:1;}
+  .arch-svg path, .arch-svg line{stroke:var(--ink-2); stroke-width:3; fill:none; stroke-linecap:round;}
+  .arch-svg marker path{fill:var(--ink-2); stroke:none;}
+  .arch-info{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:22px 24px; box-shadow:var(--shadow);}
+  .arch-info h3{font-size:1.2rem; margin-bottom:8px; color:var(--ink);}
+  .arch-info .ctx{font-size:.84rem; color:var(--muted); margin-top:10px;}
+  .arch-info .ctx b{color:var(--ink-2);}
+  .flag{display:inline-block; margin-top:12px; font-size:.8rem; font-weight:600; color:var(--red); background:color-mix(in srgb, var(--red) 10%, transparent); padding:4px 10px; border-radius:6px;}
+
+  /* ---------- 07 · Método / balança ---------- */
+  .stats{display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; margin-top:22px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.6rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.8rem; color:var(--muted);}
+  .duel{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:22px; box-shadow:var(--shadow);}
+  .duel-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:.78rem; color:var(--muted);}
+  .duel-q{font-family:var(--serif); font-size:1.15rem; color:var(--ink); margin-bottom:16px;}
+  .options{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .opt{text-align:left; border:2px solid var(--border); background:var(--bg); border-radius:12px; padding:14px; cursor:pointer; transition:border-color .2s, transform .2s;}
+  .opt:hover:not(:disabled){border-color:var(--ink); transform:translateY(-2px);}
+  .opt:disabled{cursor:default;}
+  .opt .oname{font-family:var(--serif); font-weight:700; color:var(--ink); margin-bottom:8px; display:block;}
+  .opt .row{display:flex; justify-content:space-between; gap:8px; font-size:.8rem; color:var(--muted); padding:4px 0; border-top:1px dashed var(--border);}
+  .opt .lvl{font-weight:600; border-radius:6px; padding:0 7px; white-space:nowrap;}
+  .opt .lvl.hi{color:#fff; background:var(--ink-2);}
+  .opt .lvl.lo{color:var(--muted); border:1px solid var(--border);}
+  .opt.chosen{border-color:var(--ink);}
+  .opt.winner{border-color:var(--red); box-shadow:0 0 0 3px color-mix(in srgb, var(--red) 18%, transparent);}
+  .scale{position:relative; height:150px; margin:18px auto 4px; max-width:360px;}
+  .scale .post{position:absolute; left:50%; bottom:10px; width:6px; height:100px; margin-left:-3px; background:var(--ink-2); border-radius:3px;}
+  .scale .base{position:absolute; left:50%; bottom:4px; width:90px; height:8px; margin-left:-45px; background:var(--ink-2); border-radius:4px;}
+  .beam{position:absolute; left:10%; right:10%; top:36px; height:6px; background:var(--ink-2); border-radius:3px; transform:rotate(var(--tilt,0deg)); transition:transform 1s cubic-bezier(.3,1.4,.5,1);}
+  .pan{position:absolute; top:0; width:84px; margin-left:-42px; transform-origin:50% 0; transform:rotate(calc(var(--tilt,0deg) * -1)); transition:transform 1s cubic-bezier(.3,1.4,.5,1);}
+  .pan.a{left:0;} .pan.b{left:100%;}
+  .pan .str{width:1px; height:34px; margin:0 auto; background:var(--muted);}
+  .pan .dish{height:30px; border-radius:0 0 42px 42px; background:color-mix(in srgb, var(--ink) 12%, var(--card)); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:.78rem; font-weight:700; color:var(--ink);}
+  .scale .pivot{position:absolute; left:50%; top:31px; width:16px; height:16px; margin-left:-8px; border-radius:50%; background:var(--red);}
+  .verdict{min-height:72px; font-size:.9rem; color:var(--ink-2); margin-top:8px;}
+  .verdict b{color:var(--ink);}
+  .duel-actions{display:flex; justify-content:flex-end; gap:10px; margin-top:6px;}
+
+  /* ---------- 08/09 · Torres ---------- */
+  .detail{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:22px 24px; box-shadow:var(--shadow); margin-bottom:18px; min-height:190px;}
+  .detail .rank{font-size:.75rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:600;}
+  .detail .dname{font-family:var(--serif); font-weight:700; font-size:1.25rem; color:var(--ink); margin:4px 0 2px;}
+  .detail .dpct{font-family:var(--serif); font-weight:900; font-size:2.4rem; line-height:1.1;}
+  .detail.rep .dpct{color:var(--rep);} .detail.leg .dpct{color:var(--leg);}
+  .detail p{margin:8px 0 0; font-size:.92rem;}
+  .detail .ratio{margin-top:10px; font-size:.82rem; color:var(--ink-2); background:var(--bg-soft); border-radius:8px; padding:6px 10px; display:inline-block;}
+  .rows{display:grid; gap:2px;}
+  .rowb{display:grid; grid-template-columns:26px 1fr 90px 46px; gap:10px; align-items:center; padding:6px 8px; border-radius:8px; cursor:pointer; font-size:.86rem; color:var(--ink-2); background:none; border:none; text-align:left; width:100%;}
+  .rowb:hover, .rowb.on{background:var(--card);}
+  .rowb.on{box-shadow:inset 3px 0 0 var(--c);}
+  .rowb .rk{color:var(--muted); font-size:.75rem; font-variant-numeric:tabular-nums;}
+  .rowb .bar{height:6px; background:var(--border); border-radius:4px; overflow:hidden;}
+  .rowb .bar i{display:block; height:100%; background:var(--c); border-radius:4px;}
+  .rowb .pc{text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--ink);}
+  .tower-caption{text-align:center; font-size:.78rem; color:var(--muted); margin-top:4px;}
+
+  /* ---------- 10 · Simulador ---------- */
+  .sim{display:grid; grid-template-columns:1fr; gap:22px;}
+  @media (min-width:920px){ .sim{grid-template-columns:1fr 1fr;} }
+  .sim-col{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px 18px 20px; box-shadow:var(--shadow);}
+  .sim-head{display:flex; justify-content:space-between; align-items:baseline; gap:10px;}
+  .sim-head h3{font-family:var(--sans); font-size:.76rem; letter-spacing:.14em; text-transform:uppercase;}
+  .score{font-family:var(--serif); font-weight:900; font-size:2.2rem; line-height:1; font-variant-numeric:tabular-nums;}
+  .score small{font-family:var(--sans); font-size:.75rem; font-weight:500; color:var(--muted); margin-left:4px;}
+  .sim-col.rep .score{color:var(--rep);} .sim-col.leg .score{color:var(--leg);}
+  .meter{height:8px; background:var(--border); border-radius:6px; overflow:hidden; margin:10px 0 4px;}
+  .meter i{display:block; height:100%; width:0; border-radius:6px; transition:width .5s cubic-bezier(.2,.8,.2,1);}
+  .sim-col.rep .meter i{background:var(--rep);} .sim-col.leg .meter i{background:var(--leg);}
+  .toggles{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;}
+  .tg{font-size:.76rem; border:1px solid var(--border); border-radius:999px; padding:5px 11px; cursor:pointer; background:var(--bg); color:var(--muted); transition:all .2s;}
+  .tg[aria-pressed="true"]{color:#fff; background:var(--c); border-color:var(--c);}
+  .presets{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:4px 0 18px;}
+  .presets span{font-size:.8rem; color:var(--muted); margin-right:4px;}
+  .sim-msg{margin-top:18px; padding:16px 20px; border-radius:12px; background:var(--card); border:1px solid var(--border); font-size:.95rem; color:var(--ink-2); box-shadow:var(--shadow);}
+  .sim-msg b{color:var(--ink);}
+  .disclaimer{font-size:.75rem; color:var(--muted); margin-top:10px;}
+
+  /* ---------- 11 · Descoberta ---------- */
+  .duo-stat{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:20px 0;}
+  .dstat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px;}
+  .dstat b{display:block; font-family:var(--serif); font-weight:900; font-size:2rem; line-height:1.1;}
+  .dstat.rep b{color:var(--rep);} .dstat.leg b{color:var(--leg);}
+  .dstat span{font-size:.82rem; color:var(--muted);}
+  .slab.gone{opacity:0; --z:-160px !important;}
+  .slab.fallen{--z:0px !important; --ox:70px; --c:#94a3b8 !important;}
+  .slab.fallen{transform:translate3d(var(--ox), 0px, 0px) rotateY(24deg) rotateX(8deg); transition:transform 1s cubic-bezier(.55,0,.8,.4) .15s;}
+  .collapse-msg{min-height:3.2em; font-family:var(--serif); font-size:1.02rem; color:var(--ink); transition:opacity .3s;}
+
+  /* ---------- 12 · Contraintuitivo ---------- */
+  .bar-info{text-align:center; font-size:.92rem; color:var(--ink-2); min-height:1.6em; margin-top:4px;}
+  .floor-label{position:absolute; font-size:16px; font-weight:700; color:var(--ink-2); text-align:center; width:40px;}
+  #bars-scene{perspective:3200px;}
+  #bars-scene .face-label{font-size:12px; letter-spacing:0; align-items:flex-start; padding-top:8px; color:var(--ink);}
+  #bars-scene .slab.hl .face-label{color:#fff;}
+
+  /* ---------- 13 · Prática ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:16px; margin-top:12px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  .pcard{background:var(--card); border:none; border-radius:14px; padding:24px; box-shadow:var(--shadow); transition:transform .2s;}
+  .pcard:hover{transform:translateY(-3px);}
+  .pcard .ic{width:46px; height:46px; border-radius:50%; background:color-mix(in srgb, var(--red) 10%, transparent); color:var(--red); display:flex; align-items:center; justify-content:center; margin-bottom:14px;}
+  .pcard .ic svg{width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
+  .pcard h3{font-size:1.1rem; margin-bottom:8px; color:var(--ink);}
+  .pcard p{font-size:.92rem; margin:0;}
+
+  /* ---------- 14 · Créditos ---------- */
+  .limits{display:grid; gap:10px; margin:12px 0 0; padding:0; list-style:none;}
+  .limits li{padding:12px 16px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.9rem; color:var(--ink-2);}
+  .cite{font-size:.86rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 20px; line-height:1.6;}
+  .cite b{color:var(--ink);}
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    .rv{transition:none; opacity:1; transform:none;}
+    *{animation:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <span id="count">01 / 14</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2025</div>
+      <h1 class="rv" style="--d:.1s">Entre a reputação e a legitimidade</h1>
+      <p class="sub rv" style="--d:.2s">O que faz uma universidade ser vista como <strong>boa</strong> — e o que faz ela ser vista como <strong>correta</strong>? Uma pesquisa com 362 respostas de professores, explicada em 14 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Pablo Turbuk Garrán</span>
+        <span><b>Orientador:</b> Prof. Dr. Fellipe Silva Martins</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#perguntas">Começar →</a>
+        <a class="btn ghost" href="#descoberta">Ir direto à descoberta</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene" id="hero-scene" data-fit="460x460"></div></div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · DUAS PERGUNTAS -->
+<section class="slide" id="perguntas" data-label="Duas perguntas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O ponto de partida</div>
+      <h2 class="rv" style="--d:.1s">Dois lados da mesma moeda?</h2>
+      <p class="lede rv" style="--d:.2s">No dia a dia, dizemos que uma escola, um hospital ou uma empresa é "respeitada" sem separar duas avaliações bem diferentes.</p>
+      <div class="legend-q rv" style="--d:.3s">
+        <div><i style="background:var(--rep)"></i><p><span class="rep-t">Reputação</span> responde a <strong>"essa instituição é boa?"</strong> É uma comparação: o desempenho passado dela colocado lado a lado com o dos concorrentes.</p></div>
+        <div><i style="background:var(--leg)"></i><p><span class="leg-t">Legitimidade</span> responde a <strong>"essa instituição é correta?"</strong> Não compara ninguém: pergunta se ela age de acordo com as normas, os valores e as crenças do seu contexto.</p></div>
+      </div>
+      <p class="rv" style="--d:.4s">Costumam andar juntas, mas não são a mesma coisa. E a própria literatura científica mistura as duas com frequência.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="coin-scene" id="coin-scene" data-fit="340x370">
+        <div class="coin" id="coin">
+          <div class="coin-face front"><small>Reputação</small><b>É boa?</b><span>comparação com os concorrentes</span></div>
+          <div class="coin-face back"><small>Legitimidade</small><b>É correta?</b><span>adequação a normas e valores</span></div>
+        </div>
+        <div class="coin-shadow"></div>
+      </div></div>
+      <div class="showing"><span class="pill rep on" id="pill-rep">Reputação</span><span class="pill leg" id="pill-leg">Legitimidade</span></div>
+      <p class="hint" style="justify-content:center">clique ou arraste a moeda para virar</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · LADO A LADO -->
+<section class="slide" id="diferencas" data-label="Lado a lado">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">03</span> Lado a lado</div>
+    <h2 class="rv" style="--d:.1s">Seis jeitos de separar as duas ideias</h2>
+    <p class="lede rv" style="--d:.15s">Escolha um aspecto e veja como cada conceito responde.</p>
+    <div class="chips rv" id="aspects" style="--d:.2s"></div>
+    <div class="versus rv" style="--d:.3s">
+      <div class="vcard rep"><div class="lab">Reputação</div><div class="val" id="v-rep"></div></div>
+      <div class="vs"><span>vs</span></div>
+      <div class="vcard leg"><div class="lab">Legitimidade</div><div class="val" id="v-leg"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · LITERATURA -->
+<section class="slide" id="literatura" data-label="152 artigos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Estudo 1 · Revisão da literatura</div>
+      <h2 class="rv" style="--d:.1s">Quase 80 anos de artigos, e só 3 comparam os dois conceitos de frente</h2>
+      <p class="rv" style="--d:.15s">O pesquisador vasculhou a base Web of Science em busca de todo artigo de Administração que falasse dos dois temas. Passe o mouse em cada camada do funil.</p>
+      <ul class="steps rv" id="steps" style="--d:.2s">
+        <li data-i="0"><span class="num">583</span><p>artigos encontrados com os dois termos, publicados entre 1945 e 2023</p></li>
+        <li data-i="1"><span class="num">190</span><p>tratavam do assunto com alguma profundidade (o resto só citava as palavras)</p></li>
+        <li data-i="2"><span class="num">152</span><p>foram lidos e analisados a fundo</p></li>
+        <li data-i="3"><span class="num">17</span><p>davam atenção séria aos dois conceitos ao mesmo tempo</p></li>
+        <li data-i="4"><span class="num">3</span><p>comparavam diretamente reputação e legitimidade</p></li>
+      </ul>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="fit-wrap"><div class="scene" id="funnel-scene" data-fit="420x440"></div></div>
+      <div class="callout"><p>Na maioria dos estudos, um dos conceitos é protagonista e o outro aparece como coadjuvante, muitas vezes com definições que se sobrepõem.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · PALAVRAS -->
+<section class="slide" id="palavras" data-label="As palavras">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">05</span> O que as definições dizem</div>
+    <h2 class="rv" style="--d:.1s">97 definições de reputação, 113 de legitimidade</h2>
+    <p class="lede rv" style="--d:.15s">Contando as palavras mais usadas pelos autores, aparecem dois vocabulários diferentes. Quanto mais usada a palavra, maior e mais à frente ela fica. Passe o mouse nas palavras.</p>
+    <div class="rv" style="--d:.2s; margin:6px 0 4px">
+      <button class="toggle" id="shared-toggle" aria-pressed="false"><span class="sw"></span>Destacar palavras em comum</button>
+    </div>
+    <div class="wall rv" id="wall" style="--d:.25s">
+      <div class="wall-inner" id="wall-inner">
+        <div class="cloud rep"><h3 class="rep-t">Definições de reputação</h3><div class="words" id="words-rep"></div></div>
+        <div class="cloud leg"><h3 class="leg-t">Definições de legitimidade</h3><div class="words" id="words-leg"></div></div>
+      </div>
+    </div>
+    <div class="defs rv" style="--d:.35s">
+      <div class="def rep" id="def-rep"><strong>Definição proposta na tese.</strong> Reputação é a <mark data-w="percepção">percepção</mark> coletiva construída por <mark data-w="stakeholders">stakeholders</mark> com base nas <mark data-w="ações">ações</mark> <mark data-w="passadas">passadas</mark> de uma <mark data-w="organização">organização</mark>, <mark data-w="avaliação">avaliada</mark> em função de seu <mark data-w="desempenho">desempenho</mark> e posição relativa aos <mark data-w="concorrentes">concorrentes</mark>, refletindo sua identidade <mark data-w="corporativa">corporativa</mark>.</div>
+      <div class="def leg" id="def-leg"><strong>Definição proposta na tese.</strong> Legitimidade é a <mark data-w="aceitação">aceitação</mark> <mark data-w="generalizada">generalizada</mark> de uma <mark data-w="organização">organização</mark> por stakeholders, baseada na <mark data-w="conformidade">conformidade</mark> de suas <mark data-w="ações">ações</mark> com <mark data-w="normas">normas</mark>, <mark data-w="valores">valores</mark> e <mark data-w="crenças">crenças</mark> <mark data-w="sociais">sociais</mark>, <mark data-w="percepção">percebida</mark> como <mark data-w="apropriadas">apropriada</mark> e <mark data-w="desejáveis">desejável</mark> no contexto <mark data-w="social">social</mark> específico em que opera.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · ARQUÉTIPOS -->
+<section class="slide" id="arquetipos" data-label="5 relações">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Como os dois se relacionam</div>
+      <h2 class="rv" style="--d:.1s">Cinco maneiras de ligar reputação e legitimidade</h2>
+      <p class="rv" style="--d:.15s">A revisão encontrou cinco "arquétipos" na literatura. Não existe uma ordem universal: depende do setor e de quem está avaliando.</p>
+      <div class="tabs rv" id="arch-tabs" style="--d:.2s"></div>
+      <div class="arch-info rv" id="arch-info" style="--d:.25s"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="arch-stage" id="arch-stage" data-fit="560x280">
+        <svg class="arch-svg" viewBox="0 0 560 280" aria-hidden="true">
+          <defs><marker id="ah" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
+          <g data-a="LR"><line x1="222" y1="130" x2="338" y2="130" marker-end="url(#ah)"/></g>
+          <g data-a="RL"><line x1="338" y1="130" x2="222" y2="130" marker-end="url(#ah)"/></g>
+          <g data-a="BI"><path d="M200,82 Q280,20 360,82" marker-end="url(#ah)"/><path d="M360,178 Q280,240 200,178" marker-end="url(#ah)"/></g>
+          <g data-a="IN"><line x1="280" y1="30" x2="280" y2="230" stroke-dasharray="6 8"/></g>
+        </svg>
+        <div class="sphere-shadow" id="sh-l"></div><div class="sphere-shadow" id="sh-r"></div>
+        <div class="sphere l" id="sp-l">L</div>
+        <div class="sphere r" id="sp-r">R</div>
+      </div></div>
+      <div class="showing"><span class="pill leg on">L = Legitimidade</span><span class="pill rep on">R = Reputação</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · MÉTODO -->
+<section class="slide" id="metodo" data-label="Como medir">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Estudos 2 e 3 · O método</div>
+      <h2 class="rv" style="--d:.1s">Em vez de dar notas, escolher</h2>
+      <p class="rv" style="--d:.15s">Se você pedir para alguém dar nota de 1 a 5 a cada critério, quase tudo vira "muito importante". Por isso a pesquisa usou o método <strong>PAPRIKA</strong>: o professor vê duas instituições hipotéticas e escolhe a melhor. Depois de várias rodadas, o software calcula quanto cada critério pesa.</p>
+      <p class="rv" style="--d:.2s"><strong>Experimente ao lado.</strong> Você está fazendo exatamente o que os professores fizeram.</p>
+      <div class="stats rv" style="--d:.25s">
+        <div class="stat"><b>211</b><span>professores avaliaram a reputação</span></div>
+        <div class="stat"><b>151</b><span>professores avaliaram a legitimidade</span></div>
+        <div class="stat"><b>~14</b><span>escolhas feitas por pessoa</span></div>
+        <div class="stat"><b>75%</b><span>responderam de forma totalmente coerente</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="duel" id="duel">
+        <div class="duel-top"><span id="duel-step">Rodada 1 de 3</span><span id="duel-kind"></span></div>
+        <div class="duel-q" id="duel-q"></div>
+        <div class="options" id="duel-opts"></div>
+        <div class="scale" id="scale">
+          <div class="post"></div><div class="base"></div>
+          <div class="beam" id="beam">
+            <div class="pan a"><div class="str"></div><div class="dish" id="pan-a">A</div></div>
+            <div class="pan b"><div class="str"></div><div class="dish" id="pan-b">B</div></div>
+          </div>
+          <div class="pivot"></div>
+        </div>
+        <div class="verdict" id="verdict">Escolha uma das duas instituições.</div>
+        <div class="duel-actions"><button class="btn small" id="duel-next" style="display:none">Próxima rodada →</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · REPUTAÇÃO -->
+<section class="slide" id="reputacao" data-label="Reputação">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Estudo 2 · 211 professores</div>
+      <h2 class="rv" style="--d:.1s">As camadas da <span class="rep-t" style="font-weight:900">reputação</span></h2>
+      <p class="rv" style="--d:.15s">Cada camada é um critério; a espessura é o peso que os professores deram a ele. Juntas, somam 100%. Passe o mouse (ou toque) nas camadas e arraste a torre para girar.</p>
+      <div class="detail rep rv" id="detail-rep" style="--d:.2s"></div>
+      <div class="rows rv" id="rows-rep" style="--d:.25s"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="tower-rep" data-fit="420x520"></div></div>
+      <div class="tower-caption">Na base, o que mais pesa: <strong>quem ensina e o que os formados conquistam.</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · LEGITIMIDADE -->
+<section class="slide" id="legitimidade" data-label="Legitimidade">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Estudo 3 · 151 professores</div>
+      <h2 class="rv" style="--d:.1s">As camadas da <span class="leg-t" style="font-weight:900">legitimidade</span></h2>
+      <p class="rv" style="--d:.15s">Agora a pergunta era outra: o que faz uma instituição ser aceita como correta? Os pesos ficam mais equilibrados, mas um critério se destaca na base.</p>
+      <div class="detail leg rv" id="detail-leg" style="--d:.2s"></div>
+      <div class="rows rv" id="rows-leg" style="--d:.25s"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="tower-leg" data-fit="420x520"></div></div>
+      <div class="tower-caption">Na base: <strong>integridade e ética</strong>, ou seja, fazer o que se diz.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · SIMULADOR -->
+<section class="slide" id="simulador" data-label="Simulador">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">10</span> Simulador</div>
+    <h2 class="rv" style="--d:.1s">Monte uma instituição</h2>
+    <p class="lede rv" style="--d:.15s">Ligue e desligue as camadas, clicando nas torres ou nos critérios, e veja quanto de reputação e de legitimidade a instituição acumula, segundo os pesos dados pelos professores.</p>
+    <div class="presets rv" id="presets" style="--d:.2s"><span>Cenários:</span></div>
+    <div class="sim rv" style="--d:.25s">
+      <div class="sim-col rep">
+        <div class="sim-head"><h3 class="rep-t">Reputação</h3><div class="score" id="score-rep">0<small>/ 100</small></div></div>
+        <div class="meter"><i id="meter-rep"></i></div>
+        <div class="fit-wrap"><div class="scene draggable" id="sim-rep" data-fit="320x400"></div></div>
+        <div class="toggles" id="tg-rep"></div>
+      </div>
+      <div class="sim-col leg">
+        <div class="sim-head"><h3 class="leg-t">Legitimidade</h3><div class="score" id="score-leg">0<small>/ 100</small></div></div>
+        <div class="meter"><i id="meter-leg"></i></div>
+        <div class="fit-wrap"><div class="scene draggable" id="sim-leg" data-fit="320x400"></div></div>
+        <div class="toggles" id="tg-leg"></div>
+      </div>
+    </div>
+    <div class="sim-msg rv" id="sim-msg" style="--d:.3s"></div>
+    <p class="disclaimer">Simulação ilustrativa: cada critério "ligado" soma o peso médio encontrado na tese. Os cenários são hipotéticos e servem para explorar a lógica dos resultados.</p>
+  </div>
+</section>
+
+<!-- 11 · DESCOBERTA -->
+<section class="slide" id="descoberta" data-label="A descoberta">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> A descoberta central</div>
+      <h2 class="rv" style="--d:.1s">A legitimidade vem primeiro</h2>
+      <p class="rv" style="--d:.15s">O critério mais valorizado em cada lista conta a história:</p>
+      <div class="duo-stat rv" style="--d:.2s">
+        <div class="dstat rep"><b>17,1%</b><span>Reputação: <strong>qualidade do corpo docente</strong>, um critério de desempenho, comparativo</span></div>
+        <div class="dstat leg"><b>18,3%</b><span>Legitimidade: <strong>integridade e ética</strong>, um critério moral, de coerência</span></div>
+      </div>
+      <p class="rv" style="--d:.25s">Em setores regulados como o ensino superior, a tese chama a relação de <strong>complementaridade hierárquica</strong>: a legitimidade é o alicerce que permite à instituição ser reconhecida como participante válida do campo. Só depois a reputação passa a funcionar como diferencial.</p>
+      <div class="ctas rv" style="--d:.3s; margin-top:18px">
+        <button class="btn" id="collapse-btn">Retirar a legitimidade</button>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="build-scene" data-fit="460x460"></div></div>
+      <p class="collapse-msg" id="collapse-msg">Com a base no lugar, a reputação tem onde se apoiar.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · CONTRAINTUITIVO -->
+<section class="slide" id="contraintuitivo" data-label="Contraintuitivo">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">12</span> Um dado contraintuitivo</div>
+      <h2 class="rv" style="--d:.1s">O que mais aparece no discurso ficou em último</h2>
+      <p class="rv" style="--d:.15s"><strong>Inclusão e responsabilidade social</strong> ocupa cada vez mais espaço em relatórios de sustentabilidade e campanhas de marca. Mesmo assim, entre os sete critérios de legitimidade, foi o que recebeu <strong class="leg-t">o menor peso (11,5%)</strong>.</p>
+      <p class="rv" style="--d:.2s">Isso não significa que o tema seja irrelevante. Para os professores, ele contribui de forma <strong>indireta</strong>, mediada por outros critérios. O risco apontado pela tese é investir em ações sociais voltadas ao público externo <strong>antes</strong> de consolidar integridade e apoio ao trabalho docente: o ganho de imagem lá fora não se converte em legitimidade dentro de casa.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="bars-scene" data-fit="600x400"></div></div>
+      <div class="bar-info" id="bar-info"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 · PRÁTICA -->
+<section class="slide" id="pratica" data-label="Na prática">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">13</span> Por que isso importa</div>
+    <h2 class="rv" style="--d:.1s">O que muda na prática</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s">
+        <div class="ic"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01"/></svg></div>
+        <h3>Para quem dirige instituições</h3>
+        <p>Antes de investir em rankings, marketing e visibilidade, consolide integridade, transparência e coerência entre discurso e prática. Reputação sem legitimidade cria uma imagem que o próprio corpo docente não reconhece, e isso vira desengajamento.</p>
+      </div>
+      <div class="pcard rv" style="--d:.2s">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <h3>Para professores</h3>
+        <p>Os resultados mostram que os docentes julgam a legitimidade de forma categórica: uma prática é aceitável ou problemática, sem meio-termo. Voz nas decisões, apoio à pesquisa e liberdade acadêmica entram nessa conta.</p>
+      </div>
+      <div class="pcard rv" style="--d:.25s">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+        <h3>Para estudantes e famílias</h3>
+        <p>Rankings e prestígio contam a história da reputação. Para avaliar a legitimidade, vale fazer outras perguntas: a instituição faz o que promete? É transparente? Trata bem quem ensina?</p>
+      </div>
+      <div class="pcard rv" style="--d:.3s">
+        <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+        <h3>Para outras organizações</h3>
+        <p>A literatura revisada indica a mesma lógica em outros setores regulados, como bancos e hospitais: ser "o melhor" só conta para quem já é aceito como correto. Em setores novos, a ordem pode se inverter.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 · CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Créditos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">14</span> Limites e créditos</div>
+      <h2 class="rv" style="--d:.1s">O que esta pesquisa não diz</h2>
+      <ul class="limits rv" style="--d:.15s">
+        <li>Os professores ouvidos atuam em instituições <strong>privadas</strong> de <strong>São Paulo</strong> e foram recrutados por redes acadêmicas e contatos profissionais. Generalizar para outros contextos exige cautela.</li>
+        <li>A pesquisa ouviu um único grupo, o corpo docente. Estudantes, reguladores ou o mercado podem pesar os critérios de outra forma.</li>
+        <li>A revisão da literatura usou apenas a base Web of Science.</li>
+      </ul>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="cite">
+        <b>Como citar</b><br>
+        GARRÁN, Pablo Turbuk. <em>Entre a reputação e a legitimidade: uma investigação mista sobre critérios estratégicos e aceitação institucional.</em> Tese (Doutorado em Administração de Empresas) — Programa de Pós-Graduação em Administração de Empresas, Universidade Presbiteriana Mackenzie, São Paulo, 2025. Orientador: Prof. Dr. Fellipe Silva Martins.
+      </div>
+      <p style="margin-top:16px; font-size:.86rem">Esta versão interativa simplifica a tese para o público em geral. O referencial teórico, os procedimentos estatísticos e as discussões completas estão no trabalho original.</p>
+      <div class="ctas" style="margin-top:18px">
+        <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+        <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+        <a class="btn ghost" href="../../">Outras pesquisas</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var fmt = function(n){ return n.toFixed(1).replace('.', ','); };
+  var $ = function(id){ return document.getElementById(id); };
+
+  /* ================= DADOS DA TESE ================= */
+  var REP = [
+    {n:"Qualidade do Corpo Docente", p:17.1, d:"O quanto os professores são competentes, bem preparados e reconhecidos."},
+    {n:"Sucesso dos ex-alunos", p:16.0, d:"Se os formados conseguem bons empregos e se destacam na carreira."},
+    {n:"Reconhecimento", p:14.4, d:"Presença em rankings, prêmios e visibilidade na mídia."},
+    {n:"Qualidade e seletividade dos alunos", p:11.7, d:"O nível dos estudantes que a instituição consegue atrair e selecionar."},
+    {n:"Pesquisa e Produção Acadêmica", p:11.3, d:"Quantidade e qualidade dos estudos e publicações científicas."},
+    {n:"Infraestrutura e recursos", p:10.3, d:"Prédios, laboratórios, biblioteca e equipamentos."},
+    {n:"Estabilidade financeira", p:9.8, d:"Solidez financeira e capacidade de se manter no longo prazo."},
+    {n:"Internacionalização", p:9.4, d:"Intercâmbios, parcerias e presença internacional."}
+  ];
+  var LEG = [
+    {n:"Integridade e Ética", p:18.3, d:"Coerência entre o que a instituição diz e o que faz: processos seletivos transparentes, avaliação justa, nenhuma pressão por aprovações indevidas."},
+    {n:"Desempenho Acadêmico e Empregabilidade", p:16.8, d:"Resultados acadêmicos consistentes e oportunidades reais de emprego para os estudantes."},
+    {n:"Apoio à Pesquisa e Desenvolvimento Docente", p:13.9, d:"Recursos e tempo para pesquisar, menos carga administrativa, desenvolvimento dos professores."},
+    {n:"Alinhamento Institucional (missão e valores)", p:13.9, d:"As decisões do dia a dia seguem de fato a missão e os valores declarados."},
+    {n:"Liberdade Acadêmica", p:13.0, d:"Autonomia para ensinar, pesquisar e se posicionar sem pressões indevidas."},
+    {n:"Gestão e Transparência de Recursos", p:12.6, d:"Clareza sobre como o dinheiro e os recursos são usados."},
+    {n:"Inclusão e Responsabilidade Social", p:11.5, d:"Ações de diversidade, acesso e impacto social."}
+  ];
+
+  /* ================= UTILITÁRIOS 3D ================= */
+  function box(o){
+    var s = document.createElement('div');
+    s.className = 'slab' + (o.cls ? ' ' + o.cls : '');
+    s.style.width = o.w + 'px'; s.style.height = o.d + 'px';
+    s.style.left = (o.x || 0) + 'px'; s.style.top = (o.y || 0) + 'px';
+    s.style.setProperty('--z', (o.z || 0) + 'px');
+    s.style.setProperty('--h', o.h + 'px');
+    s.style.setProperty('--c', o.c);
+    s.innerHTML = '<i class="f-back"></i><i class="f-right"></i><i class="f-left"></i><i class="f-front">' + (o.label ? '<span class="face-label">' + o.label + '</span>' : '') + '</i><i class="f-top"></i>';
+    return s;
+  }
+  function makeStage(scene, w, d, opts){
+    opts = opts || {};
+    var st = document.createElement('div');
+    st.className = 'stage';
+    st.style.width = w + 'px'; st.style.height = d + 'px';
+    if (opts.ay) st.style.setProperty('--ay', opts.ay);
+    if (opts.rx) st.style.setProperty('--rx', opts.rx);
+    if (opts.floor !== false){ var f = document.createElement('div'); f.className = 'floor'; st.appendChild(f); }
+    scene.appendChild(st);
+    return st;
+  }
+  function ramp(base, i, n){ // camadas mais altas, mais claras
+    var pct = Math.round(100 - (i / Math.max(1, n - 1)) * 48);
+    return 'color-mix(in srgb, ' + base + ' ' + pct + '%, white)';
+  }
+
+  // rotação: arrastar + oscilação suave enquanto a tela está visível
+  var rotators = [];
+  function rotatable(scene, stage, base, amp){
+    var r = {scene:scene, stage:stage, base:base, amp:amp || 12, rz:base, auto:!reduce, visible:false, moved:false};
+    rotators.push(r);
+    stage.style.setProperty('--rz', base + 'deg');
+    var drag = null;
+    scene.addEventListener('pointerdown', function(e){ drag = {x:e.clientX, rz:r.rz}; r.moved = false; });
+    window.addEventListener('pointermove', function(e){
+      if (!drag) return;
+      var dx = e.clientX - drag.x;
+      if (Math.abs(dx) > 4){ r.moved = true; r.auto = false; }
+      if (r.moved){ r.rz = drag.rz + dx * 0.5; stage.style.setProperty('--rz', r.rz + 'deg'); }
+    });
+    window.addEventListener('pointerup', function(){ drag = null; setTimeout(function(){ r.moved = false; }, 0); });
+    new IntersectionObserver(function(es){ es.forEach(function(en){ r.visible = en.isIntersecting; }); }).observe(scene);
+    return r;
+  }
+  var t0 = performance.now();
+  function tick(now){
+    var t = (now - t0) / 1000;
+    rotators.forEach(function(r){
+      if (r.auto && r.visible){ r.rz = r.base + Math.sin(t * 0.5) * r.amp; r.stage.style.setProperty('--rz', r.rz + 'deg'); }
+    });
+    coinTick(t);
+    requestAnimationFrame(tick);
+  }
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene');
+    var st = makeStage(sc, 220, 220, {ay:'66%'});
+    st.appendChild(box({w:220, d:220, h:54, c:'var(--leg)', label:'Legitimidade'}));
+    st.appendChild(box({w:140, d:140, x:40, y:40, z:54, h:150, c:'var(--rep)', label:'Reputação'}));
+    rotatable(sc, st, -35, 20);
+  })();
+
+  /* ================= 02 · MOEDA ================= */
+  var coin = $('coin'), coinScene = $('coin-scene'), cy = 0, coinAuto = !reduce, coinDrag = null;
+  (function(){
+    for (var k = -8; k <= 8; k += 2){
+      var ring = document.createElement('div'); ring.className = 'ring';
+      ring.style.transform = 'translateZ(' + k + 'px)';
+      coin.insertBefore(ring, coin.firstChild);
+    }
+  })();
+  function setCoin(v, animate){
+    cy = v;
+    coin.classList.toggle('dragging', !animate);
+    coin.style.setProperty('--cy', cy + 'deg');
+    var m = ((cy % 360) + 360) % 360;
+    var back = m > 90 && m < 270;
+    $('pill-rep').classList.toggle('on', !back);
+    $('pill-leg').classList.toggle('on', back);
+  }
+  function coinTick(t){ if (coinAuto) setCoin(Math.sin(t * 0.9) * 22, false); }
+  coinScene.addEventListener('pointerdown', function(e){ coinDrag = {x:e.clientX, cy:cy, moved:false}; coinAuto = false; });
+  window.addEventListener('pointermove', function(e){
+    if (!coinDrag) return;
+    var dx = e.clientX - coinDrag.x;
+    if (Math.abs(dx) > 4) coinDrag.moved = true;
+    if (coinDrag.moved) setCoin(coinDrag.cy + dx * 0.7, false);
+  });
+  window.addEventListener('pointerup', function(){
+    if (!coinDrag) return;
+    if (coinDrag.moved) setCoin(Math.round(cy / 180) * 180, true);
+    else setCoin(Math.round(cy / 180) * 180 + 180, true);
+    coinDrag = null;
+  });
+
+  /* ================= 03 · ASPECTOS ================= */
+  var ASPECTS = [
+    ["Natureza", "Uma avaliação favorável, construída por comparação.", "Uma percepção de que a organização é adequada e socialmente aceita."],
+    ["Base", "Desempenho, histórico e expectativas sobre o futuro.", "Conformidade com normas, valores e regras do contexto."],
+    ["Alcance", "Públicos específicos, numa lógica competitiva.", "A sociedade de modo amplo, numa lógica institucional."],
+    ["Para que serve", "Diferenciar e gerar vantagem competitiva.", "Integrar a organização ao seu meio e garantir sua sobrevivência."],
+    ["Com quem compara", "Com os concorrentes diretos.", "Com ninguém em particular: com o que o campo considera aceitável."],
+    ["Papel do público", "Julga quem tem desempenho melhor.", "Concede, ou nega, a aceitação."]
+  ];
+  (function(){
+    var wrap = $('aspects');
+    ASPECTS.forEach(function(a, i){
+      var b = document.createElement('button');
+      b.className = 'chip' + (i === 0 ? ' on' : '');
+      b.textContent = a[0];
+      b.addEventListener('click', function(){ showAspect(i); });
+      wrap.appendChild(b);
+    });
+    function showAspect(i){
+      Array.prototype.forEach.call(wrap.children, function(c, j){ c.classList.toggle('on', i === j); });
+      [$('v-rep'), $('v-leg')].forEach(function(el, k){
+        el.classList.add('swap');
+        setTimeout(function(){ el.textContent = ASPECTS[i][k + 1]; el.classList.remove('swap'); }, 220);
+      });
+    }
+    $('v-rep').textContent = ASPECTS[0][1];
+    $('v-leg').textContent = ASPECTS[0][2];
+  })();
+
+  /* ================= 04 · FUNIL ================= */
+  (function(){
+    var sc = $('funnel-scene');
+    var st = makeStage(sc, 320, 320, {ay:'70%', rx:'64deg', floor:false});
+    st.style.setProperty('--rz', '0deg');
+    var N = [583, 190, 152, 17, 3];
+    var discs = [];
+    N.forEach(function(n, i){
+      var size = Math.max(34, Math.round(Math.sqrt(n / 583) * 300));
+      var d = document.createElement('div');
+      d.className = 'disc';
+      d.style.width = size + 'px'; d.style.height = size + 'px';
+      d.style.left = (320 - size) / 2 + 'px'; d.style.top = (320 - size) / 2 + 'px';
+      d.style.setProperty('--z', ((4 - i) * 62) + 'px');
+      d.style.setProperty('--dc', i === 4 ? 'var(--red)' : 'color-mix(in srgb, #334155 ' + (40 + i * 14) + '%, #94a3b8)');
+      d.style.transitionDelay = (i * 0.12) + 's';
+      d.innerHTML = '<div class="under"></div><div class="top" style="font-size:' + Math.max(14, Math.min(34, size / 7)) + 'px">' + n + '</div>';
+      st.appendChild(d); discs.push(d);
+    });
+    var items = document.querySelectorAll('#steps li');
+    function hl(i){
+      discs.forEach(function(d, j){ d.classList.toggle('hl', i === j); d.style.transitionDelay = '0s'; });
+      Array.prototype.forEach.call(items, function(li, j){ li.classList.toggle('hl', i === j); });
+    }
+    Array.prototype.forEach.call(items, function(li){
+      li.addEventListener('mouseenter', function(){ hl(+li.dataset.i); });
+      li.addEventListener('mouseleave', function(){ hl(-1); });
+    });
+    discs.forEach(function(d, i){
+      d.addEventListener('mouseenter', function(){ hl(i); });
+      d.addEventListener('mouseleave', function(){ hl(-1); });
+    });
+  })();
+
+  /* ================= 05 · NUVEM DE PALAVRAS EM CAMADAS ================= */
+  (function(){
+    var RW = [["empresa",41],["organização",18],["stakeholders",17],["desempenho",15],["ações",13],["passadas",12],["corporativa",12],["concorrentes",10],["avaliação",10]];
+    var LW = [["normas",33],["organização",32],["valores",27],["social",23],["percepção",23],["ações",20],["socialmente",16],["sociais",15],["apropriadas",15],["aceitação",15],["desejáveis",14],["crenças",14],["generalizada",13],["conformidade",13],["regras",11]];
+    var shared = {"organização":1, "ações":1};
+    function fill(el, list){
+      list.forEach(function(w){
+        var s = document.createElement('span');
+        s.className = 'w' + (shared[w[0]] ? ' shared' : '');
+        s.dataset.w = w[0];
+        s.style.fontSize = (0.85 + (w[1] / 41) * 1.75).toFixed(2) + 'rem';
+        s.style.setProperty('--tz', Math.round(w[1] * 0.9) + 'px');
+        s.style.setProperty('--k', Math.round(45 + (w[1] / 41) * 55) + '%');
+        s.innerHTML = w[0] + '<sup>' + w[1] + '</sup>';
+        s.title = '"' + w[0] + '" aparece ' + w[1] + ' vezes';
+        el.appendChild(s);
+      });
+    }
+    fill($('words-rep'), RW);
+    fill($('words-leg'), LW);
+    var marks = document.querySelectorAll('.def mark');
+    document.querySelectorAll('.w').forEach(function(s){
+      s.addEventListener('mouseenter', function(){
+        s.classList.add('hot');
+        Array.prototype.forEach.call(marks, function(m){ m.classList.toggle('on', m.dataset.w === s.dataset.w); });
+      });
+      s.addEventListener('mouseleave', function(){
+        s.classList.remove('hot');
+        Array.prototype.forEach.call(marks, function(m){ m.classList.remove('on'); });
+      });
+    });
+    var tg = $('shared-toggle'), wi = $('wall-inner');
+    tg.addEventListener('click', function(){
+      var on = tg.getAttribute('aria-pressed') !== 'true';
+      tg.setAttribute('aria-pressed', on);
+      wi.classList.toggle('shared-on', on);
+    });
+    if (!reduce){
+      var wall = $('wall');
+      $('palavras').addEventListener('pointermove', function(e){
+        var r = wall.getBoundingClientRect();
+        var x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+        wi.style.setProperty('--wy', (x * 12).toFixed(2) + 'deg');
+        wi.style.setProperty('--wx', (-y * 10).toFixed(2) + 'deg');
+      });
+      $('palavras').addEventListener('pointerleave', function(){ wi.style.setProperty('--wy', '0deg'); wi.style.setProperty('--wx', '0deg'); });
+    }
+  })();
+
+  /* ================= 06 · ARQUÉTIPOS ================= */
+  (function(){
+    var A = [
+      {k:"LR", t:"L → R", h:"Legitimidade vem antes", d:"A legitimidade é condição prévia: sem aceitação institucional, avaliações de reputação perdem sentido prático.", c:"Bancos, hospitais, universidades e outros setores regulados.", l:140, r:420, flag:"Predomina em setores regulados. É a hipótese que os Estudos 2 e 3 examinam nas universidades."},
+      {k:"RL", t:"R → L", h:"Reputação abre portas", d:"Uma reputação sólida funciona como sinal que facilita e acelera a conquista de legitimidade, sobretudo onde as regras ainda estão em formação.", c:"Startups, setores emergentes, internacionalização.", l:140, r:420},
+      {k:"BI", t:"R ↔ L", h:"Reforço mútuo", d:"Uma alimenta a outra, sem ordem fixa. São dimensões interdependentes da aceitação de uma organização.", c:"Cadeias de suprimento e organizações em geral.", l:140, r:420},
+      {k:"OV", t:"R ≅ L", h:"Quase a mesma coisa", d:"Os dois conceitos compartilham causas, processos e efeitos, e a diferença na prática fica tênue. Alto risco de usar um no lugar do outro.", c:"Relojoaria de luxo, comunicação corporativa.", l:248, r:312},
+      {k:"IN", t:"R ≠ L", h:"Mundos separados", d:"Os conceitos operam em dimensões distintas e não têm relação direta no modelo estudado. A separação é nítida e deliberada.", c:"Economia compartilhada, contabilidade, ensino superior.", l:90, r:470}
+    ];
+    var tabs = $('arch-tabs'), info = $('arch-info'), groups = document.querySelectorAll('.arch-svg g');
+    A.forEach(function(a, i){
+      var b = document.createElement('button');
+      b.className = 'tab' + (i === 0 ? ' on' : '');
+      b.textContent = a.t;
+      b.addEventListener('click', function(){ show(i); });
+      tabs.appendChild(b);
+    });
+    function show(i){
+      var a = A[i];
+      Array.prototype.forEach.call(tabs.children, function(c, j){ c.classList.toggle('on', i === j); });
+      Array.prototype.forEach.call(groups, function(g){ g.classList.toggle('on', g.dataset.a === a.k); });
+      $('sp-l').style.left = a.l + 'px'; $('sh-l').style.left = a.l + 'px';
+      $('sp-r').style.left = a.r + 'px'; $('sh-r').style.left = a.r + 'px';
+      info.innerHTML = '<h3>' + a.t + ' · ' + a.h + '</h3><p style="margin:0">' + a.d + '</p><div class="ctx"><b>Onde aparece:</b> ' + a.c + '</div>' + (a.flag ? '<span class="flag">' + a.flag + '</span>' : '');
+    }
+    show(0);
+  })();
+
+  /* ================= 07 · DUELO PAPRIKA ================= */
+  (function(){
+    var R = [
+      {kind:"Reputação", q:"Qual das duas tem melhor reputação?",
+        A:[["Qualidade do corpo docente","Excelente",1],["Internacionalização","Fraca",0]],
+        B:[["Qualidade do corpo docente","Mediana",0],["Internacionalização","Forte",1]],
+        wa:17.1, wb:9.4,
+        why:"Para os professores, ser excelente em corpo docente vale <b>17,1</b> pontos; ser forte em internacionalização, só <b>9,4</b>. Quase o dobro."},
+      {kind:"Reputação", q:"E agora? Qual tem melhor reputação?",
+        A:[["Reconhecimento (rankings, mídia)","Alto",1],["Sucesso dos ex-alunos","Baixo",0]],
+        B:[["Reconhecimento (rankings, mídia)","Baixo",0],["Sucesso dos ex-alunos","Alto",1]],
+        wa:14.4, wb:16.0,
+        why:"Quase empate: <b>16,0</b> contra <b>14,4</b>. O sucesso dos formados pesa um pouco mais do que aparecer em rankings e na mídia."},
+      {kind:"Legitimidade", q:"Qual das duas é mais legítima, mais aceita como correta?",
+        A:[["Integridade e ética","Alta",1],["Inclusão e responsabilidade social","Baixa",0]],
+        B:[["Integridade e ética","Baixa",0],["Inclusão e responsabilidade social","Alta",1]],
+        wa:18.3, wb:11.5,
+        why:"Integridade e ética é o critério de maior peso na legitimidade (<b>18,3</b>). Inclusão e responsabilidade social, o de menor peso (<b>11,5</b>)."}
+    ];
+    var i = 0, hits = 0;
+    var opts = $('duel-opts'), beam = $('beam'), verdict = $('verdict'), next = $('duel-next');
+    function card(label, rows){
+      var html = '<span class="oname">Instituição ' + label + '</span>';
+      rows.forEach(function(r){ html += '<div class="row"><span>' + r[0] + '</span><span class="lvl ' + (r[2] ? 'hi' : 'lo') + '">' + r[1] + '</span></div>'; });
+      return html;
+    }
+    function render(){
+      var r = R[i];
+      $('duel-step').textContent = 'Rodada ' + (i + 1) + ' de ' + R.length;
+      $('duel-kind').textContent = r.kind;
+      $('duel-kind').className = r.kind === 'Reputação' ? 'rep-t' : 'leg-t';
+      $('duel-q').textContent = r.q;
+      opts.innerHTML = '';
+      ['A', 'B'].forEach(function(k){
+        var b = document.createElement('button');
+        b.className = 'opt'; b.dataset.k = k;
+        b.innerHTML = card(k, r[k]);
+        b.addEventListener('click', function(){ pick(k); });
+        opts.appendChild(b);
+      });
+      beam.style.setProperty('--tilt', '0deg');
+      $('pan-a').textContent = 'A'; $('pan-b').textContent = 'B';
+      verdict.innerHTML = 'Escolha uma das duas instituições.';
+      next.style.display = 'none';
+    }
+    function pick(k){
+      var r = R[i];
+      var win = r.wa > r.wb ? 'A' : 'B';
+      if (k === win) hits++;
+      Array.prototype.forEach.call(opts.children, function(b){
+        b.disabled = true;
+        if (b.dataset.k === k) b.classList.add('chosen');
+        if (b.dataset.k === win) b.classList.add('winner');
+      });
+      var tilt = Math.max(-22, Math.min(22, (r.wb - r.wa) * 2.6));
+      beam.style.setProperty('--tilt', tilt + 'deg');
+      $('pan-a').textContent = fmt(r.wa); $('pan-b').textContent = fmt(r.wb);
+      verdict.innerHTML = (k === win ? '<b>Você pensou como o professor médio.</b> ' : '<b>Os professores escolheriam a instituição ' + win + '.</b> ') + r.why;
+      if (i < R.length - 1){ next.textContent = 'Próxima rodada →'; }
+      else { next.textContent = 'Recomeçar'; verdict.innerHTML += '<br><br>Você concordou com os professores em <b>' + hits + ' de ' + R.length + '</b> escolhas. Cada professor fez cerca de 14 delas.'; }
+      next.style.display = 'inline-flex';
+    }
+    next.addEventListener('click', function(){
+      if (i < R.length - 1) i++; else { i = 0; hits = 0; }
+      render();
+    });
+    render();
+  })();
+
+  /* ================= 08/09 · TORRES ================= */
+  function Tower(sceneId, data, base, o){
+    o = o || {};
+    var sc = $(sceneId), W = o.W || 180, H = o.H || 330, gap = 3;
+    var st = makeStage(sc, W, W, {ay:o.ay || '72%'});
+    var slabs = [], z = 0;
+    data.forEach(function(item, i){
+      var h = Math.max(4, item.p / 100 * H - gap);
+      var c = ramp(base, i, data.length);
+      var s = box({w:W, d:W, h:h, z:z, c:c});
+      s.dataset.i = i;
+      st.appendChild(s); slabs.push(s);
+      z += h + gap;
+    });
+    rotatable(sc, st, o.rz || -35, 12);
+    var api = {slabs:slabs, scene:sc, colors:data.map(function(_, i){ return ramp(base, i, data.length); })};
+    sc.addEventListener('click', function(e){
+      var s = e.target.closest('.slab'); if (!s) return;
+      var r = rotators.filter(function(x){ return x.scene === sc; })[0];
+      if (r && r.moved) return;
+      if (o.onPick) o.onPick(+s.dataset.i);
+    });
+    sc.addEventListener('pointerover', function(e){
+      var s = e.target.closest('.slab');
+      if (s && o.onHover && e.pointerType === 'mouse') o.onHover(+s.dataset.i);
+    });
+    return api;
+  }
+
+  function inspectTower(key, data, base){
+    var detail = $('detail-' + key), rowsEl = $('rows-' + key), min = data[data.length - 1];
+    var t = Tower('tower-' + key, data, base, {onPick:setActive, onHover:setActive});
+    data.forEach(function(item, i){
+      var b = document.createElement('button');
+      b.className = 'rowb'; b.style.setProperty('--c', t.colors[i]);
+      b.innerHTML = '<span class="rk">' + (i + 1) + 'º</span><span>' + item.n + '</span><span class="bar"><i style="width:' + (item.p / data[0].p * 100) + '%"></i></span><span class="pc">' + fmt(item.p) + '%</span>';
+      b.addEventListener('mouseenter', function(){ setActive(i); });
+      b.addEventListener('click', function(){ setActive(i); });
+      rowsEl.appendChild(b);
+    });
+    function setActive(i){
+      t.slabs.forEach(function(s, j){ s.classList.toggle('active', i === j); });
+      Array.prototype.forEach.call(rowsEl.children, function(r, j){ r.classList.toggle('on', i === j); });
+      var it = data[i], ratio = it.p / min.p;
+      detail.innerHTML = '<div class="rank">' + (i + 1) + 'º de ' + data.length + ' critérios</div><div class="dname">' + it.n + '</div><div class="dpct">' + fmt(it.p) + '%</div><p>' + it.d + '</p>' +
+        (i < data.length - 1 ? '<span class="ratio">' + ratio.toFixed(1).replace('.', ',') + '× o peso de ' + min.n.toLowerCase() + ', o último colocado</span>' : '<span class="ratio">O critério de menor peso nesta lista</span>');
+    }
+    setActive(0);
+  }
+  inspectTower('rep', REP, 'var(--rep)');
+  inspectTower('leg', LEG, 'var(--leg)');
+
+  /* ================= 10 · SIMULADOR ================= */
+  (function(){
+    var state = {rep:REP.map(function(){ return false; }), leg:LEG.map(function(){ return false; })};
+    var towers = {}, tgs = {};
+    function build(key, data, base){
+      towers[key] = Tower('sim-' + key, data, base, {W:140, H:260, ay:'74%', onPick:function(i){ state[key][i] = !state[key][i]; update(); }});
+      var wrap = $('tg-' + key); tgs[key] = [];
+      data.forEach(function(item, i){
+        var b = document.createElement('button');
+        b.className = 'tg'; b.style.setProperty('--c', base);
+        b.textContent = item.n;
+        b.setAttribute('aria-pressed', 'false');
+        b.addEventListener('click', function(){ state[key][i] = !state[key][i]; update(); });
+        wrap.appendChild(b); tgs[key].push(b);
+      });
+    }
+    build('rep', REP, 'var(--rep)');
+    build('leg', LEG, 'var(--leg)');
+
+    var PRESETS = [
+      {n:"Vitrine", rep:["Reconhecimento","Infraestrutura e recursos","Internacionalização","Estabilidade financeira"], leg:["Inclusão e Responsabilidade Social"]},
+      {n:"Alicerce", rep:[], leg:["Integridade e Ética","Alinhamento Institucional (missão e valores)","Gestão e Transparência de Recursos","Liberdade Acadêmica","Apoio à Pesquisa e Desenvolvimento Docente"]},
+      {n:"Tudo ligado", rep:REP.map(function(x){ return x.n; }), leg:LEG.map(function(x){ return x.n; })},
+      {n:"Zerar", rep:[], leg:[]}
+    ];
+    var pw = $('presets');
+    PRESETS.forEach(function(p, idx){
+      var b = document.createElement('button');
+      b.className = 'chip' + (idx === 0 ? ' on' : '');
+      b.textContent = p.n;
+      b.addEventListener('click', function(){
+        Array.prototype.forEach.call(pw.querySelectorAll('.chip'), function(c){ c.classList.toggle('on', c === b); });
+        apply(p);
+      });
+      pw.appendChild(b);
+    });
+    function apply(p){
+      state.rep = REP.map(function(x){ return p.rep.indexOf(x.n) > -1; });
+      state.leg = LEG.map(function(x){ return p.leg.indexOf(x.n) > -1; });
+      update(true);
+    }
+    function score(data, s){ return data.reduce(function(a, x, i){ return a + (s[i] ? x.p : 0); }, 0); }
+    function update(fromPreset){
+      if (!fromPreset) Array.prototype.forEach.call(pw.querySelectorAll('.chip'), function(c){ c.classList.remove('on'); });
+      ['rep', 'leg'].forEach(function(k){
+        towers[k].slabs.forEach(function(s, i){ s.classList.toggle('off', !state[k][i]); });
+        tgs[k].forEach(function(b, i){ b.setAttribute('aria-pressed', state[k][i]); });
+      });
+      var r = score(REP, state.rep), l = score(LEG, state.leg);
+      $('score-rep').innerHTML = fmt(r) + '<small>/ 100</small>';
+      $('score-leg').innerHTML = fmt(l) + '<small>/ 100</small>';
+      $('meter-rep').style.width = r + '%';
+      $('meter-leg').style.width = l + '%';
+      var m;
+      if (r >= 70 && l >= 70) m = '<b>Instituição sólida e respeitada.</b> Base legítima e diferenciação ao mesmo tempo.';
+      else if (r >= 35 && l < 40) m = '<b>Vitrine sem alicerce.</b> A instituição pode até parecer boa, mas falta o que sustenta a aceitação interna. É o risco que a tese chama de construir reputação sem legitimidade.';
+      else if (l >= 55 && r < 35) m = '<b>Base firme, pouca diferenciação.</b> A instituição é aceita como correta, mas ainda não se destaca. Agora a reputação pode ser construída sobre chão firme.';
+      else if (r < 35 && l < 40) m = '<b>Nem aceita, nem destacada.</b> Ligue algumas camadas para começar.';
+      else m = '<b>Em construção.</b> Veja quais camadas ainda faltam em cada torre.';
+      $('sim-msg').innerHTML = m;
+    }
+    apply(PRESETS[0]);
+  })();
+
+  /* ================= 11 · DESCOBERTA ================= */
+  (function(){
+    var sc = $('build-scene');
+    var st = makeStage(sc, 240, 240, {ay:'66%'});
+    var baseB = box({w:240, d:240, h:58, c:'var(--leg)', label:'Legitimidade'});
+    var topB = box({w:150, d:150, x:45, y:45, z:58, h:150, c:'var(--rep)', label:'Reputação'});
+    st.appendChild(baseB); st.appendChild(topB);
+    rotatable(sc, st, -35, 14);
+    var removed = false, btn = $('collapse-btn'), msg = $('collapse-msg');
+    btn.addEventListener('click', function(){
+      removed = !removed;
+      baseB.classList.toggle('gone', removed);
+      topB.classList.toggle('fallen', removed);
+      btn.textContent = removed ? 'Recolocar a legitimidade' : 'Retirar a legitimidade';
+      msg.textContent = removed
+        ? 'Sem legitimidade, a reputação perde significado prático: a instituição deixa de ser reconhecida como participante válida do campo.'
+        : 'Com a base no lugar, a reputação tem onde se apoiar.';
+    });
+  })();
+
+  /* ================= 12 · BARRAS 3D ================= */
+  (function(){
+    var sc = $('bars-scene');
+    var st = makeStage(sc, 470, 120, {ay:'74%'});
+    var info = $('bar-info');
+    function say(i){ info.innerHTML = '<strong>' + (i + 1) + 'º · ' + LEG[i].n + '</strong> · ' + fmt(LEG[i].p) + '%'; }
+    LEG.forEach(function(item, i){
+      var last = i === LEG.length - 1;
+      var b = box({w:40, d:40, x:i * 68, y:20, h:item.p * 12, c:last ? 'var(--leg)' : 'var(--neutral)', cls:last ? 'hl' : '', label:fmt(item.p)});
+      b.dataset.i = i;
+      st.appendChild(b);
+      var lab = document.createElement('div');
+      lab.className = 'floor-label'; lab.style.left = (i * 68) + 'px'; lab.style.top = '76px';
+      lab.textContent = (i + 1) + 'º';
+      st.appendChild(lab);
+    });
+    rotatable(sc, st, -5, 5);
+    sc.addEventListener('pointerover', function(e){ var s = e.target.closest('.slab'); if (s) say(+s.dataset.i); });
+    sc.addEventListener('click', function(e){ var s = e.target.closest('.slab'); if (s) say(+s.dataset.i); });
+    say(LEG.length - 1);
+  })();
+
+  /* ================= ESCALA RESPONSIVA ================= */
+  function fit(){
+    document.querySelectorAll('[data-fit]').forEach(function(el){
+      var wh = el.dataset.fit.split('x').map(Number), w = wh[0], h = wh[1];
+      var parent = el.parentElement, avail = parent.clientWidth;
+      var s = Math.min(1, avail / w);
+      el.style.width = w + 'px'; el.style.height = h + 'px';
+      el.style.transformOrigin = 'top left';
+      el.style.transform = 'scale(' + s + ')';
+      el.style.marginLeft = Math.max(0, (avail - w * s) / 2) + 'px';
+      parent.style.height = (h * s) + 'px';
+    });
+  }
+  fit();
+  window.addEventListener('resize', fit);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+
+  /* ================= NAVEGAÇÃO ================= */
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var dots = $('dots'), cur = 0, total = slides.length;
+  slides.forEach(function(s, i){
+    var b = document.createElement('button');
+    b.dataset.label = s.dataset.label; b.setAttribute('aria-label', s.dataset.label);
+    b.addEventListener('click', function(){ go(i); });
+    dots.appendChild(b);
+  });
+  function go(i){ i = Math.max(0, Math.min(total - 1, i)); slides[i].scrollIntoView({behavior: reduce ? 'auto' : 'smooth'}); }
+  function mark(i){
+    cur = i;
+    $('count').textContent = String(i + 1).padStart(2, '0') + ' / ' + total;
+    Array.prototype.forEach.call(dots.children, function(d, j){ d.classList.toggle('on', i === j); });
+  }
+  var midObs = new IntersectionObserver(function(es){
+    es.forEach(function(en){ if (en.isIntersecting) mark(slides.indexOf(en.target)); });
+  }, {rootMargin:'-45% 0px -45% 0px'});
+  slides.forEach(function(s){ midObs.observe(s); });
+  var inObs = new IntersectionObserver(function(es){
+    es.forEach(function(en){ if (en.isIntersecting) en.target.classList.add('in'); });
+  }, {threshold:0.18});
+  slides.forEach(function(s){ inObs.observe(s); });
+
+  $('prev').addEventListener('click', function(){ go(cur - 1); });
+  $('next').addEventListener('click', function(){ go(cur + 1); });
+  document.addEventListener('keydown', function(e){
+    var tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || tag === 'button' || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' '){ e.preventDefault(); go(cur + 1); }
+    else if (e.key === 'ArrowUp' || e.key === 'PageUp'){ e.preventDefault(); go(cur - 1); }
+    else if (e.key === 'Home'){ e.preventDefault(); go(0); }
+    else if (e.key === 'End'){ e.preventDefault(); go(total - 1); }
+  });
+  var bar = $('progress');
+  function prog(){
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', prog, {passive:true});
+  prog(); mark(0);
+
+  requestAnimationFrame(tick);
+
+  /* Link para o texto completo: usa o PDF ou o link do meta.json, se existirem */
+  if (window.fetch){
+    fetch('meta.json').then(function(r){ return r.json(); }).then(function(m){
+      var url = m.pdf || m.link;
+      if (url){ var a = $('full-text'); a.href = url; a.style.display = ''; }
+    }).catch(function(){});
+  }
+})();
+</script>
+</body>
+</html>
