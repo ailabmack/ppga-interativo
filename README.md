@@ -8,6 +8,7 @@ Site: https://ailabmack.github.io/ppga-interativo/
 
 ```
 index.html            página do projeto e índice de trabalhos
+assets/               motor compartilhado das apresentações (motor.css, motor.js)
 dados/linhas.json     linhas de pesquisa e docentes do PPGA
 teses/                uma pasta por tese de doutorado
 dissertacoes/         uma pasta por dissertação de mestrado
@@ -15,7 +16,7 @@ dissertacoes/         uma pasta por dissertação de mestrado
 
 Cada trabalho fica em sua própria pasta, nomeada `ANO-sobrenome-tema`, com:
 
-- `index.html`: a apresentação interativa (HTML, CSS e JS puros, sem build)
+- `index.html`: a apresentação interativa (HTML, CSS e JS puros, sem build), que carrega o motor de `../../assets/`
 - `meta.json`: os metadados usados no índice (título, autor, orientador, linha, ano, nível, palavras-chave, resumo)
 - `tese.pdf` ou `dissertacao.pdf` (opcional): o texto completo. Se não houver PDF, preencha `link` no `meta.json` com o endereço do repositório institucional.
 

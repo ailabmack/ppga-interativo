@@ -1,0 +1,118 @@
+/* =====================================================================
+   PPGA Interativo · motor compartilhado das apresentações (CSS)
+   Usado pelas apresentações em teses/ e dissertacoes/ via ../../assets/motor.css
+   Contém só o que é comum a todas: paleta-base, tipografia, barra superior,
+   navegação, telas, animação de entrada, botões e o motor 3D.
+   Cores de conceito (ex.: --rep/--leg, --act/--sys) e componentes ficam na página.
+   ===================================================================== */
+
+/* ---------- Paleta do AI Lab Mackenzie (sempre clara) ---------- */
+:root{
+  color-scheme: light;
+  --bg:#ffffff;
+  --bg-soft:#f8fafc;
+  --card:#ffffff;
+  --ink:#0f172a;
+  --ink-2:#334155;
+  --muted:#64748b;
+  --border:#e2e8f0;
+  --red:hsl(348 94% 47%);
+  --navy:#1f3b73;
+  --neutral:#cbd5e1;
+  --shadow:0 18px 40px -20px rgb(15 23 42 / .25);
+  --serif:'Merriweather', Georgia, 'Times New Roman', serif;
+  --sans:'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth; scroll-snap-type:y proximity;}
+body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden;}
+h1,h2,h3{font-family:var(--serif); line-height:1.25; margin:0;}
+p{margin:0 0 14px; color:var(--muted);}
+strong{color:var(--ink); font-weight:600;}
+button{font:inherit; color:inherit;}
+
+/* ---------- Barra superior, progresso, navegação ---------- */
+.topbar{
+  position:fixed; inset:0 0 auto 0; height:56px; z-index:50; display:flex; align-items:center; justify-content:space-between;
+  padding:0 20px; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+}
+.brand{display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--red); font-family:var(--serif); font-weight:700; line-height:1.05; font-size:.95rem;}
+.brand .sq{width:30px; height:30px; border-radius:6px; background:var(--red); color:#fff; display:flex; align-items:center; justify-content:center; font-size:.72rem; font-family:var(--sans); font-weight:700; letter-spacing:.02em;}
+.counter{font-size:.8rem; color:var(--muted); font-variant-numeric:tabular-nums; display:flex; align-items:center; gap:14px;}
+.counter .nav-btn{border:1px solid var(--border); background:var(--card); border-radius:8px; width:30px; height:30px; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+.counter .nav-btn:hover{border-color:var(--red); color:var(--red);}
+.progress{position:fixed; top:56px; left:0; height:3px; background:var(--red); width:0; z-index:51; transition:width .15s linear;}
+
+.dots{position:fixed; right:18px; top:50%; transform:translateY(-50%); z-index:40; display:flex; flex-direction:column; gap:10px;}
+.dots button{width:10px; height:10px; border-radius:50%; border:1.5px solid var(--muted); background:transparent; padding:0; cursor:pointer; position:relative; transition:all .2s;}
+.dots button.on{background:var(--red); border-color:var(--red); transform:scale(1.25);}
+.dots button::after{
+  content:attr(data-label); position:absolute; right:20px; top:50%; transform:translateY(-50%); white-space:nowrap;
+  font-size:.72rem; background:var(--ink); color:var(--bg); padding:3px 8px; border-radius:6px; opacity:0; pointer-events:none; transition:opacity .15s;
+}
+.dots button:hover::after{opacity:1;}
+@media (max-width:760px){ .dots{display:none;} }
+
+/* ---------- Telas ---------- */
+.slide{min-height:100vh; min-height:100svh; display:flex; align-items:center; padding:96px 28px 72px; scroll-snap-align:start; position:relative; overflow:hidden;}
+.slide:nth-of-type(even){background:var(--bg-soft);}
+.inner{max-width:1120px; width:100%; margin:0 auto;}
+.grid2{display:grid; grid-template-columns:1fr; gap:40px; align-items:center;}
+@media (min-width:920px){ .grid2{grid-template-columns:1fr 1fr; gap:64px;} .grid2.wide-right{grid-template-columns:.85fr 1.15fr;} }
+.kicker{display:flex; align-items:center; gap:10px; font-size:.74rem; letter-spacing:.12em; text-transform:uppercase; font-weight:600; color:var(--red); margin-bottom:14px;}
+.kicker .n{font-family:var(--serif); font-size:1rem; letter-spacing:0;}
+.slide h2{font-size:clamp(1.6rem, 3.4vw, 2.5rem); margin-bottom:18px; color:var(--ink);}
+.lede{font-size:1.08rem; color:var(--muted);}
+.hint{font-size:.8rem; color:var(--muted); display:flex; gap:8px; align-items:center; margin-top:10px;}
+.hint::before{content:""; width:16px; height:1px; background:var(--muted);}
+
+/* animação de entrada: .rv com --d para escalonar */
+.rv{opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1); transition-delay:var(--d,0s);}
+.slide.in .rv{opacity:1; transform:none;}
+
+/* ---------- Capa, botões ---------- */
+#capa{background:linear-gradient(90deg, var(--bg) 55%, color-mix(in srgb, var(--red) 38%, var(--bg)) 100%);}
+@media (max-width:919px){ #capa{background:linear-gradient(180deg, var(--bg) 55%, color-mix(in srgb, var(--red) 30%, var(--bg)) 100%);} }
+#capa h1{color:var(--red); font-weight:900; margin-bottom:22px;}
+#capa .sub{font-size:clamp(1.05rem, 1.6vw, 1.25rem); color:var(--muted); max-width:34em;}
+.btn{display:inline-flex; align-items:center; gap:8px; padding:12px 20px; border-radius:8px; border:1px solid var(--red); background:var(--red); color:#fff; font-weight:500; font-size:.92rem; cursor:pointer; text-decoration:none; transition:transform .15s, box-shadow .15s;}
+.btn:hover{transform:translateY(-1px); box-shadow:var(--shadow);}
+.btn.ghost{background:transparent; color:var(--ink); border-color:var(--ink);}
+.btn.small{padding:8px 14px; font-size:.84rem;}
+.ctas{display:flex; gap:12px; flex-wrap:wrap; margin-top:30px;}
+.scroll-cue{position:absolute; bottom:26px; left:50%; transform:translateX(-50%); font-size:.75rem; color:var(--muted); display:flex; flex-direction:column; align-items:center; gap:6px; letter-spacing:.1em; text-transform:uppercase;}
+.scroll-cue span{width:1px; height:34px; background:linear-gradient(var(--muted), transparent); animation:cue 1.8s infinite;}
+@keyframes cue{0%{transform:scaleY(0); transform-origin:top;} 50%{transform:scaleY(1); transform-origin:top;} 51%{transform-origin:bottom;} 100%{transform:scaleY(0); transform-origin:bottom;}}
+
+/* ---------- Motor 3D (caixas em CSS) ----------
+   Não use `filter` em elementos 3D (achata o preserve-3d).
+   A face frontal fica de pé com transform-origin: bottom + rotateX(-90deg). */
+.fit-wrap{width:100%; position:relative;}
+.fit-wrap > [data-fit]{position:absolute; left:0; top:0;}
+.grid2 > *{min-width:0;}
+.scene{position:relative; perspective:1400px; touch-action:pan-y; user-select:none; -webkit-user-select:none;}
+.scene.draggable{cursor:grab;}
+.scene.draggable:active{cursor:grabbing;}
+.stage{position:absolute; left:50%; top:var(--ay,70%); transform-style:preserve-3d; transform:translate(-50%,-50%) rotateX(var(--rx,60deg)) rotateZ(var(--rz,-35deg));}
+.floor{position:absolute; inset:-40%; border-radius:50%; background:radial-gradient(closest-side, rgb(15 23 42 / .16), transparent 75%); transform:translateZ(-1px); pointer-events:none;}
+/* --ox/--oy deslocam no plano; --oz ergue (ex.: bloco ativo) */
+.slab{position:absolute; transform-style:preserve-3d; transform:translate3d(var(--ox,0px), var(--oy,0px), calc(var(--z,0px) + var(--oz,0px))); transition:transform .55s cubic-bezier(.2,.8,.2,1), opacity .5s;}
+.slab > i{position:absolute; display:block; background:var(--face); transition:background .35s, box-shadow .35s;}
+.slab .f-top{inset:0; transform:translateZ(var(--h)); --face:color-mix(in srgb, var(--c) 72%, white);}
+.slab .f-front{left:0; top:calc(100% - var(--h)); width:100%; height:var(--h); transform-origin:bottom; transform:rotateX(-90deg); --face:var(--c);}
+.slab .f-back{left:0; bottom:100%; width:100%; height:var(--h); transform-origin:bottom; transform:rotateX(-90deg); --face:color-mix(in srgb, var(--c) 78%, black);}
+.slab .f-left{top:0; right:100%; width:var(--h); height:100%; transform-origin:right; transform:rotateY(90deg); --face:color-mix(in srgb, var(--c) 82%, black);}
+.slab .f-right{top:0; left:100%; width:var(--h); height:100%; transform-origin:left; transform:rotateY(-90deg); --face:color-mix(in srgb, var(--c) 68%, black);}
+.slab.active .f-top{--face:color-mix(in srgb, var(--c) 45%, white); box-shadow:inset 0 0 0 2px #fff;}
+.slab.off > i{--face:color-mix(in srgb, var(--c) 7%, transparent); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--c) 55%, transparent);}
+.slab .f-front .face-label{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:13px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;}
+.slab .f-top .top-label{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:15px;}
+.floor-label{position:absolute; text-align:center; pointer-events:none; font-weight:700; color:var(--ink-2); line-height:1.15;}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  .rv{transition:none; opacity:1; transform:none;}
+  *{animation:none !important;}
+}
