@@ -74,6 +74,7 @@
       if (r.moved){ r.rz = drag.rz + dx * 0.5; stage.style.setProperty('--rz', r.rz + 'deg'); }
     });
     window.addEventListener('pointerup', function(){ drag = null; setTimeout(function(){ r.moved = false; }, 0); });
+    window.addEventListener('pointercancel', function(){ drag = null; r.moved = false; });
     new IntersectionObserver(function(es){ es.forEach(function(en){ r.visible = en.isIntersecting; }); }).observe(scene);
     return r;
   }
@@ -81,6 +82,19 @@
   function wasDrag(scene){
     var r = rotators.filter(function(x){ return x.scene === scene; })[0];
     return !!(r && r.moved);
+  }
+
+  /* hover(el, entrar, sair): realce ao passar o mouse/trackpad; no toque, tocar chama entrar.
+     Não use mouseenter: no iPad, mouseenter que muda a tela faz o Safari engolir o toque
+     (o clique do botão não acontece). */
+  function hover(el, enter, leave){
+    var touch = false;
+    el.addEventListener('pointerdown', function(e){ touch = e.pointerType !== 'mouse'; });
+    if (enter){
+      el.addEventListener('pointerenter', function(e){ if (e.pointerType === 'mouse') enter(e); });
+      el.addEventListener('click', function(e){ if (touch) enter(e); });
+    }
+    if (leave) el.addEventListener('pointerleave', function(e){ if (e.pointerType === 'mouse') leave(e); });
   }
 
   /* onTick(fn): fn(t) a cada quadro, com t em segundos (ex.: moeda que oscila). */
@@ -121,7 +135,12 @@
       b.addEventListener('click', function(){ go(i); });
       dots.appendChild(b);
     });
-    function go(i){ i = Math.max(0, Math.min(total - 1, i)); slides[i].scrollIntoView({behavior: reduce ? 'auto' : 'smooth'}); }
+    /* scrollTo com a posição calculada: no Safari do iPad, scrollIntoView com snap às vezes não sai do lugar. */
+    function go(i){
+      i = Math.max(0, Math.min(total - 1, i));
+      var top = slides[i].getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({top: top, behavior: reduce ? 'auto' : 'smooth'});
+    }
     function mark(i){
       cur = i;
       $('count').textContent = String(i + 1).padStart(2, '0') + ' / ' + total;
@@ -177,6 +196,6 @@
   window.Motor = {
     reduce:reduce, $:$, each:each, fmt:fmt,
     box:box, makeStage:makeStage, ramp:ramp, flatLabel:flatLabel,
-    rotatable:rotatable, wasDrag:wasDrag, onTick:onTick, fit:fit, init:init
+    rotatable:rotatable, wasDrag:wasDrag, hover:hover, onTick:onTick, fit:fit, init:init
   };
 })();

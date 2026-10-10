@@ -32,6 +32,7 @@ Cada trabalho fica em sua própria pasta, nomeada `ANO-sobrenome-tema`, com:
 | `ano` | `2025` |
 | `palavras_chave` | lista de termos |
 | `resumo` | um parágrafo em linguagem simples |
+| `ods` | até 3 ODS da ONU, do mais próximo ao menos: `[{"n": 9, "meta": "9.5", "motivo": "..."}]` (aparecem no card e na capa) |
 | `pdf` | caminho relativo do PDF, ex. `tese.pdf`, ou `null` |
 | `link` | URL externa do texto completo, ou `null` |
 

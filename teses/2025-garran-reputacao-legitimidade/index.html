@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
 <style>
   /* Motor compartilhado em ../../assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
   :root{
@@ -267,6 +268,13 @@
     </div>
     <div class="rv" style="--d:.3s">
       <div class="fit-wrap"><div class="scene" id="hero-scene" data-fit="460x460"></div></div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-4"><a href="https://brasil.un.org/pt-br/sdgs/4" target="_blank" rel="noopener" title="ODS 4 · Educação de qualidade: Investiga o que faz uma instituição de ensino superior ser reconhecida pela qualidade."><b>4</b>Educação de qualidade</a></li>
+          <li class="ods-16"><a href="https://brasil.un.org/pt-br/sdgs/16" target="_blank" rel="noopener" title="ODS 16 · Paz, justiça e instituições eficazes: Mostra que integridade, ética e transparência são a base da legitimidade de uma instituição."><b>16</b>Paz, justiça e instituições eficazes</a></li>
+        </ul>
+      </div>
     </div>
   </div>
   <div class="scroll-cue">role<span></span></div>
@@ -649,6 +657,8 @@
     else setCoin(Math.round(cy / 180) * 180 + 180, true);
     coinDrag = null;
   });
+  /* no toque, rolar a página cancela o gesto (pointercancel) sem pointerup */
+  window.addEventListener('pointercancel', function(){ coinDrag = null; });
 
   /* ================= 03 · ASPECTOS ================= */
   var ASPECTS = [
@@ -704,12 +714,12 @@
       Array.prototype.forEach.call(items, function(li, j){ li.classList.toggle('hl', i === j); });
     }
     Array.prototype.forEach.call(items, function(li){
-      li.addEventListener('mouseenter', function(){ hl(+li.dataset.i); });
-      li.addEventListener('mouseleave', function(){ hl(-1); });
+      M.hover(li, function(){ hl(+li.dataset.i); });
+      M.hover(li, null, function(){ hl(-1); });
     });
     discs.forEach(function(d, i){
-      d.addEventListener('mouseenter', function(){ hl(i); });
-      d.addEventListener('mouseleave', function(){ hl(-1); });
+      M.hover(d, function(){ hl(i); });
+      M.hover(d, null, function(){ hl(-1); });
     });
   })();
 
@@ -734,15 +744,13 @@
     fill($('words-rep'), RW);
     fill($('words-leg'), LW);
     var marks = document.querySelectorAll('.def mark');
-    document.querySelectorAll('.w').forEach(function(s){
-      s.addEventListener('mouseenter', function(){
-        s.classList.add('hot');
-        Array.prototype.forEach.call(marks, function(m){ m.classList.toggle('on', m.dataset.w === s.dataset.w); });
-      });
-      s.addEventListener('mouseleave', function(){
-        s.classList.remove('hot');
-        Array.prototype.forEach.call(marks, function(m){ m.classList.remove('on'); });
-      });
+    var words = document.querySelectorAll('.w');
+    function hot(s){
+      Array.prototype.forEach.call(words, function(w){ w.classList.toggle('hot', w === s); });
+      Array.prototype.forEach.call(marks, function(m){ m.classList.toggle('on', !!s && m.dataset.w === s.dataset.w); });
+    }
+    Array.prototype.forEach.call(words, function(s){
+      M.hover(s, function(){ hot(s); }, function(){ hot(null); });
     });
     var tg = $('shared-toggle'), wi = $('wall-inner');
     tg.addEventListener('click', function(){
@@ -894,7 +902,7 @@
       var b = document.createElement('button');
       b.className = 'rowb'; b.style.setProperty('--c', t.colors[i]);
       b.innerHTML = '<span class="rk">' + (i + 1) + 'º</span><span>' + item.n + '</span><span class="bar"><i style="width:' + (item.p / data[0].p * 100) + '%"></i></span><span class="pc">' + fmt(item.p) + '%</span>';
-      b.addEventListener('mouseenter', function(){ setActive(i); });
+      M.hover(b, function(){ setActive(i); });
       b.addEventListener('click', function(){ setActive(i); });
       rowsEl.appendChild(b);
     });
@@ -1011,7 +1019,7 @@
       st.appendChild(lab);
     });
     rotatable(sc, st, -5, 5);
-    sc.addEventListener('pointerover', function(e){ var s = e.target.closest('.slab'); if (s) say(+s.dataset.i); });
+    sc.addEventListener('pointerover', function(e){ if (e.pointerType !== 'mouse') return; var s = e.target.closest('.slab'); if (s) say(+s.dataset.i); });
     sc.addEventListener('click', function(e){ var s = e.target.closest('.slab'); if (s) say(+s.dataset.i); });
     say(LEG.length - 1);
   })();

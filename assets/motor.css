@@ -26,11 +26,14 @@
 
 *{box-sizing:border-box;}
 html{scroll-behavior:smooth; scroll-snap-type:y proximity;}
+/* Na tela de toque o snap fica desligado: o Safari do iPad "re-encaixa" a página quando
+   um clique muda a altura do conteúdo e leva o leitor para outra tela. */
+@media (pointer:coarse){ html{scroll-snap-type:none;} }
 body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden;}
 h1,h2,h3{font-family:var(--serif); line-height:1.25; margin:0;}
 p{margin:0 0 14px; color:var(--muted);}
 strong{color:var(--ink); font-weight:600;}
-button{font:inherit; color:inherit;}
+button{font:inherit; color:inherit; touch-action:manipulation;}
 
 /* ---------- Barra superior, progresso, navegação ---------- */
 .topbar{
@@ -45,14 +48,16 @@ button{font:inherit; color:inherit;}
 .counter .nav-btn:hover{border-color:var(--red); color:var(--red);}
 .progress{position:fixed; top:56px; left:0; height:3px; background:var(--red); width:0; z-index:51; transition:width .15s linear;}
 
-.dots{position:fixed; right:18px; top:50%; transform:translateY(-50%); z-index:40; display:flex; flex-direction:column; gap:10px;}
-.dots button{width:10px; height:10px; border-radius:50%; border:1.5px solid var(--muted); background:transparent; padding:0; cursor:pointer; position:relative; transition:all .2s;}
-.dots button.on{background:var(--red); border-color:var(--red); transform:scale(1.25);}
+.dots{position:fixed; right:9px; top:50%; transform:translateY(-50%); z-index:40; display:flex; flex-direction:column;}
+/* área de toque de 28px; o ponto visível (10px) é o ::before */
+.dots button{width:28px; height:20px; border:0; background:transparent; padding:0; cursor:pointer; position:relative; -webkit-tap-highlight-color:transparent; touch-action:manipulation;}
+.dots button::before{content:""; position:absolute; left:9px; top:5px; width:10px; height:10px; border-radius:50%; border:1.5px solid var(--muted); box-sizing:border-box; transition:all .2s;}
+.dots button.on::before{background:var(--red); border-color:var(--red); transform:scale(1.25);}
 .dots button::after{
-  content:attr(data-label); position:absolute; right:20px; top:50%; transform:translateY(-50%); white-space:nowrap;
+  content:attr(data-label); position:absolute; right:30px; top:50%; transform:translateY(-50%); white-space:nowrap;
   font-size:.72rem; background:var(--ink); color:var(--bg); padding:3px 8px; border-radius:6px; opacity:0; pointer-events:none; transition:opacity .15s;
 }
-.dots button:hover::after{opacity:1;}
+@media (hover:hover){ .dots button:hover::after{opacity:1;} }
 @media (max-width:760px){ .dots{display:none;} }
 
 /* ---------- Telas ---------- */

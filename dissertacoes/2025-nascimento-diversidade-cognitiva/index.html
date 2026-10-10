@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
 <style>
   /* Motor compartilhado em ../../assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
   :root{
@@ -251,6 +252,13 @@
     <div class="rv" style="--d:.3s">
       <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="460x420"></div></div>
       <div class="cap-legend" id="cap-legend"></div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Diversidade de formas de pensar se associa a equipes mais criativas e a decisões estratégicas um pouco melhores."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+          <li class="ods-10"><a href="https://brasil.un.org/pt-br/sdgs/10" target="_blank" rel="noopener" title="ODS 10 · Redução das desigualdades: Valorizar diferentes formas de pensar é tratado como questão de inclusão nas organizações."><b>10</b>Redução das desigualdades</a></li>
+        </ul>
+      </div>
     </div>
   </div>
   <div class="scroll-cue">role<span></span></div>
@@ -702,11 +710,12 @@
       each(list.querySelectorAll('li[data-i]'), function(li){ li.classList.toggle('hl', +li.dataset.i === i); });
     }
     each(list.querySelectorAll('li[data-i]'), function(li){
-      li.addEventListener('mouseenter', function(){ hl(+li.dataset.i); });
-      li.addEventListener('mouseleave', function(){ hl(-1); });
+      M.hover(li, function(){ hl(+li.dataset.i); });
+      M.hover(li, null, function(){ hl(-1); });
     });
-    sc.addEventListener('pointerover', function(e){ var s = e.target.closest('.slab'); hl(s ? +s.dataset.i : -1); });
-    sc.addEventListener('pointerleave', function(){ hl(-1); });
+    sc.addEventListener('pointerover', function(e){ if (e.pointerType !== 'mouse') return; var s = e.target.closest('.slab'); hl(s ? +s.dataset.i : -1); });
+    M.hover(sc, null, function(){ hl(-1); });
+    sc.addEventListener('click', function(e){ var s = e.target.closest('.slab'); if (s && !M.wasDrag(sc)) hl(+s.dataset.i); });
     var btn = $('ice-btn');
     btn.addEventListener('click', function(){
       var on = btn.getAttribute('aria-pressed') !== 'true';
@@ -757,12 +766,12 @@
       each(items, function(li, j){ li.classList.toggle('hl', i === j); });
     }
     each(items, function(li){
-      li.addEventListener('mouseenter', function(){ hl(+li.dataset.i); });
-      li.addEventListener('mouseleave', function(){ hl(-1); });
+      M.hover(li, function(){ hl(+li.dataset.i); });
+      M.hover(li, null, function(){ hl(-1); });
     });
     discs.forEach(function(d, i){
-      d.addEventListener('mouseenter', function(){ hl(i); });
-      d.addEventListener('mouseleave', function(){ hl(-1); });
+      M.hover(d, function(){ hl(i); });
+      M.hover(d, null, function(){ hl(-1); });
     });
   })();
 
@@ -896,7 +905,7 @@
       flatLabel(st, p.h + '\n' + b3(p.beta), i * step - 4, 82, 66, 'font-size:13px; white-space:pre-line;');
     });
     rotatable(sc, st, -5, 4);
-    sc.addEventListener('pointerover', function(e){ var s = e.target.closest('.slab'); if (s) say(sorted[+s.dataset.i]); });
+    sc.addEventListener('pointerover', function(e){ if (e.pointerType !== 'mouse') return; var s = e.target.closest('.slab'); if (s) say(sorted[+s.dataset.i]); });
     sc.addEventListener('click', function(e){ var s = e.target.closest('.slab'); if (s) say(sorted[+s.dataset.i]); });
 
     var chips = $('rank-chips');
@@ -1015,7 +1024,7 @@
       flatLabel(st, n.l.join(' ') + '\n' + fmt(g.v) + '%', x - 20, 108, 120, 'font-size:12px; white-space:pre-line;');
     });
     rotatable(sc, st, -8, 5);
-    sc.addEventListener('pointerover', function(e){ var s = e.target.closest('.slab'); if (s) say(+s.dataset.i); });
+    sc.addEventListener('pointerover', function(e){ if (e.pointerType !== 'mouse') return; var s = e.target.closest('.slab'); if (s) say(+s.dataset.i); });
     sc.addEventListener('click', function(e){ var s = e.target.closest('.slab'); if (s) say(+s.dataset.i); });
     say(2);
   })();
