@@ -181,9 +181,11 @@
   function fullText(){
     var a = $('full-text');
     if (!a || !window.fetch) return;
-    fetch(document.body.dataset.meta || 'meta.json').then(function(r){ return r.json(); }).then(function(m){
+    var metaUrl = document.body.dataset.meta || 'meta.json';
+    fetch(metaUrl).then(function(r){ return r.json(); }).then(function(m){
       var url = m.pdf || m.link;
-      if (url){ a.href = url; a.style.display = ''; }
+      /* pdf é relativo à pasta do meta.json (na versão em inglês, a pasta original) */
+      if (url){ a.href = new URL(url, new URL(metaUrl, location.href)).href; a.style.display = ''; }
     }).catch(function(){});
   }
 
