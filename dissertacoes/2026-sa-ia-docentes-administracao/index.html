@@ -1,0 +1,1128 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O professor e seu estagiário digital · PPGA Interativo</title>
+<meta name="description" content="A dissertação de mestrado de Adriana Fontes Sá (PPGA Mackenzie, 2026) sobre como professores de Administração usam a inteligência artificial generativa, explicada em 14 telas interativas.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2214%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>IA</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<style>
+  /* Motor compartilhado em ../../assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  :root{
+    --uso:var(--navy);   /* orquestração: a IA como assistente */
+    --efi:#40609e;       /* eficiência: ganhar tempo (mesma família do azul) */
+    --risco:var(--red);  /* vulnerabilidade: erros e dependência */
+    --med:#0f172a;       /* ressignificação: o professor mediador */
+    --papel:#7f95c4;     /* papel do professor (matriz) */
+    --volta:#64748b;     /* caminho sem volta (matriz) */
+    --outro:#cbd5e1;     /* outros usos e motivos */
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .floor-label{font-size:12px;}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .quote{font-family:var(--serif); font-size:1.02rem; color:var(--ink); line-height:1.5; margin:4px 0 8px;}
+  .who{font-size:.78rem; color:var(--muted); font-weight:600;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4.2vw, 3rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{display:flex; gap:8px 16px; justify-content:center; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:6px;}
+  .model-scene .face-label{font-size:10px; letter-spacing:.06em;}
+
+  /* ---------- Componentes comuns ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 18px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip.on, .chip[aria-pressed="true"]{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px 22px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.12rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.93rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .stats{display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; margin-top:20px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.55rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.8rem; color:var(--muted);}
+  .callout{margin-top:22px; padding:18px 20px; border-left:4px solid var(--red); background:var(--card); border-radius:0 12px 12px 0; box-shadow:var(--shadow);}
+  .callout p{margin:0; color:var(--ink); font-family:var(--serif); font-size:1.03rem; line-height:1.5;}
+  .toggle{display:inline-flex; align-items:center; gap:10px; cursor:pointer; font-size:.86rem; color:var(--ink-2); border:1px solid var(--border); background:var(--card); padding:7px 14px; border-radius:999px;}
+  .toggle .sw{width:30px; height:17px; border-radius:999px; background:var(--neutral); position:relative; transition:background .2s;}
+  .toggle .sw::after{content:""; position:absolute; width:13px; height:13px; border-radius:50%; background:#fff; top:2px; left:2px; transition:left .2s;}
+  .toggle[aria-pressed="true"] .sw{background:var(--red);}
+  .toggle[aria-pressed="true"] .sw::after{left:15px;}
+  .flag{display:inline-block; font-size:.74rem; font-weight:600; color:var(--red); background:color-mix(in srgb, var(--red) 10%, transparent); padding:3px 9px; border-radius:6px;}
+
+  /* ---------- 02 · Estagiário ---------- */
+  .tasks{display:grid; gap:12px;}
+  .task{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px;}
+  .task .tq{font-weight:600; color:var(--ink); font-size:.95rem; margin-bottom:8px;}
+  .task .opts{display:flex; flex-wrap:wrap; gap:6px;}
+  .task .opts button{border:1px solid var(--border); background:var(--bg-soft); border-radius:999px; padding:5px 12px; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .task .opts button:hover{border-color:var(--ink);}
+  .task .opts button.on{background:var(--uso); color:#fff; border-color:var(--uso);}
+  .task.done{border-color:color-mix(in srgb, var(--uso) 35%, white);}
+  #intern-panel{min-height:230px;}
+
+  /* ---------- 03 · Contexto ---------- */
+  .hbars{display:grid; gap:7px; margin-top:4px;}
+  .hbar{display:grid; grid-template-columns:minmax(110px, 40%) 1fr; gap:10px; align-items:center; font-size:.84rem; color:var(--ink-2);}
+  .hbar .trk{position:relative; height:22px; background:var(--bg-soft); border-radius:5px;}
+  .hbar .fill{position:absolute; left:0; top:0; bottom:0; background:var(--efi); border-radius:5px; transition:width .6s cubic-bezier(.2,.8,.2,1);}
+  .hbar .val{position:absolute; top:50%; transform:translateY(-50%); font-size:.76rem; font-weight:600; color:var(--ink); white-space:nowrap; transition:left .6s cubic-bezier(.2,.8,.2,1);}
+  .hbar.top .fill{background:var(--red);}
+
+  /* ---------- 04 · Funil ---------- */
+  .disc{position:absolute; border-radius:50%; transform-style:preserve-3d; transform:translateZ(var(--z)); transition:transform .5s cubic-bezier(.2,.8,.2,1), opacity .6s;}
+  .disc .top, .disc .under{position:absolute; inset:0; border-radius:50%;}
+  .disc .top{background:radial-gradient(circle at 40% 35%, color-mix(in srgb, var(--dc) 55%, white), var(--dc)); transform:translateZ(8px); box-shadow:inset 0 0 0 1px rgb(255 255 255 / .35); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-weight:900; color:#fff; text-shadow:0 1px 2px rgb(0 0 0 / .25);}
+  .disc .under{background:color-mix(in srgb, var(--dc) 70%, black);}
+  .disc.hl{transform:translateZ(calc(var(--z) + 18px));}
+  .slide:not(.in) .disc{opacity:0; transform:translateZ(calc(var(--z) + 120px));}
+  .steps{list-style:none; margin:0; padding:0; display:grid; gap:4px;}
+  .steps li{display:grid; grid-template-columns:70px 1fr; gap:14px; align-items:baseline; padding:10px 14px; border-radius:10px; cursor:default; transition:background .2s;}
+  .steps li:hover, .steps li.hl{background:var(--card); box-shadow:var(--shadow);}
+  .steps .num{font-family:var(--serif); font-weight:900; font-size:1.45rem; color:var(--ink); text-align:right; font-variant-numeric:tabular-nums;}
+  .steps li:last-child .num{color:var(--red);}
+  .steps p{margin:0; font-size:.92rem;}
+
+  /* ---------- 05 · Professores ---------- */
+  .people{width:100%; display:block; overflow:visible;}
+  .person{cursor:pointer;}
+  .person .halo{fill:none; stroke:none;}
+  .person .body{fill:var(--neutral); transition:fill .25s, opacity .25s;}
+  .person text{font-size:11px; font-weight:700; fill:var(--ink-2); text-anchor:middle; pointer-events:none;}
+  .person:hover .body{fill:#94a3b8;}
+  .person.hl .body{fill:var(--uso);}
+  .person.sel .body{fill:var(--red);}
+  .person.out{cursor:default;}
+  .person.out .body{fill:none; stroke:#94a3b8; stroke-width:1.5; stroke-dasharray:3 3;}
+  .person.out text{fill:#94a3b8;}
+  .people .dim .body{opacity:.35;}
+  #prof-panel{min-height:150px;}
+  .kv{display:grid; grid-template-columns:repeat(4, auto); gap:4px 18px; font-size:.84rem; color:var(--ink-2); margin:6px 0 10px;}
+  .kv b{display:block; font-family:var(--serif); font-size:1.15rem; color:var(--ink);}
+  @media (max-width:520px){ .kv{grid-template-columns:repeat(2, auto);} }
+
+  /* ---------- 06 · Análise em camadas ---------- */
+  #layer-scene .face-label{font-size:10px; letter-spacing:.04em; text-transform:none;}
+  #layer-scene .slab.off > i{--face:color-mix(in srgb, var(--c) 12%, transparent);}
+  .layer-tabs .chip{display:inline-flex; gap:8px; align-items:center;}
+  .layer-tabs .chip b{font-family:var(--serif);}
+  #layer-panel{min-height:236px;}
+  #layer-panel ul{margin:4px 0 0; padding-left:18px; font-size:.88rem; color:var(--ink-2); display:grid; gap:4px;}
+
+  /* ---------- 07 · Matriz de palavras-chave ---------- */
+  .mx{display:grid; grid-template-columns:44px repeat(6, minmax(0, 1fr)); gap:4px; font-size:.74rem;}
+  .mx .h{font-weight:700; color:var(--ink-2); text-align:center; line-height:1.15; padding:0 2px 6px; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; gap:3px;}
+  .mx .h i{width:100%; height:5px; border-radius:3px;}
+  .mx .h .sh{display:none;}
+  .mx .h small{font-family:var(--serif); font-size:.95rem; color:var(--ink);}
+  .mx .r{font-weight:700; color:var(--muted); display:flex; align-items:center; font-size:.76rem;}
+  .mx button.c{height:28px; border-radius:6px; border:1px solid var(--border); background:var(--bg); cursor:pointer; padding:0; transition:all .2s; display:flex; align-items:center; justify-content:center; gap:3px;}
+  .mx button.c span{width:8px; height:8px; border-radius:50%; background:var(--k);}
+  .mx button.c.has{background:color-mix(in srgb, var(--k) 22%, white); border-color:color-mix(in srgb, var(--k) 45%, white);}
+  .mx button.c:not(.has){cursor:default;}
+  .mx button.c.has:hover{border-color:var(--ink);}
+  .mx button.c.sel{outline:2px solid var(--ink); outline-offset:1px;}
+  .mx.focus button.c:not(.f){opacity:.22;}
+  #mx-panel{min-height:190px;}
+  @media (max-width:520px){ .mx{grid-template-columns:34px repeat(6, minmax(0, 1fr)); gap:3px; font-size:.64rem;} .mx .h small{font-size:.82rem;} .mx .h .ln{display:none;} .mx .h .sh{display:block;} }
+
+  /* ---------- 08 · Tempo ---------- */
+  .tl{display:grid; gap:14px;}
+  .tl-row .lb{display:flex; justify-content:space-between; font-size:.84rem; color:var(--ink-2); font-weight:600; margin-bottom:6px;}
+  .tl-row .lb b{font-family:var(--serif); color:var(--ink);}
+  .days{display:grid; grid-template-columns:repeat(3, 1fr); gap:6px;}
+  .day{position:relative; height:40px; border-radius:6px; background:var(--bg-soft); border:1px solid var(--border); overflow:hidden; font-size:.7rem; color:var(--muted);}
+  .day span{position:absolute; left:6px; bottom:3px;}
+  .day .f{position:absolute; left:0; top:0; bottom:0; width:0; background:var(--efi); transition:width .9s cubic-bezier(.2,.8,.2,1);}
+  .day.half .f{background:repeating-linear-gradient(135deg, var(--efi) 0 6px, color-mix(in srgb, var(--efi) 55%, white) 6px 12px);}
+  .day .f.ia{background:var(--red);}
+  .uses{display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; margin-top:6px;}
+  @media (min-width:1000px){ .uses{grid-template-columns:repeat(3, 1fr);} }
+  .use{text-align:left; border:1px solid var(--border); background:var(--card); border-radius:12px; padding:12px 14px; cursor:pointer; transition:all .2s; font-size:.84rem; color:var(--ink-2);}
+  .use b{display:block; color:var(--ink); font-size:.9rem; margin-bottom:2px;}
+  .use:hover{border-color:var(--ink);}
+  .use.on{border-color:var(--efi); box-shadow:var(--shadow); background:color-mix(in srgb, var(--efi) 7%, white);}
+  #use-panel{min-height:150px; margin-top:14px;}
+
+  /* ---------- 09 · Confiança ---------- */
+  .pieces{display:grid; grid-template-columns:1fr; gap:14px; margin-top:8px;}
+  @media (min-width:640px){ .pieces{grid-template-columns:repeat(2, 1fr);} }
+  @media (min-width:1000px){ .pieces{grid-template-columns:repeat(3, 1fr);} }
+  .flip{perspective:1200px; min-height:200px; cursor:pointer; background:none; border:0; padding:0; text-align:left; width:100%;}
+  .flip-in{position:relative; transform-style:preserve-3d; transition:transform .8s cubic-bezier(.2,.8,.2,1); min-height:200px;}
+  .flip.turned .flip-in{transform:rotateY(180deg);}
+  .flip-face{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:14px; padding:18px 18px 16px; display:flex; flex-direction:column; background:var(--card); border:1px solid var(--border); box-shadow:var(--shadow); border-top:6px solid var(--pc);}
+  .flip-face h3{font-size:1.2rem; margin:4px 0 8px; color:var(--ink);}
+  .flip-face p{font-size:.86rem; margin:0; color:var(--ink-2); line-height:1.5;}
+  .flip-face .sig{font-size:.7rem; letter-spacing:.12em; font-weight:700; color:var(--pc); text-transform:uppercase;}
+  .flip-face .more{margin-top:auto; padding-top:10px; font-size:.74rem; color:var(--muted);}
+  .flip-face.back{transform:rotateY(180deg); background:color-mix(in srgb, var(--pc) 6%, white);}
+  .flip-face.back .quote{font-size:.95rem;}
+
+  /* ---------- 10 · Mediador ---------- */
+  #tri{width:100%; max-width:460px; display:block; margin:0 auto; overflow:visible;}
+  #tri .nd circle{stroke:#fff; stroke-width:3;}
+  #tri .nd text{fill:#fff; font-size:13px; font-weight:700; text-anchor:middle; pointer-events:none;}
+  #tri .lk{stroke-width:3; fill:none; transition:opacity .6s, stroke-dashoffset 1s;}
+  #tri .lab{font-size:12px; font-weight:600; fill:var(--ink-2); text-anchor:middle; transition:opacity .6s;}
+  #tri .now{opacity:0;}
+  #tri.on .now{opacity:1;}
+  #tri.on .before{opacity:0;}
+  #tri .ia-node{transition:opacity .6s, transform .6s; opacity:0; transform:translateY(-14px);}
+  #tri.on .ia-node{opacity:1; transform:none;}
+  #role-panel{min-height:150px;}
+
+  /* ---------- 12 · Sem IA + reflexão ---------- */
+  #noai{width:100%; display:block; overflow:visible;}
+  #noai .person .body{fill:var(--uso);}
+  #noai .person .halo{fill:none; stroke:var(--red); stroke-width:2; opacity:0; transition:opacity .5s;}
+  #noai.off .person .body{fill:#94a3b8;}
+  #noai.off .person.diff .body{fill:var(--red);}
+  #noai.off .person.diff .halo{opacity:1;}
+  #noai .spark{fill:var(--efi); transition:opacity .5s;}
+  #noai.off .spark{opacity:0;}
+  .ruler{position:relative; margin:18px 0 6px;}
+  .ruler .bar{height:14px; border-radius:999px; background:linear-gradient(90deg, color-mix(in srgb, var(--efi) 30%, white), var(--med));}
+  .ruler .mk{position:absolute; top:-6px; width:4px; height:26px; background:var(--red); border-radius:2px; transform:translateX(-50%);}
+  .ruler .mk::after{content:"onde a autora situa os entrevistados"; position:absolute; top:30px; left:50%; transform:translateX(-50%); white-space:nowrap; font-size:.7rem; font-weight:700; color:var(--red);}
+  .ruler input{position:absolute; inset:-6px 0 auto 0; width:100%; height:26px; margin:0; accent-color:var(--ink); background:transparent;}
+  .ruler input{-webkit-appearance:none; appearance:none; cursor:grab;}
+  .ruler input::-webkit-slider-runnable-track{background:transparent; height:26px;}
+  .ruler input::-moz-range-track{background:transparent; height:26px;}
+  .ruler input::-webkit-slider-thumb{-webkit-appearance:none; width:22px; height:22px; margin-top:2px; border-radius:50%; background:#fff; border:3px solid var(--ink); box-shadow:var(--shadow);}
+  .ruler input::-moz-range-thumb{width:16px; height:16px; border-radius:50%; background:#fff; border:3px solid var(--ink);}
+  .ruler-ends{display:flex; justify-content:space-between; font-size:.74rem; color:var(--muted); margin-top:28px;}
+  #ref-panel{min-height:150px; margin-top:12px;}
+
+  /* ---------- 13 · E agora ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:16px; margin-top:12px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  .pcard{background:var(--card); border-radius:14px; padding:22px; box-shadow:var(--shadow); transition:transform .2s;}
+  .pcard:hover{transform:translateY(-3px);}
+  .pcard .ic{width:44px; height:44px; border-radius:50%; background:color-mix(in srgb, var(--red) 10%, transparent); color:var(--red); display:flex; align-items:center; justify-content:center; margin-bottom:12px;}
+  .pcard .ic svg{width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
+  .pcard h3{font-size:1.06rem; margin-bottom:8px; color:var(--ink);}
+  .pcard p{font-size:.9rem; margin:0 0 6px;}
+  .pcard .src{display:block; margin-top:10px; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--muted);}
+
+  /* ---------- 14 · Créditos ---------- */
+  .limits{display:grid; gap:10px; margin:12px 0 0; padding:0; list-style:none;}
+  .limits li{padding:12px 16px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.88rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .cite{font-size:.86rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 20px; line-height:1.6;}
+  .cite b{color:var(--ink);}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <span id="count">01 / 14</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Dissertação de mestrado · PPGA Mackenzie · 2026</div>
+      <h1 class="rv" style="--d:.1s">O professor e seu estagiário digital</h1>
+      <p class="sub rv" style="--d:.2s">Como e para quê professores de Administração usam a <strong>inteligência artificial generativa</strong>? Treze professores contaram o que ganham, do que desconfiam e como o próprio papel está mudando. Explicado em 14 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autora:</b> Adriana Fontes Sá</span>
+        <span><b>Orientador:</b> Prof. Dr. Diógenes de Souza Bido</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#estagiario">Começar →</a>
+        <a class="btn ghost" href="#modelo">Ir direto às conclusões</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable model-scene" id="hero-scene" data-fit="460x420"></div></div>
+      <div class="cap-legend" id="cap-legend"></div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · ESTAGIÁRIO -->
+<section class="slide" id="estagiario" data-label="O estagiário">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> Para começar</div>
+      <h2 class="rv" style="--d:.1s">Você deixaria um estagiário preparar sua aula?</h2>
+      <p class="rv" style="--d:.15s">Um dos professores entrevistados resumiu assim: <em>“A IA é um assistente do professor. E como todas, um estagiário, digamos, né? […] eu preciso treinar.”</em></p>
+      <p class="rv" style="--d:.2s">Imagine que você é professor. Para cada tarefa, escolha o que faria com esse estagiário. Depois veja o que os entrevistados disseram.</p>
+      <p class="note rv" style="--d:.25s"><b>Exercício ilustrativo</b>, criado para esta página. As falas são de professores entrevistados na pesquisa (Seção 5), identificados só pelo número da entrevista.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="tasks" id="tasks"></div>
+      <div class="panel" id="intern-panel" style="margin-top:14px" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · CONTEXTO -->
+<section class="slide" id="contexto" data-label="A IA já chegou">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> O cenário · outras pesquisas</div>
+      <h2 class="rv" style="--d:.1s">A IA já entrou na sala dos professores</h2>
+      <p class="rv" style="--d:.15s">Desde o lançamento do ChatGPT, em novembro de 2022, a IA generativa se espalhou pelas escolas e universidades. Levantamentos recentes citados na dissertação mostram o tamanho disso.</p>
+      <div class="stats rv" style="--d:.2s">
+        <div class="stat"><b>84%</b><span>dos professores usam IA para planejar aulas</span></div>
+        <div class="stat"><b>76%</b><span>usam para criar materiais pedagógicos</span></div>
+        <div class="stat"><b>75%</b><span>usam para ampliar o conhecimento da própria área</span></div>
+        <div class="stat"><b>21%</b><span>nunca usaram IA</span></div>
+      </div>
+      <p class="note rv" style="--d:.25s">Cartões: pesquisa da Fundação Itaú (2025) com estudantes, professores e gestores escolares, citada na Seção 1.3.1. <b>Não são dados desta dissertação.</b></p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="chips" id="ctx-chips" role="group" aria-label="Escolher o gráfico"></div>
+      <div class="panel">
+        <div class="tag" id="ctx-title"></div>
+        <div class="hbars" id="ctx-bars"></div>
+      </div>
+      <p class="note">Gráfico: pesquisa da UFMG (Silva et al., 2025) com os 410 docentes que usam IA, citada no Capítulo 5. Uma pessoa podia marcar mais de uma opção. <b>Não são dados desta dissertação.</b></p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · LACUNA -->
+<section class="slide" id="lacuna" data-label="A lacuna">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> O problema</div>
+      <h2 class="rv" style="--d:.1s">Quase ninguém tinha perguntado aos professores de Administração</h2>
+      <p class="rv" style="--d:.15s">A autora vasculhou duas grandes bases de artigos científicos (Web of Science e Scopus) atrás de estudos sobre IA e professores de cursos de Administração. Passe o mouse em cada etapa.</p>
+      <ul class="steps rv" id="steps" style="--d:.2s">
+        <li data-i="0"><span class="num">102</span><p>resultados nas duas bases (51 em cada)</p></li>
+        <li data-i="1"><span class="num">34</span><p>artigos de novembro de 2022 em diante, quando o ChatGPT foi lançado (após filtros de tipo e idioma)</p></li>
+        <li data-i="2"><span class="num">23</span><p>artigos diferentes, sem contar os repetidos nas duas bases</p></li>
+        <li data-i="3"><span class="num">15</span><p>traziam todos os termos da busca no título, no resumo ou nas palavras-chave</p></li>
+        <li data-i="4"><span class="num">3</span><p>tratavam de fato do uso da IA por professores de Administração</p></li>
+      </ul>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="fit-wrap"><div class="scene" id="funnel-scene" data-fit="420x400"></div></div>
+      <div class="callout"><p>A maior parte dos estudos olha para os alunos: como usam a IA nas provas e trabalhos e o que ela faz com o aprendizado. O lado do professor ficou quase sem resposta.</p></div>
+      <p class="note">Fonte: Seção 3.4. Discos com área proporcional ao número de artigos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · PROFESSORES -->
+<section class="slide" id="professores" data-label="13 professores">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Como a pesquisa olhou</div>
+      <h2 class="rv" style="--d:.1s">13 professores, 8 instituições, uma longa conversa</h2>
+      <p class="rv" style="--d:.15s">A autora entrevistou professores de cursos de graduação em Administração, com perguntas abertas sobre como usam a IA, para quê, o que temem e o que mudou na forma de dar aula. Ela parou quando as respostas começaram a se repetir.</p>
+      <div class="stats rv" style="--d:.2s">
+        <div class="stat"><b>45 a 71</b><span>anos de idade (metade tem 58 ou mais)</span></div>
+        <div class="stat"><b>2,5 a 26</b><span>anos de docência no ensino superior</span></div>
+        <div class="stat"><b>11 · 2</b><span>em instituições privadas · públicas</span></div>
+        <div class="stat"><b>10 · 3</b><span>homens · mulheres</span></div>
+      </div>
+      <p class="note rv" style="--d:.25s">Foram 14 entrevistas. A primeira ficou de fora da análise porque o professor já não lecionava no curso de Administração. Fonte: Seções 3.1 e 3.3, Tabelas 1 e 5. A idade mediana (58 anos) é cálculo nosso.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="chips" id="prof-chips" role="group" aria-label="Destacar professores"></div>
+      <svg class="people" id="people" viewBox="0 0 520 250" role="group" aria-label="Os 14 entrevistados"></svg>
+      <div class="panel" id="prof-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · ANÁLISE -->
+<section class="slide" id="analise" data-label="Da fala à ideia">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Como as conversas viraram resultado</div>
+      <h2 class="rv" style="--d:.1s">De 65 palavras-chave a 4 ideias</h2>
+      <p class="rv" style="--d:.15s">As entrevistas foram transcritas e lidas em busca de padrões. De cada uma saíram cinco palavras-chave, apoiadas em trechos das falas. Elas foram agrupadas em códigos, os códigos em temas, e os temas viraram quatro conceitos. Clique numa camada.</p>
+      <div class="chips layer-tabs rv" id="layer-tabs" style="--d:.2s" role="group" aria-label="Camadas da análise"></div>
+      <div class="panel rv" id="layer-panel" style="--d:.25s" aria-live="polite"></div>
+      <p class="note rv" style="--d:.3s">Método: análise temática sistemática (Naeem et al., 2023), feita com apoio da ferramenta de IA NotebookLM e revisada pela autora. Fonte: Capítulos 4 e 5. O total de 65 palavras-chave (5 × 13) é contagem nossa.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="layer-scene" data-fit="560x440"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · PALAVRAS -->
+<section class="slide" id="palavras" data-label="Do que falaram">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> O que encontrou · 65 palavras-chave</div>
+      <h2 class="rv" style="--d:.1s">“Ganhar tempo” é o que mais se repete</h2>
+      <p class="rv" style="--d:.15s">Cada linha é um professor; cada coluna, um assunto. <strong>11 dos 13</strong> falaram em otimizar tempo, agilidade ou produtividade. Logo atrás vêm os erros da IA e o medo de depender dela. Clique num quadrinho para ler a fala.</p>
+      <div class="chips rv" id="mx-chips" style="--d:.2s" role="group" aria-label="Destacar um assunto"></div>
+      <div class="panel rv" id="mx-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="mx" id="mx" role="grid" aria-label="Palavras-chave por professor e assunto"></div>
+      <p class="note"><b>Contagem e agrupamento nossos</b>, a partir das palavras-chave que a autora selecionou para cada entrevista (Seção 5). A autora afirma que o tempo foi destaque em todas as entrevistas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · TEMPO -->
+<section class="slide" id="tempo" data-label="Dias em minutos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> O que encontrou · para que usam</div>
+      <h2 class="rv" style="--d:.1s">Um estudo de caso que levava dias sai em 15 minutos</h2>
+      <p class="rv" style="--d:.15s">Uma professora contou que fazia um estudo de caso <em>“em 2, 3 dias. Passei a fazer em 15 minutos”</em>. A pesquisa chama isso de <strong style="color:var(--efi)">catalisação da eficiência</strong>: tarefas operacionais andam mais rápido e sobra tempo para o que exige atenção.</p>
+      <div class="panel rv" style="--d:.2s">
+        <div class="tl">
+          <div class="tl-row"><div class="lb"><span>Antes</span><b>2 a 3 dias</b></div><div class="days" id="days-a"></div></div>
+          <div class="tl-row"><div class="lb"><span>Com IA</span><b id="ia-lab">?</b></div><div class="days" id="days-b"></div></div>
+        </div>
+        <div style="margin-top:14px"><button class="toggle" id="time-btn" aria-pressed="false"><span class="sw"></span>Usar a IA</button></div>
+      </div>
+      <p class="note rv" style="--d:.25s">Escala em dias de calendário: 15 minutos ocupam cerca de 1% de um dia. A fala não diz quantas horas de trabalho havia em cada dia. Para os professores que dão aula em mais de uma instituição, o ganho de tempo pesa ainda mais (Seção 7). Fonte: Entrevista 14 e Tema 1.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <p style="font-size:.92rem">O tempo ganho vem de usos bem concretos, quase todos ligados ao <strong>ensino</strong>, mais do que à pesquisa. Clique em cada um.</p>
+      <div class="uses" id="uses"></div>
+      <div class="panel" id="use-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · CONFIANÇA -->
+<section class="slide" id="confianca" data-label="Confiança">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">09</span> O que encontrou · o outro lado</div>
+    <h2 class="rv" style="--d:.1s">…mas ninguém confia 100%</h2>
+    <p class="lede rv" style="--d:.15s">Os mesmos professores que ganham tempo desconfiam do que a IA entrega e temem o que ela faz com o pensamento, deles e dos alunos. A pesquisa chama isso de <strong style="color:var(--risco)">vulnerabilidade cognitiva tecnológica</strong>. Os professores explicaram com imagens do dia a dia: clique em cada cartão.</p>
+    <div class="pieces rv" id="metaphors" style="--d:.2s"></div>
+    <p class="note rv" style="--d:.25s">Em nossa contagem, 8 dos 13 falaram de erros ou da necessidade de checar tudo, e 8 do risco de depender da ferramenta. Para se proteger, há quem só use a IA em assuntos que domina muito bem (Entrevista 14). Fonte: Seção 5 e Tema 2.</p>
+  </div>
+</section>
+
+<!-- 10 · MEDIADOR -->
+<section class="slide" id="mediador" data-label="Elo seguro">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> O que encontrou · o papel do professor</div>
+      <h2 class="rv" style="--d:.1s">De dono da verdade a “elo seguro”</h2>
+      <p class="rv" style="--d:.15s">Com a IA na sala, a relação deixa de ser só entre professor e aluno: aparece um terceiro elemento. Para os entrevistados, o professor deixa de ser quem repassa conteúdo e passa a ser quem <strong style="color:var(--med)">orienta, verifica e dá sentido</strong> ao que a máquina produz.</p>
+      <button class="toggle rv" id="tri-btn" style="--d:.2s" aria-pressed="false"><span class="sw"></span>Pôr a IA na sala</button>
+      <div class="chips rv" id="role-chips" style="--d:.25s; margin-top:16px" role="group" aria-label="Como os professores descrevem o novo papel"></div>
+      <div class="panel rv" id="role-panel" style="--d:.3s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="tri" viewBox="0 0 460 400" role="img" aria-label="Relação entre professor, aluno e IA"></svg>
+      <p class="note">A pesquisa chama esse movimento de <b>ressignificação docente mediadora</b>. O temor do outro lado também apareceu: um professor acha que a IA pode reduzir vagas de professor (Entrevista 4). Fonte: Tema 3 e Seção 7.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · MODELO -->
+<section class="slide" id="modelo" data-label="As 4 ideias">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> A resposta da pesquisa</div>
+      <h2 class="rv" style="--d:.1s">Quatro ideias que se encaixam</h2>
+      <p class="rv" style="--d:.15s">Na base, <strong>para que</strong> a IA é usada: assistente e acelerador. No meio, a <strong style="color:var(--risco)">tensão</strong> que esse uso cria. No topo, a <strong>resposta</strong> que, segundo a autora, poderia superá-la: um professor mediador. Clique em cada conceito.</p>
+      <div class="chips rv" id="cpt-chips" style="--d:.2s" role="group" aria-label="Conceitos"></div>
+      <div class="panel rv" id="cpt-panel" style="--d:.25s; min-height:220px" aria-live="polite"></div>
+      <div class="rv" style="--d:.3s; margin-top:14px"><button class="toggle" id="sep-btn" aria-pressed="false"><span class="sw"></span>Separar as camadas</button></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable model-scene" id="model-scene" data-fit="560x460"></div></div>
+      <p class="note"><b>Desenho nosso</b> a partir do texto da conceitualização e da conclusão: a dissertação descreve os quatro conceitos e a relação entre eles, mas não traz uma figura do modelo. Base teórica: a epistemologia da prática de Donald Schön (1983).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · SEM IA + REFLEXÃO -->
+<section class="slide" id="sem-ia" data-label="O inesperado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">12</span> O inesperado</div>
+      <h2 class="rv" style="--d:.1s">Se a IA sumisse amanhã, quase nada mudaria</h2>
+      <p class="rv" style="--d:.15s">Os professores reconhecem que a IA é um “caminho sem volta”. Mesmo assim, quando a autora perguntou como se sentiriam se ela não existisse, <strong>só um</strong> professor disse que se sentiria diferente. Os outros se sentiriam como sempre se sentiram.</p>
+      <svg id="noai" viewBox="0 0 520 150" role="img" aria-label="Os 13 professores; só um se sentiria diferente sem a IA"></svg>
+      <button class="toggle rv" id="noai-btn" style="--d:.2s; margin-top:8px" aria-pressed="false"><span class="sw"></span>Desligar a IA</button>
+      <p class="note rv" style="--d:.25s">A dissertação não identifica quem foi o professor. Fonte: Capítulo 5.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <h3 style="font-size:1.25rem; margin-bottom:8px">A reflexão existe, mas ainda é rasa</h3>
+      <p style="font-size:.95rem">A IA levou os professores a repensar a prática, mas a autora interpreta que essa reflexão ocorre <strong>“de forma superficial e pragmática”</strong>: o foco é dar conta das demandas e “não ficar para trás”. Arraste o marcador para conhecer cada ponta da régua.</p>
+      <div class="ruler">
+        <div class="bar"></div>
+        <div class="mk" style="left:22%"></div>
+        <input type="range" id="ref-in" min="0" max="100" value="22" aria-label="Nível de reflexão">
+      </div>
+      <div class="ruler-ends"><span>pragmática</span><span>emancipatória</span></div>
+      <div class="panel" id="ref-panel" aria-live="polite"></div>
+      <p class="note">A régua é uma metáfora nossa. As duas pontas, superficial e emancipatória, vêm dos autores discutidos na dissertação (Brito, 2006; Reali e Reyes, 2009). Fonte: Seções 7 e 8.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 13 · E AGORA -->
+<section class="slide" id="pratica" data-label="Na prática">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">13</span> Por que isso importa</div>
+    <h2 class="rv" style="--d:.1s">E agora?</h2>
+    <p class="lede rv" style="--d:.15s">Administração é um dos cursos com mais alunos e formandos no Brasil. O jeito como seus professores lidam com a IA chega a muita gente, e o mercado espera que professores e alunos saibam usá-la.</p>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.2s">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg></div>
+        <h3>Para universidades e faculdades</h3>
+        <p>Muitos entrevistados disseram que suas instituições ainda não têm regras sobre o uso da IA. Sem diretrizes, cada um decide sozinho, e o próprio Ministério da Educação alerta que isso pode aprofundar desigualdades e gerar problemas éticos.</p>
+        <span class="src">Dissertação, Capítulo 5</span>
+      </div>
+      <div class="pcard rv" style="--d:.25s">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M2 7l10-4 10 4-10 4z"/><path d="M6 9v5c0 1.7 2.7 3 6 3s6-1.3 6-3V9"/></svg></div>
+        <h3>Para professores</h3>
+        <p>Os próprios entrevistados dão as regras práticas: tratar a IA como estagiário que precisa de supervisão, revisar tudo e usá-la só em conteúdos que se domina. Em sala, ela pode virar um “instrumento de alerta crítico” para mostrar aos alunos onde a máquina erra.</p>
+        <span class="src">Falas dos entrevistados · seleção nossa</span>
+      </div>
+      <div class="pcard rv" style="--d:.3s">
+        <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+        <h3>Para estudantes</h3>
+        <p>A IA é “um meio e não um fim”. O medo mais repetido pelos professores é o aluno trocar o raciocínio pela ferramenta. Usar a IA sem perder a capacidade de pensar criticamente é a competência que eles esperam desenvolver.</p>
+        <span class="src">Leitura nossa a partir do Tema 2</span>
+      </div>
+      <div class="pcard rv" style="--d:.35s">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg></div>
+        <h3>Para os cursos de Administração</h3>
+        <p>Os cursos tendem a priorizar o “aprender a fazer”. Para a reflexão sobre a IA ir além do pragmático, a autora sugere que o sistema de ensino ofereça tempo e espaço para os professores pensarem a própria prática, não só cursos de ferramentas.</p>
+        <span class="src">Discussão da dissertação (Seção 7)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 · CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Créditos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">14</span> Limites e créditos</div>
+      <h2 class="rv" style="--d:.1s">O que esta pesquisa não diz</h2>
+      <ul class="limits rv" style="--d:.15s">
+        <li><b>É um retrato de 13 pessoas, não do país.</b> Pesquisas qualitativas buscam profundidade, não representatividade: 12 dos 13 professores trabalham no estado de São Paulo.</li>
+        <li><b>Uma geração específica.</b> Os entrevistados têm de 45 a 71 anos e se formaram antes da IA generativa existir. Professores mais jovens podem ver a ferramenta de outro jeito.</li>
+        <li><b>Um perfil concentrado.</b> 10 dos 13 são homens e 11 dos 13 dão aula em instituições privadas (observação nossa a partir da Tabela 5).</li>
+        <li><b>É o que os professores contam.</b> A pesquisa reúne percepções relatadas em entrevista, não a observação das aulas.</li>
+        <li><b>Próximos passos sugeridos:</b> ouvir professores de outras regiões e de países sem diretrizes sobre IA, e entender como a IA poderia provocar reflexões profundas sobre a prática, e não só pragmáticas.</li>
+      </ul>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="cite">
+        <b>Como citar</b><br>
+        SÁ, Adriana Fontes. <em>Inteligência artificial no ensino superior: uso pelos docentes do curso de Administração.</em> Dissertação (Mestrado em Administração de Empresas) — Programa de Pós-Graduação em Administração de Empresas, Universidade Presbiteriana Mackenzie, São Paulo, 2026. Orientador: Prof. Dr. Diógenes de Souza Bido.
+      </div>
+      <p style="margin-top:16px; font-size:.86rem">Pesquisa qualitativa e exploratória, com 13 entrevistas semiestruturadas analisadas por análise temática. Banca: Prof. Dr. Diógenes de Souza Bido, Profa. Dra. Janette Brunstein (Mackenzie) e Prof. Dr. Dirceu da Silva (Unicamp).</p>
+      <p style="font-size:.86rem">Esta versão interativa simplifica o trabalho para o público em geral; o referencial teórico, o roteiro de entrevista e as falas completas estão no texto original.</p>
+      <div class="ctas" style="margin-top:18px">
+        <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a dissertação completa</a>
+        <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+        <a class="btn ghost" href="../../">Outras pesquisas</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, ramp = M.ramp, rotatable = M.rotatable, wasDrag = M.wasDrag;
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // Os quatro conceitos (Seção 5, conceitualização) e o tema de origem de cada um
+  var CONCEPTS = [
+    {k:'orq', n:'Orquestração pedagógica assistiva', s:'Orquestração', c:'var(--uso)', lvl:'Base · como e para que usam',
+      code:'Orquestração assistiva especializada', theme:'Tema 1 · Otimização e orquestração da prática docente',
+      d:'O professor rege a IA como um assistente ou “estagiário” especializado, que ele mesmo precisa treinar e supervisionar. O domínio técnico e a decisão continuam com o humano.',
+      t:'Schön: conhecimento-na-ação, o saber prático que o professor mobiliza para integrar a ferramenta ao dia a dia.'},
+    {k:'efi', n:'Catalisação da eficiência operacional', s:'Eficiência', c:'var(--efi)', lvl:'Base · como e para que usam',
+      code:'Eficiência operacional catalisadora', theme:'Tema 1 · Otimização e orquestração da prática docente',
+      d:'A IA acelera a produção de estudos de caso, questões de prova e resumos: o que levava dias passa a levar minutos, e sobra tempo para atividades mais complexas.',
+      t:'Liberar o professor da “carga operacional” para o trabalho intelectual.'},
+    {k:'vul', n:'Vulnerabilidade cognitiva tecnológica', s:'Vulnerabilidade', c:'var(--risco)', lvl:'Meio · a tensão',
+      code:'Vulnerabilidade cognitiva tecnológica', theme:'Tema 2 · Paradoxos da confiabilidade e riscos cognitivos',
+      d:'O risco de “terceirizar o pensamento”: depender demais da ferramenta e aceitar sem crítica respostas que podem conter erros e alucinações. Exige que o usuário domine o conteúdo.',
+      t:'Schön: as “zonas de indefinição”, situações incertas em que o repertório do professor é posto à prova.'},
+    {k:'med', n:'Ressignificação docente mediadora', s:'Mediação', c:'var(--med)', lvl:'Topo · a resposta',
+      code:'Ressignificação docente mediadora', theme:'Tema 3 · Transformação da identidade e práxis reflexiva',
+      d:'O professor deixa de ser só transmissor de conteúdo e vira facilitador, mediador e “elo seguro” na curadoria da informação, com foco no raciocínio crítico e na aplicação prática.',
+      t:'Schön: reflexão sobre a reflexão-na-ação; a IA “responde” ao professor (back talk) e o leva a repensar a didática.'}
+  ];
+  var CK = {}; CONCEPTS.forEach(function(c){ CK[c.k] = c; });
+
+  // Entrevistados analisados (Tabelas 1 e 5). E1 foi excluído da análise.
+  var PEOPLE = [
+    {e:1, age:44, g:'M', yrs:15, inst:'Privada', out:true},
+    {e:2, age:58, g:'M', yrs:2.5, inst:'Pública'},
+    {e:3, age:56, g:'F', yrs:14, inst:'Privada'},
+    {e:4, age:56, g:'M', yrs:16, inst:'Privada'},
+    {e:5, age:58, g:'M', yrs:17, inst:'Privada'},
+    {e:6, age:60, g:'M', yrs:20, inst:'Privada'},
+    {e:7, age:64, g:'M', yrs:25, inst:'Privada'},
+    {e:8, age:69, g:'M', yrs:26, inst:'Privada'},
+    {e:9, age:50, g:'M', yrs:10, inst:'Privada'},
+    {e:10, age:71, g:'M', yrs:15, inst:'Privada'},
+    {e:11, age:64, g:'M', yrs:16, inst:'Pública'},
+    {e:12, age:46, g:'M', yrs:19, inst:'Privada'},
+    {e:13, age:45, g:'F', yrs:10, inst:'Privada'},
+    {e:14, age:68, g:'F', yrs:23, inst:'Privada'}
+  ];
+
+  // Assuntos da matriz (agrupamento nosso das palavras-chave)
+  var CATS = [
+    {k:'T', s:'Tempo', n:'Ganhar tempo', c:'var(--efi)', d:'Otimização do tempo, agilidade, produtividade.'},
+    {k:'E', s:'Erros', n:'Erros e checagem', c:'var(--risco)', d:'Alucinações, inconsistências, revisar tudo.'},
+    {k:'D', s:'Depender', n:'Risco de depender', c:'color-mix(in srgb, var(--red) 55%, white)', d:'Muleta, vício, preguiça, terceirizar o pensamento.'},
+    {k:'P', s:'Papel', n:'Papel do professor', c:'var(--papel)', d:'Mediador, facilitador, orientador, elo seguro.'},
+    {k:'C', s:'Sem volta', n:'Caminho sem volta', c:'var(--volta)', d:'A IA veio para ficar.'},
+    {k:'O', s:'Outros', n:'Outros usos e motivos', c:'var(--outro)', d:'Usos concretos, motivações, mercado.'}
+  ];
+
+  // Palavras-chave e trechos por entrevista (Seção 5). Categoria (cat) atribuída por nós.
+  var KW = {
+    2:[['T','Otimização do tempo','O foco principal é a otimização do tempo. Entende? Porque ganha-se muito tempo com ela.'],
+       ['E','Alucinações','Eu não confio 100%, porque ela tem alucinações…'],
+       ['D','Beba com moderação','É que nem a mensagem que tem na latinha de cerveja, beba com moderação, né? Então eu falo, ‘use, mas use com moderação’…'],
+       ['C','Caminho sem volta','Eu, particularmente, acho que nós estamos num caminho sem volta. Não tem como isso ser modismo…'],
+       ['D','Pensar criticamente','Que não tire deles a capacidade de raciocinar, de pensar, principalmente a capacidade de pensar criticamente.']],
+    3:[['O','Engajamento do aluno','Nas atividades com o aluno, elas ajudam no engajamento, porque quando você fala que ele vai usar IA… eles se sentem conectados com uma realidade.'],
+       ['P','Professor facilitador','…encontros que seriam com esse professor, bem num papel de facilitador daquilo que ele já discutiu e aprendeu.'],
+       ['P','Urgência em se atualizar','Eu acho que isso trouxe para nós… essa urgência em se atualizar, em pensar diferente, em mudar práticas, em mudar modelos.'],
+       ['P','Dignidade do professor','Então isso acho que abala um pouco, sabe? Essa questão assim da nossa dignidade como professor, como profissional…'],
+       ['T','Otimização do tempo','A gente ganha um tempo assim… imenso nesse processo. Então isso otimiza muito…']],
+    4:[['T','Agilidade','Para mim, pessoalmente, está sendo maior agilidade na elaboração de questões.'],
+       ['E','Pente fino','Aí eu jogo de novo para fazer um pente fino. Então eu tenho essas interações de segurança com a IA.'],
+       ['D','Vício','Eu acho que a IA acabou sendo, virou, virou um vício de todo mundo.'],
+       ['E','Inconsistências','Ela vem às vezes com algumas inconsistências que a gente tem que estar sempre olhando e corrigindo.'],
+       ['P','Substituir o professor','Aí ela pode vir sim a substituir ou a reduzir o número de vagas de professor.']],
+    5:[['O','Assistente / estagiário','A IA é um assistente do professor. E como todas, um estagiário, digamos, né? Como todo assistente, como estagiário, eu preciso treinar.'],
+       ['D','Muleta permanente','Ele acha que a IA vai ser uma muleta para ele ao longo da vida… Uma muleta permanente…'],
+       ['E','Rever tudo','Eu preciso rever tudo. Não confio em deixar tudo na IA, não. Eu preciso rever absolutamente tudo, questão por questão…'],
+       ['O','Aumento de produtividade nas empresas','E as empresas estão utilizando a IA como aumento de produtividade… Profissionais cada vez mais que dominem a IA.'],
+       ['T','Economia de tempo','Economia de tempo, em primeiro lugar. […] a IA ela serve para o professor como economia de tempo.']],
+    6:[['O','Situações-problema','Então eu trabalho bastante com situações problema. […] e aí essas ferramentas me auxiliam no desenvolvimento desta estratégia.'],
+       ['P','Mediador','Ele tem que ser um mediador. Ele tem que pegar esses conteúdos… e sempre tentar traduzir isso no formato de aplicação…'],
+       ['C','Caminho sem volta','Sem dúvida nenhuma é um caminho sem volta. O maior paralelo que eu faço é a história da calculadora.'],
+       ['P','Ser humano insubstituível','Apesar de todas as ferramentas… o ser humano é insubstituível. […] Ela não tem o olhar, ela não tem o cheiro…'],
+       ['T','Otimização do tempo','É para otimização do tempo, sim, com certeza.']],
+    7:[['E','Alerta crítico','…em sala de aula eu vejo mais como uma ferramenta e como um instrumento de alerta crítico para o aluno…'],
+       ['O','Pesquisa em sala','Onde eu uso mais é em sala de aula… quando eu acho que uma pesquisa por parte dos alunos… no sentido de aumentar a interação…'],
+       ['O','Atalho','Eu acho que a IA, nesse contexto, ela ajuda a você caminhar por atalhos, não é?'],
+       ['D','Meio e não fim','É mais abrir a consciência dos alunos de que ela é uma ferramenta… que ela é um meio e não um fim.'],
+       ['C','Caminho sem volta','Acho que ela é um caminho sem volta, que deve ser incorporado, mas de uma forma inteligente…']],
+    8:[['O','Criação','…a inteligência artificial é uma ferramenta muito boa para criação. […] E ele tem que ver com um fator inédito…'],
+       ['D','Mediocridade','Se a gente ficar remoendo somente o que já foi produzido… vamos ter uma tendência à mediocridade.'],
+       ['P','Orientador','O professor tem que trabalhar muito como orientador, não só como dono da verdade…'],
+       ['T','Trabalho “burro”','Então trabalho burro, trabalho que realmente não acrescenta… eu não me incomodo usar a internet para ganhar tempo.'],
+       ['T','Ganhar tempo','Nós usamos a inteligência artificial generativa para ganhar um tempo…']],
+    9:[['O','Trabalho artesanal','Mas eu vou lá e eu produzo é… quase que artesanalmente todo o meu material…'],
+       ['D','Terceirização cognitiva','Não, eu acho que o pior de todos é a terceirização do poder cognitivo. Então eu não preciso estudar…'],
+       ['O','Complementar','Eu acredito que a inteligência artificial ela é complementar.'],
+       ['D','Escada rolante','…a grande maioria das pessoas vão ir nessa toada de ‘eu tenho é… o conhecimento é uma escada rolante’…'],
+       ['T','Ganho de produtividade','Eu entendo a IA como um ganho de produtividade, produtividade em chegar ao resultado…']],
+    10:[['O','Mega-prompt','…então eu usei uma ferramenta que é de mega-prompt. […] Ele gera o prompt que depois eu vou usar na pesquisa.'],
+        ['O','Vídeo-resumo','E às vezes eu gero um PDF das minhas aulas e gero um vídeo usando o notebook LM. […] O vídeo é o resumo da aula.'],
+        ['E','Alucinação','…sempre uso cases reais… para tomar muito cuidado com a alucinação das IAs.'],
+        ['O','Se aproxime dela','E o que eu digo para eles é o seguinte: é melhor você estar próximo da IA do que longe dela. […] se aproxime dela.'],
+        ['T','Ganhar tempo','Eu acho que é… a primeira é ganhar tempo…']],
+    11:[['E','Erros em finanças','…nessa área financeira, é… eu constatei agora… que eles respondem algumas coisas erradas…'],
+        ['D','Riqueza vocabular','…eu adquiri uma riqueza vocabular extraordinária… Eu vou entregar tudo isso a uma inteligência artificial para deformar o meu pensamento?'],
+        ['D','Preguiça cognitiva','Vai deixar as pessoas preguiçosas… vai mexer muito com o aspeto cognitivo.'],
+        ['T','Agilidade','Agilidade para poder minimizar o tempo de realização da pesquisa.'],
+        ['C','Caminho sem volta','Eu acho que é um caminho sem volta, nós temos que incorporá-la no nosso dia a dia…']],
+    12:[['O','Sobrevivência','…o que me mais me motivou é, para mim, é mais uma questão de, eu diria de, de sobrevivência.'],
+        ['O','Fadiga','…eu me sinto fadigado, assim bem, bem cansado de tanta IA na minha vida.'],
+        ['O','Feedback imediato','…um dos grandes benefícios que uma IA pode te dar é… ela vai te dar um feedback imediato.'],
+        ['O','Reciclar conteúdo','…o que eu já criei ao longo da minha carreira, eu tenho ou de alguma maneira, digamos assim reciclado, né, usando IA.'],
+        ['O','Inovação incremental','Não é uma mudança radical… Eu sinto que eu estou potencializando aquilo que eu estou fazendo já.']],
+    13:[['O','Aparência moderna','…ela ajuda muito em trazer uma aparência mais moderna para as aulas. […] traz um dinamismo, ela cria imagens diferentes…'],
+        ['P','Elo seguro','…na forma do professor, ele ser o elo seguro na relação com a informação… tendo um professor uma referência de acreditação…'],
+        ['D','Humanidade','…conviver com ela, mas sem perder a nossa identidade. Então, cuidado para a gente não deixar a nossa humanidade de lado.'],
+        ['E','Frustração e checagem','Então isso gerou uma certa frustração, porque eu aprendi que a IA acaba se adaptando para querer agradar… e às vezes falta com a verdade.'],
+        ['T','Otimização do tempo','A vantagem é a questão da otimização de tempo e da atualização de informação…']],
+    14:[['O','Divisor de águas','E a genérica foi um divisor de águas para a elaboração de estudos de casos.'],
+        ['P','Mais cognitivo, menos repetidor','Então, o novo docente de Administração vai ter que ser muito mais cognitivo e menos repetidor de conteúdos…'],
+        ['E','Domínio do conteúdo','Eu não uso a inteligência artificial se não for um conteúdo que eu domine muito.'],
+        ['O','Transformação digital e social','A IA é decorrência de uma transformação digital e de uma transformação social. Elas juntas estão fazendo.'],
+        ['T','Otimização do tempo','Para mim, em disparada, otimização de tempo, tá?']]
+  };
+  var IDS = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+
+  // Tela 2: tarefas e o que os professores disseram (Seção 5)
+  var TASKS = [
+    {t:'Criar um estudo de caso para a turma', s:[
+      ['Entrevista 14', 'Fazia em 2, 3 dias. Passei a fazer em 15 minutos.'],
+      ['Entrevista 2', 'Se eu quero criar um caso qualquer, ela é muito boa para me ajudar […] E eu ganho tempo com isso.']],
+      v:'Quase todos delegam, e com entusiasmo. É o uso mais celebrado.'},
+    {t:'Montar as questões da prova', s:[
+      ['Entrevista 4', 'Aí eu jogo de novo para fazer um pente fino. Então eu tenho essas interações de segurança com a IA.'],
+      ['Entrevista 5', 'Eu preciso rever tudo. […] Eu preciso rever absolutamente tudo, questão por questão.']],
+      v:'Usam e revisam: a IA ganha tempo, mas a palavra final é do professor.'},
+    {t:'Fazer uma conta de matemática financeira', s:[
+      ['Entrevista 11', 'Nessa área financeira, […] eu constatei agora […] que eles respondem algumas coisas erradas.'],
+      ['Entrevista 14', 'Eu não uso a inteligência artificial se não for um conteúdo que eu domine muito.']],
+      v:'Desconfiança: só usa quem já sabe a resposta e consegue achar o erro.'},
+    {t:'Escrever o material da aula do zero', s:[
+      ['Entrevista 9', 'Eu vou lá e eu produzo é… quase que artesanalmente todo o meu material.'],
+      ['Entrevista 12', 'O que eu já criei ao longo da minha carreira, eu tenho […] reciclado, né, usando IA.']],
+      v:'Aqui as opiniões se dividem: há quem faça tudo à mão e quem use a IA para dar nova forma ao que já criou.'}
+  ];
+  var CHOICES = ['Delego', 'Uso e reviso', 'Faço eu mesmo'];
+
+  // Tela 3: pesquisa da UFMG citada na dissertação (Silva et al., 2025), N = 410
+  var UFMG_N = 410;
+  var CTX = [
+    {b:'Para quê usam', t:'Usos mais frequentes (sempre ou frequentemente)', rows:[['Tradução', 251], ['Pesquisa de fontes e links', 207], ['Correção e revisão de textos', 193], ['Obter dados e informações', 186], ['Escrita acadêmica', 168], ['Sínteses de textos', 162]]},
+    {b:'Por que usam', t:'Motivos para usar a IA', rows:[['Otimizar o tempo', 382], ['Inspirar-se em tarefas sem aptidão', 136], ['Fazer o que antes parecia impossível', 67]]}
+  ];
+
+  // Tela 4: revisão sistemática (Seção 3.4)
+  var FUNNEL = [102, 34, 23, 15, 3];
+
+  // Tela 8: usos concretos (Seção 5)
+  var USES = [
+    {n:'Questões de prova', e:'Entrevista 4', q:'Para mim, pessoalmente, está sendo maior agilidade na elaboração de questões.'},
+    {n:'Slides viram e-book', e:'Entrevista 12', q:'O que eu já criei ao longo da minha carreira, eu tenho […] reciclado, né, usando IA.', x:'Anotações e slides antigos transformados em e-books para os alunos.'},
+    {n:'Vídeo-resumo da aula', e:'Entrevista 10', q:'Eu gero um PDF das minhas aulas e gero um vídeo usando o notebook LM. […] O vídeo é o resumo da aula.'},
+    {n:'Situações-problema', e:'Entrevista 6', q:'Eu trabalho bastante com situações problema. […] essas ferramentas me auxiliam no desenvolvimento desta estratégia.'},
+    {n:'Aulas mais visuais', e:'Entrevista 13', q:'Ela ajuda muito em trazer uma aparência mais moderna para as aulas. […] ela cria imagens diferentes.'},
+    {n:'Feedback imediato', e:'Entrevista 12', q:'Um dos grandes benefícios que uma IA pode te dar é… ela vai te dar um feedback imediato.', x:'Acelerar o aprendizado enquanto a dúvida do aluno ainda está “quente”.'}
+  ];
+
+  // Tela 9: metáforas sobre os riscos (Seção 5)
+  var METAPHORS = [
+    {n:'Muleta permanente', e:'Entrevista 5', c:'var(--risco)', q:'Ele acha que a IA vai ser uma muleta para ele ao longo da vida… Uma muleta permanente…', m:'O aluno que não quer aprender por conta própria e se apoia na IA para tudo.'},
+    {n:'Escada rolante', e:'Entrevista 9', c:'var(--risco)', q:'A grande maioria das pessoas vão ir nessa toada de […] o conhecimento é uma escada rolante.', m:'Conhecimento que se “sobe” sem esforço, e por isso não fortalece ninguém.'},
+    {n:'Terceirizar o pensamento', e:'Entrevista 9', c:'var(--risco)', q:'O pior de todos é a terceirização do poder cognitivo. Então eu não preciso estudar…', m:'O cérebro deixa de ser exercitado quando a máquina pensa por nós.'},
+    {n:'Beba com moderação', e:'Entrevista 2', c:'var(--efi)', q:'É que nem a mensagem que tem na latinha de cerveja, beba com moderação, né? Então eu falo, ‘use, mas use com moderação’.', m:'Não proibir, mas dar limites: a regra que o professor passa aos alunos.'},
+    {n:'Ela “pira”', e:'Entrevista 2', c:'var(--risco)', q:'Eu não confio 100%, porque ela tem alucinações… ela pira, sabe?', m:'As alucinações: respostas inventadas, ditas com toda a segurança.'},
+    {n:'Quer agradar', e:'Entrevista 13', c:'var(--risco)', q:'Eu aprendi que a IA acaba se adaptando para querer agradar… e às vezes falta com a verdade.', m:'A frustração de descobrir que a ferramenta diz o que o usuário quer ouvir.'}
+  ];
+
+  // Tela 10: como os professores descrevem o novo papel (Seção 5)
+  var ROLES = [
+    {n:'Facilitador', e:'Entrevista 3', q:'…encontros que seriam com esse professor, bem num papel de facilitador daquilo que ele já discutiu e aprendeu.'},
+    {n:'Mediador', e:'Entrevista 6', q:'Ele tem que ser um mediador. Ele tem que pegar esses conteúdos… e sempre tentar traduzir isso no formato de aplicação…'},
+    {n:'Orientador', e:'Entrevista 8', q:'O professor tem que trabalhar muito como orientador, não só como dono da verdade…'},
+    {n:'Elo seguro', e:'Entrevista 13', q:'…ele ser o elo seguro na relação com a informação… tendo um professor uma referência de acreditação…'},
+    {n:'Menos repetidor', e:'Entrevista 14', q:'O novo docente de Administração vai ter que ser muito mais cognitivo e menos repetidor de conteúdos…'}
+  ];
+
+  // Tela 12: régua da reflexão (Seções 7 e 8). Faixas: leitura nossa a partir da discussão.
+  var REFLEX = [
+    {max:40, t:'Reflexão pragmática', d:'Repensar a prática para dar conta das demandas: ganhar tempo, automatizar tarefas, “não ficar para trás”. É aqui que a autora situa a maior parte do que ouviu. Para ela, a ressignificação do papel do professor ocorreria “de forma instrumental”, em sintonia com cursos de Administração focados no “aprender a fazer”.'},
+    {max:70, t:'Repensar a didática', d:'Alguns sinais de algo mais: a “urgência em se atualizar, em pensar diferente, em mudar práticas, em mudar modelos” (Entrevista 3) e a ideia de um professor “menos repetidor de conteúdos” (Entrevista 14). Faixa intermediária: leitura nossa.'},
+    {max:101, t:'Reflexão emancipatória', d:'Questionar a prática à luz de questões éticas, sociais e políticas mais amplas. A dissertação não encontra esse nível nas entrevistas e o aponta como caminho: entender como a IA poderia provocar reflexões profundas, e não só pragmáticas, é uma das pesquisas futuras sugeridas.'}
+  ];
+
+  /* ---------- Ajudantes ---------- */
+  function person(x, y, s, cls, label){
+    return '<g class="person ' + (cls || '') + '" transform="translate(' + x + ',' + y + ') scale(' + s + ')"' + label + '>' +
+      '<circle class="halo" cx="0" cy="-2" r="26"/>' +
+      '<circle class="body" cx="0" cy="-14" r="9"/><path class="body" d="M-14 16 Q-14 -1 0 -1 Q14 -1 14 16 Z"/></g>';
+  }
+  function catOf(k){ return CATS.filter(function(c){ return c.k === k; })[0]; }
+
+  /* ---------- Modelo 3D (capa e tela 11) ---------- */
+  function buildModel(sc, sep){
+    var st = makeStage(sc, 340, 220, {ay:'64%'});
+    var parts = {};
+    parts.orq = box({w:158, d:200, x:4, y:10, h:44, c:'var(--uso)', label:'Orquestração'});
+    parts.efi = box({w:158, d:200, x:178, y:10, h:44, c:'var(--efi)', label:'Eficiência'});
+    parts.vul = box({w:332, d:200, x:4, y:10, h:24, c:'var(--risco)', label:'Vulnerabilidade'});
+    parts.med = box({w:220, d:140, x:60, y:40, h:56, c:'var(--med)', label:'Mediação'});
+    var Z = {orq:0, efi:0, vul:46, med:72};
+    Object.keys(parts).forEach(function(k){ parts[k].dataset.k = k; parts[k].style.setProperty('--z', Z[k] + 'px'); st.appendChild(parts[k]); });
+    function spread(on){
+      var G = on ? {orq:0, efi:0, vul:96, med:182} : Z;
+      Object.keys(parts).forEach(function(k){ parts[k].style.setProperty('--z', G[k] + 'px'); });
+    }
+    return {st:st, parts:parts, spread:spread};
+  }
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), m = buildModel(sc);
+    rotatable(sc, m.st, -30, 22);
+    $('cap-legend').innerHTML = CONCEPTS.map(function(c){ return '<span><i class="dot" style="background:' + c.c + '"></i>' + c.s + '</span>'; }).join('');
+  })();
+
+  /* ================= 02 · ESTAGIÁRIO ================= */
+  (function(){
+    var wrap = $('tasks'), panel = $('intern-panel'), picks = {};
+    wrap.innerHTML = TASKS.map(function(t, i){
+      return '<div class="task" data-i="' + i + '"><div class="tq">' + t.t + '</div><div class="opts">' +
+        CHOICES.map(function(c, j){ return '<button data-j="' + j + '" aria-pressed="false">' + c + '</button>'; }).join('') + '</div></div>';
+    }).join('');
+    function show(i){
+      var t = TASKS[i], n = Object.keys(picks).length;
+      panel.innerHTML = '<div class="tag">Você escolheu: ' + CHOICES[picks[i]].toLowerCase() + ' · o que os professores disseram</div>' +
+        t.s.map(function(s){ return '<p class="quote">“' + s[1] + '”</p><div class="who" style="margin:-4px 0 10px">' + s[0] + '</div>'; }).join('') +
+        '<p><strong>' + t.v + '</strong></p>' +
+        (n === TASKS.length ? '<p style="font-size:.86rem">Com as quatro tarefas, aparece o padrão da pesquisa: delegar o operacional, revisar o que importa e guardar para si o que exige domínio do conteúdo.</p>'
+          : '<p style="font-size:.84rem">Tarefas respondidas: ' + n + ' de ' + TASKS.length + '.</p>');
+    }
+    each(wrap.querySelectorAll('.task'), function(tk){
+      var i = +tk.dataset.i;
+      each(tk.querySelectorAll('button'), function(b){
+        b.addEventListener('click', function(){
+          picks[i] = +b.dataset.j;
+          each(tk.querySelectorAll('button'), function(o){ var on = o === b; o.classList.toggle('on', on); o.setAttribute('aria-pressed', on); });
+          tk.classList.add('done');
+          show(i);
+        });
+      });
+    });
+    panel.innerHTML = '<div class="tag">O estagiário digital</div><p>Escolha uma opção em qualquer tarefa ao lado (ou acima, no celular) para comparar sua resposta com a dos professores entrevistados.</p>';
+  })();
+
+  /* ================= 03 · CONTEXTO ================= */
+  (function(){
+    var chips = $('ctx-chips'), bars = $('ctx-bars');
+    chips.innerHTML = CTX.map(function(p, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="false">' + p.b + '</button>'; }).join('');
+    function show(i){
+      var p = CTX[i];
+      each(chips.children, function(c, j){ c.classList.toggle('on', i === j); c.setAttribute('aria-pressed', i === j); });
+      $('ctx-title').textContent = p.t + ' · ' + UFMG_N + ' docentes';
+      bars.innerHTML = p.rows.map(function(r, j){
+        return '<div class="hbar' + (j === 0 ? ' top' : '') + '"><span>' + r[0] + '</span><div class="trk"><div class="fill" style="width:0"></div><span class="val" style="left:6px">' + r[1] + ' · ' + fmt(r[1] / UFMG_N * 100) + '%</span></div></div>';
+      }).join('');
+      requestAnimationFrame(function(){
+        each(bars.querySelectorAll('.hbar'), function(h, j){
+          var w = p.rows[j][1] / UFMG_N * 72; // mesma escala nos dois gráficos (0 a 100% dos 410)
+          h.querySelector('.fill').style.width = w + '%';
+          h.querySelector('.val').style.left = 'calc(' + w + '% + 8px)';
+        });
+      });
+    }
+    each(chips.children, function(c){ c.addEventListener('click', function(){ show(+c.dataset.i); }); });
+    show(1);
+  })();
+
+  /* ================= 04 · FUNIL ================= */
+  (function(){
+    var sc = $('funnel-scene');
+    var st = makeStage(sc, 320, 320, {ay:'72%', rx:'64deg', floor:false});
+    st.style.setProperty('--rz', '0deg');
+    var discs = [], max = FUNNEL[0], last = FUNNEL.length - 1;
+    FUNNEL.forEach(function(n, i){
+      var size = Math.max(40, Math.round(Math.sqrt(n / max) * 300)); // área proporcional ao número
+      var d = document.createElement('div');
+      d.className = 'disc';
+      d.style.width = size + 'px'; d.style.height = size + 'px';
+      d.style.left = (320 - size) / 2 + 'px'; d.style.top = (320 - size) / 2 + 'px';
+      d.style.setProperty('--z', ((last - i) * 58) + 'px');
+      d.style.setProperty('--dc', i === last ? 'var(--red)' : 'color-mix(in srgb, #334155 ' + (40 + i * 15) + '%, #94a3b8)');
+      d.style.transitionDelay = (i * 0.12) + 's';
+      d.innerHTML = '<div class="under"></div><div class="top" style="font-size:' + Math.max(15, Math.min(32, size / 7)) + 'px">' + n + '</div>';
+      st.appendChild(d); discs.push(d);
+    });
+    var items = document.querySelectorAll('#steps li');
+    function hl(i){
+      discs.forEach(function(d, j){ d.classList.toggle('hl', i === j); d.style.transitionDelay = '0s'; });
+      each(items, function(li, j){ li.classList.toggle('hl', i === j); });
+    }
+    each(items, function(li){
+      li.addEventListener('mouseenter', function(){ hl(+li.dataset.i); });
+      li.addEventListener('mouseleave', function(){ hl(-1); });
+    });
+    discs.forEach(function(d, i){
+      d.addEventListener('mouseenter', function(){ hl(i); });
+      d.addEventListener('mouseleave', function(){ hl(-1); });
+    });
+  })();
+
+  /* ================= 05 · PROFESSORES ================= */
+  (function(){
+    var svg = $('people'), panel = $('prof-panel'), chips = $('prof-chips');
+    var FILTERS = [
+      {n:'Todos', f:function(){ return true; }},
+      {n:'Mulheres', f:function(p){ return p.g === 'F'; }},
+      {n:'Rede pública', f:function(p){ return p.inst === 'Pública'; }},
+      {n:'20 anos ou mais de docência', f:function(p){ return p.yrs >= 20; }},
+      {n:'60 anos ou mais', f:function(p){ return p.age >= 60; }}
+    ];
+    var html = '';
+    PEOPLE.forEach(function(p, i){
+      var col = i % 7, row = Math.floor(i / 7), x = 40 + col * 73, y = 62 + row * 112;
+      html += person(x, y, 1.45, p.out ? 'out' : '', ' data-i="' + i + '"' + (p.out ? '' : ' tabindex="0" role="button" aria-label="Entrevista ' + p.e + '"'));
+      html += '<text x="' + x + '" y="' + (y + 40) + '" style="font-size:11px; font-weight:700; fill:' + (p.out ? '#94a3b8' : 'var(--ink-2)') + '; text-anchor:middle">E' + p.e + '</text>';
+    });
+    svg.innerHTML = html;
+    var gs = svg.querySelectorAll('.person');
+    chips.innerHTML = FILTERS.map(function(f, i){ return '<button class="chip' + (i ? '' : ' on') + '" data-i="' + i + '" aria-pressed="' + (i ? 'false' : 'true') + '">' + f.n + '</button>'; }).join('');
+    function filter(i){
+      var f = FILTERS[i], n = 0;
+      each(chips.children, function(c, j){ c.classList.toggle('on', i === j); c.setAttribute('aria-pressed', i === j); });
+      each(gs, function(g){
+        var p = PEOPLE[+g.dataset.i], on = !p.out && f.f(p);
+        if (on) n++;
+        g.classList.toggle('hl', on && i > 0); g.classList.toggle('dim', !on && i > 0); g.classList.remove('sel');
+      });
+      panel.innerHTML = i === 0
+        ? '<div class="tag">Os entrevistados</div><p>Professores de cursos de Administração de <strong>8 instituições</strong> brasileiras, a maioria com longa experiência. A figura tracejada é a primeira entrevista, que ficou fora da análise. Clique num professor para ver o perfil e uma palavra-chave da conversa.</p>'
+        : '<div class="tag">' + f.n + '</div><h3>' + n + ' de 13 professores</h3><p>Os demais aparecem apagados.</p>';
+    }
+    function pick(i){
+      var p = PEOPLE[i];
+      if (p.out) return;
+      each(gs, function(g){ g.classList.toggle('sel', +g.dataset.i === i); });
+      var kw = KW[p.e].filter(function(k){ return k[0] !== 'T'; })[0] || KW[p.e][0];
+      panel.innerHTML = '<div class="tag">Entrevista ' + p.e + '</div>' +
+        '<div class="kv"><span><b>' + p.age + '</b>anos</span><span><b>' + (p.g === 'F' ? 'Mulher' : 'Homem') + '</b>gênero</span><span><b>' + fmt(p.yrs, p.yrs % 1 ? 1 : 0) + '</b>anos de docência</span><span><b>' + p.inst + '</b>instituição</span></div>' +
+        '<p style="margin-bottom:2px"><strong>' + kw[1] + '</strong></p><p class="quote" style="font-size:.95rem">“' + kw[2] + '”</p>';
+    }
+    each(gs, function(g){
+      g.addEventListener('click', function(){ pick(+g.dataset.i); });
+      g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); pick(+g.dataset.i); } });
+    });
+    each(chips.children, function(c){ c.addEventListener('click', function(){ filter(+c.dataset.i); }); });
+    filter(0);
+  })();
+
+  /* ================= 06 · ANÁLISE EM CAMADAS ================= */
+  (function(){
+    var sc = $('layer-scene');
+    var st = makeStage(sc, 360, 200, {ay:'76%', rx:'62deg'});
+    var layers = [[], [], [], []], ZL = [0, 90, 170, 250];
+    // camada 0: 65 palavras-chave (13 entrevistas × 5), cor pelo assunto
+    IDS.forEach(function(e, col){
+      KW[e].forEach(function(k, row){
+        var b = box({w:20, d:20, x:8 + col * 27, y:30 + row * 30, h:10, c:catOf(k[0]).c});
+        b.style.setProperty('--z', ZL[0] + 'px'); st.appendChild(b); layers[0].push(b);
+      });
+    });
+    // camada 1: 4 códigos
+    CONCEPTS.forEach(function(c, i){
+      var b = box({w:78, d:78, x:6 + i * 88, y:61, h:16, c:c.c});
+      b.style.setProperty('--z', ZL[1] + 'px'); st.appendChild(b); layers[1].push(b);
+    });
+    // camada 2: 3 temas (o tema 1 junta os dois primeiros códigos)
+    [[6, 166, 'var(--efi)'], [182, 78, 'var(--risco)'], [270, 78, 'var(--med)']].forEach(function(t){
+      var b = box({w:t[1], d:78, x:t[0], y:61, h:16, c:t[2]});
+      b.style.setProperty('--z', ZL[2] + 'px'); st.appendChild(b); layers[2].push(b);
+    });
+    // camada 3: 4 conceitos
+    CONCEPTS.forEach(function(c, i){
+      var b = box({w:70, d:70, x:10 + i * 88, y:65, h:34, c:c.c});
+      b.style.setProperty('--z', ZL[3] + 'px'); st.appendChild(b); layers[3].push(b);
+    });
+    rotatable(sc, st, -28, 14);
+
+    var L = [
+      {n:'65', t:'palavras-chave', h:'Palavras-chave, 5 por entrevista',
+        b:'<p>Termos que resumem trechos marcantes de cada conversa, escolhidos por critérios como realismo, riqueza, repetição e centralidade. Exemplos:</p><ul><li>“Otimização do tempo” (repetida em várias entrevistas)</li><li>“Muleta permanente” (Entrevista 5)</li><li>“Elo seguro” (Entrevista 13)</li></ul><p style="font-size:.82rem; margin-top:8px">As cores seguem os assuntos da próxima tela.</p>'},
+      {n:'4', t:'códigos', h:'Códigos, um por dimensão das perguntas',
+        b:'<ul>' + CONCEPTS.map(function(c){ return '<li><span class="dot" style="background:' + c.c + '"></span>' + c.code + '</li>'; }).join('') + '</ul>'},
+      {n:'3', t:'temas', h:'Temas, que juntam os códigos',
+        b:'<ul><li><span class="dot" style="background:var(--efi)"></span>Otimização e orquestração da prática docente</li><li><span class="dot" style="background:var(--risco)"></span>Paradoxos da confiabilidade e riscos cognitivos</li><li><span class="dot" style="background:var(--med)"></span>Transformação da identidade e práxis reflexiva</li></ul>'},
+      {n:'4', t:'conceitos', h:'Conceitos, a resposta da pesquisa',
+        b:'<ul>' + CONCEPTS.map(function(c){ return '<li><span class="dot" style="background:' + c.c + '"></span><strong>' + c.n + '</strong></li>'; }).join('') + '</ul><p style="font-size:.82rem; margin-top:8px">A tela 11 mostra como eles se encaixam.</p>'}
+    ];
+    var tabs = $('layer-tabs');
+    tabs.innerHTML = L.map(function(l, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="false"><b>' + l.n + '</b>' + l.t + '</button>'; }).join('');
+    function show(i){
+      each(tabs.children, function(c, j){ c.classList.toggle('on', i === j); c.setAttribute('aria-pressed', i === j); });
+      layers.forEach(function(ls, j){ ls.forEach(function(b){ b.classList.toggle('off', i >= 0 && j !== i); }); });
+      $('layer-panel').innerHTML = '<div class="tag">Camada ' + (i + 1) + ' de 4</div><h3>' + L[i].h + '</h3>' + L[i].b;
+    }
+    each(tabs.children, function(c){ c.addEventListener('click', function(){ show(+c.dataset.i); }); });
+    show(0);
+  })();
+
+  /* ================= 07 · MATRIZ ================= */
+  (function(){
+    var mx = $('mx'), panel = $('mx-panel'), chips = $('mx-chips');
+    var count = {}; // professores por assunto
+    CATS.forEach(function(c){ count[c.k] = IDS.filter(function(e){ return KW[e].some(function(k){ return k[0] === c.k; }); }).length; });
+    var html = '<div></div>' + CATS.map(function(c){ return '<div class="h"><small>' + count[c.k] + '</small><span class="ln">' + c.n + '</span><span class="sh">' + c.s + '</span><i style="background:' + c.c + '"></i></div>'; }).join('');
+    IDS.forEach(function(e){
+      html += '<div class="r">E' + e + '</div>';
+      CATS.forEach(function(c){
+        var n = KW[e].filter(function(k){ return k[0] === c.k; }).length;
+        html += '<button class="c' + (n ? ' has' : '') + '" style="--k:' + c.c + '" data-e="' + e + '" data-k="' + c.k + '" aria-label="Entrevista ' + e + ', ' + c.n + ': ' + n + ' palavra(s)-chave"' + (n ? '' : ' tabindex="-1"') + '>' + new Array(n + 1).join('<span></span>') + '</button>';
+      });
+    });
+    mx.innerHTML = html;
+    var cells = mx.querySelectorAll('button.c');
+    chips.innerHTML = '<button class="chip on" data-k="">Todos</button>' + CATS.slice(0, 5).map(function(c){ return '<button class="chip" data-k="' + c.k + '">' + c.n + '</button>'; }).join('');
+    function intro(){
+      panel.innerHTML = '<div class="tag">Como ler</div><p>Os números no topo das colunas contam <strong>quantos professores</strong> tocaram em cada assunto. As bolinhas contam as palavras-chave de cada um. O tempo domina, mas os riscos (erros e dependência) vêm logo atrás: 8 professores cada.</p>';
+    }
+    function cat(k){
+      each(chips.children, function(c){ c.classList.toggle('on', c.dataset.k === k); });
+      mx.classList.toggle('focus', !!k);
+      each(cells, function(b){ b.classList.toggle('f', b.dataset.k === k); b.classList.remove('sel'); });
+      if (!k) return intro();
+      var c = catOf(k), ex = [];
+      IDS.forEach(function(e){ KW[e].forEach(function(w){ if (w[0] === k && ex.length < 3 && !ex.some(function(x){ return x[0] === e; })) ex.push([e, w]); }); });
+      panel.innerHTML = '<div class="tag">' + c.n + ' · ' + count[k] + ' de 13 professores</div><p>' + c.d + '</p>' +
+        ex.map(function(x){ return '<p style="font-size:.88rem; margin-bottom:4px"><strong>' + x[1][1] + '</strong> <span class="who">· Entrevista ' + x[0] + '</span></p>'; }).join('') +
+        '<p style="font-size:.82rem; margin-top:6px">Clique num quadrinho colorido para ler o trecho.</p>';
+    }
+    function cell(b){
+      if (!b.classList.contains('has')) return;
+      each(cells, function(o){ o.classList.toggle('sel', o === b); });
+      var e = +b.dataset.e, c = catOf(b.dataset.k), ws = KW[e].filter(function(k){ return k[0] === c.k; });
+      panel.innerHTML = '<div class="tag">Entrevista ' + e + ' · ' + c.n + '</div>' +
+        ws.map(function(w){ return '<p style="margin-bottom:2px"><strong>' + w[1] + '</strong></p><p class="quote" style="font-size:.95rem">“' + w[2] + '”</p>'; }).join('');
+    }
+    each(cells, function(b){ b.addEventListener('click', function(){ cell(b); }); });
+    each(chips.children, function(c){ c.addEventListener('click', function(){ cat(c.dataset.k); }); });
+    intro();
+  })();
+
+  /* ================= 08 · TEMPO ================= */
+  (function(){
+    var A = $('days-a'), B = $('days-b');
+    A.innerHTML = [1, 2, 3].map(function(d){ return '<div class="day' + (d === 3 ? ' half' : '') + '"><div class="f"></div><span>dia ' + d + '</span></div>'; }).join('');
+    B.innerHTML = [1, 2, 3].map(function(d){ return '<div class="day"><div class="f ia"></div><span>dia ' + d + '</span></div>'; }).join('');
+    var fa = A.querySelectorAll('.f'), fb = B.querySelector('.f');
+    function fillA(){ each(fa, function(f){ f.style.width = '100%'; }); }
+    new IntersectionObserver(function(es){ es.forEach(function(en){ if (en.isIntersecting) fillA(); }); }, {threshold:.3}).observe(A);
+    var btn = $('time-btn');
+    btn.addEventListener('click', function(){
+      var on = btn.getAttribute('aria-pressed') !== 'true';
+      btn.setAttribute('aria-pressed', on);
+      fb.style.width = on ? (15 / 1440 * 100) + '%' : '0';
+      fb.style.minWidth = on ? '2px' : '0';
+      $('ia-lab').textContent = on ? '15 minutos' : '?';
+    });
+
+    var wrap = $('uses'), panel = $('use-panel');
+    wrap.innerHTML = USES.map(function(u, i){ return '<button class="use" data-i="' + i + '" aria-pressed="false"><b>' + u.n + '</b>' + u.e + '</button>'; }).join('');
+    function show(i){
+      var u = USES[i];
+      each(wrap.children, function(b, j){ b.classList.toggle('on', i === j); b.setAttribute('aria-pressed', i === j); });
+      panel.innerHTML = '<div class="tag">' + u.n + ' · ' + u.e + '</div><p class="quote">“' + u.q + '”</p>' + (u.x ? '<p>' + u.x + '</p>' : '');
+    }
+    each(wrap.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    panel.innerHTML = '<div class="tag">Usos citados nas entrevistas</div><p>Preparar aulas, criar atividades, corrigir trabalhos, atualizar-se sobre o conteúdo e acompanhar notícias do mundo dos negócios estão entre as tarefas relatadas.</p>';
+  })();
+
+  /* ================= 09 · CONFIANÇA ================= */
+  (function(){
+    var wrap = $('metaphors');
+    wrap.innerHTML = METAPHORS.map(function(m){
+      return '<button class="flip" style="--pc:' + m.c + '" aria-pressed="false"><div class="flip-in">' +
+        '<div class="flip-face front"><span class="sig">' + m.e + '</span><h3>' + m.n + '</h3><p>' + m.m + '</p><span class="more">Ler a fala ↻</span></div>' +
+        '<div class="flip-face back"><span class="sig">' + m.e + '</span><p class="quote">“' + m.q + '”</p></div>' +
+        '</div></button>';
+    }).join('');
+    each(wrap.querySelectorAll('.flip'), function(f){
+      f.addEventListener('click', function(){ var on = !f.classList.contains('turned'); f.classList.toggle('turned', on); f.setAttribute('aria-pressed', on); });
+    });
+  })();
+
+  /* ================= 10 · MEDIADOR ================= */
+  (function(){
+    var svg = $('tri');
+    var P = {p:[100, 300], a:[360, 300], i:[230, 90]};
+    function ln(a, b, cls, col, dash){ return '<line class="lk ' + cls + '" x1="' + a[0] + '" y1="' + a[1] + '" x2="' + b[0] + '" y2="' + b[1] + '" stroke="' + col + '"' + (dash ? ' stroke-dasharray="6 6"' : '') + '/>'; }
+    function nd(p, r, col, t, cls){ return '<g class="nd ' + (cls || '') + '"><circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + r + '" fill="' + col + '"/><text x="' + p[0] + '" y="' + (p[1] + 5) + '">' + t + '</text></g>'; }
+    svg.innerHTML =
+      ln(P.p, P.a, 'before', 'var(--med)') +
+      '<text class="lab before" x="230" y="288">transmite o conteúdo</text>' +
+      '<g class="now">' + ln(P.a, P.i, '', 'var(--risco)', true) + ln(P.p, P.i, '', 'var(--med)') + ln(P.p, P.a, '', 'var(--med)') +
+        '<text class="lab" x="330" y="190" style="text-anchor:start">pergunta à IA</text>' +
+        '<text class="lab" x="130" y="190" style="text-anchor:end">verifica, corrige,</text><text class="lab" x="130" y="206" style="text-anchor:end">ensina a usar</text>' +
+        '<text class="lab" x="230" y="288">orienta e dá sentido</text></g>' +
+      '<g class="ia-node">' + nd(P.i, 44, 'var(--risco)', 'IA') + '</g>' +
+      nd(P.p, 52, 'var(--med)', 'Professor') + nd(P.a, 46, 'var(--papel)', 'Aluno');
+    var btn = $('tri-btn');
+    btn.addEventListener('click', function(){
+      var on = btn.getAttribute('aria-pressed') !== 'true';
+      btn.setAttribute('aria-pressed', on); svg.classList.toggle('on', on);
+    });
+    var chips = $('role-chips'), panel = $('role-panel');
+    chips.innerHTML = ROLES.map(function(r, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="false">' + r.n + '</button>'; }).join('');
+    function show(i){
+      var r = ROLES[i];
+      each(chips.children, function(c, j){ c.classList.toggle('on', i === j); c.setAttribute('aria-pressed', i === j); });
+      panel.innerHTML = '<div class="tag">' + r.n + ' · ' + r.e + '</div><p class="quote">“' + r.q + '”</p>';
+    }
+    each(chips.children, function(c){ c.addEventListener('click', function(){ show(+c.dataset.i); }); });
+    panel.innerHTML = '<div class="tag">Cinco professores, a mesma direção</div><p>Clique nas palavras acima para ler como cada um descreve o novo papel.</p>';
+  })();
+
+  /* ================= 11 · MODELO ================= */
+  (function(){
+    var sc = $('model-scene'), m = buildModel(sc);
+    rotatable(sc, m.st, -30, 16);
+    var chips = $('cpt-chips'), panel = $('cpt-panel');
+    chips.innerHTML = CONCEPTS.map(function(c, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="false"><span class="dot" style="background:' + c.c + '"></span>' + c.s + '</button>'; }).join('');
+    function show(i){
+      var c = CONCEPTS[i];
+      each(chips.children, function(b, j){ b.classList.toggle('on', i === j); b.setAttribute('aria-pressed', i === j); });
+      Object.keys(m.parts).forEach(function(k){ m.parts[k].classList.toggle('off', k !== c.k); });
+      panel.innerHTML = '<div class="tag">' + c.lvl + '</div><h3>' + c.n + '</h3><p>' + c.d + '</p><p style="font-size:.84rem">' + c.t + '</p><p style="font-size:.78rem; color:var(--muted)">Vem do ' + c.theme.replace('Tema', 'tema') + '.</p>';
+    }
+    function summary(){
+      each(chips.children, function(b){ b.classList.remove('on'); b.setAttribute('aria-pressed', 'false'); });
+      Object.keys(m.parts).forEach(function(k){ m.parts[k].classList.remove('off'); });
+      panel.innerHTML = '<div class="tag">A resposta em uma frase</div><p class="quote">A IA generativa é usada como um sistema de suporte assistivo e catalisador, mas sua integração gera um estado de vulnerabilidade que poderia ser superado a partir de uma ressignificação mediadora da prática docente.</p><p style="font-size:.84rem">Conclusão da dissertação, com pequenos cortes (Seção 8). O “poderia” é da autora: é uma proposição, não um resultado medido.</p>';
+    }
+    each(chips.children, function(b){ b.addEventListener('click', function(){ var i = +b.dataset.i; if (b.classList.contains('on')) summary(); else show(i); }); });
+    sc.addEventListener('click', function(e){
+      if (wasDrag(sc)) return;
+      var s = e.target.closest('.slab');
+      if (s) show(CONCEPTS.indexOf(CK[s.dataset.k]));
+    });
+    var sep = $('sep-btn');
+    sep.addEventListener('click', function(){ var on = sep.getAttribute('aria-pressed') !== 'true'; sep.setAttribute('aria-pressed', on); m.spread(on); });
+    summary();
+  })();
+
+  /* ================= 12 · SEM IA + REFLEXÃO ================= */
+  (function(){
+    var svg = $('noai'), html = '', DIFF = 9; // posição ilustrativa: a dissertação não diz quem foi
+    IDS.forEach(function(e, i){
+      var x = 22 + i * 37.5, y = 82;
+      html += '<circle class="spark" cx="' + (x + 12) + '" cy="' + (y - 34) + '" r="4"/>';
+      html += person(x, y, 1, i === DIFF ? 'diff' : '', '');
+    });
+    svg.innerHTML = html;
+    var btn = $('noai-btn');
+    btn.addEventListener('click', function(){ var on = btn.getAttribute('aria-pressed') !== 'true'; btn.setAttribute('aria-pressed', on); svg.classList.toggle('off', on); });
+
+    var inp = $('ref-in'), panel = $('ref-panel');
+    function show(){
+      var v = +inp.value, z = REFLEX.filter(function(r){ return v < r.max; })[0];
+      panel.innerHTML = '<div class="tag">' + z.t + '</div><p>' + z.d + '</p>';
+    }
+    inp.addEventListener('input', show);
+    show();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
