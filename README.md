@@ -8,6 +8,8 @@ Site: https://ailabmack.github.io/ppga-interativo/
 
 ```
 index.html            página do projeto e índice de trabalhos
+sobre/                página "Sobre o projeto"
+en/                   versão em inglês, espelhando a mesma estrutura (en/index.html, en/sobre/, en/teses/...)
 assets/               motor compartilhado das apresentações (motor.css, motor.js)
 dados/linhas.json     linhas de pesquisa e docentes do PPGA
 teses/                uma pasta por tese de doutorado
@@ -33,6 +35,7 @@ Cada trabalho fica em sua própria pasta, nomeada `ANO-sobrenome-tema`, com:
 | `palavras_chave` | lista de termos |
 | `resumo` | um parágrafo em linguagem simples |
 | `ods` | até 3 ODS da ONU, do mais próximo ao menos: `[{"n": 9, "meta": "9.5", "motivo": "..."}]` (aparecem no card e na capa) |
+| `en` | textos em inglês: `titulo`, `titulo_curto`, `chamada`, `resumo`, `palavras_chave`, `ods_motivo` (um por item de `ods`) |
 | `pdf` | caminho relativo do PDF, ex. `tese.pdf`, ou `null` |
 | `link` | URL externa do texto completo, ou `null` |
 

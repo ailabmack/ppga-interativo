@@ -10,7 +10,9 @@
   var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   var $ = function(id){ return document.getElementById(id); };
   var each = function(list, fn){ Array.prototype.forEach.call(list, fn); };
-  var fmt = function(n, d){ return n.toFixed(d === undefined ? 1 : d).replace('.', ','); };
+  /* Idioma da página (<html lang>): 'en' nas cópias em /en/, 'pt' no resto. Decide o separador decimal. */
+  var lang = /^en/i.test(document.documentElement.lang) ? 'en' : 'pt';
+  var fmt = function(n, d){ var s = n.toFixed(d === undefined ? 1 : d); return lang === 'en' ? s : s.replace('.', ','); };
 
   /* ---------- Caixas 3D ----------
      box({w, d, h, x, y, z, c, label, top, cls}): caixa com 5 faces.
@@ -174,11 +176,12 @@
     prog(); mark(0);
   }
 
-  /* Botão do texto completo (#full-text): aparece se o meta.json tiver pdf ou link. */
+  /* Botão do texto completo (#full-text): aparece se o meta.json tiver pdf ou link.
+     A versão em inglês aponta para o meta.json da pasta original com <body data-meta="...">. */
   function fullText(){
     var a = $('full-text');
     if (!a || !window.fetch) return;
-    fetch('meta.json').then(function(r){ return r.json(); }).then(function(m){
+    fetch(document.body.dataset.meta || 'meta.json').then(function(r){ return r.json(); }).then(function(m){
       var url = m.pdf || m.link;
       if (url){ a.href = url; a.style.display = ''; }
     }).catch(function(){});
@@ -194,7 +197,7 @@
   }
 
   window.Motor = {
-    reduce:reduce, $:$, each:each, fmt:fmt,
+    reduce:reduce, lang:lang, $:$, each:each, fmt:fmt,
     box:box, makeStage:makeStage, ramp:ramp, flatLabel:flatLabel,
     rotatable:rotatable, wasDrag:wasDrag, hover:hover, onTick:onTick, fit:fit, init:init
   };
