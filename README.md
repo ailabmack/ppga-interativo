@@ -39,16 +39,6 @@ Cada trabalho fica em sua própria pasta, nomeada `ANO-sobrenome-tema`, com:
 | `pdf` | caminho relativo do PDF, ex. `tese.pdf`, ou `null` |
 | `link` | URL externa do texto completo, ou `null` |
 
-## Skill para novos trabalhos
-
-`.claude/skills/tese-interativa/` contém a skill do Claude Code que guia a transformação de uma tese ou dissertação numa apresentação interativa: extração do texto, roteiro, visualizações, construção, verificação e publicação. Ela é atualizada a cada novo trabalho (`references/licoes.md` guarda preferências, soluções e histórico).
-
-Para usá-la em qualquer pasta, crie um atalho na pasta de skills pessoais:
-
-```bash
-ln -s "$(pwd)/.claude/skills/tese-interativa" ~/.claude/skills/tese-interativa
-```
-
 ## Visualizar localmente
 
 Abra `index.html` no navegador ou sirva a pasta com `python3 -m http.server`.
