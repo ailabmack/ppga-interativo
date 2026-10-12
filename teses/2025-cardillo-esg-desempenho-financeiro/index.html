@@ -1,0 +1,913 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fazer ou contar ESG · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Marcos Alexandre dos Reis Cardillo (PPGA Mackenzie, 2025) sobre ESG e desempenho financeiro: uma revisão de 108 estudos e uma análise de empresas do Brasil, China, Índia e África do Sul, explicada em 10 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2025-cardillo-esg-desempenho-financeiro/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2213%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>ESG</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em ../../assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --faz:var(--navy);   /* fazer: nota de desempenho ESG */
+    --con:var(--red);    /* contar: nota de divulgação ESG */
+    --neg:#334155;       /* efeito negativo significativo */
+    --off:#cbd5e1;       /* não significativo */
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .faz-t{color:var(--faz); font-weight:700;} .con-t{color:var(--con); font-weight:700;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4.2vw, 2.9rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{display:flex; gap:6px 16px; justify-content:center; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:6px;}
+  #hero-scene .face-label{font-size:12px; letter-spacing:.08em;}
+  #hero-scene .top-label{font-size:16px;}
+  #hero-scene .floor-label{font-size:14px;}
+
+  /* ---------- Componentes comuns ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px 20px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.08rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.92rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px; margin:4px 8px 12px 0;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 15px; font-size:.85rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .seg button.faz[aria-pressed="true"]{background:var(--faz);}
+  .seg button.con[aria-pressed="true"]{background:var(--con);}
+  .pbars{display:grid; gap:8px; margin-top:8px;}
+  .pbar{display:grid; grid-template-columns:150px 1fr 86px; gap:10px; align-items:center; font-size:.84rem; color:var(--ink-2);}
+  .pbar .tr{height:16px; background:#eef2f7; border-radius:4px; overflow:hidden;}
+  .pbar .tr i{display:block; height:100%; background:var(--ink-2); border-radius:4px; transition:width .6s cubic-bezier(.2,.8,.2,1);}
+  .pbar b{font-weight:700; color:var(--ink); text-align:right; font-variant-numeric:tabular-nums;}
+  @media (max-width:520px){ .pbar{grid-template-columns:104px 1fr 70px; font-size:.78rem;} }
+  .leg{display:flex; flex-wrap:wrap; gap:4px 14px; font-size:.74rem; color:var(--muted); margin-top:8px;}
+  .leg i{display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:5px; vertical-align:-2px;}
+  svg text{font-family:var(--sans);}
+  .rng{margin:10px 0 4px;}
+  .rng label{font-size:.86rem; font-weight:600; color:var(--ink-2); display:block; margin-bottom:4px;}
+  .rng input[type=range]{width:100%; -webkit-appearance:none; appearance:none; height:30px; background:transparent; cursor:pointer; --tc:var(--con);}
+  .rng input[type=range]::-webkit-slider-runnable-track{height:6px; border-radius:3px; background:linear-gradient(90deg, #e2e8f0, var(--tc));}
+  .rng input[type=range]::-moz-range-track{height:6px; border-radius:3px; background:linear-gradient(90deg, #e2e8f0, var(--tc));}
+  .rng input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:22px; height:22px; border-radius:50%; background:#fff; border:3px solid var(--tc); margin-top:-8px; box-shadow:var(--shadow);}
+  .rng input[type=range]::-moz-range-thumb{width:18px; height:18px; border-radius:50%; background:#fff; border:3px solid var(--tc);}
+  .rng .ticks{display:flex; justify-content:space-between; font-size:.72rem; color:var(--muted);}
+
+  /* ---------- 02 · O debate ---------- */
+  #funnel{width:100%; max-width:380px; display:block; margin:6px 0 0;}
+  #years{width:100%; display:block;}
+  #years .yb{cursor:pointer;}
+  #years .yb:focus{outline:none;}
+  #years .yb:focus rect.b{stroke:var(--ink); stroke-width:2;}
+  #year-panel{min-height:150px; margin-top:10px;}
+  @media (max-width:600px){ #years text{font-size:15px !important;} #years .sm{display:none;} }
+
+  /* ---------- 03 · Moderadores ---------- */
+  #mod-scene{perspective:3200px;}
+  #mod-scene .face-label{font-size:15px; letter-spacing:0; align-items:flex-start; padding-top:6px;}
+  #mod-scene .floor-label{font-size:14px;}
+  #mod-scene .slab{cursor:pointer;}
+  #mod-scene .slab.active{--oz:14px; --c:var(--red) !important;}
+  #mod-panel{min-height:132px;}
+  @media (max-width:600px){ #mod-scene .floor-label{font-size:19px; white-space:nowrap;} #mod-scene .face-label{font-size:19px;} #mat-scene .top-label{font-size:19px;} #mat-scene .floor-label{font-size:22px;} }
+
+  /* ---------- 04 · Duas notas ---------- */
+  .two{display:grid; grid-template-columns:1fr; gap:14px;}
+  @media (min-width:640px){ .two{grid-template-columns:1fr 1fr;} }
+  .side{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 18px; box-shadow:var(--shadow); border-top:6px solid var(--sc);}
+  .side .who{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--sc);}
+  .side h3{font-size:1.1rem; margin:4px 0 4px; color:var(--ink);}
+  .side p{font-size:.86rem; margin:0 0 8px;}
+  .mini{display:grid; gap:5px;}
+  .mini div{display:grid; grid-template-columns:86px 1fr 40px; gap:8px; align-items:center; font-size:.78rem; color:var(--ink-2);}
+  .mini .tr{height:10px; background:#eef2f7; border-radius:3px; overflow:hidden;}
+  .mini .tr i{display:block; height:100%; background:var(--sc); border-radius:3px;}
+  .mini b{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink);}
+  .flips{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .flip{perspective:900px; cursor:pointer; border:0; background:none; padding:0; text-align:left; min-height:168px;}
+  .flip .in{display:block; position:relative; width:100%; height:100%; min-height:168px; transform-style:preserve-3d; transition:transform .6s cubic-bezier(.2,.8,.2,1);}
+  .flip[aria-pressed="true"] .in{transform:rotateY(180deg);}
+  .flip .fc, .flip .bc{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:12px; padding:14px 15px; border:1px solid var(--border); box-shadow:var(--shadow); background:var(--card);}
+  .flip .fc{border-top:5px solid var(--fc);}
+  .flip .bc{transform:rotateY(180deg); background:color-mix(in srgb, var(--fc) 8%, white); border-top:5px solid var(--fc);}
+  .flip .k, .flip .q, .flip .turn{display:block;}
+  .flip .k{font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--muted);}
+  .flip h4{font-family:var(--serif); font-size:1.15rem; margin:4px 0 6px; color:var(--ink);}
+  .flip .q{font-size:.88rem; color:var(--ink-2); line-height:1.4;}
+  .flip .bc p{font-size:.8rem; margin:0 0 6px; color:var(--ink-2); line-height:1.4;}
+  .flip .turn{position:absolute; bottom:10px; right:12px; font-size:.7rem; color:var(--muted);}
+  @media (max-width:420px){ .flips{grid-template-columns:1fr;} }
+
+  /* ---------- 05 · Amostra ---------- */
+  #countries{width:100%; display:block; max-width:560px;}
+  #countries .cb{cursor:pointer;}
+  #countries .cb:focus{outline:none;}
+  #countries .cb:focus circle{stroke:var(--ink); stroke-width:3;}
+  @media (max-width:600px){ #countries text{font-size:17px !important;} #countries text.cn{font-size:13px !important;} }
+  .method{margin-top:12px; padding:14px 18px;}
+  #sec-bars{gap:5px;}
+  #sec-bars .pbar{grid-template-columns:170px 1fr 80px; font-size:.8rem;}
+  @media (max-width:520px){ #sec-bars .pbar{grid-template-columns:118px 1fr 66px;} }
+
+  /* ---------- 06 · Fazer × contar ---------- */
+  #push-svg{width:100%; display:block;}
+  @media (max-width:600px){ #push-svg text{font-size:16px !important;} #push-svg .sm{display:none;} }
+  #push-panel{min-height:150px; margin-top:12px;}
+
+  /* ---------- 07 · Pilares ---------- */
+  #mat-scene{perspective:2600px;}
+  #mat-scene .top-label{font-size:14px; color:#fff;}
+  #mat-scene .slab.ns .top-label{color:var(--ink-2); font-weight:600;}
+  #mat-scene .floor-label{font-size:17px;}
+  #mat-scene .slab{cursor:pointer;}
+  #mat-scene .slab.neg > i, .leg i.neg{background-image:repeating-linear-gradient(45deg, rgb(255 255 255 / .28) 0 5px, transparent 5px 10px);}
+  #mat-scene .slab.active > i{box-shadow:inset 0 0 0 2px var(--ink);}
+  #mat-panel{min-height:150px;}
+  details.alt{margin-top:10px; font-size:.8rem; color:var(--muted);}
+  details.alt summary{cursor:pointer;}
+  #mat-table{overflow-x:auto;}
+  details.alt table{border-collapse:collapse; margin-top:6px; width:100%; font-variant-numeric:tabular-nums;}
+  details.alt td, details.alt th{border:1px solid var(--border); padding:3px 6px; text-align:right;}
+  details.alt th:first-child, details.alt td:first-child{text-align:left;}
+
+  /* ---------- 08 e 09 · Curvas ---------- */
+  .curve{width:100%; display:block;}
+  @media (max-width:600px){ .curve text{font-size:16px !important;} .curve .sm{display:none;} }
+  #curve-msg, #zone-msg{min-height:5.2em; font-size:.9rem; color:var(--ink-2); margin-top:6px;}
+
+  /* ---------- 10 · Prática, limites e créditos ---------- */
+  .cards3{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:760px){ .cards3{grid-template-columns:repeat(3, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.95rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{font-size:.76rem; line-height:1.45; color:var(--ink-2); margin:0;}
+  .pcard .src{display:block; margin-top:6px; font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--muted);}
+  .end{display:grid; grid-template-columns:1fr; gap:24px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.08rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:8px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+  .cite a{color:var(--red);}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2025-cardillo-esg-desempenho-financeiro/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 10</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2025</div>
+      <h1 class="rv" style="--d:.1s">Rende mais fazer ESG ou contar o que se faz?</h1>
+      <p class="sub rv" style="--d:.2s">Empresas do mundo todo investem em meio ambiente, social e governança (ESG). Isso dá retorno? A tese revisou <strong>108 estudos</strong> e analisou <strong>2.987 registros anuais</strong> de empresas do Brasil, China, Índia e África do Sul. Nesses mercados, o investidor premiou quem <strong>divulga bem</strong> suas práticas, não quem tem as melhores notas. Explicada em 10 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Marcos Alexandre dos Reis Cardillo</span>
+        <span><b>Orientador:</b> Prof. Dr. Leonardo Fernando Cruz Basso</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#debate">Começar →</a>
+        <a class="btn ghost" href="#fazer-contar">Ir direto à descoberta</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="500x340" role="img" aria-label="Dois blocos: fazer, baixo, e contar, cerca de cinco vezes mais alto; a altura é o efeito de cada nota ESG no retorno ao acionista"></div></div>
+      <div class="cap-legend">
+        <span><i class="dot" style="background:var(--faz)"></i>Fazer: nota de desempenho ESG</span>
+        <span><i class="dot" style="background:var(--con)"></i>Contar: nota de divulgação ESG</span>
+      </div>
+      <p class="note" style="margin-top:6px">Altura = efeito de cada nota no retorno ao acionista (coeficiente padronizado): +0,035, não significativo, e +0,165, significativo. Fonte: Tabelas 14 e 15.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-12"><a href="https://brasil.un.org/pt-br/sdgs/12" target="_blank" rel="noopener" title="ODS 12 · Consumo e produção responsáveis: Mostra como a divulgação de informações de sustentabilidade pelas empresas se reflete no retorno ao acionista e no lucro."><b>12</b>Consumo e produção responsáveis</a></li>
+          <li class="ods-16"><a href="https://brasil.un.org/pt-br/sdgs/16" target="_blank" rel="noopener" title="ODS 16 · Paz, justiça e instituições eficazes: Defende relatórios ESG padronizados e verificados, para que a divulgação reflita o que as empresas fazem."><b>16</b>Paz, justiça e instituições eficazes</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · O DEBATE -->
+<section class="slide" id="debate" data-label="O debate">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> Artigo 1 · 108 estudos</div>
+      <h2 class="rv" style="--d:.1s">ESG dá lucro? Os estudos não chegam a um acordo</h2>
+      <p class="rv" style="--d:.15s">Alguns estudos encontram ganho, outros nenhum efeito, outros perda. Para entender por quê, o autor vasculhou as bases Web of Science e Scopus atrás de artigos que testaram <strong>o que muda</strong> essa relação. De 610 artigos encontrados, <strong>108</strong>, publicados de 2019 a 2023, entraram na análise.</p>
+      <svg id="funnel" class="rv" style="--d:.2s" viewBox="0 0 380 190" role="img" aria-label="Dois círculos com área proporcional: 610 artigos encontrados e 108 analisados"></svg>
+      <p class="note">Área dos círculos proporcional ao número de artigos. Os 108 artigos têm 320 autores e saíram em 76 periódicos. Triagem pelo protocolo PRISMA no Rayyan; busca encerrada em 18/12/2023. Fonte: seção 2.4.1.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="years" viewBox="0 0 520 262" role="group" aria-label="Artigos por ano, de 2019 a 2023, e citações médias por ano"></svg>
+      <div class="leg"><span><i style="background:#94a3b8"></i>artigos publicados no ano</span><span><i style="background:var(--red); height:3px; vertical-align:3px"></i>citações médias por ano</span></div>
+      <div class="panel" id="year-panel" aria-live="polite"></div>
+      <p class="note">Toque num ano. Artigos recentes tiveram menos tempo para ser citados; o autor lê a queda também como sinal de um campo sem consenso. Fonte: Tabela 2 e seção 2.5.1.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · MODERADORES -->
+<section class="slide" id="moderadores" data-label="Depende de quê?">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> Artigo 1 · o que os estudos testam</div>
+      <h2 class="rv" style="--d:.1s">A resposta depende de quem comanda a empresa</h2>
+      <p class="rv" style="--d:.15s">Nos 108 estudos, o fator mais testado como <strong>moderador</strong>, aquilo que pode aumentar ou diminuir o efeito do ESG no resultado, foi o <strong>conselho de administração</strong>, seguido das características da própria empresa. Toque numa barra:</p>
+      <div class="panel rv" id="mod-panel" style="--d:.2s" aria-live="polite"></div>
+      <p class="note rv" style="--d:.25s">Das 20 lacunas apontadas na revisão, quatro guiaram o segundo estudo: <b>mais medidas financeiras</b> (inclusive o retorno ao acionista), <b>separar E, S e G</b>, <b>juntar as notas de fazer e de contar</b> e <b>métodos mais robustos</b>, com dados globais. Fonte: Tabela 8 e seção 2.9.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="mod-scene" data-fit="620x330" role="group" aria-label="Seis barras: percentual de ocorrências de cada moderador nos 108 estudos"></div></div>
+      <p class="note" style="margin-top:4px">Altura = % das ocorrências de moderadores nos 108 estudos (os seis mais frequentes). Fonte: Figura 9 e seção 2.5.4.</p>
+      <div class="panel" style="margin-top:12px">
+        <div class="tag">E como os estudos medem o resultado financeiro</div>
+        <div class="pbars" id="fp-bars"></div>
+      </div>
+      <p class="note">% dos estudos por tipo de medida. O risco (volatilidade, risco de crédito) quase não aparece. Fonte: Figura 10 e seção 2.6.1.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · DUAS NOTAS -->
+<section class="slide" id="duas-notas" data-label="Duas notas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Artigo 2 · como a pesquisa olhou</div>
+      <h2 class="rv" style="--d:.1s">Duas notas para a mesma empresa: o que ela faz e o que ela conta</h2>
+      <p class="rv" style="--d:.15s">A Bloomberg, base de dados usada por investidores, dá duas notas de ESG a cada empresa. O autor usou as duas, no total e por pilar: ambiental (E), social (S) e governança (G).</p>
+      <div class="two rv" style="--d:.2s">
+        <div class="side" style="--sc:var(--faz)">
+          <span class="who">Fazer</span>
+          <h3>Desempenho ESG</h3>
+          <p>O que a empresa entrega em cada pilar, pesado pelo que importa financeiramente. Escala de 0 a 10; média da amostra: <strong>2,77</strong>.</p>
+          <div class="mini" id="mini-faz"></div>
+        </div>
+        <div class="side" style="--sc:var(--con)">
+          <span class="who">Contar</span>
+          <h3>Divulgação ESG</h3>
+          <p>Quantos dados de ESG a empresa torna públicos. Escala de 0 a 100; média da amostra: <strong>45,8</strong>.</p>
+          <div class="mini" id="mini-con"></div>
+        </div>
+      </div>
+      <p class="note rv" style="--d:.25s">Médias por pilar. Nas duas notas, a governança é o pilar mais alto. Fonte: Tabelas 11 e 12.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <p style="margin-bottom:10px"><strong>E o resultado financeiro?</strong> A tese usa quatro medidas: duas olham para o mercado, duas para a contabilidade. Toque para virar:</p>
+      <div class="flips" id="flips"></div>
+      <p class="note">Médias da amostra antes da padronização. Fonte: Tabelas 11 e 12.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · AMOSTRA -->
+<section class="slide" id="amostra" data-label="As empresas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Artigo 2 · 2016 a 2023</div>
+      <h2 class="rv" style="--d:.1s">2.987 registros anuais de empresas em quatro países</h2>
+      <p class="rv" style="--d:.15s">Empresas de capital aberto dos BRICS com notas ESG e dados financeiros na Bloomberg, de 2016 a 2023. Cada empresa em cada ano é um registro. A <strong>Rússia</strong> ficou de fora: com as sanções após a invasão da Ucrânia, os dados deixaram de estar disponíveis.</p>
+      <svg id="countries" class="rv" style="--d:.2s" viewBox="0 0 600 260" role="group" aria-label="Círculos com área proporcional ao número de registros por país"></svg>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="chips" id="c-chips" role="group" aria-label="Escolher o país"></div>
+      <div class="panel">
+        <div class="tag" id="sec-tag"></div>
+        <div class="pbars" id="sec-bars"></div>
+      </div>
+      <p class="note">Registros por setor. A China responde por dois terços da amostra (1.967 de 2.987). Fonte: Tabelas 9 e 10 e seção 3.4.</p>
+      <div class="panel method">
+        <div class="tag">Separar causa de coincidência</div>
+        <p style="font-size:.86rem">Empresas que lucram mais podem investir mais em ESG, e não o contrário. O método em dois estágios (<strong>2SLS</strong>) isola a parte da nota que não reflete o próprio resultado e compara empresas do mesmo setor e ano.</p>
+        <p style="font-size:.8rem; color:var(--muted)">Variáveis padronizadas: as próximas telas dizem quanto o resultado muda, em desvios-padrão, quando a nota sobe um desvio-padrão.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · FAZER × CONTAR -->
+<section class="slide" id="fazer-contar" data-label="A descoberta">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> A descoberta</div>
+      <h2 class="rv" style="--d:.1s">Fazer, sozinho, não move o ponteiro. Contar, sim.</h2>
+      <p class="rv" style="--d:.15s">Com a nota total de <strong class="faz-t">desempenho</strong>, nenhuma medida de retorno ou de lucro melhorou. Com a nota total de <strong class="con-t">divulgação</strong>, subiram o retorno ao acionista, o ROA e o ROE. Para o autor, em mercados com regras frágeis e pouca informação, divulgar funciona como um <strong>sinal</strong> para o investidor. Compare:</p>
+      <div class="rv" style="--d:.2s">
+        <div class="seg" role="group" aria-label="Escolher a nota"><button class="faz" data-m="faz" aria-pressed="false">Fazer · desempenho</button><button class="con" data-m="con" aria-pressed="true">Contar · divulgação</button></div>
+      </div>
+      <div class="panel rv" id="push-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="push-svg" viewBox="0 0 560 300" role="img" aria-label="Barras divergentes: efeito da nota ESG em quatro medidas financeiras"></svg>
+      <div class="leg"><span><i style="background:var(--con)"></i>aumenta</span><span><i style="background:var(--neg)"></i>diminui</span><span><i style="background:var(--off)"></i>não significativo</span></div>
+      <p class="note">Coeficientes padronizados do 2SLS: quanto a medida muda, em desvios-padrão, quando a nota sobe um desvio-padrão (cerca de 1,2 ponto de 0 a 10 no desempenho; cerca de 12 pontos de 0 a 100 na divulgação). *** p &lt; 0,01; ** p &lt; 0,05. Fonte: Tabelas 14 e 15 (modelos 1.1 a 1.4 e 2.1 a 2.4).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · PILARES -->
+<section class="slide" id="pilares" data-label="E, S ou G?">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> O que encontrou · por pilar</div>
+      <h2 class="rv" style="--d:.1s">A governança é o pilar que rende de forma mais constante</h2>
+      <p class="rv" style="--d:.15s">Separando as notas em ambiental, social e governança, a divulgação de <strong>governança</strong> é a única que melhora as quatro medidas, e a governança nunca puxa o resultado para baixo. O <strong>social</strong> não faz diferença no desempenho; na divulgação, ajuda o retorno ao acionista mas reduz o valor de mercado. Explore:</p>
+      <div class="rv" style="--d:.2s">
+        <div class="seg" id="mat-m" role="group" aria-label="Escolher a nota"><button class="faz" data-m="faz" aria-pressed="false">Fazer</button><button class="con" data-m="con" aria-pressed="true">Contar</button></div>
+        <div class="seg" id="mat-p" role="group" aria-label="Escolher a combinação"><button data-p="one" aria-pressed="true">Um pilar por vez</button><button data-p="pair" aria-pressed="false">Dois pilares juntos</button></div>
+      </div>
+      <div class="panel rv" id="mat-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="mat-scene" data-fit="600x380" role="group" aria-label="Matriz 3D: pilares por medida financeira; altura é o tamanho do efeito"></div></div>
+      <div class="leg"><span><i id="leg-pos" style="background:var(--con)"></i>aumenta</span><span><i class="neg" style="background-color:var(--neg)"></i>diminui (listrado)</span><span><i id="leg-weak" style="background:color-mix(in srgb, var(--con) 45%, white)"></i>fraco (p &lt; 0,10)</span><span><i style="background:var(--off)"></i>não significativo</span></div>
+      <details class="alt"><summary>Ver como tabela</summary><div id="mat-table"></div></details>
+      <p class="note">Altura = tamanho do coeficiente; cor = direção. Toque num bloco. Fonte: Tabelas 14, 15, 17 e 18.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · A CURVA -->
+<section class="slide" id="curva" data-label="Até certo ponto">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> O que encontrou · a curva</div>
+      <h2 class="rv" style="--d:.1s">Divulgar ajuda até certo ponto</h2>
+      <p class="rv" style="--d:.15s">A relação não é uma linha reta. Para o retorno ao acionista, o ROA e o ROE, a curva da divulgação <strong>sobe, chega a um pico e desce</strong>: divulgar demais deixa de render. O valor de mercado faz o contrário: pune quem fica no meio. O autor chama isso de efeito <em>"demais de uma coisa boa"</em>. Mova a nota:</p>
+      <div class="rv" style="--d:.2s">
+        <div class="seg" id="cv-m" role="group" aria-label="Escolher a nota"><button class="faz" data-m="faz" aria-pressed="false">Fazer</button><button class="con" data-m="con" aria-pressed="true">Contar</button></div>
+        <div class="chips" id="cv-chips" role="group" aria-label="Escolher a medida"></div>
+      </div>
+      <div class="rng rv" style="--d:.25s">
+        <label for="cv-x" id="cv-lab">Nota de divulgação da empresa</label>
+        <input type="range" id="cv-x" min="-2" max="2" step="0.1" value="1.2" aria-describedby="curve-msg">
+        <div class="ticks"><span>bem abaixo da média</span><span>média</span><span>bem acima</span></div>
+      </div>
+      <p id="curve-msg" aria-live="polite"></p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="curve-svg" class="curve" viewBox="0 0 560 330" role="img" aria-label="Curva do resultado previsto conforme a nota ESG"></svg>
+      <p class="note">Curvas recalculadas por nós a partir dos coeficientes da Tabela 16, com as demais variáveis na média; eixo de −2 a +2 desvios-padrão. Notas de 0 a 100 (ou 0 a 10) aproximadas pela média e desvio da Tabela 11. Linha tracejada: significativa só a 10%. Fonte: Tabela 16 e Figuras 19 e 20.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · ZONA CINZENTA -->
+<section class="slide" id="zona" data-label="Zona cinzenta">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> O que encontrou · as duas notas juntas</div>
+      <h2 class="rv" style="--d:.1s">A zona cinzenta: ficar no meio do caminho é o pior lugar</h2>
+      <p class="rv" style="--d:.15s">Quando o autor juntou as duas notas no mesmo modelo, apareceu uma <strong>zona cinzenta</strong>: com divulgação entre baixa e média, o retorno ao acionista, o ROA e o ROE previstos ficam abaixo da empresa média. No alto da divulgação, o melhor retorno ao acionista e o melhor ROE vêm com <strong>desempenho médio</strong>, não máximo. Posicione uma empresa:</p>
+      <div class="chips rv" id="zn-chips" style="--d:.2s" role="group" aria-label="Escolher a medida"></div>
+      <div class="rng rv" style="--d:.22s">
+        <label for="zn-e">Fazer · desempenho ESG</label>
+        <input type="range" id="zn-e" min="-1" max="1" step="0.5" value="0" style="--tc:var(--faz)">
+        <div class="ticks"><span>baixo</span><span>médio</span><span>alto</span></div>
+      </div>
+      <div class="rng rv" style="--d:.25s">
+        <label for="zn-d">Contar · divulgação ESG</label>
+        <input type="range" id="zn-d" min="-2" max="2" step="0.1" value="-0.6" aria-describedby="zone-msg">
+        <div class="ticks"><span>bem abaixo da média</span><span>média</span><span>bem acima</span></div>
+      </div>
+      <p id="zone-msg" aria-live="polite"></p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="zone-svg" class="curve" viewBox="0 0 560 330" role="img" aria-label="Curvas do resultado previsto conforme a divulgação, para três níveis de desempenho; faixa cinza onde fica abaixo da empresa média"></svg>
+      <p class="note">Curvas recalculadas por nós a partir da Tabela 19 (modelos 6.5 a 6.8), com as demais variáveis na média; reproduzem a Figura 21 da tese. Desempenho baixo, médio e alto = −1, 0 e +1 desvio-padrão. Neste modelo conjunto, a curva da divulgação tem outra forma que na tela 08, em que ela aparece sozinha: leia as curvas como tendências, não como regra fixa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">10</span> E daí?</div>
+    <h2 class="rv" style="--d:.1s">Divulgar com coerência, sem parar no meio do caminho</h2>
+    <div class="cards3">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--con)">
+        <h3>Para gestores</h3>
+        <p>Divulgar ESG de forma integrada, cobrindo os três pilares, e coerente com o que a empresa de fato faz. Divulgação sem substância expõe a acusações de <em>greenwashing</em>. Evitar o engajamento morno da zona cinzenta.</p>
+        <span class="src">Seção 3.6.3</span>
+      </div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--faz)">
+        <h3>Para investidores</h3>
+        <p>Olhar o retorno ao acionista junto com ROA e ROE: o mercado pode premiar o discurso antes de o lucro aparecer. A governança é o pilar que gera valor de forma mais constante.</p>
+        <span class="src">Seção 3.6.3 e capítulo 4</span>
+      </div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--neg)">
+        <h3>Para reguladores</h3>
+        <p>Padronizar os relatórios ESG, exigir verificação independente e coibir a divulgação apenas simbólica, para que o que se conta reflita o que se faz.</p>
+        <span class="src">Seção 3.6.3</span>
+      </div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Só empresas listadas, e sem a Rússia.</b> Empresas fechadas e médias ficaram de fora. <em>· segundo o autor</em></li>
+          <li><b>Uma só fonte de notas.</b> As notas da Bloomberg podem não captar aspectos qualitativos; vale comparar com MSCI ou Refinitiv. <em>· segundo o autor</em></li>
+          <li><b>A pandemia não foi isolada</b>, e a revisão cobriu 5 anos e duas bases. <em>· segundo o autor</em></li>
+          <li><b>Dois terços dos registros são da China</b>, e os efeitos são pequenos (décimos de desvio-padrão). O 2SLS reduz, mas não elimina, a dúvida sobre causa. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          CARDILLO, Marcos Alexandre dos Reis. <em>ESG/CSR measures impacting financial performance: an analysis of moderating variables.</em> Tese (Doutorado em Administração de Empresas) — Universidade Presbiteriana Mackenzie, São Paulo, 2025. Orientador: Prof. Dr. Leonardo Fernando Cruz Basso.<br>
+          <b>Artigo 1 publicado:</b> Cardillo &amp; Basso (2025), <em>Journal of Innovation &amp; Knowledge</em>, 10(1), 100648. <a href="https://doi.org/10.1016/j.jik.2024.100648" target="_blank" rel="noopener">doi.org/10.1016/j.jik.2024.100648</a>
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Tese escrita em inglês, com apoio da CAPES. Dados da Bloomberg e do Banco Mundial; análise por 2SLS no Stata. Esta versão simplifica o trabalho para o público em geral.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt, EN = M.lang === 'en';
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var NS = 'http://www.w3.org/2000/svg';
+  // número com sinal, com os dígitos da tabela
+  function num(v){ var s = String(Math.abs(v)); if (!EN) s = s.replace('.', ','); return (v < 0 ? '−' : '+') + s; }
+  function sgn(v, d){ return (v > 0 ? '+' : v < 0 ? '−' : '') + fmt(Math.abs(v), d); }
+  function int(n){ return EN ? n.toLocaleString('en-US') : n.toLocaleString('pt-BR'); }
+
+  /* ================= TEXTOS (traduzir aqui na versão em inglês) ================= */
+  var T = {
+    found:'encontrados', analysed:'analisados', articles:'artigos',
+    yearTag:'artigos · citações médias por ano',
+    phases:{2019:'Crescimento inicial', 2020:'Crescimento inicial', 2021:'Mais artigos, menos citações', 2022:'Mais artigos, menos citações', 2023:'Queda nos dois'},
+    phaseTxt:{
+      2019:'Os primeiros estudos sobre moderadores ganham atenção.',
+      2020:'O ano mais citado: para o autor, os estudos de 2020 ajudaram a fixar os modelos usados depois.',
+      2021:'A produção segue crescendo, mas as citações caem.',
+      2022:'O pico: 38 artigos. Para o autor, pode refletir a pandemia e um campo saturado, com estudos mais específicos e menos citados.',
+      2023:'Produção e citações caem; o campo pode estar se consolidando, sem um consenso claro.'},
+    modTag:'% das ocorrências de moderadores',
+    fp:[['Valor de mercado', 51.06, 'Q de Tobin, valor de mercado sobre patrimônio'], ['Lucratividade', 34, 'ROA, ROE, margem'], ['Risco', 4.9, 'menos de 5%']],
+    fpLess:'< 5%',
+    secAll:'Todos os países', secTag:function(c, n){ return c + ' · ' + int(n) + ' registros'; },
+    russia:'Rússia', out:'fora',
+    flipTurn:'toque para virar ↻', market:'Mercado', accounting:'Contabilidade', mean:'Média na amostra',
+    pushTitle:{faz:'Fazer · nota de desempenho ESG', con:'Contar · nota de divulgação ESG'},
+    pushTxt:{
+      faz:'<p>A nota total de desempenho <strong>não melhorou</strong> o retorno ao acionista, o ROA nem o ROE. O valor de mercado (Q de Tobin) até caiu um pouco (<strong>−0,0374</strong>). Para o autor, o investidor pode ver o ESG amplo como custo que tira recursos do negócio.</p>',
+      con:'<p>Quando a nota de divulgação sobe um desvio-padrão (cerca de 12 pontos), o retorno ao acionista sobe <strong>0,165</strong> desvio-padrão, o ROE <strong>0,155</strong> e o ROA <strong>0,106</strong>. O valor de mercado cai um pouco (<strong>−0,0328</strong>): para o autor, sinal de cautela do investidor com o custo de longo prazo.</p>'},
+    ns:'não significativo',
+    rowsOne:['Ambiental (E)', 'Social (S)', 'Governança (G)'],
+    rowsPair:['E × S', 'E × G', 'S × G'],
+    rowsShort:{one:['E', 'S', 'G'], pair:['E×S', 'E×G', 'S×G']},
+    matHint:'Toque num bloco para ver o número.',
+    matOneTxt:{faz:'No <strong>desempenho</strong>, o ambiental ajuda o retorno ao acionista e o ROE; a governança, o valor de mercado; o social não faz diferença.', con:'Na <strong>divulgação</strong>, a governança melhora as quatro medidas. O social ajuda o retorno ao acionista e o ROE, mas reduz o valor de mercado; o ambiental só ajuda o valor de mercado.'},
+    matPairTxt:'Aqui, cada bloco é a <strong>combinação de dois pilares</strong>: quando a empresa é forte nos dois ao mesmo tempo, o ganho somado fica <strong>menor do que a soma das partes</strong>. O lucro (ROA, ROE) e o retorno ao acionista caem; o valor de mercado quase não reage.',
+    cell:function(r, c, v, s){ return '<div class="tag">' + r + ' → ' + c + '</div><p>Coeficiente <strong>' + num(v) + '</strong> · ' + s + '</p>'; },
+    sig:{3:'significativo (p < 0,01)', 2:'significativo (p < 0,05)', 1:'fraco (p < 0,10)', 0:'não significativo'},
+    tbl:'Medida',
+    cvLab:{faz:'Nota de desempenho da empresa', con:'Nota de divulgação da empresa'},
+    yAxis:'resultado previsto', avg:'empresa média',
+    xAxis:{faz:'nota de desempenho (desvios em relação à média)', con:'nota de divulgação (desvios em relação à média)'},
+    score:function(m, x){ var s = m === 'con' ? 45.82 + x * 12.273 : 2.771 + x * 1.185; return m === 'con' ? 'cerca de ' + fmt(s, 0) + ' de 100' : 'cerca de ' + fmt(s, 1) + ' de 10'; },
+    noCurve:'Para esta medida, a curva do desempenho <strong>não foi significativa</strong> (Tabela 16): não há forma a mostrar.',
+    peak:'pico', valley:'vale',
+    cvMsg:function(o){
+      var where = o.dir === 0 ? 'perto do ' + (o.cave ? 'vale' : 'pico') : (o.dir > 0 ? 'subindo' : 'descendo');
+      return 'Com nota de ' + o.score + ', o ' + o.ind + ' previsto fica <strong>' + sgn(o.y, 2) + '</strong> desvio em relação à empresa média, e a curva está <strong>' + where + '</strong>. O ' + (o.cave ? 'vale' : 'pico') + ' fica em ' + o.top + '.';
+    },
+    eLab:{'-1':'desempenho baixo', '-0.5':'desempenho entre baixo e médio', '0':'desempenho médio', '0.5':'desempenho entre médio e alto', '1':'desempenho alto'},
+    zone:'zona cinzenta', low:'baixo', mid:'médio', high:'alto', perf:'desempenho',
+    znMsg:function(o){ return 'Com ' + o.e + ' e divulgação de ' + o.score + ', o ' + o.ind + ' previsto fica <strong>' + sgn(o.y, 2) + '</strong> desvio em relação à empresa média' + (o.inZone ? ', <strong>dentro da zona cinzenta</strong>.' : '.') + ' ' + o.best; },
+    best:{
+      TSR:'No retorno ao acionista, o melhor ponto é divulgação alta com desempenho médio.',
+      TQ:'No Q de Tobin, a combinação das notas não foi significativa: quem tem desempenho baixo fica acima, efeito do desempenho sozinho (em U).',
+      ROA:'No ROA, o melhor ponto é divulgação alta com desempenho baixo.',
+      ROE:'No ROE, o melhor ponto é divulgação alta com desempenho médio.'}
+  };
+  var IND = {TSR:{n:'Retorno ao acionista', s:'TSR'}, TQ:{n:'Valor de mercado', s:'Q de Tobin'}, ROA:{n:'Lucro sobre ativos', s:'ROA'}, ROE:{n:'Lucro sobre patrimônio', s:'ROE'}};
+  var KEYS = ['TSR', 'TQ', 'ROA', 'ROE'];
+
+  /* ================= DADOS DA TESE ================= */
+  // Artigo 1 · produção anual e citações médias por ano (Tabela 2)
+  var YEARS = [[2019, 10, 27.9], [2020, 14, 49.79], [2021, 22, 29.36], [2022, 38, 13.63], [2023, 24, 4.17]];
+  // Moderadores mais frequentes (Figura 9, seção 2.5.4)
+  var MODS = [
+    {n:'Conselho', full:'Características do conselho', v:19.3, t:'Tamanho, diversidade e independência do conselho de administração, e a existência de comitê de sustentabilidade. Para o autor, um conselho diverso e independente dá mais credibilidade às ações de ESG.'},
+    {n:'Empresa', full:'Características da empresa', v:17.4, t:'Porte, idade, lucratividade e endividamento. Empresas grandes têm mais recursos para programas de sustentabilidade; as muito endividadas podem ter menos fôlego.'},
+    {n:'Donos', full:'Estrutura de propriedade', v:7.3, t:'Concentração do controle, investidores institucionais, empresas familiares e ativismo de acionistas: quem é dono muda as prioridades.'},
+    {n:'Social', full:'Influência social', v:5.5, t:'Expectativas da sociedade, normas culturais e a pressão de clientes, investidores e mídia sobre a empresa.'},
+    {n:'Setor', full:'Características do setor', v:4.6, t:'Regulação e exposição ambiental. Energia, mineração e indústria sofrem mais pressão e cobrança.'},
+    {n:'CEO', full:'Características do CEO', v:4.6, t:'Poder, tempo no cargo, orientação ética e estilo de liderança do principal executivo.'}
+  ];
+  // Notas médias por pilar (Tabela 11)
+  var MINI = {faz:[['Ambiental', 2.51, 10], ['Social', 2.364, 10], ['Governança', 4.94, 10]], con:[['Ambiental', 34.63, 100], ['Social', 28.505, 100], ['Governança', 75.643, 100]]};
+  // As quatro medidas (Tabelas 11 e 12)
+  var FLIPS = [
+    {k:'TSR', g:'market', h:'Retorno total ao acionista (TSR)', q:'Quanto o acionista ganhou no ano?', b:'Valorização da ação mais dividendos. A tese o coloca no centro, porque quase não aparece nos estudos.', m:'15,0%'},
+    {k:'TQ', g:'market', h:'Q de Tobin', q:'Quanto o mercado aposta no futuro da empresa?', b:'Valor de mercado dividido pelo custo de repor os ativos. Acima de 1, o mercado vê mais valor do que os ativos custam.', m:'2,70'},
+    {k:'ROA', g:'accounting', h:'ROA', q:'Quanto a empresa lucra com o que tem?', b:'Lucro sobre os ativos totais, em %. Mede a eficiência da operação.', m:'7,4%'},
+    {k:'ROE', g:'accounting', h:'ROE', q:'Quanto lucra com o dinheiro dos sócios?', b:'Lucro sobre o patrimônio dos acionistas, em %.', m:'15,2%'}
+  ];
+  // Registros por país e setor (Tabela 9)
+  var COUNTRIES = [['Brasil', 564], ['China', 1967], ['Índia', 312], ['África do Sul', 144]];
+  var SECTORS = [
+    ['Indústria', [72, 432, 32, 8]], ['Tecnologia', [16, 479, 40, 0]], ['Materiais', [79, 280, 48, 40]],
+    ['Consumo não essencial', [93, 151, 64, 32]], ['Consumo básico', [96, 135, 40, 24]], ['Saúde', [32, 194, 32, 8]],
+    ['Serviços públicos', [96, 104, 16, 0]], ['Energia', [40, 96, 32, 8]], ['Comunicação', [16, 64, 8, 16]], ['Imobiliário', [24, 32, 0, 8]]
+  ];
+  // Efeitos totais (Tabela 14, modelos 1.1–1.4; Tabela 15, modelos 2.1–2.4): [β, nível de significância 0–3]
+  var TOTAL = {
+    faz:{TSR:[0.0350, 0], TQ:[-0.0374, 3], ROA:[0.000673, 0], ROE:[0.0207, 0]},
+    con:{TSR:[0.165, 3], TQ:[-0.0328, 2], ROA:[0.106, 2], ROE:[0.155, 3]}
+  };
+  // Por pilar (Tabelas 14 e 15, modelos 1.5–1.8 e 2.5–2.8) e pares de pilares (Tabelas 18 e 17)
+  var PILLAR = {
+    faz:{one:[[[0.0682, 2], [0.0289, 0], [0.140, 0], [0.181, 1]], [[0.0200, 0], [-0.0203, 0], [-0.0446, 0], [0.00466, 0]], [[0.0213, 0], [0.0229, 2], [0.0333, 0], [-0.0157, 0]]],
+         pair:[[[-0.059, 3], [-0.000281, 0], [-0.140, 3], [-0.149, 3]], [[-0.061, 3], [-0.0169, 0], [-0.162, 3], [-0.169, 3]], [[-0.072, 3], [0.00111, 0], [-0.107, 3], [-0.145, 3]]]},
+    con:{one:[[[-0.0468, 0], [0.0646, 2], [0.0303, 0], [-0.0241, 0]], [[0.167, 2], [-0.119, 3], [0.0108, 0], [0.122, 1]], [[0.106, 1], [0.0405, 3], [0.125, 2], [0.110, 1]]],
+         pair:[[[-0.161, 3], [0.0317, 2], [-0.114, 3], [-0.165, 3]], [[-0.175, 3], [0.0204, 0], [-0.106, 3], [-0.183, 3]], [[-0.152, 3], [0.00609, 0], [-0.0956, 3], [-0.155, 3]]]}
+  };
+  // Curvas (Tabela 16): y = a·x + b·x²; sig = nível do termo quadrático; null = não significativo
+  var CURVE = {
+    con:{TSR:{a:0.225, b:-0.0972, sig:3}, TQ:{a:-0.0384, b:0.0245, sig:2}, ROA:{a:0.137, b:-0.0509, sig:1}, ROE:{a:0.216, b:-0.101, sig:3}},
+    faz:{TSR:{a:0.0641, b:-0.0385, sig:1}, TQ:{a:-0.0683, b:0.0442, sig:3}, ROA:null, ROE:null}
+  };
+  // Modelo conjunto (Tabela 19, modelos 6.5–6.8): E = desempenho, D = divulgação
+  var JOINT = {
+    TSR:{E:-0.0105, D:0.141, ED:-0.0133, E2:0.0535, D2:0.116, E2D2:-0.0629},
+    TQ:{E:-0.0803, D:0.0163, ED:-0.0206, E2:0.0486, D2:0.0214, E2D2:-0.00123},
+    ROA:{E:-0.0869, D:0.133, ED:-0.0475, E2:0.0937, D2:0.111, E2D2:-0.0480},
+    ROE:{E:-0.0377, D:0.151, ED:-0.0181, E2:0.0770, D2:0.115, E2D2:-0.0678}
+  };
+  function joint(k, e, d){ var c = JOINT[k]; return c.E * e + c.D * d + c.ED * e * d + c.E2 * e * e + c.D2 * d * d + c.E2D2 * e * e * d * d; }
+
+  function el(tag, attrs, txt){
+    var e = document.createElementNS(NS, tag);
+    for (var a in attrs) e.setAttribute(a, attrs[a]);
+    if (txt !== undefined) e.textContent = txt;
+    return e;
+  }
+  function chips(id, items, cur, onPick){
+    var w = $(id);
+    w.innerHTML = items.map(function(it){ return '<button class="chip" data-k="' + it[0] + '" aria-pressed="' + (it[0] === cur) + '">' + it[1] + '</button>'; }).join('');
+    each(w.children, function(b){ b.addEventListener('click', function(){ each(w.children, function(o){ o.setAttribute('aria-pressed', o === b); }); onPick(b.dataset.k); }); });
+  }
+  function seg(wrap, attr, onPick){
+    each(wrap.querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){ each(wrap.querySelectorAll('button'), function(o){ o.setAttribute('aria-pressed', o === b); }); onPick(b.dataset[attr]); });
+    });
+  }
+
+  /* ================= 01 · CAPA ================= */
+  // Altura dos blocos ∝ efeito no retorno ao acionista (Tabelas 14 e 15)
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 400, 200, {ay:'62%'}), K = 1250;
+    st.appendChild(box({w:120, d:120, x:30, y:40, h:TOTAL.faz.TSR[0] * K, c:'var(--faz)', top:num(TOTAL.faz.TSR[0])}));
+    st.appendChild(box({w:120, d:120, x:250, y:40, h:TOTAL.con.TSR[0] * K, c:'var(--con)', label:EN ? 'Tell' : 'Contar', top:num(TOTAL.con.TSR[0])}));
+    flatLabel(st, EN ? 'Do' : 'Fazer', 30, 168, 120);
+    flatLabel(st, EN ? 'Tell' : 'Contar', 250, 168, 120);
+    rotatable(sc, st, -24, 12);
+  })();
+
+  /* ================= 02 · O DEBATE ================= */
+  (function(){
+    var k = 3.4, r1 = k * Math.sqrt(610), r2 = k * Math.sqrt(108), cy = 95;
+    $('funnel').innerHTML =
+      '<circle cx="' + (10 + r1) + '" cy="' + cy + '" r="' + r1 + '" fill="color-mix(in srgb, var(--ink-2) 16%, white)" stroke="var(--ink-2)" stroke-dasharray="4 4"/>' +
+      '<text x="' + (10 + r1) + '" y="' + (cy - 2) + '" text-anchor="middle" style="font-size:30px; font-weight:700; fill:var(--ink); font-family:var(--serif)">610</text>' +
+      '<text x="' + (10 + r1) + '" y="' + (cy + 20) + '" text-anchor="middle" style="font-size:13px; fill:var(--ink-2)">' + T.found + '</text>' +
+      '<path d="M' + (18 + 2 * r1) + ' ' + cy + ' l26 0" stroke="var(--muted)" stroke-width="2"/><path d="M' + (40 + 2 * r1) + ' ' + (cy - 6) + ' l8 6 l-8 6" fill="none" stroke="var(--muted)" stroke-width="2"/>' +
+      '<circle cx="' + (58 + 2 * r1 + r2) + '" cy="' + cy + '" r="' + r2 + '" fill="var(--ink)"/>' +
+      '<text x="' + (58 + 2 * r1 + r2) + '" y="' + (cy + 2) + '" text-anchor="middle" style="font-size:20px; font-weight:700; fill:#fff; font-family:var(--serif)">108</text>' +
+      '<text x="' + (58 + 2 * r1 + r2) + '" y="' + (cy + r2 + 18) + '" text-anchor="middle" style="font-size:13px; fill:var(--ink-2)">' + T.analysed + '</text>';
+
+    var svg = $('years'), X0 = 50, BW = 64, GAP = 30, BASE = 230, HA = 3.2, CT = 76, HC = 1.1;
+    svg.appendChild(el('line', {x1:X0 - 10, x2:500, y1:BASE, y2:BASE, stroke:'var(--border)', 'stroke-width':2}));
+    var pts = [], groups = [];
+    YEARS.forEach(function(y, i){
+      var x = X0 + i * (BW + GAP), h = y[1] * HA;
+      var g = el('g', {'class':'yb', tabindex:0, role:'button', 'aria-label':y[0] + ': ' + y[1] + ' ' + T.articles});
+      g.appendChild(el('rect', {'class':'b', x:x, y:BASE - h, width:BW, height:h, rx:4, fill:'#94a3b8'}));
+      g.appendChild(el('text', {x:x + BW / 2, y:BASE - h - 8, 'text-anchor':'middle', style:'font-size:15px; font-weight:700; fill:var(--ink)'}, y[1]));
+      g.appendChild(el('text', {x:x + BW / 2, y:BASE + 22, 'text-anchor':'middle', style:'font-size:13.5px; fill:var(--ink-2)'}, y[0]));
+      svg.appendChild(g); groups.push(g);
+      pts.push([x + BW / 2, CT - y[2] * HC]);  // citações numa faixa própria, acima das barras
+    });
+    svg.appendChild(el('polyline', {points:pts.map(function(p){ return p.join(','); }).join(' '), fill:'none', stroke:'var(--red)', 'stroke-width':3, 'pointer-events':'none'}));
+    pts.forEach(function(p, i){
+      svg.appendChild(el('circle', {cx:p[0], cy:p[1], r:5, fill:'#fff', stroke:'var(--red)', 'stroke-width':3, 'pointer-events':'none'}));
+      svg.appendChild(el('text', {'class':'sm', x:p[0], y:p[1] - 12, 'text-anchor':'middle', style:'font-size:12px; fill:var(--red); font-weight:700; paint-order:stroke; stroke:#fff; stroke-width:4px', 'pointer-events':'none'}, fmt(YEARS[i][2], 1)));
+    });
+    function show(i){
+      var y = YEARS[i];
+      groups.forEach(function(g, j){ g.querySelector('rect').setAttribute('fill', i === j ? 'var(--ink)' : '#94a3b8'); });
+      $('year-panel').innerHTML = '<div class="tag">' + y[0] + ' · ' + T.phases[y[0]] + '</div><h3>' + y[1] + ' ' + T.articles + ' · ' + fmt(y[2], 2) + '</h3><p style="font-size:.78rem; color:var(--muted); margin-top:-4px">' + T.yearTag + '</p><p>' + T.phaseTxt[y[0]] + '</p>';
+    }
+    groups.forEach(function(g, i){
+      g.addEventListener('click', function(){ show(i); });
+      g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(i); } });
+    });
+    show(3);
+  })();
+
+  /* ================= 03 · MODERADORES ================= */
+  (function(){
+    var sc = $('mod-scene'), W = 580, D = 150;
+    var st = makeStage(sc, W, D, {ay:'76%', rx:'58deg'});
+    rotatable(sc, st, -5, 4);
+    var bw = 66, gap = 22, x0 = (W - (MODS.length * bw + (MODS.length - 1) * gap)) / 2, tiles = [];
+    MODS.forEach(function(m, i){
+      var bx = x0 + i * (bw + gap);
+      var b = box({w:bw, d:50, x:bx, y:D / 2 - 25, h:m.v * 8.5, c:i < 2 ? 'var(--navy)' : 'color-mix(in srgb, var(--navy) 55%, white)', label:fmt(m.v) + '%'});
+      b.setAttribute('role', 'button'); b.setAttribute('aria-label', m.full + ', ' + fmt(m.v) + '%'); b.tabIndex = 0;
+      st.appendChild(b); tiles.push(b);
+      flatLabel(st, m.n, bx - 14, D / 2 + 34, bw + 28);
+    });
+    function show(i){
+      var m = MODS[i];
+      tiles.forEach(function(t, j){ t.classList.toggle('active', i === j); });
+      $('mod-panel').innerHTML = '<div class="tag">' + T.modTag + ' · ' + fmt(m.v) + '%</div><h3>' + m.full + '</h3><p>' + m.t + '</p>';
+    }
+    tiles.forEach(function(t, i){
+      t.addEventListener('click', function(){ if (M.wasDrag(sc)) return; show(i); });
+      t.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(i); } });
+    });
+    show(0);
+    $('fp-bars').innerHTML = T.fp.map(function(r){
+      return '<div class="pbar"><span>' + r[0] + '<br><small style="color:var(--muted)">' + r[2] + '</small></span><div class="tr"><i style="width:' + (r[1] / 60 * 100) + '%"></i></div><b>' + (r[1] < 5 ? T.fpLess : fmt(r[1], r[1] % 1 ? 2 : 0) + '%') + '</b></div>';
+    }).join('');
+  })();
+
+  /* ================= 04 · DUAS NOTAS ================= */
+  (function(){
+    ['faz', 'con'].forEach(function(m){
+      $('mini-' + m).innerHTML = MINI[m].map(function(r){
+        return '<div><span>' + r[0] + '</span><span class="tr"><i style="width:' + (r[1] / r[2] * 100) + '%"></i></span><b>' + fmt(r[1], 1) + '</b></div>';
+      }).join('');
+    });
+    var f = $('flips');
+    f.innerHTML = FLIPS.map(function(c){
+      var col = c.g === 'market' ? 'var(--red)' : 'var(--navy)';
+      return '<button class="flip" aria-pressed="false" style="--fc:' + col + '"><span class="in"><span class="fc"><span class="k">' + T[c.g] + '</span><h4>' + c.h + '</h4><span class="q">' + c.q + '</span><span class="turn">' + T.flipTurn + '</span></span>' +
+        '<span class="bc"><span class="k">' + c.h + '</span><p style="margin-top:6px">' + c.b + '</p><p><strong>' + T.mean + ': ' + c.m + '</strong></p></span></span></button>';
+    }).join('');
+    each(f.children, function(b){ b.addEventListener('click', function(){ b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true'); }); });
+  })();
+
+  /* ================= 05 · AMOSTRA ================= */
+  (function(){
+    var svg = $('countries'), k = 2.4, cy = 125, x = 8, nodes = [];
+    COUNTRIES.forEach(function(c, i){
+      var r = k * Math.sqrt(c[1]); x += r;
+      var g = el('g', {'class':'cb', tabindex:0, role:'button', 'aria-label':c[0] + ': ' + c[1]});
+      g.appendChild(el('circle', {cx:x, cy:cy, r:r, fill:'var(--ink-2)'}));
+      g.appendChild(el('text', {x:x, y:cy + 5, 'text-anchor':'middle', style:'font-size:' + (r > 40 ? 18 : 13) + 'px; font-weight:700; fill:#fff; font-family:var(--serif)'}, int(c[1])));
+      g.appendChild(el('text', {'class':'cn', x:x, y:cy + Math.max(r, 30) + 22, 'text-anchor':'middle', style:'font-size:13px; fill:var(--ink-2); font-weight:600'}, c[0]));
+      svg.appendChild(g); nodes.push(g);
+      x += r + 14;
+    });
+    x += 40;
+    svg.appendChild(el('circle', {cx:x, cy:cy, r:18, fill:'none', stroke:'var(--muted)', 'stroke-dasharray':'4 4'}));
+    svg.appendChild(el('text', {x:x, y:cy + 4, 'text-anchor':'middle', style:'font-size:11px; fill:var(--muted)'}, T.out));
+    svg.appendChild(el('text', {'class':'cn', x:x, y:cy + 52, 'text-anchor':'middle', style:'font-size:13px; fill:var(--muted)'}, T.russia));
+    var items = [['all', T.secAll]].concat(COUNTRIES.map(function(c, i){ return [String(i), c[0]]; }));
+    function show(key){
+      nodes.forEach(function(g, j){ g.querySelector('circle').setAttribute('fill', key === 'all' || +key === j ? 'var(--ink-2)' : '#cbd5e1'); });
+      each($('c-chips').children, function(b){ b.setAttribute('aria-pressed', b.dataset.k === key); });
+      var rows = SECTORS.map(function(s){ return [s[0], key === 'all' ? s[1].reduce(function(a, b){ return a + b; }, 0) : s[1][+key]]; });
+      var tot = rows.reduce(function(a, r){ return a + r[1]; }, 0), max = Math.max.apply(null, rows.map(function(r){ return r[1]; }));
+      rows.sort(function(a, b){ return b[1] - a[1]; });
+      $('sec-tag').textContent = T.secTag(key === 'all' ? T.secAll : COUNTRIES[+key][0], tot);
+      $('sec-bars').innerHTML = rows.map(function(r){ return '<div class="pbar"><span>' + r[0] + '</span><div class="tr"><i style="width:0"></i></div><b>' + int(r[1]) + ' · ' + fmt(r[1] / tot * 100, 0) + '%</b></div>'; }).join('');
+      var bars = $('sec-bars').querySelectorAll('.tr i');
+      requestAnimationFrame(function(){ each(bars, function(b, j){ b.style.width = (rows[j][1] / max * 100) + '%'; }); });
+    }
+    chips('c-chips', items, 'all', show);
+    nodes.forEach(function(g, i){
+      g.addEventListener('click', function(){ show(String(i)); });
+      g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(String(i)); } });
+    });
+    show('all');
+  })();
+
+  /* ================= 06 · FAZER × CONTAR ================= */
+  (function(){
+    var svg = $('push-svg'), CX = 210, U = 1150, RH = 66, Y0 = 34;
+    function draw(m){
+      svg.innerHTML = '';
+      svg.appendChild(el('line', {x1:CX, x2:CX, y1:20, y2:Y0 + 4 * RH, stroke:'var(--muted)', 'stroke-width':1.5}));
+      svg.appendChild(el('text', {'class':'sm', x:CX, y:14, 'text-anchor':'middle', style:'font-size:11.5px; fill:var(--muted)'}, T.avg));
+      KEYS.forEach(function(k, i){
+        var v = TOTAL[m][k][0], s = TOTAL[m][k][1], y = Y0 + i * RH, w = Math.abs(v) * U;
+        var col = !s ? 'var(--off)' : v > 0 ? 'var(--' + m + ')' : 'var(--neg)';
+        var t = el('text', {x:10, y:y + 14, style:'font-size:14px; font-weight:700; fill:var(--ink)'}, IND[k].n + ' ');
+        t.appendChild(el('tspan', {style:'font-weight:400; fill:var(--muted); font-size:12px'}, '(' + IND[k].s + ')'));
+        svg.appendChild(t);
+        y += 22;
+        var r = el('rect', {x:v < 0 ? CX - w : CX, y:y, width:Math.max(w, 2), height:28, rx:4, fill:col});
+        svg.appendChild(r);
+        var lbl = num(v) + (s === 3 ? ' ***' : s === 2 ? ' **' : s === 1 ? ' *' : '') + (s ? '' : ' · ' + T.ns);
+        svg.appendChild(el('text', {x:v < 0 ? CX - w - 8 : CX + w + 8, y:y + 19, 'text-anchor':v < 0 ? 'end' : 'start', style:'font-size:13.5px; font-weight:700; fill:' + (s ? 'var(--ink)' : 'var(--muted)')}, lbl));
+      });
+      $('push-panel').innerHTML = '<div class="tag">' + T.pushTitle[m] + '</div>' + T.pushTxt[m];
+    }
+    seg(document.querySelector('#fazer-contar .seg'), 'm', draw);
+    draw('con');
+  })();
+
+  /* ================= 07 · PILARES ================= */
+  (function(){
+    var sc = $('mat-scene'), W = 470, D = 300, st = makeStage(sc, W, D, {ay:'56%', rx:'44deg'});
+    rotatable(sc, st, -8, 5);
+    var CW = 84, CD = 58, GX = 16, GY = 40, X0 = 70, Y0 = 10, K = 480, mode = 'con', part = 'one', tiles = [], cur = null;
+    var rowLabels = [], colLabels = [];
+    for (var r = 0; r < 3; r++){
+      rowLabels.push(flatLabel(st, '', X0 - 78, Y0 + r * (CD + GY) + CD / 2 - 10, 70, 'text-align:right'));
+      for (var c = 0; c < 4; c++){
+        var b = box({w:CW, d:CD, x:X0 + c * (CW + GX), y:Y0 + r * (CD + GY), h:4, c:'var(--off)', top:' '});
+        b.dataset.r = r; b.dataset.c = c; b.tabIndex = 0; b.setAttribute('role', 'button');
+        st.appendChild(b); tiles.push(b);
+      }
+    }
+    KEYS.forEach(function(k, c){ colLabels.push(flatLabel(st, IND[k].s, X0 + c * (CW + GX) - 10, Y0 + 3 * (CD + GY) - 8, CW + 20)); });
+    function color(v, s){
+      if (!s) return 'var(--off)';
+      var base = v > 0 ? 'var(--' + mode + ')' : 'var(--neg)';
+      return s === 1 ? 'color-mix(in srgb, ' + base + ' 45%, white)' : base;
+    }
+    function render(){
+      var D_ = PILLAR[mode][part], rows = part === 'one' ? T.rowsOne : T.rowsPair;
+      rowLabels.forEach(function(l, r){ l.textContent = T.rowsShort[part][r]; });
+      tiles.forEach(function(b){
+        var v = D_[b.dataset.r][b.dataset.c][0], s = D_[b.dataset.r][b.dataset.c][1];
+        b.style.setProperty('--h', (s ? Math.max(Math.abs(v) * K, 8) : 4) + 'px');
+        b.style.setProperty('--c', color(v, s));
+        b.classList.toggle('ns', !s);
+        b.classList.toggle('neg', !!s && v < 0);
+        // no topo, o valor com 3 casas (o painel e a tabela mostram o número da tese)
+        b.querySelector('.top-label').textContent = s ? sgn(v, 3) : 'ns';
+        b.setAttribute('aria-label', rows[b.dataset.r] + ' → ' + IND[KEYS[b.dataset.c]].s + ': ' + num(v) + ', ' + T.sig[s]);
+      });
+      $('leg-pos').style.background = 'var(--' + mode + ')';
+      $('leg-weak').style.background = 'color-mix(in srgb, var(--' + mode + ') 45%, white)';
+      var intro = part === 'one' ? T.matOneTxt[mode] : T.matPairTxt;
+      $('mat-panel').innerHTML = '<p>' + intro + '</p><p id="mat-cell" style="font-size:.86rem; color:var(--muted)">' + T.matHint + '</p>';
+      $('mat-table').innerHTML = '<table><tr><th>' + T.tbl + '</th>' + KEYS.map(function(k){ return '<th>' + IND[k].s + '</th>'; }).join('') + '</tr>' +
+        rows.map(function(rn, r){ return '<tr><td>' + rn + '</td>' + D_[r].map(function(x){ return '<td>' + num(x[0]) + ['', '*', '**', '***'][x[1]] + '</td>'; }).join('') + '</tr>'; }).join('') + '</table>';
+      if (cur) pick(cur);
+    }
+    function pick(b){
+      cur = b;
+      tiles.forEach(function(t){ t.classList.toggle('active', t === b); });
+      var rows = part === 'one' ? T.rowsOne : T.rowsPair, x = PILLAR[mode][part][b.dataset.r][b.dataset.c];
+      var cell = $('mat-cell');
+      if (cell) cell.outerHTML = '<div id="mat-cell" style="border-top:1px solid var(--border); padding-top:8px">' + T.cell(rows[b.dataset.r], IND[KEYS[b.dataset.c]].n + ' (' + IND[KEYS[b.dataset.c]].s + ')', x[0], T.sig[x[1]]) + '</div>';
+    }
+    tiles.forEach(function(b){
+      b.addEventListener('click', function(){ if (M.wasDrag(sc)) return; pick(b); });
+      b.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); pick(b); } });
+    });
+    seg($('mat-m'), 'm', function(m){ mode = m; render(); });
+    seg($('mat-p'), 'p', function(p){ part = p; render(); });
+    render();
+  })();
+
+  /* ================= Gráfico de curvas (telas 08 e 09) ================= */
+  function plot(svg, o){
+    // o: {ymin, ymax, curves:[{f, col, w, dash, op}], shade:[[x1,x2]], dot:{x, y, col}, xlab, peak}
+    var L = 64, R = 494, TP = 20, B = 270;
+    function X(x){ return L + (x + 2) / 4 * (R - L); }
+    function Y(y){ return B - (y - o.ymin) / (o.ymax - o.ymin) * (B - TP); }
+    svg.innerHTML = '';
+    (o.shade || []).forEach(function(s){
+      svg.appendChild(el('rect', {x:X(s[0]), y:TP, width:X(s[1]) - X(s[0]), height:B - TP, fill:'#e5e7eb'}));
+      svg.appendChild(el('text', {x:(X(s[0]) + X(s[1])) / 2, y:TP + 16, 'text-anchor':'middle', style:'font-size:12.5px; font-weight:700; fill:var(--muted)'}, T.zone));
+    });
+    for (var i = Math.ceil(o.ymin / o.step - 1e-9); i * o.step <= o.ymax + 1e-9; i++){
+      var t = Math.round(i * o.step * 100) / 100, yy = Y(t), zero = i === 0;
+      svg.appendChild(el('line', {x1:L, x2:R, y1:yy, y2:yy, stroke:zero ? 'var(--muted)' : '#eef2f7', 'stroke-width':zero ? 1.5 : 1}));
+      svg.appendChild(el('text', {x:L - 8, y:yy + 4, 'text-anchor':'end', style:'font-size:11.5px; fill:var(--muted)'}, sgn(t, 1).replace(/^\+?0([.,]0)?$/, '0')));
+    }
+    svg.appendChild(el('text', {'class':'sm', x:L + 6, y:Y(0) + 15, style:'font-size:11.5px; fill:var(--muted); paint-order:stroke; stroke:#fff; stroke-width:3px'}, T.avg));
+    [-2, -1, 0, 1, 2].forEach(function(v){
+      svg.appendChild(el('text', {x:X(v), y:B + 18, 'text-anchor':'middle', style:'font-size:12px; fill:var(--muted)'}, v > 0 ? '+' + v : v < 0 ? '−' + (-v) : '0'));
+    });
+    svg.appendChild(el('text', {x:(L + R) / 2, y:B + 40, 'text-anchor':'middle', style:'font-size:12.5px; fill:var(--ink-2); font-weight:600'}, o.xlab));
+    svg.appendChild(el('text', {'class':'sm', x:14, y:(TP + B) / 2, 'text-anchor':'middle', transform:'rotate(-90 14 ' + (TP + B) / 2 + ')', style:'font-size:12px; fill:var(--muted)'}, T.yAxis));
+    o.curves.forEach(function(c){
+      var d = '';
+      for (var x = -2; x <= 2.0001; x += 0.05) d += (d ? 'L' : 'M') + X(x).toFixed(1) + ' ' + Y(c.f(x)).toFixed(1);
+      svg.appendChild(el('path', {d:d, fill:'none', stroke:c.col, 'stroke-width':c.w || 3, 'stroke-dasharray':c.dash || 'none', opacity:c.op || 1}));
+      if (c.label) svg.appendChild(el('text', {x:R + 4, y:Y(c.f(2)) + 4, style:'font-size:11.5px; font-weight:700; fill:' + c.col, opacity:c.op || 1}, c.label));
+    });
+    if (o.peak){
+      svg.appendChild(el('line', {x1:X(o.peak.x), x2:X(o.peak.x), y1:Y(o.peak.y), y2:B, stroke:'var(--muted)', 'stroke-dasharray':'3 4'}));
+      svg.appendChild(el('text', {x:X(o.peak.x), y:Y(o.peak.y) + (o.peak.cave ? 22 : -10), 'text-anchor':'middle', style:'font-size:12px; font-weight:700; fill:var(--ink-2)'}, o.peak.cave ? T.valley : T.peak));
+    }
+    if (o.dot){
+      svg.appendChild(el('circle', {cx:X(o.dot.x), cy:Y(o.dot.y), r:9, fill:'#fff', stroke:o.dot.col, 'stroke-width':4}));
+    }
+  }
+
+  /* ================= 08 · A CURVA ================= */
+  (function(){
+    var mode = 'con', ind = 'TSR', rng = $('cv-x');
+    function draw(){
+      var c = CURVE[mode][ind], x = +rng.value, col = 'var(--' + mode + ')';
+      rng.style.setProperty('--tc', col);
+      $('cv-lab').textContent = T.cvLab[mode];
+      if (!c){
+        plot($('curve-svg'), {ymin:-0.9, ymax:0.4, step:0.2, curves:[], xlab:T.xAxis[mode]});
+        $('curve-msg').innerHTML = T.noCurve;
+        return;
+      }
+      var f = function(v){ return c.a * v + c.b * v * v; }, xp = -c.a / (2 * c.b), cave = c.b > 0;
+      var slope = c.a + 2 * c.b * x, dir = Math.abs(x - xp) < 0.25 ? 0 : (slope > 0 ? 1 : -1);
+      plot($('curve-svg'), {ymin:-0.9, ymax:0.4, step:0.2, xlab:T.xAxis[mode],
+        curves:[{f:f, col:col, w:3.5, dash:c.sig === 1 ? '7 6' : 'none'}],
+        peak:xp >= -2 && xp <= 2 ? {x:xp, y:f(xp), cave:cave} : null,
+        dot:{x:x, y:f(x), col:col}});
+      $('curve-msg').innerHTML = T.cvMsg({score:T.score(mode, x), ind:IND[ind].s, y:f(x), dir:dir, cave:cave, top:T.score(mode, xp)});
+    }
+    chips('cv-chips', KEYS.map(function(k){ return [k, IND[k].s]; }), ind, function(k){ ind = k; draw(); });
+    seg($('cv-m'), 'm', function(m){ mode = m; draw(); });
+    rng.addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 09 · ZONA CINZENTA ================= */
+  (function(){
+    var ind = 'TSR', re = $('zn-e'), rd = $('zn-d');
+    function zones(e){
+      // trechos de x em que a curva fica abaixo da empresa média
+      var out = [], start = null;
+      for (var x = -2; x <= 2.0001; x += 0.02){
+        var below = joint(ind, e, x) < 0;
+        if (below && start === null) start = x;
+        if (!below && start !== null){ out.push([start, x]); start = null; }
+      }
+      if (start !== null) out.push([start, 2]);
+      return out.filter(function(z){ return z[1] - z[0] > 0.05; });
+    }
+    function draw(){
+      var e = +re.value, d = +rd.value, y = joint(ind, e, d), zs = zones(e);
+      var refs = [[-1, T.low], [0, T.mid], [1, T.high]].map(function(p){
+        return {f:function(x){ return joint(ind, p[0], x); }, col:'var(--faz)', w:1.5, dash:'5 5', op:Math.abs(p[0] - e) < 1e-9 ? 0 : 0.45, label:p[1]};
+      });
+      refs.push({f:function(x){ return joint(ind, e, x); }, col:'var(--con)', w:3.5});
+      plot($('zone-svg'), {ymin:-0.2, ymax:0.9, step:0.2, xlab:T.xAxis.con, shade:zs, curves:refs, dot:{x:d, y:y, col:'var(--con)'}});
+      var inZone = zs.some(function(z){ return d >= z[0] && d <= z[1]; });
+      $('zone-msg').innerHTML = T.znMsg({e:T.eLab[String(e)], score:T.score('con', d), ind:IND[ind].s, y:y, inZone:inZone, best:T.best[ind]});
+    }
+    chips('zn-chips', KEYS.map(function(k){ return [k, IND[k].s]; }), ind, function(k){ ind = k; draw(); });
+    re.addEventListener('input', draw); rd.addEventListener('input', draw);
+    draw();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
