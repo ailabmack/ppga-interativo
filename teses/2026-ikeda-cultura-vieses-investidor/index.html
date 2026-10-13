@@ -1,0 +1,1077 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O investidor tem sotaque? · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Wilson Eduardo Ikeda (PPGA Mackenzie e Universidade da Beira Interior, 2026) sobre como a cultura de cada país molda o excesso de confiança, o efeito disposição e o efeito manada dos investidores em 64 bolsas, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2026-ikeda-cultura-vieses-investidor/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2214%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>64</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em ../../assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --mais:var(--red);    /* associado a MAIS viés (ou manada) */
+    --menos:var(--navy);  /* associado a MENOS viés (ou anti-manada) */
+    --ns:#cbd5e1;         /* sem efeito claro / neutro */
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .mais-t{color:var(--mais); font-weight:700;} .menos-t{color:var(--menos); font-weight:700;}
+  svg text{font-family:var(--sans);}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2.1rem, 4.4vw, 3rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.86rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{display:flex; gap:6px 16px; justify-content:center; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:6px;}
+  #hero-scene .top-label{font-size:17px;}
+  #hero-scene .floor-label{font-size:15px;}
+
+  /* ---------- Componentes comuns ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px 20px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.08rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.92rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px; margin:4px 8px 12px 0;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 15px; font-size:.85rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .leg{display:flex; flex-wrap:wrap; gap:4px 14px; font-size:.74rem; color:var(--muted); margin-top:8px;}
+  .leg i{display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:5px; vertical-align:-2px;}
+  details.alt{margin-top:10px; font-size:.8rem; color:var(--muted);}
+  details.alt summary{cursor:pointer;}
+  .tbl-wrap{overflow-x:auto;}
+  details.alt table{border-collapse:collapse; margin-top:6px; width:100%; font-variant-numeric:tabular-nums;}
+  details.alt td, details.alt th{border:1px solid var(--border); padding:3px 6px; text-align:right;}
+  details.alt th:first-child, details.alt td:first-child{text-align:left;}
+  select.pick{font:inherit; font-size:.88rem; padding:7px 10px; border:1px solid var(--border); border-radius:8px; background:var(--card); color:var(--ink); max-width:100%;}
+  .pick-row{display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; font-size:.84rem; color:var(--ink-2); margin:4px 0 10px;}
+
+  /* ---------- 02 · Três vieses ---------- */
+  .flips{display:grid; grid-template-columns:1fr; gap:12px;}
+  .flip{perspective:900px; cursor:pointer; border:0; background:none; padding:0; text-align:left; min-height:150px; width:100%;}
+  .flip .in{display:block; position:relative; width:100%; height:100%; min-height:150px; transform-style:preserve-3d; transition:transform .6s cubic-bezier(.2,.8,.2,1);}
+  .flip[aria-pressed="true"] .in{transform:rotateY(180deg);}
+  .flip .fc, .flip .bc{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:12px; padding:14px 16px; border:1px solid var(--border); box-shadow:var(--shadow); background:var(--card); border-left:6px solid var(--fc);}
+  .flip .bc{transform:rotateY(180deg); background:color-mix(in srgb, var(--fc) 6%, white);}
+  .flip .k, .flip .q, .flip .turn, .flip .m{display:block;}
+  .flip .k{font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--muted);}
+  .flip .q{font-family:var(--serif); font-size:1.02rem; margin-top:6px; color:var(--ink); line-height:1.4;}
+  .flip h4{font-family:var(--serif); font-size:1.08rem; margin:2px 0 4px; color:var(--ink);}
+  .flip .bc .m{font-size:.8rem; color:var(--ink-2); line-height:1.45;}
+  .flip .bc .m + .m{margin-top:5px;}
+  .flip .turn{position:absolute; bottom:9px; right:12px; font-size:.7rem; color:var(--muted);}
+  @media (max-width:520px){ .flip, .flip .in{min-height:196px;} }
+  .ask{border-left:4px solid var(--red); background:var(--card); padding:12px 16px; border-radius:0 10px 10px 0; box-shadow:var(--shadow); font-family:var(--serif); color:var(--ink); font-size:1.02rem; margin-top:8px;}
+
+  /* ---------- 03 · Seis dimensões ---------- */
+  #strip{width:100%; display:block;}
+  #strip .cd{cursor:pointer;}
+  #strip .cd:focus{outline:none;}
+  #strip .cd:focus circle{stroke:var(--ink); stroke-width:2.5;}
+  #dim-panel{min-height:150px;}
+  @media (max-width:600px){ #strip text{font-size:17px !important;} #strip .sm{display:none;} }
+
+  /* ---------- 04 · Literatura ---------- */
+  #lit-svg{width:100%; max-width:520px; display:block;}
+  .tbars{display:grid; gap:10px; margin-top:6px;}
+  .tbar{display:grid; grid-template-columns:1fr; gap:4px; border:1px solid var(--border); background:var(--card); border-radius:12px; padding:10px 14px; cursor:pointer; text-align:left;}
+  .tbar[aria-pressed="true"]{border-color:var(--ink); box-shadow:var(--shadow);}
+  .tbar .top{display:flex; justify-content:space-between; gap:10px; font-size:.9rem; font-weight:600; color:var(--ink);}
+  .tbar .top b{font-variant-numeric:tabular-nums;}
+  .tbar .tr{display:block; height:12px; background:#eef2f7; border-radius:4px; overflow:hidden;}
+  .tbar .tr i{display:block; height:100%; background:var(--ink-2); border-radius:4px;}
+  .tbar[aria-pressed="true"] .tr i{background:var(--red);}
+  #lit-panel{min-height:170px; margin-top:12px;}
+  #lit-panel ol{margin:4px 0 0; padding-left:20px; font-size:.86rem; color:var(--ink-2);}
+  #lit-panel li{margin-bottom:4px;}
+
+  /* ---------- 05 · Raízes ---------- */
+  #root-scene{perspective:2200px;}
+  #root-scene .slab{cursor:pointer;}
+  #root-scene .face-label{font-size:15px; letter-spacing:.1em;}
+  #root-scene .slab.active{--oz:18px; --c:var(--red) !important;}
+  #root-panel{min-height:250px; padding:14px 18px;}
+  #root-panel p{font-size:.86rem;}
+  .finds{display:grid; gap:6px; margin-top:6px;}
+  .find{display:grid; grid-template-columns:135px 1fr; gap:6px; align-items:start; font-size:.8rem; border-top:1px solid var(--border); padding-top:6px;}
+  .find > span{font-weight:600; color:var(--ink);}
+  .arrows{display:flex; flex-wrap:wrap; gap:4px;}
+  .arr{display:inline-flex; gap:4px; align-items:center; font-size:.74rem; padding:2px 8px; border-radius:999px; background:#eef2f7; color:var(--ink-2); white-space:nowrap;}
+  .arr b{font-size:.9rem;}
+  .arr.up b{color:var(--red);} .arr.dn b{color:var(--navy);}
+  @media (max-width:520px){ .find{grid-template-columns:1fr;} }
+
+  /* ---------- 06 · Método ---------- */
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin:8px 0 6px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 12px; box-shadow:var(--shadow);}
+  .stat b{display:block; font-family:var(--serif); font-size:1.5rem; color:var(--red); line-height:1.1;}
+  .stat span{font-size:.76rem; color:var(--ink-2);}
+  .meas{display:grid; gap:8px; margin-top:10px;}
+  .meas div{font-size:.84rem; color:var(--ink-2); background:var(--card); border:1px solid var(--border); border-radius:10px; padding:8px 12px;}
+  .meas div b{color:var(--ink);}
+  #timeline{width:100%; display:block; margin-top:6px;}
+  #herd-svg{width:100%; display:block;}
+  #herd-msg{min-height:4.2em; font-size:.88rem; color:var(--ink-2); margin-top:6px;}
+  @media (max-width:600px){ #timeline text{font-size:16px !important;} #herd-svg text{font-size:16px !important;} #timeline .sm, #herd-svg .sm{display:none;} }
+
+  /* ---------- 07 · Excesso de confiança ---------- */
+  #oc-scene{perspective:2600px;}
+  #oc-scene .slab{cursor:pointer;}
+  #oc-scene .top-label{font-size:13px; color:#fff;}
+  #oc-scene .slab.nsx .top-label{color:var(--ink-2); font-weight:600;}
+  #oc-scene .floor-label{font-size:16px; white-space:nowrap;}
+  #oc-scene .slab.active > i{box-shadow:inset 0 0 0 2px var(--ink);}
+  #oc-scene .slab.dim > i{--face:color-mix(in srgb, var(--c) 10%, transparent); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--c) 45%, transparent);}
+  #oc-scene .slab.dim .top-label{opacity:.35;}
+  #oc-panel{min-height:150px;}
+  @media (max-width:600px){ #oc-scene .floor-label{font-size:19px;} #oc-scene .top-label{font-size:17px;} #hero-scene .floor-label{font-size:21px;} #hero-scene .top-label{font-size:22px;} #root-scene .face-label{font-size:19px;} }
+
+  /* ---------- 08 · Efeito disposição ---------- */
+  .dv{display:grid; gap:7px; margin-top:4px;}
+  .dv .hd{display:grid; grid-template-columns:150px 1fr 96px; gap:10px; font-size:.72rem; font-weight:600;}
+  .dv .hd span:nth-child(2){display:flex; justify-content:space-between;}
+  .dvr{display:grid; grid-template-columns:150px 1fr 96px; gap:10px; align-items:center; font-size:.84rem; color:var(--ink);}
+  .dvr > span:first-child{font-weight:600;}
+  .dvr .tr{position:relative; height:20px; border-left:0;}
+  .dvr .tr::before{content:''; position:absolute; left:70%; top:-4px; bottom:-4px; width:1.5px; background:var(--muted);}
+  .dvr .tr i{position:absolute; top:0; height:100%; border-radius:4px;}
+  .dvr b{font-size:.8rem; font-variant-numeric:tabular-nums;}
+  .dvr b.ns{color:var(--muted); font-weight:500;}
+  @media (max-width:520px){ .dvr, .dv .hd{grid-template-columns:104px 1fr 78px; font-size:.76rem;} }
+  .rbars{display:grid; gap:6px; margin-top:8px;}
+  .rbar{display:grid; grid-template-columns:130px 1fr 52px; gap:10px; align-items:center; font-size:.84rem; color:var(--ink-2);}
+  .rbar .tr{height:16px; background:#eef2f7; border-radius:4px; overflow:hidden; position:relative;}
+  .rbar .tr i{display:block; height:100%; background:var(--ink-2); border-radius:4px; transition:width .6s cubic-bezier(.2,.8,.2,1);}
+  .rbar.br .tr i{background:var(--red);}
+  .rbar.br span{font-weight:700; color:var(--ink);}
+  .rbar b{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink);}
+  .rbar .tr .avg{position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--ink);}
+  @media (max-width:520px){ .rbar{grid-template-columns:104px 1fr 46px; font-size:.78rem;} }
+
+  /* ---------- 09 · Manada por país ---------- */
+  .regions{display:grid; gap:10px;}
+  .region .rn{font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:4px;}
+  .tiles{display:flex; flex-wrap:wrap; gap:4px;}
+  .tile{border:0; border-radius:6px; padding:5px 8px; font-size:.74rem; cursor:pointer; background:var(--ns); color:var(--ink-2); transition:background .45s, color .45s; line-height:1.2;}
+  .tile.h{background:var(--mais); color:#fff;}
+  .tile.a{background:var(--menos); color:#fff;}
+  .tile.sel{outline:2px solid var(--ink); outline-offset:1px;}
+  .counts{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin:8px 0 10px;}
+  .count{border-radius:12px; padding:10px 12px; color:#fff;}
+  .count b{display:block; font-family:var(--serif); font-size:1.7rem; line-height:1.05;}
+  .count span{font-size:.76rem;}
+  .count.h{background:var(--mais);} .count.a{background:var(--menos);} .count.n{background:var(--ns); color:var(--ink-2);}
+  #herd-panel{min-height:120px;}
+  .mini3{display:flex; gap:6px; flex-wrap:wrap; margin-top:4px;}
+  .mini3 span{font-size:.76rem; padding:3px 9px; border-radius:999px; background:var(--ns); color:var(--ink-2);}
+  .mini3 span.h{background:var(--mais); color:#fff;} .mini3 span.a{background:var(--menos); color:#fff;}
+
+  /* ---------- 10 · Manada e cultura ---------- */
+  #slope{width:100%; display:block;}
+  #slope .ln{cursor:pointer;}
+  @media (max-width:600px){ #slope text{font-size:16px !important;} #slope .sm{display:none;} }
+  #slope-panel{min-height:140px;}
+  .gni{display:grid; gap:6px; margin-top:8px;}
+  .gni div{display:grid; grid-template-columns:90px 1fr 56px; gap:8px; align-items:center; font-size:.82rem; color:var(--ink-2);}
+  .gni .tr{height:14px; background:#eef2f7; border-radius:4px; overflow:hidden;}
+  .gni .tr i{display:block; height:100%; background:var(--menos); border-radius:4px;}
+  .gni b{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink);}
+
+  /* ---------- 11 · Seu país ---------- */
+  .prof{display:grid; gap:7px; margin-top:6px;}
+  .prow{display:grid; grid-template-columns:150px 1fr; gap:10px; align-items:center; font-size:.82rem; color:var(--ink-2);}
+  .prow .tr{position:relative; height:26px; background:#eef2f7; border-radius:5px;}
+  .prow .tr i{position:absolute; left:0; height:12px; border-radius:3px; transition:width .6s cubic-bezier(.2,.8,.2,1);}
+  .prow .tr i.a{top:1px; background:var(--red);}
+  .prow .tr i.b{bottom:1px; background:#94a3b8;}
+  .prow .tr em{position:absolute; right:6px; top:50%; transform:translateY(-50%); font-style:normal; font-size:.72rem; color:var(--ink-2); font-variant-numeric:tabular-nums;}
+  @media (max-width:520px){ .prow{grid-template-columns:110px 1fr; font-size:.76rem;} }
+  .facts{display:grid; gap:10px; margin-top:12px;}
+  #cty-de .tr{height:14px; background:#eef2f7; border-radius:4px; position:relative; margin:6px 0 2px;}
+  #cty-de .tr i{position:absolute; top:-4px; width:12px; height:22px; border-radius:3px; background:var(--red); transform:translateX(-6px); transition:left .6s;}
+  #cty-de .tr .avg{position:absolute; top:-4px; height:22px; width:2px; background:var(--ink);}
+
+  /* ---------- 12 · Prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:760px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.95rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{font-size:.76rem; line-height:1.45; color:var(--ink-2); margin:0;}
+  .pcard .src{display:block; margin-top:6px; font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--muted);}
+  .end{display:grid; grid-template-columns:1fr; gap:24px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.08rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:7px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.78rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2026-ikeda-cultura-vieses-investidor/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2026</div>
+      <h1 class="rv" style="--d:.1s">O investidor tem sotaque?</h1>
+      <p class="sub rv" style="--d:.2s">Confiar demais em si mesmo, segurar a ação que só cai, ir atrás da manada: investidores do mundo todo cometem os mesmos erros. Com dados diários de <strong>64 bolsas</strong>, de 2010 a 2024, a tese mostra que a <strong>cultura de cada país</strong> muda o tamanho desses vieses, e que a pandemia chegou a <strong>inverter a direção</strong> de alguns. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Wilson Eduardo Ikeda</span>
+        <span><b>Orientador:</b> Prof. Dr. Denis Forte</span>
+        <span><b>Coorientação:</b> Ana Paula Matias Gama, Ph.D. (Universidade da Beira Interior)</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie, em dupla titulação com a Universidade da Beira Interior (Portugal)</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#vieses">Começar →</a>
+        <a class="btn ghost" href="#confianca">Ir direto à descoberta</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="520x330" role="img" aria-label="Barras 3D: número de bolsas com efeito manada e com anti-manada antes, durante e depois da pandemia: 12 e 26, 14 e 9, 7 e 25"></div></div>
+      <div class="cap-legend">
+        <span><i class="dot" style="background:var(--mais)"></i>bolsas com efeito manada</span>
+        <span><i class="dot" style="background:var(--menos)"></i>bolsas com o contrário (anti-manada)</span>
+      </div>
+      <p class="note" style="margin-top:6px">Das 64 bolsas, quantas mostraram cada comportamento em cada período. Na pandemia, o "anti-manada" quase sumiu. Contagem nossa a partir da Tabela 17 (p &lt; 0,10).</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-10"><a href="https://brasil.un.org/pt-br/sdgs/10" target="_blank" rel="noopener" title="ODS 10 · Redução das desigualdades: Mostra como a cultura e a renda de cada país moldam vieses que afetam a estabilidade dos mercados financeiros, e sugere regulação e vigilância atentas a esses perfis (meta 10.5)."><b>10</b>Redução das desigualdades</a></li>
+          <li class="ods-4"><a href="https://brasil.un.org/pt-br/sdgs/4" target="_blank" rel="noopener" title="ODS 4 · Educação de qualidade: Defende programas de educação financeira adaptados à cultura de cada país para reduzir os vieses dos investidores (meta 4.4)."><b>4</b>Educação de qualidade</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · TRÊS VIESES -->
+<section class="slide" id="vieses" data-label="Três erros">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O problema</div>
+      <h2 class="rv" style="--d:.1s">Três erros que quase todo investidor já cometeu</h2>
+      <p class="rv" style="--d:.15s">A teoria clássica supõe um investidor frio, que usa toda a informação disponível. As <strong>finanças comportamentais</strong> mostram outra coisa: emoções e atalhos mentais levam a erros previsíveis, os <strong>vieses</strong>. A tese estuda três deles.</p>
+      <p class="rv" style="--d:.2s">Esses erros têm o mesmo tamanho em todo lugar? A tese aposta que não: cada país tem uma <strong>cultura nacional</strong>, um jeito compartilhado de pensar e sentir que passa de geração em geração e que pode ampliar ou frear cada viés.</p>
+      <div class="ask rv" style="--d:.25s">Os investidores do mundo todo têm os mesmos vieses, ou a cultura de cada país os molda e amplia?</div>
+      <p class="note rv" style="--d:.3s">Pergunta de pesquisa da tese, seção 1.1.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <p style="margin-bottom:10px"><strong>Você reconhece a cena?</strong> Toque para ver o nome do viés e como a tese o mediu:</p>
+      <div class="flips" id="flips"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · SEIS DIMENSÕES -->
+<section class="slide" id="dimensoes" data-label="Seis dimensões">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> Como medir uma cultura</div>
+      <h2 class="rv" style="--d:.1s">Seis notas de 0 a 100 para descrever a cultura de um país</h2>
+      <p class="rv" style="--d:.15s">A tese usa as <strong>dimensões culturais de Hofstede</strong>, o modelo mais usado para comparar países. Cada país recebe uma nota de 0 a 100 em seis dimensões. Escolha uma e veja onde ficam os 64 países da pesquisa:</p>
+      <div class="chips rv" id="dim-chips" style="--d:.2s" role="group" aria-label="Escolher a dimensão"></div>
+      <div class="panel rv" id="dim-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="pick-row"><label for="dim-cty">Destacar um país:</label><select class="pick" id="dim-cty"></select></div>
+      <svg id="strip" viewBox="0 0 560 250" role="group" aria-label="Os 64 países distribuídos na escala de 0 a 100 da dimensão escolhida"></svg>
+      <div class="leg"><span><i style="background:var(--red); border-radius:50%"></i>Brasil</span><span><i style="background:var(--ink); border-radius:50%"></i>país destacado</span><span><i style="background:#94a3b8; border-radius:50%"></i>outros países</span></div>
+      <p class="note">Cada ponto é um país; toque num ponto para ver o nome. Países sem nota na dimensão ficam de fora (Jamaica em longo prazo e indulgência; Israel, Sri Lanka, Tunísia e Jamaica em indulgência). Fonte: Hofstede Insights (2024), Apêndice I.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · LITERATURA -->
+<section class="slide" id="literatura" data-label="O que se sabia">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Capítulo 3 · 60 artigos</div>
+      <h2 class="rv" style="--d:.1s">Um campo novo, que dobrou de tamanho desde 2017</h2>
+      <p class="rv" style="--d:.15s">Antes de ir aos dados, o autor vasculhou as bases Web of Science e Scopus atrás de tudo o que se publicou sobre cultura nacional e comportamento do investidor em revistas de finanças bem avaliadas. Ficaram <strong>60 artigos</strong>, de 2009 a 2024. A produção mais que dobrou a partir de 2017; o estudo mais influente é o de Schmeling (2009), e os países mais estudados são os Estados Unidos e a China.</p>
+      <svg id="lit-svg" class="rv" style="--d:.2s" viewBox="0 0 520 200" role="img" aria-label="Círculos com área proporcional: 828 documentos encontrados, 677 após os filtros, 60 artigos analisados"></svg>
+      <p class="note">Área dos círculos proporcional ao número de documentos. Filtros: só inglês, só revistas classificadas pela ABS (nível 2 ou mais), sem duplicatas; depois, leitura dos resumos. Busca em maio de 2024. Fonte: seção 3.3.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <p style="margin-bottom:6px"><strong>Do que falam esses artigos?</strong> Uma análise do vocabulário dos resumos separou três grandes temas. Toque num tema:</p>
+      <div class="tbars" id="lit-bars"></div>
+      <div class="panel" id="lit-panel" aria-live="polite"></div>
+      <p class="note">% dos trechos dos resumos classificados em cada tema (201 de 219 trechos, análise de Reinert no IRaMuTeQ). Perguntas da Tabela 5, que guiaram os estudos seguintes. Fonte: seções 3.5 e 3.7.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · RAÍZES -->
+<section class="slide" id="raizes" data-label="Raízes da cultura">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Capítulo 4 · até 98 países</div>
+      <h2 class="rv" style="--d:.1s">A cultura tem raízes na economia, na fé e nas leis</h2>
+      <p class="rv" style="--d:.15s">O autor comparou o perfil cultural dos países pelo <strong>desenvolvimento</strong>, pela <strong>religião da maioria</strong> e pela <strong>origem do sistema jurídico</strong>. As setas dizem o que muda em relação ao grupo de referência. Toque numa camada:</p>
+      <div class="panel rv" id="root-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="root-scene" data-fit="520x360" role="group" aria-label="Três camadas empilhadas: economia, religião e direito"></div></div>
+      <div class="leg"><span><i style="background:var(--red)"></i>↑ nota mais alta que a referência</span><span><i style="background:var(--navy)"></i>↓ nota mais baixa</span></div>
+      <p class="note">Só aparecem as diferenças estatisticamente significativas (*** p &lt; 0,01; ** p &lt; 0,05; * p &lt; 0,10) em regressões logísticas multinomiais com 60, 79 e 98 países com dados completos. Fonte: Tabelas 8, 9 e 10.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · MÉTODO -->
+<section class="slide" id="metodo" data-label="Como mediu">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Capítulos 5 a 7 · como a pesquisa olhou</div>
+      <h2 class="rv" style="--d:.1s">Como medir um viés sem perguntar nada a ninguém</h2>
+      <p class="rv" style="--d:.15s">Em vez de questionários, a tese lê os vieses nas <strong>pegadas que deixam no mercado</strong>: o volume negociado e o movimento dos preços, dia a dia, setor a setor.</p>
+      <div class="stats rv" style="--d:.2s">
+        <div class="stat"><b>64</b><span>bolsas de valores</span></div>
+        <div class="stat"><b>15</b><span>anos de pregões, 2010 a 2024</span></div>
+        <div class="stat"><b>&gt; 0,5 bi</b><span>de negociações</span></div>
+      </div>
+      <div class="meas rv" style="--d:.25s">
+        <div><b>Excesso de confiança:</b> quanto se negocia nos setores em queda, comparado ao volume normal de cada setor. Volume alto em dia ruim sugere gente confiante demais.</div>
+        <div><b>Efeito disposição:</b> volume dos setores em alta dividido pelo dos setores em queda. Se o primeiro é bem maior, vende-se o que ganha e segura-se o que perde.</div>
+        <div><b>Manada:</b> o quanto os setores se afastam da média do mercado em dias de grandes movimentos. Ao lado, veja a ideia.</div>
+      </div>
+      <p class="note rv" style="--d:.3s">Os dias de cada mercado viram três níveis (viés baixo, médio ou alto, pelos quartis), relacionados às seis dimensões por regressão logística multinomial; um segundo modelo (GAM) procura relações que não são linhas retas. Dados da Capital IQ. Fonte: seções 5.2, 6.3 e 7.3.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="timeline" viewBox="0 0 560 120" role="img" aria-label="Linha do tempo: o efeito disposição usa 2010 a 2024; excesso de confiança e manada são comparados em três períodos: antes da pandemia, de 2015 a março de 2020; pandemia, de março de 2020 a dezembro de 2021; depois, de 2022 a junho de 2024"></svg>
+      <div class="panel" style="margin-top:12px">
+        <div class="tag">A ideia da medida de manada · exemplo ilustrativo</div>
+        <div class="seg" id="herd-seg" role="group" aria-label="Escolher o tipo de dia"><button data-k="normal" aria-pressed="true">Dia de queda comum</button><button data-k="manada" aria-pressed="false">Dia de queda com manada</button></div>
+        <svg id="herd-svg" viewBox="0 0 520 220" role="img" aria-label="Retornos de dez setores em torno do retorno do mercado"></svg>
+        <p id="herd-msg" aria-live="polite"></p>
+      </div>
+      <p class="note">Setores e retornos inventados, só para mostrar a lógica. A medida da tese segue Chang, Cheng e Khorana (2000): se, nos dias de grandes movimentos, a distância média dos setores ao mercado cresce menos do que o esperado, há manada.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · EXCESSO DE CONFIANÇA -->
+<section class="slide" id="confianca" data-label="Confiança e a crise">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Capítulo 5 · excesso de confiança</div>
+      <h2 class="rv" style="--d:.1s">Na pandemia, três traços culturais trocaram de lado</h2>
+      <p class="rv" style="--d:.15s">Antes da COVID-19, países mais <strong>individualistas</strong>, mais <strong>competitivos</strong> (masculinidade) e mais <strong>avessos à incerteza</strong> tinham mais dias de excesso de confiança. Na pandemia, os três <strong>passaram a frear</strong> o viés, e assim ficaram depois. Para o autor, diante de um risco que ninguém controla, as pessoas passaram a agir mais como grupo.</p>
+      <div class="chips rv" id="oc-chips" style="--d:.2s" role="group" aria-label="Filtrar as dimensões"></div>
+      <div class="panel rv" id="oc-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="oc-scene" data-fit="600x420" role="group" aria-label="Matriz 3D: seis dimensões por três períodos; cor indica se a dimensão aumenta ou reduz o excesso de confiança e altura indica a força"></div></div>
+      <div class="leg"><span><i style="background:var(--mais)"></i>mais excesso de confiança</span><span><i style="background:var(--menos)"></i>menos excesso de confiança</span><span><i style="background:var(--ns)"></i>sem efeito claro</span></div>
+      <details class="alt"><summary>Ver como tabela</summary><div class="tbl-wrap" id="oc-table"></div></details>
+      <p class="note">Altura = tamanho do coeficiente (modelo completo, coluna 7); cor = direção. Coeficientes por ponto da escala de 0 a 100: pequenos um a um, somam diferenças grandes entre países distantes na escala. Toque num bloco. Fonte: Tabela 12.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · EFEITO DISPOSIÇÃO -->
+<section class="slide" id="disposicao" data-label="Segurar o prejuízo">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Capítulo 6 · efeito disposição · 2010 a 2024</div>
+      <h2 class="rv" style="--d:.1s">Países ricos e de olhar longo seguram menos o prejuízo</h2>
+      <p class="rv" style="--d:.15s">Quanto maior a <strong>renda por habitante</strong>, menor a chance de dias com efeito disposição alto. Países mais <strong>individualistas</strong> e de <strong>longo prazo</strong> também mostram menos o viés. Contra estudos anteriores, <strong>masculinidade</strong> e <strong>indulgência</strong> também aparecem ligadas a <em>menos</em> viés.</p>
+      <div class="dv rv" id="de-bars-div" style="--d:.2s" role="img" aria-label="Barras divergentes: direção da associação de cada dimensão com o efeito disposição"></div>
+      <div class="leg"><span><i style="background:var(--mais)"></i>mais viés</span><span><i style="background:var(--menos)"></i>menos viés</span><span><i style="background:color-mix(in srgb, var(--mais) 45%, white)"></i>fraco (p &lt; 0,10)</span><span><i style="background:var(--ns)"></i>sem efeito claro</span></div>
+      <p class="note">Modelo completo (coluna 8), por ponto de 0 a 100; a renda, em logaritmo, fica à parte (−0,0455***). No GAM, individualismo, aversão à incerteza e distância do poder ligam-se a <em>mais</em> viés em parte da escala. Fonte: Tabela 15 e seção 6.5.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <p style="margin-bottom:6px"><strong>E país a país?</strong> Média diária do índice de efeito disposição (1 = vende-se tanto o que sobe quanto o que cai):</p>
+      <div class="seg" id="de-seg" role="group" aria-label="Escolher a lista"><button data-k="top" aria-pressed="true">Os 6 mais altos</button><button data-k="bot" aria-pressed="false">Os 6 mais baixos</button></div>
+      <div class="rbars" id="de-bars"></div>
+      <p class="note">Linha preta: média da amostra (1,77). O Brasil (1,13) é o 59º de 64, entre os que menos seguram o prejuízo. As médias diárias são puxadas por dias extremos; as medianas ficam perto de 1 em quase todos os países. Fonte: Tabelas 14 e H-1.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · MANADA POR PAÍS -->
+<section class="slide" id="manada" data-label="Manada no mapa">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Capítulo 7 · efeito manada · 64 bolsas</div>
+      <h2 class="rv" style="--d:.1s">Na pandemia, quase todo mercado parou de remar contra a corrente</h2>
+      <p class="rv" style="--d:.15s">Antes da COVID-19, 26 bolsas mostravam o contrário da manada: investidores agindo cada um por si. Na pandemia, só 9 continuaram assim; a maioria ficou <strong>neutra</strong> e a manada apareceu em 14. Depois, o anti-manada voltou (25) e a manada caiu para 7, quase toda em mercados emergentes, como <strong>Marrocos, Tunísia e Vietnã</strong>.</p>
+      <div class="rv" style="--d:.2s">
+        <div class="seg" id="hd-seg" role="group" aria-label="Escolher o período"><button data-p="0" aria-pressed="true">Antes</button><button data-p="1" aria-pressed="false">Pandemia</button><button data-p="2" aria-pressed="false">Depois</button></div>
+      </div>
+      <div class="counts rv" style="--d:.22s" aria-live="polite">
+        <div class="count h"><b id="n-h">12</b><span>com manada</span></div>
+        <div class="count a"><b id="n-a">26</b><span>anti-manada</span></div>
+        <div class="count n"><b id="n-n">26</b><span>neutras</span></div>
+      </div>
+      <div class="panel rv" id="herd-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="regions" id="regions"></div>
+      <p class="note">Manada = coeficiente γ₃ negativo e significativo (p &lt; 0,10) na regressão de cada bolsa, como no método da tese (seção 7.3); anti-manada = positivo e significativo. Antes: jan/2015 a 10/mar/2020; pandemia: 11/mar/2020 a dez/2021; depois: jan/2022 a jun/2024. Toque num país. Contagem nossa a partir da Tabela 17.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · MANADA E CULTURA -->
+<section class="slide" id="manada-cultura" data-label="O que explica a manada">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Capítulo 7 · cultura, renda e manada</div>
+      <h2 class="rv" style="--d:.1s">Depois da crise, a hierarquia passou a pesar muito mais</h2>
+      <p class="rv" style="--d:.15s">A <strong>renda por habitante</strong> protege contra a manada nos três períodos. Entre os traços culturais, a <strong>distância do poder</strong> (aceitar a hierarquia) sempre puxou para a manada, e esse peso quase quintuplicou depois da pandemia. A <strong>orientação de longo prazo</strong> sempre freou o viés. Masculinidade e aversão à incerteza <strong>mudaram de sinal</strong>. Toque numa linha:</p>
+      <div class="panel rv" id="slope-panel" style="--d:.2s" aria-live="polite"></div>
+      <div class="panel rv" style="--d:.25s; margin-top:12px">
+        <div class="tag">Renda por habitante · sempre protege</div>
+        <div class="gni" id="gni"></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="chips" id="sl-chips" role="group" aria-label="Destacar uma dimensão"></div>
+      <svg id="slope" viewBox="0 0 560 360" role="group" aria-label="Linhas: coeficiente de cada dimensão cultural na manada, antes, durante e depois da pandemia"></svg>
+      <div class="leg"><span><i style="background:var(--mais)"></i>acima de zero: mais manada</span><span><i style="background:var(--menos)"></i>abaixo de zero: menos manada</span><span><i style="background:#fff; border:1.5px solid var(--muted); border-radius:50%"></i>ponto vazio: sem efeito claro</span></div>
+      <p class="note">Coeficientes do modelo completo (coluna 8), por ponto de 0 a 100; a renda entra em logaritmo, por isso fica no painel à parte. O conjunto explica mais depois da crise (pseudo R² de 0,128 para 0,139 e 0,236). Fonte: Tabela 18.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · SEU PAÍS -->
+<section class="slide" id="pais" data-label="Escolha um país">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> Explore</div>
+      <h2 class="rv" style="--d:.1s">Escolha um país e veja seu perfil</h2>
+      <p class="rv" style="--d:.15s">Juntamos, para cada uma das 64 bolsas, as notas culturais, o efeito disposição médio e o que o teste de manada mostrou em cada período. Compare com outro país:</p>
+      <div class="pick-row rv" style="--d:.2s">
+        <label for="cty-a"><span class="dot" style="background:var(--red)"></span>País</label><select class="pick" id="cty-a"></select>
+        <label for="cty-b"><span class="dot" style="background:#94a3b8"></span>Comparar com</label><select class="pick" id="cty-b"></select>
+      </div>
+      <div class="prof rv" id="cty-prof" style="--d:.25s"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="facts">
+        <div class="panel" id="cty-de"></div>
+        <div class="panel" id="cty-herd"></div>
+      </div>
+      <p class="note">Painel montado por nós a partir do Apêndice I, da Tabela H-1 e da Tabela 17. Os modelos da tese falam de tendências entre países, não preveem o comportamento de um país nem de um investidor.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> E daí?</div>
+    <h2 class="rv" style="--d:.1s">Educar, regular e investir com a cultura no radar</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)">
+        <h3>Educação financeira</h3>
+        <p>Programas e alertas de risco funcionam melhor quando adaptados ao perfil cultural de quem investe, em vez de uma receita única para todos.</p>
+        <span class="src">Seções 6.5 e 8</span>
+      </div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)">
+        <h3>Reguladores</h3>
+        <p>Atenção especial a mercados de renda baixa e média, onde ganhar renda mais reduz a manada, e a países hierárquicos na saída de crises. Comunicação de crise que reduz a ambiguidade.</p>
+        <span class="src">Seção 7.5</span>
+      </div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ink-2)">
+        <h3>Empresas</h3>
+        <p>Considerar a cultura do mercado-alvo ao negociar, entrar num país e lançar produtos: onde a aversão à incerteza é alta, contratos detalhados e produtos que transmitam segurança.</p>
+        <span class="src">Seções 4.5 e 8</span>
+      </div>
+      <div class="pcard rv" style="--d:.3s; --pc:#94a3b8">
+        <h3>Investidores</h3>
+        <p>Saber que o ambiente cultural pesa nas decisões, e que numa crise esse peso pode mudar de direção, ajuda a desconfiar dos próprios impulsos. <em>Leitura nossa.</em></p>
+        <span class="src">A partir do capítulo 8</span>
+      </div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Não prova causa.</b> Mostra associações entre cultura, renda e vieses; outros fatores do país podem pesar nos dois. <em>· segundo o autor</em></li>
+          <li><b>Uma nota por país.</b> Hofstede supõe uma cultura homogênea e não capta regiões, subculturas nem imigrantes. <em>· segundo o autor</em></li>
+          <li><b>Vieses medidos por pegadas no mercado</b>, não por testes com pessoas; liquidez e robôs de negociação entram no volume. <em>· segundo o autor</em></li>
+          <li><b>Uma crise só.</b> A pandemia foi um choque de saúde; uma crise financeira ou uma guerra pode ter outro efeito, e as datas dos períodos são uma escolha. <em>· segundo o autor</em></li>
+          <li><b>Poder de explicação modesto.</b> Os modelos têm pseudo R² de 0,02 a 0,24, conforme o viés: a cultura é uma peça, não a explicação toda. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          IKEDA, Wilson Eduardo. <em>Cultural dimensions and behavioral finance: cross-national evidence of investor biases.</em> Tese (Doutorado em Administração de Empresas) — Universidade Presbiteriana Mackenzie, São Paulo, 2026. Orientador: Prof. Dr. Denis Forte. Coorientação: Ana Paula Matias Gama, Ph.D.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Tese escrita em inglês, em cinco artigos, em dupla titulação com o doutorado em Gestão da Universidade da Beira Interior (Covilhã, Portugal), com apoio da CAPES e da FCT. Dados da Capital IQ, Hofstede Insights e Banco Mundial. Esta versão simplifica o trabalho para o público em geral.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt, EN = M.lang === 'en';
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var NS = 'http://www.w3.org/2000/svg';
+  // número com sinal, com os dígitos da tabela
+  function num(v){ var s = String(Math.abs(v)); if (!EN) s = s.replace('.', ','); return (v < 0 ? '−' : '+') + s; }
+  function stars(s){ return ['', '*', '**', '***'][s]; }
+
+  /* ================= TEXTOS (traduzir aqui na versão em inglês) ================= */
+  var T = {
+    periods:['Antes', 'Pandemia', 'Depois'],
+    periodsLong:['antes da pandemia (2015 a mar/2020)', 'na pandemia (mar/2020 a dez/2021)', 'depois da pandemia (2022 a jun/2024)'],
+    herdLbl:'manada', antiLbl:'anti-manada', neutral:'neutro',
+    flipTurn:'toque para virar ↻', scene:'A cena', measured:'Como a tese mediu',
+    found:'encontrados', filtered:'após filtros', analysed:'analisados',
+    brazil:'Brasil', none:'nenhum',
+    dimHint:'Toque num ponto para ver o país.',
+    dimTxt:function(d, lo, hi){ return '<div class="tag">' + d.n + ' · 0 = ' + d.lo + ', 100 = ' + d.hi + '</div><h3>' + d.q + '</h3><p>' + d.t + '</p><p style="font-size:.84rem; color:var(--muted)">Na amostra: de <strong>' + lo + '</strong> a <strong>' + hi + '</strong>.</p>'; },
+    dimPick:function(c, d, v){ return v == null ? c + ': sem nota em ' + d : c + ': <strong>' + v + '</strong> em ' + d; },
+    ref:'Referência', refTxt:'comparado com',
+    rootNs:'Sem diferença significativa',
+    ocChips:[['all', 'Todas'], ['flip', 'Mudaram de sinal na crise'], ['same', 'Mesma direção sempre']],
+    ocTxt:{
+      all:'<strong>Sempre na mesma direção:</strong> distância do poder freia o viés; orientação de longo prazo aumenta (resultado que surpreendeu o autor); indulgência aumenta antes e durante a pandemia e perde o efeito depois.',
+      flip:'<strong>Mudaram de sinal:</strong> individualismo, masculinidade e aversão à incerteza ligavam-se a mais excesso de confiança antes da crise e passaram a ligar-se a menos na pandemia e depois.',
+      same:'<strong>Mesma direção sempre:</strong> distância do poder (menos viés) e orientação de longo prazo (mais viés), com indulgência positiva até a pandemia.'},
+    ocHint:'Toque num bloco para ver o número.',
+    ocCell:function(d, p, v, s){ return '<div style="border-top:1px solid var(--border); padding-top:8px; margin-top:4px"><div class="tag">' + d + ' · ' + p + '</div><p>Coeficiente <strong>' + num(v) + stars(s) + '</strong> · ' + (s ? (v > 0 ? 'ligado a <span class="mais-t">mais</span> excesso de confiança' : 'ligado a <span class="menos-t">menos</span> excesso de confiança') : 'sem efeito claro') + '</p></div>'; },
+    tblDim:'Dimensão',
+    deMore:'mais viés', deLess:'menos viés', ns:'sem efeito claro', avg:'sem relação',
+    ord:function(r){ return r + 'º'; },
+    deRank:function(r){ return T.ord(r) + ' de 64'; },
+    herdTxt:['<strong>Antes:</strong> a manada aparece sobretudo em mercados emergentes e de renda média, como Argentina, Bangladesh, Nigéria e Vietnã. Muitos mercados ricos mostram o contrário.',
+             '<strong>Pandemia:</strong> o choque fez os setores andarem juntos. Até Estados Unidos, Canadá, Irlanda e Portugal mostram manada; o anti-manada quase some.',
+             '<strong>Depois:</strong> os mercados ricos voltam a agir cada um por si (Canadá, Irlanda e Portugal passam a anti-manada), enquanto Marrocos, Tunísia, Romênia e Vietnã seguem na manada.'],
+    herdPick:function(c, g){ return '<div class="tag">' + c + '</div><div class="mini3">' + g.map(function(x, i){ var k = cls(x); return '<span class="' + (k === 1 ? 'h' : k === -1 ? 'a' : '') + '">' + T.periods[i] + ': ' + (k === 1 ? T.herdLbl : k === -1 ? T.antiLbl : T.neutral) + ' (' + num(x[0]) + stars(x[1]) + ')</span>'; }).join('') + '</div>'; },
+    regions:{af:'África', as:'Ásia', eu:'Europa', la:'América Latina e Caribe', me:'Oriente Médio', na:'América do Norte', oc:'Oceania'},
+    slTxt:{
+      PDI:'<strong>Distância do poder:</strong> sempre ligada a mais manada, e o peso salta depois da pandemia (de +0,0309 para +0,1431). Para o autor, em sociedades hierárquicas os investidores seguem líderes e tendências sobretudo na recuperação.',
+      LTO:'<strong>Orientação de longo prazo:</strong> sempre freia a manada, com mais força depois da crise (−0,1134). Quem planeja para o futuro se deixa levar menos pelo movimento do dia.',
+      UAV:'<strong>Aversão à incerteza:</strong> ligada a mais manada antes; na pandemia e depois, passa a frear o viés (−0,0440 no pós). Para o autor, culturas que evitam o risco preferem regras a imitar os outros.',
+      MAS:'<strong>Masculinidade:</strong> levemente ligada a mais manada antes e durante; depois, inverte e passa a frear (−0,0959).',
+      IDV:'<strong>Individualismo:</strong> um efeito pequeno e positivo nos três períodos, ao contrário da maioria dos estudos anteriores.',
+      IDG:'<strong>Indulgência:</strong> freava a manada antes; na pandemia perde o efeito; depois volta em parte (−0,0345).'},
+    gni:['Antes', 'Pandemia', 'Depois'],
+    profHead:function(a, b){ return a + ' × ' + b; },
+    noData:'sem nota',
+    deTitle:'Efeito disposição', deTxt:function(c, v, r){ return '<div class="tag">' + T.deTitle + ' · ' + c + '</div><h3>' + fmt(v, 2) + ' · ' + T.deRank(r) + '</h3><p style="font-size:.84rem">Média diária do índice, 2010 a 2024 (1º = segura mais o prejuízo). Linha preta: média da amostra, 1,77.</p>'; },
+    herdTitle:'Teste de manada nos três períodos',
+    herdNote:'Manada = γ₃ negativo e significativo; anti-manada = positivo e significativo.',
+    sample:'Média dos 64 países'
+  };
+
+  /* ================= DADOS DA TESE ================= */
+  // Dimensões de Hofstede (ordem do Apêndice I): IDV, UAV, PDI, MAS, LTO, IDG
+  var DIMS = [
+    {k:'IDV', n:'Individualismo', s:'Individualismo', lo:'coletivista', hi:'individualista', q:'Cada um por si, ou o grupo primeiro?', t:'Mede se as pessoas se veem como indivíduos independentes ou como parte de grupos que cuidam delas em troca de lealdade.'},
+    {k:'UAV', n:'Aversão à incerteza', s:'Aversão à incerteza', lo:'tolera o imprevisto', hi:'evita o imprevisto', q:'Quanto o imprevisível incomoda?', t:'Mede o desconforto de uma sociedade com situações ambíguas e desconhecidas, e a preferência por regras claras.'},
+    {k:'PDI', n:'Distância do poder', s:'Distância do poder', lo:'igualitária', hi:'hierárquica', q:'Quanto se aceita a hierarquia?', t:'Mede quanto os menos poderosos aceitam que o poder seja distribuído de forma desigual.'},
+    {k:'MAS', n:'Masculinidade', s:'Masculinidade', lo:'cuidado e consenso', hi:'competição e conquista', q:'Vencer ou cuidar?', t:'Mede se a sociedade valoriza mais a competição, a ambição e o sucesso material ou a cooperação e a qualidade de vida. O nome vem de Hofstede.'},
+    {k:'LTO', n:'Orientação de longo prazo', s:'Longo prazo', lo:'presente e tradição', hi:'futuro e poupança', q:'Poupar e planejar, ou viver o agora?', t:'Mede se os esforços miram o futuro (perseverança, poupança, adaptação) ou o passado e o presente (tradição, obrigações sociais).'},
+    {k:'IDG', n:'Indulgência', s:'Indulgência', lo:'contenção', hi:'indulgência', q:'Aproveitar a vida ou se conter?', t:'Mede o equilíbrio entre satisfazer desejos e aproveitar a vida e regular esses impulsos por normas sociais rígidas.'}
+  ];
+  // Três vieses (seções 2.3, 5.2, 6.3 e 7.3)
+  var FLIPS = [
+    {k:'Excesso de confiança', c:'var(--red)', q:'O mercado está caindo, mas você tem certeza de que sabe o que vai acontecer e compra e vende mais do que nunca.', b:'Achar que se sabe mais e se controla mais do que de fato. Leva a negociar demais e a assumir risco demais.', m:'Volume negociado nos setores em queda, comparado ao volume normal de cada setor.'},
+    {k:'Efeito disposição', c:'var(--navy)', q:'Uma ação subiu, outra caiu. Você vende a que subiu, para garantir o ganho, e segura a que caiu "até voltar".', b:'Vender rápido o que dá lucro e manter por tempo demais o que dá prejuízo, para não admitir a perda.', m:'Volume dos setores em alta dividido pelo volume dos setores em queda.'},
+    {k:'Efeito manada', c:'var(--ink-2)', q:'Todo mundo está vendendo. Você vende também, sem olhar os números da empresa.', b:'Abandonar a própria análise para seguir o movimento do grupo.', m:'Quanto os setores se afastam da média do mercado em dias de grandes altas ou quedas.'}
+  ];
+  // Capítulo 3: triagem (seção 3.3) e temas (seção 3.5); perguntas da Tabela 5
+  var FUNNEL = [[828, 'found'], [677, 'filtered'], [60, 'analysed']];
+  var THEMES = [
+    {n:'Cultura e vieses comportamentais', v:46.77, t:'Como vieses como manada e efeito disposição se relacionam com a cultura.', q:['Como o efeito disposição interage com outros vieses nos mercados internacionais?', 'Até que ponto os investidores institucionais reduzem ou reforçam a manada dos investidores individuais?', 'Como diferenças culturais influenciam a preferência por ações do próprio país?']},
+    {n:'Decisão do investidor', v:32.34, t:'Como a informação (notícias, internet, anúncios, boca a boca), sua falta ou excesso movem as decisões em cada cultura.', q:['Diferenças culturais influenciam como os investidores processam informação?', 'Como reagem a notícias das redes sociais em culturas diferentes?', 'As reações a desastres naturais e crises globais dependem da cultura nacional?']},
+    {n:'Preferências culturais do mercado', v:20.90, t:'Superstições, números da sorte, datas como o Ano-Novo Lunar e eventos religiosos que afetam os preços.', q:['Fatores religiosos influenciam as decisões de forma parecida em países muçulmanos e não muçulmanos?', 'Jogo e apostas se relacionam com a cultura nacional?', 'Como os hábitos de poupança se relacionam com as preferências culturais?']}
+  ];
+  // Capítulo 4: diferenças significativas em relação à referência (Tabelas 8, 9 e 10). [rótulo, direção, estrelas]
+  var ROOTS = [
+    {n:'Economia', ref:'países desenvolvidos', txt:'Emergentes e de fronteira (classificação MSCI) são mais coletivistas, evitam mais a incerteza e têm menos liberdades civis (índice de voz e responsabilização do Banco Mundial).',
+      rows:[['Emergentes', [['Individualismo', -1, 2], ['Aversão à incerteza', 1, 2], ['Liberdade', -1, 1]]], ['Fronteira', [['Individualismo', -1, 2], ['Aversão à incerteza', 1, 1], ['Liberdade', -1, 1]]]]},
+    {n:'Religião', ref:'maioria católica', txt:'Maiorias budista, confucionista e hindu não diferem das católicas, nem o grau de religiosidade. Para o autor, é o desenvolvimento, e não a fé protestante em si, que se liga a mais individualismo.',
+      rows:[['Maioria muçulmana', [['Individualismo', -1, 3]]], ['Maioria protestante', [['Distância do poder', -1, 1]]], ['Maioria ortodoxa', [['Indulgência', -1, 1]]]]},
+    {n:'Direito', ref:'common law (tradição inglesa)', txt:'Os países de direito civil francês aceitam mais a hierarquia e evitam mais a incerteza.',
+      rows:[['Direito civil francês', [['Individualismo', 1, 3], ['Aversão à incerteza', 1, 3], ['Distância do poder', 1, 1], ['Estado de direito', -1, 2]]], ['Direito civil germânico', [['Individualismo', 1, 3], ['Aversão à incerteza', 1, 3], ['Indulgência', -1, 1]]], ['Direito civil escandinavo', [['Masculinidade', -1, 1]]]]}
+  ];
+  // Capítulo 5: excesso de confiança, modelo completo (Tabela 12, coluna 7). [coeficiente, estrelas] por período
+  var OC = {
+    IDV:[[0.0082, 3], [-0.0198, 3], [-0.0105, 3]],
+    UAV:[[0.0018, 2], [-0.0249, 3], [-0.0236, 3]],
+    PDI:[[-0.0049, 3], [-0.0171, 3], [-0.0169, 3]],
+    MAS:[[0.0138, 3], [-0.0110, 3], [-0.0172, 3]],
+    LTO:[[0.0090, 3], [0.0530, 3], [0.0282, 3]],
+    IDG:[[0.0019, 3], [0.0071, 3], [0.00027, 0]]
+  };
+  var OC_FLIP = ['IDV', 'UAV', 'MAS'];
+  // Capítulo 6: efeito disposição, modelo completo (Tabela 15, coluna 8)
+  var DE = [['IDV', -0.0020, 3], ['UAV', 0.0007, 1], ['PDI', 0.0001, 0], ['MAS', -0.0021, 3], ['LTO', -0.0021, 3], ['IDG', -0.0026, 3]];
+  var DE_MEAN = 1.77;
+  // Capítulo 7: manada, modelo completo (Tabela 18, coluna 8). [coeficiente, estrelas] por período
+  var HD = {
+    PDI:[[0.0296, 3], [0.0309, 3], [0.1431, 3]],
+    LTO:[[-0.0411, 3], [-0.0092, 3], [-0.1134, 3]],
+    UAV:[[0.0148, 3], [-0.0132, 3], [-0.0440, 3]],
+    MAS:[[0.0030, 3], [0.0072, 3], [-0.0959, 3]],
+    IDV:[[0.0115, 3], [0.0275, 3], [0.0301, 3]],
+    IDG:[[-0.1208, 3], [-0.0013, 0], [-0.0345, 3]]
+  };
+  var GNI = [-0.6401, -0.4497, -0.7218];
+  // Por país: [nome PT, nome EN, região, [IDV, UAV, PDI, MAS, LTO, IDG] (Apêndice I), efeito disposição médio (Tabela H-1),
+  //            γ3 da manada [coeficiente, estrelas] antes, pandemia, depois (Tabela 17)]
+  var C = [
+    ["Egito", "Egypt", "af", [13, 55, 80, 55, 22, 0], 2.188, [[1.657, 3], [0.401, 0], [-109.757, 0]]],
+    ["Marrocos", "Morocco", "af", [24, 68, 70, 53, 25, 25], 2.822, [[-4.333, 3], [-1.886, 3], [-5.507, 3]]],
+    ["Nigéria", "Nigeria", "af", [0, 55, 80, 60, 8, 84], 1.671, [[-4.085, 3], [-4.73, 0], [-11.066, 3]]],
+    ["África do Sul", "South Africa", "af", [23, 49, 49, 63, 18, 63], 1.363, [[10.703, 0], [2.039, 2], [3.37, 0]]],
+    ["Tunísia", "Tunisia", "af", [27, 75, 70, 40, 24, null], 1.999, [[1.055, 0], [-10.957, 3], [-3.632, 1]]],
+    ["Bangladesh", "Bangladesh", "as", [5, 60, 80, 55, 38, 20], 1.589, [[-6.454, 3], [-7.492, 3], [1.763, 2]]],
+    ["China", "China", "as", [43, 30, 80, 66, 77, 24], 1.114, [[-1.233, 3], [1.798, 0], [0.955, 0]]],
+    ["Hong Kong", "Hong Kong", "as", [50, 29, 68, 57, 93, 17], 1.119, [[2.834, 3], [-0.618, 0], [2.054, 3]]],
+    ["Índia", "India", "as", [24, 40, 77, 56, 51, 26], 1.172, [[2.531, 3], [-0.152, 0], [7.687, 3]]],
+    ["Indonésia", "Indonesia", "as", [5, 48, 78, 46, 29, 38], 1.311, [[5.531, 0], [1.552, 0], [2.355, 0]]],
+    ["Japão", "Japan", "as", [62, 92, 54, 95, 100, 42], 1.113, [[-0.284, 0], [1.807, 3], [4.082, 3]]],
+    ["Malásia", "Malaysia", "as", [27, 36, 100, 50, 47, 57], 1.253, [[12.233, 3], [-2.739, 3], [1.069, 0]]],
+    ["Paquistão", "Pakistan", "as", [5, 70, 55, 50, 19, 0], 1.707, [[0.826, 0], [0.795, 0], [-1.397, 0]]],
+    ["Filipinas", "Philippines", "as", [17, 44, 94, 64, 46, 42], 2.046, [[0.368, 0], [-1.283, 1], [1.587, 0]]],
+    ["Singapura", "Singapore", "as", [43, 8, 74, 48, 67, 46], 1.452, [[-0.208, 0], [-1.142, 0], [6.262, 3]]],
+    ["Coreia do Sul", "South Korea", "as", [58, 85, 60, 39, 86, 29], 1.321, [[-1.198, 0], [0.471, 0], [5.145, 3]]],
+    ["Sri Lanka", "Sri Lanka", "as", [35, 45, 80, 10, 45, null], 2.575, [[3.474, 1], [-1.519, 0], [1.639, 2]]],
+    ["Taiwan", "Taiwan", "as", [40, 69, 58, 45, 87, 49], 1.224, [[-0.753, 0], [0.019, 0], [7.605, 3]]],
+    ["Tailândia", "Thailand", "as", [19, 64, 64, 34, 67, 45], 1.21, [[4.11, 3], [-0.532, 0], [-1.362, 0]]],
+    ["Vietnã", "Vietnam", "as", [30, 30, 70, 40, 47, 35], 1.278, [[-2.423, 3], [-2.47, 3], [-2.358, 3]]],
+    ["Áustria", "Austria", "eu", [77, 70, 11, 79, 47, 63], 1.351, [[-2.258, 0], [0.366, 0], [2.602, 0]]],
+    ["Bélgica", "Belgium", "eu", [81, 94, 65, 54, 61, 57], 1.216, [[2.462, 3], [-0.301, 0], [6.937, 3]]],
+    ["Bulgária", "Bulgaria", "eu", [50, 85, 70, 40, 51, 16], 3.092, [[0.048, 0], [0.222, 0], [-0.293, 0]]],
+    ["Croácia", "Croatia", "eu", [42, 80, 73, 40, 40, 33], 2.591, [[-1.192, 1], [-0.848, 0], [-0.429, 0]]],
+    ["Tchéquia", "Czechia", "eu", [70, 74, 57, 57, 51, 29], 2.625, [[-3.228, 0], [-0.61, 0], [2.838, 0]]],
+    ["Dinamarca", "Denmark", "eu", [89, 23, 18, 16, 59, 70], 1.666, [[2.429, 3], [1.134, 0], [8.613, 3]]],
+    ["Finlândia", "Finland", "eu", [75, 59, 33, 26, 63, 57], 1.127, [[1.132, 1], [0.033, 0], [0.968, 0]]],
+    ["França", "France", "eu", [74, 86, 68, 43, 60, 48], 1.219, [[1.873, 3], [0.189, 0], [0.408, 0]]],
+    ["Alemanha", "Germany", "eu", [79, 65, 35, 66, 57, 40], 1.133, [[0.606, 0], [0.008, 0], [0.877, 0]]],
+    ["Grécia", "Greece", "eu", [59, 100, 60, 57, 51, 50], 1.577, [[0.493, 1], [0.491, 1], [2.882, 3]]],
+    ["Hungria", "Hungary", "eu", [71, 82, 46, 88, 45, 31], 2.207, [[0.419, 0], [-0.708, 0], [-0.062, 0]]],
+    ["Irlanda", "Ireland", "eu", [58, 35, 28, 68, 51, 65], 1.944, [[1.849, 2], [-2.065, 1], [5.453, 2]]],
+    ["Itália", "Italy", "eu", [53, 75, 50, 70, 39, 30], 1.339, [[1.185, 3], [-0.186, 0], [1.356, 2]]],
+    ["Luxemburgo", "Luxembourg", "eu", [60, 70, 40, 50, 64, 56], 1.661, [[5.828, 3], [1.9, 1], [3.482, 1]]],
+    ["Países Baixos", "Netherlands", "eu", [100, 53, 38, 14, 67, 68], 1.964, [[-0.303, 0], [0.039, 0], [6.498, 3]]],
+    ["Noruega", "Norway", "eu", [81, 50, 31, 8, 55, 55], 1.611, [[1.642, 3], [0.051, 0], [4.013, 1]]],
+    ["Polônia", "Poland", "eu", [47, 93, 68, 64, 49, 29], 1.2, [[-2.099, 3], [-0.687, 1], [0.459, 0]]],
+    ["Portugal", "Portugal", "eu", [59, 99, 63, 31, 42, 33], 1.718, [[1.319, 2], [-1.789, 1], [10.627, 2]]],
+    ["Romênia", "Romania", "eu", [46, 90, 90, 42, 32, 20], 2.197, [[0.922, 0], [-1.603, 2], [-1.639, 1]]],
+    ["Rússia", "Russia", "eu", [46, 95, 93, 36, 58, 20], 2.349, [[1.219, 3], [0.336, 0], [-1.93, 3]]],
+    ["Sérvia", "Serbia", "eu", [42, 92, 86, 43, 37, 28], 4.391, [[1.624, 3], [-1.052, 0], [0.091, 3]]],
+    ["Eslovênia", "Slovenia", "eu", [81, 88, 71, 19, 50, 48], 2.311, [[-4.669, 3], [-2.176, 2], [-0.691, 0]]],
+    ["Espanha", "Spain", "eu", [67, 86, 57, 42, 47, 44], 1.57, [[1.747, 3], [-0.104, 0], [4.04, 3]]],
+    ["Suécia", "Sweden", "eu", [87, 29, 31, 5, 52, 78], 1.283, [[1.026, 1], [-0.461, 0], [3.091, 0]]],
+    ["Suíça", "Switzerland", "eu", [79, 58, 34, 70, 42, 66], 1.219, [[3.114, 3], [-0.823, 0], [5.283, 2]]],
+    ["Reino Unido", "United Kingdom", "eu", [76, 35, 35, 66, 60, 69], 1.3, [[1.636, 3], [-0.603, 0], [3.022, 0]]],
+    ["Argentina", "Argentina", "la", [51, 86, 49, 56, 29, 62], 1.804, [[-0.323, 2], [1.611, 0], [4.225, 3]]],
+    ["Brasil", "Brazil", "la", [36, 76, 69, 49, 28, 59], 1.13, [[1.365, 3], [-0.947, 0], [1.739, 0]]],
+    ["Chile", "Chile", "la", [49, 86, 63, 28, 12, 68], 1.88, [[0.041, 0], [0.678, 3], [-1.408, 0]]],
+    ["Colômbia", "Colombia", "la", [29, 80, 67, 64, 6, 83], 2.415, [[0.044, 0], [0.035, 0], [1.037, 1]]],
+    ["Jamaica", "Jamaica", "la", [39, 13, 45, 68, null, null], 3.001, [[0.852, 0], [1.234, 0], [13.184, 0]]],
+    ["México", "Mexico", "la", [34, 82, 81, 69, 23, 97], 1.648, [[-0.042, 0], [3.753, 3], [8.198, 0]]],
+    ["Peru", "Peru", "la", [20, 87, 64, 42, 5, 46], 3.155, [[-1.317, 3], [-0.09, 0], [1.096, 0]]],
+    ["Venezuela", "Venezuela", "la", [26, 76, 81, 73, 0, 100], 5.171, [[0.291, 0], [3.237, 0], [-1.096, 0]]],
+    ["Israel", "Israel", "me", [56, 81, 13, 47, 47, null], 1.361, [[0.798, 0], [0.352, 0], [5.58, 3]]],
+    ["Jordânia", "Jordan", "me", [20, 65, 70, 45, 20, 43], 1.9, [[1.077, 2], [0.778, 3], [-1.011, 0]]],
+    ["Kuwait", "Kuwait", "me", [28, 70, 73, 45, 31, 29], 2.063, [[-1.384, 3], [6.479, 3], [-4.454, 2]]],
+    ["Arábia Saudita", "Saudi Arabia", "me", [48, 64, 72, 43, 27, 14], 1.361, [[-0.767, 3], [-1.042, 0], [-0.299, 0]]],
+    ["Turquia", "Turkey", "me", [46, 85, 66, 45, 35, 49], 1.433, [[1.008, 0], [-1.987, 2], [-0.13, 0]]],
+    ["Emirados Árabes", "UAE", "me", [36, 66, 74, 52, 22, 22], 2.285, [[0.68, 0], [6.918, 0], [-1.54, 0]]],
+    ["Canadá", "Canada", "na", [72, 48, 39, 52, 54, 68], 1.244, [[-0.271, 0], [-1.404, 3], [8.0, 3]]],
+    ["Estados Unidos", "United States", "na", [60, 46, 40, 62, 50, 68], 1.089, [[0.313, 0], [-0.62, 1], [0.98, 0]]],
+    ["Austrália", "Australia", "oc", [73, 51, 38, 61, 56, 71], 1.229, [[3.649, 3], [1.29, 2], [1.217, 0]]],
+    ["Nova Zelândia", "New Zealand", "oc", [69, 49, 22, 58, 55, 75], 1.455, [[5.039, 2], [1.394, 0], [5.056, 1]]]
+  ];
+  // Manada: γ3 negativo e significativo; anti-manada: positivo e significativo (seção 7.3)
+  function cls(x){ return !x[1] ? 0 : x[0] < 0 ? 1 : -1; }
+  function cname(c){ return EN ? c[1] : c[0]; }
+  var BR = C.filter(function(c){ return c[1] === 'Brazil'; })[0];
+  var DK = {}; DIMS.forEach(function(d, i){ DK[d.k] = i; });
+
+  function el(tag, attrs, txt){
+    var e = document.createElementNS(NS, tag);
+    for (var a in attrs) e.setAttribute(a, attrs[a]);
+    if (txt !== undefined) e.textContent = txt;
+    return e;
+  }
+  function chips(id, items, cur, onPick){
+    var w = $(id);
+    w.innerHTML = items.map(function(it){ return '<button class="chip" data-k="' + it[0] + '" aria-pressed="' + (it[0] === cur) + '">' + it[1] + '</button>'; }).join('');
+    each(w.children, function(b){ b.addEventListener('click', function(){ each(w.children, function(o){ o.setAttribute('aria-pressed', o === b); }); onPick(b.dataset.k); }); });
+  }
+  function seg(wrap, attr, onPick){
+    each(wrap.querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){ each(wrap.querySelectorAll('button'), function(o){ o.setAttribute('aria-pressed', o === b); }); onPick(b.dataset[attr]); });
+    });
+  }
+  function keyed(g, fn){
+    g.addEventListener('click', fn);
+    g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); fn(); } });
+  }
+  function sorted(){ return C.slice().sort(function(a, b){ return cname(a).localeCompare(cname(b), EN ? 'en' : 'pt'); }); }
+  function options(sel, cur, extra){
+    sel.innerHTML = (extra ? '<option value="avg">' + extra + '</option>' : '') + sorted().map(function(c){ return '<option value="' + c[1] + '"' + (c[1] === cur ? ' selected' : '') + '>' + cname(c) + '</option>'; }).join('');
+  }
+  function byKey(k){ return C.filter(function(c){ return c[1] === k; })[0]; }
+
+  /* ================= 01 · CAPA ================= */
+  // Bolsas com manada e anti-manada por período (contagem nossa, Tabela 17)
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 480, 170, {ay:'64%', rx:'62deg'}), K = 6.6;
+    [0, 1, 2].forEach(function(p, i){
+      var h = C.filter(function(c){ return cls(c[5][p]) === 1; }).length;
+      var a = C.filter(function(c){ return cls(c[5][p]) === -1; }).length;
+      var x = 20 + i * 160;
+      st.appendChild(box({w:56, d:56, x:x, y:50, h:h * K, c:'var(--mais)', top:String(h)}));
+      st.appendChild(box({w:56, d:56, x:x + 64, y:50, h:a * K, c:'var(--menos)', top:String(a)}));
+      flatLabel(st, T.periods[p], x - 10, 120, 140);
+    });
+    rotatable(sc, st, -22, 12);
+  })();
+
+  /* ================= 02 · TRÊS VIESES ================= */
+  (function(){
+    var f = $('flips');
+    f.innerHTML = FLIPS.map(function(c){
+      return '<button class="flip" aria-pressed="false" style="--fc:' + c.c + '"><span class="in"><span class="fc"><span class="k">' + T.scene + '</span><span class="q">' + c.q + '</span><span class="turn">' + T.flipTurn + '</span></span>' +
+        '<span class="bc"><h4>' + c.k + '</h4><span class="m">' + c.b + '</span><span class="m"><strong>' + T.measured + ':</strong> ' + c.m + '</span></span></span></button>';
+    }).join('');
+    each(f.children, function(b){ b.addEventListener('click', function(){ b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true'); }); });
+  })();
+
+  /* ================= 03 · SEIS DIMENSÕES ================= */
+  (function(){
+    var svg = $('strip'), L = 24, R = 536, BASE = 196, RAD = 6.5, cur = 'IDV', hl = 'Japan', groups = [];
+    function X(v){ return L + v / 100 * (R - L); }
+    var sel = $('dim-cty');
+    options(sel, hl);
+    function draw(){
+      var di = DK[cur], d = DIMS[di];
+      svg.innerHTML = '';
+      svg.appendChild(el('line', {x1:L, x2:R, y1:BASE + 10, y2:BASE + 10, stroke:'var(--muted)', 'stroke-width':1.5}));
+      [0, 25, 50, 75, 100].forEach(function(v){
+        svg.appendChild(el('line', {x1:X(v), x2:X(v), y1:BASE + 10, y2:BASE + 16, stroke:'var(--muted)'}));
+        svg.appendChild(el('text', {x:X(v), y:BASE + 32, 'text-anchor':'middle', style:'font-size:12px; fill:var(--muted)'}, v));
+      });
+      svg.appendChild(el('text', {x:L, y:BASE + 50, style:'font-size:12.5px; fill:var(--ink-2); font-weight:600'}, '← ' + d.lo));
+      svg.appendChild(el('text', {x:R, y:BASE + 50, 'text-anchor':'end', style:'font-size:12.5px; fill:var(--ink-2); font-weight:600'}, d.hi + ' →'));
+      // pilha simples: cada ponto sobe até não encostar nos já colocados
+      var pts = C.filter(function(c){ return c[3][di] != null; }).sort(function(a, b){ return a[3][di] - b[3][di]; }), placed = [];
+      groups = [];
+      pts.forEach(function(c){
+        var x = X(c[3][di]), lvl = 0;
+        while (placed.some(function(p){ return p.l === lvl && Math.abs(p.x - x) < RAD * 2 + 1; })) lvl++;
+        placed.push({x:x, l:lvl});
+        var y = BASE - RAD - lvl * (RAD * 2 + 1);
+        var isBR = c === BR, isHL = c[1] === hl && !isBR;
+        var g = el('g', {'class':'cd', tabindex:0, role:'button', 'aria-label':cname(c) + ': ' + c[3][di]});
+        g.appendChild(el('circle', {cx:x, cy:y, r:RAD, fill:isBR ? 'var(--red)' : isHL ? 'var(--ink)' : '#94a3b8', stroke:'#fff', 'stroke-width':1.2}));
+        g.dataset.k = c[1];
+        svg.appendChild(g); groups.push([g, c, x, y]);
+        keyed(g, function(){ hl = c[1]; sel.value = hl; draw(); });
+      });
+      // rótulos do Brasil e do destacado
+      [[BR, 'var(--red)'], [byKey(hl), 'var(--ink)']].forEach(function(p, i){
+        var c = p[0]; if (!c || c[3][di] == null || (i === 1 && c === BR)) return;
+        var gg = groups.filter(function(g){ return g[1] === c; })[0];
+        var up = i === 0 ? 34 : 18, tx = Math.max(L + 30, Math.min(R - 30, gg[2]));
+        svg.appendChild(el('line', {x1:gg[2], x2:gg[2], y1:gg[3] - RAD, y2:26 + i * 24, stroke:p[1], 'stroke-width':1, 'stroke-dasharray':'2 3'}));
+        svg.appendChild(el('text', {x:tx, y:20 + i * 24, 'text-anchor':'middle', style:'font-size:13px; font-weight:700; fill:' + p[1] + '; paint-order:stroke; stroke:#fff; stroke-width:4px'}, cname(c) + ' · ' + c[3][di]));
+      });
+      var vals = pts.map(function(c){ return c[3][di]; }), lo = pts.filter(function(c){ return c[3][di] === vals[0]; }), hi = pts.filter(function(c){ return c[3][di] === vals[vals.length - 1]; });
+      $('dim-panel').innerHTML = T.dimTxt(d, lo.map(cname).join(', ') + ' (' + vals[0] + ')', hi.map(cname).join(', ') + ' (' + vals[vals.length - 1] + ')') + '<p id="dim-pick" style="font-size:.86rem">' + T.dimPick(cname(BR), d.n.toLowerCase(), BR[3][di]) + (hl !== 'Brazil' ? ' · ' + T.dimPick(cname(byKey(hl)), d.n.toLowerCase(), byKey(hl)[3][di]) : '') + '</p>';
+    }
+    chips('dim-chips', DIMS.map(function(d){ return [d.k, d.s]; }), cur, function(k){ cur = k; draw(); });
+    sel.addEventListener('change', function(){ hl = sel.value; draw(); });
+    draw();
+  })();
+
+  /* ================= 04 · LITERATURA ================= */
+  (function(){
+    var svg = $('lit-svg'), k = 2.9, cy = 92, x = 12;
+    FUNNEL.forEach(function(f, i){
+      var r = k * Math.sqrt(f[0]); x += r;
+      var last = i === FUNNEL.length - 1;
+      svg.appendChild(el('circle', {cx:x, cy:cy, r:r, fill:last ? 'var(--red)' : i ? 'color-mix(in srgb, var(--ink-2) 30%, white)' : 'color-mix(in srgb, var(--ink-2) 14%, white)', stroke:last ? 'none' : 'var(--ink-2)', 'stroke-dasharray':i ? 'none' : '4 4'}));
+      svg.appendChild(el('text', {x:x, y:cy + (last ? 6 : 6), 'text-anchor':'middle', style:'font-size:' + (last ? 17 : 26) + 'px; font-weight:700; fill:' + (last ? '#fff' : 'var(--ink)') + '; font-family:var(--serif)'}, f[0]));
+      svg.appendChild(el('text', {x:x, y:cy + Math.max(r, 24) + 22, 'text-anchor':'middle', style:'font-size:13px; fill:var(--ink-2)'}, T[f[1]]));
+      x += r + (i < FUNNEL.length - 1 ? 30 : 0);
+      if (i < FUNNEL.length - 1){
+        svg.appendChild(el('path', {d:'M' + (x - 24) + ' ' + cy + ' l16 0', stroke:'var(--muted)', 'stroke-width':2}));
+        svg.appendChild(el('path', {d:'M' + (x - 13) + ' ' + (cy - 5) + ' l6 5 l-6 5', fill:'none', stroke:'var(--muted)', 'stroke-width':2}));
+      }
+    });
+    var w = $('lit-bars');
+    w.innerHTML = THEMES.map(function(t, i){ return '<button class="tbar" aria-pressed="' + (i === 0) + '"><span class="top"><span>' + t.n + '</span><b>' + fmt(t.v, 2) + '%</b></span><span class="tr"><i style="width:' + (t.v / 50 * 100) + '%"></i></span></button>'; }).join('');
+    function show(i){
+      each(w.children, function(b, j){ b.setAttribute('aria-pressed', i === j); });
+      var t = THEMES[i];
+      $('lit-panel').innerHTML = '<div class="tag">' + t.n + '</div><p>' + t.t + '</p><p style="font-size:.8rem; color:var(--muted); margin-bottom:2px">' + (EN ? 'Open questions the author proposes:' : 'Perguntas em aberto que o autor propõe:') + '</p><ol>' + t.q.map(function(q){ return '<li>' + q + '</li>'; }).join('') + '</ol>';
+    }
+    each(w.children, function(b, i){ b.addEventListener('click', function(){ show(i); }); });
+    show(0);
+  })();
+
+  /* ================= 05 · RAÍZES ================= */
+  (function(){
+    var sc = $('root-scene'), st = makeStage(sc, 300, 190, {ay:'74%', rx:'58deg'}), tiles = [];
+    rotatable(sc, st, -28, 10);
+    ROOTS.forEach(function(r, i){
+      var b = box({w:300, d:190, x:0, y:0, z:i * 92, h:22, c:M.ramp('var(--navy)', i, 3), label:r.n});
+      b.tabIndex = 0; b.setAttribute('role', 'button'); b.setAttribute('aria-label', r.n);
+      st.appendChild(b); tiles.push(b);
+    });
+    function show(i){
+      var r = ROOTS[i];
+      tiles.forEach(function(t, j){ t.classList.toggle('active', i === j); });
+      $('root-panel').innerHTML = '<div class="tag">' + r.n + ' · ' + T.ref + ': ' + r.ref + '</div><p>' + r.txt + '</p><div class="finds">' +
+        r.rows.map(function(row){
+          return '<div class="find"><span>' + row[0] + '</span><span class="arrows">' + row[1].map(function(a){
+            return '<span class="arr ' + (a[1] > 0 ? 'up' : 'dn') + '"><b>' + (a[1] > 0 ? '↑' : '↓') + '</b>' + a[0] + ' ' + stars(a[2]) + '</span>';
+          }).join('') + '</span></div>';
+        }).join('') + '</div>';
+    }
+    tiles.forEach(function(t, i){ keyed(t, function(){ if (M.wasDrag(sc)) return; show(i); }); });
+    show(2);
+  })();
+
+  /* ================= 06 · MÉTODO ================= */
+  (function(){
+    // Linha do tempo (seções 5.2.1, 6.3 e 7.3)
+    var svg = $('timeline'), L = 20, R = 540;
+    function X(y){ return L + (y - 2010) / 14.5 * (R - L); }
+    var DEt = EN ? 'Disposition effect: whole period' : 'Efeito disposição: período inteiro';
+    var OCt = EN ? 'Overconfidence and herding' : 'Excesso de confiança e manada';
+    svg.appendChild(el('rect', {x:X(2010), y:14, width:X(2024.5) - X(2010), height:22, rx:4, fill:'color-mix(in srgb, var(--navy) 22%, white)'}));
+    svg.appendChild(el('text', {x:X(2010) + 8, y:30, style:'font-size:12.5px; font-weight:600; fill:var(--ink)'}, DEt));
+    var P = [[2015, 2020.19, '#94a3b8'], [2020.19, 2022, 'var(--red)'], [2022, 2024.5, 'var(--ink-2)']];
+    P.forEach(function(p, i){
+      svg.appendChild(el('rect', {x:X(p[0]), y:48, width:X(p[1]) - X(p[0]) - 2, height:22, rx:4, fill:p[2]}));
+      svg.appendChild(el('text', {x:(X(p[0]) + X(p[1])) / 2, y:63, 'text-anchor':'middle', style:'font-size:12px; font-weight:700; fill:#fff'}, T.periods[i]));
+    });
+    svg.appendChild(el('text', {'class':'sm', x:X(2015) - 6, y:63, 'text-anchor':'end', style:'font-size:12px; fill:var(--ink-2)'}, OCt));
+    [2010, 2015, 2020, 2024].forEach(function(y){
+      svg.appendChild(el('line', {x1:X(y), x2:X(y), y1:76, y2:84, stroke:'var(--muted)'}));
+      svg.appendChild(el('text', {x:X(y), y:100, 'text-anchor':'middle', style:'font-size:12px; fill:var(--muted)'}, y));
+    });
+    svg.appendChild(el('line', {x1:L, x2:R, y1:80, y2:80, stroke:'var(--muted)'}));
+
+    // Exemplo ilustrativo de dispersão dos setores (CSAD)
+    var hs = $('herd-svg'), RM = -3, Y0 = 110, K = 26;
+    var SPREAD = {normal:[-2.6, -1.9, -1.3, -0.8, -0.3, 0.3, 0.9, 1.4, 2.0, 2.4], manada:[-0.5, -0.4, -0.3, -0.2, -0.1, 0.1, 0.2, 0.3, 0.4, 0.5]};
+    var dots = [];
+    hs.appendChild(el('line', {x1:30, x2:500, y1:Y0, y2:Y0, stroke:'var(--ink)', 'stroke-width':2, 'stroke-dasharray':'6 5'}));
+    hs.appendChild(el('path', {d:'M60 24 L60 ' + (Y0 - 4), stroke:'var(--muted)', 'stroke-width':1, 'stroke-dasharray':'2 3'}));
+    hs.appendChild(el('text', {x:66, y:22, style:'font-size:12.5px; font-weight:700; fill:var(--ink)'}, (EN ? 'market: ' : 'mercado: ') + fmt(RM, 1) + '%'));
+    for (var i = 0; i < 10; i++){
+      var x = 50 + i * 46;
+      var ln = el('line', {x1:x, x2:x, y1:Y0, y2:Y0, stroke:'#94a3b8', 'stroke-width':2});
+      var c = el('circle', {cx:x, cy:Y0, r:9, fill:'var(--ink-2)', stroke:'#fff', 'stroke-width':2});
+      hs.appendChild(ln); hs.appendChild(c); dots.push([ln, c]);
+    }
+    hs.appendChild(el('text', {'class':'sm', x:50, y:212, style:'font-size:11.5px; fill:var(--muted)'}, EN ? 'each dot = one sector; distance to the line = how far it moved from the market' : 'cada ponto = um setor; distância à linha = quanto se afastou do mercado'));
+    function show(k){
+      var off = SPREAD[k], csad = off.reduce(function(a, b){ return a + Math.abs(b); }, 0) / off.length;
+      dots.forEach(function(d, i){
+        var y = Y0 - off[(i * 7) % 10] * K;
+        d[0].setAttribute('y2', y); d[1].setAttribute('cy', y);
+        d[1].setAttribute('fill', k === 'manada' ? 'var(--red)' : 'var(--ink-2)');
+      });
+      $('herd-msg').innerHTML = (EN ? 'Average distance of sectors from the market: ' : 'Distância média dos setores ao mercado: ') + '<strong>' + fmt(csad, 2) + (EN ? ' percentage points' : (csad < 2 ? ' ponto percentual' : ' pontos percentuais')) + '</strong>. ' +
+        (k === 'manada' ? (EN ? 'Everyone moves together: on a big day, a small distance is the sign of herding.' : 'Todos andam juntos: num dia de grande queda, distância pequena é o sinal de manada.') : (EN ? 'Each sector reacts in its own way, as rational pricing models expect on big days.' : 'Cada setor reage do seu jeito, como os modelos racionais esperam num dia de grande movimento.'));
+    }
+    seg($('herd-seg'), 'k', show);
+    show('normal');
+    // transição suave das bolinhas
+    each(hs.querySelectorAll('circle, line'), function(e){ e.style.transition = 'all .7s cubic-bezier(.2,.8,.2,1)'; });
+  })();
+
+  /* ================= 07 · EXCESSO DE CONFIANÇA ================= */
+  (function(){
+    var sc = $('oc-scene'), W = 440, D = 400, st = makeStage(sc, W, D, {ay:'52%', rx:'50deg'});
+    rotatable(sc, st, -10, 5);
+    var CW = 78, CD = 44, GX = 18, GY = 20, X0 = 150, Y0 = 0, K = 1800, tiles = [], mode = 'all', cur = null;
+    var ROWS = ['LTO', 'IDV', 'UAV', 'MAS', 'PDI', 'IDG'].map(function(k){ return DIMS[DK[k]]; });
+    ROWS.forEach(function(d, r){
+      flatLabel(st, d.s, X0 - 212, Y0 + r * (CD + GY) + CD / 2 - 10, 200, 'text-align:right');
+      [0, 1, 2].forEach(function(p){
+        var v = OC[d.k][p];
+        var b = box({w:CW, d:CD, x:X0 + p * (CW + GX), y:Y0 + r * (CD + GY), h:v[1] ? Math.max(Math.abs(v[0]) * K, 7) : 4, c:!v[1] ? 'var(--ns)' : v[0] > 0 ? 'var(--mais)' : 'var(--menos)', top:v[1] ? (v[0] > 0 ? '+' : '−') : 'ns', cls:v[1] ? '' : 'nsx'});
+        b.dataset.k = d.k; b.dataset.p = p; b.tabIndex = 0; b.setAttribute('role', 'button');
+        b.setAttribute('aria-label', d.n + ', ' + T.periodsLong[p] + ': ' + num(v[0]));
+        st.appendChild(b); tiles.push(b);
+      });
+    });
+    [0, 1, 2].forEach(function(p){ flatLabel(st, T.periods[p], X0 + p * (CW + GX) - 14, Y0 + 6 * (CD + GY) - 6, CW + 28); });
+    function render(){
+      tiles.forEach(function(b){
+        var f = OC_FLIP.indexOf(b.dataset.k) >= 0;
+        b.classList.toggle('dim', (mode === 'flip' && !f) || (mode === 'same' && f));
+      });
+      $('oc-panel').innerHTML = '<p>' + T.ocTxt[mode] + '</p><div id="oc-cell"><p style="font-size:.86rem; color:var(--muted)">' + T.ocHint + '</p></div>';
+      if (cur) pick(cur);
+    }
+    function pick(b){
+      cur = b;
+      tiles.forEach(function(t){ t.classList.toggle('active', t === b); });
+      var v = OC[b.dataset.k][b.dataset.p];
+      $('oc-cell').innerHTML = T.ocCell(DIMS[DK[b.dataset.k]].n, T.periodsLong[b.dataset.p], v[0], v[1]);
+    }
+    tiles.forEach(function(b){ keyed(b, function(){ if (M.wasDrag(sc)) return; pick(b); }); });
+    chips('oc-chips', T.ocChips, mode, function(k){ mode = k; render(); });
+    render();
+    $('oc-table').innerHTML = '<table><tr><th>' + T.tblDim + '</th>' + T.periods.map(function(p){ return '<th>' + p + '</th>'; }).join('') + '</tr>' +
+      DIMS.map(function(d){ return '<tr><td>' + d.n + '</td>' + OC[d.k].map(function(v){ return '<td>' + num(v[0]) + stars(v[1]) + '</td>'; }).join('') + '</tr>'; }).join('') + '</table>';
+  })();
+
+  /* ================= 08 · EFEITO DISPOSIÇÃO ================= */
+  (function(){
+    var U = 70 / 0.0026, html = '<div class="hd"><span></span><span><span style="color:var(--menos)">← ' + T.deLess + '</span><span style="color:var(--mais)">' + T.deMore + ' →</span></span><span></span></div>';
+    DE.forEach(function(r){
+      var v = r[1], s = r[2], w = Math.max(Math.abs(v) * U, 0.6);
+      var col = !s ? 'var(--ns)' : v > 0 ? (s === 1 ? 'color-mix(in srgb, var(--mais) 45%, white)' : 'var(--mais)') : 'var(--menos)';
+      html += '<div class="dvr"><span>' + DIMS[DK[r[0]]].s + '</span><span class="tr"><i style="left:' + (v < 0 ? 70 - w : 70) + '%; width:' + w + '%; background:' + col + '"></i></span><b class="' + (s ? '' : 'ns') + '">' + num(v) + stars(s) + (s ? '' : ' · ' + T.ns) + '</b></div>';
+    });
+    $('de-bars-div').innerHTML = html;
+    // Ranking por país (Tabela H-1)
+    var all = C.slice().sort(function(a, b){ return b[4] - a[4]; }), MAX = 5.4;
+    function show(k){
+      var rows = k === 'top' ? all.slice(0, 6) : all.slice(-6);
+      if (rows.indexOf(BR) < 0) rows = rows.concat([BR]);
+      $('de-bars').innerHTML = rows.map(function(c){
+        return '<div class="rbar' + (c === BR ? ' br' : '') + '"><span>' + T.ord(all.indexOf(c) + 1) + ' ' + cname(c) + '</span><div class="tr"><i style="width:0"></i><span class="avg" style="left:' + (DE_MEAN / MAX * 100) + '%"></span></div><b>' + fmt(c[4], 2) + '</b></div>';
+      }).join('');
+      var bars = $('de-bars').querySelectorAll('.tr i');
+      requestAnimationFrame(function(){ each(bars, function(b, j){ b.style.width = (rows[j][4] / MAX * 100) + '%'; }); });
+    }
+    seg($('de-seg'), 'k', show);
+    show('top');
+  })();
+
+  /* ================= 09 · MANADA POR PAÍS ================= */
+  (function(){
+    var p = 0, sel = null, w = $('regions');
+    var order = ['la', 'na', 'eu', 'af', 'me', 'as', 'oc'];
+    w.innerHTML = order.map(function(r){
+      return '<div class="region"><div class="rn">' + T.regions[r] + '</div><div class="tiles">' + C.filter(function(c){ return c[2] === r; }).map(function(c){ return '<button class="tile" data-k="' + c[1] + '">' + cname(c) + '</button>'; }).join('') + '</div></div>';
+    }).join('');
+    var tiles = w.querySelectorAll('.tile');
+    function render(){
+      var n = {1:0, '-1':0, 0:0};
+      each(tiles, function(t){
+        var k = cls(byKey(t.dataset.k)[5][p]); n[k]++;
+        t.classList.toggle('h', k === 1); t.classList.toggle('a', k === -1);
+        t.setAttribute('aria-label', t.textContent + ': ' + (k === 1 ? T.herdLbl : k === -1 ? T.antiLbl : T.neutral));
+      });
+      $('n-h').textContent = n[1]; $('n-a').textContent = n['-1']; $('n-n').textContent = n[0];
+      $('herd-panel').innerHTML = '<p>' + T.herdTxt[p] + '</p>' + (sel ? '<div style="border-top:1px solid var(--border); padding-top:8px">' + T.herdPick(cname(byKey(sel)), byKey(sel)[5]) + '</div>' : '');
+    }
+    each(tiles, function(t){ t.addEventListener('click', function(){ sel = t.dataset.k; each(tiles, function(o){ o.classList.toggle('sel', o === t); }); render(); }); });
+    seg($('hd-seg'), 'p', function(v){ p = +v; render(); });
+    render();
+  })();
+
+  /* ================= 10 · MANADA E CULTURA ================= */
+  (function(){
+    var svg = $('slope'), L = 150, R = 470, TP = 24, B = 326, YMIN = -0.13, YMAX = 0.15, cur = 'PDI';
+    function X(i){ return L + i * (R - L) / 2; }
+    function Y(v){ return B - (v - YMIN) / (YMAX - YMIN) * (B - TP); }
+    var keys = ['PDI', 'LTO', 'UAV', 'MAS', 'IDV', 'IDG'];
+    function draw(){
+      svg.innerHTML = '';
+      [-0.1, -0.05, 0, 0.05, 0.1, 0.15].forEach(function(t){
+        svg.appendChild(el('line', {x1:L - 10, x2:R + 10, y1:Y(t), y2:Y(t), stroke:t === 0 ? 'var(--muted)' : '#eef2f7', 'stroke-width':t === 0 ? 1.5 : 1}));
+        svg.appendChild(el('text', {'class':'sm', x:R + 16, y:Y(t) + 4, style:'font-size:11px; fill:var(--muted)'}, t === 0 ? '0' : (t > 0 ? '+' : '−') + fmt(Math.abs(t), 2)));
+      });
+      svg.appendChild(el('rect', {x:L - 10, y:TP - 6, width:R - L + 20, height:Y(0) - TP + 6, fill:'color-mix(in srgb, var(--mais) 5%, transparent)'}));
+      svg.appendChild(el('rect', {x:L - 10, y:Y(0), width:R - L + 20, height:B - Y(0), fill:'color-mix(in srgb, var(--menos) 5%, transparent)'}));
+      [0, 1, 2].forEach(function(i){ svg.appendChild(el('text', {x:X(i), y:B + 24, 'text-anchor':'middle', style:'font-size:13px; font-weight:700; fill:var(--ink-2)'}, T.periods[i])); });
+      keys.slice().sort(function(a){ return a === cur ? 1 : -1; }).forEach(function(k){
+        var on = k === cur, v = HD[k];
+        var g = el('g', {'class':'ln', tabindex:0, role:'button', 'aria-label':DIMS[DK[k]].n});
+        var d = v.map(function(x, i){ return (i ? 'L' : 'M') + X(i) + ' ' + Y(x[0]); }).join('');
+        g.appendChild(el('path', {d:d, fill:'none', stroke:'transparent', 'stroke-width':16}));
+        g.appendChild(el('path', {d:d, fill:'none', stroke:on ? 'var(--ink)' : '#b6c2d1', 'stroke-width':on ? 3.5 : 2}));
+        v.forEach(function(x, i){
+          var col = !x[1] ? '#fff' : x[0] > 0 ? 'var(--mais)' : 'var(--menos)';
+          g.appendChild(el('circle', {cx:X(i), cy:Y(x[0]), r:on ? 7 : 4.5, fill:on ? col : (x[1] ? '#b6c2d1' : '#fff'), stroke:on ? (x[1] ? '#fff' : 'var(--muted)') : '#b6c2d1', 'stroke-width':on ? 2 : 1.5}));
+          if (on) svg.appendChild(el('text', {x:X(i) + (i === 0 ? 10 : 0), y:Y(x[0]) + (x[0] >= 0 ? -13 : 22), 'text-anchor':i === 0 ? 'start' : 'middle', style:'font-size:12.5px; font-weight:700; fill:var(--ink); paint-order:stroke; stroke:#fff; stroke-width:4px'}, num(x[0])));
+        });
+        if (on) svg.appendChild(el('text', {'class':'sm', x:L - 16, y:Y(v[0][0]) + 4, 'text-anchor':'end', style:'font-size:12.5px; font-weight:700; fill:var(--ink); paint-order:stroke; stroke:#fff; stroke-width:4px'}, DIMS[DK[k]].s));
+        svg.appendChild(g);
+        keyed(g, function(){ cur = k; sync(); });
+      });
+      $('slope-panel').innerHTML = '<p>' + T.slTxt[cur] + '</p>';
+    }
+    function sync(){ each($('sl-chips').children, function(b){ b.setAttribute('aria-pressed', b.dataset.k === cur); }); draw(); }
+    chips('sl-chips', keys.map(function(k){ return [k, DIMS[DK[k]].s]; }), cur, function(k){ cur = k; draw(); });
+    draw();
+    $('gni').innerHTML = GNI.map(function(v, i){ return '<div><span>' + T.gni[i] + '</span><span class="tr"><i style="width:' + (Math.abs(v) / 0.8 * 100) + '%"></i></span><b>' + num(v) + '</b></div>'; }).join('');
+  })();
+
+  /* ================= 11 · SEU PAÍS ================= */
+  (function(){
+    var a = $('cty-a'), b = $('cty-b');
+    options(a, 'Brazil'); options(b, 'avg', T.sample);
+    var avg = DIMS.map(function(d, i){ var v = C.filter(function(c){ return c[3][i] != null; }); return Math.round(v.reduce(function(s, c){ return s + c[3][i]; }, 0) / v.length); });
+    var rank = C.slice().sort(function(x, y){ return y[4] - x[4]; });
+    function draw(){
+      var A = byKey(a.value), B = b.value === 'avg' ? null : byKey(b.value), bv = B ? B[3] : avg;
+      $('cty-prof').innerHTML = DIMS.map(function(d, i){
+        var va = A[3][i], vb = bv[i];
+        return '<div class="prow"><span>' + d.n + '</span><div class="tr"><i class="a" style="width:' + (va == null ? 0 : va) + '%"></i><i class="b" style="width:' + (vb == null ? 0 : vb) + '%"></i><em>' + (va == null ? T.noData : va) + ' · ' + (vb == null ? T.noData : vb) + '</em></div></div>';
+      }).join('');
+      var r = rank.indexOf(A) + 1, MAX = 5.4;
+      $('cty-de').innerHTML = T.deTxt(cname(A), A[4], r) + '<div class="tr"><span class="avg" style="left:' + (DE_MEAN / MAX * 100) + '%"></span><i style="left:' + (A[4] / MAX * 100) + '%"></i></div>';
+      $('cty-herd').innerHTML = '<div class="tag">' + T.herdTitle + '</div>' + T.herdPick(cname(A), A[5]).replace(/^<div class="tag">.*?<\/div>/, '') + '<p style="font-size:.78rem; color:var(--muted); margin-top:8px">' + T.herdNote + '</p>';
+    }
+    a.addEventListener('change', draw); b.addEventListener('change', draw);
+    draw();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
