@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Does the climate enter a stock's debut price? · PPGA Interativo</title>
+<meta name="description" content="Rosangela Medina's master's dissertation (PPGA Mackenzie, 2026) on environmental disclosure, climate change and the first-day discount of new shares (IPO underpricing), explained in 12 interactive screens.">
+<link rel="alternate" hreflang="pt-BR" href="../../../dissertacoes/2026-medina-clima-ipo/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2213%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>IPO</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/motor.css">
+<link rel="stylesheet" href="../../../assets/ods.css">
+<style>
+  /* Motor compartilhado em ../../assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  :root{
+    --und:var(--red);     /* o desconto da estreia (underpricing) e o que o aumenta */
+    --down:var(--navy);   /* o que diminui o desconto */
+    --firm:#334155;       /* andar das empresas */
+    --ctry:#5b6f96;       /* andar dos países */
+    --off:#cbd5e1;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+  .stripe{background-image:repeating-linear-gradient(45deg, rgb(255 255 255 / .3) 0 5px, transparent 5px 10px);}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4.4vw, 3rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:30em; margin-left:auto; margin-right:auto;}
+  #hero-scene .face-label{font-size:21px; letter-spacing:0; font-family:var(--serif); flex-direction:column; gap:2px;}
+  #hero-scene .face-label small{font-family:var(--sans); font-size:12px; font-weight:700; letter-spacing:.02em; text-transform:none;}
+  #hero-scene .top-label{color:#fff; font-size:20px; font-family:var(--serif);}
+
+  /* ---------- Componentes comuns ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px 22px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.1rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.92rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.4rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.76rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  details.tbl{margin-top:12px; font-size:.82rem; color:var(--ink-2);}
+  details.tbl summary{cursor:pointer; color:var(--muted); font-weight:600;}
+  details.tbl .wrap{overflow-x:auto; margin-top:8px;}
+  details.tbl table{border-collapse:collapse; width:100%; font-variant-numeric:tabular-nums;}
+  details.tbl th, details.tbl td{border-bottom:1px solid var(--border); padding:4px 6px; text-align:right; white-space:nowrap;}
+  details.tbl th:first-child, details.tbl td:first-child{text-align:left;}
+
+  /* ---------- 02 · A estreia ---------- */
+  #ipo-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  #ipo-svg text{font-family:var(--sans);}
+  .range{width:100%; margin:14px 0 4px; accent-color:var(--und);}
+  .ruler{position:relative; height:54px; margin:6px 4px 0;}
+  .ruler::before{content:""; position:absolute; left:0; right:0; top:14px; height:6px; border-radius:3px; background:linear-gradient(90deg, #fde2e7, var(--und));}
+  .ruler .mk{position:absolute; top:6px; width:3px; height:22px; margin-left:-1.5px; background:var(--ink);}
+  .ruler .mk span{position:absolute; top:24px; left:50%; transform:translateX(-50%); font-size:.66rem; white-space:nowrap; color:var(--ink-2); font-weight:600;}
+  .ruler .mk.up span{top:-16px;}
+  .ruler .you{position:absolute; top:4px; width:16px; height:16px; margin-left:-8px; border-radius:50%; background:#fff; border:3px solid var(--und); transition:left .2s;}
+  #ipo-msg{min-height:3.4em; font-size:.92rem; color:var(--ink-2); margin-top:12px;}
+  @media (max-width:600px){ #ipo-svg text{font-size:18px !important;} #ipo-svg text.big{font-size:30px !important;} .ruler .mk span{font-size:.58rem;} }
+
+  /* ---------- 03 · Por quê ---------- */
+  .flips{display:grid; grid-template-columns:1fr; gap:12px; margin-top:8px;}
+  @media (min-width:800px){ .flips{grid-template-columns:repeat(3, 1fr);} }
+  .flip{perspective:900px; border:0; background:none; padding:0; text-align:left; cursor:pointer; font:inherit; color:inherit;}
+  .flip .in{display:block; position:relative; min-height:200px; transform-style:preserve-3d; transition:transform .6s cubic-bezier(.2,.8,.2,1);}
+  .flip[aria-pressed="true"] .in{transform:rotateY(180deg);}
+  .flip .fc, .flip .bc{display:block; position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:12px; padding:14px 16px; border:1px solid var(--border); border-top:5px solid var(--fcol); background:var(--card); box-shadow:var(--shadow); overflow:hidden;}
+  .flip .bc{transform:rotateY(180deg); background:color-mix(in srgb, var(--fcol) 6%, white);}
+  .flip .k{display:block; font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--fcol);}
+  .flip .nm{display:block; font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--ink); margin:2px 0 6px;}
+  .flip .q{display:block; font-size:.86rem; color:var(--ink-2); line-height:1.45;}
+  .flip .bc .q{font-size:.8rem;}
+  .flip .rf{display:block; position:absolute; bottom:9px; left:16px; right:16px; font-size:.64rem; color:var(--muted);}
+  .hyps{display:grid; grid-template-columns:1fr; gap:8px; margin-top:18px;}
+  @media (min-width:800px){ .hyps{grid-template-columns:repeat(3, 1fr);} }
+  .hyp{border-left:4px solid var(--hc); background:var(--card); border-radius:0 10px 10px 0; padding:9px 13px; font-size:.84rem; color:var(--ink-2); box-shadow:var(--shadow);}
+  .hyp b{color:var(--ink);}
+
+  /* ---------- 04 · Países ---------- */
+  .cbars{display:grid; grid-template-columns:1fr; gap:3px 26px;}
+  @media (min-width:700px){ .cbars{grid-template-columns:1fr 1fr; grid-template-rows:repeat(13, auto); grid-auto-flow:column;} }
+  .cbar{display:grid; grid-template-columns:96px 1fr 34px; gap:8px; align-items:center; font-size:.76rem; color:var(--ink-2); border:0; background:none; padding:2px 0; cursor:pointer; text-align:left; font:inherit; transition:opacity .3s;}
+  .cbar .nm{font-size:.76rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .cbar .tr{height:13px; background:#eef2f7; border-radius:3px; position:relative;}
+  .cbar .tr i{position:absolute; left:0; top:0; bottom:0; border-radius:3px; background:var(--bc);}
+  .cbar b{font-size:.76rem; text-align:right; font-variant-numeric:tabular-nums; color:var(--ink);}
+  .cbar.dim{opacity:.22;}
+  .cbar[aria-pressed="true"] .nm{font-weight:700; color:var(--und);}
+  .cbar.br .nm::after{content:" ●"; color:var(--und);}
+  #c-panel{min-height:150px; margin-top:14px;}
+
+  /* ---------- 05 · Nota de carbono ---------- */
+  #cdp-scene{perspective:2600px;}
+  #cdp-scene .face-label{font-size:15px; letter-spacing:0;}
+  #cdp-scene .top-label{color:#fff; font-size:13px;}
+  #cdp-scene .floor-label{font-size:14px;}
+  #cdp-scene .slab{cursor:pointer;}
+  #cdp-scene .slab.active{--oz:14px;}
+  #cdp-scene .pin .face-label{font-size:12px; color:#fff; writing-mode:horizontal-tb;}
+  #cdp-panel{min-height:150px;}
+  .circles{display:flex; gap:18px; align-items:flex-end; margin-top:14px;}
+  .circles svg{flex:0 0 auto;}
+  .circles p{font-size:.84rem; color:var(--ink-2); margin:0;}
+  @media (max-width:600px){ #cdp-scene .face-label{font-size:19px;} #cdp-scene .floor-label{font-size:18px;} }
+
+  /* ---------- 06 · Andares ---------- */
+  #lv-scene .face-label{font-size:17px; letter-spacing:.08em;}
+  #lv-scene .slab{cursor:pointer;}
+  #lv-panel{min-height:205px;}
+  .vlist{display:grid; gap:6px; margin:10px 0 0; padding:0; list-style:none;}
+  .vlist li{font-size:.84rem; color:var(--ink-2); padding-left:12px; border-left:3px solid var(--vc);}
+  .vlist li b{color:var(--ink);}
+  .vlist li em{font-style:normal; font-size:.7rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--vc); margin-left:4px;}
+  .icc{margin-top:16px;}
+  .icc .bar{display:flex; height:26px; border-radius:6px; overflow:hidden; font-size:.72rem; font-weight:700; color:#fff;}
+  .icc .bar span{display:flex; align-items:center; padding:0 8px; white-space:nowrap; transition:flex-basis .6s cubic-bezier(.2,.8,.2,1);}
+  .icc p{font-size:.84rem; color:var(--ink-2); margin:8px 0 0;}
+  @media (max-width:600px){ #lv-scene .face-label{font-size:22px;} }
+
+  /* ---------- 07 · Apostas ---------- */
+  .bets{display:grid; grid-template-columns:1fr; gap:14px; margin-top:8px;}
+  @media (min-width:900px){ .bets{grid-template-columns:repeat(3, 1fr);} }
+  .bet{perspective:1000px;}
+  .bet .in{position:relative; min-height:300px; transform-style:preserve-3d; transition:transform .7s cubic-bezier(.2,.8,.2,1);}
+  .bet.done .in{transform:rotateY(180deg);}
+  .bet .fc, .bet .bc{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:14px; padding:16px 18px; background:var(--card); border:1px solid var(--border); border-top:5px solid var(--hc); box-shadow:var(--shadow); display:flex; flex-direction:column;}
+  .bet .bc{transform:rotateY(180deg); background:color-mix(in srgb, var(--vc) 7%, white); border-top-color:var(--vc);}
+  .bet .k{font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--hc);}
+  .bet h3{font-size:1.02rem; margin:4px 0 6px; line-height:1.35;}
+  .bet p{font-size:.84rem; color:var(--ink-2); margin:0 0 8px;}
+  .bet .opts{display:flex; gap:6px; margin-top:auto;}
+  .bet .opts button{flex:1; border:1px solid var(--border); background:var(--card); border-radius:9px; padding:9px 4px; font-size:.82rem; font-weight:600; cursor:pointer; color:var(--ink);}
+  .bet .opts button:hover{border-color:var(--hc);}
+  .bet .verdict{display:inline-block; align-self:flex-start; font-size:.74rem; font-weight:700; padding:3px 10px; border-radius:6px; color:#fff; background:var(--vc); margin-bottom:8px;}
+  .bet .bc .you{font-size:.76rem; color:var(--muted); margin-top:auto;}
+  .bet .mini{display:grid; gap:4px; margin:4px 0 8px;}
+  .bet .mini div{display:grid; grid-template-columns:1fr auto; gap:8px; font-size:.8rem; color:var(--ink-2); background:#fff; border-radius:6px; padding:4px 8px;}
+  .bet .mini b{font-variant-numeric:tabular-nums;}
+  #bet-score{font-size:.92rem; color:var(--ink-2); margin-top:14px; min-height:1.6em;}
+  @media (max-width:520px){ .bet .in{min-height:320px;} }
+
+  /* ---------- 08 · Pessoas × desastres ---------- */
+  .ctl{margin-top:14px;}
+  .ctl label{display:flex; justify-content:space-between; font-size:.86rem; font-weight:600; color:var(--ink);}
+  .ctl label span{font-variant-numeric:tabular-nums; color:var(--cc);}
+  .ctl input{width:100%; accent-color:var(--cc);}
+  .ctl small{display:block; font-size:.74rem; color:var(--muted);}
+  #gauge{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  #gauge text{font-family:var(--sans);}
+  #peo-msg{min-height:3.2em; font-size:.9rem; color:var(--ink-2); margin-top:12px;}
+  .pista{display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; margin-left:6px; vertical-align:2px;}
+  @media (max-width:600px){ #gauge text{font-size:19px !important;} #gauge text.big{font-size:34px !important;} }
+
+  /* ---------- 09 · O que mais pesa ---------- */
+  .dv{display:grid; gap:3px; margin-top:4px;}
+  .dv .hd{display:grid; grid-template-columns:190px 1fr 74px; gap:10px; font-size:.7rem; font-weight:600; color:var(--muted);}
+  .dv .hd span:nth-child(2){display:flex; justify-content:space-between; white-space:nowrap;}
+  .dvr{display:grid; grid-template-columns:190px 1fr 74px; gap:10px; align-items:center; font-size:.82rem; color:var(--ink-2); border:0; background:none; padding:1px 0; cursor:pointer; text-align:left; font:inherit; transition:opacity .3s;}
+  .dvr .nm small{display:block; font-size:.68rem; color:var(--muted);}
+  .dvr .tr{position:relative; height:18px; background:#f1f5f9; border-radius:3px;}
+  .dvr .tr::before{content:""; position:absolute; left:50%; top:-4px; bottom:-4px; border-left:2px solid var(--ink-2);}
+  .dvr .tr i{position:absolute; top:0; bottom:0; border-radius:3px; background:var(--bc);}
+  .dvr b{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink); font-size:.82rem;}
+  .dvr.ns .tr i{background:var(--off);}
+  .dvr.ns b{color:var(--muted); font-weight:500;}
+  .dvr.hide{display:none;}
+  .dvr[aria-pressed="true"] .nm{color:var(--und); font-weight:700;}
+  #dv-panel{min-height:140px;}
+  @media (max-width:520px){ .dvr, .dv .hd{grid-template-columns:118px 1fr 62px; font-size:.74rem;} .dvr b{font-size:.74rem;} }
+
+  /* ---------- 10 · Três provas ---------- */
+  #mat-scene .slab{cursor:pointer;}
+  #mat-scene .slab.active{--oz:12px;}
+  #mat-scene .slab.neg > i{background-image:repeating-linear-gradient(45deg, rgb(255 255 255 / .3) 0 5px, transparent 5px 10px);}
+  #mat-scene .floor-label{font-size:13px; white-space:nowrap;}
+  #mat-scene .floor-label.row{text-align:right;}
+  #mat-scene .floor-label.hl{color:var(--und); font-weight:800;}
+  #mat-scene .top-label{color:#fff; font-size:12px;}
+  #mat-panel{min-height:150px;}
+  @media (max-width:600px){ #mat-scene .floor-label{font-size:17px;} }
+
+  /* ---------- 11 · Na prática ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:12px; margin-top:8px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:15px 17px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink)); transition:transform .2s;}
+  .pcard:hover{transform:translateY(-3px);}
+  .pcard h3{font-size:1rem; margin-bottom:6px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:5px; font-size:.84rem; line-height:1.45; color:var(--ink-2);}
+  .pcard .src{display:block; margin-top:9px; font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--muted);}
+  .callout{margin-top:22px; padding:16px 20px; border-left:4px solid var(--red); background:var(--card); border-radius:0 12px 12px 0; box-shadow:var(--shadow);}
+  .callout p{margin:0; color:var(--ink); font-family:var(--serif); font-size:1rem; line-height:1.5;}
+
+  /* ---------- 12 · Limites e créditos ---------- */
+  .end{display:grid; grid-template-columns:1fr; gap:28px; margin-top:16px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:48px;} }
+  .end h3{font-size:1.15rem; margin-bottom:6px;}
+  .limits{display:grid; gap:8px; margin:10px 0 0; padding:0; list-style:none;}
+  .limits li{padding:10px 14px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.86rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.72rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.85rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px 18px; line-height:1.6; margin-top:10px;}
+  .cite b{color:var(--ink);}
+</style>
+</head>
+<body data-meta="../../../dissertacoes/2026-medina-clima-ipo/meta.json">
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../../dissertacoes/2026-medina-clima-ipo/" hreflang="pt-BR" lang="pt-BR" title="Ler em português"><img class="lang-flag" src="../../../assets/bandeira-br.svg" width="17" height="12" alt="">PT</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Previous screen">↑</button>
+    <button class="nav-btn" id="next" aria-label="Next screen">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Screen navigation"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Start">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Master's dissertation · PPGA Mackenzie · 2026</div>
+      <h1 class="rv" style="--d:.1s">Does the climate enter a stock's debut price?</h1>
+      <p class="sub rv" style="--d:.2s">When a company debuts on the stock exchange, its shares often close the first day <strong>above the offer price</strong>: a discount for those who bought. The research gathered 880 debuts in 25 countries, from 2015 to 2024, and asked whether environmental rules and climate change move this discount. Explained in 12 screens.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Author:</b> Rosangela Medina</span>
+        <span><b>Advisor:</b> Prof. Dr. Michele Nascimento Jucá</span>
+        <span><b>Program:</b> Graduate Program in Business Administration (PPGA) · Mackenzie Presbyterian University</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#estreia">Start →</a>
+        <a class="btn ghost" href="#pessoas">Skip to the result</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="500x330" role="img" aria-label="Two blocks: the offer price and the first-day closing price, 45 percent higher on average"></div></div>
+      <p class="cap-legend">Across the 880 debuts, shares closed the first day 45.38% above the offer price on average (Table 3). The R$ 10 price is illustrative.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">Closest UN Sustainable Development Goals</span>
+        <ul class="ods">
+          <li class="ods-13"><a href="https://sdgs.un.org/goals/goal13" target="_blank" rel="noopener" title="SDG 13 · Climate Action: Shows that investors demand a larger discount from firms in countries where climate disasters affect more people."><b>13</b>Climate Action</a></li>
+          <li class="ods-12"><a href="https://sdgs.un.org/goals/goal12" target="_blank" rel="noopener" title="SDG 12 · Responsible Consumption and Production: Tests whether rules requiring firms to disclose their environmental practices, and firms' carbon scores, change share prices at their debut."><b>12</b>Responsible Consumption and Production</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">scroll<span></span></div>
+</section>
+
+<!-- 02 · A ESTREIA -->
+<section class="slide" id="estreia" data-label="The debut discount">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> Try it</div>
+      <h2 class="rv" style="--d:.1s">At the debut, shares tend to come out cheap</h2>
+      <p class="lede rv" style="--d:.15s">Going public (an <strong>IPO</strong>, initial public offering) means selling shares on the stock exchange for the first time. The company and its banks set an <strong>offer price</strong>. On the first trading day, the market says what the share is worth.</p>
+      <p class="rv" style="--d:.2s">When the first-day close is above the offer price, there is a <strong>debut discount</strong> (<em>underpricing</em>): a quick gain for those who bought at the offer. The math is simple: (close − offer) ÷ offer. Drag to see.</p>
+      <p class="note rv" style="--d:.25s"><b>It may or may not be on purpose.</b> According to the dissertation, the discount can be a strategy to attract investors and give the shares liquidity, or something unexpected.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="ipo-svg" viewBox="0 0 560 290" role="img" aria-label="Offer price and first-day closing price"></svg>
+      <input type="range" class="range" id="ipo-range" min="1001" max="3350" step="1" value="1454" aria-label="First-day closing price">
+      <div class="ruler" id="ruler" aria-hidden="true"></div>
+      <div class="chips" id="ipo-chips" role="group" aria-label="Discount examples"></div>
+      <div id="ipo-msg" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · POR QUÊ -->
+<section class="slide" id="porque" data-label="Why the discount">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">03</span> The theories behind it</div>
+    <h2 class="rv" style="--d:.1s">Buyers know less than sellers</h2>
+    <p class="lede rv" style="--d:.15s">At the debut, managers know the company from the inside; investors do not. To make up for the doubt, investors ask for a discount. Three finance theories explain this game, and all point to the same remedy: <strong>clear, reliable information</strong>. Tap the cards.</p>
+    <div class="flips rv" id="flips" style="--d:.2s"></div>
+    <div class="hyps rv" style="--d:.3s">
+      <div class="hyp" style="--hc:var(--firm)"><b>H1 · Firm.</b> The discount is smaller for firms more committed to climate policies.</div>
+      <div class="hyp" style="--hc:var(--ctry)"><b>H2 · Country rule.</b> The discount is smaller where disclosing environmental practices is mandatory.</div>
+      <div class="hyp" style="--hc:var(--und)"><b>H3 · Country climate.</b> The discount is larger in countries with more climate change.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · PAÍSES -->
+<section class="slide" id="paises" data-label="25 countries">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> The sample</div>
+      <h2 class="rv" style="--d:.1s">880 debuts in 25 countries</h2>
+      <p class="lede rv" style="--d:.15s">The research started from 65 countries in an earlier study (Krueger and colleagues, 2024) and kept the 25 with enough IPO data between 2015 and 2024. In 18 of them, the law requires firms to disclose environmental and social practices; in 7, it does not.</p>
+      <div class="stats rv" style="--d:.2s">
+        <div class="stat"><b>880</b><span>stock market debuts (IPOs)</span></div>
+        <div class="stat"><b>736</b><span>in the 18 countries with a mandatory rule (our count)</span></div>
+        <div class="stat"><b>144</b><span>in the 7 countries without it, such as Brazil</span></div>
+      </div>
+      <div class="panel rv" id="c-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="c-seg" role="group" aria-label="Filter countries" style="margin-bottom:12px">
+        <button data-f="all" aria-pressed="true">All</button>
+        <button data-f="y" aria-pressed="false">With rule</button>
+        <button data-f="n" aria-pressed="false">Without rule</button>
+      </div>
+      <div class="cbars" id="cbars"></div>
+      <div class="legend"><span><i class="dot" style="background:var(--ctry)"></i>mandatory rule</span><span><i class="dot stripe" style="background-color:#94a3b8"></i>no rule</span></div>
+      <p class="note">Number of IPOs per country (Appendix A). The rule counts from the year it took effect, according to Krueger and colleagues (2024): earlier debuts count as "no rule". Tap a country.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · NOTA DE CARBONO -->
+<section class="slide" id="carbono" data-label="The carbon score">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Measuring the firm's commitment</div>
+      <h2 class="rv" style="--d:.1s">Few debutants show a carbon score, and the scores are low</h2>
+      <p class="lede rv" style="--d:.15s">The CDP (<em>Carbon Disclosure Project</em>) gives firms a score from F to A for how they handle climate issues. It is voluntary: only <strong>145 of the 880</strong> debutants had a score.</p>
+      <p class="rv" style="--d:.2s">The average was 0.86 on a 0-to-8 scale, close to <strong>D−</strong>: firms that are starting to disclose but do not yet manage their impacts in a structured way. None reached A.</p>
+      <div class="circles rv" style="--d:.25s">
+        <svg width="132" height="132" viewBox="0 0 132 132" role="img" aria-label="Circles: 880 debuts and, inside, the 145 with a carbon score">
+          <circle cx="66" cy="66" r="64" fill="#eef2f7" stroke="var(--off)"/>
+          <circle cx="66" cy="104" r="26" fill="var(--firm)"/>
+          <text x="66" y="109" text-anchor="middle" font-size="15" font-weight="700" fill="#fff" font-family="Inter">145</text>
+          <text x="66" y="42" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink-2)" font-family="Inter">880</text>
+        </svg>
+        <p>Area proportional to the number of debuts. The models that test all variables together use only these <strong>145</strong>, the ones with a score.</p>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="cdp-scene" data-fit="580x380" role="group" aria-label="Staircase of nine steps, from F to A; a red marker shows the 0.86 average, close to D minus"></div></div>
+      <div class="panel" id="cdp-panel" aria-live="polite"></div>
+      <p class="note">Step height: the position on the scale (F = 0 … A = 8), not the number of firms, which the dissertation does not report by score. Score bands from Table 2. Tap a step.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · ANDARES -->
+<section class="slide" id="andares" data-label="Firms within countries">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> The method</div>
+      <h2 class="rv" style="--d:.1s">Firms within countries: a two-floor analysis</h2>
+      <p class="lede rv" style="--d:.15s">Debuts in the same country share the same law, economy and climate. So the research uses a <strong>multilevel regression</strong>: it separates what belongs to each firm (upper floor) from what belongs to the country (lower floor).</p>
+      <div class="seg rv" id="lv-seg" style="--d:.2s" role="group" aria-label="Choose the floor">
+        <button data-l="firm" aria-pressed="true">Firm floor</button>
+        <button data-l="ctry" aria-pressed="false">Country floor</button>
+      </div>
+      <div class="panel rv" id="lv-panel" style="--d:.25s; margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="lv-scene" data-fit="560x360" role="group" aria-label="Two floors: firm blocks on top of a country slab"></div></div>
+      <div class="icc" id="icc">
+        <div class="seg" id="icc-seg" role="group" aria-label="Model">
+          <button data-m="0" aria-pressed="true">No variables (880)</button>
+          <button data-m="1" aria-pressed="false">Full model (145)</button>
+        </div>
+        <div class="bar" style="margin-top:10px"><span id="icc-c" style="background:var(--ctry)"></span><span id="icc-f" style="background:var(--firm); flex:1"></span></div>
+        <p id="icc-p"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · APOSTAS -->
+<section class="slide" id="apostas" data-label="Three bets">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">07</span> The results · place your bet</div>
+    <h2 class="rv" style="--d:.1s">Not everything that seemed obvious held up</h2>
+    <p class="lede rv" style="--d:.15s">Before looking, bet: did the research confirm each hypothesis? The card flips with the result of the full model (Table 5, 145 debuts).</p>
+    <div class="bets rv" id="bets" style="--d:.2s"></div>
+    <div id="bet-score" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- 08 · PESSOAS × DESASTRES -->
+<section class="slide" id="pessoas" data-label="People affected">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> The main result</div>
+      <h2 class="rv" style="--d:.1s">More people hit by disasters, a larger discount</h2>
+      <p class="lede rv" style="--d:.15s">The more people a country has affected by climate disasters, the larger the debut discount. For each 1% more people affected, the discount rises by <strong>0.025 percentage points</strong>. For the author, investors in countries more exposed to the social effects of climate see more risk and ask for a larger discount.</p>
+      <p class="rv" style="--d:.2s">The number of disasters pointed the other way: more disasters, a smaller discount. For the author, frequent disasters would make the market more cautious. But it is a weak hint that did not hold in the robustness tests (screen 10).</p>
+      <div class="ctl rv" style="--d:.25s; --cc:var(--und)">
+        <label for="peo">People affected <span id="peo-v">× 1</span></label>
+        <input type="range" id="peo" min="0" max="100" value="0" aria-describedby="peo-msg">
+        <small>times the number of people affected in a country-year</small>
+      </div>
+      <div class="ctl rv" style="--d:.3s; --cc:var(--down)">
+        <label for="dis">Number of disasters <span class="pista">hint</span> <span id="dis-v">× 1</span></label>
+        <input type="range" id="dis" min="0" max="100" value="0">
+        <small>times the number of climate disasters in a country-year</small>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="gauge" viewBox="0 0 560 300" role="img" aria-label="Estimated debut discount starting from the average, according to the sliders"></svg>
+      <div id="peo-msg" aria-live="polite"></div>
+      <div class="stats">
+        <div class="stat"><b>+1.7 pp</b><span>when the number of people affected doubles</span></div>
+        <div class="stat"><b>+8.7 pp</b><span>one standard deviation more people affected</span></div>
+        <div class="stat"><b>24%</b><span>higher odds of a high discount for every ~2.7 times more people (Table 6)</span></div>
+      </div>
+      <p class="note"><b>Our simulation.</b> It starts from the sample's average discount (45.38%) and applies the full model's coefficients (people: 0.0251, p &lt; 5%; disasters: −0.1048, p &lt; 10%; Table 5), holding other characteristics constant. It shows association, not cause; it does not predict the discount of a real IPO.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · O QUE MAIS PESA -->
+<section class="slide" id="fatores" data-label="What else matters">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> All the variables</div>
+      <h2 class="rv" style="--d:.1s">Technology, size, age and auditor also move the discount</h2>
+      <p class="lede rv" style="--d:.15s">The features of the debut itself matter a lot. High-tech firms and larger offerings had larger discounts; older firms and those audited by one of the four big audit firms (the <em>Big Four</em>: PwC, EY, Deloitte and KPMG), smaller ones.</p>
+      <div class="seg rv" id="dv-seg" style="--d:.2s" role="group" aria-label="Filter variables">
+        <button data-f="all" aria-pressed="true">All</button>
+        <button data-f="firm" aria-pressed="false">Firm</button>
+        <button data-f="ctry" aria-pressed="false">Country</button>
+        <button data-f="sig" aria-pressed="false">Significant only</button>
+      </div>
+      <div class="panel rv" id="dv-panel" style="--d:.25s; margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="dv" id="dv" role="group" aria-label="Diverging bars: how much each variable changes the discount, in percentage points"></div>
+      <div class="legend"><span><i class="dot" style="background:var(--und)"></i>raises the discount</span><span><i class="dot" style="background:var(--down)"></i>lowers it</span><span><i class="dot" style="background:var(--off)"></i>no proven effect</span></div>
+      <p class="note"><b>Our conversion</b> of the full model's coefficients (Table 5) into percentage points of discount, for the change shown on each row. Stars: significance at 10% (*), 5% (**) and 1% (***). Tap a row.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · TRÊS PROVAS -->
+<section class="slide" id="provas" data-label="Three tests">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Robustness tests</div>
+      <h2 class="rv" style="--d:.1s">Three tests, one result that holds</h2>
+      <p class="lede rv" style="--d:.15s">To see whether the finding depends on the method, the author redid the analysis in two other ways: a simple regression and a logistic regression, which sorts debuts into high or low discount (above or below the median). Among the climate and disclosure variables, <strong>only people affected</strong> passed all three.</p>
+      <div class="stats rv" style="--d:.2s">
+        <div class="stat"><b>3 of 3</b><span>tests in which people affected raise the discount</span></div>
+        <div class="stat"><b>1 of 3</b><span>in which disasters lower the discount (at 10%)</span></div>
+        <div class="stat"><b>73.1%</b><span>of debuts correctly classified (high or low) by the logistic model</span></div>
+      </div>
+      <div class="panel rv" id="mat-panel" style="--d:.25s; margin-top:14px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="mat-scene" data-fit="600x440" role="group" aria-label="Matrix: each variable in three tests; height shows the strength of the evidence"></div></div>
+      <div class="legend"><span><i class="dot" style="background:var(--und)"></i>raises the discount</span><span><i class="dot stripe" style="background-color:var(--down)"></i>lowers it (striped)</span><span><i class="dot" style="background:var(--off)"></i>no proven effect</span></div>
+      <p class="note">Block height: strength of the evidence (1, 2 or 3 stars). Tables 5 and 6, all with the 145 debuts that have a carbon score. Tap a block.</p>
+      <details class="tbl"><summary>See the dissertation's coefficients</summary><div class="wrap" id="mat-table"></div></details>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · NA PRÁTICA -->
+<section class="slide" id="pratica" data-label="In practice">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> Why it matters</div>
+    <h2 class="rv" style="--d:.1s">What changes for those who invest, go public or regulate</h2>
+    <p class="lede rv" style="--d:.15s">At the debut, investors already seem to charge for the social risk of climate. Disclosure rules and carbon scores, however, do not yet show up in the first-day price.</p>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.2s; --pc:var(--und)">
+        <h3>For investors</h3>
+        <ul><li>The impact of climate on a country's people enters the debut price.</li><li>Looking at this exposure helps make better-informed IPO decisions.</li></ul>
+        <span class="src">Sections 1.5 and 4.3</span>
+      </div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--firm)">
+        <h3>For firms about to go public</h3>
+        <ul><li>Explaining how the firm handles climate risks can reduce investors' doubts.</li><li>The research suggests adjusting communication to attract funds at the debut.</li></ul>
+        <span class="src">Section 1.5</span>
+      </div>
+      <div class="pcard rv" style="--d:.3s; --pc:var(--ctry)">
+        <h3>For regulators and governments</h3>
+        <ul><li>The results can guide policies on disclosing environmental and climate risks.</li><li>The mandatory rule alone did not change the debut discount. The effect may only appear in the long run, according to the author.</li></ul>
+        <span class="src">Sections 1.5 and 4.3</span>
+      </div>
+      <div class="pcard rv" style="--d:.35s; --pc:var(--ink-2)">
+        <h3>For researchers</h3>
+        <ul><li>Test other measures: carbon intensity, renewable energy, sustainability committees, signs of <em>greenwashing</em>, heat waves, droughts and floods.</li><li>Also study debuts that close below the offer price.</li></ul>
+        <span class="src">Conclusion</span>
+      </div>
+    </div>
+    <div class="callout rv" style="--d:.4s"><p>The climate already enters the debut price, but through its human side: the more people hit by disasters, the larger the discount investors ask for.</p></div>
+  </div>
+</section>
+
+<!-- 12 · LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Limits and credits">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Limits and credits</div>
+    <h2 class="rv" style="--d:.1s">What this research does not say</h2>
+    <div class="end">
+      <div class="rv" style="--d:.2s">
+        <ul class="limits">
+          <li><b>Only 145 firms with a carbon score.</b> Because the score is voluntary and rare among debutants, the full model uses 145 of the 880 debuts. With little data, it is hard to prove the score's effect. <em>· according to the author</em></li>
+          <li><b>Long-term effects are left out.</b> Environmental rules and temperature changes may act gradually and not show up in the first-day price. <em>· according to the author</em></li>
+          <li><b>Association, not cause.</b> The model shows that the discount and people affected move together, holding other variables constant; it does not prove that one causes the other. <em>· our note</em></li>
+          <li><b>Only debuts with a discount.</b> In the sample, all closed the first day above the offer price (the smallest discount was 0.07%). Debuts that fall are left for future studies. <em>· Table 3 and conclusion</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.25s">
+        <h3>Credits</h3>
+        <div class="cite">
+          <b>How to cite</b><br>
+          MEDINA, Rosangela. <em>O efeito da divulgação obrigatória das práticas ambientais e das mudanças climáticas no underpricing de IPO das empresas</em> [The effect of mandatory disclosure of environmental practices and of climate change on firms' IPO underpricing]. Master's dissertation (Business Administration) — Mackenzie Presbyterian University, São Paulo, 2026. Advisor: Prof. Dr. Michele Nascimento Jucá.
+        </div>
+        <p style="margin-top:14px; font-size:.85rem">Research supported by CAPES (the Brazilian federal agency for graduate education). Data from Capital IQ, Bloomberg, the International Monetary Fund, the Heritage Foundation and the World Bank; analysis in Stata. This version simplifies the work for a general audience; the formulas and full tables are in the original text.</p>
+        <div class="ctas" style="margin-top:16px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Read the full dissertation (in Portuguese)</a>
+          <a class="btn ghost" href="#capa">↑ Back to the start</a>
+          <a class="btn ghost" href="../../">Other research</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable, ramp = M.ramp;
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  var MEAN = 0.4538;   // Tabela 3: desconto médio (IPOU)
+  // Apêndice A: país, regra obrigatória, ano, nº de IPOs
+  var COUNTRIES = [
+    ['China', 1, 2003, 260], ['India', 1, 2016, 126], ['United States', 1, 2010, 104], ['Australia', 1, 2008, 67],
+    ['Japan', 0, null, 62], ['Thailand', 1, 2016, 39], ['South Korea', 0, null, 35], ['United Kingdom', 1, 2016, 28],
+    ['Turkey', 0, null, 22], ['Canada', 1, 2015, 19], ['Malaysia', 1, 2014, 18], ['Sweden', 1, 2016, 15],
+    ['Hong Kong', 1, 2013, 14], ['Italy', 1, 2007, 12], ['Saudi Arabia', 1, 2001, 11], ['France', 0, null, 10],
+    ['Taiwan', 1, 2016, 9], ['Brazil', 0, null, 6], ['Germany', 0, null, 6], ['Pakistan', 1, 2016, 6],
+    ['Poland', 1, 2019, 5], ['South Africa', 0, null, 3], ['Israel', 1, 2004, 1], ['Norway', 1, 2016, 1],
+    ['United Arab Emirates', 1, 2009, 1, 'UAE']
+  ];
+  // Tabela 2 (nota 2): faixas da nota CDP
+  var CDP = [
+    {s:'F', v:0, b:'Failure to disclose', x:'Asked by investors or partners to disclose its environmental data, the firm did not respond or responded incompletely.'},
+    {s:'D−', v:1, b:'Disclosure', x:'Starting point of the environmental journey: minimal disclosure.'},
+    {s:'D', v:2, b:'Disclosure', x:'Somewhat more detailed transparency, but still basic.'},
+    {s:'C−', v:3, b:'Awareness', x:'The firm understands its environmental impacts but has major gaps in disclosure and management.'},
+    {s:'C', v:4, b:'Awareness', x:'The firm understands its environmental impacts but has major gaps in disclosure and management.'},
+    {s:'B−', v:5, b:'Management', x:'Satisfactory disclosure and active management of environmental impacts, with initiatives and strategies in place.'},
+    {s:'B', v:6, b:'Management', x:'Satisfactory disclosure and active management of environmental impacts, with initiatives and strategies in place.'},
+    {s:'A−', v:7, b:'Leadership', x:'Outstanding environmental performance and proactive management. The highest score found in the sample.'},
+    {s:'A', v:8, b:'Leadership', x:'Environmental leadership, with bold strategies and proven progress. No debutant in the sample got here.'}
+  ];
+  // Tabela 5 (modelo completo) e Tabela 6: sinal e estrelas por teste [multinível, regressão simples, logística]
+  // conv: pontos percentuais para a mudança indicada (conversão nossa)
+  var VARS = [
+    {k:'CDP', sn:'CDP score', n:'Carbon score', u:'+1 level in the score', lv:'firm', b:0.0075, conv:0.75, t:[[1,0],[1,0],[-1,0]], vals:['0.0075','0.0067','−0.1159'], h:'H1'},
+    {k:'ENV', sn:'Rule', n:'Mandatory rule', u:'with × without rule', lv:'ctry', b:-0.0469, conv:-4.7, t:[[-1,0],[-1,0],[1,0]], vals:['−0.0469','−0.0261','0.7443'], h:'H2'},
+    {k:'DIS', sn:'Disasters', n:'Climate disasters', u:'2× more disasters', lv:'ctry', b:-0.1048, conv:-7.3, t:[[-1,1],[-1,0],[-1,0]], vals:['−0.1048*','−0.0806','−0.1835'], h:'H3'},
+    {k:'PEO', sn:'People', n:'People affected', u:'2× more people', lv:'ctry', b:0.0251, conv:1.7, t:[[1,2],[1,3],[1,3]], vals:['0.0251**','0.0271***','0.2149***'], h:'H3'},
+    {k:'STC', sn:'Temperature', n:'Temperature change', u:'+1 °C', lv:'ctry', b:0.0578, conv:5.8, t:[[1,0],[1,0],[-1,0]], vals:['0.0578','0.0563','−0.0547'], h:'H3'},
+    {k:'HT', sn:'High tech', n:'High technology', u:'yes × no', lv:'firm', b:0.2890, conv:28.9, t:[[1,2],[1,1],[1,0]], vals:['0.2890**','0.2938*','0.2329']},
+    {k:'BIG4', sn:'Big Four', n:'Big Four auditor', u:'yes × no', lv:'firm', b:-0.1744, conv:-17.4, t:[[-1,2],[-1,1],[-1,2]], vals:['−0.1744**','−0.1581*','−0.9981**']},
+    {k:'OSIZE', sn:'Offer size', n:'Offer size', u:'offer 2× larger', lv:'firm', b:0.1093, conv:7.6, t:[[1,3],[1,3],[1,3]], vals:['0.1093***','0.1045***','0.4497***']},
+    {k:'AGE', sn:'Age', n:'Firm age', u:'2× older', lv:'firm', b:-0.1052, conv:-7.3, t:[[-1,2],[-1,2],[-1,1]], vals:['−0.1052**','−0.1051**','−0.4838*']},
+    {k:'EF', sn:'Econ. freedom', n:'Economic freedom', u:'+10 points (0–100)', lv:'ctry', b:-0.0016, conv:-1.6, t:[[-1,0],[-1,0],[1,0]], vals:['−0.0016','−0.0029','0.0394']},
+    {k:'GDPG', sn:'GDP', n:'GDP growth', u:'+1 percentage point', lv:'ctry', b:-1.5730, conv:-1.6, t:[[-1,0],[-1,0],[1,0]], vals:['−1.5730','−1.6540','1.6611']}
+  ];
+  var TESTS = ['Multilevel', 'Simple regression', 'Logistic'];
+  var STARS = ['', '*', '**', '***'];
+  var SIGTXT = ['not statistically significant', 'significant at 10%', 'significant at 5%', 'significant at 1%'];
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene');
+    var st = makeStage(sc, 400, 200, {ay:'62%'});
+    st.appendChild(box({w:130, d:110, x:40, y:45, h:120, c:'#94a3b8', label:'R$ 10.00<small>offer price</small>'}));
+    st.appendChild(box({w:130, d:110, x:230, y:45, h:174, c:'var(--und)', label:'R$ 14.54<small>first-day close</small>', top:'+45%'}));
+    rotatable(sc, st, -20, 12);
+  })();
+
+  /* ================= 02 · A ESTREIA ================= */
+  (function(){
+    var svg = $('ipo-svg'), rg = $('ipo-range'), OFFER = 10;
+    var REFS = [
+      {v:11.4, n:'Ibbotson', x:'On average, 11.4% in New York Stock Exchange debuts between 1960 and 1969 (Ibbotson, 1975), the first to measure the phenomenon.'},
+      {v:18.8, n:'Ritter and Welch', x:'On average, 18.8% in US debuts between 1980 and 2001 (Ritter and Welch, 2002).'},
+      {v:45.38, n:'average here', x:'On average, 45.38% in this research\'s 880 debuts, from 2015 to 2024 (Table 3).'},
+      {v:234.99, n:'largest here', x:'The largest discount in the sample: shares closed the first day 235% above the offer (Table 3).'}
+    ];
+    var Y0 = 262, SC = 6.4; // R$ → px
+    function draw(close){
+      var pct = (close / OFFER - 1) * 100;
+      var hO = OFFER * SC, hC = close * SC;
+      var h = '<line x1="40" x2="330" y1="' + Y0 + '" y2="' + Y0 + '" stroke="var(--border)" stroke-width="2"/>' +
+        '<rect x="70" y="' + (Y0 - hO) + '" width="96" height="' + hO + '" rx="4" fill="#94a3b8"/>' +
+        '<rect x="210" y="' + (Y0 - hO) + '" width="96" height="' + hO + '" rx="4" fill="#94a3b8" opacity=".45"/>' +
+        '<rect x="210" y="' + (Y0 - hC) + '" width="96" height="' + (hC - hO) + '" rx="4" fill="var(--und)"/>' +
+        '<line x1="166" x2="210" y1="' + (Y0 - hO) + '" y2="' + (Y0 - hO) + '" stroke="var(--ink-2)" stroke-dasharray="4 4"/>' +
+        '<text x="118" y="' + (Y0 - hO - 10) + '" text-anchor="middle" style="font-size:14px; font-weight:700; fill:var(--ink)">R$ ' + fmt(OFFER, 2) + '</text>' +
+        '<text x="258" y="' + (Y0 - hC - 10) + '" text-anchor="middle" style="font-size:14px; font-weight:700; fill:var(--und)">R$ ' + fmt(close, 2) + '</text>' +
+        '<text x="118" y="' + (Y0 + 20) + '" text-anchor="middle" style="font-size:12px; fill:var(--muted)">offer</text>' +
+        '<text x="258" y="' + (Y0 + 20) + '" text-anchor="middle" style="font-size:12px; fill:var(--muted)">end of day 1</text>' +
+        '<text x="445" y="120" text-anchor="middle" class="big" style="font-size:44px; font-weight:700; font-family:Merriweather, serif; fill:var(--und)">+' + fmt(pct, 1) + '%</text>' +
+        '<text x="445" y="148" text-anchor="middle" style="font-size:13px; fill:var(--ink-2)">debut discount</text>' +
+        '<text x="445" y="186" text-anchor="middle" style="font-size:12px; fill:var(--muted)">buying 100 shares</text>' +
+        '<text x="445" y="204" text-anchor="middle" style="font-size:12px; fill:var(--muted)">at the offer earned</text>' +
+        '<text x="445" y="228" text-anchor="middle" style="font-size:16px; font-weight:700; fill:var(--ink)">R$ ' + fmt((close - OFFER) * 100, 2) + '</text>';
+      svg.innerHTML = h;
+      $('ruler-you').style.left = Math.min(100, pct / 240 * 100) + '%';
+      return pct;
+    }
+    var ruler = $('ruler');
+    ruler.innerHTML = REFS.map(function(r, i){ return '<div class="mk' + (i === 1 ? ' up' : '') + '" style="left:' + (r.v / 240 * 100) + '%"><span>' + fmt(r.v, r.v > 100 ? 0 : 1) + '%</span></div>'; }).join('') + '<div class="you" id="ruler-you"></div>';
+    var chips = $('ipo-chips');
+    chips.innerHTML = REFS.map(function(r, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="false">' + r.n + '</button>'; }).join('');
+    function set(close, i){
+      var pct = draw(close);
+      each(chips.children, function(b, j){ b.setAttribute('aria-pressed', j === i); });
+      $('ipo-msg').innerHTML = i !== undefined && i !== null ? REFS[i].x : 'Close of R$ ' + fmt(close, 2) + ': a discount of ' + fmt(pct, 1) + '%. Pick an example from history.';
+    }
+    rg.addEventListener('input', function(){ set(rg.value / 100, null); });
+    each(chips.children, function(b){ b.addEventListener('click', function(){ var r = REFS[+b.dataset.i]; var c = OFFER * (1 + r.v / 100); rg.value = Math.round(c * 100); set(c, +b.dataset.i); }); });
+    set(14.538, 2);
+  })();
+
+  /* ================= 03 · POR QUÊ ================= */
+  (function(){
+    var F = [
+      {g:'Agency theory', c:'var(--firm)', q:'Those who run the firm (the agent) do not always act in the interest of those who own it (the principal). Investors are wary.', b:'Climate policies show responsible management and align managers and owners. Mandatory rules force transparency. Both would reduce the discount (H1, H2).', r:'Jensen and Meckling (1976)'},
+      {g:'Information asymmetry', c:'var(--ctry)', q:'Sellers know more than buyers. Unsure about quality, the buyer pays less.', b:'Disclosing environmental data narrows the information gap. With more climate change, however, firms are more exposed to losses, and the risk calls for a larger discount (H3).', r:'Akerlof (1970)'},
+      {g:'Signaling', c:'var(--und)', q:'Whoever has the information sends signals to the market; the market decides whether to believe them.', b:'Managing climate risks is a signal of care. A mandatory rule makes the signal more credible. Where climate weighs more, attentive investors may charge more (H3).', r:'Spence; Connelly and colleagues (2011)'}
+    ];
+    var w = $('flips');
+    w.innerHTML = F.map(function(f){
+      return '<button class="flip" aria-pressed="false" style="--fcol:' + f.c + '"><span class="in">' +
+        '<span class="fc"><span class="k">The idea</span><span class="nm">' + f.g + '</span><span class="q">' + f.q + '</span><span class="rf">tap to flip ↻</span></span>' +
+        '<span class="bc"><span class="k">And the climate?</span><span class="nm">' + f.g + '</span><span class="q">' + f.b + '</span><span class="rf">' + f.r + '</span></span></span></button>';
+    }).join('');
+    each(w.children, function(b){ b.addEventListener('click', function(){ b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true'); }); });
+  })();
+
+  /* ================= 04 · PAÍSES ================= */
+  (function(){
+    var wrap = $('cbars'), max = 260, filter = 'all', act = null;
+    wrap.innerHTML = COUNTRIES.map(function(c, i){
+      return '<button class="cbar' + (c[0] === 'Brazil' ? ' br' : '') + '" data-i="' + i + '" aria-pressed="false" style="--bc:' + (c[1] ? 'var(--ctry)' : '#94a3b8') + '" aria-label="' + c[0] + ': ' + c[3] + ' IPOs, ' + (c[1] ? 'rule since ' + c[2] : 'no rule') + '">' +
+        '<span class="nm">' + (c[4] || c[0]) + '</span><span class="tr"><i class="' + (c[1] ? '' : 'stripe') + '" style="width:' + Math.max(1, c[3] / max * 100) + '%"></i></span><b>' + c[3] + '</b></button>';
+    }).join('');
+    function show(i){
+      act = i;
+      each(wrap.children, function(b, j){ b.setAttribute('aria-pressed', j === i); });
+      var c = COUNTRIES[i], share = c[3] / 880 * 100;
+      $('c-panel').innerHTML = '<div class="tag">' + (c[1] ? 'Mandatory rule' : 'No mandatory rule') + '</div><h3>' + c[0] + ': ' + c[3] + ' debut' + (c[3] > 1 ? 's' : '') + '</h3>' +
+        '<p>' + (share >= 1 ? fmt(share, 1) + '% of the sample. ' : 'Less than 1% of the sample. ') +
+        (c[1] ? 'Disclosing environmental and social practices has been mandatory since ' + c[2] + (c[2] > 2015 ? '; earlier debuts count as "no rule".' : ', before the whole period studied.') : 'No obligation to disclose environmental and social practices in the period.') +
+        (c[0] === 'Brazil' ? ' According to the dissertation, the CVM (Brazil\'s securities regulator) made disclosure mandatory from 2026, after the period studied.' : '') +
+        (c[0] === 'China' ? ' China alone has almost 30% of the debuts.' : '') + '</p>';
+    }
+    function apply(){
+      each(wrap.children, function(b, j){ var c = COUNTRIES[j]; b.classList.toggle('dim', (filter === 'y' && !c[1]) || (filter === 'n' && c[1])); });
+    }
+    each(wrap.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    each($('c-seg').children, function(b){ b.addEventListener('click', function(){ filter = b.dataset.f; each($('c-seg').children, function(c){ c.setAttribute('aria-pressed', c === b); }); apply(); }); });
+    show(17);
+  })();
+
+  /* ================= 05 · NOTA DE CARBONO ================= */
+  (function(){
+    var sc = $('cdp-scene'), W = 520, D = 120, bw = 46, gap = 10;
+    var st = makeStage(sc, W, D, {ay:'72%', rx:'58deg'});
+    rotatable(sc, st, -8, 5);
+    var x0 = (W - (9 * bw + 8 * gap)) / 2, steps = [];
+    var BAND = {'Failure to disclose':'#94a3b8', 'Disclosure':'#8494ab', 'Awareness':'#64748b', 'Management':'#475569', 'Leadership':'var(--firm)'};
+    CDP.forEach(function(c, i){
+      var b = box({w:bw, d:56, x:x0 + i * (bw + gap), y:D / 2 - 28, h:14 + i * 22, c:BAND[c.b], label:c.s, top:i === 7 ? 'max.' : '', cls:i === 8 ? 'off' : ''});
+      b.setAttribute('role', 'button'); b.tabIndex = 0; b.setAttribute('aria-label', 'Score ' + c.s + ', ' + c.b);
+      st.appendChild(b); steps.push(b);
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)) show(i); });
+      b.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(i); } });
+    });
+    // marcador da média (0,8551): fino, vermelho, entre F e D−
+    var mx = x0 + 0.8551 * (bw + gap) + bw / 2 - 4;
+    st.appendChild(box({w:8, d:8, x:mx, y:D / 2 - 4, h:150, c:'var(--und)', cls:'pin'}));
+    flatLabel(st, '↑ average 0.86', mx - 40, D / 2 + 34, 100, 'color:var(--und); font-weight:800; white-space:nowrap');
+    function show(i){
+      var c = CDP[i];
+      steps.forEach(function(s, j){ s.classList.toggle('active', i === j); });
+      $('cdp-panel').innerHTML = '<div class="tag">Score ' + c.s + ' · ' + c.v + ' of 8 · ' + c.b + '</div><h3>' + c.b + '</h3><p>' + c.x + '</p>';
+    }
+    show(1);
+  })();
+
+  /* ================= 06 · ANDARES ================= */
+  (function(){
+    var sc = $('lv-scene'), W = 420, D = 240;
+    var st = makeStage(sc, W, D, {ay:'64%', rx:'58deg'});
+    rotatable(sc, st, -30, 10);
+    var base = box({w:W, d:D, x:0, y:0, h:26, c:'var(--ctry)', label:'COUNTRY'});
+    st.appendChild(base);
+    var firms = [];
+    for (var r = 0; r < 3; r++) for (var c = 0; c < 4; c++){
+      var f = box({w:58, d:44, x:36 + c * 92, y:22 + r * 72, z:26, h:34 + ((r * 4 + c) * 7 % 30), c:'var(--firm)'});
+      st.appendChild(f); firms.push(f);
+    }
+    var LV = {
+      firm:{c:'var(--firm)', t:'Upper floor · each debut', h:'What belongs to each firm', items:[
+        ['Carbon score (CDP)', 'H1', 'commitment to climate policies, from F to A'],
+        ['High technology', 'control', 'computers, electronics, telecommunications, software…'],
+        ['Age', 'control', 'years between founding and the IPO'],
+        ['Offer size', 'control', 'market value at the debut'],
+        ['Big Four auditor', 'control', 'PwC, EY, Deloitte or KPMG']]},
+      ctry:{c:'var(--ctry)', t:'Lower floor · each country and year', h:'What belongs to the country', items:[
+        ['Mandatory rule', 'H2', 'is disclosing environmental practices mandatory?'],
+        ['Climate disasters', 'H3', 'number of disasters in the country (IMF)'],
+        ['People affected', 'H3', 'number of people hit by them (IMF)'],
+        ['Temperature change', 'H3', 'in degrees Celsius; average of 1.13 °C (IMF)'],
+        ['Economic freedom', 'control', 'index from 0 to 100; average of 64.5 (Heritage Foundation)'],
+        ['GDP growth', 'control', 'average of 4% a year (World Bank)']]}
+    };
+    function show(l){
+      var v = LV[l];
+      firms.forEach(function(f){ f.classList.toggle('off', l === 'ctry'); f.style.setProperty('--oz', l === 'firm' ? '40px' : '0px'); });
+      base.classList.toggle('off', l === 'firm');
+      each($('lv-seg').children, function(b){ b.setAttribute('aria-pressed', b.dataset.l === l); });
+      $('lv-panel').innerHTML = '<div class="tag">' + v.t + '</div><h3>' + v.h + '</h3><ul class="vlist">' +
+        v.items.map(function(it){ return '<li style="--vc:' + (it[1] === 'control' ? 'var(--muted)' : v.c) + '"><b>' + it[0] + '</b><em>' + it[1] + '</em><br>' + it[2] + '</li>'; }).join('') + '</ul>';
+    }
+    each($('lv-seg').children, function(b){ b.addEventListener('click', function(){ show(b.dataset.l); }); });
+    base.addEventListener('click', function(){ if (!M.wasDrag(sc)) show('ctry'); });
+    firms.forEach(function(f){ f.addEventListener('click', function(e){ e.stopPropagation(); if (!M.wasDrag(sc)) show('firm'); }); });
+    show('firm');
+    // correlação intraclasse (Tabela 5)
+    var ICC = [[8.28, 'With no variables, about <strong>8%</strong> of the differences in discount come from the country; the rest, from firms and offerings. This justifies the two-floor analysis (likelihood-ratio test, p &lt; 0.001).'],
+               [10.22, 'In the full model, with the 145 debuts that have a carbon score, the country share rises to <strong>10.2%</strong>.']];
+    function icc(m){
+      var v = ICC[m][0];
+      $('icc-c').style.flexBasis = v + '%'; $('icc-c').textContent = fmt(v, 2) + '% country';
+      $('icc-f').textContent = fmt(100 - v, 2) + '% firms and offerings';
+      $('icc-p').innerHTML = ICC[m][1];
+      each($('icc-seg').children, function(b){ b.setAttribute('aria-pressed', +b.dataset.m === m); });
+    }
+    each($('icc-seg').children, function(b){ b.addEventListener('click', function(){ icc(+b.dataset.m); }); });
+    icc(0);
+  })();
+
+  /* ================= 07 · APOSTAS ================= */
+  (function(){
+    var B = [
+      {h:'H1', lv:'Firm', hc:'var(--firm)', q:'Do firms with a better carbon score have a smaller debut discount?', m:'Measure: CDP score, from F to A.', ans:'nao', v:'Not confirmed', vc:'var(--muted)',
+        rows:[['Carbon score', '0.0075 · no effect']], x:'The score made no difference. With only 145 firms with a score, it is hard to prove an effect, the author says. A study of 1,668 US IPOs (Amini and colleagues, 2025) did find one.'},
+      {h:'H2', lv:'Country rule', hc:'var(--ctry)', q:'Where disclosing environmental practices is mandatory, is the discount smaller?', m:'Measure: was the rule already in force in the debut year?', ans:'nao', v:'Not confirmed', vc:'var(--muted)',
+        rows:[['Mandatory rule', '−0.0469 · no effect']], x:'With or without the rule, the discount did not change in a provable way. For the author, country effects may be indirect and long-term, and not show up in the first-day price.'},
+      {h:'H3', lv:'Country climate', hc:'var(--und)', q:'In countries with more climate change, is the discount larger?', m:'Three measures: disasters, people affected and temperature.', ans:'parte', v:'Partly confirmed', vc:'var(--und)',
+        rows:[['People affected', '0.0251** · raises'], ['Disasters', '−0.1048* · lowers'], ['Temperature', '0.0578 · no effect']], x:'Only people affected raise the discount, as predicted. Disasters went the opposite way, and temperature made no difference.'}
+    ];
+    var LBL = {sim:'Yes', parte:'Partly', nao:'No'}, hits = 0, done = 0;
+    var w = $('bets');
+    w.innerHTML = B.map(function(b, i){
+      return '<div class="bet" style="--hc:' + b.hc + '; --vc:' + b.vc + '" data-i="' + i + '"><div class="in">' +
+        '<div class="fc"><span class="k">' + b.h + ' · ' + b.lv + '</span><h3>' + b.q + '</h3><p>' + b.m + '</p><p style="font-size:.78rem; color:var(--muted)">Your bet: did the research confirm it?</p><div class="opts">' +
+          ['sim', 'parte', 'nao'].map(function(o){ return '<button data-o="' + o + '">' + LBL[o] + '</button>'; }).join('') + '</div></div>' +
+        '<div class="bc"><span class="verdict">' + b.v + '</span><h3 style="font-size:.95rem">' + b.h + ' · ' + b.lv + '</h3><div class="mini">' +
+          b.rows.map(function(r){ return '<div><span>' + r[0] + '</span><b>' + r[1] + '</b></div>'; }).join('') + '</div><p>' + b.x + '</p><span class="you"></span></div>' +
+        '</div></div>';
+    }).join('');
+    each(w.querySelectorAll('.bet'), function(card){
+      var b = B[+card.dataset.i];
+      each(card.querySelectorAll('.opts button'), function(btn){
+        btn.addEventListener('click', function(){
+          var ok = btn.dataset.o === b.ans;
+          if (ok) hits++; done++;
+          card.querySelector('.you').textContent = 'You bet "' + LBL[btn.dataset.o] + '": ' + (ok ? 'right.' : 'wrong.');
+          card.classList.add('done');
+          $('bet-score').innerHTML = 'You got <strong>' + hits + ' of ' + done + '</strong> right.' + (done === 3 ? ' Coefficients from the full model; stars: significance at 10% (*) and 5% (**).' : '');
+        });
+      });
+    });
+  })();
+
+  /* ================= 08 · PESSOAS × DESASTRES ================= */
+  (function(){
+    var svg = $('gauge'), peo = $('peo'), dis = $('dis');
+    function mult(r){ return Math.pow(10, r.value / 100); } // 0..100 → ×1 … ×10
+    function mtxt(m){ return '× ' + (m < 10 ? fmt(m, 1) : Math.round(m)); }
+    function draw(){
+      var mp = mult(peo), md = mult(dis);
+      var dP = 0.0251 * Math.log(mp), dD = -0.1048 * Math.log(md);
+      var v = MEAN + dP + dD;
+      $('peo-v').textContent = mtxt(mp); $('dis-v').textContent = mtxt(md);
+      var X0 = 40, X1 = 520, MAXV = 0.8;
+      function x(t){ return X0 + (X1 - X0) * Math.max(0, Math.min(MAXV, t)) / MAXV; }
+      var h = '<text x="280" y="62" text-anchor="middle" class="big" style="font-size:42px; font-weight:700; font-family:Merriweather, serif; fill:' + (v >= MEAN ? 'var(--und)' : 'var(--down)') + '">' + fmt(v * 100, 1) + '%</text>' +
+        '<text x="280" y="88" text-anchor="middle" style="font-size:13px; fill:var(--ink-2)">estimated debut discount</text>';
+      h += '<rect x="' + X0 + '" y="130" width="' + (X1 - X0) + '" height="20" rx="4" fill="#eef2f7"/>';
+      h += '<rect x="' + X0 + '" y="130" width="' + (x(v) - X0) + '" height="20" rx="4" fill="' + (v >= MEAN ? 'var(--und)' : 'var(--down)') + '"/>';
+      h += '<line x1="' + x(MEAN) + '" x2="' + x(MEAN) + '" y1="120" y2="160" stroke="var(--ink)" stroke-width="2.5"/>' +
+        '<text x="' + x(MEAN) + '" y="114" text-anchor="middle" style="font-size:12px; font-weight:700; fill:var(--ink)">average 45.4%</text>';
+      [0, 0.2, 0.4, 0.6, 0.8].forEach(function(t){ h += '<text x="' + x(t) + '" y="176" text-anchor="middle" style="font-size:11px; fill:var(--muted)">' + Math.round(t * 100) + '%</text>'; });
+      // contribuições
+      function row(y, lab, d, col){
+        var w = Math.abs(d) / MAXV * (X1 - X0), xs = d >= 0 ? 280 : 280 - w;
+        return '<text x="40" y="' + (y + 14) + '" style="font-size:12.5px; fill:var(--ink-2)">' + lab + '</text>' +
+          '<line x1="280" x2="280" y1="' + (y - 2) + '" y2="' + (y + 20) + '" stroke="var(--border)" stroke-width="2"/>' +
+          '<rect x="' + xs + '" y="' + y + '" width="' + Math.max(1, w) + '" height="18" rx="3" fill="' + col + '"/>' +
+          '<text x="520" y="' + (y + 14) + '" text-anchor="end" style="font-size:13px; font-weight:700; fill:' + col + '">' + (d >= 0 ? '+' : '−') + fmt(Math.abs(d * 100), 1) + ' pp</text>';
+      }
+      h += row(206, 'people affected', dP, 'var(--und)');
+      h += row(244, 'disasters (hint)', dD, 'var(--down)');
+      svg.innerHTML = h;
+      var msg;
+      if (mp < 1.05 && md < 1.05) msg = 'Move the sliders. With ' + mtxt(10) + ' people affected, the discount rises by about 5.8 percentage points.';
+      else {
+        var parts = [];
+        if (mp >= 1.05) parts.push(mtxt(mp) + ' people affected');
+        if (md >= 1.05) parts.push(mtxt(md) + ' disasters');
+        msg = 'With ' + parts.join(' and ') + ', the estimated discount goes from 45.4% to <strong>' + fmt(v * 100, 1) + '%</strong>.' + (md >= 1.05 ? ' Remember: the disaster effect is a weak hint that vanished in the robustness tests.' : '');
+      }
+      $('peo-msg').innerHTML = msg;
+    }
+    peo.addEventListener('input', draw); dis.addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 09 · O QUE MAIS PESA ================= */
+  (function(){
+    var wrap = $('dv'), MAX = 30, filter = 'all', act = null;
+    var order = VARS.slice().sort(function(a, b){ return Math.abs(b.conv) - Math.abs(a.conv); });
+    wrap.innerHTML = '<div class="hd"><span></span><span><span>← lowers</span><span>raises →</span></span><span></span></div>' + order.map(function(v){
+      var s = v.t[0][1], w = Math.abs(v.conv) / MAX * 50;
+      return '<button class="dvr' + (s ? '' : ' ns') + '" data-k="' + v.k + '" aria-pressed="false" style="--bc:' + (v.conv > 0 ? 'var(--und)' : 'var(--down)') + '">' +
+        '<span class="nm">' + v.n + '<small>' + v.u + '</small></span><span class="tr"><i style="' + (v.conv > 0 ? 'left:50%' : 'right:50%') + '; width:' + w + '%"></i></span>' +
+        '<b>' + (v.conv > 0 ? '+' : '−') + fmt(Math.abs(v.conv), 1) + STARS[s] + '</b></button>';
+    }).join('');
+    var rows = wrap.querySelectorAll('.dvr');
+    function byK(k){ for (var i = 0; i < VARS.length; i++) if (VARS[i].k === k) return VARS[i]; }
+    function show(k){
+      act = k; var v = byK(k), s = v.t[0][1];
+      each(rows, function(r){ r.setAttribute('aria-pressed', r.dataset.k === k); });
+      $('dv-panel').innerHTML = '<div class="tag">' + (v.lv === 'firm' ? 'Firm' : 'Country') + (v.h ? ' · ' + v.h : ' · control') + ' · ' + SIGTXT[s] + '</div><h3>' + v.n + ': ' + (v.conv > 0 ? '+' : '−') + fmt(Math.abs(v.conv), 1) + ' percentage point' + (Math.abs(v.conv) === 1 ? '' : 's') + '</h3>' +
+        '<p>For ' + v.u + ', holding other variables constant. Coefficient in Table 5: ' + v.vals[0] + '.' + (s ? '' : ' <strong>Not statistically significant</strong>: we cannot say the effect differs from zero.') + '</p>';
+    }
+    function apply(){
+      each(rows, function(r){ var v = byK(r.dataset.k); r.classList.toggle('hide', (filter === 'firm' && v.lv !== 'firm') || (filter === 'ctry' && v.lv !== 'ctry') || (filter === 'sig' && !v.t[0][1])); });
+    }
+    each(rows, function(r){ r.addEventListener('click', function(){ show(r.dataset.k); }); });
+    each($('dv-seg').children, function(b){ b.addEventListener('click', function(){ filter = b.dataset.f; each($('dv-seg').children, function(c){ c.setAttribute('aria-pressed', c === b); }); apply(); }); });
+    show('HT');
+  })();
+
+  /* ================= 10 · TRÊS PROVAS ================= */
+  (function(){
+    var sc = $('mat-scene'), CW = 70, CD = 22, GX = 14, GY = 9, LW = 130;
+    var n = VARS.length, W = LW + 3 * CW + 2 * GX, D = n * CD + (n - 1) * GY;
+    var st = makeStage(sc, W, D, {ay:'55%', rx:'50deg'});
+    rotatable(sc, st, -10, 5);
+    var cells = [], act = null;
+    VARS.forEach(function(v, r){
+      flatLabel(st, v.sn, 0, r * (CD + GY) + 2, LW - 12, 'text-align:right').classList.add('row');
+      if (v.k === 'PEO') st.lastChild.classList.add('hl');
+      v.t.forEach(function(t, j){
+        var s = t[1];
+        var b = box({w:CW, d:CD, x:LW + j * (CW + GX), y:r * (CD + GY), h:s ? 8 + s * 15 : 4, c:s ? (t[0] > 0 ? 'var(--und)' : 'var(--down)') : '#94a3b8', top:s ? STARS[s] : '', cls:(s ? '' : 'off') + (s && t[0] < 0 ? ' neg' : '')});
+        b.setAttribute('role', 'button'); b.tabIndex = 0;
+        b.setAttribute('aria-label', v.n + ', ' + TESTS[j] + ': ' + (s ? (t[0] > 0 ? 'raises' : 'lowers') + ', ' + SIGTXT[s] : 'no proven effect'));
+        b.dataset.r = r; b.dataset.j = j;
+        st.appendChild(b); cells.push(b);
+        b.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick(b); });
+        b.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); pick(b); } });
+      });
+    });
+    TESTS.forEach(function(t, j){ flatLabel(st, ['Multilevel', 'Simple', 'Logistic'][j], LW + j * (CW + GX) - 8, D + 8, CW + 16); });
+    function panel(){
+      if (!act){
+        $('mat-panel').innerHTML = '<div class="tag">Reading</div><h3>People affected: raises the discount in all three tests</h3><p>In the logistic model, each increase of about 2.7 times in people affected (one unit on the logarithmic scale the author uses) raises the odds of a high discount by 24%. Offer size, age and the Big Four auditor also hold.</p>';
+        return;
+      }
+      var v = VARS[+act.dataset.r], j = +act.dataset.j, t = v.t[j];
+      $('mat-panel').innerHTML = '<div class="tag">' + TESTS[j] + '</div><h3>' + v.n + '</h3><p>Coefficient ' + v.vals[j] + ': ' + (t[1] ? (t[0] > 0 ? 'raises' : 'lowers') + ' the discount, ' + SIGTXT[t[1]] + '.' : 'not statistically significant.') + '</p>';
+    }
+    function pick(b){ act = act === b ? null : b; cells.forEach(function(c){ c.classList.toggle('active', c === act); }); panel(); }
+    panel();
+    $('mat-table').innerHTML = '<table><tr><th>Variable</th>' + TESTS.map(function(t){ return '<th>' + t + '</th>'; }).join('') + '</tr>' +
+      VARS.map(function(v){ return '<tr><td>' + v.n + '</td>' + v.vals.map(function(x){ return '<td>' + x + '</td>'; }).join('') + '</tr>'; }).join('') + '</table>' +
+      '<p style="margin-top:6px">For the logistic model, coefficients (not odds ratios). * 10%, ** 5%, *** 1%.</p>';
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
