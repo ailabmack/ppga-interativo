@@ -99,6 +99,16 @@
     if (leave) el.addEventListener('pointerleave', function(e){ if (e.pointerType === 'mouse') leave(e); });
   }
 
+  /* ---------- Contagem (GoatCounter) ----------
+     track(nome): registra um evento ligado à página atual, ex.: ".../#tela-07" ou ".../#texto-completo".
+     Se o GoatCounter não carregou (bloqueador, rede, localhost), não faz nada. */
+  function track(name, title){
+    try {
+      if (window.goatcounter && window.goatcounter.count)
+        window.goatcounter.count({path:location.pathname + '#' + name, title:title || name, event:true});
+    } catch(e){}
+  }
+
   /* onTick(fn): fn(t) a cada quadro, com t em segundos (ex.: moeda que oscila). */
   var tickers = [], t0 = performance.now();
   function onTick(fn){ tickers.push(fn); }
@@ -143,8 +153,13 @@
       var top = slides[i].getBoundingClientRect().top + window.scrollY;
       window.scrollTo({top: top, behavior: reduce ? 'auto' : 'smooth'});
     }
+    /* conta cada tela (a partir da 2ª) uma vez por visita, se o leitor ficar nela 1,5 s */
+    var seen = {};
     function mark(i){
       cur = i;
+      if (i > 0 && !seen[i]) setTimeout(function(){
+        if (cur === i && !seen[i]){ seen[i] = true; track('tela-' + String(i + 1).padStart(2, '0'), 'Tela ' + (i + 1) + ' de ' + total); }
+      }, 1500);
       $('count').textContent = String(i + 1).padStart(2, '0') + ' / ' + total;
       each(dots.children, function(d, j){ d.classList.toggle('on', i === j); });
     }
@@ -185,7 +200,10 @@
     fetch(metaUrl).then(function(r){ return r.json(); }).then(function(m){
       var url = m.pdf || m.link;
       /* pdf é relativo à pasta do meta.json (na versão em inglês, a pasta original) */
-      if (url){ a.href = new URL(url, new URL(metaUrl, location.href)).href; a.style.display = ''; }
+      if (url){
+        a.href = new URL(url, new URL(metaUrl, location.href)).href; a.style.display = '';
+        a.addEventListener('click', function(){ track(m.pdf ? 'pdf' : 'link-texto', m.pdf ? 'Abriu o PDF' : 'Abriu o texto completo'); });
+      }
     }).catch(function(){});
   }
 
@@ -201,6 +219,6 @@
   window.Motor = {
     reduce:reduce, lang:lang, $:$, each:each, fmt:fmt,
     box:box, makeStage:makeStage, ramp:ramp, flatLabel:flatLabel,
-    rotatable:rotatable, wasDrag:wasDrag, hover:hover, onTick:onTick, fit:fit, init:init
+    rotatable:rotatable, wasDrag:wasDrag, track:track, hover:hover, onTick:onTick, fit:fit, init:init
   };
 })();
