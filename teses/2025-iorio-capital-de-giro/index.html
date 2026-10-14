@@ -1,0 +1,937 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quanto tempo o dinheiro fica parado? · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Fabio Roberto Iorio (PPGA Mackenzie, 2025) sobre a gestão do capital de giro das empresas brasileiras da B3 antes e depois da pandemia, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2025-iorio-capital-de-giro/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><circle cx=%2216%22 cy=%2216%22 r=%229%22 fill=%22none%22 stroke=%22white%22 stroke-width=%223%22/><circle cx=%2225%22 cy=%2216%22 r=%223.5%22 fill=%22white%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em ../../assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  :root{
+    --est:var(--navy);     /* dias em estoque */
+    --rec:#5b7bb5;         /* dias a receber dos clientes */
+    --pag:var(--red);      /* dias para pagar o fornecedor */
+    --pre:#9aaac4;         /* antes da pandemia */
+    --pos:var(--navy);     /* depois da pandemia */
+    --roa:var(--red);      /* lucro sobre o ativo */
+    --off:#cbd5e1;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .sq{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4.4vw, 3rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:30em; margin-left:auto; margin-right:auto;}
+  #hero-scene .top-label{font-size:17px; font-weight:700; letter-spacing:.02em;}
+  #hero-scene .coin .top-label{font-size:16px; font-family:var(--serif); font-weight:900;}
+  .ring{position:absolute; border:2px dashed color-mix(in srgb, var(--ink-2) 35%, transparent); border-radius:50%; pointer-events:none;}
+
+  /* ---------- Componentes comuns ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 20px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.05rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.9rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .segs{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:4px 0 12px;}
+  .segs small{font-size:.74rem; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.08em;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.4rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.76rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  details.tbl{margin-top:12px; font-size:.82rem; color:var(--ink-2);}
+  details.tbl summary{cursor:pointer; color:var(--muted); font-weight:600;}
+  details.tbl .wrap{overflow-x:auto; margin-top:8px;}
+  details.tbl table{border-collapse:collapse; width:100%; font-variant-numeric:tabular-nums;}
+  details.tbl th, details.tbl td{border-bottom:1px solid var(--border); padding:4px 6px; text-align:right; white-space:nowrap;}
+  details.tbl th:first-child, details.tbl td:first-child{text-align:left;}
+  .ctl{margin-top:12px;}
+  .ctl label{display:flex; justify-content:space-between; gap:10px; font-size:.86rem; font-weight:600; color:var(--ink);}
+  .ctl label span{font-variant-numeric:tabular-nums; color:var(--c, var(--red));}
+  .ctl small{font-size:.74rem; color:var(--muted);}
+  input[type=range]{width:100%; accent-color:var(--c, var(--red)); margin:6px 0 0;}
+  .svgbox{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .svgbox text{font-family:var(--sans);}
+  @media (max-width:600px){ .svgbox text{font-size:17px !important;} .svgbox text.sm{display:none;} }
+  /* barras 3D (pares e matriz) */
+  .bars3d .slab{transition:transform .55s cubic-bezier(.2,.8,.2,1), opacity .5s, --h .6s;}
+  .bars3d .slab{cursor:pointer;}
+  .bars3d .slab.active{--oz:10px;}
+  /* opacidade nas faces, não na caixa: opacity na .slab achata o preserve-3d */
+  .bars3d .slab > i{transition:background .35s, box-shadow .35s, opacity .4s;}
+  .bars3d .slab.dim > i{opacity:.3;}
+  .bars3d .slab.gone > i{opacity:.06;}
+  .bars3d .slab.gone{pointer-events:none;}
+  .bars3d .top-label{color:#fff; font-size:13px;}
+  .bars3d .floor-label{font-size:15px; white-space:nowrap;}
+  @media (max-width:600px){ .bars3d .floor-label{font-size:19px;} .bars3d .top-label{font-size:16px;} }
+
+  /* ---------- 02 · Ciclo do dinheiro ---------- */
+  #cyc-out{font-family:var(--serif); font-size:1.15rem; color:var(--ink); margin-top:10px; min-height:3.2em;}
+  #cyc-out b{color:var(--red);}
+  .presets{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;}
+
+  /* ---------- 03 · Três artigos ---------- */
+  .arts{display:grid; gap:8px; margin-top:6px;}
+  .art{display:grid; grid-template-columns:42px 1fr; gap:12px; align-items:center; text-align:left; border:1px solid var(--border); background:var(--card); border-radius:12px; padding:10px 14px; cursor:pointer; font:inherit; color:inherit; transition:all .2s;}
+  .art .num{font-family:var(--serif); font-weight:900; font-size:1.5rem; color:var(--muted); text-align:center;}
+  .art .t{display:block; font-weight:600; color:var(--ink); font-size:.92rem;}
+  .art .s{display:block; font-size:.78rem; color:var(--muted);}
+  .art[aria-pressed="true"]{border-color:var(--red); box-shadow:var(--shadow);}
+  .art[aria-pressed="true"] .num{color:var(--red);}
+  #art-panel{min-height:150px; margin-top:12px;}
+  .hb{display:grid; gap:5px; margin-top:8px;}
+  .hbr{display:grid; grid-template-columns:minmax(0, 1.3fr) 1fr 40px; gap:10px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .hbr .tr{height:12px; background:#eef2f7; border-radius:3px; position:relative; overflow:hidden;}
+  .hbr .tr i{position:absolute; left:0; top:0; bottom:0; border-radius:3px; background:var(--bc, var(--ink-2)); transition:width .6s cubic-bezier(.2,.8,.2,1);}
+  .hbr b{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink);}
+
+  /* ---------- 05 · Poucos escrevem muito ---------- */
+  .dotgrid{display:flex; flex-wrap:wrap; gap:3px; margin-top:6px;}
+  .dotgrid i{width:11px; height:11px; border-radius:50%; background:var(--off); transition:background .4s, transform .4s;}
+  .dotgrid i.sq3{border-radius:2px;}
+  @media (max-width:600px){ .dotgrid{gap:2px;} .dotgrid i{width:9px; height:9px;} }
+  #lot-panel{min-height:120px; margin-top:12px;}
+  .zbar{display:flex; height:30px; border-radius:6px; overflow:hidden; font-size:.74rem; font-weight:700; color:#fff; margin-top:10px;}
+  .zbar span{display:flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden;}
+
+  /* ---------- 07 · Matriz de determinantes ---------- */
+  #det-scene .floor-label.row{text-align:right; font-size:15px;}
+  #det-scene .floor-label.dim{opacity:.25;}
+  @media (max-width:600px){ #det-scene .floor-label.row{font-size:20px;} }
+  #det-panel{min-height:150px; margin-top:10px;}
+
+  /* ---------- 08 e 09 · simuladores ---------- */
+  #ds-svg, #roa-svg{margin-top:8px;}
+  #ds-msg, #roa-msg{font-size:.86rem; color:var(--ink-2); margin-top:10px; min-height:2.8em;}
+  .tiles{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px;}
+  .tiles span{font-size:.76rem; border:1px solid var(--border); background:var(--card); border-radius:8px; padding:5px 9px; color:var(--ink-2);}
+  .tiles span b{color:var(--ink);}
+
+  /* ---------- 10 · Prazos ---------- */
+  #pz-panel{min-height:120px; margin-top:10px;}
+
+  /* ---------- 11 · Apostas ---------- */
+  .flips{display:grid; grid-template-columns:1fr; gap:12px; margin-top:8px;}
+  @media (min-width:700px){ .flips{grid-template-columns:1fr 1fr;} }
+  .flip{perspective:900px; border:0; background:none; padding:0; text-align:left; cursor:pointer; font:inherit; color:inherit;}
+  .flip .in{display:block; position:relative; min-height:178px; transform-style:preserve-3d; transition:transform .6s cubic-bezier(.2,.8,.2,1);}
+  .flip[aria-pressed="true"] .in{transform:rotateY(180deg);}
+  .flip .fc, .flip .bc{display:block; position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:12px; padding:14px 16px; border:1px solid var(--border); border-top:5px solid var(--fcol); background:var(--card); box-shadow:var(--shadow); overflow:hidden;}
+  .flip .bc{transform:rotateY(180deg); background:color-mix(in srgb, var(--fcol) 6%, white);}
+  .flip .k{display:block; font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--fcol);}
+  .flip .nm{display:block; font-family:var(--serif); font-weight:700; font-size:1.02rem; color:var(--ink); margin:4px 0 6px;}
+  .flip .q{display:block; font-size:.82rem; color:var(--ink-2); line-height:1.45;}
+  .flip .rf{display:block; position:absolute; bottom:9px; left:16px; right:16px; font-size:.64rem; color:var(--muted);}
+  .flip .ans{display:block; font-family:var(--serif); font-weight:900; font-size:1.25rem; color:var(--fcol);}
+
+  /* ---------- 12 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:4px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.9rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:6px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:8px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2025-iorio-capital-de-giro/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2025</div>
+      <h1 class="rv" style="--d:.1s">Quanto tempo o dinheiro da empresa fica parado?</h1>
+      <p class="sub rv" style="--d:.2s">Entre comprar, estocar, vender e receber, o dinheiro de uma empresa passa semanas preso no dia a dia. É o <strong>capital de giro</strong>. A tese acompanhou empresas brasileiras da bolsa (B3) de 2015 a 2024 para ver como elas cuidaram desse dinheiro antes e depois da pandemia, e se isso mexeu no lucro. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Fabio Roberto Iorio</span>
+        <span><b>Orientador:</b> Prof. Dr. Wilson Toshiro Nakamura</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#ciclo">Começar →</a>
+        <a class="btn ghost" href="#lucro">Ir direto à descoberta</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="500x360" role="img" aria-label="Quatro etapas em círculo (compra, estoque, venda e recebimento) e um cubo vermelho, o dinheiro, dando a volta"></div></div>
+      <p class="cap-legend">O ciclo do dinheiro: a empresa compra, estoca, vende e recebe. O cubo vermelho é o dinheiro dando a volta. Imagem ilustrativa.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximo</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Mostra que empresas que deixaram o dinheiro menos tempo parado no dia a dia tiveram rentabilidade um pouco maior, antes e depois da pandemia."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · O CICLO DO DINHEIRO -->
+<section class="slide" id="ciclo" data-label="O ciclo do dinheiro">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> A ideia</div>
+      <h2 class="rv" style="--d:.1s">O relógio do capital de giro conta dias</h2>
+      <p class="lede rv" style="--d:.15s">A empresa paga o fornecedor, guarda a mercadoria no <strong>estoque</strong>, vende a prazo e só depois <strong>recebe</strong> do cliente. Os dias em que o dinheiro dela fica preso nesse caminho formam o <strong>ciclo de conversão de caixa</strong>.</p>
+      <p class="rv" style="--d:.2s">Ciclo = dias de estoque + dias para receber − dias para pagar o fornecedor. Mexa nos prazos e veja o ciclo mudar.</p>
+      <div class="rv" style="--d:.25s">
+        <div class="ctl" style="--c:var(--est)"><label for="c-pme">Dias em estoque <span id="c-pme-v"></span></label><input type="range" id="c-pme" min="0" max="150" step="1"></div>
+        <div class="ctl" style="--c:var(--rec)"><label for="c-pmr">Dias para receber do cliente <span id="c-pmr-v"></span></label><input type="range" id="c-pmr" min="0" max="90" step="1"></div>
+        <div class="ctl" style="--c:var(--pag)"><label for="c-pmp">Dias para pagar o fornecedor <span id="c-pmp-v"></span></label><input type="range" id="c-pmp" min="0" max="90" step="1"></div>
+        <div class="presets" role="group" aria-label="Exemplos">
+          <button class="chip" data-p="pre">Média antes da pandemia</button>
+          <button class="chip" data-p="pos">Média depois</button>
+          <button class="chip" data-p="agr">Gestão agressiva</button>
+        </div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="cyc-svg" class="svgbox" viewBox="0 0 560 270" role="img" aria-label="Linha do tempo com os dias de estoque, de recebimento e de pagamento e o ciclo resultante"></svg>
+      <div id="cyc-out" aria-live="polite"></div>
+      <p class="note"><b>Duas estratégias.</b> Segundo a tese, a gestão <b>conservadora</b> mantém mais estoque e mais vendas a receber (mais segurança, menos retorno esperado); a <b>agressiva</b> enxuga esses dias e alonga o prazo com fornecedores (mais retorno esperado, mais risco). As médias são das 92 empresas do artigo 3 (Tabela 3.2), arredondadas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · TRÊS ARTIGOS -->
+<section class="slide" id="artigos" data-label="Três artigos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> Como a pesquisa olhou</div>
+      <h2 class="rv" style="--d:.1s">Uma pergunta, três artigos, dois períodos</h2>
+      <p class="lede rv" style="--d:.15s">Como as empresas brasileiras da B3 cuidaram do capital de giro antes e depois da pandemia? A tese responde em três passos.</p>
+      <div class="arts rv" id="arts" style="--d:.2s" role="group" aria-label="Escolha o artigo">
+        <button class="art" data-a="0" aria-pressed="true"><span class="num">1</span><span><span class="t">O que se pesquisa no mundo</span><span class="s">168 artigos científicos, 2015–2024</span></span></button>
+        <button class="art" data-a="1" aria-pressed="false"><span class="num">2</span><span><span class="t">O que encurta ou alonga o ciclo</span><span class="s">107 empresas, dados trimestrais</span></span></button>
+        <button class="art" data-a="2" aria-pressed="false"><span class="num">3</span><span><span class="t">Ciclo e lucro andam juntos?</span><span class="s">92 empresas, dados trimestrais</span></span></button>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="q-svg" class="svgbox" viewBox="0 0 560 150" role="img" aria-label="Linha do tempo de 2015 a 2024 com 19 trimestres antes e 19 depois do início da pandemia"></svg>
+      <div class="panel" id="art-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · O TEMA GANHOU FÔLEGO -->
+<section class="slide" id="publicacoes" data-label="Artigo 1: o tema cresceu">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Artigo 1 · 168 artigos</div>
+      <h2 class="rv" style="--d:.1s">Depois de 2020, os pesquisadores olharam mais para o capital de giro</h2>
+      <p class="lede rv" style="--d:.15s">O autor juntou as duas maiores bases de artigos científicos da área (Scopus e Web of Science) e ficou com <strong>168 artigos</strong> de acesso aberto sobre capital de giro, publicados de 2015 a 2024.</p>
+      <p class="rv" style="--d:.2s">As publicações por ano saltaram em 2020, ano em que começou a pandemia, e não voltaram ao patamar anterior.</p>
+      <div class="segs rv" style="--d:.25s"><div class="seg" id="pub-seg" role="group" aria-label="Modo de ver"><button data-m="ano" aria-pressed="true">Por ano</button><button data-m="soma" aria-pressed="false">Antes × depois de 2020</button></div></div>
+      <div class="stats rv" style="--d:.3s">
+        <div class="stat"><b>14,13%</b><span>de crescimento médio por ano no número de artigos</span></div>
+        <div class="stat"><b>429</b><span>autores, quase todos escrevendo em grupo</span></div>
+        <div class="stat"><b style="font-size:1.1rem; line-height:1.55">3 anos e 4 meses</b><span>de idade média dos artigos: um tema recente</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="pub-svg" class="svgbox" viewBox="0 0 560 320" role="img" aria-label="Artigos publicados por ano, de 2015 a 2024"></svg>
+      <p class="note">Valores da Figura 1.1 da tese; 2024 conta só até outubro. A soma antes e depois de 2020 é <b>contagem nossa</b>. Funil da busca (Tabela 1.1): 316 registros → 184 depois dos filtros de área, tipo e idioma → 168 sem os 15 repetidos nas duas bases.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · POUCOS ESCREVEM MUITO -->
+<section class="slide" id="autores" data-label="Artigo 1: quem escreve">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Artigo 1 · quem escreve e onde</div>
+      <h2 class="rv" style="--d:.1s">Muita gente escreveu uma vez; quase ninguém, várias</h2>
+      <p class="lede rv" style="--d:.15s">É o que prevê a <strong>Lei de Lotka</strong>: poucos pesquisadores publicam muito e muitos publicam pouco. Com as revistas acontece algo parecido (<strong>Lei de Bradford</strong>): um núcleo pequeno concentra boa parte dos artigos.</p>
+      <div class="segs rv" style="--d:.2s"><div class="seg" id="lot-seg" role="group" aria-label="O que ver"><button data-m="aut" aria-pressed="true">Autores</button><button data-m="rev" aria-pressed="false">Revistas</button><button data-m="pai" aria-pressed="false">Países</button></div></div>
+      <div class="panel rv" id="lot-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div id="lot-vis"></div>
+      <div class="legend" id="lot-leg"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · DEPOIS DE 2020 -->
+<section class="slide" id="prazos-medios" data-label="O ciclo ficou mais longo">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Artigo 3 · 92 empresas · médias</div>
+      <h2 class="rv" style="--d:.1s">Depois de 2020, o dinheiro ficou mais tempo no estoque</h2>
+      <p class="lede rv" style="--d:.15s">Comparando as médias das 92 empresas, o ciclo de caixa passou de <strong>94 para 103 dias</strong>. Quem puxou foi o estoque: <strong>25,7% mais dias</strong> parado.</p>
+      <p class="rv" style="--d:.2s">As empresas também passaram a demorar mais para pagar os fornecedores e receberam dos clientes um pouco mais rápido. Para a tese, foi uma gestão <strong>mais flexível</strong> (conservadora), com mais folga para atravessar a incerteza. Toque num par de blocos.</p>
+      <div class="legend rv" style="--d:.25s"><span><i class="sq" style="background:var(--pre)"></i>2015–2019 (antes)</span><span><i class="sq" style="background:var(--pos)"></i>2020–2024 (depois)</span></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable bars3d" id="pm-scene" data-fit="540x330" role="img" aria-label="Pares de barras 3D com os dias médios de estoque, de recebimento, de pagamento e do ciclo, antes e depois"></div></div>
+      <div class="panel" id="pm-panel" aria-live="polite"></div>
+      <p class="note">Médias da Tabela 3.2 (sem tratar valores extremos). Os valores variam muito entre empresas: o desvio-padrão do ciclo passa de 200 dias. No artigo 2, com 107 empresas, o ciclo médio foi de 91 para 98 dias, e a mediana, de 33 para 35 dias (Tabela 2.3).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · DETERMINANTES -->
+<section class="slide" id="determinantes" data-label="Artigo 2: o que encurta o ciclo">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Artigo 2 · 107 empresas</div>
+      <h2 class="rv" style="--d:.1s">Caixa forte, empresa grande e vendas crescendo: ciclo mais curto</h2>
+      <p class="lede rv" style="--d:.15s">O artigo 2 mediu o que acompanha um ciclo mais curto ou mais longo. Nos dois períodos, empresas que <strong>geram mais caixa</strong> na operação, que são <strong>maiores</strong> e que <strong>vendem mais a cada trimestre</strong> tiveram ciclos mais curtos.</p>
+      <p class="rv" style="--d:.2s">A tese mediu o giro de duas formas: em <strong>dias</strong> (o ciclo) e em <strong>dinheiro</strong> (a necessidade de capital de giro: quanto do ativo fica preso em estoques e vendas a receber, descontado o que os fornecedores financiam).</p>
+      <div class="segs rv" style="--d:.25s">
+        <small>Medida</small><div class="seg" id="det-m" role="group" aria-label="Medida do giro"><button data-v="ccc" aria-pressed="true">Ciclo (dias)</button><button data-v="wcr" aria-pressed="false">Necessidade de capital</button></div>
+      </div>
+      <div class="segs rv" style="--d:.28s">
+        <small>Modelo</small><div class="seg" id="det-p" role="group" aria-label="Modelo"><button data-v="A" aria-pressed="true">Completo</button><button data-v="B" aria-pressed="false">Sem o lucro</button><button data-v="C" aria-pressed="false">Sem o caixa</button></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable bars3d" id="det-scene" data-fit="520x400" role="img" aria-label="Matriz 3D: seis fatores por dois períodos; a altura mostra a força estatística e a cor, a direção"></div></div>
+      <div class="legend"><span><i class="sq" style="background:var(--navy)"></i>diminui</span><span><i class="sq" style="background:var(--red)"></i>aumenta</span><span><i class="sq" style="background:var(--off)"></i>sem efeito estatístico</span><span>altura = força estatística (* a ***)</span></div>
+      <div class="panel" id="det-panel" aria-live="polite"></div>
+      <details class="tbl"><summary>Ver os coeficientes do modelo completo em tabela</summary><div class="wrap"><table id="det-tbl"></table></div></details>
+      <p class="note">Tabelas 2.4 e 2.5 (efeitos fixos). Caixa operacional e lucro sobre o ativo andam muito juntos; por isso a tese também estimou modelos com um de cada vez. <b>Lucro e ciclo:</b> o efeito negativo só aparece no modelo sem o caixa. O modelo do ciclo explica 19% (antes) e 25% (depois) da variação de cada empresa ao longo do tempo; o da necessidade de capital, só 2% a 3%.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · A PANDEMIA MUDOU A FORÇA -->
+<section class="slide" id="forca" data-label="A pandemia mudou a força">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Artigo 2 · antes × depois</div>
+      <h2 class="rv" style="--d:.1s">A pandemia mudou a força, não a direção</h2>
+      <p class="lede rv" style="--d:.15s">Os fatores que encurtavam o ciclo antes de 2020 continuaram encurtando depois. O que mudou foi o tamanho do efeito, e o <strong>endividamento</strong>, que só passou a pesar depois da pandemia.</p>
+      <p class="rv" style="--d:.2s">Escolha um fator e veja quantos dias a menos de ciclo ele acompanha em cada período, partindo do ciclo médio.</p>
+      <div class="chips rv" id="ds-chips" style="--d:.25s" role="group" aria-label="Escolha o fator"></div>
+      <div class="ctl rv" style="--d:.3s"><label for="ds-r"><span id="ds-l" style="color:var(--ink)"></span><span id="ds-v"></span></label><input type="range" id="ds-r" min="0" max="20" step="1" aria-describedby="ds-msg"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="ds-svg" class="svgbox" viewBox="0 0 560 200" role="img" aria-label="Ciclo médio antes e depois da pandemia e quanto ele encurta com o fator escolhido"></svg>
+      <div id="ds-msg" aria-live="polite"></div>
+      <p class="note"><b>Conta nossa.</b> Parte do ciclo médio das 107 empresas (91 e 98 dias, Tabela 2.3) e aplica os coeficientes do modelo completo (Tabela 2.4), mantido o resto igual. Só entram efeitos com significância estatística. Mostra associação, não causa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · CICLO MENOR, LUCRO MAIOR -->
+<section class="slide" id="lucro" data-label="A descoberta">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Artigo 3 · a descoberta</div>
+      <h2 class="rv" style="--d:.1s">Ciclo mais curto, lucro um pouco maior, antes e depois da pandemia</h2>
+      <p class="lede rv" style="--d:.15s">Nas 92 empresas, quem deixou o dinheiro menos dias parado teve <strong>maior lucro sobre o ativo</strong> (ROA). Vale para os dois períodos; depois de 2020, a relação ficou mais forte.</p>
+      <p class="rv" style="--d:.2s">Para a tese, é um argumento a favor da gestão <strong>agressiva</strong> do giro. Mas o efeito por dia é pequeno, como o próprio autor ressalta. Encurte o ciclo e veja.</p>
+      <div class="ctl rv" style="--d:.25s; --c:var(--roa)"><label for="roa-r">Dias a menos no ciclo <span id="roa-v"></span></label><input type="range" id="roa-r" min="0" max="100" step="5" value="30" aria-describedby="roa-msg"><small>o ciclo médio era de 94 dias antes e 103 depois</small></div>
+      <div class="tiles rv" id="roa-tiles" style="--d:.3s" aria-label="Outros fatores ligados ao lucro"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="roa-svg" class="svgbox" viewBox="0 0 560 250" role="img" aria-label="Lucro sobre o ativo médio antes e depois da pandemia e o ganho estimado com o ciclo mais curto"></svg>
+      <div id="roa-msg" aria-live="polite"></div>
+      <p class="note"><b>Conta nossa.</b> Parte do ROA médio (4% antes, 5% depois; Tabela 3.2) e aplica o coeficiente do ciclo (−0,0000193** por dia antes; −0,0000291*** depois; Tabelas 3.3 e 3.4). O ROA está em fração na tese: 0,0000193 por dia = 0,00193 ponto percentual. Mostra associação, não causa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · PRAZO A PRAZO -->
+<section class="slide" id="prazos" data-label="Prazo a prazo">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Artigo 3 · cada prazo</div>
+      <h2 class="rv" style="--d:.1s">Depois da pandemia, o prazo dado ao cliente passou a pesar três vezes mais</h2>
+      <p class="lede rv" style="--d:.15s">A tese também testou cada pedaço do ciclo. Antes de 2020, 30 dias a mais para receber dos clientes vinham com um ROA <strong>0,38 ponto</strong> menor; depois, <strong>1,17 ponto</strong> menor.</p>
+      <p class="rv" style="--d:.2s">Os dias de estoque pesaram pouco (e, depois de 2020, só com significância fraca, a 10%). E o prazo para pagar o fornecedor? Ele aparece na próxima tela.</p>
+      <div class="segs rv" style="--d:.25s"><small>Dias a mais</small><div class="seg" id="pz-seg" role="group" aria-label="Quantos dias a mais"><button data-d="30" aria-pressed="true">30</button><button data-d="60" aria-pressed="false">60</button><button data-d="90" aria-pressed="false">90</button></div></div>
+      <div class="legend rv" style="--d:.3s"><span><i class="sq" style="background:var(--pre)"></i>2015–2019 (antes)</span><span><i class="sq" style="background:var(--pos)"></i>2020–2024 (depois)</span></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable bars3d" id="pz-scene" data-fit="540x330" role="img" aria-label="Pares de barras 3D: quanto o ROA cai com mais dias de ciclo, de recebimento, de estoque e de pagamento"></div></div>
+      <div class="panel" id="pz-panel" aria-live="polite"></div>
+      <p class="note"><b>Conta nossa</b> a partir dos coeficientes das Tabelas 3.3 e 3.4 (efeitos aleatórios), convertidos em pontos percentuais de ROA. Cada barra vem de um modelo separado. Estrelas: significância a 10% (*), 5% (**) e 1% (***).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · O INESPERADO -->
+<section class="slide" id="inesperado" data-label="O inesperado">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> Artigos 2 e 3 · o inesperado</div>
+    <h2 class="rv" style="--d:.1s">Nem tudo seguiu a receita da gestão agressiva</h2>
+    <p class="lede rv" style="--d:.15s">Faça sua aposta e vire o cartão.</p>
+    <div class="flips" id="flips"></div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Na prática, limites e créditos</div>
+    <h2 class="rv" style="--d:.1s">Prazos são decisões do dia a dia, e somam</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Gestores financeiros</h3><p>Acompanhar os prazos de estoque, de recebimento e de pagamento, um a um, ajuda a entender o lucro: o ciclo mais curto veio junto com ROA maior nos dois períodos.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Em tempos de crise</h3><p>As relações não mudaram de direção com a pandemia; mudaram de intensidade. Depois de 2020, o prazo dado aos clientes passou a pesar mais no lucro.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--rec)"><h3>Empresas endividadas</h3><p>Depois da pandemia, empresas mais endividadas tiveram ciclos mais curtos, o que a tese lê como cuidado maior com a liquidez num cenário de juros altos.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:var(--ink-2)"><h3>Pesquisadores</h3><p>O Brasil quase não aparece na pesquisa mundial sobre o tema e não teve parceria internacional no período; a tese aponta a escassez de estudos sobre empresas brasileiras.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Poucas empresas, concentradas em alguns setores:</b> 107 e 92 empresas de capital aberto, quase metade delas da indústria. <em>· segundo o autor</em></li>
+          <li><b>Recortes de tempo e variáveis escolhidos.</b> Outros períodos, setores e empresas pequenas e médias podem mostrar outra coisa. <em>· segundo o autor</em></li>
+          <li><b>Só artigos de acesso aberto, em duas bases,</b> no levantamento do artigo 1. <em>· segundo o autor</em></li>
+          <li><b>Efeito pequeno por dia</b> ("reduzida significância prática", nas palavras do autor) e <b>associação, não prova de causa</b>. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          IORIO, Fabio Roberto. <em>Gestão do capital de giro de empresas brasileiras listadas na B3: uma análise dos contextos pré e pós pandemia.</em> Tese (Doutorado em Administração de Empresas) — Universidade Presbiteriana Mackenzie, São Paulo, 2025. Orientador: Prof. Dr. Wilson Toshiro Nakamura.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Pesquisa com apoio do Instituto Presbiteriano Mackenzie (isenção integral de mensalidades e taxas). Dados da Economática, da Scopus e da Web of Science. Esta versão simplifica o trabalho para o público em geral; as fórmulas e as tabelas completas estão no texto original.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent, text){
+    var e = document.createElementNS(SVGNS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (text !== undefined) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function th(n){ return n.toLocaleString(M.lang === 'en' ? 'en-US' : 'pt-BR'); }
+  function raw(n){ var t = String(Math.abs(n)); return (n < 0 ? '−' : n > 0 ? '+' : '') + (M.lang === 'en' ? t : t.replace('.', ',')); }
+  function sgn(n, d){ return (n > 0 ? '+' : n < 0 ? '−' : '') + fmt(Math.abs(n), d); }
+  function pressSet(group, attr, val){ each(group.children, function(b){ b.setAttribute('aria-pressed', String(b.dataset[attr] === val)); }); }
+  var STARS = ['', '*', '**', '***'];
+  var SIGTXT = ['sem significância estatística', 'significância fraca (10%)', 'significativo a 5%', 'significativo a 1%'];
+  var PER = ['antes da pandemia', 'depois da pandemia'];
+
+  /* ================= DADOS DA TESE ================= */
+  // Tabela 3.2 (artigo 3, 92 empresas): médias [antes, depois]
+  var MEAN3 = {pme:[74.65, 93.81], pmr:[48.39, 45.48], pmp:[28.55, 35.85], ccc:[94.48, 103.43], roa:[0.04, 0.05]};
+  // Figura 1.1: artigos por ano (2024 até outubro)
+  var PUBS = [[2015, 7], [2016, 9], [2017, 11], [2018, 12], [2019, 11], [2020, 20], [2021, 23], [2022, 24], [2023, 28], [2024, 23]];
+  // Tabela 1.4 (Lei de Lotka): [artigos publicados, nº de autores]
+  var LOTKA = [[1, 402], [2, 21], [3, 4], [4, 1], [6, 1]];
+  // Figura 1.2 (Lei de Bradford): [periódicos, artigos]
+  var BRAD = [[19, 57], [50, 56], [55, 55]];
+  // Tabela 1.8
+  var COUNTRIES = [['Índia', 27], ['Polônia', 18], ['Estados Unidos', 18], ['Espanha', 16], ['Irã', 13], ['Indonésia', 12], ['Paquistão', 11], ['China', 10], ['República Tcheca', 10], ['Jordânia', 10]];
+  // Tabela 2.1
+  var SECTORS = [['Indústria', 48], ['Recursos básicos', 18], ['Construção', 14], ['Comércio', 11], ['Serviços', 9], ['Transporte e armazenagem', 7]];
+  // Tabelas 2.4 (ciclo, em dias) e 2.5 (necessidade de capital, fração do ativo): [coeficiente, estrelas] por painel, [antes, depois]; null = fora do modelo
+  var A2 = {
+    ccc:{
+      A:{FCO:[[-248.426, 3], [-213.551, 3]], ROA:[[49.159, 0], [23.416, 0]], TAM:[[-11.743, 3], [-16.148, 3]], ALAV:[[30.002, 0], [-99.699, 2]], CRESC:[[-41.781, 3], [-35.909, 3]], TAN:[[-24.107, 0], [-17.117, 0]]},
+      B:{FCO:[[-216.397, 3], [-196.252, 3]], ROA:null, TAM:[[-11.736, 3], [-16.133, 3]], ALAV:[[28.704, 0], [-100.833, 2]], CRESC:[[-41.795, 3], [-35.904, 3]], TAN:[[-27.780, 0], [-17.678, 0]]},
+      C:{FCO:null, ROA:[[-163.976, 3], [-171.774, 3]], TAM:[[-12.643, 3], [-16.512, 3]], ALAV:[[27.459, 0], [-107.993, 3]], CRESC:[[-43.192, 3], [-37.054, 3]], TAN:[[-32.966, 0], [-17.613, 0]]}
+    },
+    wcr:{
+      A:{FCO:[[-0.023, 0], [-0.029, 0]], ROA:[[0.118, 3], [0.109, 3]], TAM:[[-0.0007, 0], [-0.0003, 0]], ALAV:[[-0.052, 3], [-0.016, 0]], CRESC:[[-0.0001, 0], [-0.0008, 0]], TAN:[[-0.018, 0], [-0.097, 3]]},
+      B:{FCO:[[0.053, 2], [0.052, 3]], ROA:null, TAM:[[-0.0006, 0], [-0.0003, 0]], ALAV:[[-0.055, 3], [-0.021, 0]], CRESC:[[-0.0001, 0], [-0.0008, 0]], TAN:[[-0.027, 0], [-0.100, 3]]},
+      C:{FCO:null, ROA:[[0.097, 3], [0.083, 3]], TAM:[[-0.0007, 0], [-0.0004, 0]], ALAV:[[-0.052, 3], [-0.017, 0]], CRESC:[[-0.0002, 0], [-0.0009, 0]], TAN:[[-0.019, 0], [-0.097, 3]]}
+    }
+  };
+  // Tabela 2.3: ciclo médio das 107 empresas [antes, depois]
+  var CCC2 = [90.54, 97.83];
+  // Variáveis do artigo 2: passo usado para ler o coeficiente
+  var VARS = [
+    {k:'FCO', n:'Caixa operacional', d:'dinheiro gerado pela operação, como fração do ativo', step:0.10, st:'10 pontos percentuais a mais de caixa operacional (sobre o ativo)'},
+    {k:'ROA', n:'Lucro sobre o ativo', d:'lucro líquido sobre o ativo', step:0.10, st:'10 pontos percentuais a mais de lucro sobre o ativo'},
+    {k:'TAM', n:'Tamanho', d:'receita de vendas (em logaritmo)', step:1, st:'receita cerca de 2,7 vezes maior'},
+    {k:'ALAV', n:'Endividamento', d:'dívidas sobre o ativo', step:0.10, st:'10 pontos percentuais a mais de dívida (sobre o ativo)'},
+    {k:'CRESC', n:'Crescimento das vendas', d:'quanto as vendas cresceram sobre o trimestre anterior', step:0.10, st:'vendas crescendo 10 pontos percentuais a mais'},
+    {k:'TAN', n:'Ativos fixos', d:'máquinas, prédios e equipamentos sobre o ativo', step:0.10, st:'10 pontos percentuais a mais de ativos fixos (sobre o ativo)'}
+  ];
+  // Tabelas 3.3 e 3.4: efeito no ROA (fração) por dia ou por unidade, [antes, depois]
+  var A3 = {
+    ccc:[[-0.0000193, 2], [-0.0000291, 3]],
+    pmr:[[-0.000126, 3], [-0.000389, 3]],
+    pme:[[-0.0000301, 3], [-0.0000226, 1]],
+    pmp:[[-0.000399, 3], [-0.000431, 3]],
+    wcr:[[0.057, 3], [0.142, 3]]
+  };
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene');
+    var W = 440, D = 340, cx = W / 2, cy = D / 2, R = 140;
+    var st = makeStage(sc, W, D, {ay:'60%', rx:'58deg'});
+    var ring = document.createElement('div'); ring.className = 'ring';
+    ring.style.cssText = 'left:' + (cx - R) + 'px; top:' + (cy - R) + 'px; width:' + (2 * R) + 'px; height:' + (2 * R) + 'px;';
+    st.appendChild(ring);
+    var STEPS = [['Compra', -90, '#334155'], ['Estoque', 0, 'var(--est)'], ['Venda', 90, 'var(--rec)'], ['Recebe', 180, '#7d8fb0']];
+    var bw = 124, bd = 74, bh = 56;
+    STEPS.forEach(function(s){
+      var a = s[1] * Math.PI / 180;
+      st.appendChild(box({w:bw, d:bd, h:bh, x:cx + R * Math.cos(a) - bw / 2, y:cy + R * Math.sin(a) - bd / 2, c:s[2], top:s[0]}));
+    });
+    var cs = 34;
+    var coin = box({w:cs, d:cs, h:cs, x:cx - cs / 2, y:cy - R - cs / 2, z:bh + 6, c:'var(--red)', top:'$', cls:'coin'});
+    st.appendChild(coin);
+    function place(t){
+      var a = -Math.PI / 2 + t;
+      coin.style.left = (cx + R * Math.cos(a) - cs / 2) + 'px';
+      coin.style.top = (cy + R * Math.sin(a) - cs / 2) + 'px';
+    }
+    place(0.35);
+    if (!M.reduce) M.onTick(function(t){ place(t * 0.7); });
+    rotatable(sc, st, -14, 10);
+  })();
+
+  /* ================= 02 · O CICLO DO DINHEIRO ================= */
+  (function(){
+    var svg = $('cyc-svg'), X0 = 40, X1 = 540, MAXD = 240;
+    var sx = function(d){ return X0 + (X1 - X0) * d / MAXD; };
+    var PRE = {pre:[75, 48, 29], pos:[94, 45, 36], agr:[30, 20, 60]};
+    var R = {pme:$('c-pme'), pmr:$('c-pmr'), pmp:$('c-pmp')};
+    function draw(){
+      var e = +R.pme.value, r = +R.pmr.value, p = +R.pmp.value, c = e + r - p;
+      $('c-pme-v').textContent = e + ' dias'; $('c-pmr-v').textContent = r + ' dias'; $('c-pmp-v').textContent = p + ' dias';
+      svg.innerHTML = '';
+      for (var d = 0; d <= MAXD; d += 30){
+        el('line', {x1:sx(d), x2:sx(d), y1:20, y2:222, stroke:'#e2e8f0'}, svg);
+        el('text', {x:sx(d), y:244, 'font-size':12, 'text-anchor':'middle', fill:'#64748b'}, svg, d);
+      }
+      el('text', {x:X1, y:262, 'font-size':12, 'text-anchor':'end', fill:'#64748b', class:'sm'}, svg, 'dias desde a compra');
+      // linha da empresa: estoque e depois a receber
+      el('rect', {x:sx(0), y:36, width:Math.max(0, sx(e) - sx(0)), height:34, rx:4, style:'fill:var(--est)'}, svg);
+      el('rect', {x:sx(e), y:36, width:Math.max(0, sx(e + r) - sx(e)), height:34, rx:4, style:'fill:var(--rec)'}, svg);
+      if (e >= 22) el('text', {x:sx(0) + 8, y:58, 'font-size':13, fill:'#fff', 'font-weight':700}, svg, 'estoque');
+      if (r >= 22) el('text', {x:sx(e) + 8, y:58, 'font-size':13, fill:'#fff', 'font-weight':700}, svg, 'a receber');
+      el('text', {x:sx(e + r), y:28, 'font-size':12, 'text-anchor':'middle', fill:'#334155'}, svg, 'recebe');
+      // fornecedor
+      el('rect', {x:sx(0), y:96, width:Math.max(0, sx(p) - sx(0)), height:26, rx:4, style:'fill:color-mix(in srgb, var(--pag) 22%, white); stroke:var(--pag)'}, svg);
+      el('text', {x:Math.max(sx(p), sx(0)) + 8, y:114, 'font-size':13, style:'fill:var(--pag)', 'font-weight':700}, svg, p ? 'paga o fornecedor' : 'paga à vista');
+      // ciclo
+      if (c > 0){
+        el('rect', {x:sx(p), y:156, width:sx(e + r) - sx(p), height:34, rx:4, style:'fill:var(--ink)'}, svg);
+        el('line', {x1:sx(p), x2:sx(p), y1:122, y2:190, stroke:'#0f172a', 'stroke-dasharray':'3 3'}, svg);
+        el('line', {x1:sx(e + r), x2:sx(e + r), y1:70, y2:190, stroke:'#0f172a', 'stroke-dasharray':'3 3'}, svg);
+        var mid = (sx(p) + sx(e + r)) / 2;
+        el('text', {x:c >= 40 ? mid : sx(e + r) + 8, y:178, 'font-size':13, fill:c >= 40 ? '#fff' : '#0f172a', 'text-anchor':c >= 40 ? 'middle' : 'start', 'font-weight':700}, svg, 'ciclo: ' + c + ' dias');
+        $('cyc-out').innerHTML = 'O dinheiro da empresa fica <b>' + c + ' dias</b> parado antes de voltar ao caixa.';
+      } else {
+        el('text', {x:sx(0) + 4, y:178, 'font-size':13, fill:'#0f172a', 'font-weight':700}, svg, c === 0 ? 'ciclo: zero' : 'ciclo negativo: ' + c + ' dias');
+        $('cyc-out').innerHTML = c === 0 ? 'Recebe no mesmo dia em que paga: o ciclo é <b>zero</b>.' : 'Recebe do cliente antes de pagar o fornecedor: o ciclo é <b>negativo</b>, e o fornecedor financia a operação.';
+      }
+    }
+    function set(k){
+      var v = PRE[k]; R.pme.value = v[0]; R.pmr.value = v[1]; R.pmp.value = v[2];
+      each(document.querySelectorAll('#ciclo .presets .chip'), function(b){ b.setAttribute('aria-pressed', String(b.dataset.p === k)); });
+      draw();
+    }
+    each([R.pme, R.pmr, R.pmp], function(i){ i.addEventListener('input', function(){
+      each(document.querySelectorAll('#ciclo .presets .chip'), function(b){ b.setAttribute('aria-pressed', 'false'); });
+      draw();
+    }); });
+    each(document.querySelectorAll('#ciclo .presets .chip'), function(b){ b.addEventListener('click', function(){ set(b.dataset.p); }); });
+    set('pre');
+  })();
+
+  /* ================= 03 · TRÊS ARTIGOS ================= */
+  (function(){
+    var svg = $('q-svg'), X0 = 24, X1 = 536, n = 38, w = (X1 - X0) / n;
+    var sq = [];
+    for (var i = 0; i < n; i++){
+      var pre = i < 19;
+      sq.push(el('rect', {x:X0 + i * w + 1.5, y:44, width:w - 3, height:30, rx:3, style:'fill:' + (pre ? 'var(--pre)' : 'var(--pos)') + '; transition:opacity .4s'}, svg));
+    }
+    var mx = X0 + 19 * w;
+    el('line', {x1:mx, x2:mx, y1:30, y2:90, stroke:'#e80734', 'stroke-width':2.5}, svg);
+    el('text', {x:mx, y:22, 'font-size':12, 'text-anchor':'middle', fill:'#e80734', 'font-weight':700}, svg, 'pandemia: 11/03/2020');
+    el('text', {x:X0, y:104, 'font-size':12, fill:'#334155'}, svg, '2º tri. 2015');
+    el('text', {x:mx - 8, y:104, 'font-size':12, fill:'#334155', 'text-anchor':'end'}, svg, '4º tri. 2019');
+    el('text', {x:mx + 8, y:104, 'font-size':12, fill:'#334155'}, svg, '1º tri. 2020');
+    el('text', {x:X1, y:104, 'font-size':12, fill:'#334155', 'text-anchor':'end'}, svg, '3º tri. 2024');
+    el('text', {x:(X0 + mx) / 2, y:132, 'font-size':13, 'text-anchor':'middle', fill:'#0f172a', 'font-weight':700}, svg, 'antes: 19 trimestres');
+    el('text', {x:(mx + X1) / 2, y:132, 'font-size':13, 'text-anchor':'middle', fill:'#0f172a', 'font-weight':700}, svg, 'depois: 19 trimestres');
+    var bars = '<div class="hb">' + SECTORS.map(function(s){ return '<div class="hbr"><span>' + s[0] + '</span><span class="tr"><i style="width:' + (s[1] / 48 * 100) + '%; --bc:var(--navy)"></i></span><b>' + s[1] + '</b></div>'; }).join('') + '</div>';
+    var ART = [
+      {tag:'Artigo 1 · bibliometria', h:'Um mapa da pesquisa mundial', p:'Reuniu os artigos de acesso aberto sobre capital de giro publicados de 2015 a 2024 nas bases Scopus e Web of Science e contou autores, revistas, países e temas. Não usa dados de empresas, então não se divide em antes e depois.', dim:true},
+      {tag:'Artigo 2 · determinantes', h:'O que acompanha um ciclo mais curto?', p:'Usou balanços trimestrais de <strong>107 empresas não financeiras</strong> da B3 (base Economática), 2.033 observações em cada período, e comparou seis fatores antes e depois da pandemia.', extra:bars},
+      {tag:'Artigo 3 · rentabilidade', h:'Giro mais rápido rende mais?', p:'Usou balanços trimestrais de <strong>92 empresas</strong> com ações negociadas na B3 em todo o período (1.748 observações em cada lado) e testou o ciclo, cada prazo e a necessidade de capital contra o lucro sobre o ativo (ROA) e contra o valor de mercado. Ao todo, 80 equações.'}
+    ];
+    function show(i){
+      pressSet($('arts'), 'a', String(i));
+      var a = ART[i];
+      sq.forEach(function(r){ r.style.opacity = a.dim ? .2 : 1; });
+      $('art-panel').innerHTML = '<div class="tag">' + a.tag + '</div><h3>' + a.h + '</h3><p>' + a.p + '</p>' + (a.extra || '');
+    }
+    each($('arts').children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.a); }); });
+    show(1);
+  })();
+
+  /* ================= 04 · PUBLICAÇÕES POR ANO ================= */
+  (function(){
+    var svg = $('pub-svg'), X0 = 40, X1 = 540, Y0 = 270, H = 210, n = PUBS.length, w = (X1 - X0) / n;
+    var sum = function(a, b){ return PUBS.filter(function(p){ return p[0] >= a && p[0] <= b; }).reduce(function(s, p){ return s + p[1]; }, 0); };
+    function draw(m){
+      svg.innerHTML = '';
+      pressSet($('pub-seg'), 'm', m);
+      if (m === 'ano'){
+        [0, 10, 20, 30].forEach(function(v){
+          var y = Y0 - v / 30 * H;
+          el('line', {x1:X0, x2:X1, y1:y, y2:y, stroke:'#e2e8f0'}, svg);
+          el('text', {x:X0 - 8, y:y + 4, 'font-size':12, 'text-anchor':'end', fill:'#64748b'}, svg, v);
+        });
+        PUBS.forEach(function(p, i){
+          var h = p[1] / 30 * H, x = X0 + i * w + 6, post = p[0] >= 2020;
+          el('rect', {x:x, y:Y0 - h, width:w - 12, height:h, rx:3, style:'fill:' + (post ? 'var(--red)' : 'var(--pre)')}, svg);
+          el('text', {x:x + (w - 12) / 2, y:Y0 - h - 7, 'font-size':13, 'text-anchor':'middle', fill:'#0f172a', 'font-weight':700}, svg, p[1]);
+          el('text', {x:x + (w - 12) / 2, y:Y0 + 18, 'font-size':12, 'text-anchor':'middle', fill:'#334155'}, svg, (i % 2 === 0 || window.innerWidth > 600) ? p[0] : '');
+        });
+        el('text', {x:X1, y:Y0 + 40, 'font-size':12, 'text-anchor':'end', fill:'#64748b', class:'sm'}, svg, '2024: até outubro');
+      } else {
+        var a = sum(2015, 2019), b = sum(2020, 2024), max = 130;
+        [[a, '2015–2019', 'var(--pre)'], [b, '2020–2024', 'var(--red)']].forEach(function(r, i){
+          var h = r[0] / max * H, x = 130 + i * 190;
+          el('rect', {x:x, y:Y0 - h, width:110, height:h, rx:4, style:'fill:' + r[2]}, svg);
+          el('text', {x:x + 55, y:Y0 - h - 10, 'font-size':22, 'text-anchor':'middle', fill:'#0f172a', 'font-weight':700, 'font-family':'Merriweather, Georgia, serif'}, svg, r[0]);
+          el('text', {x:x + 55, y:Y0 + 20, 'font-size':13, 'text-anchor':'middle', fill:'#334155', 'font-weight':600}, svg, r[1]);
+        });
+        el('text', {x:280, y:34, 'font-size':14, 'text-anchor':'middle', fill:'#334155'}, svg, 'mais que o dobro de artigos em cinco anos');
+      }
+    }
+    each($('pub-seg').children, function(b){ b.addEventListener('click', function(){ draw(b.dataset.m); }); });
+    draw('ano');
+  })();
+
+  /* ================= 05 · LOTKA, BRADFORD, PAÍSES ================= */
+  (function(){
+    var vis = $('lot-vis'), leg = $('lot-leg');
+    var LC = {1:'#cbd5e1', 2:'#9aaac4', 3:'#5b7bb5', 4:'var(--navy)', 6:'var(--red)'};
+    var ZC = ['var(--red)', 'var(--navy)', '#9aaac4'];
+    var MODES = {
+      aut:{
+        tag:'Lei de Lotka · Tabela 1.4', h:'402 de 429 autores escreveram um artigo só',
+        p:'São 93,7% dos autores. Só dois passaram de três artigos no período: Zimon (6) e Habib (4). Quase todos escrevem em grupo: 2,55 autores por artigo, em média.',
+        draw:function(){
+          var h = '<div class="dotgrid" role="img" aria-label="429 pontos, um por autor, coloridos pelo número de artigos">';
+          LOTKA.forEach(function(l){ for (var i = 0; i < l[1]; i++) h += '<i style="background:' + LC[l[0]] + '"></i>'; });
+          vis.innerHTML = h + '</div>';
+          leg.innerHTML = LOTKA.map(function(l){ return '<span><i class="dot" style="background:' + LC[l[0]] + '"></i>' + l[0] + (l[0] > 1 ? ' artigos' : ' artigo') + ': ' + l[1] + '</span>'; }).join('');
+        }
+      },
+      rev:{
+        tag:'Lei de Bradford · Figura 1.2', h:'19 revistas publicaram um terço dos artigos',
+        p:'Os 168 artigos saíram em 124 revistas. Um terço deles ficou em 19 revistas (o núcleo); o segundo terço, em 50; o último, em 55. A que mais publicou foi a Cogent Economics &amp; Finance, com 6 artigos.',
+        draw:function(){
+          var h = '<div class="dotgrid" role="img" aria-label="124 quadrados, um por revista, divididos em três zonas">';
+          BRAD.forEach(function(b, z){ for (var i = 0; i < b[0]; i++) h += '<i class="sq3" style="background:' + ZC[z] + '"></i>'; });
+          h += '</div><div class="zbar" aria-label="Artigos por zona">' + BRAD.map(function(b, z){ return '<span style="flex:' + b[1] + '; background:' + ZC[z] + (z === 2 ? '; color:#0f172a' : '') + '">' + b[1] + ' artigos</span>'; }).join('') + '</div>';
+          vis.innerHTML = h;
+          leg.innerHTML = BRAD.map(function(b, z){ return '<span><i class="sq" style="background:' + ZC[z] + '"></i>zona ' + (z + 1) + ': ' + b[0] + ' revistas</span>'; }).join('');
+        }
+      },
+      pai:{
+        tag:'Países · Tabela 1.8', h:'Índia na frente; o Brasil quase não aparece',
+        p:'Os dez países que mais publicaram somam 86% dos artigos. A América Latina inteira responde por 3,57% dos documentos, e não houve nenhuma parceria internacional com o Brasil no período.',
+        draw:function(){
+          vis.innerHTML = '<div class="hb">' + COUNTRIES.map(function(c, i){ return '<div class="hbr"><span>' + c[0] + '</span><span class="tr"><i style="width:' + (c[1] / 27 * 100) + '%; --bc:' + (i === 0 ? 'var(--red)' : 'var(--navy)') + '"></i></span><b>' + c[1] + '</b></div>'; }).join('') + '</div>';
+          leg.innerHTML = '<span>artigos por país (um artigo pode ter autores de mais de um país)</span>';
+        }
+      }
+    };
+    function show(m){
+      pressSet($('lot-seg'), 'm', m);
+      var v = MODES[m]; v.draw();
+      $('lot-panel').innerHTML = '<div class="tag">' + v.tag + '</div><h3>' + v.h + '</h3><p>' + v.p + '</p>';
+    }
+    each($('lot-seg').children, function(b){ b.addEventListener('click', function(){ show(b.dataset.m); }); });
+    show('aut');
+  })();
+
+  /* ================= barras 3D em pares (telas 06 e 10) ================= */
+  function pairScene(sc, G, o){
+    var W = 500, D = 150, st = makeStage(sc, W, D, {ay:o.ay || '68%', rx:'58deg'});
+    var gw = W / G.length, bw = 50;
+    G.forEach(function(g, i){
+      var cx = i * gw + gw / 2; g.els = [];
+      [0, 1].forEach(function(p){
+        var b = box({w:bw, d:bw, h:Math.max(3, o.h(g, p)), x:cx - bw - 5 + p * (bw + 10), y:D / 2 - bw / 2 - 10, c:p ? 'var(--pos)' : 'var(--pre)', top:o.top(g, p)});
+        b.addEventListener('click', function(){ if (!M.wasDrag(sc)) o.pick(i); });
+        st.appendChild(b); g.els.push(b);
+      });
+      flatLabel(st, g.n, cx - gw / 2, D / 2 + bw / 2 + 4, gw, '');
+    });
+    rotatable(sc, st, -4, 6);
+    return function mark(i){ G.forEach(function(g, j){ g.els.forEach(function(b){ b.classList.toggle('active', i === j); b.classList.toggle('dim', i !== j && i !== null); }); }); };
+  }
+
+  /* ================= 06 · PRAZOS MÉDIOS ================= */
+  (function(){
+    var G = [
+      {k:'pme', n:'estoque', h:'Estoque: de 75 para 94 dias', p:'Os produtos ficaram, em média, 25,7% mais dias parados antes de serem vendidos. Foi a maior mudança e a principal responsável pelo ciclo mais longo.'},
+      {k:'pmr', n:'a receber', h:'Recebimento: de 48 para 45 dias', p:'As empresas passaram a receber dos clientes um pouco mais rápido: 6% menos dias, em média.'},
+      {k:'pmp', n:'a pagar', h:'Pagamento: de 29 para 36 dias', p:'As empresas passaram a pagar os fornecedores 25,6% mais tarde, em média. Isso desconta dias do ciclo, mas não compensou o estoque.'},
+      {k:'ccc', n:'ciclo', h:'Ciclo: de 94 para 103 dias', p:'Somando tudo, o dinheiro ficou 9,47% mais tempo parado. A tese lê como uma gestão mais flexível do giro, para preservar a liquidez no período de incerteza.'}
+    ];
+    var mark = pairScene($('pm-scene'), G, {
+      h:function(g, p){ return MEAN3[g.k][p] * 1.55; },
+      top:function(g, p){ return fmt(MEAN3[g.k][p], 0); },
+      pick:show
+    });
+    function show(i){
+      mark(i); var g = G[i];
+      $('pm-panel').innerHTML = '<div class="tag">Médias · antes → depois</div><h3>' + g.h + '</h3><p>' + g.p + '</p>';
+    }
+    show(0);
+  })();
+
+  /* ================= 07 · MATRIZ DE DETERMINANTES ================= */
+  (function(){
+    var sc = $('det-scene'), W = 340, D = 370;
+    var st = makeStage(sc, W, D, {ay:'50%', rx:'38deg'});
+    var cells = {}, rowL = {}, measure = 'ccc', panel = 'A', sel = {k:'FCO', p:0};
+    var bw = 70, bd = 36, rowY = function(r){ return 6 + r * 60; }, colX = function(c){ return 150 + c * 92; };
+    VARS.forEach(function(v, r){
+      rowL[v.k] = flatLabel(st, v.n, -40, rowY(r) + 8, 180, '');
+      rowL[v.k].classList.add('row');
+      [0, 1].forEach(function(c){
+        var b = box({w:bw, d:bd, h:3, x:colX(c), y:rowY(r), c:'var(--off)', top:' '});
+        b.addEventListener('click', function(){ if (!M.wasDrag(sc)){ sel = {k:v.k, p:c}; render(); } });
+        st.appendChild(b); cells[v.k + c] = b;
+      });
+    });
+    flatLabel(st, 'antes', colX(0) - 10, rowY(6) - 6, bw + 20, '');
+    flatLabel(st, 'depois', colX(1) - 10, rowY(6) - 6, bw + 20, '');
+    function reading(v, c){
+      var x = c[0] * v.step;
+      if (measure === 'ccc') return v.st + ' → ciclo ' + (x < 0 ? fmt(-x, 1) + ' dias mais curto' : fmt(x, 1) + ' dias mais longo');
+      return v.st + ' → necessidade de capital ' + (x < 0 ? fmt(-x * 100, 2) + ' ponto percentual menor' : fmt(x * 100, 2) + ' ponto percentual maior') + ' (sobre o ativo)';
+    }
+    function render(){
+      var T = A2[measure][panel];
+      VARS.forEach(function(v){
+        var row = T[v.k];
+        rowL[v.k].classList.toggle('dim', !row);
+        [0, 1].forEach(function(p){
+          var b = cells[v.k + p], c = row && row[p];
+          b.classList.toggle('gone', !row);
+          var s = c ? c[1] : 0;
+          b.style.setProperty('--h', (s ? s * 13 : 3) + 'px');
+          b.style.setProperty('--c', !s ? 'var(--off)' : c[0] < 0 ? 'var(--navy)' : 'var(--red)');
+          b.querySelector('.top-label').textContent = s ? (c[0] < 0 ? '↓' : '↑') : '';
+          b.classList.toggle('active', sel.k === v.k && sel.p === p);
+        });
+      });
+      var v = VARS.filter(function(x){ return x.k === sel.k; })[0], row = T[sel.k];
+      var tag = (measure === 'ccc' ? 'Ciclo de caixa' : 'Necessidade de capital de giro') + ' · ' + PER[sel.p];
+      var h, p;
+      if (!row){ h = v.n + ': fora deste modelo'; p = 'Neste modelo o fator foi retirado para evitar a sobreposição entre caixa operacional e lucro, que andam juntos.'; }
+      else {
+        var c = row[sel.p];
+        h = v.n + ': ' + (c[1] ? (c[0] < 0 ? 'diminui' : 'aumenta') + ' ' + (measure === 'ccc' ? 'o ciclo' : 'a necessidade de capital') : 'sem efeito estatístico');
+        p = '<strong>' + v.d.charAt(0).toUpperCase() + v.d.slice(1) + '.</strong> Coeficiente ' + raw(c[0]) + STARS[c[1]] + ' (' + SIGTXT[c[1]] + ').';
+        if (c[1]) p += ' Leitura: ' + reading(v, c) + '.';
+      }
+      $('det-panel').innerHTML = '<div class="tag">' + tag + '</div><h3>' + h + '</h3><p>' + p + '</p>';
+    }
+    function seg(id, fn){ each($(id).children, function(b){ b.addEventListener('click', function(){ pressSet($(id), 'v', b.dataset.v); fn(b.dataset.v); render(); }); }); }
+    seg('det-m', function(v){ measure = v; });
+    seg('det-p', function(v){ panel = v; if (!A2[measure][v][sel.k]) sel.k = 'TAM'; });
+    rotatable(sc, st, -5, 5);
+    render();
+    $('det-tbl').innerHTML = '<tr><th>Fator</th><th>Ciclo · antes</th><th>Ciclo · depois</th><th>Necessidade · antes</th><th>Necessidade · depois</th></tr>' +
+      VARS.map(function(v){ return '<tr><td>' + v.n + '</td>' + ['ccc', 'wcr'].map(function(m){ return A2[m].A[v.k].map(function(c){ return '<td>' + raw(c[0]) + STARS[c[1]] + '</td>'; }).join(''); }).join('') + '</tr>'; }).join('');
+  })();
+
+  /* ================= 08 · SIMULADOR DE DIAS (artigo 2) ================= */
+  (function(){
+    var T = A2.ccc.A;
+    var F = [
+      {k:'FCO', n:'Caixa operacional', l:'Caixa operacional a mais', max:20, v:5, u:function(x){ return '+' + x + ' p.p. do ativo'; }, x:function(x){ return x / 100; }},
+      {k:'TAM', n:'Tamanho', l:'Receita maior', max:30, v:10, u:function(x){ return fmt(1 + x / 10, 1) + ' vezes'; }, x:function(x){ return Math.log(1 + x / 10); }},
+      {k:'CRESC', n:'Crescimento das vendas', l:'Vendas crescendo a mais', max:50, v:10, u:function(x){ return '+' + x + ' p.p.'; }, x:function(x){ return x / 100; }},
+      {k:'ALAV', n:'Endividamento', l:'Dívida a mais', max:30, v:10, u:function(x){ return '+' + x + ' p.p. do ativo'; }, x:function(x){ return x / 100; }}
+    ];
+    var cur = 0, r = $('ds-r'), svg = $('ds-svg');
+    $('ds-chips').innerHTML = F.map(function(f, i){ return '<button class="chip" data-i="' + i + '">' + f.n + '</button>'; }).join('');
+    function draw(){
+      var f = F[cur], x = f.x(+r.value);
+      $('ds-v').textContent = f.u(+r.value);
+      svg.innerHTML = '';
+      var X0 = 130, X1 = 430, MAX = 110, sx = function(d){ return X0 + (X1 - X0) * d / MAX; };
+      var msg = [];
+      [0, 1].forEach(function(p){
+        var c = T[f.k][p], y = 40 + p * 90, base = CCC2[p];
+        var dd = c[1] ? c[0] * x : 0, res = Math.max(0, base + dd);
+        el('text', {x:16, y:y + 22, 'font-size':14, fill:'#0f172a', 'font-weight':700}, svg, p ? 'Depois' : 'Antes');
+        el('text', {x:16, y:y + 40, 'font-size':12, fill:'#64748b', class:'sm'}, svg, p ? '2020–2024' : '2015–2019');
+        el('rect', {x:X0, y:y, width:sx(base) - X0, height:34, rx:4, style:'fill:color-mix(in srgb, var(--est) 18%, white); stroke:var(--est)'}, svg);
+        el('rect', {x:X0, y:y, width:sx(res) - X0, height:34, rx:4, style:'fill:' + (p ? 'var(--pos)' : 'var(--pre)') + '; transition:width .4s'}, svg);
+        if (c[1]){
+          el('text', {x:sx(base) + 8, y:y + 22, 'font-size':13, fill:'#0f172a', 'font-weight':700}, svg, fmt(base, 0) + ' → ' + fmt(res, 0) + ' dias');
+          msg.push(PER[p] + ', ' + fmt(-dd, 1) + ' dias a menos');
+        } else {
+          el('text', {x:sx(base) + 8, y:y + 22, 'font-size':13, fill:'#64748b', 'font-weight':700}, svg, 'sem efeito');
+          msg.push(PER[p] + ', sem efeito estatístico');
+        }
+        el('text', {x:X0 + 6, y:y + 54, 'font-size':12, fill:'#64748b'}, svg, 'coeficiente ' + raw(c[0]) + STARS[c[1]]);
+      });
+      el('line', {x1:X0, x2:X0, y1:30, y2:170, stroke:'#0f172a'}, svg);
+      $('ds-msg').innerHTML = '<strong>' + f.l + ' (' + f.u(+r.value) + '):</strong> ' + msg.join('; ') + '.' + (f.k === 'ALAV' ? ' A dívida só passou a acompanhar ciclos mais curtos depois da pandemia, num cenário de incerteza e juros altos.' : '');
+    }
+    function pick(i){
+      cur = i; var f = F[i];
+      each($('ds-chips').children, function(b){ b.setAttribute('aria-pressed', String(+b.dataset.i === i)); });
+      r.max = f.max; r.value = f.v; $('ds-l').textContent = f.l; draw();
+    }
+    each($('ds-chips').children, function(b){ b.addEventListener('click', function(){ pick(+b.dataset.i); }); });
+    r.addEventListener('input', draw);
+    pick(0);
+  })();
+
+  /* ================= 09 · CICLO E LUCRO ================= */
+  (function(){
+    var r = $('roa-r'), svg = $('roa-svg');
+    $('roa-tiles').innerHTML = [
+      ['Empresa maior', '↑ lucro', '***'], ['Mais endividamento', '↓ lucro', '***'], ['Vendas crescendo', '↑ lucro', '***']
+    ].map(function(t){ return '<span>' + t[0] + ': <b>' + t[1] + '</b> ' + t[2] + '</span>'; }).join('') + '<span>nos dois períodos (Tabelas 3.3 e 3.4)</span>';
+    function draw(){
+      var d = +r.value; $('roa-v').textContent = d + ' dias';
+      svg.innerHTML = '';
+      var X0 = 120, X1 = 520, MAX = 6, sx = function(v){ return X0 + (X1 - X0) * v / MAX; };
+      for (var v = 0; v <= MAX; v++){
+        el('line', {x1:sx(v), x2:sx(v), y1:24, y2:200, stroke:'#e2e8f0'}, svg);
+        el('text', {x:sx(v), y:220, 'font-size':12, 'text-anchor':'middle', fill:'#64748b'}, svg, v + '%');
+      }
+      el('text', {x:X1, y:240, 'font-size':12, 'text-anchor':'end', fill:'#64748b', class:'sm'}, svg, 'lucro sobre o ativo (ROA), média');
+      var gains = [];
+      [0, 1].forEach(function(p){
+        var base = MEAN3.roa[p] * 100, g = -A3.ccc[p][0] * d * 100, y = 40 + p * 86;
+        gains.push(g);
+        el('text', {x:16, y:y + 22, 'font-size':14, fill:'#0f172a', 'font-weight':700}, svg, p ? 'Depois' : 'Antes');
+        el('text', {x:16, y:y + 40, 'font-size':12, fill:'#64748b', class:'sm'}, svg, (p ? '2020–2024' : '2015–2019') + ' ' + STARS[A3.ccc[p][1]]);
+        el('rect', {x:X0, y:y, width:sx(base) - X0, height:34, rx:4, style:'fill:' + (p ? 'var(--pos)' : 'var(--pre)')}, svg);
+        el('rect', {x:sx(base), y:y, width:Math.max(0, sx(base + g) - sx(base)), height:34, style:'fill:var(--roa)'}, svg);
+        el('text', {x:sx(base + g) + 8, y:y + 22, 'font-size':13, fill:'#0f172a', 'font-weight':700}, svg, fmt(base, 1) + '% → ' + fmt(base + g, 2) + '%');
+      });
+      $('roa-msg').innerHTML = d ? '<strong>' + d + ' dias a menos no ciclo</strong> vêm junto com um ROA <strong>' + fmt(gains[0], 2) + ' ponto percentual</strong> maior antes da pandemia e <strong>' + fmt(gains[1], 2) + '</strong> depois. A direção é clara; o tamanho, modesto.' : 'Arraste para encurtar o ciclo.';
+    }
+    r.addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 10 · PRAZO A PRAZO ================= */
+  (function(){
+    var days = 30;
+    var G = [
+      {k:'pmr', n:'a receber', h:'Dias para receber do cliente'},
+      {k:'pme', n:'estoque', h:'Dias de estoque'},
+      {k:'pmp', n:'a pagar', h:'Dias para pagar o fornecedor'},
+      {k:'ccc', n:'ciclo', h:'Ciclo de caixa inteiro'}
+    ];
+    var eff = function(k, p){ return A3[k][p][0] * days * 100; };
+    var cur = 0;
+    var mark = pairScene($('pz-scene'), G, {
+      h:function(g, p){ return Math.abs(eff(g.k, p)) * 50; },
+      top:function(g, p){ return '−' + fmt(Math.abs(eff(g.k, p)), 2); },
+      pick:show
+    });
+    function show(i){
+      cur = i; mark(i); var g = G[i];
+      var t = '<div class="tag">' + days + ' dias a mais · ROA em pontos percentuais</div><h3>' + g.h + '</h3><p>Antes: <strong>' + sgn(eff(g.k, 0), 2) + '</strong> ' + STARS[A3[g.k][0][1]] + ' · Depois: <strong>' + sgn(eff(g.k, 1), 2) + '</strong> ' + STARS[A3[g.k][1][1]] + '</p>';
+      if (g.k === 'pmr') t += '<p>O efeito por dia ficou cerca de três vezes maior depois de 2020 (−0,000389 contra −0,000126 por dia).</p>';
+      if (g.k === 'pme') t += '<p>O menor efeito por dia. Depois de 2020, só com significância fraca (10%).</p>';
+      if (g.k === 'pmp') t += '<p>Pagar mais tarde veio junto com <strong>menos</strong> lucro, não mais. Veja na próxima tela.</p>';
+      if (g.k === 'ccc') t += '<p>O ciclo junta os três prazos, e o de pagamento entra com sinal de menos. Por isso o efeito por dia do ciclo é menor que o de cada prazo.</p>';
+      $('pz-panel').innerHTML = t;
+    }
+    function rescale(){
+      G.forEach(function(g){ g.els.forEach(function(b, p){
+        b.style.setProperty('--h', Math.max(3, Math.abs(eff(g.k, p)) * 50) + 'px');
+        b.querySelector('.top-label').textContent = '−' + fmt(Math.abs(eff(g.k, p)), 2);
+      }); });
+    }
+    each($('pz-seg').children, function(b){ b.addEventListener('click', function(){ days = +b.dataset.d; pressSet($('pz-seg'), 'd', b.dataset.d); rescale(); show(cur); }); });
+    rescale(); show(0);
+  })();
+
+  /* ================= 11 · APOSTAS ================= */
+  (function(){
+    var C = [
+      {k:'Artigo 3 · prazo de pagamento', q:'Quem paga o fornecedor mais tarde lucra mais?', a:'Não. Veio com menos lucro.', b:'30 dias a mais para pagar vieram com ROA 1,20 ponto menor antes e 1,29 depois (***). Pela lógica do ciclo, alongar esse prazo seria bom; a tese explica o contrário: empresas menos rentáveis demoram mais para pagar porque precisam do prazo.', rf:'Tabelas 3.3 e 3.4', c:'var(--red)'},
+      {k:'Artigo 3 · necessidade de capital', q:'Precisar de mais capital de giro reduz o lucro?', a:'Não. Veio com mais lucro.', b:'10 pontos percentuais a mais de necessidade de capital (sobre o ativo) vieram com ROA 0,57 ponto maior antes e 1,42 depois (***). Leitura do autor: empresas mais rentáveis dão menos atenção à eficiência do giro.', rf:'Tabelas 3.3 e 3.4 · conta nossa', c:'var(--navy)'},
+      {k:'Artigo 3 · valor de mercado', q:'A bolsa valoriza quem gira o dinheiro mais rápido?', a:'Não se viu.', b:'Nenhuma das cinco medidas do giro teve efeito estatístico no valor de mercado sobre o valor contábil (market-to-book), antes ou depois da pandemia. Com essa medida, o modelo explica muito pouco.', rf:'Tabelas 3.5 e 3.6', c:'#5b7bb5'},
+      {k:'Artigos 2 e 3 · a pandemia', q:'A pandemia inverteu alguma relação?', a:'Não. Mudou a intensidade.', b:'Nos modelos do lucro, nenhuma medida do giro inverteu o sinal entre os dois períodos. Mudou a força: o ciclo e o prazo de recebimento passaram a pesar mais depois de 2020. No artigo 2, endividamento e ativos fixos ganharam ou perderam significância.', rf:'Artigo 2 (Tab. 2.4–2.5) · artigo 3 (Tab. 3.3–3.4)', c:'#334155'}
+    ];
+    $('flips').innerHTML = C.map(function(c, i){
+      return '<button class="flip rv" style="--d:' + (0.15 + i * 0.05) + 's; --fcol:' + c.c + '" aria-pressed="false"><span class="in">' +
+        '<span class="fc"><span class="k">' + c.k + '</span><span class="nm">' + c.q + '</span><span class="q">Toque para ver o que a tese encontrou.</span><span class="rf">' + c.rf + '</span></span>' +
+        '<span class="bc"><span class="ans">' + c.a + '</span><span class="q">' + c.b + '</span></span></span></button>';
+    }).join('');
+    each($('flips').children, function(b){ b.addEventListener('click', function(){ b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true')); }); });
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
