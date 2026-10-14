@@ -1,0 +1,921 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O que faz uma operadora de saúde se endividar? · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Carmem Campos Pereira (PPGA Mackenzie, 2025) sobre o que pesa nas dívidas das operadoras de planos de saúde no Brasil, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2025-pereira-estrutura-capital-saude/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><rect x=%2213%22 y=%227%22 width=%226%22 height=%2218%22 fill=%22white%22/><rect x=%227%22 y=%2213%22 width=%2218%22 height=%226%22 fill=%22white%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em ../../assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  :root{
+    --div:var(--red);      /* dívida, mais endividamento */
+    --own:var(--navy);     /* ativo, recursos próprios, menos endividamento */
+    --res:#5b7bb5;         /* reserva técnica */
+    --fix:#334155;         /* ativos fixos */
+    --odo:#9aaac4;         /* planos odontológicos */
+    --off:#cbd5e1;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .sq{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4.4vw, 3rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:31em; margin-left:auto; margin-right:auto;}
+  #hero-scene .top-label{font-size:16px; font-weight:700; color:#fff;}
+  #hero-scene .floor-label{font-size:14px; white-space:nowrap;}
+  @media (max-width:600px){ #hero-scene .floor-label{font-size:18px;} }
+
+  /* ---------- Componentes comuns ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 20px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.05rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.9rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .segs{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:4px 0 12px;}
+  .segs small{font-size:.74rem; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.08em;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.4rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.76rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  details.tbl{margin-top:12px; font-size:.82rem; color:var(--ink-2);}
+  details.tbl summary{cursor:pointer; color:var(--muted); font-weight:600;}
+  details.tbl .wrap{overflow-x:auto; margin-top:8px;}
+  details.tbl table{border-collapse:collapse; width:100%; font-variant-numeric:tabular-nums;}
+  details.tbl th, details.tbl td{border-bottom:1px solid var(--border); padding:4px 6px; text-align:right; white-space:nowrap;}
+  details.tbl th:first-child, details.tbl td:first-child{text-align:left;}
+  .ctl{margin-top:12px;}
+  .ctl label{display:flex; justify-content:space-between; gap:10px; font-size:.86rem; font-weight:600; color:var(--ink);}
+  .ctl label span{font-variant-numeric:tabular-nums; color:var(--c, var(--red));}
+  .ctl small{font-size:.74rem; color:var(--muted);}
+  input[type=range]{width:100%; accent-color:var(--c, var(--red)); margin:6px 0 0;}
+  .svgbox{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .svgbox text{font-family:var(--sans);}
+  @media (max-width:600px){ .svgbox text{font-size:17px !important;} .svgbox text.sm{display:none;} }
+  .bars3d .slab{transition:transform .55s cubic-bezier(.2,.8,.2,1), opacity .5s, --h .6s;}
+  .bars3d .slab{cursor:pointer;}
+  .bars3d .slab.active{--oz:10px;}
+  /* opacidade nas faces, não na caixa: opacity na .slab achata o preserve-3d */
+  .bars3d .slab > i{transition:background .35s, box-shadow .35s, opacity .4s;}
+  .bars3d .slab.dim > i{opacity:.3;}
+  .bars3d .slab.gone > i{opacity:.06;}
+  .bars3d .slab.gone{pointer-events:none;}
+  .bars3d .top-label{color:#fff; font-size:15px;}
+  .bars3d .floor-label{font-size:15px; white-space:nowrap;}
+  @media (max-width:600px){ .bars3d .floor-label{font-size:19px;} .bars3d .top-label{font-size:18px;} }
+
+  /* ---------- 02 · Mensalidade ---------- */
+  .coins{display:grid; grid-template-columns:repeat(10, 1fr); gap:5px; max-width:360px; margin:4px auto 0;}
+  .coins i{aspect-ratio:1; border-radius:50%; background:var(--off); transition:background .35s;}
+  .coins i.on{background:var(--div);}
+  .coins i.over{background:repeating-linear-gradient(45deg, var(--div) 0 3px, #fff 3px 6px); box-shadow:inset 0 0 0 1.5px var(--div);}
+  #sin-out{font-family:var(--serif); font-size:1.15rem; color:var(--ink); margin-top:12px; min-height:3.2em; text-align:center;}
+  #sin-out b{color:var(--red);}
+  .coins-wrap{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px;}
+
+  /* ---------- 03 · Setor ---------- */
+  #mod-panel{min-height:84px; margin-top:4px; padding:12px 18px;}
+  #mod-chips{margin-bottom:8px;} #mod-chips .chip{padding:5px 12px; font-size:.8rem;}
+
+  /* ---------- 04 · Duas teorias ---------- */
+  #teo-panel{min-height:120px; margin-top:12px;}
+
+  /* ---------- 05 · Amostra ---------- */
+  .dotgrid{display:flex; flex-wrap:wrap; gap:2px; margin-top:6px;}
+  .dotgrid i{width:8px; height:8px; border-radius:50%; background:var(--off); transition:background .4s, opacity .4s;}
+  .dotgrid i.cut1{background:#e2e8f0;}
+  .dotgrid i.cut2{background:#94a3b8;}
+  .dotgrid i.cut3{background:transparent; box-shadow:inset 0 0 0 1px #94a3b8;}
+  .dotgrid i.keep{background:var(--own);}
+  @media (max-width:600px){ .dotgrid i{width:6px; height:6px;} }
+  .steps{display:grid; gap:6px; margin-top:6px;}
+  .step{display:grid; grid-template-columns:76px 1fr; gap:12px; align-items:center; text-align:left; border:1px solid var(--border); background:var(--card); border-radius:12px; padding:9px 14px; cursor:pointer; font:inherit; color:inherit; transition:all .2s;}
+  .step .num{font-family:var(--serif); font-weight:900; font-size:1.2rem; color:var(--muted); text-align:right;}
+  .step .t{display:block; font-weight:600; color:var(--ink); font-size:.88rem;}
+  .step .s{display:block; font-size:.76rem; color:var(--muted);}
+  .step[aria-pressed="true"]{border-color:var(--red); box-shadow:var(--shadow);}
+  .step[aria-pressed="true"] .num{color:var(--red);}
+  .years{display:grid; grid-template-columns:repeat(6, 1fr); gap:4px; margin-top:12px;}
+  .years span{background:var(--own); color:#fff; border-radius:6px; padding:6px 0; text-align:center; font-size:.78rem; font-weight:700;}
+  .years span.pan{background:var(--red);}
+
+  /* ---------- 06 · Três réguas ---------- */
+  #lev-panel{min-height:150px; margin-top:12px;}
+  @media (max-width:600px){ #bal-svg text.bt{font-size:14px !important;} }
+
+  /* ---------- 07 · Retrato ---------- */
+  #ret-panel{min-height:120px; margin-top:12px;}
+
+  /* ---------- 08 · Matriz ---------- */
+  #mx-scene .floor-label.row{text-align:right; font-size:15px;}
+  #mx-scene .floor-label.dim{opacity:.25;}
+  @media (max-width:600px){ #mx-scene .floor-label.row{font-size:20px;} }
+  #mx-panel{min-height:150px; margin-top:10px;}
+
+  /* ---------- 09 · Simulador ---------- */
+  #sim-msg{font-size:.86rem; color:var(--ink-2); margin-top:10px; min-height:2.8em;}
+
+  /* ---------- 10 · Depende da régua ---------- */
+  .plate{display:grid; grid-template-columns:minmax(0, 1.1fr) repeat(3, minmax(0, 1fr)); gap:6px; margin-top:6px;}
+  .plate .h{font-size:.72rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; text-align:center; align-self:end; line-height:1.25;}
+  .plate .rl{font-size:.86rem; font-weight:600; color:var(--ink); align-self:center;}
+  @media (max-width:600px){ .plate{grid-template-columns:minmax(0, .9fr) repeat(3, minmax(0, 1fr));} .plate .rl{font-size:.74rem; overflow-wrap:anywhere;} }
+  .cell{border:1px solid var(--border); background:var(--card); border-radius:12px; padding:10px 4px; text-align:center; cursor:pointer; font:inherit; color:var(--ink-2); transition:all .2s;}
+  .cell b{display:block; font-family:var(--serif); font-size:1.6rem; line-height:1.1;}
+  .cell small{font-size:.72rem; color:var(--muted);}
+  .cell.up b{color:var(--div);} .cell.dn b{color:var(--own);} .cell.ns b{color:var(--off);}
+  .cell[aria-pressed="true"]{border-color:var(--ink); box-shadow:var(--shadow);}
+  #dr-panel{min-height:140px; margin-top:12px;}
+
+  /* ---------- 11 · Apostas ---------- */
+  .flips{display:grid; grid-template-columns:1fr; gap:12px; margin-top:8px;}
+  @media (min-width:700px){ .flips{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .flips{grid-template-columns:repeat(3, 1fr);} }
+  .flip{perspective:900px; border:0; background:none; padding:0; text-align:left; cursor:pointer; font:inherit; color:inherit;}
+  .flip .in{display:block; position:relative; min-height:184px; transform-style:preserve-3d; transition:transform .6s cubic-bezier(.2,.8,.2,1);}
+  .flip[aria-pressed="true"] .in{transform:rotateY(180deg);}
+  .flip .fc, .flip .bc{display:block; position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:12px; padding:14px 16px; border:1px solid var(--border); border-top:5px solid var(--fcol); background:var(--card); box-shadow:var(--shadow); overflow:hidden;}
+  .flip .bc{transform:rotateY(180deg); background:color-mix(in srgb, var(--fcol) 6%, white);}
+  .flip .k{display:block; font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--fcol);}
+  .flip .nm{display:block; font-family:var(--serif); font-weight:700; font-size:1.02rem; color:var(--ink); margin:4px 0 6px;}
+  .flip .q{display:block; font-size:.8rem; color:var(--ink-2); line-height:1.45;}
+  .flip .rf{display:block; position:absolute; bottom:9px; left:16px; right:16px; font-size:.64rem; color:var(--muted);}
+  .flip .ans{display:block; font-family:var(--serif); font-weight:900; font-size:1.15rem; color:var(--fcol); margin-bottom:4px;}
+
+  /* ---------- 12 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:4px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.9rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:6px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:8px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2025-pereira-estrutura-capital-saude/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2025</div>
+      <h1 class="rv" style="--d:.1s">O que faz uma operadora de plano de saúde se endividar?</h1>
+      <p class="sub rv" style="--d:.2s">As operadoras recebem mensalidades e pagam consultas, exames e internações. Para financiar o resto, cada uma escolhe entre usar o próprio dinheiro ou tomar dívida. A tese acompanhou cerca de <strong>200 operadoras</strong> de 2018 a 2023 para ver o que pesa nessa escolha. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autora:</b> Carmem Campos Pereira</span>
+        <span><b>Orientador:</b> Prof. Dr. Wilson Toshiro Nakamura</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#mensalidade">Começar →</a>
+        <a class="btn ghost" href="#descoberta">Ir direto à descoberta</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="500x380" role="img" aria-label="Uma coluna alta representa o ativo da operadora média, 100; ao lado, três colunas baixas: reserva técnica 25, obrigações de longo prazo 16 e dívida 4"></div></div>
+      <p class="cap-legend">Para cada R$ 100 de ativo, a operadora média da amostra tinha R$ 25 de reserva técnica, R$ 16 de obrigações de longo prazo e R$ 4 de dívida. Médias da Tabela 38; são medidas diferentes, que não se somam.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximo</span>
+        <ul class="ods">
+          <li class="ods-3"><a href="https://brasil.un.org/pt-br/sdgs/3" target="_blank" rel="noopener" title="ODS 3 · Saúde e bem-estar: Estuda como se financiam as operadoras que pagam a assistência de mais de 50 milhões de beneficiários, informação útil para manter o setor solvente."><b>3</b>Saúde e bem-estar</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · A CONTA DA MENSALIDADE -->
+<section class="slide" id="mensalidade" data-label="A conta da mensalidade">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> A ideia</div>
+      <h2 class="rv" style="--d:.1s">De cada R$ 100 de mensalidade, cerca de R$ 75 voltam em consultas, exames e internações</h2>
+      <p class="lede rv" style="--d:.15s">É a <strong>sinistralidade</strong>: a parte do que a operadora recebe dos planos que vai para as despesas com a saúde dos beneficiários. O que sobra precisa pagar todo o resto da operação.</p>
+      <p class="rv" style="--d:.2s">Na amostra da tese, a sinistralidade média foi de 75%. Mas há operadoras que gastaram mais do que receberam. Escolha um caso.</p>
+      <div class="chips rv" id="sin-chips" style="--d:.25s" role="group" aria-label="Escolha um caso"></div>
+      <div class="ctl rv" style="--d:.3s"><label for="sin-r">Sinistralidade <span id="sin-v"></span></label><input type="range" id="sin-r" min="0" max="121" step="1" aria-describedby="sin-out"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="coins-wrap">
+        <div class="coins" id="coins" role="img" aria-label="Cem moedas, uma por real de mensalidade; as vermelhas são as que voltam em despesas com saúde"></div>
+        <div id="sin-out" aria-live="polite"></div>
+        <div class="legend" style="justify-content:center"><span><i class="dot" style="background:var(--div)"></i>vai para despesas com saúde</span><span><i class="dot" style="background:var(--off)"></i>sobra para o resto</span><span><i class="dot" style="background:repeating-linear-gradient(45deg, var(--div) 0 2px, #fff 2px 4px)"></i>além do que entrou</span></div>
+      </div>
+      <p class="note">Sinistralidade = despesas assistenciais ÷ receitas com planos de saúde. Valores da amostra de 2018 a 2023 (Tabela 38: mediana 77%, um quarto acima de 83%, máximo 121%). O valor do setor médico-hospitalar em 2023 (87%) é da ANS, citado na tese.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · O SETOR -->
+<section class="slide" id="setor" data-label="Um setor vigiado de perto">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> O contexto</div>
+      <h2 class="rv" style="--d:.1s">Mais de 80 milhões de vínculos, e uma agência de olho nas contas</h2>
+      <p class="lede rv" style="--d:.15s">O mercado de planos tem <strong>mais de 1.200 empresas</strong>, em oito modalidades. Todas respondem à <strong>Agência Nacional de Saúde Suplementar (ANS)</strong>, que acompanha seus números e exige <strong>reservas técnicas</strong>: dinheiro guardado para honrar o atendimento já prometido.</p>
+      <p class="rv" style="--d:.2s">A operadora precisa atender a ANS, que quer solvência, e os investidores, que querem retorno. Toque numa modalidade.</p>
+      <div class="chips rv" id="mod-chips" style="--d:.25s" role="group" aria-label="Modalidades de operadora"></div>
+      <div class="panel rv" id="mod-panel" style="--d:.3s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="ben-svg" class="svgbox" viewBox="0 0 560 270" role="img" aria-label="Beneficiários de planos de assistência médica e de planos só odontológicos, de 2014 a 2024"></svg>
+      <div class="legend"><span><i class="sq" style="background:var(--own)"></i>assistência médica (com ou sem odontologia)</span><span><i class="sq" style="background:var(--odo)"></i>só odontológicos</span><span>toque num ano</span></div>
+      <div class="stats" id="ben-stats"></div>
+      <p class="note">Beneficiários em dezembro de cada ano (2024: setembro), Tabela 24 (SIB/ANS). Uma pessoa pode ter os dois tipos de plano, por isso falamos em vínculos; a soma dos dois (83 milhões em 2023) é <b>conta nossa</b>. As modalidades estão descritas na Introdução da tese.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · DUAS TEORIAS -->
+<section class="slide" id="teorias" data-label="Duas teorias">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> As teorias</div>
+      <h2 class="rv" style="--d:.1s">Duas teorias dão conselhos opostos sobre o lucro</h2>
+      <p class="lede rv" style="--d:.15s">Tomar dívida ou usar o próprio dinheiro? As finanças têm duas explicações clássicas, e a tese testa as duas nas operadoras.</p>
+      <div class="segs rv" style="--d:.2s"><div class="seg" id="teo-seg" role="group" aria-label="Escolha a teoria"><button data-t="to" aria-pressed="true">Trade-off (equilíbrio)</button><button data-t="po" aria-pressed="false">Pecking order (fila)</button></div></div>
+      <div class="panel rv" id="teo-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="teo-svg" class="svgbox" viewBox="0 0 560 330" role="img" aria-label="Esquema da teoria escolhida"></svg>
+      <p class="note"><b>Esquema ilustrativo</b>, sem dados. As previsões de cada teoria vêm das seções 1.1 e 1.7 da tese (Myers, 1984; Myers e Majluf, 1984). Para a sinistralidade e a reserva técnica, a tese admite os dois sinais (Tabela 37).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · A AMOSTRA -->
+<section class="slide" id="amostra" data-label="Como a pesquisa olhou">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Como a pesquisa olhou</div>
+      <h2 class="rv" style="--d:.1s">De 1.292 operadoras, ficaram cerca de 200 com contas comparáveis</h2>
+      <p class="lede rv" style="--d:.15s">A autora usou os balanços que as operadoras entregam à ANS, ano a ano, de 2018 a 2023, e comparou a mesma operadora ao longo do tempo (análise de <strong>dados em painel</strong>).</p>
+      <div class="steps rv" id="steps" style="--d:.2s" role="group" aria-label="Etapas da seleção"></div>
+      <div class="years rv" style="--d:.3s" aria-label="Seis anos de dados, com a pandemia a partir de 2020"><span>2018</span><span>2019</span><span class="pan">2020</span><span class="pan">2021</span><span>2022</span><span>2023</span></div>
+      <p class="legend rv" style="--d:.32s"><span><i class="sq" style="background:var(--red)"></i>anos de pandemia de covid-19 no período</span></p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel">
+        <div class="dotgrid" id="pop-dots" role="img" aria-label="1.292 pontos, um por operadora cadastrada na ANS"></div>
+        <div class="legend" id="pop-leg"></div>
+      </div>
+      <p class="note">Tabela 35 e Tabela 40. A tabela da amostra lista dois filtros (722 e 54 operadoras); os demais cortes até chegar a 200 não são detalhados (1.292 − 722 − 54 = 516, <b>conta nossa</b>). Valores extremos foram aparados (winsorização a 1% e 99%) sem excluir registros.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · TRÊS RÉGUAS -->
+<section class="slide" id="reguas" data-label="Três réguas de dívida">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> O que foi medido</div>
+      <h2 class="rv" style="--d:.1s">Três réguas para medir a dívida, e em duas delas quase não há dívida</h2>
+      <p class="lede rv" style="--d:.15s">"Quanto a operadora deve" depende do que se conta. A tese usou três medidas de <strong>alavancagem</strong>, todas como fatia do ativo. Escolha uma régua e veja o que ela pega no balanço.</p>
+      <div class="segs rv" style="--d:.2s"><div class="seg" id="lev-seg" role="group" aria-label="Escolha a régua"><button data-l="0" aria-pressed="true">Dívida líquida</button><button data-l="1" aria-pressed="false">Dívida total</button><button data-l="2" aria-pressed="false">Longo prazo</button></div></div>
+      <div class="panel rv" id="lev-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="bal-svg" class="svgbox" viewBox="0 0 560 300" role="img" aria-label="Balanço esquemático de uma operadora, com o ativo à esquerda e as obrigações e o patrimônio à direita; a régua escolhida fica destacada"></svg>
+      <p class="note"><b>Balanço ilustrativo</b>: os tamanhos dos blocos não são dados. As fórmulas são da Tabela 36 e os números do painel, da Tabela 38 (1.138 a 1.145 registros).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · O RETRATO -->
+<section class="slide" id="retrato" data-label="O retrato das operadoras">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> O retrato · cerca de 1.100 registros</div>
+      <h2 class="rv" style="--d:.1s">Operadoras muito diferentes entre si</h2>
+      <p class="lede rv" style="--d:.15s">Além da dívida, a tese mediu quatro características de cada operadora em cada ano. Elas variam muito: há quem tenha prejuízo e quem lucre metade do ativo; quem quase não tenha prédios e equipamentos e quem tenha dois terços do ativo neles.</p>
+      <div class="chips rv" id="ret-chips" style="--d:.2s" role="group" aria-label="Escolha a característica"></div>
+      <div class="panel rv" id="ret-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="ret-svg" class="svgbox" viewBox="0 0 560 330" role="img" aria-label="Distribuição de quatro características: a faixa mostra onde fica a metade do meio das operadoras, o traço a mediana e o ponto a média"></svg>
+      <div class="legend"><span><i class="sq" style="background:var(--navy)"></i>metade do meio (do 1º ao 3º quartil)</span><span>| mediana</span><span><i class="dot" style="background:var(--red)"></i>média</span><span>linha fina: mínimo a máximo</span></div>
+      <p class="note">Tabela 38 (estatística descritiva, 2018–2023, valores aparados a 1% e 99%). Todas as medidas como fatia do ativo, exceto a sinistralidade, que é fatia da receita com planos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · A MATRIZ DOS RESULTADOS -->
+<section class="slide" id="resultados" data-label="Os resultados">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Os resultados · 191 operadoras · 6 modelos</div>
+      <h2 class="rv" style="--d:.1s">Dois fatores apontam na mesma direção em todas as réguas</h2>
+      <p class="lede rv" style="--d:.15s">A autora estimou seis modelos: cada régua de dívida, com e sem o tipo de plano que a operadora vende. Lucro e ativos fixos deram o mesmo sinal nos seis; os demais mudam de régua para régua. Toque num bloco.</p>
+      <div class="segs rv" style="--d:.25s"><small>Modelo</small><div class="seg" id="mx-seg" role="group" aria-label="Modelo"><button data-v="0" aria-pressed="true">Básico</button><button data-v="1" aria-pressed="false">Com o tipo de plano</button></div></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable bars3d" id="mx-scene" data-fit="540x360" role="img" aria-label="Matriz 3D: seis fatores por três réguas de dívida; a altura mostra a força estatística e a cor, a direção"></div></div>
+      <div class="legend"><span><i class="sq" style="background:var(--div)"></i>mais dívida</span><span><i class="sq" style="background:var(--own)"></i>menos dívida</span><span><i class="sq" style="background:var(--off)"></i>sem efeito estatístico</span><span>altura = força estatística (* a ***)</span></div>
+      <div class="panel" id="mx-panel" aria-live="polite"></div>
+      <details class="tbl"><summary>Ver os coeficientes em tabela</summary><div class="wrap"><table id="mx-tbl"></table></div></details>
+      <p class="note">Tabela 40. Efeitos fixos (cada operadora comparada com ela mesma) nas réguas líquida e de longo prazo; efeitos aleatórios na dívida total, como indicou o teste de Hausman. R² de 11% a 27%. Associação, não causa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · A DESCOBERTA -->
+<section class="slide" id="descoberta" data-label="A descoberta">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> A descoberta</div>
+      <h2 class="rv" style="--d:.1s">Quem lucra mais deve menos; quem tem mais prédios e equipamentos deve mais</h2>
+      <p class="lede rv" style="--d:.15s">As duas teorias aparecem juntas. O <strong>lucro</strong> segue a fila (pecking order): quem gera mais resultado usa o próprio dinheiro e deve menos. Os <strong>ativos fixos</strong> seguem o equilíbrio (trade-off): servem de garantia e vêm com mais dívida.</p>
+      <p class="rv" style="--d:.2s">Escolha um fator e aumente-o, partindo da operadora média.</p>
+      <div class="chips rv" id="sim-chips" style="--d:.25s" role="group" aria-label="Escolha o fator"></div>
+      <div class="ctl rv" style="--d:.3s"><label for="sim-r"><span id="sim-l" style="color:var(--ink)"></span><span id="sim-v"></span></label><input type="range" id="sim-r" min="0" max="30" step="1" value="12" aria-describedby="sim-msg"><small id="sim-hint"></small></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="sim-svg" class="svgbox" viewBox="0 0 560 250" role="img" aria-label="Dívida total e obrigações de longo prazo da operadora média e como mudam com o fator escolhido"></svg>
+      <div id="sim-msg" aria-live="polite"></div>
+      <p class="note"><b>Conta nossa.</b> Parte das médias da Tabela 38 (dívida total 4% e longo prazo 16% do ativo) e aplica os coeficientes dos modelos básicos da Tabela 40 (3 e 5), mantido o resto igual. A régua da dívida líquida tem outra escala e fica de fora da conta, mas aponta na mesma direção. Mostra associação, não causa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · DEPENDE DA RÉGUA -->
+<section class="slide" id="setoriais" data-label="Os fatores do setor">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Os fatores do setor</div>
+      <h2 class="rv" style="--d:.1s">Sinistralidade e reserva técnica: depende da régua</h2>
+      <p class="lede rv" style="--d:.15s">Os dois fatores próprios das operadoras não deram um sinal só. Na régua da <strong>dívida total</strong>, nenhum dos dois teve efeito. Nas outras duas, a sinistralidade veio com mais dívida, e a reserva técnica trocou de sinal.</p>
+      <p class="rv" style="--d:.2s">Toque num quadro para ler o resultado e a explicação da autora.</p>
+      <div class="segs rv" style="--d:.25s"><small>Modelo</small><div class="seg" id="dr-seg" role="group" aria-label="Modelo"><button data-v="0" aria-pressed="true">Básico</button><button data-v="1" aria-pressed="false">Com o tipo de plano</button></div></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="plate" id="plate"></div>
+      <div class="panel" id="dr-panel" aria-live="polite"></div>
+      <p class="note">Tabela 40. Setas: ↑ mais dívida, ↓ menos dívida, — sem efeito estatístico. Estrelas: significância a 10% (*), 5% (**) e 1% (***). As explicações são da autora (seções 5.3 e 6.2).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · APOSTAS -->
+<section class="slide" id="apostas" data-label="Faça sua aposta">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> Teste sua intuição</div>
+    <h2 class="rv" style="--d:.1s">Nem tudo o que parecia óbvio se confirmou</h2>
+    <p class="lede rv" style="--d:.15s">Faça sua aposta e vire o cartão. Respostas pela Tabela 40, nos três modelos com o tipo de plano.</p>
+    <div class="flips" id="flips"></div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Na prática, limites e créditos</div>
+    <h2 class="rv" style="--d:.1s">Dívida, lucro e regulação andam juntos na saúde suplementar</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Gestores das operadoras</h3><p>A autora recomenda gerir de perto a sinistralidade e as reservas técnicas, equilibrando a estrutura de capital com a sustentabilidade financeira.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>ANS e reguladores</h3><p>Para a autora, as regras de reservas garantem a continuidade do atendimento, mas pesam mais em operadoras menores; ela sugere normas que considerem as diferenças entre operadoras.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--res)"><h3>Investidores</h3><p>Leitura nossa: lucro operacional e ativos fixos são os sinais mais estáveis do endividamento de uma operadora: deram o mesmo sinal nos seis modelos.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:var(--ink-2)"><h3>Pesquisadores</h3><p>A autora sugere entrevistas com gestores e reguladores, períodos mais longos, comparação por porte e o efeito de tecnologias como a telemedicina.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Só números de balanço:</b> dados secundários da ANS, sem as razões dos gestores por trás das decisões. <em>· segundo a autora</em></li>
+          <li><b>Seis anos (2018–2023)</b>, com a pandemia no meio: pouco para ver efeitos de longo prazo. <em>· segundo a autora</em></li>
+          <li><b>Ficaram de fora</b> as operadoras com ativo abaixo de R$ 1 milhão e as com patrimônio negativo, que podem se endividar de outro jeito. <em>· segundo a autora</em></li>
+          <li><b>Associação, não causa,</b> e boa parte da variação da dívida (73% a 89%) fica sem explicação nos modelos. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          PEREIRA, Carmem Campos. <em>Determinantes de estrutura de capital no setor de saúde do Brasil.</em> Tese (Doutorado em Administração de Empresas) — Universidade Presbiteriana Mackenzie, São Paulo, 2025. Orientador: Prof. Dr. Wilson Toshiro Nakamura.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Dados da Agência Nacional de Saúde Suplementar (ANS). Esta versão simplifica o trabalho para o público em geral; as fórmulas e as tabelas completas estão no texto original.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent, text){
+    var e = document.createElementNS(SVGNS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (text !== undefined) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function th(n){ return n.toLocaleString(M.lang === 'en' ? 'en-US' : 'pt-BR'); }
+  function raw(n){ var t = String(Math.abs(n)); return (n < 0 ? '−' : n > 0 ? '+' : '') + (M.lang === 'en' ? t : t.replace('.', ',')); }
+  function pressSet(group, attr, val){ each(group.children, function(b){ b.setAttribute('aria-pressed', String(b.dataset[attr] === val)); }); }
+  var STARS = ['', '*', '**', '***'];
+  var SIGTXT = ['sem significância estatística', 'significância fraca (10%)', 'significativo a 5%', 'significativo a 1%'];
+
+  /* ================= DADOS DA TESE ================= */
+  // Tabela 38: [N, média, p25, p50, p75, mín, máx] (frações)
+  var DESC = {
+    lev1:[1145, -1.64, -1.42, -0.68, -0.31, -29.58, 0.16],
+    lev2:[1145, 0.04, 0.00, 0.00, 0.05, 0.00, 0.36],
+    lev3:[1138, 0.16, 0.07, 0.14, 0.23, 0.00, 0.60],
+    sin:[1143, 0.75, 0.70, 0.77, 0.83, 0.00, 1.21],
+    res:[1130, 0.25, 0.16, 0.23, 0.32, 0.04, 0.74],
+    roa:[1145, 0.05, -0.01, 0.05, 0.11, -0.37, 0.51],
+    tan:[1109, 0.17, 0.03, 0.12, 0.29, 0.00, 0.64]
+  };
+  // Tabela 24: beneficiários (milhões) [ano, assistência médica, só odontológicos]; 2024 = setembro
+  var BEN = [[2014, 50.531748, 20.081836], [2015, 49.279085, 20.780720], [2016, 47.685266, 21.181491], [2017, 47.144909, 22.271134], [2018, 47.122155, 24.033193], [2019, 47.076596, 25.336520], [2020, 47.468971, 25.905267], [2021, 48.820702, 28.112547], [2022, 50.066425, 30.033457], [2023, 50.801802, 32.393673], [2024, 51.481212, 34.046045]];
+  // Tabela 40: [coeficiente, estrelas] por modelo M1..M6 (réguas: M1-M2 dívida líquida, M3-M4 dívida total, M5-M6 longo prazo); null = fora do modelo
+  var T40 = {
+    sin:[[2.31, 3], [1.16, 1], [0.007, 0], [0.007, 0], [0.04, 1], [0.016, 1]],
+    res:[[2.829, 3], [2.82, 3], [-0.018, 0], [-0.018, 0], [-0.09, 2], [-0.094, 2]],
+    odo:[null, [-10.29, 3], null, [0.007, 0], null, [-0.21, 3]],
+    sau:[null, [0.53, 0], null, [0.008, 0], null, [0.011, 0]],
+    tan:[[2.248, 1], [2.38, 2], [0.24, 3], [0.24, 3], [0.29, 3], [0.29, 3]],
+    roa:[[-2.151, 3], [-1.25, 2], [-0.05, 3], [-0.05, 3], [-0.130, 3], [-0.12, 3]]
+  };
+  var R2 = ['11,65%', '10,87%', '27,21%', '11,65%', '16,54%', '18,14%'];
+  var LEVS = [
+    {n:'Dívida líquida', s:'dívida líquida'},
+    {n:'Dívida total', s:'dívida total'},
+    {n:'Longo prazo', s:'longo prazo'}
+  ];
+  var VARS = [
+    {k:'sin', n:'Sinistralidade', d:'despesas com saúde sobre a receita dos planos', cont:true},
+    {k:'res', n:'Reserva técnica', d:'reservas técnicas sobre o ativo', cont:true},
+    {k:'odo', n:'Planos odontológicos', d:'1 se a operadora tem receita de planos só odontológicos', cont:false},
+    {k:'sau', n:'Planos médicos', d:'1 se a operadora tem receita de planos de assistência médica', cont:false},
+    {k:'tan', n:'Ativos fixos', d:'prédios, equipamentos e outros ativos fixos sobre o ativo (tangibilidade)', cont:true},
+    {k:'roa', n:'Lucro (ROA)', d:'lucro operacional antes de juros e impostos sobre o ativo', cont:true}
+  ];
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene');
+    var W = 460, D = 200, k = 2.3;
+    var st = makeStage(sc, W, D, {ay:'72%', rx:'60deg'});
+    var bw = 92, y = 60;
+    // ativo: ativos fixos (17) na base + o resto (83)
+    st.appendChild(box({w:118, d:bw, h:17 * k, x:20, y:y, c:'var(--fix)'}));
+    st.appendChild(box({w:118, d:bw, h:83 * k, x:20, y:y, z:17 * k, c:'var(--own)', top:'ativo 100'}));
+    var R = [[25, 'var(--res)', 'reserva técnica'], [16, 'color-mix(in srgb, var(--div) 55%, white)', 'longo prazo'], [4, 'var(--div)', 'dívida']];
+    R.forEach(function(r, i){
+      var x = 180 + i * 96;
+      st.appendChild(box({w:72, d:72, h:r[0] * k, x:x, y:y + 10, c:r[1], top:String(r[0])}));
+      flatLabel(st, r[2], x - 20, y + 92 + (i % 2) * 22, 112, '');
+    });
+    flatLabel(st, 'ativo (17 fixos)', 0, y + 102, 160, '');
+    rotatable(sc, st, -10, 8);
+  })();
+
+  /* ================= 02 · A CONTA DA MENSALIDADE ================= */
+  (function(){
+    var CASES = [['Média da amostra', 75], ['Mediana', 77], ['3º quartil', 83], ['Setor médico-hospitalar 2023', 87], ['Máximo da amostra', 121]];
+    var coins = $('coins'), r = $('sin-r'), cs = [];
+    for (var i = 0; i < 100; i++){ var c = document.createElement('i'); coins.appendChild(c); cs.push(c); }
+    $('sin-chips').innerHTML = CASES.map(function(c, i){ return '<button class="chip" data-i="' + i + '">' + c[0] + ' (' + c[1] + '%)</button>'; }).join('');
+    function draw(fromChip){
+      var v = +r.value;
+      $('sin-v').textContent = v + '%';
+      cs.forEach(function(c, i){ c.className = i < Math.min(v, 100) ? 'on' : ''; if (v > 100 && i < v - 100) c.className = 'over'; });
+      $('sin-out').innerHTML = v > 100 ? 'Gastou <b>R$ ' + v + '</b> para cada R$ 100 recebidos: faltaram <b>R$ ' + (v - 100) + '</b>.' : 'Saem <b>R$ ' + v + '</b> em despesas com saúde; sobram <b>R$ ' + (100 - v) + '</b> para salários, impostos, sistemas e lucro.';
+      if (!fromChip) each($('sin-chips').children, function(b){ b.setAttribute('aria-pressed', String(CASES[+b.dataset.i][1] === v)); });
+    }
+    each($('sin-chips').children, function(b){ b.addEventListener('click', function(){ r.value = CASES[+b.dataset.i][1]; pressSet($('sin-chips'), 'i', b.dataset.i); draw(true); }); });
+    r.addEventListener('input', function(){ draw(false); });
+    r.value = 75; draw(false);
+  })();
+
+  /* ================= 03 · O SETOR ================= */
+  (function(){
+    var MOD = [
+      ['Autogestão', 'Criada por funcionários de uma mesma empresa ou instituição para oferecer planos só aos seus membros.'],
+      ['Cooperativa médica', 'Formada por médicos, que oferecem serviços de saúde aos associados.'],
+      ['Filantropia', 'Instituição sem fins lucrativos que oferece serviços de saúde à população carente.'],
+      ['Medicina de grupo', 'Empresa que oferece planos com uma rede própria de prestadores.'],
+      ['Odontologia de grupo', 'Empresa que oferece planos odontológicos com rede própria.'],
+      ['Seguradora especializada em saúde', 'Seguradora que oferece planos de saúde a pessoas e empresas.'],
+      ['Seguradora com planos de saúde', 'Seguradora que oferece planos de saúde como produto adicional.'],
+      ['Operadora de planos de saúde', 'Empresa que vende planos de saúde a pessoas físicas e jurídicas.']
+    ];
+    $('mod-chips').innerHTML = MOD.map(function(m, i){ return '<button class="chip" data-i="' + i + '">' + m[0] + '</button>'; }).join('');
+    function showMod(i){ pressSet($('mod-chips'), 'i', String(i)); $('mod-panel').innerHTML = '<div class="tag">Modalidade ' + (i + 1) + ' de 8</div><h3>' + MOD[i][0] + '</h3><p>' + MOD[i][1] + '</p>'; }
+    each($('mod-chips').children, function(b){ b.addEventListener('click', function(){ showMod(+b.dataset.i); }); });
+    showMod(0);
+
+    var svg = $('ben-svg'), X0 = 50, X1 = 530, Y0 = 228, H = 190, MAX = 60, n = BEN.length;
+    var sx = function(i){ return X0 + (X1 - X0) * i / (n - 1); }, sy = function(v){ return Y0 - v / MAX * H; };
+    var sel = 9;
+    function draw(){
+      svg.innerHTML = '';
+      el('rect', {x:sx(4) - 12, y:Y0 - H - 6, width:sx(9) - sx(4) + 24, height:H + 6, rx:6, fill:'#f1f5f9'}, svg);
+      el('text', {x:(sx(4) + sx(9)) / 2, y:Y0 - H + 10, 'font-size':12, 'text-anchor':'middle', fill:'#64748b', class:'sm'}, svg, 'período da tese');
+      [0, 20, 40, 60].forEach(function(v){
+        el('line', {x1:X0, x2:X1, y1:sy(v), y2:sy(v), stroke:'#e2e8f0'}, svg);
+        el('text', {x:X0 - 8, y:sy(v) + 4, 'font-size':12, 'text-anchor':'end', fill:'#64748b'}, svg, v);
+      });
+      el('text', {x:X0 - 8, y:sy(60) - 12, 'font-size':12, 'text-anchor':'start', fill:'#64748b', class:'sm'}, svg, 'milhões');
+      [[1, 'var(--own)'], [2, 'var(--odo)']].forEach(function(s){
+        el('polyline', {points:BEN.map(function(b, i){ return sx(i) + ',' + sy(b[s[0]]); }).join(' '), fill:'none', style:'stroke:' + s[1], 'stroke-width':3.5}, svg);
+        BEN.forEach(function(b, i){ el('circle', {cx:sx(i), cy:sy(b[s[0]]), r:i === sel ? 7 : 4, style:'fill:' + s[1], stroke:'#fff', 'stroke-width':1.5}, svg); });
+      });
+      BEN.forEach(function(b, i){
+        el('text', {x:sx(i), y:Y0 + 20, 'font-size':12, 'text-anchor':'middle', fill:i === sel ? '#0f172a' : '#64748b', 'font-weight':i === sel ? 700 : 400}, svg, (i % 2 === 0 || window.innerWidth > 600 || i === sel) ? (b[0] === 2024 ? 'set/24' : b[0]) : '');
+        var hit = el('rect', {x:sx(i) - 20, y:Y0 - H, width:40, height:H + 28, fill:'transparent', style:'cursor:pointer'}, svg);
+        hit.addEventListener('click', function(){ sel = i; draw(); });
+      });
+      var b = BEN[sel];
+      el('text', {x:sx(sel), y:sy(b[1]) - 14, 'font-size':13, 'text-anchor':'middle', fill:'#0f172a', 'font-weight':700}, svg, fmt(b[1], 1));
+      el('text', {x:sx(sel), y:sy(b[2]) + 24, 'font-size':13, 'text-anchor':'middle', fill:'#0f172a', 'font-weight':700}, svg, fmt(b[2], 1));
+      $('ben-stats').innerHTML = '<div class="stat"><b>' + fmt(b[1], 1) + ' mi</b><span>em planos de assistência médica (' + (b[0] === 2024 ? 'set/2024' : 'dez/' + b[0]) + ')</span></div><div class="stat"><b>' + fmt(b[2], 1) + ' mi</b><span>em planos só odontológicos</span></div><div class="stat"><b>1.200+</b><span>empresas no mercado, em 8 modalidades</span></div>';
+    }
+    draw();
+  })();
+
+  /* ================= 04 · DUAS TEORIAS ================= */
+  (function(){
+    var svg = $('teo-svg');
+    var TEO = {
+      to:{tag:'Trade-off · equilíbrio', h:'Dívida até o ponto em que o custo empata com o benefício',
+        p:'Os juros da dívida reduzem o imposto a pagar; esse é o benefício. Mas dívida demais aumenta o risco de quebra; esse é o custo. A empresa buscaria o ponto de equilíbrio entre os dois.',
+        e:'<strong>O que espera:</strong> quem tem mais <strong>ativos fixos</strong> (prédios, equipamentos) pode oferecê-los como garantia e <strong>deve mais</strong>. Quem lucra pouco aproveita pouco o desconto no imposto e deve menos.'},
+      po:{tag:'Pecking order · fila', h:'Primeiro o próprio dinheiro, depois a dívida, por último novas ações',
+        p:'Quem está de fora sabe menos sobre a empresa do que quem a dirige. Vender ações novas pode soar como sinal de que estão caras. Por isso a empresa segue uma fila: usa o caixa que gera, depois toma dívida e só por último emite ações.',
+        e:'<strong>O que espera:</strong> quem <strong>lucra mais</strong> tem caixa próprio e <strong>deve menos</strong>; quem lucra pouco precisa se endividar.'}
+    };
+    function drawTO(){
+      var X0 = 60, X1 = 520, Y0 = 270;
+      el('line', {x1:X0, x2:X1, y1:Y0, y2:Y0, stroke:'#0f172a'}, svg);
+      el('line', {x1:X0, x2:X0, y1:40, y2:Y0, stroke:'#0f172a'}, svg);
+      el('text', {x:X1, y:Y0 + 24, 'font-size':13, 'text-anchor':'end', fill:'#334155'}, svg, 'mais dívida →');
+      el('text', {x:X0 + 6, y:36, 'font-size':13, fill:'#334155'}, svg, 'valor da empresa');
+      var pts = [], best = 0, bx = 0;
+      for (var i = 0; i <= 40; i++){
+        var d = i / 40, v = 0.55 * d - 0.62 * d * d * d * 1.4;
+        pts.push([X0 + d * (X1 - X0), Y0 - 120 - v * 260]);
+        if (v > best){ best = v; bx = i; }
+      }
+      el('polyline', {points:pts.map(function(p){ return p.join(','); }).join(' '), fill:'none', style:'stroke:var(--navy)', 'stroke-width':4}, svg);
+      var b = pts[bx];
+      el('line', {x1:b[0], x2:b[0], y1:b[1], y2:Y0, stroke:'#e80734', 'stroke-dasharray':'4 4', 'stroke-width':2}, svg);
+      el('circle', {cx:b[0], cy:b[1], r:8, fill:'#e80734'}, svg);
+      el('text', {x:b[0], y:b[1] - 16, 'font-size':14, 'text-anchor':'middle', fill:'#e80734', 'font-weight':700}, svg, 'ponto de equilíbrio');
+      el('text', {x:X0 + 20, y:Y0 - 40, 'font-size':13, fill:'#1f3b73', 'font-weight':600}, svg, '+ desconto no imposto');
+      el('text', {x:X1 - 10, y:Y0 - 40, 'font-size':13, 'text-anchor':'end', fill:'#1f3b73', 'font-weight':600}, svg, '− risco de quebra');
+    }
+    function drawPO(){
+      var S = [['1º', 'Caixa gerado pela operação', 'var(--navy)'], ['2º', 'Dívida (empréstimos)', 'var(--red)'], ['3º', 'Emissão de novas ações', '#94a3b8']];
+      S.forEach(function(s, i){
+        var x = 50 + i * 160, w = 150, h = 92 + i * 70, y = 286 - h;
+        el('rect', {x:x, y:y, width:w, height:h, rx:8, style:'fill:' + s[2]}, svg);
+        el('text', {x:x + 14, y:y + 34, 'font-size':24, fill:'#fff', 'font-weight':900, 'font-family':'Merriweather, Georgia, serif'}, svg, s[0]);
+        var words = s[1].split(' '), l1 = [], l2 = [];
+        words.forEach(function(w2){ (l1.join(' ').length + w2.length < 14 ? l1 : l2).push(w2); });
+        el('text', {x:x + 14, y:y + 58, 'font-size':13, fill:'#fff', 'font-weight':600}, svg, l1.join(' '));
+        if (l2.length) el('text', {x:x + 14, y:y + 76, 'font-size':13, fill:'#fff', 'font-weight':600}, svg, l2.join(' '));
+      });
+      el('text', {x:280, y:314, 'font-size':13, 'text-anchor':'middle', fill:'#334155'}, svg, 'cada degrau é mais caro e mais difícil que o anterior');
+    }
+    function show(t){
+      pressSet($('teo-seg'), 't', t);
+      var v = TEO[t];
+      $('teo-panel').innerHTML = '<div class="tag">' + v.tag + '</div><h3>' + v.h + '</h3><p>' + v.p + '</p><p>' + v.e + '</p>';
+      svg.innerHTML = '';
+      if (t === 'to') drawTO(); else drawPO();
+    }
+    each($('teo-seg').children, function(b){ b.addEventListener('click', function(){ show(b.dataset.t); }); });
+    show('to');
+  })();
+
+  /* ================= 05 · A AMOSTRA ================= */
+  (function(){
+    var N = 1292, A = 722, B = 54, F = 200;
+    var dots = $('pop-dots'), ds = [];
+    for (var i = 0; i < N; i++){ var d = document.createElement('i'); dots.appendChild(d); ds.push(d); }
+    var STEPS = [
+      {num:'1.292', t:'Operadoras cadastradas na ANS', s:'a população de partida'},
+      {num:'− 722', t:'Ativo abaixo de R$ 1 milhão', s:'operadoras muito pequenas'},
+      {num:'− 54', t:'Patrimônio líquido negativo', s:'sem indicadores comparáveis'},
+      {num:'200', t:'Amostra final', s:'191 entram nos modelos, com 1.095 registros anuais'}
+    ];
+    $('steps').innerHTML = STEPS.map(function(s, i){ return '<button class="step" data-i="' + i + '" aria-pressed="false"><span class="num">' + s.num + '</span><span><span class="t">' + s.t + '</span><span class="s">' + s.s + '</span></span></button>'; }).join('');
+    function show(k){
+      pressSet($('steps'), 'i', String(k));
+      ds.forEach(function(d, i){
+        var c = '';
+        if (k >= 1 && i < A) c = 'cut1';
+        else if (k >= 2 && i < A + B) c = 'cut2';
+        else if (k >= 3 && i < N - F) c = 'cut3';
+        else if (k >= 3) c = 'keep';
+        d.className = c;
+      });
+      var L = ['<span><i class="dot" style="background:var(--off)"></i>operadora na base da ANS</span>'];
+      if (k >= 1) L.push('<span><i class="dot" style="background:#e2e8f0"></i>ativo &lt; R$ 1 mi (722)</span>');
+      if (k >= 2) L.push('<span><i class="dot" style="background:#94a3b8"></i>patrimônio negativo (54)</span>');
+      if (k >= 3){ L.push('<span><i class="dot" style="box-shadow:inset 0 0 0 1px #94a3b8"></i>outros cortes não detalhados (316)</span>'); L.push('<span><i class="dot" style="background:var(--own)"></i>amostra final (200)</span>'); L.shift(); }
+      $('pop-leg').innerHTML = L.join('');
+    }
+    each($('steps').children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(3);
+  })();
+
+  /* ================= 06 · TRÊS RÉGUAS ================= */
+  (function(){
+    var svg = $('bal-svg');
+    // blocos do balanço esquemático: [lado, nome, altura, chave]
+    var LEFT = [[['Caixa e aplicações', 'de curto prazo'], 70, 'cash'], [['Ativos fixos', '(prédios, equipamentos)'], 70, 'fix'], [['Outros ativos'], 110, 'oth']];
+    var RIGHT = [[['Dívida', '(empréstimos)'], 56, 'debt'], [['Outras obrigações', 'de curto prazo'], 60, 'cur'], [['Obrigações', 'de longo prazo'], 64, 'lp'], [['Patrimônio líquido'], 70, 'eq']];
+    var L = [
+      {tag:'Régua 1 · dívida líquida', h:'Quanto a dívida passa do dinheiro em caixa',
+        f:'(dívida total − caixa e aplicações de curto prazo) ÷ (ativo − caixa e aplicações)', num:['debt'], neg:['cash'], den:['fix', 'oth'],
+        p:'Média de <strong>−1,64</strong> e mediana de <strong>−0,68</strong>: o número negativo quer dizer <strong>mais dinheiro em caixa do que dívida</strong>. Pelo menos três em cada quatro registros ficaram abaixo de zero (3º quartil: −0,31). Mesmo o maior valor foi baixo (0,16).'},
+      {tag:'Régua 2 · dívida total', h:'Quanto do ativo é financiado por dívida',
+        f:'dívida total ÷ ativo total', num:['debt'], neg:[], den:['cash', 'fix', 'oth'],
+        p:'Média de <strong>4%</strong> do ativo. Na metade dos registros, a dívida é praticamente <strong>zero</strong> (mediana 0,00); um quarto passa de 5%, e o máximo chega a 36%.'},
+      {tag:'Régua 3 · longo prazo', h:'Tudo o que vence em mais de um ano',
+        f:'passivo não circulante ÷ ativo total', num:['lp'], neg:[], den:['cash', 'fix', 'oth'],
+        p:'Média de <strong>16%</strong> do ativo (mediana 14%, máximo 60%). É a régua mais larga: além de empréstimos, pega outras obrigações de longo prazo, financeiras e operacionais.'}
+    ];
+    var mob = window.matchMedia('(max-width:600px)');
+    function col(items, x, cw, L0){
+      var y = 40;
+      items.forEach(function(it){
+        var inNum = L0.num.indexOf(it[2]) >= 0, inNeg = L0.neg.indexOf(it[2]) >= 0, inDen = L0.den.indexOf(it[2]) >= 0;
+        var fill = inNum ? 'var(--div)' : inNeg ? 'var(--own)' : inDen ? '#dbe3ef' : '#f1f5f9';
+        var tc = (inNum || inNeg) ? '#fff' : '#334155';
+        el('rect', {x:x, y:y, width:cw, height:it[1] - 4, rx:5, style:'fill:' + fill + '; transition:fill .3s'}, svg);
+        if (inNeg) el('rect', {x:x, y:y, width:cw, height:it[1] - 4, rx:5, fill:'none', stroke:'#fff', 'stroke-dasharray':'5 4', 'stroke-width':2}, svg);
+        el('text', {x:x + 10, y:y + 21, 'font-size':13, fill:tc, 'font-weight':600, class:'bt'}, svg, it[0][0]);
+        if (it[0][1]) el('text', {x:x + 10, y:y + 40, 'font-size':12, fill:tc, class:'bt'}, svg, it[0][1]);
+        if (inNeg) el('text', {x:x + cw - 10, y:y + 21, 'font-size':16, 'text-anchor':'end', fill:'#fff', 'font-weight':700, class:'bt'}, svg, '−');
+        y += it[1];
+      });
+    }
+    function show(i){
+      pressSet($('lev-seg'), 'l', String(i));
+      var l = L[i];
+      svg.innerHTML = '';
+      var m = mob.matches, W = m ? 400 : 560, cw = m ? 188 : 220, xl = m ? 8 : 40, xr = m ? 204 : 300;
+      svg.setAttribute('viewBox', '0 0 ' + W + ' 300');
+      el('text', {x:xl, y:26, 'font-size':12, fill:'#64748b', 'font-weight':700, class:'bt'}, svg, m ? 'O QUE TEM' : 'O QUE TEM (ATIVO)');
+      el('text', {x:xr, y:26, 'font-size':12, fill:'#64748b', 'font-weight':700, class:'bt'}, svg, m ? 'O QUE DEVE + PATRIMÔNIO' : 'O QUE DEVE E O PATRIMÔNIO');
+      col(LEFT, xl, cw, l); col(RIGHT, xr, cw, l);
+      $('lev-panel').innerHTML = '<div class="tag">' + l.tag + '</div><h3>' + l.h + '</h3><p style="font-size:.8rem; color:var(--muted)">' + l.f + '</p><p>' + l.p + '</p>';
+    }
+    var curL = 1;
+    each($('lev-seg').children, function(b){ b.addEventListener('click', function(){ curL = +b.dataset.l; show(curL); }); });
+    mob.addEventListener('change', function(){ show(curL); });
+    show(1);
+  })();
+
+  /* ================= 07 · O RETRATO ================= */
+  (function(){
+    var svg = $('ret-svg');
+    var ROWS = [
+      {k:'sin', n:'Sinistralidade', c:'var(--div)', p:'Média de <strong>75%</strong> da receita com planos indo para despesas com saúde; metade das operadoras ficou entre 70% e 83%. No topo, gasto maior que a receita (121%).'},
+      {k:'res', n:'Reserva técnica', c:'var(--res)', p:'Em média, <strong>25%</strong> do ativo. Para a autora, é o principal termômetro de risco que a ANS acompanha; o máximo chegou a 74% do ativo.'},
+      {k:'tan', n:'Ativos fixos', c:'var(--fix)', p:'Em média, <strong>17%</strong> do ativo em prédios, equipamentos e outros ativos fixos. Um quarto das operadoras tem 3% ou menos; outro quarto, 29% ou mais.'},
+      {k:'roa', n:'Lucro (ROA)', c:'var(--navy)', p:'Lucro operacional médio de <strong>5%</strong> do ativo. Ao menos um quarto dos registros teve prejuízo (1º quartil: −1%); o pior, −37%, e o melhor, 51%.'}
+    ];
+    var X0 = 150, X1 = 530, MIN = -0.4, MAX = 1.25, sx = function(v){ return X0 + (X1 - X0) * (v - MIN) / (MAX - MIN); };
+    var cur = 0;
+    $('ret-chips').innerHTML = ROWS.map(function(r, i){ return '<button class="chip" data-i="' + i + '">' + r.n + '</button>'; }).join('');
+    function draw(){
+      svg.innerHTML = '';
+      [-0.25, 0, 0.25, 0.5, 0.75, 1, 1.25].forEach(function(v){
+        el('line', {x1:sx(v), x2:sx(v), y1:26, y2:290, stroke:v === 0 ? '#94a3b8' : '#e2e8f0'}, svg);
+        el('text', {x:sx(v), y:310, 'font-size':12, 'text-anchor':'middle', fill:'#64748b'}, svg, Math.round(v * 100) + '%');
+      });
+      ROWS.forEach(function(r, i){
+        var d = DESC[r.k], y = 58 + i * 64, on = i === cur, op = on ? 1 : .35;
+        var g = el('g', {style:'opacity:' + op + '; cursor:pointer; transition:opacity .3s'}, svg);
+        el('text', {x:16, y:y + 5, 'font-size':14, fill:'#0f172a', 'font-weight':on ? 700 : 500}, g, r.n);
+        el('line', {x1:sx(d[5]), x2:sx(d[6]), y1:y, y2:y, stroke:'#64748b', 'stroke-width':1.5}, g);
+        el('rect', {x:sx(d[2]), y:y - 13, width:Math.max(3, sx(d[4]) - sx(d[2])), height:26, rx:4, style:'fill:' + r.c}, g);
+        el('line', {x1:sx(d[3]), x2:sx(d[3]), y1:y - 17, y2:y + 17, stroke:'#fff', 'stroke-width':3}, g);
+        el('circle', {cx:sx(d[1]), cy:y, r:6, fill:'#e80734', stroke:'#fff', 'stroke-width':2}, g);
+        if (on){
+          el('text', {x:sx(d[5]), y:y - 20, 'font-size':12, 'text-anchor':'middle', fill:'#64748b'}, g, Math.round(d[5] * 100) + '%');
+          el('text', {x:sx(d[6]), y:y - 20, 'font-size':12, 'text-anchor':'middle', fill:'#64748b'}, g, Math.round(d[6] * 100) + '%');
+        }
+        g.addEventListener('click', function(){ pick(i); });
+      });
+    }
+    function pick(i){
+      cur = i; pressSet($('ret-chips'), 'i', String(i));
+      var r = ROWS[i], d = DESC[r.k];
+      $('ret-panel').innerHTML = '<div class="tag">' + th(d[0]) + ' registros</div><h3>' + r.n + '</h3><p>' + r.p + '</p>';
+      draw();
+    }
+    each($('ret-chips').children, function(b){ b.addEventListener('click', function(){ pick(+b.dataset.i); }); });
+    pick(0);
+  })();
+
+  /* ================= 08 · MATRIZ DOS RESULTADOS ================= */
+  (function(){
+    var sc = $('mx-scene'), W = 380, D = 380;
+    var st = makeStage(sc, W, D, {ay:'50%', rx:'40deg'});
+    var cells = {}, rowL = {}, model = 0, sel = {k:'roa', c:1};
+    var bw = 70, bd = 34, rowY = function(r){ return 6 + r * 58; }, colX = function(c){ return 140 + c * 84; };
+    VARS.forEach(function(v, r){
+      rowL[v.k] = flatLabel(st, v.n, -50, rowY(r) + 8, 180, '');
+      rowL[v.k].classList.add('row');
+      [0, 1, 2].forEach(function(c){
+        var b = box({w:bw, d:bd, h:3, x:colX(c), y:rowY(r), c:'var(--off)', top:' '});
+        b.addEventListener('click', function(){ if (!M.wasDrag(sc)){ sel = {k:v.k, c:c}; render(); } });
+        st.appendChild(b); cells[v.k + c] = b;
+      });
+    });
+    ['líquida', 'total', 'longo prazo'].forEach(function(t, c){ flatLabel(st, t, colX(c) - 12, rowY(6) - 8, bw + 24, ''); });
+    function reading(v, c, co){
+      if (!v.cont) return 'Variável de presença (sim ou não): leia só a direção.';
+      if (c === 0) return 'Nesta régua a escala é outra (média −1,64); leia só a direção.';
+      var x = co[0] * 0.10 * 100;
+      return '10 pontos percentuais a mais de ' + v.n.toLowerCase().replace(' (roa)', '') + ' → ' + (x < 0 ? fmt(-x, 1) + ' ponto percentual a menos' : fmt(x, 1) + ' ponto percentual a mais') + ' de ' + LEVS[c].s + ' sobre o ativo (conta nossa).';
+    }
+    function render(){
+      VARS.forEach(function(v){
+        [0, 1, 2].forEach(function(c){
+          var co = T40[v.k][c * 2 + model], b = cells[v.k + c];
+          b.classList.toggle('gone', !co);
+          var s = co ? co[1] : 0;
+          b.style.setProperty('--h', (s ? s * 14 : 3) + 'px');
+          b.style.setProperty('--c', !s ? 'var(--off)' : co[0] < 0 ? 'var(--own)' : 'var(--div)');
+          b.querySelector('.top-label').textContent = s ? (co[0] < 0 ? '↓' : '↑') : '';
+          b.classList.toggle('active', sel.k === v.k && sel.c === c);
+        });
+        rowL[v.k].classList.toggle('dim', !T40[v.k][model]);
+      });
+      var v = VARS.filter(function(x){ return x.k === sel.k; })[0], m = sel.c * 2 + model, co = T40[sel.k][m];
+      var tag = 'Modelo ' + (m + 1) + ' · ' + LEVS[sel.c].s + ' · R² ' + R2[m];
+      var h, p;
+      if (!co){ h = v.n + ': fora deste modelo'; p = 'O tipo de plano só entra nos modelos com o tipo de plano. Troque o modelo acima.'; }
+      else {
+        h = v.n + ': ' + (co[1] ? (co[0] < 0 ? 'menos dívida' : 'mais dívida') : 'sem efeito estatístico');
+        p = '<strong>' + v.d.charAt(0).toUpperCase() + v.d.slice(1) + '.</strong> Coeficiente ' + raw(co[0]) + STARS[co[1]] + ' (' + SIGTXT[co[1]] + ').';
+        if (co[1]) p += ' ' + reading(v, sel.c, co);
+      }
+      $('mx-panel').innerHTML = '<div class="tag">' + tag + '</div><h3>' + h + '</h3><p>' + p + '</p>';
+    }
+    each($('mx-seg').children, function(b){ b.addEventListener('click', function(){ model = +b.dataset.v; pressSet($('mx-seg'), 'v', b.dataset.v); if (!T40[sel.k][model]) sel.k = 'roa'; render(); }); });
+    rotatable(sc, st, -5, 5);
+    render();
+    $('mx-tbl').innerHTML = '<tr><th>Fator</th>' + [1, 2, 3, 4, 5, 6].map(function(m){ return '<th>M' + m + '</th>'; }).join('') + '</tr><tr><td><i>régua</i></td><td>líquida</td><td>líquida</td><td>total</td><td>total</td><td>longo pr.</td><td>longo pr.</td></tr>' +
+      VARS.map(function(v){ return '<tr><td>' + v.n + '</td>' + T40[v.k].map(function(c){ return '<td>' + (c ? raw(c[0]) + STARS[c[1]] : '—') + '</td>'; }).join('') + '</tr>'; }).join('') +
+      '<tr><td>R²</td>' + R2.map(function(r){ return '<td>' + r + '</td>'; }).join('') + '</tr>';
+  })();
+
+  /* ================= 09 · SIMULADOR ================= */
+  (function(){
+    var F = [
+      {k:'roa', n:'Lucro (ROA)', l:'Lucro a mais (sobre o ativo)', q:12, hint:'do 1º ao 3º quartil, o lucro vai de −1% a 11% do ativo: 12 pontos'},
+      {k:'tan', n:'Ativos fixos', l:'Ativos fixos a mais (sobre o ativo)', q:26, hint:'do 1º ao 3º quartil, os ativos fixos vão de 3% a 29% do ativo: 26 pontos'}
+    ];
+    var BASE = [DESC.lev2[1], DESC.lev3[1]], MOD = [2, 4]; // modelos 3 e 5 (índices 2 e 4)
+    var cur = 0, r = $('sim-r'), svg = $('sim-svg');
+    $('sim-chips').innerHTML = F.map(function(f, i){ return '<button class="chip" data-i="' + i + '">' + f.n + '</button>'; }).join('');
+    function draw(){
+      var f = F[cur], x = +r.value;
+      $('sim-v').textContent = '+' + x + ' p.p.';
+      svg.innerHTML = '';
+      var X0 = 140, X1 = 520, MAX = 30, sx = function(v){ return X0 + (X1 - X0) * v / MAX; };
+      for (var v = 0; v <= MAX; v += 5){
+        el('line', {x1:sx(v), x2:sx(v), y1:24, y2:196, stroke:'#e2e8f0'}, svg);
+        el('text', {x:sx(v), y:216, 'font-size':12, 'text-anchor':'middle', fill:'#64748b'}, svg, v + '%');
+      }
+      el('text', {x:X1, y:238, 'font-size':12, 'text-anchor':'end', fill:'#64748b', class:'sm'}, svg, 'fatia do ativo');
+      var msg = [];
+      ['Dívida total', 'Longo prazo'].forEach(function(n, i){
+        var co = T40[f.k][MOD[i]], base = BASE[i] * 100, dd = co[0] * x, res = Math.max(0, base + dd), y = 40 + i * 86;
+        el('text', {x:16, y:y + 22, 'font-size':14, fill:'#0f172a', 'font-weight':700}, svg, n);
+        el('text', {x:16, y:y + 40, 'font-size':12, fill:'#64748b', class:'sm'}, svg, 'média ' + fmt(base, 0) + '% ' + STARS[co[1]]);
+        el('rect', {x:X0, y:y, width:sx(base) - X0, height:34, rx:4, style:'fill:color-mix(in srgb, var(--div) 18%, white); stroke:var(--div)'}, svg);
+        el('rect', {x:X0, y:y, width:Math.max(0, sx(res) - X0), height:34, rx:4, style:'fill:' + (dd < 0 ? 'var(--own)' : 'var(--div)') + '; transition:width .4s'}, svg);
+        el('text', {x:Math.max(sx(res), sx(base)) + 8, y:y + 22, 'font-size':13, fill:'#0f172a', 'font-weight':700}, svg, fmt(base, 0) + '% → ' + fmt(res, 1) + '%');
+        msg.push(n.toLowerCase() + ' ' + (dd < 0 ? fmt(-dd, 1) + ' ponto a menos' : fmt(dd, 1) + ' ponto' + (Math.abs(dd) >= 2 ? 's' : '') + ' a mais'));
+      });
+      el('line', {x1:X0, x2:X0, y1:30, y2:200, stroke:'#0f172a'}, svg);
+      $('sim-msg').innerHTML = x ? '<strong>' + f.l + ': +' + x + ' pontos percentuais.</strong> ' + msg.join('; ').replace(/^./, function(c){ return c.toUpperCase(); }) + '.' + (cur === 0 ? ' Mais lucro, menos dívida: a fila (pecking order).' : ' Mais garantia, mais dívida: o equilíbrio (trade-off).') : 'Arraste para aumentar o fator.';
+    }
+    function pick(i){
+      cur = i; pressSet($('sim-chips'), 'i', String(i));
+      var f = F[i]; $('sim-l').textContent = f.l; $('sim-hint').textContent = f.hint; r.value = f.q; draw();
+    }
+    each($('sim-chips').children, function(b){ b.addEventListener('click', function(){ pick(+b.dataset.i); }); });
+    r.addEventListener('input', draw);
+    pick(0);
+  })();
+
+  /* ================= 10 · DEPENDE DA RÉGUA ================= */
+  (function(){
+    var model = 0, sel = {k:'res', c:2};
+    var ROWS = [{k:'sin', n:'Sinistralidade'}, {k:'res', n:'Reserva técnica'}];
+    var READ = {
+      sin:['Na régua da dívida líquida, mais despesas com saúde vieram com mais dívida. Para a autora, as operadoras recorrem ao crédito para sustentar a operação quando os sinistros apertam a margem.',
+           'Na régua da dívida total, nenhum efeito estatístico.',
+           'Na régua do longo prazo, também mais dívida, com significância fraca (10%). Para a autora, os sinistros acabam financiados por obrigações, inclusive operacionais.'],
+      res:['Na régua da dívida líquida, mais reserva técnica veio com mais dívida. Para a autora, reservas robustas dão confiança aos credores.',
+           'Na régua da dívida total, nenhum efeito estatístico.',
+           'Na régua do longo prazo, que inclui obrigações operacionais, o sinal se inverte: mais reserva, menos dívida. Para a autora, reserva maior significa mais caixa preso, o que limita a capacidade de pagar dívidas.']
+    };
+    function render(){
+      var h = '<span></span>' + LEVS.map(function(l){ return '<span class="h">' + l.n + '</span>'; }).join('');
+      ROWS.forEach(function(r){
+        h += '<span class="rl">' + r.n + '</span>';
+        [0, 1, 2].forEach(function(c){
+          var co = T40[r.k][c * 2 + model], s = co[1], cls = !s ? 'ns' : co[0] < 0 ? 'dn' : 'up';
+          var on = sel.k === r.k && sel.c === c;
+          h += '<button class="cell ' + cls + '" data-k="' + r.k + '" data-c="' + c + '" aria-pressed="' + on + '"><b>' + (!s ? '—' : co[0] < 0 ? '↓' : '↑') + '</b><small>' + (s ? STARS[s] : 'sem efeito') + '</small></button>';
+        });
+      });
+      $('plate').innerHTML = h;
+      each(document.querySelectorAll('#plate .cell'), function(b){ b.addEventListener('click', function(){ sel = {k:b.dataset.k, c:+b.dataset.c}; render(); }); });
+      var co = T40[sel.k][sel.c * 2 + model], n = sel.k === 'sin' ? 'Sinistralidade' : 'Reserva técnica';
+      $('dr-panel').innerHTML = '<div class="tag">Modelo ' + (sel.c * 2 + model + 1) + ' · ' + LEVS[sel.c].s + '</div><h3>' + n + ': ' + (co[1] ? (co[0] < 0 ? 'menos dívida' : 'mais dívida') : 'sem efeito estatístico') + '</h3><p>Coeficiente ' + raw(co[0]) + STARS[co[1]] + ' (' + SIGTXT[co[1]] + ').</p><p>' + READ[sel.k][sel.c] + '</p>';
+    }
+    each($('dr-seg').children, function(b){ b.addEventListener('click', function(){ model = +b.dataset.v; pressSet($('dr-seg'), 'v', b.dataset.v); render(); }); });
+    render();
+  })();
+
+  /* ================= 11 · APOSTAS ================= */
+  (function(){
+    var C = [
+      {k:'Lucro', q:'A operadora que lucra mais deve mais?', a:'Não. Deve menos.', b:'Nas três réguas, lucro operacional maior veio com menos dívida (−1,25**, −0,05*** e −0,12***). É o que prevê a fila (pecking order): quem gera caixa usa o próprio dinheiro.', rf:'Tabela 40 · modelos 2, 4 e 6', c:'var(--navy)'},
+      {k:'Ativos fixos', q:'Prédios e equipamentos ajudam a tomar dívida?', a:'Sim, nas três réguas.', b:'Mais ativos fixos vieram com mais dívida (+2,38**, +0,24*** e +0,29***). Servem de garantia aos credores, como prevê o equilíbrio (trade-off).', rf:'Tabela 40 · modelos 2, 4 e 6', c:'var(--red)'},
+      {k:'Sinistralidade', q:'Gastar mais com sinistros leva a mais dívida?', a:'Em parte.', b:'Sim nas réguas da dívida líquida e do longo prazo, com significância fraca (10%); na da dívida total, sem efeito.', rf:'Tabela 40 · modelos 2, 4 e 6', c:'#334155'},
+      {k:'Planos odontológicos', q:'Operadoras com planos odontológicos devem mais?', a:'Não. Apareceram com menos.', b:'Ter receita de planos só odontológicos veio com menos dívida nas réguas da dívida líquida e do longo prazo (***); na da dívida total, sem efeito. É uma variável de sim ou não: leia só a direção.', rf:'Tabela 40 · modelos 2, 4 e 6', c:'var(--odo)'},
+      {k:'Planos médicos', q:'Vender planos médicos muda a dívida?', a:'Não se viu.', b:'Ter receita de planos de assistência médica não teve efeito estatístico em nenhuma das três réguas.', rf:'Tabela 40 · modelos 2, 4 e 6', c:'var(--res)'},
+      {k:'Reserva técnica', q:'Guardar mais reserva técnica reduz a dívida?', a:'Depende da régua.', b:'Mais dívida na régua da dívida líquida (+2,82***), menos na do longo prazo (−0,094**) e sem efeito na da dívida total.', rf:'Tabela 40 · modelos 2, 4 e 6', c:'#5b7bb5'}
+    ];
+    $('flips').innerHTML = C.map(function(c, i){
+      return '<button class="flip rv" style="--d:' + (0.15 + i * 0.04) + 's; --fcol:' + c.c + '" aria-pressed="false"><span class="in">' +
+        '<span class="fc"><span class="k">' + c.k + '</span><span class="nm">' + c.q + '</span><span class="q">Toque para ver o que a tese encontrou.</span><span class="rf">' + c.rf + '</span></span>' +
+        '<span class="bc"><span class="ans">' + c.a + '</span><span class="q">' + c.b + '</span></span></span></button>';
+    }).join('');
+    each($('flips').children, function(b){ b.addEventListener('click', function(){ b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true')); }); });
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
