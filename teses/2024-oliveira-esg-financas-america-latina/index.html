@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O ESG ajudou as empresas na pandemia? · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Isaac Gezer Silva de Oliveira (PPGA Mackenzie, 2024) sobre ESG, salário de executivos, lucro, valor de mercado e custo da dívida de empresas latino-americanas antes, durante e depois da pandemia, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2024-oliveira-esg-financas-america-latina/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><rect x=%2213%22 y=%227%22 width=%226%22 height=%2218%22 fill=%22white%22/><rect x=%227%22 y=%2213%22 width=%2218%22 height=%226%22 fill=%22white%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em ../../assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  :root{
+    --up:var(--red);       /* aumenta */
+    --dn:var(--navy);      /* diminui */
+    --pan:#334155;         /* pandemia */
+    --e:#1f3b73;           /* ambiental */
+    --s:#5b7bb5;           /* social */
+    --g:#9aaac4;           /* governança */
+    --off:#cbd5e1;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .sq{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(1.9rem, 3.8vw, 2.6rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:31em; margin-left:auto; margin-right:auto;}
+  #hero-scene .top-label{font-size:16px; font-weight:700; color:#fff;}
+  #hero-scene .face-label{font-size:13px; font-weight:700; color:#fff;}
+  #hero-scene .floor-label{font-size:14px; white-space:nowrap;}
+  @media (max-width:600px){ #hero-scene .floor-label{font-size:18px;} }
+
+  /* ---------- Componentes comuns ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 20px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.05rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.9rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .segs{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:4px 0 12px;}
+  .segs small{font-size:.74rem; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.08em;}
+  details.tbl{margin-top:12px; font-size:.82rem; color:var(--ink-2);}
+  details.tbl summary{cursor:pointer; color:var(--muted); font-weight:600;}
+  details.tbl .wrap{overflow-x:auto; margin-top:8px;}
+  details.tbl table{border-collapse:collapse; width:100%; font-variant-numeric:tabular-nums;}
+  details.tbl th, details.tbl td{border-bottom:1px solid var(--border); padding:4px 6px; text-align:right; white-space:nowrap;}
+  details.tbl th:first-child, details.tbl td:first-child{text-align:left;}
+  .ctl{margin-top:12px;}
+  .ctl label{display:flex; justify-content:space-between; gap:10px; font-size:.86rem; font-weight:600; color:var(--ink);}
+  .ctl label span{font-variant-numeric:tabular-nums; color:var(--c, var(--red));}
+  input[type=range]{width:100%; accent-color:var(--c, var(--red)); margin:6px 0 0;}
+  .svgbox{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .svgbox text{font-family:var(--sans);}
+  @media (max-width:600px){ .svgbox text{font-size:17px !important;} .svgbox text.sm{display:none;} }
+  .bars3d .slab{transition:transform .55s cubic-bezier(.2,.8,.2,1), opacity .5s, --h .6s;}
+  .bars3d .slab{cursor:pointer;}
+  .bars3d .slab.active{--oz:10px;}
+  /* opacidade nas faces, não na caixa: opacity na .slab achata o preserve-3d */
+  .bars3d .slab > i{transition:background .35s, box-shadow .35s, opacity .4s;}
+  .bars3d .slab.dim > i{opacity:.3;}
+  .bars3d .top-label{color:#fff; font-size:15px;}
+  .bars3d .face-label{color:#fff; font-size:14px; font-weight:700;}
+  .bars3d .floor-label{font-size:15px; white-space:nowrap;}
+  @media (max-width:600px){ .bars3d .floor-label{font-size:19px;} .bars3d .top-label{font-size:18px;} }
+
+  /* ---------- 02 · Três letras ---------- */
+  .flips{display:grid; grid-template-columns:1fr; gap:12px; margin-top:8px;}
+  @media (min-width:700px){ .flips{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .flips{grid-template-columns:repeat(3, 1fr);} }
+  .flips.f3{grid-template-columns:1fr;}
+  @media (min-width:700px){ .flips.f3{grid-template-columns:repeat(3, 1fr);} }
+  .flip{perspective:900px; border:0; background:none; padding:0; text-align:left; cursor:pointer; font:inherit; color:inherit;}
+  .flip .in{display:block; position:relative; min-height:184px; transform-style:preserve-3d; transition:transform .6s cubic-bezier(.2,.8,.2,1);}
+  .flip[aria-pressed="true"] .in{transform:rotateY(180deg);}
+  .flip .fc, .flip .bc{display:block; position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:12px; padding:14px 16px; border:1px solid var(--border); border-top:5px solid var(--fcol); background:var(--card); box-shadow:var(--shadow); overflow:hidden;}
+  .flip .bc{transform:rotateY(180deg); background:color-mix(in srgb, var(--fcol) 6%, white);}
+  .flip .k{display:block; font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--fcol);}
+  .flip .big{display:block; font-family:var(--serif); font-weight:900; font-size:3rem; line-height:1; color:var(--fcol); margin:8px 0 4px;}
+  .flip .nm{display:block; font-family:var(--serif); font-weight:700; font-size:1.02rem; color:var(--ink); margin:4px 0 6px;}
+  .flip .q{display:block; font-size:.8rem; color:var(--ink-2); line-height:1.45;}
+  .flip .rf{display:block; position:absolute; bottom:9px; left:16px; right:16px; font-size:.64rem; color:var(--muted);}
+  .flip .ans{display:block; font-family:var(--serif); font-weight:900; font-size:1.15rem; color:var(--fcol); margin-bottom:4px;}
+
+  /* ---------- 03 · O debate ---------- */
+  .grid100{display:grid; grid-template-columns:repeat(10, 1fr); gap:5px; max-width:340px; margin:0 auto;}
+  .grid100 i{aspect-ratio:1; border-radius:4px; background:var(--off); transition:background .35s, opacity .35s;}
+  .grid100 i.dim{opacity:.25;}
+  #deb-out{font-family:var(--serif); font-size:1.1rem; color:var(--ink); margin-top:12px; min-height:3em; text-align:center;}
+  .boxw{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px;}
+  .growth{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+  .growth div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px;}
+  .growth b{display:block; font-family:var(--serif); font-size:1.4rem; color:var(--ink);}
+  .growth span{font-size:.76rem; color:var(--muted);}
+
+  /* ---------- 04 · Três ensaios ---------- */
+  .years{display:grid; grid-template-columns:repeat(6, 1fr); gap:4px; margin-top:12px;}
+  .years span{background:var(--navy); color:#fff; border-radius:6px; padding:6px 0; text-align:center; font-size:.78rem; font-weight:700;}
+  .years span.pan{background:var(--red);}
+  .countries{display:grid; grid-template-columns:repeat(5, 1fr); gap:6px; margin-top:6px;}
+  .country{border:1px solid var(--border); border-radius:12px; padding:12px 4px; text-align:center; background:var(--card); transition:all .35s;}
+  .country b{display:block; font-family:var(--serif); font-size:1.1rem; color:var(--ink);}
+  .country span{font-size:.68rem; color:var(--muted);}
+  .country.on{border-color:var(--navy); background:color-mix(in srgb, var(--navy) 8%, white);}
+  .country.off{opacity:.3;}
+  #ens-panel{min-height:190px; margin-top:12px;}
+  .ens-n{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:10px;}
+  .ens-n div{background:var(--bg-alt, #f8fafc); border:1px solid var(--border); border-radius:10px; padding:8px 10px;}
+  .ens-n b{display:block; font-family:var(--serif); font-size:1.15rem; color:var(--ink);}
+  .ens-n span{font-size:.7rem; color:var(--muted);}
+
+  /* ---------- 05 · As réguas ---------- */
+  #msr-panel{min-height:120px; margin-top:12px;}
+  #msr-out{font-family:var(--serif); font-size:1.05rem; color:var(--ink); margin-top:10px; min-height:2.6em;}
+  #msr-out b{color:var(--red);}
+
+  /* ---------- 06 · Ensaio 1 ---------- */
+  #pay-panel{min-height:170px; margin-top:12px;}
+  #pay-svg .arr{transition:stroke-width .5s, stroke .5s, opacity .5s;}
+
+  /* ---------- 08 · Placa ---------- */
+  .plate{display:grid; grid-template-columns:minmax(0, 1.2fr) repeat(3, minmax(0, 1fr)); gap:6px; margin-top:6px;}
+  .plate .h{font-size:.72rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; text-align:center; align-self:end; line-height:1.25;}
+  .plate .rl{font-size:.86rem; font-weight:600; color:var(--ink); align-self:center;}
+  @media (max-width:600px){ .plate{grid-template-columns:minmax(0, .9fr) repeat(3, minmax(0, 1fr));} .plate .rl{font-size:.74rem; overflow-wrap:anywhere;} }
+  .cell{border:1px solid var(--border); background:var(--card); border-radius:12px; padding:10px 4px; text-align:center; cursor:pointer; font:inherit; color:var(--ink-2); transition:all .2s;}
+  .cell b{display:block; font-family:var(--serif); font-size:1.6rem; line-height:1.1;}
+  .cell small{font-size:.72rem; color:var(--muted);}
+  .cell.up b{color:var(--up);} .cell.dn b{color:var(--dn);} .cell.ns b{color:var(--off);}
+  .cell[aria-pressed="true"]{border-color:var(--ink); box-shadow:var(--shadow);}
+  #pl-panel{min-height:140px; margin-top:12px;}
+
+  /* ---------- 07, 09 · Barras ---------- */
+  #e2-panel, #e3-panel{min-height:120px; margin-top:10px;}
+
+  /* ---------- 11 · Matriz ---------- */
+  #mx-scene .floor-label.row{text-align:right; font-size:15px;}
+  @media (max-width:600px){ #mx-scene .floor-label.row{font-size:20px;} }
+  #mx-panel{min-height:140px; margin-top:10px;}
+
+  /* ---------- 12 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:4px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.9rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:6px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:8px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2024-oliveira-esg-financas-america-latina/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2024</div>
+      <h1 class="rv" style="--d:.1s">O ESG ajudou as empresas latino-americanas a atravessar a pandemia?</h1>
+      <p class="sub rv" style="--d:.2s">ESG é a sigla em inglês para o cuidado de uma empresa com o <strong>ambiente</strong>, as <strong>pessoas</strong> e a <strong>governança</strong>. Em três estudos com empresas de capital aberto de 2018 a 2023, a tese pergunta se uma nota ESG mais alta muda o salário dos executivos, o lucro, o valor de mercado e os juros que a empresa paga, e se a pandemia mexeu nisso. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Isaac Gezer Silva de Oliveira</span>
+        <span><b>Orientador:</b> Prof. Dr. Wilson Toshiro Nakamura</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#letras">Começar →</a>
+        <a class="btn ghost" href="#sintese">Ir direto à descoberta</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="500x380" role="img" aria-label="Uma empresa apoiada em três pilares, E, S e G; ao lado, três resultados: valor e lucro sobem, juros descem"></div></div>
+      <p class="cap-legend">A empresa apoiada nos três pilares do ESG e os resultados que a tese acompanhou. Esquema: as alturas não são dados.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximo</span>
+        <ul class="ods">
+          <li class="ods-12"><a href="https://brasil.un.org/pt-br/sdgs/12" target="_blank" rel="noopener" title="ODS 12 · Consumo e produção responsáveis: Mostra que, na América Latina, empresas com nota ESG mais alta tiveram mais valor e lucro e pagaram juros menores, um argumento para adotar e divulgar práticas sustentáveis."><b>12</b>Consumo e produção responsáveis</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · TRÊS LETRAS -->
+<section class="slide" id="letras" data-label="Três letras">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">02</span> A ideia</div>
+    <h2 class="rv" style="--d:.1s">Três letras resumem como uma empresa trata o planeta, as pessoas e o próprio comando</h2>
+    <p class="lede rv" style="--d:.15s">As empresas divulgam o que fazem em cada frente, e bases de dados como a <strong>Refinitiv</strong> transformam isso numa <strong>nota ESG</strong>. A tese usa essa nota, a total e a de cada letra. Vire os cartões.</p>
+    <div class="flips f3" id="esg-flips"></div>
+    <p class="note rv" style="--d:.3s">Definições das seções 3.3.2 e 4.3.2 da tese. A nota mede o que a empresa divulga e faz em cada tema; a tese fala em <b>divulgação ESG</b> (<i>ESG disclosure</i>).</p>
+  </div>
+</section>
+
+<!-- 03 · O DEBATE -->
+<section class="slide" id="debate" data-label="Uma pergunta em aberto">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> O problema</div>
+      <h2 class="rv" style="--d:.1s">Ser responsável dá retorno? Os estudos ainda não concordam</h2>
+      <p class="lede rv" style="--d:.15s">O tema explodiu: os artigos com "ESG" passaram de menos de cem por ano até 2018 para <strong>1.164 em 2023</strong>. Mas uma revisão de mais de mil estudos achou de tudo. E quase todos olham para mercados desenvolvidos, não para a América Latina.</p>
+      <p class="rv" style="--d:.2s">Toque num tipo de resposta.</p>
+      <div class="chips rv" id="deb-chips" style="--d:.25s" role="group" aria-label="Tipo de resultado"></div>
+      <div class="growth rv" style="--d:.3s">
+        <div><b>&lt; 100</b><span>artigos com "ESG" por ano até 2018</span></div>
+        <div><b>1.164</b><span>artigos com "ESG" em 2023</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="boxw">
+        <div class="grid100" id="deb-grid" role="img" aria-label="Cem quadrados: 58 estudos acharam relação positiva entre ESG e desempenho, 8 negativa, 13 nenhuma e 21 resultados mistos"></div>
+        <div id="deb-out" aria-live="polite"></div>
+        <div class="legend" id="deb-leg" style="justify-content:center"></div>
+      </div>
+      <p class="note">De cada 100 estudos sobre ESG e desempenho financeiro publicados de 2015 a 2020 (Whelan et al., 2021, citado na seção 3.2.1). Contagem de artigos na Scopus: Ararat et al. (2021), citado na seção 1.1.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · TRÊS ENSAIOS -->
+<section class="slide" id="ensaios" data-label="Como a pesquisa olhou">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Como a pesquisa olhou</div>
+      <h2 class="rv" style="--d:.1s">Três estudos, seis anos e uma crise no meio</h2>
+      <p class="lede rv" style="--d:.15s">A pandemia foi um teste-surpresa: ninguém escolheu a nota ESG pensando nela. O autor comparou as mesmas empresas antes (2018–2019), durante (2020–2021) e depois (2022–2023), com dados de balanço, de mercado e de remuneração (análise de <strong>dados em painel</strong>).</p>
+      <div class="segs rv" style="--d:.2s"><div class="seg" id="ens-seg" role="group" aria-label="Escolha o estudo"><button data-i="0" aria-pressed="true">Estudo 1</button><button data-i="1" aria-pressed="false">Estudo 2</button><button data-i="2" aria-pressed="false">Estudo 3</button></div></div>
+      <div class="years rv" style="--d:.25s" aria-label="Seis anos de dados, com a pandemia em 2020 e 2021"><span>2018</span><span>2019</span><span class="pan">2020</span><span class="pan">2021</span><span>2022</span><span>2023</span></div>
+      <p class="legend rv" style="--d:.28s"><span><i class="sq" style="background:var(--red)"></i>anos tratados como pandemia nos modelos</span></p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="countries" id="countries"></div>
+      <div class="panel" id="ens-panel" aria-live="polite"></div>
+      <p class="note">Seções 2.3, 3.3 e 4.3. Dados da Refinitiv, da Capital IQ e da CVM (Formulário de Referência); estudos 2 e 3 em dólares. Registros = empresa × ano. A tese não informa quantas empresas há em cada estudo; no Estudo 3, os 1.020 registros da estatística descritiva equivalem a <b>cerca de 170 empresas por ano</b> (1.020 ÷ 6, conta nossa).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · AS RÉGUAS -->
+<section class="slide" id="reguas" data-label="O que foi medido">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> O que foi medido</div>
+      <h2 class="rv" style="--d:.1s">Quatro contas simples medem valor, lucro e o preço do dinheiro emprestado</h2>
+      <p class="lede rv" style="--d:.15s">Cada estudo mede o desempenho por razões entre dois números do balanço ou da bolsa. Escolha uma e mexa nos valores de uma empresa imaginária.</p>
+      <div class="segs rv" style="--d:.2s"><div class="seg" id="msr-seg" role="group" aria-label="Escolha a medida"><button data-i="0" aria-pressed="true">Q de Tobin</button><button data-i="1" aria-pressed="false">ROA</button><button data-i="2" aria-pressed="false">ROE</button><button data-i="3" aria-pressed="false">Custo da dívida</button></div></div>
+      <div class="panel rv" id="msr-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel">
+        <div class="ctl"><label for="msr-a"><span id="msr-al" style="color:var(--ink)"></span><span id="msr-av"></span></label><input type="range" id="msr-a" min="0" max="100" step="1"></div>
+        <div class="ctl" style="--c:var(--navy)"><label for="msr-b"><span id="msr-bl" style="color:var(--ink)"></span><span id="msr-bv"></span></label><input type="range" id="msr-b" min="1" max="100" step="1"></div>
+        <svg id="msr-svg" viewBox="0 0 520 120" style="width:100%; display:block; margin-top:10px" role="img" aria-label="Duas barras comparam o numerador e o denominador da medida escolhida"></svg>
+        <div id="msr-out" aria-live="polite"></div>
+      </div>
+      <p class="note"><b>Empresa imaginária</b>: os valores são ilustrativos, só para mostrar a conta. As definições são das Tabelas 3 e 5 da tese. O estudo 1 usa o Q e o ROA; o 2, o Q, o ROA e o ROE; o 3, o custo da dívida.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · ESTUDO 1 -->
+<section class="slide" id="salario" data-label="Estudo 1: o salário">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Estudo 1 · Brasil · 441 registros</div>
+      <h2 class="rv" style="--d:.1s">Com nota ESG mais alta, o pagamento dos executivos acompanha mais de perto o desempenho</h2>
+      <p class="lede rv" style="--d:.15s">Pela teoria da agência, o salário dos executivos deveria subir e descer com o desempenho da empresa, para que eles defendam o interesse dos acionistas. Nas empresas da B3, esse elo ficou <strong>mais forte quanto maior a nota ESG</strong>. A pandemia não o reforçou.</p>
+      <div class="segs rv" style="--d:.2s"><small>Desempenho</small><div class="seg" id="pay-seg" role="group" aria-label="Medida de desempenho"><button data-m="q" aria-pressed="true">Valor de mercado (Q)</button><button data-m="roa" aria-pressed="false">Lucro (ROA)</button></div></div>
+      <div class="chips rv" id="pay-chips" style="--d:.25s" role="group" aria-label="Condição"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="pay-svg" class="svgbox" viewBox="0 0 560 230" role="img" aria-label="Seta do desempenho para o pagamento dos executivos; a espessura muda conforme a condição escolhida"></svg>
+      <div class="panel" id="pay-panel" aria-live="polite"></div>
+      <p class="note">Tabela 4 (GMM sistêmico, seis modelos, 441 registros de 2018 a 2023). Pagamento = remuneração total dos executivos (salário, bônus e opções), em log. A espessura da seta é um <b>esquema</b>: mostra a direção do efeito, não o tamanho. Associação, não causa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · ESTUDO 2 -->
+<section class="slide" id="lucro" data-label="Estudo 2: lucro e valor">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Estudo 2 · 5 países · 488 registros</div>
+      <h2 class="rv" style="--d:.1s">Nota ESG mais alta veio com mais valor de mercado e mais lucro</h2>
+      <p class="lede rv" style="--d:.15s">Comparando cada empresa com ela mesma ao longo dos anos, a nota ESG andou junto com o <strong>valor de mercado</strong> (Q) e o <strong>lucro sobre o ativo</strong> (ROA). No lucro sobre o patrimônio (ROE), só uma pista fraca. Já os anos de pandemia puxaram o valor e o lucro para baixo.</p>
+      <div class="segs rv" style="--d:.2s"><small>Efeito de</small><div class="seg" id="e2-seg" role="group" aria-label="Efeito de"><button data-v="esg" aria-pressed="true">Nota ESG</button><button data-v="cov" aria-pressed="false">Anos de pandemia</button></div></div>
+      <div class="panel rv" id="e2-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable bars3d" id="e2-scene" data-fit="520x330" role="img" aria-label="Três barras 3D, uma por medida (Q, ROA, ROE); a altura mostra a força estatística e a cor, a direção"></div></div>
+      <div class="legend"><span><i class="sq" style="background:var(--up)"></i>sobe</span><span><i class="sq" style="background:var(--dn)"></i>desce</span><span><i class="sq" style="background:var(--off)"></i>sem efeito estatístico</span><span>altura = força estatística (* a ***)</span></div>
+      <p class="note">Tabela 7: efeitos fixos com erros robustos, 488 registros, R² de 17% a 19%. A tese também refaz a conta com outro método (GMM) como teste de robustez. As escalas das medidas são diferentes: compare a direção e a força, não o tamanho dos coeficientes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · A VIRADA -->
+<section class="slide" id="virada" data-label="Na pandemia">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> A virada · Estudo 2 · 1.018 registros</div>
+      <h2 class="rv" style="--d:.1s">Na pandemia, a nota ESG pesou ainda mais no valor e no lucro</h2>
+      <p class="lede rv" style="--d:.15s">Para ver se o ESG serviu de proteção na crise, o autor acrescentou um termo que mede o <strong>efeito a mais</strong> da nota ESG nos anos de 2020 e 2021. A pandemia sozinha derrubou o Q e o ROA; nas empresas com nota ESG mais alta, a queda foi compensada em parte.</p>
+      <p class="rv" style="--d:.2s">Toque num quadro para ler o resultado.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="plate" id="plate"></div>
+      <div class="panel" id="pl-panel" aria-live="polite"></div>
+      <p class="note">Tabela 8 (efeitos fixos com erros robustos, 1.018 registros). Setas: ↑ sobe, ↓ desce, — sem efeito estatístico. Estrelas: significância a 10% (*), 5% (**) e 1% (***). Associação, não causa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · ESTUDO 3 -->
+<section class="slide" id="juros" data-label="Estudo 3: os juros">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Estudo 3 · 5 países · 1.019 registros</div>
+      <h2 class="rv" style="--d:.1s">Nota ESG mais alta, juros menores, mas a pandemia não ampliou essa vantagem</h2>
+      <p class="lede rv" style="--d:.15s">Quem empresta dinheiro olha o risco. Empresas com nota ESG mais alta pagaram <strong>juros menores</strong> sobre a dívida, na nota total e em cada letra. Nos anos de pandemia, porém, a nota não trouxe desconto a mais: a crise pesou mais que o ESG.</p>
+      <div class="segs rv" style="--d:.2s"><small>Efeito</small><div class="seg" id="e3-seg" role="group" aria-label="Efeito"><button data-v="0" aria-pressed="true">Em todos os anos</button><button data-v="1" aria-pressed="false">A mais na pandemia</button></div></div>
+      <div class="panel rv" id="e3-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable bars3d" id="e3-scene" data-fit="520x330" role="img" aria-label="Quatro barras 3D: nota ESG total, ambiental, social e governança; a altura mostra a força estatística do efeito sobre o custo da dívida"></div></div>
+      <div class="legend"><span><i class="sq" style="background:var(--dn)"></i>juros menores</span><span><i class="sq" style="background:var(--off)"></i>sem efeito estatístico</span><span>altura = força estatística (* a ***)</span></div>
+      <p class="note">Figura 6 (efeitos fixos com erros robustos, oito modelos, 1.019 registros, R² de 14% a 19%). Custo da dívida = despesa de juros ÷ dívida média. Mostramos só a direção e a força: as escalas da nota e do custo não permitem ler o tamanho do efeito. A tese destaca a governança; os pilares não foram comparados por um teste.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · APOSTAS -->
+<section class="slide" id="apostas" data-label="Faça sua aposta">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">10</span> Teste sua intuição</div>
+    <h2 class="rv" style="--d:.1s">A pandemia mudou o peso do ESG? Depende de onde se olha</h2>
+    <p class="lede rv" style="--d:.15s">Faça sua aposta e vire o cartão. Respostas pelas tabelas dos três estudos.</p>
+    <div class="flips" id="flips"></div>
+  </div>
+</section>
+
+<!-- 11 · SÍNTESE -->
+<section class="slide" id="sintese" data-label="A descoberta">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> A descoberta · os três estudos juntos</div>
+      <h2 class="rv" style="--d:.1s">O ESG ficou do lado bom em tudo; a crise só o reforçou no valor e no lucro</h2>
+      <p class="lede rv" style="--d:.15s">Cada linha é um resultado; cada coluna, um efeito: a nota ESG em todos os anos, os anos de pandemia e o efeito a mais da nota ESG na pandemia. Toque num bloco.</p>
+      <div class="panel rv" id="mx-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable bars3d" id="mx-scene" data-fit="540x380" role="img" aria-label="Matriz 3D: seis resultados por três efeitos; a altura mostra a força estatística e a cor, a direção"></div></div>
+      <div class="legend"><span><i class="sq" style="background:var(--up)"></i>aumenta</span><span><i class="sq" style="background:var(--dn)"></i>diminui</span><span><i class="sq" style="background:var(--off)"></i>sem efeito estatístico</span><span>altura = força estatística</span></div>
+      <details class="tbl"><summary>Ver os coeficientes em tabela</summary><div class="wrap"><table id="mx-tbl"></table></div></details>
+      <p class="note">Montado por nós com as Tabelas 4 (modelos 3 e 6), 7, 8 e a Figura 6. No custo da dívida, "diminui" é bom para a empresa. As duas primeiras linhas medem quanto o pagamento dos executivos acompanha o desempenho.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Na prática, limites e créditos</div>
+    <h2 class="rv" style="--d:.1s">ESG é também uma decisão financeira</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Gestores</h3><p>O autor recomenda levar o ESG para as decisões financeiras, sobretudo a governança, para conseguir crédito mais barato e mais resistência a crises.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Investidores</h3><p>Para o autor, a nota ESG é um sinal de resiliência, mais valioso em tempos de incerteza, como mostrou o efeito a mais no valor e no lucro durante a pandemia.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--s)"><h3>Conselhos</h3><p>Leitura nossa: nas empresas da B3 com nota ESG mais alta, o pagamento dos executivos acompanhou mais o desempenho, o que interessa a quem desenha a política de remuneração.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:var(--ink-2)"><h3>Reguladores</h3><p>O autor defende regras que promovam práticas ESG autênticas e transparentes, que contribuam para a economia, a sociedade e o ambiente.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Seis anos (2018–2023):</b> pouco para ver efeitos de longo prazo do ESG e da pandemia. <em>· segundo o autor</em></li>
+          <li><b>Só empresas abertas da América Latina</b>, e o Estudo 1 só do Brasil: os resultados podem não valer para empresas fechadas, pequenas ou de outras regiões. <em>· segundo o autor</em></li>
+          <li><b>Notas de uma única base (Refinitiv)</b>, que podem ter falhas, e tratadas da mesma forma em todos os setores. <em>· segundo o autor</em></li>
+          <li><b>Associação, não causa;</b> os modelos explicam menos de 20% da variação, e mostramos direção e força, não tamanho. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          OLIVEIRA, Isaac Gezer Silva de. <em>Essays of corporate finance and ESG.</em> Tese (Doutorado em Administração de Empresas) — Universidade Presbiteriana Mackenzie, São Paulo, 2024. Orientador: Prof. Dr. Wilson Toshiro Nakamura.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">A tese foi escrita em inglês, com apoio da CAPES e do Instituto Presbiteriano Mackenzie. Esta versão simplifica o trabalho para o público em geral; as fórmulas, os controles e as tabelas completas estão no texto original.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa (em inglês)</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent, text){
+    var e = document.createElementNS(SVGNS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (text !== undefined) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function raw(n){ var t = String(Math.abs(n)); return (n < 0 ? '−' : n > 0 ? '+' : '') + (M.lang === 'en' ? t : t.replace('.', ',')); }
+  function pressSet(group, attr, val){ each(group.children, function(b){ b.setAttribute('aria-pressed', String(b.dataset[attr] === val)); }); }
+  function flipCards(host, C){
+    host.innerHTML = C.map(function(c, i){
+      return '<button class="flip rv" style="--d:' + (0.15 + i * 0.04) + 's; --fcol:' + c.c + '" aria-pressed="false"><span class="in">' +
+        '<span class="fc"><span class="k">' + c.k + '</span>' + (c.big ? '<span class="big">' + c.big + '</span>' : '') + '<span class="nm">' + c.q + '</span><span class="q">' + (c.hint || 'Toque para ver o que a tese encontrou.') + '</span>' + (c.rf ? '<span class="rf">' + c.rf + '</span>' : '') + '</span>' +
+        '<span class="bc">' + (c.a ? '<span class="ans">' + c.a + '</span>' : '') + '<span class="q">' + c.b + '</span></span></span></button>';
+    }).join('');
+    each(host.children, function(b){ b.addEventListener('click', function(){ b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true')); }); });
+  }
+  var STARS = ['', '*', '**', '***'];
+  var SIGTXT = ['sem significância estatística', 'significância fraca (10%)', 'significativo a 5%', 'significativo a 1%'];
+
+  /* ================= DADOS DA TESE ================= */
+  // Whelan et al. (2021), citado na seção 3.2.1: de cada 100 estudos
+  var DEB = [['positiva', 58, 'var(--up)'], ['negativa', 8, 'var(--dn)'], ['nenhuma', 13, '#94a3b8'], ['mista', 21, 'var(--s)']];
+  // Estudo 1, Tabela 4: [coeficiente, estrelas, modelo]
+  var T4 = {
+    esg:[0.18612, 3, 1], q:[0.18693, 3, 1], cov:[-0.1034, 1, 1], roa:[-0.01547, 0, 4],
+    qEsg:[[0.08623, 3, 2], [0.08773, 3, 3]], qCov:[[-0.01255, 0, 2], [-0.0079, 3, 3]], qEsgCov:[[-0.0013207, 0, 3]],
+    rEsg:[[0.00447, 2, 5], [0.00075, 3, 6]], rCov:[[-0.10628, 3, 5], [-0.10628, 3, 6]], rEsgCov:[[0.02174, 3, 6]]
+  };
+  // Estudo 2, Tabela 7 (488 registros) e Tabela 8 (1.018 registros): [coeficiente, estrelas]
+  var T7 = {esg:{q:[0.0897, 3], roa:[0.489, 3], roe:[0.226, 1]}, cov:{q:[-0.08702, 2], roa:[-0.594, 2], roe:[0.3805, 0]}};
+  var T8 = {cov:{q:[-1.540, 3], roa:[-0.277, 3], roe:[-1.61, 0]}, int:{q:[0.3243, 3], roa:[0.1249, 3], roe:[0.226, 1]}};
+  // Estudo 3, Figura 6: [coeficiente, estrelas, modelo]; dir = modelos 1–4, int = interação com a pandemia nos modelos 5–8
+  var F6 = {
+    esg:{dir:[-10.9811, 3, 1], int:[1.729476, 0, 5]},
+    env:{dir:[-4.0340, 2, 4], int:[-0.617838, 0, 8]},
+    soc:{dir:[-6.1372, 3, 3], int:[1.032857, 0, 7]},
+    gov:{dir:[-7.8533, 2, 2], int:[1.586845, 0, 6]},
+    cov:[2.22087, 0, 1]
+  };
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene');
+    var st = makeStage(sc, 460, 220, {ay:'72%', rx:'60deg'});
+    var y = 70, P = [['E', 'var(--e)'], ['S', 'var(--s)'], ['G', 'var(--g)']];
+    P.forEach(function(p, i){ st.appendChild(box({w:36, d:36, h:110, x:20 + i * 64, y:y + 20, c:p[1], label:p[0]})); });
+    st.appendChild(box({w:196, d:90, h:26, x:10, y:y, z:110, c:'var(--red)', top:'empresa'}));
+    var R = [[70, 'var(--up)', 'valor ↑'], [62, 'color-mix(in srgb, var(--up) 60%, white)', 'lucro ↑'], [26, 'var(--dn)', 'juros ↓']];
+    R.forEach(function(r, i){
+      var x = 250 + i * 70;
+      st.appendChild(box({w:50, d:50, h:r[0], x:x, y:y + 20, c:r[1]}));
+      flatLabel(st, r[2], x - 20, y + 86 + (i % 2) * 22, 90, '');
+    });
+    flatLabel(st, 'ambiente · social · governança', 0, y + 120, 220, '');
+    rotatable(sc, st, -12, 8);
+  })();
+
+  /* ================= 02 · TRÊS LETRAS ================= */
+  flipCards($('esg-flips'), [
+    {k:'Ambiental', big:'E', q:'Environmental: como a empresa afeta o planeta', hint:'Toque para ver o que entra na nota.', a:'Entra na nota', b:'Pegada de carbono, uso de recursos, gestão de resíduos e inovação ambiental.', c:'var(--e)'},
+    {k:'Social', big:'S', q:'Social: como a empresa trata as pessoas', hint:'Toque para ver o que entra na nota.', a:'Entra na nota', b:'Condições de trabalho, relação com a comunidade, diversidade e direitos humanos.', c:'var(--s)'},
+    {k:'Governança', big:'G', q:'Governance: como a empresa é comandada', hint:'Toque para ver o que entra na nota.', a:'Entra na nota', b:'Composição do conselho, remuneração dos executivos, transparência e direitos dos acionistas.', c:'#64748b'}
+  ]);
+
+  /* ================= 03 · O DEBATE ================= */
+  (function(){
+    var g = $('deb-grid'), cells = [], k = 0;
+    DEB.forEach(function(d, j){ for (var i = 0; i < d[1]; i++){ var c = document.createElement('i'); c.style.background = d[2]; c.dataset.j = j; g.appendChild(c); cells.push(c); } });
+    $('deb-chips').innerHTML = '<button class="chip" data-j="-1" aria-pressed="true">Todos</button>' + DEB.map(function(d, j){ return '<button class="chip" data-j="' + j + '" aria-pressed="false">Relação ' + d[0] + '</button>'; }).join('');
+    $('deb-leg').innerHTML = DEB.map(function(d){ return '<span><i class="sq" style="background:' + d[2] + '"></i>' + d[0] + ' (' + d[1] + ')</span>'; }).join('');
+    function show(j){
+      pressSet($('deb-chips'), 'j', String(j));
+      cells.forEach(function(c){ c.classList.toggle('dim', j >= 0 && +c.dataset.j !== j); });
+      $('deb-out').innerHTML = j < 0 ? 'De cada 100 estudos, <b>58</b> acharam que o ESG ajuda o desempenho, e <b>42</b> não.' :
+        '<b>' + DEB[j][1] + '</b> de cada 100 acharam relação <b>' + DEB[j][0] + '</b>' + (j === 3 ? ' (depende do caso).' : '.');
+    }
+    each($('deb-chips').children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.j); }); });
+    show(-1);
+  })();
+
+  /* ================= 04 · TRÊS ENSAIOS ================= */
+  (function(){
+    var C = [['BR', 'Brasil'], ['AR', 'Argentina'], ['CL', 'Chile'], ['CO', 'Colômbia'], ['MX', 'México']];
+    $('countries').innerHTML = C.map(function(c, i){ return '<div class="country" data-i="' + i + '"><b>' + c[0] + '</b><span>' + c[1] + '</span></div>'; }).join('');
+    var E = [
+      {t:'Estudo 1 · o salário dos executivos', p:'A nota ESG muda o quanto o pagamento dos executivos acompanha o desempenho? E a pandemia?', all:false,
+       n:[['441', 'registros empresa × ano'], ['6', 'modelos'], ['B3', 'empresas brasileiras']], m:'GMM sistêmico, um método que usa o passado de cada empresa para reduzir o risco de causa e efeito invertidos.'},
+      {t:'Estudo 2 · o lucro e o valor de mercado', p:'Empresas com nota ESG mais alta valem mais e lucram mais? E resistiram melhor à pandemia?', all:true,
+       n:[['488', 'registros (modelo sem a pandemia como termo a mais)'], ['1.018', 'registros (modelo com o termo a mais)'], ['3', 'medidas: Q, ROA e ROE']], m:'Efeitos fixos: cada empresa comparada com ela mesma ao longo do tempo. GMM como teste de robustez.'},
+      {t:'Estudo 3 · os juros da dívida', p:'Empresas com nota ESG mais alta pagam juros menores? A pandemia mudou isso?', all:true,
+       n:[['1.019', 'registros empresa × ano'], ['8', 'modelos (nota total e cada letra)'], ['~170', 'empresas por ano (conta nossa)']], m:'Efeitos fixos com erros robustos. Os cinco países formam o índice MSCI da América Latina emergente, com cerca de 85% do valor de mercado da região.'}
+    ];
+    function show(i){
+      pressSet($('ens-seg'), 'i', String(i));
+      var e = E[i];
+      each($('countries').children, function(c){ var on = e.all || c.dataset.i === '0'; c.classList.toggle('on', on); c.classList.toggle('off', !on); });
+      $('ens-panel').innerHTML = '<div class="tag">' + (e.all ? '5 países' : 'só o Brasil') + '</div><h3>' + e.t + '</h3><p>' + e.p + '</p><p style="font-size:.82rem; color:var(--muted)">' + e.m + '</p><div class="ens-n">' + e.n.map(function(x){ return '<div><b>' + x[0] + '</b><span>' + x[1] + '</span></div>'; }).join('') + '</div>';
+    }
+    each($('ens-seg').children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(0);
+  })();
+
+  /* ================= 05 · AS RÉGUAS ================= */
+  (function(){
+    var R = [
+      {n:'Q de Tobin', d:'<strong>Valor de mercado ÷ custo de repor os ativos.</strong> Acima de 1, os investidores pagam pela empresa mais do que custaria montá-la de novo: enxergam valor além do que está no balanço.', a:'Valor de mercado', b:'Custo de repor os ativos', va:60, vb:40, unit:'R$ mi', out:function(q){ return 'Q = <b>' + fmt(q, 2) + '</b>' + (q > 1 ? ': o mercado paga mais do que a empresa custaria.' : q < 1 ? ': o mercado paga menos do que a empresa custaria.' : ': empate.'); }, ratio:true},
+      {n:'ROA', d:'<strong>Lucro líquido ÷ ativo total.</strong> Quanto a empresa lucra com tudo o que tem, de máquinas a dinheiro em caixa.', a:'Lucro líquido', b:'Ativo total', va:6, vb:100, unit:'R$ mi', out:function(q){ return 'ROA = <b>' + fmt(q * 100, 1) + '%</b> do ativo.'; }},
+      {n:'ROE', d:'<strong>Lucro líquido ÷ patrimônio líquido.</strong> Quanto a empresa rende para o dinheiro que os sócios colocaram.', a:'Lucro líquido', b:'Patrimônio líquido', va:6, vb:40, unit:'R$ mi', out:function(q){ return 'ROE = <b>' + fmt(q * 100, 1) + '%</b> do patrimônio.'; }},
+      {n:'Custo da dívida', d:'<strong>Despesa de juros ÷ dívida média.</strong> O preço que a empresa paga pelo dinheiro emprestado. Quanto menor, melhor para ela.', a:'Juros pagos no ano', b:'Dívida média', va:8, vb:80, unit:'R$ mi', out:function(q){ return 'Custo da dívida = <b>' + fmt(q * 100, 1) + '%</b> ao ano.'; }}
+    ];
+    var cur = 0, a = $('msr-a'), b = $('msr-b'), svg = $('msr-svg');
+    function draw(){
+      var r = R[cur], va = +a.value, vb = +b.value, mx = Math.max(va, vb, 1);
+      $('msr-av').textContent = 'R$ ' + va + ' mi'; $('msr-bv').textContent = 'R$ ' + vb + ' mi';
+      svg.innerHTML = '';
+      [[va, 'var(--red)', r.a], [vb, 'var(--navy)', r.b]].forEach(function(x, i){
+        var y = 14 + i * 54;
+        el('rect', {x:0, y:y, width:520, height:26, rx:6, fill:'#eef2f7'}, svg);
+        el('rect', {x:0, y:y, width:Math.max(2, 520 * x[0] / mx), height:26, rx:6, style:'fill:' + x[1]}, svg);
+        el('text', {x:6, y:y + 44, 'font-size':13, fill:'#64748b'}, svg, x[2]);
+      });
+      $('msr-out').innerHTML = r.out(va / Math.max(vb, 1));
+    }
+    function show(i){
+      cur = i; pressSet($('msr-seg'), 'i', String(i));
+      var r = R[i];
+      $('msr-panel').innerHTML = '<div class="tag">Como se calcula</div><h3>' + r.n + '</h3><p>' + r.d + '</p>';
+      $('msr-al').textContent = r.a; $('msr-bl').textContent = r.b;
+      a.value = r.va; b.value = r.vb; draw();
+    }
+    a.addEventListener('input', draw); b.addEventListener('input', draw);
+    each($('msr-seg').children, function(x){ x.addEventListener('click', function(){ show(+x.dataset.i); }); });
+    show(0);
+  })();
+
+  /* ================= 06 · ESTUDO 1 ================= */
+  (function(){
+    var CH = [
+      {k:'base', n:'Sem condição'},
+      {k:'esg', n:'Nota ESG mais alta'},
+      {k:'cov', n:'Anos de pandemia'},
+      {k:'both', n:'Nota ESG alta na pandemia'}
+    ];
+    var met = 'q', cond = 'esg', svg = $('pay-svg');
+    $('pay-chips').innerHTML = CH.map(function(c){ return '<button class="chip" data-k="' + c.k + '">' + c.n + '</button>'; }).join('');
+    function mods(list){ return list.map(function(c){ return 'modelo ' + c[2] + ': ' + raw(c[0]) + STARS[c[1]]; }).join('; '); }
+    function info(){
+      var q = met === 'q', nm = q ? 'valor de mercado (Q)' : 'lucro (ROA)';
+      if (cond === 'base') return q ?
+        {w:12, c:'var(--up)', s:'↑', h:'Mais valor de mercado, mais pagamento', p:'Sozinho, um Q mais alto veio com pagamento maior (modelo 1: ' + raw(T4.q[0]) + '***). A nota ESG também (' + raw(T4.esg[0]) + '***). Os anos de pandemia, só uma pista fraca de pagamento menor (' + raw(T4.cov[0]) + '*, a 10%).'} :
+        {w:4, c:'var(--off)', s:'—', h:'O lucro sozinho não moveu o pagamento', p:'Nos modelos com o ROA, o lucro sozinho não teve efeito estatístico (modelo 4: ' + raw(T4.roa[0]) + '). O elo aparece quando entra a nota ESG.'};
+      if (cond === 'esg') return {w:q ? 24 : 20, c:'var(--up)', s:'↑', h:'Nota ESG mais alta reforça o elo', p:'Quanto maior a nota ESG, mais o pagamento acompanhou o ' + nm + ' (' + mods(q ? T4.qEsg : T4.rEsg) + '). É o que a tese esperava (hipótese 1).'};
+      if (cond === 'cov') return q ?
+        {w:6, c:'var(--dn)', s:'↓', h:'A pandemia não reforçou o elo com o valor', p:'Nos anos de pandemia, o elo com o Q não ficou mais forte: sem efeito num modelo e mais fraco no outro (' + mods(T4.qCov) + ').'} :
+        {w:6, c:'var(--dn)', s:'↓', h:'Na pandemia, o elo com o lucro enfraqueceu', p:'Nos anos de pandemia, o pagamento acompanhou menos o lucro (' + mods(T4.rCov) + ').'};
+      return q ?
+        {w:12, c:'var(--off)', s:'—', h:'Nota ESG alta na pandemia: nada a mais', p:'O termo que junta nota ESG, pandemia e Q não teve efeito estatístico (' + mods(T4.qEsgCov) + '). A hipótese 2, de um elo ainda mais forte na pandemia, não se confirmou pelo Q.'} :
+        {w:18, c:'var(--up)', s:'↑', h:'Pelo lucro, a nota ESG segurou o elo na pandemia', p:'Com o ROA, o termo que junta nota ESG e pandemia veio positivo (' + mods(T4.rEsgCov) + '): nas empresas com nota mais alta, o pagamento continuou ligado ao lucro. Resultado de um só modelo; leia como pista.'};
+    }
+    function draw(){
+      var I = info(); svg.innerHTML = '';
+      var defs = el('defs', {}, svg);
+      var mk = el('marker', {id:'pay-ah', viewBox:'0 0 10 10', refX:8, refY:5, markerWidth:28, markerHeight:28, markerUnits:'userSpaceOnUse', orient:'auto'}, defs);
+      el('path', {d:'M0,0 L10,5 L0,10 z', style:'fill:' + I.c}, mk);
+      el('rect', {x:20, y:70, width:150, height:80, rx:12, style:'fill:#eef2f7'}, svg);
+      el('text', {x:95, y:105, 'text-anchor':'middle', 'font-size':15, 'font-weight':700, fill:'#0f172a'}, svg, 'Desempenho');
+      el('text', {x:95, y:126, 'text-anchor':'middle', 'font-size':13, fill:'#64748b'}, svg, met === 'q' ? 'valor (Q)' : 'lucro (ROA)');
+      el('rect', {x:390, y:70, width:150, height:80, rx:12, style:'fill:#0f172a'}, svg);
+      el('text', {x:465, y:105, 'text-anchor':'middle', 'font-size':15, 'font-weight':700, fill:'#fff'}, svg, 'Pagamento');
+      el('text', {x:465, y:126, 'text-anchor':'middle', 'font-size':13, fill:'#cbd5e1'}, svg, 'dos executivos');
+      el('line', {x1:180, y1:110, x2:372, y2:110, class:'arr', 'stroke-width':I.w, 'stroke-linecap':'round', 'marker-end':'url(#pay-ah)', style:'stroke:' + I.c}, svg);
+      el('text', {x:276, y:92 - I.w / 2, 'text-anchor':'middle', 'font-size':26, 'font-weight':900, style:'fill:' + (I.c === 'var(--off)' ? '#94a3b8' : I.c)}, svg, I.s);
+      var tags = cond === 'esg' ? ['ESG'] : cond === 'cov' ? ['pandemia'] : cond === 'both' ? ['ESG', 'pandemia'] : [];
+      tags.forEach(function(t, i){
+        var x = 276 + (i - (tags.length - 1) / 2) * 104;
+        el('rect', {x:x - 48, y:166, width:96, height:30, rx:15, style:'fill:' + (t === 'ESG' ? 'var(--s)' : 'var(--red)')}, svg);
+        el('text', {x:x, y:186, 'text-anchor':'middle', 'font-size':13, 'font-weight':700, fill:'#fff'}, svg, t);
+        el('line', {x1:x, y1:166, x2:x === 276 ? 276 : x, y2:124, stroke:'#94a3b8', 'stroke-dasharray':'3 3'}, svg);
+      });
+      $('pay-panel').innerHTML = '<div class="tag">' + (met === 'q' ? 'Valor de mercado (Q)' : 'Lucro (ROA)') + ' · ' + CH.filter(function(c){ return c.k === cond; })[0].n + '</div><h3>' + I.h + '</h3><p>' + I.p + '</p>';
+    }
+    function setCond(k){ cond = k; pressSet($('pay-chips'), 'k', k); draw(); }
+    each($('pay-chips').children, function(b){ b.addEventListener('click', function(){ setCond(b.dataset.k); }); });
+    each($('pay-seg').children, function(b){ b.addEventListener('click', function(){ met = b.dataset.m; pressSet($('pay-seg'), 'm', met); draw(); }); });
+    setCond('esg');
+  })();
+
+  /* ================= 07 · ESTUDO 2: BARRAS ================= */
+  var OUT = [{k:'q', n:'Valor (Q)', l:'valor de mercado (Q de Tobin)'}, {k:'roa', n:'Lucro (ROA)', l:'lucro sobre o ativo (ROA)'}, {k:'roe', n:'Lucro (ROE)', l:'lucro sobre o patrimônio (ROE)'}];
+  function barColor(co){ return !co[1] ? 'var(--off)' : co[0] < 0 ? 'var(--dn)' : 'var(--up)'; }
+  (function(){
+    var sc = $('e2-scene'), st = makeStage(sc, 420, 160, {ay:'70%', rx:'62deg'}), bars = {}, v = 'esg', sel = 'q';
+    OUT.forEach(function(o, i){
+      var b = box({w:84, d:70, h:3, x:20 + i * 136, y:40, c:'var(--off)', top:' '});
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)){ sel = o.k; render(); } });
+      st.appendChild(b); bars[o.k] = b;
+      flatLabel(st, o.n, i * 136, 128, 124, '');
+    });
+    function render(){
+      OUT.forEach(function(o){
+        var co = T7[v][o.k], b = bars[o.k];
+        b.style.setProperty('--h', (co[1] ? co[1] * 48 : 4) + 'px');
+        b.style.setProperty('--c', barColor(co));
+        b.querySelector('.top-label').textContent = co[1] ? (co[0] < 0 ? '↓' : '↑') + STARS[co[1]] : '—';
+        b.classList.toggle('active', o.k === sel);
+      });
+      var o = OUT.filter(function(x){ return x.k === sel; })[0], co = T7[v][sel];
+      var h = (v === 'esg' ? 'Nota ESG → ' : 'Anos de pandemia → ') + o.l + ': ' + (!co[1] ? 'sem efeito estatístico' : co[1] === 1 ? 'pista fraca de ' + (co[0] < 0 ? 'queda' : 'alta') : co[0] < 0 ? 'desce' : 'sobe');
+      $('e2-panel').innerHTML = '<div class="tag">Tabela 7 · 488 registros</div><h3>' + h + '</h3><p>Coeficiente ' + raw(co[0]) + STARS[co[1]] + ' (' + SIGTXT[co[1]] + '). Toque noutra barra ou troque o efeito acima.</p>';
+    }
+    each($('e2-seg').children, function(b){ b.addEventListener('click', function(){ v = b.dataset.v; pressSet($('e2-seg'), 'v', v); render(); }); });
+    rotatable(sc, st, -6, 5);
+    render();
+  })();
+
+  /* ================= 08 · A VIRADA: PLACA ================= */
+  (function(){
+    var ROWS = [
+      {k:'cov', n:'Anos de pandemia', d:'o efeito dos anos de 2020 e 2021, para qualquer empresa'},
+      {k:'int', n:'Nota ESG a mais na pandemia', d:'o efeito a mais da nota ESG nos anos de 2020 e 2021'}
+    ];
+    var sel = {r:'int', c:'q'};
+    function render(){
+      var h = '<div></div>' + OUT.map(function(o){ return '<div class="h">' + o.n + '</div>'; }).join('');
+      ROWS.forEach(function(r){
+        h += '<div class="rl">' + r.n + '</div>';
+        OUT.forEach(function(o){
+          var co = T8[r.k][o.k], cls = !co[1] ? 'ns' : co[0] < 0 ? 'dn' : 'up';
+          h += '<button class="cell ' + cls + '" data-r="' + r.k + '" data-c="' + o.k + '" aria-pressed="' + (sel.r === r.k && sel.c === o.k) + '"><b>' + (!co[1] ? '—' : co[0] < 0 ? '↓' : '↑') + '</b><small>' + (STARS[co[1]] || 'n.s.') + '</small></button>';
+        });
+      });
+      $('plate').innerHTML = h;
+      each($('plate').querySelectorAll('.cell'), function(b){ b.addEventListener('click', function(){ sel = {r:b.dataset.r, c:b.dataset.c}; render(); }); });
+      var r = ROWS.filter(function(x){ return x.k === sel.r; })[0], o = OUT.filter(function(x){ return x.k === sel.c; })[0], co = T8[sel.r][sel.c];
+      var txt;
+      if (sel.r === 'cov') txt = co[1] ? 'Nos anos de pandemia, o ' + o.l + ' caiu, para todas as empresas.' : 'Nos anos de pandemia, o ' + o.l + ' não mudou de forma estatisticamente clara.';
+      else txt = co[1] > 1 ? 'Nos anos de pandemia, cada ponto a mais de nota ESG somou mais ao ' + o.l + ' do que nos outros anos: o ESG ajudou a amortecer a queda.' : 'No ' + o.l + ', nada claro: no máximo uma pista fraca, a 10%.';
+      $('pl-panel').innerHTML = '<div class="tag">' + r.n + ' · ' + o.n + '</div><h3>' + (!co[1] ? 'Sem efeito estatístico' : co[1] === 1 ? 'Só uma pista fraca' : co[0] < 0 ? 'Desce' : 'Sobe') + '</h3><p>' + txt + ' Coeficiente ' + raw(co[0]) + STARS[co[1]] + ' (' + SIGTXT[co[1]] + '). Aqui, ' + r.d + '.</p>';
+    }
+    render();
+  })();
+
+  /* ================= 09 · ESTUDO 3: BARRAS ================= */
+  (function(){
+    var P = [{k:'esg', n:'Nota ESG', l:'nota ESG total', c:'var(--dn)'}, {k:'env', n:'E', l:'nota ambiental (E)'}, {k:'soc', n:'S', l:'nota social (S)'}, {k:'gov', n:'G', l:'nota de governança (G)'}];
+    var sc = $('e3-scene'), st = makeStage(sc, 440, 160, {ay:'70%', rx:'62deg'}), bars = {}, v = 0, sel = 'esg';
+    P.forEach(function(p, i){
+      var b = box({w:70, d:62, h:3, x:16 + i * 108, y:40, c:'var(--off)', top:' '});
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)){ sel = p.k; render(); } });
+      st.appendChild(b); bars[p.k] = b;
+      flatLabel(st, p.n, i * 108, 124, 102, '');
+    });
+    function render(){
+      P.forEach(function(p){
+        var co = F6[p.k][v ? 'int' : 'dir'], b = bars[p.k];
+        b.style.setProperty('--h', (co[1] ? co[1] * 48 : 4) + 'px');
+        b.style.setProperty('--c', barColor(co));
+        b.querySelector('.top-label').textContent = co[1] ? '↓' + STARS[co[1]] : '—';
+        b.classList.toggle('active', p.k === sel);
+      });
+      var p = P.filter(function(x){ return x.k === sel; })[0], co = F6[sel][v ? 'int' : 'dir'];
+      var h = v ? 'Pandemia × ' + p.l + ': sem efeito a mais' : p.l.charAt(0).toUpperCase() + p.l.slice(1) + ' mais alta → juros menores';
+      var t = v ? 'Nos anos de 2020 e 2021, a ' + p.l + ' não trouxe desconto a mais nos juros (modelo ' + co[2] + ': ' + raw(co[0]) + ', ' + SIGTXT[0] + ').' :
+        'Em todos os anos, empresas com ' + p.l + ' mais alta pagaram juros menores (modelo ' + co[2] + ': ' + raw(co[0]) + STARS[co[1]] + ', ' + SIGTXT[co[1]] + ').';
+      $('e3-panel').innerHTML = '<div class="tag">Figura 6 · ' + (v ? 'modelos 5 a 8' : 'modelos 1 a 4') + '</div><h3>' + h + '</h3><p>' + t + (v ? ' A hipótese 2, de uma vantagem maior na crise, não se confirmou.' : ' Os anos de pandemia, sozinhos, não mudaram o custo de forma estatisticamente clara.') + '</p>';
+    }
+    each($('e3-seg').children, function(b){ b.addEventListener('click', function(){ v = +b.dataset.v; pressSet($('e3-seg'), 'v', b.dataset.v); render(); }); });
+    rotatable(sc, st, -6, 5);
+    render();
+  })();
+
+  /* ================= 10 · APOSTAS ================= */
+  flipCards($('flips'), [
+    {k:'Estudo 1', q:'Empresas com nota ESG mais alta pagam mais aos executivos?', a:'Sim.', b:'A nota ESG veio com pagamento total maior (+0,186***), e o pagamento acompanhou mais de perto o valor de mercado e o lucro.', rf:'Tabela 4 · modelos 1, 2, 3, 5 e 6', c:'var(--s)'},
+    {k:'Estudo 1', q:'A pandemia cortou o pagamento dos executivos?', a:'Não de forma clara.', b:'Só uma pista fraca de pagamento menor, a 10% e num só modelo (−0,10*); no outro, sem efeito.', rf:'Tabela 4 · modelos 1 e 4', c:'var(--s)'},
+    {k:'Estudo 2', q:'Na crise, a nota ESG protegeu o valor de mercado?', a:'Sim.', b:'Os anos de pandemia derrubaram o Q (−1,540***), e o efeito a mais da nota ESG nesses anos foi positivo (+0,3243***).', rf:'Tabela 8', c:'var(--red)'},
+    {k:'Estudo 2', q:'E protegeu o retorno dos sócios (ROE)?', a:'Nada claro.', b:'No ROE, a pandemia não teve efeito estatístico, e o efeito a mais da nota ESG ficou só como pista fraca (+0,226*, a 10%).', rf:'Tabela 8', c:'var(--red)'},
+    {k:'Estudo 3', q:'Na pandemia, a nota ESG baixou ainda mais os juros?', a:'Não.', b:'Nenhum dos quatro termos que juntam nota e pandemia teve efeito estatístico (total, E, S e G). A vantagem nos juros existiu em todos os anos, mas não cresceu na crise.', rf:'Figura 6 · modelos 5 a 8', c:'var(--navy)'},
+    {k:'Estudo 3', q:'Só a governança ajuda a pagar menos juros?', a:'Não: as três letras.', b:'Ambiental (−4,03**), social (−6,14***) e governança (−7,85**) vieram com juros menores. A tese destaca a governança, que teve o maior coeficiente das três.', rf:'Figura 6 · modelos 2 a 4', c:'var(--navy)'}
+  ]);
+
+  /* ================= 11 · SÍNTESE: MATRIZ ================= */
+  (function(){
+    var COLS = ['ESG', 'pandemia', 'ESG na pandemia'];
+    var ROWS = [
+      {n:'Pagamento × valor', s:'Estudo 1 · Tabela 4, modelo 3', l:'o elo entre o pagamento dos executivos e o valor de mercado', v:[[0.08773, 3], [-0.0079, 3], [-0.0013207, 0]]},
+      {n:'Pagamento × lucro', s:'Estudo 1 · Tabela 4, modelo 6', l:'o elo entre o pagamento dos executivos e o lucro', v:[[0.00075, 3], [-0.10628, 3], [0.02174, 3]]},
+      {n:'Valor (Q)', s:'Estudo 2 · Tabelas 7 e 8', l:'o valor de mercado', v:[T7.esg.q, T8.cov.q, T8.int.q]},
+      {n:'Lucro (ROA)', s:'Estudo 2 · Tabelas 7 e 8', l:'o lucro sobre o ativo', v:[T7.esg.roa, T8.cov.roa, T8.int.roa]},
+      {n:'Lucro (ROE)', s:'Estudo 2 · Tabelas 7 e 8', l:'o lucro sobre o patrimônio', v:[T7.esg.roe, T8.cov.roe, T8.int.roe]},
+      {n:'Custo da dívida', s:'Estudo 3 · Figura 6, modelos 1 e 5', l:'os juros sobre a dívida', v:[F6.esg.dir, F6.cov, F6.esg.int]}
+    ];
+    var sc = $('mx-scene'), st = makeStage(sc, 380, 380, {ay:'50%', rx:'40deg'}), cells = [], sel = [5, 0];
+    var rowY = function(r){ return 6 + r * 58; }, colX = function(c){ return 140 + c * 84; };
+    ROWS.forEach(function(r, i){
+      var lb = flatLabel(st, r.n, -60, rowY(i) + 8, 190, ''); lb.classList.add('row');
+      cells[i] = [];
+      [0, 1, 2].forEach(function(c){
+        var b = box({w:70, d:34, h:3, x:colX(c), y:rowY(i), c:'var(--off)', top:' '});
+        b.addEventListener('click', function(){ if (!M.wasDrag(sc)){ sel = [i, c]; render(); } });
+        st.appendChild(b); cells[i][c] = b;
+      });
+    });
+    ['ESG', 'pandemia', 'ESG + pand.'].forEach(function(t, c){ flatLabel(st, t, colX(c) - 12, rowY(6) - 8 + (c % 2) * 24, 94, ''); });
+    function render(){
+      ROWS.forEach(function(r, i){
+        [0, 1, 2].forEach(function(c){
+          var co = r.v[c], b = cells[i][c];
+          b.style.setProperty('--h', (co[1] ? co[1] * 14 : 3) + 'px');
+          b.style.setProperty('--c', barColor(co));
+          b.querySelector('.top-label').textContent = co[1] ? (co[0] < 0 ? '↓' : '↑') : '';
+          b.classList.toggle('active', sel[0] === i && sel[1] === c);
+        });
+      });
+      var r = ROWS[sel[0]], co = r.v[sel[1]];
+      var what = sel[1] === 0 ? 'Nota ESG mais alta' : sel[1] === 1 ? 'Anos de pandemia' : 'Nota ESG a mais na pandemia';
+      var res = !co[1] ? 'sem efeito estatístico em ' : co[1] === 1 ? 'pista fraca de que ' + (co[0] < 0 ? 'diminui ' : 'aumenta ') : (co[0] < 0 ? 'diminui ' : 'aumenta ');
+      $('mx-panel').innerHTML = '<div class="tag">' + r.s + '</div><h3>' + what + ': ' + res + r.l + '</h3><p>Coeficiente ' + raw(co[0]) + STARS[co[1]] + ' (' + SIGTXT[co[1]] + ').' + (sel[0] === 5 && co[1] && co[0] < 0 ? ' Juros menores são bons para a empresa.' : '') + '</p>';
+    }
+    rotatable(sc, st, -5, 5);
+    render();
+    $('mx-tbl').innerHTML = '<tr><th>Resultado</th>' + COLS.map(function(c){ return '<th>' + c + '</th>'; }).join('') + '</tr>' +
+      ROWS.map(function(r){ return '<tr><td>' + r.n + '</td>' + r.v.map(function(c){ return '<td>' + raw(c[0]) + STARS[c[1]] + '</td>'; }).join('') + '</tr>'; }).join('');
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
