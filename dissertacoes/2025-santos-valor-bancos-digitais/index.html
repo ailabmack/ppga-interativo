@@ -1,0 +1,967 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valor em bancos digitais · PPGA Interativo</title>
+<meta name="description" content="A dissertação de mestrado de Cléber Silva dos Santos (PPGA Mackenzie, 2025) sobre o caminho da criação à captura de valor em bancos digitais, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/dissertacoes/2025-santos-valor-bancos-digitais/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2214%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>VB</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em ../../assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  :root{
+    --cri:var(--navy);   /* criação de valor (o banco cria) */
+    --vp:var(--red);     /* valor percebido (o cliente percebe) */
+    --cap:#334155;       /* captura de valor (o banco captura) */
+    --coc:#7c8aa5;       /* cocriação (o cliente participa) */
+    --off:#cbd5e1;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .cri-t{color:var(--cri); font-weight:700;} .vp-t{color:var(--vp); font-weight:700;} .cap-t{color:var(--cap); font-weight:700;} .coc-t{color:#5b6b85; font-weight:700;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4.2vw, 2.9rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{display:flex; gap:8px 16px; justify-content:center; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:6px;}
+  #hero-scene .face-label{font-size:11px; letter-spacing:.06em; text-align:center; line-height:1.15;}
+
+  /* ---------- Componentes comuns ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 16px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip.on, .chip[aria-pressed="true"]{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px 22px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.12rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.93rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .panel ul{margin:4px 0 0; padding-left:18px; display:grid; gap:4px; font-size:.88rem; color:var(--ink-2);}
+  .stats{display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; margin-top:18px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.55rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.8rem; color:var(--muted);}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 15px; font-size:.85rem; cursor:pointer; color:var(--ink-2);}
+  .seg button.on{background:var(--ink); color:#fff;}
+  .ok-t{color:#15803d; font-weight:700;} .ns-t{color:var(--muted); font-weight:700;}
+  .flag{display:inline-block; font-size:.74rem; font-weight:600; color:var(--red); background:color-mix(in srgb, var(--red) 10%, transparent); padding:3px 9px; border-radius:6px;}
+
+  /* ---------- 02 · As três faces do valor ---------- */
+  .reasons{display:grid; grid-template-columns:1fr; gap:8px; margin-top:6px;}
+  @media (min-width:560px){ .reasons{grid-template-columns:1fr 1fr;} }
+  .reason{display:flex; gap:10px; align-items:flex-start; text-align:left; border:1px solid var(--border); background:var(--card); border-radius:10px; padding:9px 12px; cursor:pointer; font-size:.86rem; color:var(--ink-2); line-height:1.35; transition:all .2s;}
+  .reason:hover{border-color:var(--ink);}
+  .reason .bx{flex:0 0 18px; height:18px; border-radius:5px; border:2px solid var(--neutral); margin-top:1px; transition:all .2s;}
+  .reason[aria-pressed="true"]{border-color:var(--fc); box-shadow:inset 0 0 0 1px var(--fc);}
+  .reason[aria-pressed="true"] .bx{background:var(--fc); border-color:var(--fc);}
+  .faces{display:grid; gap:12px;}
+  .face{border-left:6px solid var(--fc); background:var(--card); border-radius:0 12px 12px 0; padding:12px 16px; box-shadow:var(--shadow);}
+  .face h3{font-size:1.02rem; color:var(--ink); display:flex; justify-content:space-between; gap:10px; align-items:baseline;}
+  .face h3 b{font-family:var(--sans); font-size:1.3rem; color:var(--fc);}
+  .face p{font-size:.84rem; margin:2px 0 6px;}
+  .face .tr{height:10px; background:#eef2f7; border-radius:5px; overflow:hidden;}
+  .face .tr i{display:block; height:100%; width:0; background:var(--fc); border-radius:5px; transition:width .5s cubic-bezier(.2,.8,.2,1);}
+  #faces-msg{min-height:3.2em; font-size:.88rem; color:var(--ink-2); margin-top:12px;}
+
+  /* ---------- 03 · Quatro palavras ---------- */
+  .flips{display:grid; grid-template-columns:1fr; gap:12px; margin-top:10px;}
+  @media (min-width:640px){ .flips{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1050px){ .flips{grid-template-columns:repeat(4, 1fr);} }
+  .flip{perspective:1200px; border:0; background:transparent; padding:0; cursor:pointer; text-align:left; min-height:262px;}
+  .flip .in{position:relative; display:block; width:100%; min-height:262px; transform-style:preserve-3d; transition:transform .6s cubic-bezier(.2,.8,.2,1);}
+  .flip[aria-pressed="true"] .in{transform:rotateY(180deg);}
+  .flip .fr, .flip .bk{position:absolute; inset:0; display:block; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:14px; padding:16px 18px; box-shadow:var(--shadow);}
+  .flip .fr{background:var(--card); border:1px solid var(--border); border-top:6px solid var(--fc);}
+  .flip .bk{background:var(--fc); color:#fff; transform:rotateY(180deg);}
+  .flip .k{display:block; font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--fc);}
+  .flip .bk .k{color:rgb(255 255 255 / .8);}
+  .flip .t{display:block; font-family:var(--serif); font-weight:700; font-size:1.15rem; color:var(--ink); margin:4px 0 8px; line-height:1.25;}
+  .flip .bk .t{color:#fff; font-size:1rem;}
+  .flip .d{display:block; font-size:.86rem; color:var(--ink-2); line-height:1.45;}
+  .flip .bk .d{color:#fff; font-size:.82rem;}
+  .flip .q{display:block; font-family:var(--serif); font-style:italic; font-size:.84rem; margin-top:8px; padding-top:8px; border-top:1px solid rgb(255 255 255 / .35);}
+  .flip .who{position:absolute; bottom:14px; left:18px; right:18px; display:block; font-size:.74rem; color:var(--muted);}
+  .flip .who b{color:var(--ink-2);}
+  .road{display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:.82rem; color:var(--ink-2); margin-top:16px;}
+  .road span{padding:4px 10px; border-radius:999px; color:#fff; font-weight:600;}
+  .road i{font-style:normal; color:var(--muted);}
+
+  /* ---------- 04 · Duas revisões ---------- */
+  #funnel-svg{width:100%; display:block; max-width:520px; margin:0 auto;}
+  #funnel-svg text{font-family:var(--sans);}
+  #funnel-svg .stp{cursor:pointer;}
+  #funnel-svg .stp:hover rect.bar{stroke:var(--ink); stroke-width:2;}
+  @media (max-width:600px){ #funnel-svg text.fl{font-size:20px !important;} #funnel-svg text.fv{font-size:24px !important;} }
+  #rev-panel{min-height:200px;}
+  .minibars{display:grid; gap:5px; margin-top:6px;}
+  .minibar{display:grid; grid-template-columns:118px 1fr 44px; gap:8px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .minibar .tr{height:10px; background:#eef2f7; border-radius:4px; overflow:hidden;}
+  .minibar .tr i{display:block; height:100%; background:var(--rc); border-radius:4px;}
+  .minibar b{text-align:right; font-variant-numeric:tabular-nums;}
+
+  /* ---------- 05 · Quem respondeu ---------- */
+  #people{width:100%; max-width:470px; display:block; margin:0 auto;}
+  #people circle{transition:fill .45s;}
+  .legend{display:grid; gap:6px; margin-top:12px;}
+  .legend div{display:grid; grid-template-columns:14px 1fr auto; gap:8px; align-items:center; font-size:.85rem; color:var(--ink-2);}
+  .legend i{width:14px; height:14px; border-radius:50%; display:block;}
+  .legend b{font-variant-numeric:tabular-nums; color:var(--ink);}
+  #who-msg{font-size:.86rem; color:var(--ink-2); margin-top:10px; min-height:3em;}
+
+  /* ---------- 06 · A régua ---------- */
+  #ruler-scene .face-label{font-size:20px; letter-spacing:0;}
+  #ruler-scene .floor-label{font-size:15px;}
+  #ruler-scene .slab{cursor:pointer;}
+  #ruler-scene .slab.active{--oz:14px;}
+  #ruler-scene .slab{transition:transform .55s cubic-bezier(.2,.8,.2,1), opacity .5s, --h .6s;}
+  .steps{display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; margin:8px 0 14px;}
+  .steps button{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:9px 10px; text-align:left; cursor:pointer; transition:all .2s;}
+  .steps button b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink);}
+  .steps button span{font-size:.76rem; color:var(--muted); line-height:1.25; display:block;}
+  .steps button.on{border-color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink), var(--shadow);}
+  #ruler-panel{min-height:230px;}
+  .itl{list-style:none; padding:0 !important; margin:6px 0 0; display:grid; gap:5px !important;}
+  .itl li{font-size:.85rem; color:var(--ink-2); display:grid; grid-template-columns:auto 1fr; gap:8px; align-items:baseline;}
+  .itl li small{font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; font-weight:700; padding:2px 6px; border-radius:4px; color:#fff; white-space:nowrap;}
+  .fm{background:#64748b;} .fi{background:#0f766e;} .fh{background:#9333ea;}
+
+  /* ---------- 07 · Apostas ---------- */
+  .bets{display:grid; grid-template-columns:1fr; gap:12px; margin-top:10px;}
+  @media (min-width:700px){ .bets{grid-template-columns:1fr 1fr;} }
+  .bet{background:var(--card); border:1px solid var(--border); border-left:6px solid var(--bc); border-radius:12px; padding:14px 16px; box-shadow:var(--shadow); min-height:178px;}
+  .bet .q{font-family:var(--serif); font-weight:700; font-size:1rem; color:var(--ink); line-height:1.35;}
+  .bet .opts{display:flex; gap:8px; margin:10px 0 0;}
+  .bet .opts button{border:1px solid var(--border); background:var(--bg-soft); border-radius:8px; padding:7px 14px; font-size:.84rem; cursor:pointer; font-weight:600; color:var(--ink-2);}
+  .bet .opts button:hover{border-color:var(--ink);}
+  .bet .opts button.pick{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .bet .ans{font-size:.86rem; color:var(--ink-2); margin-top:10px; display:none; line-height:1.45;}
+  .bet.done .ans{display:block;}
+  .bet .ans b.v{display:inline-block; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; padding:2px 8px; border-radius:5px; color:#fff; margin-right:6px;}
+  #score{font-size:.92rem; color:var(--ink-2); margin-top:14px; min-height:1.5em;}
+
+  /* ---------- 08 · O mapa ---------- */
+  #map-svg{width:100%; display:block; overflow:visible;}
+  #map-svg text{font-family:var(--sans);}
+  #map-svg .arr{cursor:pointer;}
+  #map-svg .arr.on rect{stroke:var(--red); stroke-width:2.5;}
+  #map-svg .arr.on text{fill:var(--red) !important;}
+  #map-svg .arr:hover rect{stroke:var(--ink);}
+  #map-svg .mod{transition:opacity .4s;}
+  #map-svg.only .mod{opacity:0; pointer-events:none;}
+  @media (max-width:600px){ #map-svg .ep{display:none;} }
+  #map-panel{min-height:190px; margin-top:12px;}
+
+  /* ---------- 09 · Cocriação ---------- */
+  .duo{display:grid; grid-template-columns:1fr; gap:14px;}
+  @media (min-width:600px){ .duo{grid-template-columns:1fr 1fr;} }
+  .duo figure{margin:0; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px 12px 8px; box-shadow:var(--shadow);}
+  .duo figcaption{font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:4px;}
+  .duo figcaption .flag{letter-spacing:0; text-transform:none; margin-left:4px;}
+  .duo svg{width:100%; display:block;}
+  .duo svg text{font-family:var(--sans);}
+  .duo svg path.a{transition:stroke-width .45s;}
+  .push{margin:14px 0 4px;}
+  .push label{font-size:.86rem; font-weight:600; color:var(--ink-2); display:block; margin-bottom:6px;}
+  .push input[type=range]{width:100%; -webkit-appearance:none; appearance:none; height:30px; background:transparent; cursor:pointer;}
+  .push input[type=range]::-webkit-slider-runnable-track{height:6px; border-radius:3px; background:linear-gradient(90deg, #e2e8f0, var(--coc));}
+  .push input[type=range]::-moz-range-track{height:6px; border-radius:3px; background:linear-gradient(90deg, #e2e8f0, var(--coc));}
+  .push input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:22px; height:22px; border-radius:50%; background:#fff; border:3px solid #5b6b85; margin-top:-8px; box-shadow:var(--shadow);}
+  .push input[type=range]::-moz-range-thumb{width:18px; height:18px; border-radius:50%; background:#fff; border:3px solid #5b6b85;}
+  .push .ticks{display:flex; justify-content:space-between; font-size:.72rem; color:var(--muted);}
+  .pv{display:grid; gap:6px; margin-top:12px;}
+  .pv div{display:grid; grid-template-columns:1fr auto; gap:10px; font-size:.84rem; color:var(--ink-2); border-bottom:1px dashed var(--border); padding-bottom:4px;}
+  .pv b{font-variant-numeric:tabular-nums; color:var(--ink);}
+
+  /* ---------- 10 · R² ---------- */
+  #glass-scene .face-label{font-size:16px; letter-spacing:.02em;}
+  #glass-scene .floor-label{font-size:15px;}
+  #glass-scene .slab.inner{cursor:pointer;}
+  #glass-scene .slab.inner.active{--oz:10px;}
+  #r2-panel{min-height:200px;}
+
+  /* ---------- 11 · Na prática ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:12px; margin-top:8px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:15px 17px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink)); transition:transform .2s;}
+  .pcard:hover{transform:translateY(-3px);}
+  .pcard h3{font-size:1rem; margin-bottom:6px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:5px; font-size:.84rem; line-height:1.45; color:var(--ink-2);}
+  .pcard .src{display:block; margin-top:9px; font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--muted);}
+  .callout{margin-top:22px; padding:16px 20px; border-left:4px solid var(--red); background:var(--card); border-radius:0 12px 12px 0; box-shadow:var(--shadow);}
+  .callout p{margin:0; color:var(--ink); font-family:var(--serif); font-size:1rem; line-height:1.5;}
+
+  /* ---------- 12 · Limites e créditos ---------- */
+  .end{display:grid; grid-template-columns:1fr; gap:28px; margin-top:16px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:48px;} }
+  .end h3{font-size:1.15rem; margin-bottom:6px;}
+  .limits{display:grid; gap:7px; margin:10px 0 0; padding:0; list-style:none;}
+  .limits li{padding:9px 14px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.84rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.72rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.85rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px 18px; line-height:1.6; margin-top:10px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/dissertacoes/2025-santos-valor-bancos-digitais/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Dissertação de mestrado · PPGA Mackenzie · 2025</div>
+      <h1 class="rv" style="--d:.1s">Do valor criado ao valor capturado</h1>
+      <p class="sub rv" style="--d:.2s">O que acontece entre o que um banco digital oferece e o que ele ganha com isso? Com <strong>117 clientes</strong> de bancos brasileiros, a pesquisa seguiu esse caminho: o banco cria valor, o cliente percebe e o banco captura. E testou se chamar o cliente para <strong>cocriar</strong> faz diferença. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Cléber Silva dos Santos</span>
+        <span><b>Orientador:</b> Prof. Dr. Fellipe Silva Martins · <b>Coorientador:</b> Prof. Dr. Gilberto Perez</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#faces">Começar →</a>
+        <a class="btn ghost" href="#mapa">Ir direto aos resultados</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="520x340" role="img" aria-label="Três blocos em degrau, criação, valor percebido e captura, com um cubo que passa de um ao outro; embaixo, o contorno da cocriação"></div></div>
+      <div class="cap-legend">
+        <span><i class="dot" style="background:var(--cri)"></i>Criação</span>
+        <span><i class="dot" style="background:var(--vp)"></i>Valor percebido</span>
+        <span><i class="dot" style="background:var(--cap)"></i>Captura</span>
+        <span><i class="dot" style="background:transparent; box-shadow:inset 0 0 0 2px var(--coc)"></i>Cocriação</span>
+      </div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximo</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Estuda como os bancos digitais criam valor para os clientes e o que liga esse valor ao uso e ao engajamento, base para serviços financeiros que atendam melhor quem os usa."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · AS TRÊS FACES DO VALOR -->
+<section class="slide" id="faces" data-label="Três faces do valor">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> A pergunta</div>
+      <h2 class="rv" style="--d:.1s">Por que você gosta do seu banco?</h2>
+      <p class="rv" style="--d:.15s">Valor não é só preço. A dissertação olha para <strong>três faces</strong> do valor e mede cada etapa do caminho nas três. Marque as razões que valem para o app ou o internet banking do seu banco:</p>
+      <div class="reasons rv" id="reasons" style="--d:.2s" role="group" aria-label="Razões para gostar do banco"></div>
+      <p class="note rv" style="--d:.25s">Exercício ilustrativo, sem medir nada. As razões resumem perguntas do questionário da dissertação (apêndices C a F).</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="faces" id="faces-box"></div>
+      <p id="faces-msg" aria-live="polite"></p>
+      <p class="note">As três faces vêm da revisão teórica (seções 2.2.1 a 2.2.3): o valor <b>monetário</b> pesa custos e benefícios; o <b>intrínseco</b> é o que a pessoa sente; o <b>humano</b> é social, ligado a pertencer a um grupo e ser bem visto nele.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · QUATRO PALAVRAS -->
+<section class="slide" id="conceitos" data-label="Quatro palavras">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">03</span> O caminho</div>
+    <h2 class="rv" style="--d:.1s">Quatro palavras para um caminho</h2>
+    <p class="lede rv" style="--d:.15s">A dissertação segue o valor da criação à captura, passando pelo que o cliente percebe. No meio do caminho, a participação do cliente: a cocriação. Toque em cada cartão para ver como foi medido.</p>
+    <div class="flips" id="flips"></div>
+    <div class="road rv" style="--d:.3s" aria-label="O caminho estudado">
+      <span style="background:var(--cri)">Criação</span><i>→</i><span style="background:var(--vp)">Valor percebido</span><i>→</i><span style="background:var(--cap)">Captura</span><i>· e a</i><span style="background:var(--coc)">Cocriação</span><i>reforçaria cada trecho?</i>
+    </div>
+    <p class="note rv" style="--d:.35s">Banco digital, aqui, é tanto o banco 100% digital (fintech) quanto o banco tradicional usado pelo app ou pelo internet banking (seção 2.1). Definições: seção 2.9; perguntas: apêndices C a F e Tabela 14.</p>
+  </div>
+</section>
+
+<!-- 04 · DUAS REVISÕES -->
+<section class="slide" id="revisoes" data-label="Duas revisões">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Como a pesquisa olhou · a literatura</div>
+      <h2 class="rv" style="--d:.1s">525 artigos encontrados, 41 lidos a fundo</h2>
+      <p class="rv" style="--d:.15s">Antes de ouvir clientes, o autor fez <strong>duas buscas</strong> nas bases Web of Science e Scopus, em 2023. Ninguém tinha feito antes uma revisão sistemática com o mesmo objetivo. Escolha a busca e toque numa etapa:</p>
+      <div class="seg rv" id="rev-seg" style="--d:.2s" role="group" aria-label="Escolher a busca"></div>
+      <div class="panel rv" id="rev-panel" style="--d:.25s; margin-top:14px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="funnel-svg" viewBox="0 0 520 420" role="img" aria-label="Funil da busca escolhida, etapa por etapa"></svg>
+      <p class="note">Largura das barras proporcional ao número de artigos. Fonte: Figuras 01 e 03 (fluxogramas PRISMA) e seções 2.7.1 a 2.7.4.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · QUEM RESPONDEU -->
+<section class="slide" id="quem" data-label="Quem respondeu">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Como a pesquisa olhou · os clientes</div>
+      <h2 class="rv" style="--d:.1s">117 clientes, a maioria com conta em banco tradicional</h2>
+      <p class="rv" style="--d:.15s">O questionário circulou pelo WhatsApp em 2024. Entraram brasileiros com conta corrente que usam o app ou o internet banking do banco. Cada ponto é uma pessoa. Escolha um recorte:</p>
+      <div class="chips rv" id="who-chips" style="--d:.2s" role="group" aria-label="Escolher o recorte"></div>
+      <div class="stats rv" style="--d:.25s">
+        <div class="stat"><b>44,6 anos</b><span>idade média (de 21 a 68)</span></div>
+        <div class="stat"><b>117 &gt; 85</b><span>respostas válidas, acima do mínimo calculado para o modelo</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="people" viewBox="0 0 470 330" role="img" aria-label="117 pontos, um por respondente, coloridos pelo recorte escolhido"></svg>
+      <div class="legend" id="who-legend"></div>
+      <p id="who-msg" aria-live="polite"></p>
+      <p class="note">Amostra por conveniência, sem pretensão de representar todos os clientes do país. Antes, um pré-teste com 8 pessoas ajustou as perguntas. Fonte: seções 3.6 e 3.7, Tabelas 05 a 12.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · A RÉGUA -->
+<section class="slide" id="regua" data-label="A régua">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Como a pesquisa olhou · o questionário</div>
+      <h2 class="rv" style="--d:.1s">De 60 perguntas, 21 ficaram na régua</h2>
+      <p class="rv" style="--d:.15s">As perguntas vieram de escalas já usadas em outros países, traduzidas e adaptadas, com notas de 1 (discordo totalmente) a 5 (concordo totalmente). Perguntas que não mediam bem a sua etapa saíram da análise. Siga as etapas e toque num bloco:</p>
+      <div class="steps rv" id="ruler-steps" style="--d:.2s" role="group" aria-label="Etapas do questionário"></div>
+      <div class="panel rv" id="ruler-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="ruler-scene" data-fit="600x420" role="group" aria-label="Quatro blocos, um por etapa do caminho; a altura é o número de perguntas"></div></div>
+      <p class="note">Altura do bloco proporcional ao número de perguntas. Contagens nossas, a partir dos apêndices C a F (60), da Figura 07 (46) e da Tabela 14 (21). A dissertação diz que os itens saíram por cargas fatoriais insuficientes ou por não se ajustarem ao modelo (seção 4.2). Nas medidas finais, a confiabilidade (alfa de Cronbach) ficou entre 0,853 e 0,915 (Tabela 13).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · APOSTAS -->
+<section class="slide" id="apostas" data-label="Aposte">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">07</span> Antes dos resultados</div>
+    <h2 class="rv" style="--d:.1s">Aposte antes de ver o que os dados disseram</h2>
+    <p class="lede rv" style="--d:.15s">A dissertação testou seis hipóteses. Aqui elas estão em quatro perguntas. Escolha sua resposta e o cartão mostra o resultado.</p>
+    <div class="bets" id="bets"></div>
+    <p id="score" aria-live="polite"></p>
+  </div>
+</section>
+
+<!-- 08 · O MAPA -->
+<section class="slide" id="mapa" data-label="O caminho do valor">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> O que encontrou</div>
+      <h2 class="rv" style="--d:.1s">Criar valor puxa a percepção, e as duas chegam à captura</h2>
+      <p class="rv" style="--d:.15s">A ligação mais forte é a primeira: quem vê o banco <strong class="cri-t">criar valor</strong> para si também <strong class="vp-t">percebe mais valor</strong>. Criação e valor percebido se ligam, cada um, à <strong class="cap-t">captura</strong>, com coeficientes menores. Quanto mais grossa a seta, mais forte a ligação. Toque numa seta:</p>
+      <div class="seg rv" id="map-seg" style="--d:.2s" role="group" aria-label="O que mostrar no mapa"></div>
+      <div class="panel rv" id="map-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="map-svg" viewBox="0 0 600 420" role="img" aria-label="Mapa do modelo: setas da criação ao valor percebido (0,467), da criação à captura (0,117) e do valor percebido à captura (0,090); linhas tracejadas da cocriação, não significativas"></svg>
+      <p class="note">Coeficientes padronizados (β), estimados no SmartPLS 4 com 5.000 reamostragens. Espessura proporcional ao β. Mostram associação num momento só, não prova de causa. Fonte: Tabela 15.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · COCRIAÇÃO -->
+<section class="slide" id="cocriacao" data-label="A cocriação">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> O inesperado</div>
+      <h2 class="rv" style="--d:.1s">Chamar o cliente para cocriar não mudou o caminho</h2>
+      <p class="rv" style="--d:.15s">A literatura aposta na <strong class="coc-t">cocriação</strong>: o cliente que participa, personaliza e opina reforçaria cada trecho do caminho. Nos dados, isso não apareceu em nenhum dos três. Mova o quanto o cliente se sente cocriador e compare os dois lados:</p>
+      <div class="push rv" style="--d:.2s">
+        <label for="coc-range">Quanto o cliente se sente parte da criação do serviço:</label>
+        <input type="range" id="coc-range" min="0" max="2" step="1" value="1">
+        <div class="ticks"><span>pouco</span><span>médio</span><span>muito</span></div>
+      </div>
+      <div class="pv rv" style="--d:.25s">
+        <div><span>Cocriação × criação → valor percebido</span><b>p = 0,658</b></div>
+        <div><span>Cocriação × valor percebido → captura</span><b>p = 0,425</b></div>
+        <div><span>Cocriação × criação → captura</span><b>p = 0,986</b></div>
+      </div>
+      <p class="note rv" style="--d:.3s">Para ser significativo, o p teria de ficar abaixo de 0,05. Fonte: Tabela 15 e seção 4.4.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="duo">
+        <figure><figcaption>Se a hipótese estivesse certa <span class="flag">ilustração</span></figcaption><svg id="coc-a" viewBox="0 0 300 220" role="img" aria-label="Setas que engrossam quando a cocriação aumenta"></svg></figure>
+        <figure><figcaption>O que os dados mostraram</figcaption><svg id="coc-b" viewBox="0 0 300 220" role="img" aria-label="Setas que não mudam quando a cocriação aumenta"></svg></figure>
+      </div>
+      <div class="panel" style="margin-top:14px">
+        <div class="tag">A leitura do autor</div>
+        <p>Os serviços dos bancos digitais ainda são feitos para entrega automática, com pouca participação do cliente no desenvolvimento. O cliente não percebe a própria participação como algo que cria valor.</p>
+      </div>
+      <p class="note">À esquerda, uma ilustração nossa do efeito que a hipótese previa (o quanto as setas engrossariam é inventado). À direita, as setas com os coeficientes da Tabela 15, iguais em qualquer nível de cocriação.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · O QUE O MODELO EXPLICA -->
+<section class="slide" id="explica" data-label="O que o modelo explica">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> O que encontrou · o modelo</div>
+      <h2 class="rv" style="--d:.1s">O modelo explica mais da metade do valor percebido e da captura</h2>
+      <p class="rv" style="--d:.15s">Juntas, as peças do modelo dão conta de <strong>59%</strong> das diferenças no valor que os clientes percebem e de <strong>65,9%</strong> das diferenças na captura. O resto depende de coisas que o modelo não mediu. Toque num copo:</p>
+      <div class="panel rv" id="r2-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="glass-scene" data-fit="520x340" role="group" aria-label="Dois copos: valor percebido preenchido até 59%, captura até 65,9%"></div></div>
+      <p class="note">Copo cheio = 100% das diferenças entre os clientes; parte colorida = coeficiente de determinação (R²) do modelo. Fonte: seção 4.6 e Figura 08.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · NA PRÁTICA -->
+<section class="slide" id="pratica" data-label="Na prática">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> Por que isso importa</div>
+    <h2 class="rv" style="--d:.1s">Cuidar do que o cliente percebe é o elo entre criar e capturar</h2>
+    <p class="lede rv" style="--d:.15s">Para o autor, o sucesso na captura de valor depende de como os clientes percebem o que recebem. E a cocriação, por enquanto, é uma promessa que os bancos ainda não cumpriram.</p>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.2s; --pc:var(--cri)">
+        <h3>Para gestores de bancos</h3>
+        <ul><li>Priorizar a criação de valor com inovação, personalização, segurança das transações e eficiência.</li><li>Ligar cada inovação à experiência do cliente, para que o valor percebido vire fidelidade e retorno.</li></ul>
+        <span class="src">Seção 5.2</span>
+      </div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--coc)">
+        <h3>Para quem desenha o app</h3>
+        <ul><li>Rever as práticas de engajamento: canais claros de comunicação e incentivos para o cliente participar.</li><li>Ferramentas interativas e colaborativas podem fazer o cliente perceber a própria participação.</li></ul>
+        <span class="src">Seção 5.2</span>
+      </div>
+      <div class="pcard rv" style="--d:.3s; --pc:var(--vp)">
+        <h3>Para acompanhar o cliente</h3>
+        <ul><li>Monitorar sempre o que forma o valor percebido, porque ele liga a criação aos resultados.</li><li>Na régua final, pesaram custo-benefício, preço justo, sentir-se valorizado e serviço acima do esperado (tela 06).</li></ul>
+        <span class="src">Seção 5.2 e Tabela 14</span>
+      </div>
+      <div class="pcard rv" style="--d:.35s; --pc:var(--cap)">
+        <h3>Para pesquisadores</h3>
+        <ul><li>Acompanhar os mesmos clientes ao longo do tempo e ampliar a amostra, inclusive fora do Brasil.</li><li>Estudar a cocriação com entrevistas ou experimentos e incluir confiança, experiência digital e satisfação.</li></ul>
+        <span class="src">Sugestões para pesquisas futuras</span>
+      </div>
+    </div>
+    <div class="callout rv" style="--d:.4s"><p>Para o autor, os bancos digitais que conseguirem inovar, fortalecer a experiência do cliente e alinhar criação, percepção e captura num ciclo contínuo estarão mais bem posicionados no mercado.</p></div>
+  </div>
+</section>
+
+<!-- 12 · LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Limites e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Limites e créditos</div>
+    <h2 class="rv" style="--d:.1s">O que esta pesquisa não diz</h2>
+    <div class="end">
+      <div class="rv" style="--d:.2s">
+        <ul class="limits">
+          <li><b>Uma amostra pequena e de conveniência.</b> 117 pessoas, três em cada quatro do Sudeste e quase todas com curso superior. Não dá para generalizar a todos os clientes. <em>· segundo o autor, com dados das Tabelas 06 e 12</em></li>
+          <li><b>Um momento só.</b> Os dados foram coletados uma vez e não mostram como a percepção muda com o tempo. <em>· segundo o autor</em></li>
+          <li><b>Só o Brasil.</b> Cultura e confiança no sistema financeiro podem mudar o resultado em outros países. <em>· segundo o autor</em></li>
+          <li><b>Captura vista pelo cliente.</b> A captura foi medida com perguntas ao cliente (engajamento, personalização, aprender com o app), não com receitas ou lucros dos bancos. <em>· observação nossa</em></li>
+          <li><b>O elo, trecho a trecho.</b> Os dois trechos do caminho pelo valor percebido se confirmaram, o segundo por pouco (p = 0,048). O teste do efeito indireto, que mediria o caminho inteiro, não aparece no texto. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.25s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          SANTOS, Cléber Silva dos. <em>Da criação à captura de valor em bancos digitais: causas, mecanismos e consequências.</em> Dissertação (Mestrado em Administração de Empresas) — Universidade Presbiteriana Mackenzie, São Paulo, 2025. Orientador: Prof. Dr. Fellipe Silva Martins. Coorientador: Prof. Dr. Gilberto Perez.
+        </div>
+        <p style="margin-top:14px; font-size:.85rem">Pesquisa com apoio da CAPES. Revisões no protocolo PRISMA; dados analisados por modelagem de equações estruturais (PLS-SEM, no SmartPLS 4). Segundo o autor, o texto foi revisado com apoio do ChatGPT. Esta versão simplifica o trabalho para o público em geral; as revisões completas e a discussão estão no texto original.</p>
+        <div class="ctas" style="margin-top:16px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a dissertação completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, ramp = M.ramp, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // Três faces do valor (seções 2.2.1–2.2.3) e razões resumidas das perguntas (apêndices C–F)
+  var FACES = [
+    {k:'m', n:'Monetário', c:'#64748b', d:'Custo-benefício: o que pago e o que recebo.'},
+    {k:'i', n:'Intrínseco', c:'#0f766e', d:'O que sinto: satisfação, ser valorizado, combinar comigo.'},
+    {k:'h', n:'Humano', c:'#9333ea', d:'O social: ser bem visto, pertencer, o que meu grupo pensa.'}
+  ];
+  var REASONS = [
+    {f:'m', t:'Vale o preço que eu pago'},
+    {f:'i', t:'Me sinto valorizado nas interações'},
+    {f:'h', t:'Causa boa impressão no meu grupo social'},
+    {f:'m', t:'Me ajuda a comparar produtos e preços'},
+    {f:'i', t:'Parece feito sob medida para mim'},
+    {f:'h', t:'Me dá reconhecimento e aprovação social'},
+    {f:'m', t:'Tem preços razoáveis'},
+    {f:'i', t:'Combina com a minha personalidade'},
+    {f:'h', t:'Me sinto parte de um grupo de clientes'}
+  ];
+
+  // Os quatro conceitos (seção 2.9) e as perguntas finais (Tabela 14)
+  var CONCEPTS = [
+    {k:'cri', n:'Criação de valor', who:'O banco', d:'Como o banco desenvolve serviços e produtos que atendem às necessidades do cliente.', m:'4 perguntas na régua final, todas sobre identidade e status.', q:'Usar meu banco me dá aprovação e reconhecimento social.'},
+    {k:'coc', n:'Cocriação de valor', who:'O cliente, junto com o banco', d:'A participação ativa do cliente na criação do valor: opinar, personalizar, se aproximar.', m:'4 perguntas na régua final.', q:'Tive um impacto positivo no grau em que minhas preferências foram atendidas pelo app.'},
+    {k:'vp', n:'Valor percebido', who:'O cliente', d:'A avaliação de cada cliente sobre a utilidade e a relevância do que o banco oferece.', m:'6 perguntas na régua final.', q:'Estou satisfeito com a relação custo-benefício oferecida pelo meu banco.'},
+    {k:'cap', n:'Captura de valor', who:'O banco', d:'Como o banco transforma o valor criado em resultado: uso, engajamento, receita.', m:'7 perguntas na régua final, respondidas pelo cliente.', q:'A última vez que usei o app do meu banco, eu estava totalmente engajado.'}
+  ];
+
+  // Revisões (Figuras 01 e 03; seções 2.7.1–2.7.4)
+  var REVS = [
+    {n:'Busca 1', s:'Criação e cocriação', q:'Existe um consenso sobre a criação de valor em bancos digitais?', when:'março de 2023', c:'var(--cri)',
+      steps:[
+        {v:216, l:'encontrados', t:'Web of Science (121) e Scopus (95), com as palavras <em>value creation</em>, <em>bank*</em> e <em>digital</em>, sem limite de período.'},
+        {v:123, l:'artigos de periódico', t:'Saíram <strong>93</strong> registros que não eram artigos (ou revisões, nos critérios de cada base).'},
+        {v:105, l:'sem repetição', t:'Saíram <strong>18</strong> artigos que apareciam nas duas bases.'},
+        {v:46, l:'lidos por inteiro', t:'Pela leitura dos resumos saíram <strong>58</strong>, que tratavam de criação de valor em medicina, engenharia ou cidades inteligentes; <strong>1</strong> não foi encontrado.'},
+        {v:22, l:'na revisão', t:'Na leitura completa, saíram <strong>24</strong>: falavam de operadoras de telefonia ou de empresas que não eram bancos. Ficaram <strong>22 artigos</strong>.'}
+      ],
+      facts:[['Revista mais frequente', 'International Journal of Bank Marketing, 23%'], ['Abordagem', 'quantitativa 56%, qualitativa 38%, mista 6%'], ['Método mais usado', 'equações estruturais, 32%'], ['Países', '15; Finlândia e Espanha com 14% cada'], ['Anos com mais artigos', '2021 (32%), 2022 e 2018 (18% cada)']]},
+    {n:'Busca 2', s:'Valor percebido e captura', q:'Como a percepção de valor e a captura de valor se relacionam no banco digital?', when:'setembro de 2023', c:'var(--vp)',
+      steps:[
+        {v:309, l:'encontrados', t:'Duas buscas: <em>value capture</em> (101) e <em>perceived value</em> (208), sempre com <em>bank*</em> e <em>digital</em>. Web of Science 188, Scopus 121.'},
+        {v:237, l:'artigos de periódico', t:'Saíram <strong>72</strong> registros que não eram artigos.'},
+        {v:195, l:'sem repetição', t:'Saíram <strong>42</strong> artigos repetidos entre as bases.'},
+        {v:44, l:'lidos por inteiro', t:'Pelos resumos saíram <strong>149</strong>, de outros campos; <strong>2</strong> não foram encontrados.'},
+        {v:19, l:'na revisão', t:'Na leitura completa, saíram <strong>25</strong> que não tratavam de valor percebido ou captura em bancos digitais. Ficaram <strong>19 artigos</strong>, de 18 revistas diferentes.'}
+      ],
+      facts:[['Revistas', '18 diferentes em 19 artigos'], ['Abordagem', 'quantitativa 79%, qualitativa 21%'], ['Métodos mais usados', 'PLS-SEM 42%, equações estruturais 26%'], ['Países', '13; Índia 21%, Tailândia e Vietnã 11% cada'], ['Anos com mais artigos', '2022 (26%), 2023 (21%), 2020 (16%)']]}
+  ];
+
+  // Perfil dos 117 (Tabelas 05 a 12)
+  var N = 117;
+  var WHO = [
+    {b:'Tipo de banco', rows:[['Só banco tradicional', 59], ['Tradicional e 100% digital', 50], ['Só banco 100% digital', 8]],
+      t:'Metade usa só banco tradicional, pelo app ou pelo internet banking. Só 8 pessoas têm conta apenas em banco 100% digital.'},
+    {b:'Formação', rows:[['Ensino médio', 5], ['Graduação', 30], ['Pós-graduação ou MBA', 46], ['Mestrado ou doutorado', 36]],
+      t:'Sete em cada dez fazem ou fizeram pós-graduação, MBA, mestrado ou doutorado: um grupo bem mais escolarizado que a média do país.'},
+    {b:'Renda', rows:[['Sem renda', 1], ['R$ 1.412 a 2.824', 4], ['R$ 2.824 a 4.236', 19], ['R$ 4.236 a 7.060', 29], ['R$ 7.060 a 14.120', 32], ['R$ 14.120 a 28.240', 23], ['Acima de R$ 28.240', 9]],
+      t:'A faixa mais comum vai de R$ 7.060 a R$ 14.120 por mês. Quase oito em cada dez ganham mais de R$ 4.236 (conta nossa).'},
+    {b:'Ocupação', rows:[['Empregado CLT', 62], ['Servidor público', 29], ['Empresário', 10], ['Profissional liberal', 9], ['Estudante', 4], ['Outras', 3]],
+      t:'Mais da metade trabalha com carteira assinada; um quarto é servidor público. "Outras": uma pessoa aposentada, uma desempregada e uma do lar.'},
+    {b:'Região', rows:[['Sudeste', 89], ['Centro-Oeste', 15], ['Sul', 8], ['Nordeste', 5]],
+      t:'Três em cada quatro moram no Sudeste. Não houve respondentes do Norte.'},
+    {b:'Onde mora', rows:[['Capital ou região metropolitana', 100], ['Interior', 17]],
+      t:'Quase nove em cada dez vivem em capitais ou regiões metropolitanas.'},
+    {b:'Gênero', rows:[['Feminino', 61], ['Masculino', 56]],
+      t:'Um grupo equilibrado entre mulheres e homens.'}
+  ];
+
+  // Perguntas por etapa do caminho: apêndices C–F, Figura 07 e Tabela 14 (contagens nossas)
+  var RULER = [
+    {k:'cri', n:'Criação', c:'var(--cri)', v:[14, 9, 4], items:[
+      ['h', 'Meu uso do app causa uma boa impressão no meu grupo social.'],
+      ['h', 'Usar meu banco me dá aprovação e reconhecimento social.'],
+      ['i', 'Tenho um sentimento de pertencimento em relação ao meu banco.'],
+      ['i', 'Meu banco se adapta à minha personalidade.']],
+      t:'Todas as perguntas de preço e de novidade saíram. A criação de valor ficou medida por <strong>status e identidade</strong>: boa impressão, reconhecimento, pertencimento, combinar com o cliente (observação nossa).'},
+    {k:'coc', n:'Cocriação', c:'var(--coc)', v:[15, 14, 4], items:[
+      ['i', 'O app me proporciona sentimentos de realização valiosa.'],
+      ['i', 'Tive um impacto positivo no grau em que minhas preferências foram atendidas pelo app.'],
+      ['i', 'A participação no atendimento on-line me ajuda a ter proximidade com o banco.'],
+      ['i', 'Sinto-me identificado com os valores do meu banco.']],
+      t:'Saíram as perguntas sobre preço e sobre conversar com outros clientes. Ficaram quatro de sentimento: realização, ter as preferências atendidas, proximidade, identificação.'},
+    {k:'vp', n:'Valor percebido', c:'var(--vp)', v:[18, 11, 6], items:[
+      ['i', 'O nível de serviço prestado pelo meu banco foi maior do que eu esperava.'],
+      ['i', 'Sinto-me valorizado nas minhas interações com o meu banco.'],
+      ['i', 'Considero que as pessoas do meu banco se preocupam comigo como pessoa.'],
+      ['m', 'Estou satisfeito com a relação custo-benefício oferecida pelo meu banco.'],
+      ['m', 'No preço atual, o app do meu banco oferece um bom valor.'],
+      ['m', 'Os apps de bancos têm serviços com preços razoáveis.']],
+      t:'Metade sentimento, metade bolso: sentir-se valorizado e cuidado, e achar o preço justo.'},
+    {k:'cap', n:'Captura', c:'var(--cap)', v:[13, 12, 7], items:[
+      ['i', 'O app do meu banco não vende apenas produtos, ele me diverte.'],
+      ['i', 'O app do meu banco é feito sob medida para mim.'],
+      ['i', 'Os serviços do app são muitas vezes personalizados para mim.'],
+      ['i', 'A última vez que usei o app, eu estava totalmente engajado.'],
+      ['m', 'Pelas informações do app, aprendo a melhorar minha situação financeira.'],
+      ['m', 'Quando uso o app, sinto que entendo mais de questões financeiras.'],
+      ['m', 'O app me ajuda a comparar produtos e preços.']],
+      t:'A captura foi medida pelo lado do cliente: engajamento, personalização e aprender com o app. Não por receita ou lucro do banco.'}
+  ];
+  var STEPS = [
+    {v:60, l:'no questionário', s:'apêndices C a F'},
+    {v:46, l:'na primeira análise', s:'Figura 07'},
+    {v:21, l:'no modelo final', s:'Tabela 14'}
+  ];
+
+  // Teste de hipóteses (Tabela 15)
+  var PATHS = {
+    h1:{n:'H1', from:'Criação de valor', to:'Valor percebido', b:0.467, t:'4,964', p:'< 0,001', ok:true,
+      txt:'A ligação mais forte do modelo. Quem vê o banco criar valor para si, com reconhecimento e identificação, também percebe mais valor no que recebe. Para o autor, inovação, automação e interfaces intuitivas são as peças-chave.'},
+    h4:{n:'H4', from:'Criação de valor', to:'Captura de valor', b:0.117, t:'2,764', p:'0,006', ok:true,
+      txt:'Criar valor também se liga diretamente à captura, sem passar pela percepção. Para o autor, inovação e diferenciação dão retorno concreto aos bancos.'},
+    h3:{n:'H3', from:'Valor percebido', to:'Captura de valor', b:0.090, t:'1,979', p:'0,048', ok:true, close:true,
+      txt:'Quem percebe mais valor também mostra mais engajamento com o banco. A ligação se confirmou <strong>por pouco</strong>: o limite é 0,05. Para o autor, segurança, conveniência e personalização formam essa percepção.'},
+    mod:{n:'H2a, H2b e H2c', from:'Cocriação', to:'cada trecho do caminho', ok:false,
+      txt:'A cocriação deveria reforçar as três setas. Nenhum dos três efeitos foi significativo (p = 0,658, 0,425 e 0,986). Veja a próxima tela.'}
+  };
+  var R2 = [
+    {k:'vp', n:'Valor percebido', v:59.0, c:'var(--vp)',
+      t:'O modelo explica <strong>59%</strong> das diferenças no valor que os clientes percebem. Chegam a ele a criação de valor e o efeito, não significativo, da cocriação.'},
+    {k:'cap', n:'Captura', v:65.9, c:'var(--cap)',
+      t:'O modelo explica <strong>65,9%</strong> das diferenças na captura. Chegam a ela a criação de valor, o valor percebido e os efeitos, não significativos, da cocriação.'}
+  ];
+
+  /* ================= 01 · CAPA ================= */
+  // Três blocos em degrau (criação, valor percebido, captura) e um cubo que vai de um ao outro.
+  (function(){
+    var sc = $('hero-scene');
+    var st = makeStage(sc, 460, 200, {ay:'60%'});
+    var B = [{x:0, h:60, c:'var(--cri)', l:'Criação'}, {x:165, h:100, c:'var(--vp)', l:'Valor<br>percebido'}, {x:330, h:140, c:'var(--cap)', l:'Captura'}];
+    B.forEach(function(b){ st.appendChild(box({w:120, d:110, x:b.x, y:45, h:b.h, c:b.c, label:b.l})); });
+    st.appendChild(box({w:450, d:34, x:5, y:172, h:18, c:'var(--coc)', cls:'off'}));
+    flatLabel(st, EN ? 'co-creation' : 'cocriação', 5, 210, 450, 'font-size:15px; color:#5b6b85;');
+    var cube = box({w:30, d:30, x:45, y:85, z:60, h:30, c:'#f59e0b'});
+    st.appendChild(cube);
+    rotatable(sc, st, -26, 10);
+    if (reduce) return;
+    // percurso: sobe de bloco em bloco e volta ao início (7 s por volta)
+    M.onTick(function(t){
+      var u = (t % 7) / 7, x, z, seg;
+      var xs = [45, 210, 375], zs = [60, 100, 140];
+      if (u < .25){ x = xs[0]; z = zs[0]; }
+      else if (u < .4){ seg = (u - .25) / .15; x = xs[0] + (xs[1] - xs[0]) * seg; z = zs[0] + (zs[1] - zs[0]) * seg + Math.sin(seg * Math.PI) * 50; }
+      else if (u < .6){ x = xs[1]; z = zs[1]; }
+      else if (u < .75){ seg = (u - .6) / .15; x = xs[1] + (xs[2] - xs[1]) * seg; z = zs[1] + (zs[2] - zs[1]) * seg + Math.sin(seg * Math.PI) * 50; }
+      else if (u < .9){ x = xs[2]; z = zs[2]; }
+      else { seg = (u - .9) / .1; x = xs[2]; z = zs[2] + 40 * seg; }
+      cube.style.left = x + 'px'; cube.style.setProperty('--z', z + 'px');
+      cube.style.opacity = u >= .9 ? String(1 - (u - .9) / .1) : '1';
+    });
+  })();
+
+  /* ================= 02 · TRÊS FACES ================= */
+  (function(){
+    var col = {}; FACES.forEach(function(f){ col[f.k] = f.c; });
+    var wrap = $('reasons'), on = {};
+    wrap.innerHTML = REASONS.map(function(r, i){
+      return '<button class="reason" data-i="' + i + '" aria-pressed="false" style="--fc:' + col[r.f] + '"><span class="bx"></span><span>' + r.t + '</span></button>';
+    }).join('');
+    $('faces-box').innerHTML = FACES.map(function(f){
+      return '<div class="face" style="--fc:' + f.c + '"><h3>' + f.n + '<b id="fc-' + f.k + '">0</b></h3><p>' + f.d + '</p><div class="tr"><i id="fb-' + f.k + '"></i></div></div>';
+    }).join('');
+    function draw(){
+      var cnt = {m:0, i:0, h:0}, tot = 0;
+      Object.keys(on).forEach(function(i){ if (on[i]){ cnt[REASONS[i].f]++; tot++; } });
+      FACES.forEach(function(f){ $('fc-' + f.k).textContent = cnt[f.k]; $('fb-' + f.k).style.width = (cnt[f.k] / 3 * 100) + '%'; });
+      var top = FACES.slice().sort(function(a, b){ return cnt[b.k] - cnt[a.k]; });
+      var msg;
+      if (!tot) msg = EN ? 'Tick at least one reason.' : 'Marque pelo menos uma razão.';
+      else if (cnt[top[0].k] === cnt[top[1].k]) msg = EN ? 'Your reasons mix more than one face of value. In the dissertation, each step of the path was measured on all three.' : 'Suas razões misturam mais de uma face do valor. Na dissertação, cada etapa do caminho foi medida nas três.';
+      else msg = (EN ? 'For you, the <strong>' + top[0].n.toLowerCase() + '</strong> face weighs most. ' : 'Para você, pesa mais a face <strong>' + top[0].n.toLowerCase() + '</strong>. ') + (top[0].k === 'h' ? (EN ? 'This was the face that remained in the final measure of value creation (screen 06).' : 'Foi a face que ficou na medida final da criação de valor (tela 06).') : (EN ? 'In the dissertation, each step of the path was measured on all three faces.' : 'Na dissertação, cada etapa do caminho foi medida nas três faces.'));
+      $('faces-msg').innerHTML = msg;
+    }
+    each(wrap.children, function(b){
+      b.addEventListener('click', function(){
+        var i = +b.dataset.i; on[i] = !on[i]; b.setAttribute('aria-pressed', !!on[i]); draw();
+      });
+    });
+    draw();
+  })();
+
+  /* ================= 03 · QUATRO PALAVRAS ================= */
+  (function(){
+    var wrap = $('flips');
+    wrap.innerHTML = CONCEPTS.map(function(c, i){
+      return '<button class="flip rv" style="--d:' + (.2 + i * .05) + 's; --fc:var(--' + c.k + ')" aria-pressed="false"><span class="in">' +
+        '<span class="fr"><span class="k">' + (i + 1) + ' · ' + c.who + '</span><span class="t">' + c.n + '</span><span class="d">' + c.d + '</span><span class="who"><b>' + (EN ? 'Tap' : 'Toque') + '</b> ' + (EN ? 'to see how it was measured' : 'para ver como foi medido') + ' ↻</span></span>' +
+        '<span class="bk"><span class="k">' + (EN ? 'How it was measured' : 'Como foi medido') + '</span><span class="t">' + c.m + '</span><span class="d">' + (EN ? 'One of the statements (1 to 5):' : 'Uma das frases (nota de 1 a 5):') + '</span><span class="q">“' + c.q + '”</span></span>' +
+        '</span></button>';
+    }).join('');
+    each(wrap.children, function(b){
+      b.addEventListener('click', function(){ b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true'); });
+    });
+  })();
+
+  /* ================= 04 · DUAS REVISÕES ================= */
+  (function(){
+    var svg = $('funnel-svg'), seg = $('rev-seg'), cur = 0, curStep = 4;
+    seg.innerHTML = REVS.map(function(r, i){ return '<button data-i="' + i + '" aria-pressed="false">' + r.n + ' · ' + r.s + '</button>'; }).join('');
+    function draw(){
+      var r = REVS[cur], max = 309, W = 470, X0 = 25, y = 14, H = 58, G = 22;
+      var h = '';
+      r.steps.forEach(function(s, j){
+        var w = Math.max(30, s.v / max * W), x = X0 + (W - w) / 2, yy = y + j * (H + G);
+        var on = j === curStep, small = w < 150;
+        // barras estreitas: número e rótulo ao lado da barra, para a largura continuar proporcional
+        var tx = small ? x + w + 12 : X0 + W / 2, ta = small ? 'start' : 'middle';
+        var tc = on && !small ? '#fff' : 'var(--ink)', lc = on && !small ? '#fff' : 'var(--ink-2)';
+        h += '<g class="stp" data-j="' + j + '" role="button" tabindex="0" aria-label="' + s.v + ' ' + s.l + '">' +
+          '<rect class="bar" x="' + x + '" y="' + yy + '" width="' + w + '" height="' + H + '" rx="8" style="fill:' + (on ? r.c : 'color-mix(in srgb, ' + r.c + ' 22%, white)') + '; stroke:' + (on ? 'var(--ink)' : 'none') + '"/>' +
+          (small ? '<rect x="' + x + '" y="' + yy + '" width="' + (W - (x - X0)) + '" height="' + H + '" fill="transparent"/>' : '') +
+          '<text class="fv" x="' + tx + '" y="' + (yy + 28) + '" text-anchor="' + ta + '" style="font-size:20px; font-weight:700; fill:' + tc + '">' + s.v + '</text>' +
+          '<text class="fl" x="' + tx + '" y="' + (yy + 47) + '" text-anchor="' + ta + '" style="font-size:13px; fill:' + lc + '">' + s.l + '</text></g>';
+        if (j < r.steps.length - 1) h += '<path d="M' + (X0 + W / 2) + ' ' + (yy + H + 4) + ' l0 ' + (G - 8) + '" stroke="var(--muted)" stroke-width="2"/><path d="M' + (X0 + W / 2 - 5) + ' ' + (yy + H + G - 9) + ' l5 6 l5 -6" fill="none" stroke="var(--muted)" stroke-width="2"/>';
+      });
+      svg.innerHTML = h;
+      each(svg.querySelectorAll('.stp'), function(g){
+        var go = function(){ curStep = +g.dataset.j; draw(); };
+        g.addEventListener('click', go);
+        g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); } });
+      });
+      var s = r.steps[curStep];
+      $('rev-panel').innerHTML = '<div class="tag">' + r.n + ' · ' + r.when + '</div><h3>' + r.q + '</h3><p><strong>' + s.v + ' ' + s.l + '.</strong> ' + s.t + '</p>' +
+        (curStep === r.steps.length - 1 ? '<div class="minibars">' + r.facts.map(function(f){ return '<div style="font-size:.82rem; color:var(--ink-2)"><b style="color:var(--ink)">' + f[0] + ':</b> ' + f[1] + '</div>'; }).join('') + '</div>' : '<p style="font-size:.8rem; color:var(--muted)">' + (EN ? 'Tap the last step to see what the selected articles look like.' : 'Toque na última etapa para ver o perfil dos artigos escolhidos.') + '</p>');
+      each(seg.children, function(b, i){ b.classList.toggle('on', i === cur); b.setAttribute('aria-pressed', i === cur); });
+    }
+    each(seg.children, function(b){ b.addEventListener('click', function(){ cur = +b.dataset.i; curStep = 4; draw(); }); });
+    draw();
+  })();
+
+  /* ================= 05 · QUEM RESPONDEU ================= */
+  (function(){
+    var svg = $('people'), COLS = 13, R = 13, GX = 35, GY = 35, X0 = 22, Y0 = 22, dots = [];
+    var h = '';
+    for (var i = 0; i < N; i++){
+      var cx = X0 + (i % COLS) * GX, cy = Y0 + Math.floor(i / COLS) * GY;
+      h += '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="#cbd5e1"/>';
+    }
+    svg.innerHTML = h;
+    dots = svg.querySelectorAll('circle');
+    var chips = $('who-chips');
+    chips.innerHTML = WHO.map(function(w, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="false">' + w.b + '</button>'; }).join('');
+    function colors(n){
+      var base = ['#1f3b73', 'hsl(348 94% 47%)', '#0f766e', '#f59e0b', '#9333ea', '#64748b', '#0ea5e9'];
+      return base.slice(0, n);
+    }
+    function show(i){
+      var w = WHO[i], cs = colors(w.rows.length), k = 0;
+      each(chips.children, function(c, j){ c.setAttribute('aria-pressed', i === j); });
+      w.rows.forEach(function(r, j){ for (var q = 0; q < r[1]; q++){ dots[k++].setAttribute('fill', cs[j]); } });
+      $('who-legend').innerHTML = w.rows.map(function(r, j){
+        return '<div><i style="background:' + cs[j] + '"></i><span>' + r[0] + '</span><b>' + r[1] + ' · ' + fmt(r[1] / N * 100) + '%</b></div>';
+      }).join('');
+      $('who-msg').textContent = w.t;
+    }
+    each(chips.children, function(c){ c.addEventListener('click', function(){ show(+c.dataset.i); }); });
+    show(0);
+  })();
+
+  /* ================= 06 · A RÉGUA ================= */
+  (function(){
+    var sc = $('ruler-scene'), W = 560, D = 150, HK = 18;
+    var st = makeStage(sc, W, D, {ay:'76%', rx:'58deg'});
+    rotatable(sc, st, -6, 5);
+    var bw = 96, gap = 40, x0 = (W - (4 * bw + 3 * gap)) / 2, tiles = [], cur = 0, step = 2;
+    RULER.forEach(function(r, i){
+      var b = box({w:bw, d:60, x:x0 + i * (bw + gap), y:D / 2 - 30, h:r.v[2] * HK, c:r.c, label:String(r.v[2])});
+      b.setAttribute('role', 'button'); b.setAttribute('aria-label', r.n); b.tabIndex = 0;
+      st.appendChild(b); tiles.push(b);
+      flatLabel(st, r.n, x0 + i * (bw + gap) - 14, D / 2 + 40, bw + 28);
+    });
+    var steps = $('ruler-steps');
+    steps.innerHTML = STEPS.map(function(s, i){ return '<button data-i="' + i + '" aria-pressed="false"><b>' + s.v + '</b><span>' + s.l + ' · ' + s.s + '</span></button>'; }).join('');
+    function draw(){
+      each(steps.children, function(b, j){ b.classList.toggle('on', j === step); b.setAttribute('aria-pressed', j === step); });
+      tiles.forEach(function(b, i){
+        var v = RULER[i].v[step];
+        b.style.setProperty('--h', v * HK + 'px');
+        b.querySelector('.face-label').textContent = v;
+        b.classList.toggle('active', i === cur);
+      });
+      var r = RULER[cur], tag = {m:EN ? 'monetary' : 'monetário', i:EN ? 'intrinsic' : 'intrínseco', h:EN ? 'human' : 'humano'};
+      $('ruler-panel').innerHTML = '<div class="tag">' + r.n + ' · ' + r.v.join(' → ') + (EN ? ' statements' : ' perguntas') + '</div>' +
+        '<h3>' + (EN ? 'What remained in the final measure' : 'O que ficou na régua final') + '</h3><p>' + r.t + '</p>' +
+        '<ul class="itl">' + r.items.map(function(it){ return '<li><small class="f' + it[0] + '">' + tag[it[0]] + '</small><span>' + it[1] + '</span></li>'; }).join('') + '</ul>';
+    }
+    each(steps.children, function(b){ b.addEventListener('click', function(){ step = +b.dataset.i; draw(); }); });
+    tiles.forEach(function(t, i){
+      var go = function(){ if (M.wasDrag(sc)) return; cur = i; draw(); };
+      t.addEventListener('click', go);
+      t.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); cur = i; draw(); } });
+    });
+    draw();
+  })();
+
+  /* ================= 07 · APOSTAS ================= */
+  (function(){
+    var BETS = [
+      {c:'var(--cri)', q:'Quando o banco cria valor para o cliente, o cliente percebe mais valor?', a:'sim', v:'Sim', t:'Confirmado, e é a ligação mais forte do modelo (β = 0,467; p < 0,001).'},
+      {c:'var(--vp)', q:'Quando o cliente percebe mais valor, o banco captura mais valor?', a:'sim', v:'Sim, por pouco', t:'Confirmado, mas no limite: p = 0,048, logo abaixo de 0,05, e o coeficiente é pequeno (β = 0,090).'},
+      {c:'var(--cap)', q:'Criar valor se liga à captura mesmo sem passar pela percepção?', a:'sim', v:'Sim', t:'Confirmado: há também um caminho direto (β = 0,117; p = 0,006).'},
+      {c:'var(--coc)', q:'Quando o cliente participa da criação (cocriação), essas ligações ficam mais fortes?', a:'nao', v:'Não', t:'Nenhum dos três reforços se confirmou (p entre 0,425 e 0,986).'}
+    ];
+    var wrap = $('bets'), hits = 0, done = 0;
+    wrap.innerHTML = BETS.map(function(b, i){
+      return '<div class="bet rv" style="--d:' + (.2 + i * .05) + 's; --bc:' + b.c + '" data-i="' + i + '"><div class="q">' + b.q + '</div>' +
+        '<div class="opts"><button data-a="sim">' + (EN ? 'Yes' : 'Sim') + '</button><button data-a="nao">' + (EN ? 'No' : 'Não') + '</button></div>' +
+        '<div class="ans" aria-live="polite"></div></div>';
+    }).join('');
+    each(wrap.children, function(card){
+      var b = BETS[+card.dataset.i];
+      each(card.querySelectorAll('.opts button'), function(btn){
+        btn.addEventListener('click', function(){
+          if (card.classList.contains('done')) return;
+          var right = btn.dataset.a === b.a;
+          btn.classList.add('pick'); card.classList.add('done'); done++; if (right) hits++;
+          card.querySelector('.ans').innerHTML = '<b class="v" style="background:' + (b.a === 'sim' ? '#15803d' : '#64748b') + '">' + b.v + '</b>' + (right ? (EN ? 'You got it. ' : 'Você acertou. ') : (EN ? 'Not this time. ' : 'Não foi dessa vez. ')) + b.t;
+          $('score').innerHTML = (EN ? 'Score: ' : 'Placar: ') + '<strong>' + hits + (EN ? ' of ' : ' de ') + done + '</strong>' + (done === 4 ? (EN ? '. The next screens show each result.' : '. As próximas telas mostram cada resultado.') : '');
+        });
+      });
+    });
+  })();
+
+  /* ================= 08 · O MAPA ================= */
+  (function(){
+    var svg = $('map-svg'), seg = $('map-seg'), cur = 'h1';
+    var P = {cri:[100, 250], vp:[300, 92], cap:[500, 250], coc:[300, 375]}, R = 56;
+    var NODE = {cri:[EN ? 'Value' : 'Criação', EN ? 'creation' : 'de valor', 'var(--cri)'], vp:[EN ? 'Perceived' : 'Valor', EN ? 'value' : 'percebido', 'var(--vp)'], cap:[EN ? 'Value' : 'Captura', EN ? 'capture' : 'de valor', 'var(--cap)']};
+    function edge(a, b, pad){
+      var dx = b[0] - a[0], dy = b[1] - a[1], L = Math.sqrt(dx * dx + dy * dy), ux = dx / L, uy = dy / L;
+      return [a[0] + ux * pad, a[1] + uy * pad, b[0] - ux * (pad + 14), b[1] - uy * (pad + 14)];
+    }
+    var ARROWS = [['h1', 'cri', 'vp', -26, -16], ['h3', 'vp', 'cap', 26, -16], ['h4', 'cri', 'cap', 0, -18]];
+    // no celular o SVG encolhe ~50%: fontes e pílulas maiores (k), refeito ao cruzar o limite
+    var mq = window.matchMedia('(max-width:600px)');
+    function render(){
+      var k = mq.matches ? 1.7 : 1, PW = 64 * k, PH = 26 * k;
+      var h = '<defs><marker id="mh" viewBox="0 0 10 10" refX="2" refY="5" markerUnits="userSpaceOnUse" markerWidth="22" markerHeight="22" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--ink)"/></marker></defs>';
+      // linhas tracejadas da cocriação até o meio de cada seta (moderação)
+      var MID = {h1:[200, 171], h3:[400, 171], h4:[300, 250]};
+      h += '<g class="mod arr" data-k="mod">';
+      ['h1', 'h3', 'h4'].forEach(function(q){
+        h += '<path d="M' + P.coc[0] + ' ' + (P.coc[1] - 38) + ' L' + MID[q][0] + ' ' + MID[q][1] + '" stroke="var(--coc)" stroke-width="2.5" stroke-dasharray="6 6" fill="none"/>';
+        h += '<path class="hit" d="M' + P.coc[0] + ' ' + (P.coc[1] - 38) + ' L' + MID[q][0] + ' ' + MID[q][1] + '" stroke="transparent" stroke-width="18" fill="none"/>';
+      });
+      h += '<text class="ep" x="346" y="406" style="font-size:12.5px; fill:#5b6b85; font-weight:600">' + (EN ? 'not significant (3 of 3)' : 'não significativas (3 de 3)') + '</text></g>';
+      ARROWS.forEach(function(a){
+        var p = PATHS[a[0]], e = edge(P[a[1]], P[a[2]], R + 4), w = 2 + p.b * 30;
+        var mx = (e[0] + e[2]) / 2 + a[3] * k, my = (e[1] + e[3]) / 2 + a[4] * k;
+        h += '<g class="arr" data-k="' + a[0] + '" role="button" tabindex="0" aria-label="' + p.from + ' → ' + p.to + ', ' + fmt(p.b, 3) + '">' +
+          '<path class="hit" d="M' + e[0] + ' ' + e[1] + ' L' + e[2] + ' ' + e[3] + '" stroke="transparent" stroke-width="30"/>' +
+          '<path class="vis" d="M' + e[0] + ' ' + e[1] + ' L' + e[2] + ' ' + e[3] + '" stroke="var(--ink)" stroke-opacity=".72" stroke-width="' + w + '" stroke-linecap="round" marker-end="url(#mh)"/>' +
+          '<rect x="' + (mx - PW / 2) + '" y="' + (my - PH / 2 - 1) + '" width="' + PW + '" height="' + PH + '" rx="' + PH / 2 + '" fill="#fff" stroke="var(--border)"/>' +
+          '<text x="' + mx + '" y="' + (my + 4.5 * k) + '" text-anchor="middle" style="font-size:' + 13 * k + 'px; font-weight:700; fill:var(--ink)">' + fmt(p.b, 3) + (p.close ? '*' : '') + '</text></g>';
+      });
+      Object.keys(NODE).forEach(function(q){
+        var n = NODE[q], c = P[q], f = mq.matches ? 1.45 : 1;
+        h += '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="' + R + '" style="fill:' + n[2] + '"/>' +
+          '<text x="' + c[0] + '" y="' + (c[1] - 3 * f) + '" text-anchor="middle" style="font-size:' + 14 * f + 'px; font-weight:700; fill:#fff">' + n[0] + '</text>' +
+          '<text x="' + c[0] + '" y="' + (c[1] + 16 * f) + '" text-anchor="middle" style="font-size:' + 13 * f + 'px; fill:#fff">' + n[1] + '</text>';
+      });
+      h += '<g class="mod"><circle cx="' + P.coc[0] + '" cy="' + P.coc[1] + '" r="' + (mq.matches ? 46 : 38) + '" fill="#fff" stroke="var(--coc)" stroke-width="2.5" stroke-dasharray="6 5"/>' +
+        '<text x="' + P.coc[0] + '" y="' + (P.coc[1] + 5) + '" text-anchor="middle" style="font-size:' + (mq.matches ? 17 : 13) + 'px; font-weight:700; fill:#5b6b85">' + (EN ? 'Co-creation' : 'Cocriação') + '</text></g>';
+      h += '<text class="ep" x="300" y="16" text-anchor="middle" style="font-size:11.5px; fill:var(--muted)">' + (EN ? 'thickness proportional to the coefficient · * just under the 0.05 limit' : 'espessura proporcional ao coeficiente · * logo abaixo do limite de 0,05') + '</text>';
+      svg.innerHTML = h;
+      each(svg.querySelectorAll('.arr'), function(g){
+        g.addEventListener('click', function(){ show(g.dataset.k); });
+        g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(g.dataset.k); } });
+      });
+    }
+    function show(q){
+      cur = q;
+      var p = PATHS[q];
+      each(svg.querySelectorAll('.arr'), function(g){ g.classList.toggle('on', g.dataset.k === q); });
+      $('map-panel').innerHTML = '<div class="tag">' + p.n + ' · ' + (p.ok ? '<span class="ok-t">' + (EN ? 'confirmed' : 'confirmada') + '</span>' : '<span class="ns-t">' + (EN ? 'not confirmed' : 'não confirmadas') + '</span>') + '</div>' +
+        '<h3>' + p.from + ' → ' + p.to + '</h3>' +
+        (p.b ? '<p style="font-size:.84rem; color:var(--muted)">β = <strong>' + fmt(p.b, 3) + '</strong> · t = ' + p.t + ' · p ' + (p.p.charAt(0) === '<' ? '' : '= ') + p.p + '</p>' : '') +
+        '<p>' + p.txt + '</p>';
+    }
+    render();
+    var wasM = mq.matches;
+    window.addEventListener('resize', function(){ if (mq.matches !== wasM){ wasM = mq.matches; render(); show(cur); } });
+    var MODES = [EN ? 'Everything tested' : 'Tudo o que foi testado', EN ? 'Only what was confirmed' : 'Só o que se confirmou'];
+    seg.innerHTML = MODES.map(function(m, i){ return '<button data-i="' + i + '" aria-pressed="false">' + m + '</button>'; }).join('');
+    function mode(i){
+      svg.classList.toggle('only', i === 1);
+      each(seg.children, function(b, j){ b.classList.toggle('on', i === j); b.setAttribute('aria-pressed', i === j); });
+      if (i === 1 && cur === 'mod') show('h1');
+    }
+    each(seg.children, function(b){ b.addEventListener('click', function(){ mode(+b.dataset.i); }); });
+    mode(0); show('h1');
+  })();
+
+  /* ================= 09 · COCRIAÇÃO ================= */
+  (function(){
+    var P = {cri:[50, 160], vp:[150, 48], cap:[250, 160]}, R = 34;
+    var A = [['h1', 'cri', 'vp'], ['h3', 'vp', 'cap'], ['h4', 'cri', 'cap']];
+    function edge(a, b){
+      var dx = b[0] - a[0], dy = b[1] - a[1], L = Math.sqrt(dx * dx + dy * dy), ux = dx / L, uy = dy / L;
+      return [a[0] + ux * (R + 3), a[1] + uy * (R + 3), b[0] - ux * (R + 12), b[1] - uy * (R + 12)];
+    }
+    function base(id){
+      var h = '<defs><marker id="' + id + 'm" viewBox="0 0 10 10" refX="2" refY="5" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="16" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--ink)"/></marker></defs>';
+      A.forEach(function(a){
+        var e = edge(P[a[1]], P[a[2]]);
+        h += '<path class="a" data-k="' + a[0] + '" d="M' + e[0] + ' ' + e[1] + ' L' + e[2] + ' ' + e[3] + '" stroke="var(--ink)" stroke-opacity=".78" stroke-linecap="round" marker-end="url(#' + id + 'm)"/>';
+      });
+      [['cri', 'var(--cri)', EN ? 'Creation' : 'Criação'], ['vp', 'var(--vp)', EN ? 'Perceived' : 'Percebido'], ['cap', 'var(--cap)', EN ? 'Capture' : 'Captura']].forEach(function(n){
+        h += '<circle cx="' + P[n[0]][0] + '" cy="' + P[n[0]][1] + '" r="' + R + '" style="fill:' + n[1] + '"/><text x="' + P[n[0]][0] + '" y="' + (P[n[0]][1] + 4) + '" text-anchor="middle" style="font-size:11.5px; font-weight:700; fill:#fff">' + n[2] + '</text>';
+      });
+      h += '<text id="' + id + 't" x="150" y="212" text-anchor="middle" style="font-size:12px; fill:var(--muted)"></text>';
+      return h;
+    }
+    $('coc-a').innerHTML = base('ca'); $('coc-b').innerHTML = base('cb');
+    var B = {h1:0.467, h3:0.090, h4:0.117};
+    function draw(){
+      var s = +$('coc-range').value, mult = [0.6, 1, 1.6][s];
+      each($('coc-a').querySelectorAll('path.a'), function(p){ p.setAttribute('stroke-width', 2 + B[p.dataset.k] * 22 * mult + (s - 1) * 3); });
+      each($('coc-b').querySelectorAll('path.a'), function(p){ p.setAttribute('stroke-width', 2 + B[p.dataset.k] * 22); });
+      var lab = [EN ? 'little co-creation' : 'pouca cocriação', EN ? 'some co-creation' : 'cocriação média', EN ? 'a lot of co-creation' : 'muita cocriação'][s];
+      $('cat').textContent = lab + (EN ? ': arrows change' : ': as setas mudam');
+      $('cbt').textContent = lab + (EN ? ': arrows stay the same' : ': as setas não mudam');
+    }
+    $('coc-range').addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 10 · O QUE O MODELO EXPLICA ================= */
+  (function(){
+    var sc = $('glass-scene'), st = makeStage(sc, 420, 200, {ay:'76%'});
+    var H = 200, inner = [];
+    R2.forEach(function(g, i){
+      var x = 30 + i * 210;
+      var b = box({w:130, d:130, x:x + 3, y:38, h:g.v / 100 * H, c:g.c, label:fmt(g.v) + '%', cls:'inner'});
+      b.setAttribute('role', 'button'); b.setAttribute('aria-label', g.n + ', ' + fmt(g.v) + '%'); b.tabIndex = 0;
+      st.appendChild(b); inner.push(b);
+      st.appendChild(box({w:136, d:136, x:x, y:35, h:H, c:g.c, cls:'off'}));
+      flatLabel(st, g.n, x - 20, 186, 176);
+    });
+    rotatable(sc, st, -24, 10);
+    function show(i){
+      var g = R2[i];
+      inner.forEach(function(b, j){ b.classList.toggle('active', i === j); });
+      $('r2-panel').innerHTML = '<div class="tag">' + g.n + ' · R² = ' + fmt(g.v / 100, 3) + '</div><h3>' + (EN ? 'Explained by the model: ' : 'Explicado pelo modelo: ') + fmt(g.v) + '%</h3><p>' + g.t + '</p>' +
+        '<p style="font-size:.86rem">' + (EN ? 'What is left over (' : 'O que fica de fora (') + fmt(100 - g.v) + (EN ? '%) depends on factors the model did not include. The author suggests adding trust, digital experience, engagement and satisfaction in future studies.' : '%) depende de fatores fora do modelo. O autor sugere incluir confiança, experiência digital, engajamento e satisfação em novos estudos.') + '</p>';
+    }
+    inner.forEach(function(b, i){
+      var go = function(){ if (M.wasDrag(sc)) return; show(i); };
+      b.addEventListener('click', go);
+      b.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(i); } });
+    });
+    show(0);
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
