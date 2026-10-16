@@ -1,0 +1,994 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FIAGROs and farm prices · PPGA Interativo</title>
+<meta name="description" content="The master's dissertation by Jessica Paganotti Palhão (PPGA Mackenzie, 2026) on how crop and livestock commodity prices affect the returns of FIAGROs, Brazilian agribusiness funds, explained in 12 interactive screens.">
+<link rel="alternate" hreflang="pt-BR" href="../../../dissertacoes/2026-palhao-fiagros-commodities/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2214%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>FA</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/motor.css">
+<link rel="stylesheet" href="../../../assets/ods.css">
+<style>
+  /* Motor compartilhado em ../../../assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  :root{
+    --fia:var(--navy);   /* o FIAGRO (o fundo) */
+    --com:var(--red);    /* preços do campo (commodities) */
+    --mac:#334155;       /* economia e mercado (Selic, Ibovespa, dólar) */
+    --off:#cbd5e1;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .fia-t{color:var(--fia); font-weight:700;} .com-t{color:var(--com); font-weight:700;} .mac-t{color:var(--mac); font-weight:700;}
+  .stripe{background-image:repeating-linear-gradient(45deg, rgb(255 255 255 / .45) 0 3px, transparent 3px 6px);}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4.2vw, 2.9rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{display:flex; gap:8px 16px; justify-content:center; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:6px;}
+  #hero-scene .face-label{font-size:10px; letter-spacing:0; text-align:center; line-height:1.1;}
+  #hero-scene .slab.fund .face-label{font-size:18px; letter-spacing:.08em;}
+
+  /* ---------- Componentes comuns ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 16px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip.on, .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px 20px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.08rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.9rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button.on{background:var(--ink); color:#fff;}
+  .flag{display:inline-block; font-size:.74rem; font-weight:600; color:var(--red); background:color-mix(in srgb, var(--red) 10%, transparent); padding:3px 9px; border-radius:6px;}
+  .range{width:100%; -webkit-appearance:none; appearance:none; height:30px; background:transparent; cursor:pointer;}
+  .range::-webkit-slider-runnable-track{height:6px; border-radius:3px; background:#e2e8f0;}
+  .range::-moz-range-track{height:6px; border-radius:3px; background:#e2e8f0;}
+  .range::-webkit-slider-thumb{-webkit-appearance:none; width:22px; height:22px; border-radius:50%; background:#fff; border:3px solid var(--ink); margin-top:-8px; box-shadow:var(--shadow);}
+  .range::-moz-range-thumb{width:18px; height:18px; border-radius:50%; background:#fff; border:3px solid var(--ink);}
+  .ticks{display:flex; justify-content:space-between; font-size:.72rem; color:var(--muted);}
+
+  /* ---------- 02 · O agro e o FIAGRO ---------- */
+  .gap-bars{display:grid; gap:12px; margin:8px 0 6px;}
+  .gb{display:grid; grid-template-columns:1fr; gap:4px;}
+  .gb .lb{display:flex; justify-content:space-between; gap:10px; font-size:.86rem; color:var(--ink-2);}
+  .gb .lb b{font-family:var(--serif); font-size:1.2rem; color:var(--ink); white-space:nowrap;}
+  .gb .lb b small{font-family:var(--sans); font-size:.72rem; font-weight:500; color:var(--muted);}
+  .gb .tr{height:14px; background:#eef2f7; border-radius:7px; overflow:hidden;}
+  .gb .tr i{display:block; height:100%; width:0; border-radius:7px; transition:width 1s cubic-bezier(.2,.8,.2,1);}
+  .slide.in .gb .tr i{width:var(--w);}
+  #layers-scene .face-label{font-size:13px; letter-spacing:.02em; text-align:center; line-height:1.15;}
+  #layers-scene .slab{cursor:pointer; transition:transform .5s cubic-bezier(.2,.8,.2,1);}
+  #layers-scene .slab.active{--oz:14px;}
+  #layer-panel{min-height:150px; margin-top:8px;}
+  .lay-btns{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;}
+
+  /* ---------- 03 · A revisão ---------- */
+  #funnel-svg{width:100%; display:block; max-width:540px;}
+  #funnel-svg text{font-family:var(--sans);}
+  #funnel-svg .stp{cursor:pointer;}
+  #funnel-svg .stp:hover rect.bar, #funnel-svg .stp.on rect.bar{stroke:var(--ink); stroke-width:2;}
+  @media (max-width:600px){ #funnel-svg text.fv{font-size:21px !important;} #funnel-svg text.fl{font-size:18px !important;} }
+  .zero{display:flex; gap:14px; align-items:center; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 16px; margin:4px 0 14px; box-shadow:var(--shadow);}
+  .zero .q{font-family:ui-monospace, Menlo, monospace; font-size:.86rem; background:#eef2f7; border-radius:6px; padding:4px 10px; color:var(--ink);}
+  .zero b{font-family:var(--serif); font-size:2rem; color:var(--red); line-height:1;}
+  .zero span{font-size:.82rem; color:var(--muted);}
+  .minibars{display:grid; gap:5px; margin-top:6px;}
+  .minibar{display:grid; grid-template-columns:150px 1fr 30px; gap:8px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .minibar .tr{height:10px; background:#eef2f7; border-radius:4px; overflow:hidden;}
+  .minibar .tr i{display:block; height:100%; background:var(--fia); border-radius:4px; transition:width .5s;}
+  .minibar b{text-align:right; font-variant-numeric:tabular-nums;}
+  .minibar.hl span{color:var(--red); font-weight:700;}
+  .minibar.hl .tr i{background:var(--red);}
+  #rev-panel{min-height:96px; margin-top:12px;}
+
+  /* ---------- 04 · Como mediu ---------- */
+  .tickers{display:grid; grid-template-columns:repeat(8, 1fr); gap:4px; margin:6px 0 12px;}
+  .tickers span{font-size:.62rem; font-weight:600; text-align:center; padding:4px 0; border-radius:5px; background:color-mix(in srgb, var(--fia) 12%, white); color:var(--fia); font-variant-numeric:tabular-nums; letter-spacing:.02em;}
+  @media (max-width:420px){ .tickers{grid-template-columns:repeat(5, 1fr);} }
+  .vars{display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 6px;}
+  .vars span{font-size:.78rem; padding:4px 10px; border-radius:999px; color:#fff; font-weight:600;}
+  .calc{display:grid; gap:4px;}
+  .calc label{font-size:.86rem; font-weight:600; color:var(--ink-2); display:flex; justify-content:space-between; gap:10px; margin-top:6px;}
+  .calc label b{font-variant-numeric:tabular-nums; color:var(--ink);}
+  .eq{display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:.9rem; margin:14px 0 8px; color:var(--ink-2);}
+  .eq span{background:#eef2f7; border-radius:6px; padding:4px 8px; font-variant-numeric:tabular-nums;}
+  .eq .res{background:var(--fia); color:#fff; font-weight:700;}
+  #calc-msg{font-size:.86rem; color:var(--ink-2); min-height:3em;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.3rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.76rem; color:var(--muted); line-height:1.3; display:block;}
+
+  /* ---------- 05 · Apostas ---------- */
+  .bets{display:grid; grid-template-columns:1fr; gap:12px; margin-top:10px;}
+  @media (min-width:700px){ .bets{grid-template-columns:1fr 1fr;} }
+  .bet{background:var(--card); border:1px solid var(--border); border-left:6px solid var(--bc); border-radius:12px; padding:14px 16px; box-shadow:var(--shadow); min-height:170px;}
+  .bet .q{font-family:var(--serif); font-weight:700; font-size:1rem; color:var(--ink); line-height:1.35;}
+  .bet .why{font-size:.8rem; color:var(--muted); margin-top:4px;}
+  .bet .opts{display:flex; gap:8px; margin:10px 0 0;}
+  .bet .opts button{border:1px solid var(--border); background:var(--bg-soft); border-radius:8px; padding:7px 14px; font-size:.84rem; cursor:pointer; font-weight:600; color:var(--ink-2);}
+  .bet .opts button:hover{border-color:var(--ink);}
+  .bet .opts button.pick{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .bet .ans{font-size:.86rem; color:var(--ink-2); margin-top:10px; display:none; line-height:1.45;}
+  .bet.done .ans{display:block;}
+  .bet .ans b.v{display:inline-block; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; padding:2px 8px; border-radius:5px; color:#fff; margin-right:6px; background:#64748b;}
+  #score{font-size:.92rem; color:var(--ink-2); margin-top:14px; min-height:1.5em;}
+
+  /* ---------- 06 · Quem mexe com o fundo ---------- */
+  #eff-scene .face-label{font-size:13px; letter-spacing:0; font-variant-numeric:tabular-nums;}
+  #eff-scene .floor-label{font-size:14px;}
+  #eff-scene .slab{cursor:pointer; transition:transform .5s cubic-bezier(.2,.8,.2,1);}
+  #eff-scene .slab.active{--oz:14px;}
+  #eff-scene .slab.neg > i{background-image:repeating-linear-gradient(45deg, rgb(255 255 255 / .2) 0 5px, transparent 5px 10px);}
+  #eff-scene .face-label{text-shadow:0 0 3px rgb(0 0 0 / .45);}
+  @media (max-width:600px){ #eff-scene .floor-label{display:none;} }
+  .vlist{display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 4px;}
+  .vlist button{border:1px solid var(--border); background:var(--card); border-radius:8px; padding:5px 10px; font-size:.8rem; cursor:pointer; color:var(--ink-2); display:flex; align-items:center; gap:6px;}
+  .vlist button i{width:10px; height:10px; border-radius:3px; display:block;}
+  .vlist button.dim{color:#94a3b8;}
+  .vlist button.on{border-color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink); color:var(--ink);}
+  .leg{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.76rem; color:var(--muted); margin-top:6px;}
+  .leg i{display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:5px; vertical-align:-2px;}
+  #eff-panel{min-height:190px;}
+
+  /* ---------- 07 · O atraso ---------- */
+  #lag-svg{width:100%; display:block;}
+  #lag-svg text{font-family:var(--sans);}
+  #lag-svg rect.b{transition:y .45s, height .45s;}
+  @media (max-width:600px){ #lag-svg text{font-size:17px !important;} #lag-svg text.sm{display:none;} }
+  .sim-head{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-top:6px;}
+  #lag-msg{font-size:.88rem; color:var(--ink-2); margin-top:10px; min-height:4.2em;}
+  #lag-msg b{color:var(--ink);}
+
+  /* ---------- 08 · Menos de 1% ---------- */
+  #grid-svg{width:100%; max-width:520px; display:block; margin:0 auto;}
+  #grid-svg circle{transition:fill .4s;}
+  .split{display:flex; height:30px; border-radius:8px; overflow:hidden; margin:8px 0 4px;}
+  .split div{display:flex; align-items:center; padding:0 10px; font-size:.8rem; font-weight:700; color:#fff; white-space:nowrap; transition:width .8s cubic-bezier(.2,.8,.2,1);}
+  .split-lb{display:flex; justify-content:space-between; gap:10px; font-size:.76rem; color:var(--muted);}
+  #r2-msg{font-size:.88rem; color:var(--ink-2); min-height:3.2em; margin-top:8px;}
+
+  /* ---------- 09 · Outra régua ---------- */
+  .cmp{display:grid; gap:4px; margin-top:8px;}
+  .cmp .row{display:grid; grid-template-columns:110px 54px 1fr 1fr; gap:6px; align-items:stretch; cursor:pointer; border-radius:8px; transition:opacity .3s;}
+  .cmp .row.hd{cursor:default; font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; font-weight:700; color:var(--muted);}
+  .cmp .row.dim{opacity:.28;}
+  .cmp .row.on .nm{color:var(--red);}
+  .cmp .nm{font-size:.86rem; font-weight:600; color:var(--ink); display:flex; align-items:center; gap:6px;}
+  .cmp .nm i{width:9px; height:9px; border-radius:2px; display:block; flex:0 0 9px;}
+  .cmp .ex, .cmp .cell{font-size:.78rem; border-radius:6px; padding:5px 8px; display:flex; align-items:center; gap:6px; line-height:1.25;}
+  .cmp .ex{justify-content:center; background:#eef2f7; color:var(--ink-2); font-weight:700;}
+  .cmp .cell{background:var(--card); border:1px solid var(--border); color:var(--muted);}
+  .cmp .cell.up{border-color:var(--fia); color:var(--fia); font-weight:600; background:color-mix(in srgb, var(--fia) 8%, white);}
+  .cmp .cell.dn{border-color:var(--red); color:var(--red); font-weight:600; background:color-mix(in srgb, var(--red) 7%, white);}
+  .cmp .cell big{font-size:1rem; line-height:1;}
+  @media (max-width:600px){ .cmp .row{grid-template-columns:76px 34px 1fr 1fr; gap:4px;} .cmp .nm{font-size:.76rem;} .cmp .cell{font-size:.68rem; padding:4px 5px;} .cmp .cell small{display:none;} }
+  .cmp .sh{display:none;}
+  @media (max-width:600px){ .cmp .lg{display:none;} .cmp .sh{display:inline;} }
+  #cmp-panel{min-height:150px;}
+
+  /* ---------- 10 · Risco e retorno ---------- */
+  #rr-svg{width:100%; display:block;}
+  #rr-svg text{font-family:var(--sans);}
+  #rr-svg .pt{cursor:pointer;}
+  @media (max-width:600px){ #rr-svg text{font-size:17px !important;} #rr-svg text.sm{display:none;} }
+  .ctrl-row{display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; margin:6px 0 10px;}
+  #rr-panel{min-height:170px;}
+
+  /* ---------- 11 · Na prática ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:12px; margin-top:8px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:15px 17px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink)); transition:transform .2s;}
+  .pcard:hover{transform:translateY(-3px);}
+  .pcard h3{font-size:1rem; margin-bottom:6px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:5px; font-size:.84rem; line-height:1.45; color:var(--ink-2);}
+  .pcard .src{display:block; margin-top:9px; font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--muted);}
+  .callout{margin-top:22px; padding:16px 20px; border-left:4px solid var(--red); background:var(--card); border-radius:0 12px 12px 0; box-shadow:var(--shadow);}
+  .callout p{margin:0; color:var(--ink); font-family:var(--serif); font-size:1rem; line-height:1.5;}
+
+  /* ---------- 12 · Limites e créditos ---------- */
+  .end{display:grid; grid-template-columns:1fr; gap:28px; margin-top:16px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:48px;} }
+  .end h3{font-size:1.15rem; margin-bottom:6px;}
+  .limits{display:grid; gap:7px; margin:10px 0 0; padding:0; list-style:none;}
+  .limits li{padding:9px 14px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.84rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.72rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.85rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px 18px; line-height:1.6; margin-top:10px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-meta="../../../dissertacoes/2026-palhao-fiagros-commodities/meta.json">
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../../dissertacoes/2026-palhao-fiagros-commodities/" hreflang="pt-BR" lang="pt-BR" title="Ler em português"><img class="lang-flag" src="../../../assets/bandeira-br.svg" width="17" height="12" alt="">PT</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Previous screen">↑</button>
+    <button class="nav-btn" id="next" aria-label="Next screen">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navigate between screens"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Start">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Master's dissertation · PPGA Mackenzie · 2026</div>
+      <h1 class="rv" style="--d:.1s">Farm prices go up. What about FIAGROs?</h1>
+      <p class="sub rv" style="--d:.2s">FIAGROs are Brazilian exchange-traded funds that channel investors' money into agribusiness. The study followed <strong>40 of these funds</strong>, day by day, from 2021 to 2025, and compared their returns with the prices of <strong>eight farm products</strong>. The link was much weaker than expected. Explained in 12 screens.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Author:</b> Jessica Paganotti Palhão</span>
+        <span><b>Advisor:</b> Prof. Dr. Denis Forte</span>
+        <span><b>Program:</b> Graduate Program in Business Administration (PPGA) · Mackenzie Presbyterian University</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#agro">Start →</a>
+        <a class="btn ghost" href="#efeitos">Skip to the results</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="540x340" role="img" aria-label="Eight red columns, one per farm product, rise and fall; in front, the blue FIAGRO block barely moves"></div></div>
+      <div class="cap-legend">
+        <span><i class="dot" style="background:var(--com)"></i>Farm prices</span>
+        <span><i class="dot" style="background:var(--fia)"></i>FIAGRO</span>
+        <span>Illustration, not data</span>
+      </div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">Closest UN Sustainable Development Goal</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://sdgs.un.org/goals/goal8" target="_blank" rel="noopener" title="SDG 8 · Decent Work and Economic Growth: Studies a recent instrument that opens agribusiness investment to any stock market investor and shows how its returns behaved."><b>8</b>Decent Work and Economic Growth</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">scroll<span></span></div>
+</section>
+
+<!-- 02 · O AGRO E O FIAGRO -->
+<section class="slide" id="agro" data-label="Agribusiness and FIAGROs">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> The starting point</div>
+      <h2 class="rv" style="--d:.1s">Agribusiness is a quarter of Brazil's economy and barely on the stock exchange</h2>
+      <div class="gap-bars rv" style="--d:.15s">
+        <div class="gb"><div class="lb"><span>Agribusiness share of GDP (2020–2023)</span><b><small>about</small> 25%</b></div><div class="tr"><i style="--w:25%; background:var(--com)"></i></div></div>
+        <div class="gb"><div class="lb"><span>Workers employed in the sector</span><b><small>about</small> 27%</b></div><div class="tr"><i style="--w:27%; background:var(--com)"></i></div></div>
+        <div class="gb"><div class="lb"><span>Agribusiness firms among companies listed on B3</span><b><small>under</small> 5%</b></div><div class="tr"><i style="--w:5%; background:var(--fia)"></i></div></div>
+      </div>
+      <p class="rv" style="--d:.2s">To bring the two worlds together, <strong>Law 14,130/2021</strong> created FIAGROs: funds traded on the stock exchange (B3, Brazil's exchange) that invest in agribusiness chains. Anyone who buys a unit takes part, directly or indirectly, in the sector's growth.</p>
+      <p class="note rv" style="--d:.25s">Data from CEPEA–Esalq/USP (a University of São Paulo research center) and from B3, cited in the dissertation's introduction. In 2021, agribusiness reached 26.6% of GDP; in 2023, 28% of employed workers.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="layers-scene" data-fit="480x330" role="img" aria-label="Three floors: units traded on the exchange on top, the fund in the middle and, below, four kinds of agribusiness assets"></div></div>
+      <div class="lay-btns" id="lay-btns" role="group" aria-label="Parts of a FIAGRO"></div>
+      <div class="panel" id="layer-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · A REVISÃO -->
+<section class="slide" id="revisao" data-label="What was known">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> The literature</div>
+      <h2 class="rv" style="--d:.1s">Plenty of studies on commodities. On FIAGROs, none</h2>
+      <div class="zero rv" style="--d:.15s"><span class="q">FIAGRO</span><b>0</b><span>articles in the Web of Science (search of March 2025)</span></div>
+      <p class="rv" style="--d:.2s">So the author widened the search to agribusiness, investment and commodities. Of 3,104 documents, <strong>56 articles</strong> from 2021 to 2025 remained. Tap each step of the funnel.</p>
+      <svg id="funnel-svg" class="rv" style="--d:.25s" viewBox="0 0 560 330" role="img" aria-label="Review funnel: from 3,104 documents to 56 articles"></svg>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="rev-seg" role="group" aria-label="Group the 56 articles"><button class="on" data-k="t">By topic</button><button data-k="m">By method</button></div>
+      <div class="minibars" id="rev-bars"></div>
+      <p id="rev-txt" style="font-size:.84rem; color:var(--ink-2); margin-top:10px; min-height:4.5em"></p>
+      <div class="panel" id="rev-panel" aria-live="polite"></div>
+      <p class="note">Funnel: Figure 1. Topics: Table 7 (classified by two researchers, with a third one breaking ties). Methods: Table 8. No Brazilian article appeared in the Web of Science; Brazilian studies on FIAGROs exist in broader databases, but none linked commodity prices to the performance of these funds (section 2.2).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · COMO MEDIU -->
+<section class="slide" id="metodo" data-label="How it was measured">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> The method</div>
+      <h2 class="rv" style="--d:.1s">40 funds, eight farm prices and four years of trading days</h2>
+      <p class="rv" style="--d:.12s">Every FIAGRO traded on B3 with available prices, from <strong>October 2021</strong> (when trading began) to <strong>December 2025</strong>:</p>
+      <div class="tickers rv" id="tickers" style="--d:.15s" aria-label="Tickers of the 40 funds"></div>
+      <p class="rv" style="--d:.18s; margin-bottom:4px">Next to each fund's return, the daily change in:</p>
+      <div class="vars rv" id="vars" style="--d:.2s"></div>
+      <p class="note rv" style="--d:.25s">Funds: Table 9 (Bloomberg). Spot prices from CEPEA–Esalq; the Selic rate (Brazil's base interest rate), the Ibovespa (the main Brazilian stock index) and the dollar (Ptax rate) from Bloomberg. The model uses each day's change and up to four trading days before, in a panel with robust standard errors (Stata).</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel">
+        <div class="tag">How one day's return is measured</div>
+        <h3>The unit price and the dividend both count</h3>
+        <div class="calc">
+          <label for="c-price">Unit price today (yesterday it closed at R$ 100.00) <b id="c-price-v"></b></label>
+          <input class="range" id="c-price" type="range" min="95" max="105" step="0.5" value="99">
+          <label for="c-div">Dividend that day <b id="c-div-v"></b></label>
+          <input class="range" id="c-div" type="range" min="0" max="2" step="0.1" value="1">
+        </div>
+        <div class="eq" id="c-eq"></div>
+        <p id="calc-msg" aria-live="polite"></p>
+        <p class="note" style="margin-top:6px">Illustrative example of the dissertation's formula (section 3.1): return = (today's price − yesterday's price + dividend) ÷ yesterday's price. The dividend counts on the day the unit starts trading without it (ex-dividend date).</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>27,328</b><span>daily fund returns with a price</span></div>
+        <div class="stat"><b>+0.06%</b><span>average return per day</span></div>
+        <div class="stat"><b>2.18%</b><span>typical daily swing (standard deviation)</span></div>
+      </div>
+      <p class="note">Table 10. Extremes range from −86% to +169% in a single day, linked, according to the author, to market events, dividends and thin trading in some funds.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · APOSTAS -->
+<section class="slide" id="apostas" data-label="Place your bets">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">05</span> Before the results</div>
+    <h2 class="rv" style="--d:.1s">What theory predicted</h2>
+    <p class="lede rv" style="--d:.15s">The dissertation started from four hypotheses, each with a good reason behind it. Place your bets before seeing what the data said.</p>
+    <div class="bets" id="bets"></div>
+    <p id="score" aria-live="polite"></p>
+  </div>
+</section>
+
+<!-- 06 · QUEM MEXE COM O FUNDO -->
+<section class="slide" id="efeitos" data-label="What moves the funds">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> The main result · 39 funds</div>
+      <h2 class="rv" style="--d:.1s">Of the eight farm prices, only three showed up</h2>
+      <p class="rv" style="--d:.15s">Rises in <span class="com-t">wheat</span> and <span class="com-t">beef cattle</span> were followed by slightly higher returns. <span class="com-t">Sugar</span> went the other way. Corn, soybeans, coffee, cotton and chicken left no mark. Tap each block.</p>
+      <div class="panel rv" id="eff-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="eff-scene" data-fit="640x330" role="img" aria-label="Eleven blocks, one per variable; only sugar, wheat, beef cattle, Ibovespa and the dollar have height"></div></div>
+      <div class="vlist" id="eff-list" role="group" aria-label="Variables in the model"></div>
+      <div class="leg"><span><i style="background:var(--com)"></i>farm price</span><span><i style="background:var(--mac)"></i>economy and market</span><span><i class="stripe" style="background-color:#64748b"></i>striped: opposite effect (the fund falls)</span><span><i style="background:var(--off)"></i>no effect</span></div>
+      <p class="note">Height = largest significant coefficient of each variable in the final model (Table 12, model 4; 4,749 observations from 39 funds). Read it like this: if the price rises 1%, the fund's return changes by that many percent, on the day shown.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · O ATRASO -->
+<section class="slide" id="atraso" data-label="The effect comes later">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Over time</div>
+      <h2 class="rv" style="--d:.1s">When it shows up, the effect comes days later and is small</h2>
+      <p class="rv" style="--d:.15s">Pick a price and how much it changes today. The bars show the expected change in a FIAGRO's return on each of the following trading days, according to the final model. The grey band is a fund's typical swing in a single day.</p>
+      <div class="chips rv" id="lag-chips" style="--d:.2s" role="group" aria-label="Pick the variable"></div>
+      <div class="calc rv" style="--d:.22s">
+        <label for="lag-r">Price change today <b id="lag-v"></b></label>
+        <input class="range" id="lag-r" type="range" min="-3" max="3" step="0.5" value="1">
+        <div class="ticks"><span>−3%</span><span>0</span><span>+3%</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="sim-head"><span class="flag">Simulation with the dissertation's coefficients · our calculations</span><div class="seg" id="lag-zoom" role="group" aria-label="Scale"><button class="on" data-z="1">True scale</button><button data-z="10">Zoom ×10</button></div></div>
+      <svg id="lag-svg" viewBox="0 0 560 330" role="img" aria-label="Bars of the expected effect on the fund's return, from the day of the change to four trading days later"></svg>
+      <p id="lag-msg" aria-live="polite"></p>
+      <p class="note">Coefficients from the final model (Table 12, model 4). The band uses the standard deviation of the funds' daily return (2.18%, Table 10). Variables without a significant effect stay at zero. Lags count trading days, not calendar days.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · MENOS DE 1% -->
+<section class="slide" id="ruido" data-label="Almost all noise">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> How strong the link is</div>
+      <h2 class="rv" style="--d:.1s">Prices explain less than 1% of the funds' ups and downs</h2>
+      <p class="rv" style="--d:.15s">Imagine a thousand parts of all the daily variation in a fund's returns over time. Farm and economic prices, together, account for fewer than ten of them. The rest is the day-to-day noise of the market.</p>
+      <div class="seg rv" id="r2-seg" style="--d:.2s" role="group" aria-label="Model version"><button data-i="0">Same day only</button><button data-i="1">With lags (best)</button><button class="on" data-i="2">Final model</button></div>
+      <p id="r2-msg" aria-live="polite"></p>
+      <div class="panel rv" style="--d:.25s; margin-top:12px">
+        <div class="tag">So what matters more?</div>
+        <h3>The fund itself</h3>
+        <div class="split" aria-label="76% of the differences come from the funds themselves"><div style="width:76%; background:var(--fia)">76%</div><div style="width:24%; background:#94a3b8">24%</div></div>
+        <div class="split-lb"><span>differences between funds</span><span>the rest</span></div>
+        <p style="margin-top:8px; font-size:.86rem">About 76% of the variation in returns comes from differences between the funds themselves: what they hold, the sector they are exposed to, their protection against risk and their management strategy.</p>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="grid-svg" viewBox="0 0 500 330" role="img" aria-label="A thousand dots; a few are highlighted, the part explained by the model"></svg>
+      <p class="note">Within R² from Table 12: 0.08% (same day only, model 1), 0.83% (model 2) and 0.49% (final model). Share of the variance linked to differences between funds (ρ = 0.76): model 1, section 4.1. Dots rounded to the nearest whole number. Even though small, the set of variables is statistically significant (F test).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · OUTRA RÉGUA -->
+<section class="slide" id="robustez" data-label="Another yardstick">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Robustness test</div>
+      <h2 class="rv" style="--d:.1s">With a different yardstick, only sugar held</h2>
+      <p class="rv" style="--d:.15s">To check whether the results depended on extreme days (such as +169% or −86%), the author redid the calculations with another method, <strong>LAD</strong> (least absolute deviations): instead of adding up squared errors, it adds up errors without their sign, which gives less weight to unusual days.</p>
+      <div class="chips rv" id="cmp-chips" style="--d:.2s" role="group" aria-label="Filter variables"></div>
+      <div class="panel rv" id="cmp-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="cmp" id="cmp" role="list"></div>
+      <p class="note">Main model: Table 12, model 4 (4,749 observations). LAD: Table 14, model 3 (27,317 observations). ↑ the fund rises with it; ↓ the fund falls; "—" no significant effect. In brackets, the trading day on which the effect appears. In Table 14, the dollar's effect on the 2nd trading day has a positive coefficient and a negative t statistic; we follow the coefficient and the author's text.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · RISCO E RETORNO -->
+<section class="slide" id="risco" data-label="Risk and return">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Risk and return · by half-year</div>
+      <h2 class="rv" style="--d:.1s">They paid for the risk, with a dip in 2023 and 2024</h2>
+      <p class="rv" style="--d:.15s">Three ratios compare what a fund earned above the Selic rate with the risk it took. Above zero, the fund paid for the risk; below, it did not. Tap each half-year.</p>
+      <div class="panel rv" id="rr-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="ctrl-row">
+        <div class="seg" id="rr-idx" role="group" aria-label="Ratio"><button class="on" data-k="sharpe">Sharpe</button><button data-k="sortino">Sortino</button><button data-k="treynor">Treynor</button></div>
+        <div class="seg" id="rr-stat" role="group" aria-label="Measure"><button class="on" data-k="med">Median</button><button data-k="avg">Average</button></div>
+      </div>
+      <svg id="rr-svg" viewBox="0 0 600 330" role="img" aria-label="Risk-return ratio of FIAGROs by half-year, from 2021 to 2025"></svg>
+      <p class="note">Tables 16 to 18. N = number of funds in the half-year. Excess return = FIAGRO return − Selic rate. Sharpe divides by the total swing; Sortino, only by the downward swing; Treynor, by beta (how much the fund follows the Ibovespa).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · NA PRÁTICA -->
+<section class="slide" id="pratica" data-label="In practice">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> Why it matters</div>
+    <h2 class="rv" style="--d:.1s">Investing in agribusiness through a FIAGRO is not a bet on soybean prices</h2>
+    <p class="lede rv" style="--d:.15s">For the author, FIAGROs are an asset class with dynamics of their own: only loosely tied to commodities and also to the traditional stock market.</p>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.2s; --pc:var(--fia)">
+        <h3>For investors</h3>
+        <ul><li>Being exposed to agribusiness does not mean following commodity prices.</li><li>FIAGROs can help diversify a portfolio, behaving differently from farm markets and the stock exchange.</li></ul>
+        <span class="src">Final remarks</span>
+      </div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--com)">
+        <h3>When looking at a fund</h3>
+        <ul><li>What matters most is the fund itself: its portfolio, credit quality, contracts and management.</li><li>When counting returns, dividends matter: they are the main way unit holders are paid.</li></ul>
+        <span class="src">Sections 3.1, 4.1 and final remarks</span>
+      </div>
+      <div class="pcard rv" style="--d:.3s; --pc:var(--mac)">
+        <h3>For managers and regulators</h3>
+        <ul><li>The evidence can help improve how these funds are structured.</li><li>And help develop the capital market that finances agribusiness.</li></ul>
+        <span class="src">Final remarks</span>
+      </div>
+      <div class="pcard rv" style="--d:.35s; --pc:#64748b">
+        <h3>For researchers</h3>
+        <ul><li>Split the funds by the kind of asset that dominates their portfolio.</li><li>Use a longer time window and include credit quality, liquidity and sustainability indices.</li></ul>
+        <span class="src">Future studies</span>
+      </div>
+    </div>
+    <div class="callout rv" style="--d:.4s"><p>For the author, the main finding is not the few links that showed up, but their size: much smaller than theory led one to expect from funds tied to agribusiness.</p></div>
+  </div>
+</section>
+
+<!-- 12 · LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Limits and credits">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Limits and credits</div>
+    <h2 class="rv" style="--d:.1s">What this research does not say</h2>
+    <div class="end">
+      <div class="rv" style="--d:.2s">
+        <ul class="limits">
+          <li><b>A short history.</b> FIAGROs have existed since 2021, and the period studied is just over four years. <em>· according to the author</em></li>
+          <li><b>Very different funds lumped together.</b> Credit funds, land funds and funds holding other assets, with different structures, were analyzed together. <em>· according to the author</em></li>
+          <li><b>Short term.</b> The model looks at each day's change and up to four trading days before. It says nothing about months or years. <em>· our observation</em></li>
+          <li><b>Fewer days in the final model.</b> With the lags, the final model used 4,749 of the 27,328 observations; the test with the other method used 27,317. <em>· our observation, with data from Tables 12 and 14</em></li>
+          <li><b>Little link with the stock market.</b> This conclusion comes from the low betas that made the Treynor ratio of little use; the beta values themselves are not reported. <em>· our observation</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.25s">
+        <h3>Credits</h3>
+        <div class="cite">
+          <b>How to cite</b><br>
+          PALHÃO, Jessica Paganotti. <em>FIAGROS e commodities: análise de risco e retorno entre 2021 e 2025</em> [FIAGROs and commodities: risk and return analysis between 2021 and 2025]. Master's dissertation (Business Administration) — Mackenzie Presbyterian University, São Paulo, 2026. Advisor: Prof. Dr. Denis Forte.
+        </div>
+        <p style="margin-top:14px; font-size:.85rem">Research supported by CAPES (Brazil's federal agency for graduate education). Bibliometric and systematic review in the Web of Science (Biblioshiny), panel data regression and a LAD robustness test (Stata). According to the author, the text had language revision with the help of ChatGPT. This version simplifies the work for the general public; the full review and tables are in the original text.</p>
+        <div class="ctas" style="margin-top:16px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Read the full dissertation (in Portuguese)</a>
+          <a class="btn ghost" href="#capa">↑ Back to the start</a>
+          <a class="btn ghost" href="../../">More research</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+
+<script src="../../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, ramp = M.ramp, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  var LOC = EN ? 'en-US' : 'pt-BR';
+  function num(n, d){ return n.toLocaleString(LOC, {minimumFractionDigits:d, maximumFractionDigits:d}); }
+  function sgn(n, d){ return (n > 0 ? '+' : n < 0 ? '−' : '') + num(Math.abs(n), d); }
+  var COM = 'var(--com)', MAC = 'var(--mac)', FIA = 'var(--fia)';
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // Fundos analisados (Tabela 9)
+  var TICKERS = ['AAGR11','AAZQ11','BBGO11','BRFT11','BTAL11','BTAG11','BTRA11','CTEM11','CPTR11','DCRA11','EGAF11','FGAA11','JGPX11','AGRX11','RZAG11','FTCA11','GCRA11','GRWA11','HCRA11','HGAG11','IAAG11','RURA11','KDOL11','KNCA11','KOPA11','NEXG11','OIAG11','PLCA11','RZEO11','RZNE11','IAGR11','CRAA11','SNAG11','SNFZ11','FZDA11','FZDB11','VGIA11','VHFA11','VCRA11','XPCA11'];
+
+  // Variáveis. ex = sinal esperado (Tabela 9). main = modelo final (Tabela 12, modelo 4): [pregão, coeficiente, estrelas].
+  // lad = robustez (Tabela 14, modelo 3). sd = desvio-padrão diário (Tabela 10).
+  var VARS = [
+    {k:'milho',   n:EN ? 'Corn' : 'Milho',       g:'c', ex:'+', sd:1.12, main:[], lad:[]},
+    {k:'soja',    n:EN ? 'Soybeans' : 'Soja',    g:'c', ex:'+', sd:1.09, main:[], lad:[]},
+    {k:'cafe',    n:EN ? 'Coffee' : 'Café',      g:'c', ex:'+', sd:1.98, main:[], lad:[]},
+    {k:'acucar',  n:EN ? 'Sugar' : 'Açúcar',     g:'c', ex:'+', sd:1.41, main:[[4, -0.089, 3]], lad:[[0, -0.031, 1], [4, -0.028, 2]]},
+    {k:'trigo',   n:EN ? 'Wheat' : 'Trigo',      g:'c', ex:'+', sd:1.27, main:[[1, 0.037, 2], [4, 0.135, 2]], lad:[]},
+    {k:'algodao', n:EN ? 'Cotton' : 'Algodão',   g:'c', ex:'+', sd:2.28, main:[], lad:[]},
+    {k:'boi',     n:EN ? 'Beef cattle' : 'Boi gordo', g:'c', ex:'+', sd:1.74, main:[[2, 0.058, 3]], lad:[]},
+    {k:'frango',  n:EN ? 'Chicken' : 'Frango',   g:'c', ex:'+', sd:1.18, main:[], lad:[]},
+    {k:'selic',   n:'Selic',                     g:'m', ex:'−', sd:2.16, main:[], lad:[[4, -0.029, 2]]},
+    {k:'ibov',    n:'Ibovespa',                  g:'m', ex:'+', sd:1.40, main:[[2, -0.065, 3]], lad:[[0, 0.031, 3], [1, 0.039, 2], [4, 0.042, 3]]},
+    {k:'cambio',  n:EN ? 'US dollar' : 'Dólar',  g:'m', ex:'+', sd:0.79, main:[[0, -0.101, 3]], lad:[[2, 0.034, 2], [3, 0.041, 2]]}
+  ];
+  var DESC = EN ? {
+    milho:'Expected to help the funds, like every crop price. It did not appear in the final model.',
+    soja:'Brazil\'s flagship export, it did not appear in the final model either.',
+    cafe:'On the same day, a negative sign that only came close to significance in the first versions of the model; it did not remain in the final model.',
+    acucar:'The opposite of what was expected: a rise in the price of sugar came with a lower fund return four trading days later. It is the only result that also held with the other method.',
+    trigo:'One of the most consistent results of the main model: a rise in wheat came with higher returns one and four trading days later.',
+    algodao:'The most volatile price in the period (it swung up to 71% in a day), and yet it left no mark on the funds.',
+    boi:'A rise in the price of beef cattle came with a slightly higher fund return two trading days later.',
+    frango:'No significant effect in any version of the model.',
+    selic:'Expected to hurt the funds (higher interest makes government bonds more attractive). No effect in the main model; in the other method, a small effect four trading days later.',
+    ibov:'Expected to help (a buoyant stock market signals appetite for risk). In the main model it went the other way, two trading days later.',
+    cambio:'Expected to help (a pricier dollar raises exporters\' income in reais). In the main model, a pricier dollar came with a lower fund return on the same day.'
+  } : {
+    milho:'Esperava-se que ajudasse os fundos, como todo preço do campo. Não ficou no modelo final.',
+    soja:'Principal produto de exportação do país, também não ficou no modelo final.',
+    cafe:'No mesmo dia, um sinal negativo que só chegou perto da significância nas primeiras versões do modelo; não ficou no modelo final.',
+    acucar:'Ao contrário do esperado: a alta do açúcar veio seguida de retorno menor do fundo quatro pregões depois. É o único resultado que se manteve também no outro método.',
+    trigo:'Um dos resultados mais consistentes do modelo principal: a alta do trigo veio seguida de retornos maiores um e quatro pregões depois.',
+    algodao:'O preço mais instável do período (chegou a variar 71% num dia) e, ainda assim, não deixou marca nos fundos.',
+    boi:'A alta do boi gordo veio seguida de retorno um pouco maior do fundo dois pregões depois.',
+    frango:'Sem efeito significativo em nenhuma versão do modelo.',
+    selic:'Esperava-se que atrapalhasse (juros mais altos tornam os títulos públicos mais atraentes). Sem efeito no modelo principal; no outro método, um efeito pequeno quatro pregões depois.',
+    ibov:'Esperava-se que ajudasse (bolsa em alta indica apetite por risco). No modelo principal, foi ao contrário, dois pregões depois.',
+    cambio:'Esperava-se que ajudasse (dólar alto aumenta a receita dos exportadores em reais). No modelo principal, dólar mais caro veio com retorno menor do fundo no mesmo dia.'
+  };
+  var PHR = EN ? {milho:'the price of corn', soja:'the price of soybeans', cafe:'the price of coffee', acucar:'the price of sugar', trigo:'the price of wheat', algodao:'the price of cotton', boi:'the price of beef cattle', frango:'the price of chicken', selic:'the Selic rate', ibov:'the Ibovespa', cambio:'the dollar'}
+    : {milho:'o preço do milho', soja:'o preço da soja', cafe:'o preço do café', acucar:'o preço do açúcar', trigo:'o preço do trigo', algodao:'o preço do algodão', boi:'o preço do boi gordo', frango:'o preço do frango', selic:'a Selic', ibov:'o Ibovespa', cambio:'o dólar'};
+  function gcol(v){ return v.g === 'c' ? COM : MAC; }
+  function dayTxt(d){ return EN ? (d === 0 ? 'same day' : d === 1 ? '1st trading day after' : d === 2 ? '2nd trading day after' : d === 3 ? '3rd trading day after' : '4th trading day after') : (d === 0 ? 'mesmo dia' : d + 'º pregão depois'); }
+  function dayShort(d){ return EN ? (d === 0 ? 'same day' : 'day ' + d) : (d === 0 ? 'mesmo dia' : d + 'º pregão'); }
+  function stars(s){ return s === 3 ? 'p < 0,01' : s === 2 ? 'p < 0,05' : 'p < 0,10'; }
+  function starsTxt(s){ var t = stars(s); return EN ? t.replace(',', '.') : t; }
+
+  // Revisão (Figura 1, Tabelas 7 e 8)
+  var FUNNEL = EN ? [
+    [3104, 'found in the Web of Science', 'The search combined agribusiness or agriculture with investment and commodities, in all fields.'],
+    [1240, 'in economics, finance, agriculture and management', '1,864 documents fell outside the chosen subject categories.'],
+    [1127, 'articles only', '113 were other types of document.'],
+    [1098, 'in English or Portuguese', '29 were in other languages.'],
+    [368, 'published from 2021 to 2025', '730 were older. The cut-off covers the pandemic and the war in Ukraine, a new phase of volatility in commodity markets.'],
+    [56, 'about commodities and investment at the same time', 'Of the 368, 173 dealt with neither topic, 115 only with commodities, 17 only with investment, 1 with non-financial investment, 1 with accounting, and 5 were not available.']
+  ] : [
+    [3104, 'encontrados na Web of Science', 'A busca combinou agronegócio ou agricultura com investimento e commodities, em todos os campos.'],
+    [1240, 'em economia, finanças, agro e gestão', '1.864 documentos estavam fora das categorias escolhidas.'],
+    [1127, 'só artigos', '113 eram outros tipos de documento.'],
+    [1098, 'em inglês ou português', '29 estavam em outras línguas.'],
+    [368, 'publicados de 2021 a 2025', '730 eram anteriores. O recorte cobre a pandemia e a guerra na Ucrânia, uma nova fase de instabilidade nos mercados de commodities.'],
+    [56, 'tratam de commodities e investimento ao mesmo tempo', 'Dos 368, 173 não tratavam de nenhum dos dois temas, 115 só de commodities, 17 só de investimentos, 1 de investimento não financeiro, 1 de contabilidade, e 5 não estavam disponíveis.']
+  ];
+  var TOPICS = EN ? [['Price', 21, 'how prices form, bubbles and transmission between markets'], ['Risk', 12, 'volatility, contagion and connectedness'], ['Investment', 12, 'financialization, portfolios and funds; only one study (Tunc, 2024) looks at funds directly'], ['Hedge', 11, 'protection, derivatives and futures markets']]
+    : [['Preço', 21, 'formação de preços, bolhas e transmissão entre mercados'], ['Risco', 12, 'volatilidade, contágio e conectividade'], ['Investimento', 12, 'financeirização, carteiras e fundos; só um estudo (Tunc, 2024) olha diretamente para fundos'], ['Hedge', 11, 'proteção, derivativos e mercados futuros']];
+  var METHODS = EN ? [['Market connectedness', 14], ['Volatility', 9], ['Quantile', 6], ['Panel', 4], ['Wavelet', 4], ['Cointegration', 4], ['Other models', 4], ['Theoretical / events', 3], ['Regime change', 3], ['Causality', 2], ['Portfolio', 2], ['Bubbles (LPPLS)', 1]]
+    : [['Conectividade', 14], ['Volatilidade', 9], ['Quantílicos', 6], ['Painel', 4], ['Wavelet', 4], ['Cointegração', 4], ['Outros modelos', 4], ['Teóricos / eventos', 3], ['Mudança de regime', 3], ['Causalidade', 2], ['Carteiras', 2], ['Bolhas (LPPLS)', 1]];
+
+  // R² within (Tabela 12)
+  var R2 = [
+    {v:0.08, n:EN ? 'Same day only (model 1)' : 'Só o mesmo dia (modelo 1)'},
+    {v:0.83, n:EN ? 'With lags, best version (model 2)' : 'Com atrasos, melhor versão (modelo 2)'},
+    {v:0.49, n:EN ? 'Final model (model 4)' : 'Modelo final (modelo 4)'}
+  ];
+
+  // Índices por semestre (Tabelas 16–18): [período, N, média, mediana]
+  var SEM = ['2021S2','2022S1','2022S2','2023S1','2023S2','2024S1','2024S2','2025S1','2025S2'];
+  var NS = [5, 16, 24, 28, 29, 32, 34, 34, 33];
+  var IDX = {
+    sharpe:{avg:[0.029, 0.007, 0.007, 0.025, -0.021, -0.035, -0.048, 0.081, 0.058], med:[0.032, 0.035, 0.006, 0.028, -0.011, -0.050, -0.050, 0.087, 0.045], all:[0.016, 0.004]},
+    sortino:{avg:[0.059, 0.015, 0.060, 0.047, -0.022, 0.057, -0.032, 0.128, 0.097], med:[0.052, 0.053, 0.008, 0.042, -0.016, -0.075, -0.080, 0.120, 0.078], all:[0.777, 0.005]},
+    treynor:{avg:[7130.58, 625.97, 3345.59, 664.94, -11388.49, -316842.23, -2405.60, -985.53, 7647.07], med:[1013.42, 763.50, 285.51, 1878.57, 26.32, -1833.31, 2208.26, 4662.44, 5165.85], all:[-1302.09, -3237.26]}
+  };
+
+  /* ================= 01 · CAPA ================= */
+  // Oito colunas de preços que sobem e descem; o bloco do fundo, à frente, quase parado. Ilustração.
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 500, 230, {ay:'64%'});
+    var cols = [];
+    VARS.slice(0, 8).forEach(function(v, i){
+      var b = box({w:48, d:48, x:6 + i * 61, y:20, h:70, c:COM, label:v.n.replace(' ', '<br>')});
+      st.appendChild(b); cols.push(b);
+    });
+    var fund = box({w:330, d:80, x:85, y:120, h:46, c:FIA, label:'FIAGRO', cls:'fund'});
+    st.appendChild(fund);
+    rotatable(sc, st, -18, 9);
+    if (reduce) return;
+    var ph = [0, 1.7, 3.1, .6, 4.4, 2.3, 5.2, 3.8], sp = [1.1, .8, 1.4, .9, 1.25, .7, 1.05, .95];
+    M.onTick(function(t){
+      cols.forEach(function(b, i){ b.style.setProperty('--h', (70 + 42 * Math.sin(t * sp[i] + ph[i])) + 'px'); });
+      fund.style.setProperty('--h', (46 + 2 * Math.sin(t * .9)) + 'px');
+    });
+  })();
+
+  /* ================= 02 · DENTRO DE UM FIAGRO ================= */
+  (function(){
+    var L = EN ? [
+      {k:'cota', n:'Units on B3', t:'You buy units on the stock exchange', d:'FIAGROs are traded on B3 like shares. Anyone with a brokerage account can buy units and take part, directly or indirectly, in the growth of agribusiness.'},
+      {k:'fundo', n:'The fund', t:'The fund gathers the money and invests it', d:'The dissertation describes FIAGROs as hybrid vehicles, somewhere between real-estate funds, credit funds and structured instruments. Investors are paid mainly through dividends.'},
+      {k:'cra', n:'CRA', t:'Agribusiness receivables (CRA)', d:'Certificates of Agribusiness Receivables: one of the ways the fund finances the agro-industrial chain through credit and receivables.'},
+      {k:'cpr', n:'CPR', t:'Rural product notes (CPR)', d:'Cédula de Produto Rural: another credit instrument of the rural chain that FIAGROs can hold.'},
+      {k:'terra', n:'Rural land', t:'Rural properties', d:'Some funds own farmland and earn income from it, an access to the sector that used to be restricted to large producers and companies.'},
+      {k:'part', n:'Stakes', t:'Stakes in structured operations', d:'The fund can also hold stakes in structured operations of the agribusiness chain.'}
+    ] : [
+      {k:'cota', n:'Cotas na B3', t:'Você compra cotas na bolsa', d:'Os FIAGROs são negociados na B3 como ações. Qualquer pessoa com conta numa corretora pode comprar cotas e participar, de forma direta ou indireta, do crescimento do agronegócio.'},
+      {k:'fundo', n:'O fundo', t:'O fundo junta o dinheiro e investe', d:'A dissertação descreve os FIAGROs como veículos híbridos, entre os fundos imobiliários, os de crédito e os instrumentos estruturados. O investidor é pago sobretudo com dividendos.'},
+      {k:'cra', n:'CRA', t:'Recebíveis do agronegócio (CRA)', d:'Certificados de Recebíveis do Agronegócio: uma das formas de o fundo financiar a cadeia agroindustrial por meio de crédito e recebíveis.'},
+      {k:'cpr', n:'CPR', t:'Cédula de Produto Rural (CPR)', d:'Outro instrumento de crédito da cadeia rural que os FIAGROs podem ter na carteira.'},
+      {k:'terra', n:'Imóveis rurais', t:'Imóveis rurais', d:'Alguns fundos têm terras e ganham com elas, um acesso ao setor que antes ficava restrito a grandes produtores e empresas especializadas.'},
+      {k:'part', n:'Participações', t:'Participações em operações estruturadas', d:'O fundo também pode participar de operações estruturadas da cadeia do agronegócio.'}
+    ];
+    var sc = $('layers-scene'), st = makeStage(sc, 440, 210, {ay:'66%', rx:'58deg'});
+    var blocks = [];
+    // térreo: quatro ativos
+    L.slice(2).forEach(function(l, i){
+      var b = box({w:96, d:80, x:8 + i * 108, y:110, h:46, c:COM, label:l.n.replace('Participações', 'Partici-<br>pações').replace(' ', '<br>')});
+      st.appendChild(b); blocks.push([b, i + 2]);
+    });
+    // meio: o fundo
+    var f = box({w:430, d:100, x:5, y:100, z:78, h:30, c:FIA, label:L[1].n});
+    st.appendChild(f); blocks.push([f, 1]);
+    // topo: cotas
+    for (var j = 0; j < 6; j++){
+      var c = box({w:44, d:44, x:60 + j * 56, y:128, z:132, h:26, c:MAC, label:j === 0 ? '' : ''});
+      st.appendChild(c); blocks.push([c, 0]);
+    }
+    rotatable(sc, st, -16, 8);
+    var btns = $('lay-btns');
+    btns.innerHTML = L.map(function(l, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="false">' + l.n + '</button>'; }).join('');
+    function show(i){
+      blocks.forEach(function(p){ p[0].classList.toggle('active', p[1] === i); });
+      each(btns.children, function(b){ b.setAttribute('aria-pressed', +b.dataset.i === i); });
+      var l = L[i];
+      $('layer-panel').innerHTML = '<div class="tag">' + (i === 0 ? (EN ? 'Top floor' : 'Andar de cima') : i === 1 ? (EN ? 'Middle floor' : 'Andar do meio') : (EN ? 'Ground floor · what the fund holds' : 'Térreo · o que o fundo tem')) + '</div><h3>' + l.t + '</h3><p>' + l.d + '</p>';
+    }
+    each(btns.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    blocks.forEach(function(p){ p[0].addEventListener('click', function(){ if (M.wasDrag(sc)) return; show(p[1]); }); });
+    show(1);
+  })();
+
+  /* ================= 03 · A REVISÃO ================= */
+  (function(){
+    var svg = $('funnel-svg'), NS_ = 'http://www.w3.org/2000/svg', cur = 5;
+    function el(t, a, txt){ var e = document.createElementNS(NS_, t); for (var k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; return e; }
+    var maxW = 520, rows = [];
+    FUNNEL.forEach(function(f, i){
+      var w = Math.max(6, f[0] / 3104 * maxW), y = 4 + i * 54, x = (560 - maxW) / 2;
+      var g = el('g', {'class':'stp', tabindex:0, role:'button', 'aria-label':f[0] + ' ' + f[1]});
+      g.appendChild(el('rect', {x:x, y:y, width:maxW, height:50, fill:'transparent'}));
+      g.appendChild(el('text', {'class':'fl', x:x, y:y + 13, 'font-size':13, fill:'#334155'}, f[1]));
+      g.appendChild(el('rect', {x:x, y:y + 19, width:maxW, height:28, rx:5, fill:'#eef2f7'}));
+      g.appendChild(el('rect', {'class':'bar', x:x, y:y + 19, width:w, height:28, rx:5, fill:i === 5 ? '#e80734' : '#1f3b73'}));
+      var inside = w > 400;
+      g.appendChild(el('text', {'class':'fv', x:inside ? x + 10 : x + w + 8, y:y + 39, 'font-size':16, 'font-weight':700, fill:inside ? '#fff' : '#0f172a'}, f[0].toLocaleString(LOC)));
+      svg.appendChild(g); rows.push(g);
+      g.addEventListener('click', function(){ show(i); });
+      g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(i); } });
+    });
+    function show(i){
+      cur = i;
+      rows.forEach(function(g, j){ g.classList.toggle('on', j === i); });
+      var f = FUNNEL[i];
+      $('rev-panel').innerHTML = '<div class="tag">' + (EN ? 'Step ' : 'Etapa ') + (i + 1) + ' · ' + f[0].toLocaleString(LOC) + '</div><p>' + f[2] + '</p>';
+    }
+    show(5);
+    var mode = 't';
+    function bars(){
+      var data = mode === 't' ? TOPICS : METHODS, mx = data[0][1];
+      $('rev-bars').innerHTML = data.map(function(d){
+        var hl = mode === 't' && d[0] === (EN ? 'Investment' : 'Investimento');
+        return '<div class="minibar' + (hl ? ' hl' : '') + '" title="' + (d[2] || '') + '"><span>' + d[0] + '</span><div class="tr"><i style="width:' + (d[1] / mx * 100) + '%"></i></div><b>' + d[1] + '</b></div>';
+      }).join('') + '<div class="minibar" style="border-top:1px solid var(--border); padding-top:4px"><span><b style="text-align:left">' + (EN ? 'Total' : 'Total') + '</b></span><span></span><b>56</b></div>';
+      if (mode === 't') $('rev-txt').innerHTML = TOPICS.map(function(d){ return '<b>' + d[0] + '</b>: ' + d[2]; }).join('. ') + '.';
+      else $('rev-txt').innerHTML = (EN ? 'Most studies use models of connectedness between markets and of volatility. Only four use panel data, the approach of this dissertation.' : 'A maioria usa modelos de conectividade entre mercados e de volatilidade. Só quatro usam dados em painel, o caminho desta dissertação.');
+    }
+    each($('rev-seg').children, function(b){ b.addEventListener('click', function(){ mode = b.dataset.k; each($('rev-seg').children, function(x){ x.classList.toggle('on', x === b); }); bars(); }); });
+    bars();
+  })();
+
+  /* ================= 04 · COMO MEDIU ================= */
+  (function(){
+    $('tickers').innerHTML = TICKERS.map(function(t){ return '<span>' + t + '</span>'; }).join('');
+    $('vars').innerHTML = VARS.map(function(v){ return '<span style="background:' + gcol(v) + '">' + v.n + '</span>'; }).join('');
+    var p = $('c-price'), d = $('c-div');
+    function draw(){
+      var pv = +p.value, dv = +d.value, r = (pv - 100 + dv) / 100 * 100, rp = (pv - 100) / 100 * 100;
+      $('c-price-v').textContent = 'R$ ' + num(pv, 2);
+      $('c-div-v').textContent = 'R$ ' + num(dv, 2);
+      $('c-eq').innerHTML = '<span>(' + num(pv, 2) + ' − 100,00 + ' + num(dv, 2) + ')</span><span>÷ 100,00</span><span>=</span><span class="res">' + sgn(r, 1) + '%</span>';
+      if (EN) $('c-eq').innerHTML = $('c-eq').innerHTML.replace('100,00', '100.00').replace('100,00', '100.00');
+      var msg;
+      if (dv > 0 && rp < 0 && r >= 0) msg = EN ? 'The unit fell ' + num(-rp, 1) + '%, but with the dividend the investor did not lose: ' + sgn(r, 1) + '%. Looking at the price alone would be misleading.' : 'A cota caiu ' + num(-rp, 1) + '%, mas, com o dividendo, o investidor não perdeu: ' + sgn(r, 1) + '%. Olhar só o preço enganaria.';
+      else if (dv > 0) msg = EN ? 'Price alone: ' + sgn(rp, 1) + '%. With the dividend: ' + sgn(r, 1) + '%. The dividend is the investor\'s main source of pay.' : 'Só o preço: ' + sgn(rp, 1) + '%. Com o dividendo: ' + sgn(r, 1) + '%. O dividendo é a principal forma de remuneração do investidor.';
+      else msg = EN ? 'With no dividend that day, the return is just the price change: ' + sgn(r, 1) + '%.' : 'Sem dividendo no dia, o retorno é só a variação da cota: ' + sgn(r, 1) + '%.';
+      $('calc-msg').textContent = msg;
+    }
+    p.addEventListener('input', draw); d.addEventListener('input', draw); draw();
+  })();
+
+  /* ================= 05 · APOSTAS ================= */
+  (function(){
+    var BETS = EN ? [
+      {c:COM, q:'When crop and livestock prices go up, do FIAGROs go up too?', w:'Higher prices raise agribusiness income, and the funds depend on the health of that chain.', a:'nao', v:'Rarely', t:'Of the eight prices, only wheat and beef cattle pushed the funds up, days later. Sugar went the other way. Corn, soybeans, coffee, cotton and chicken left no mark.'},
+      {c:MAC, q:'When the Selic rate rises, do FIAGROs fall?', w:'Higher interest reduces the present value of assets and draws money to government bonds.', a:'nao', v:'Not confirmed', t:'The Selic rate had no effect in the main model. With the other method, only a small effect four trading days later (−0.029).'},
+      {c:MAC, q:'When the stock market rises, do FIAGROs rise too?', w:'A buoyant market signals optimism and appetite for riskier investments.', a:'nao', v:'Not confirmed', t:'In the main model, a rising Ibovespa was followed by lower returns two trading days later (−0.065). With the other method, the sign turned positive. The author concludes the hypothesis does not hold.'},
+      {c:MAC, q:'Does a pricier dollar help FIAGROs?', w:'Commodities are priced in dollars, so exporters earn more in reais.', a:'nao', v:'No, in the main model', t:'On the same day, a pricier dollar came with lower returns (−0.101). With the other method, positive effects appeared two and three trading days later.'}
+    ] : [
+      {c:COM, q:'Quando o preço dos produtos do campo sobe, o FIAGRO sobe junto?', w:'Preços maiores aumentam a renda do agronegócio, e os fundos dependem da saúde dessa cadeia.', a:'nao', v:'Quase nunca', t:'Dos oito preços, só trigo e boi gordo empurraram os fundos para cima, dias depois. O açúcar foi ao contrário. Milho, soja, café, algodão e frango não deixaram marca.'},
+      {c:MAC, q:'Quando a Selic sobe, o FIAGRO cai?', w:'Juros altos reduzem o valor dos ativos e levam o dinheiro para os títulos públicos.', a:'nao', v:'Não se confirmou', t:'A Selic não teve efeito no modelo principal. No outro método, só um efeito pequeno quatro pregões depois (−0,029).'},
+      {c:MAC, q:'Bolsa em alta, FIAGRO em alta?', w:'Mercado aquecido indica otimismo e apetite por investimentos de mais risco.', a:'nao', v:'Não se confirmou', t:'No modelo principal, a alta do Ibovespa veio seguida de retorno menor dois pregões depois (−0,065). No outro método, o sinal virou positivo. A autora conclui que a hipótese não se confirma.'},
+      {c:MAC, q:'Dólar mais caro ajuda o FIAGRO?', w:'As commodities são cotadas em dólar, e os exportadores ganham mais em reais.', a:'nao', v:'Não, no modelo principal', t:'No mesmo dia, dólar mais caro veio com retorno menor (−0,101). No outro método, apareceram efeitos positivos dois e três pregões depois.'}
+    ];
+    var wrap = $('bets'), hits = 0, done = 0;
+    wrap.innerHTML = BETS.map(function(b, i){
+      return '<div class="bet rv" style="--d:' + (.2 + i * .05) + 's; --bc:' + b.c + '" data-i="' + i + '"><div class="q">' + b.q + '</div><div class="why">' + (EN ? 'Why it was expected: ' : 'Por que se esperava: ') + b.w + '</div>' +
+        '<div class="opts"><button data-a="sim">' + (EN ? 'Yes' : 'Sim') + '</button><button data-a="nao">' + (EN ? 'No' : 'Não') + '</button></div>' +
+        '<div class="ans" aria-live="polite"></div></div>';
+    }).join('');
+    each(wrap.children, function(card){
+      var b = BETS[+card.dataset.i];
+      each(card.querySelectorAll('.opts button'), function(btn){
+        btn.addEventListener('click', function(){
+          if (card.classList.contains('done')) return;
+          var right = btn.dataset.a === b.a;
+          btn.classList.add('pick'); card.classList.add('done'); done++; if (right) hits++;
+          card.querySelector('.ans').innerHTML = '<b class="v">' + b.v + '</b>' + (right ? (EN ? 'You got it. ' : 'Você acertou. ') : (EN ? 'Not this time. ' : 'Não foi dessa vez. ')) + b.t;
+          $('score').innerHTML = (EN ? 'Score: ' : 'Placar: ') + '<strong>' + hits + (EN ? ' of ' : ' de ') + done + '</strong>' + (done === 4 ? (EN ? '. None of the four hypotheses held as stated. The next screens show why.' : '. Nenhuma das quatro hipóteses se confirmou como foi escrita. As próximas telas mostram por quê.') : '');
+        });
+      });
+    });
+  })();
+
+  /* ================= 06 · QUEM MEXE COM O FUNDO ================= */
+  (function(){
+    var sc = $('eff-scene'), W = 620, D = 120, K = 1250;
+    var st = makeStage(sc, W, D, {ay:'78%', rx:'60deg'});
+    rotatable(sc, st, -5, 4);
+    var bw = 46, gap = 8, x0 = 0, tiles = [], cur = 4;
+    VARS.forEach(function(v, i){
+      var top = v.main.reduce(function(a, m){ return Math.abs(m[1]) > Math.abs(a ? a[1] : 0) ? m : a; }, null);
+      var x = x0 + i * (bw + gap) + (v.g === 'm' ? 24 : 0);
+      var b = box({w:bw, d:44, x:x, y:D / 2 - 22, h:top ? Math.abs(top[1]) * K : 4, c:top ? gcol(v) : '#cbd5e1', label:top ? sgn(top[1], 3) : '', cls:(top && top[1] < 0 ? 'neg' : '') + (top ? '' : ' flat')});
+      b.setAttribute('role', 'button'); b.setAttribute('aria-label', v.n); b.tabIndex = 0;
+      st.appendChild(b); tiles.push(b);
+      flatLabel(st, v.n, x - 14, D / 2 + 30 + (i % 2) * 20, bw + 28);
+    });
+    var list = $('eff-list');
+    list.innerHTML = VARS.map(function(v, i){ return '<button data-i="' + i + '" class="' + (v.main.length ? '' : 'dim') + '" aria-pressed="false"><i style="background:' + (v.main.length ? gcol(v) : 'var(--off)') + '"></i>' + v.n + '</button>'; }).join('');
+    function show(i){
+      cur = i;
+      tiles.forEach(function(b, j){ b.classList.toggle('active', j === i); });
+      each(list.children, function(b){ var on = +b.dataset.i === i; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+      var v = VARS[i], html = '<div class="tag">' + v.n + ' · ' + (EN ? 'expected sign ' : 'sinal esperado ') + v.ex + '</div>';
+      if (!v.main.length) html += '<h3>' + (EN ? 'No effect in the final model' : 'Sem efeito no modelo final') + '</h3>';
+      else html += '<h3>' + v.main.map(function(m){ return sgn(m[1], 3) + '% ' + (EN ? 'on the ' : 'no ') + dayTxt(m[0]); }).join(EN ? ' and ' : ' e ') + '</h3>';
+      html += '<p>' + DESC[v.k] + '</p>';
+      if (v.main.length){
+        var m = v.main[v.main.length - 1];
+        html += '<p style="font-size:.84rem">' + (EN ? 'In practice: if ' + PHR[v.k] + ' rises 1% today, the fund\'s return on the ' + dayTxt(m[0]) + ' changes by ' + sgn(m[1], 3) + '%, on average (' + starsTxt(m[2]) + ').' : 'Na prática: se ' + PHR[v.k] + ' sobe 1% hoje, o retorno do fundo ' + (m[0] === 0 ? 'no mesmo dia' : 'no ' + m[0] + 'º pregão depois') + ' muda ' + sgn(m[1], 3) + '%, em média (' + starsTxt(m[2]) + ').') + '</p>';
+      }
+      $('eff-panel').innerHTML = html;
+    }
+    tiles.forEach(function(t, i){
+      t.addEventListener('click', function(){ if (M.wasDrag(sc)) return; show(i); });
+      t.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(i); } });
+    });
+    each(list.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(4);
+  })();
+
+  /* ================= 07 · O ATRASO ================= */
+  (function(){
+    var SIG = VARS.filter(function(v){ return v.main.length; }).concat(VARS.filter(function(v){ return !v.main.length && v.k === 'soja'; }));
+    var svg = $('lag-svg'), NS_ = 'http://www.w3.org/2000/svg', vi = 1, zoom = 1, SD = 2.18;
+    function el(t, a, txt){ var e = document.createElementNS(NS_, t); for (var k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; return e; }
+    var chips = $('lag-chips');
+    chips.innerHTML = SIG.map(function(v, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="' + (i === vi) + '">' + v.n + '</button>'; }).join('');
+    var X0 = 60, X1 = 545, Y0 = 18, Y1 = 270, MID = (Y0 + Y1) / 2, bars = [], vals = [];
+    function draw(){
+      var v = SIG[vi], dP = +$('lag-r').value, range = 2.6 / zoom;
+      $('lag-v').textContent = sgn(dP, 1) + '%';
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      var sy = function(y){ return MID - y / range * (MID - Y0); };
+      // faixa do sobe e desce típico
+      if (zoom === 1){
+        svg.appendChild(el('rect', {x:X0, y:sy(SD), width:X1 - X0, height:sy(-SD) - sy(SD), fill:'#e2e8f0', opacity:.6}));
+        svg.appendChild(el('text', {'class':'sm', x:X1 - 6, y:sy(SD) + 16, 'text-anchor':'end', 'font-size':12, fill:'#64748b'}, (EN ? 'typical daily swing ±' : 'sobe e desce típico ±') + num(SD, 2) + '%'));
+      }
+      // eixo
+      [-1, -.5, 0, .5, 1].forEach(function(f){
+        var y = f * range, yy = sy(y);
+        svg.appendChild(el('line', {x1:X0, x2:X1, y1:yy, y2:yy, stroke:f === 0 ? '#334155' : '#e2e8f0', 'stroke-width':f === 0 ? 1.5 : 1}));
+        svg.appendChild(el('text', {x:X0 - 8, y:yy + 4, 'text-anchor':'end', 'font-size':12, fill:'#64748b'}, sgn(y, zoom === 1 ? 1 : 2) + '%'));
+      });
+      var bw = (X1 - X0) / 5, tot = 0;
+      for (var d = 0; d < 5; d++){
+        var c = 0; v.main.forEach(function(m){ if (m[0] === d) c = m[1]; });
+        var eff = c * dP; tot += eff;
+        var cx = X0 + bw * d + bw / 2, h = Math.abs(sy(eff) - MID), y = eff >= 0 ? MID - h : MID;
+        var col = eff === 0 ? '#cbd5e1' : (v.g === 'c' ? '#e80734' : '#334155');
+        svg.appendChild(el('rect', {'class':'b', x:cx - 30, y:y, width:60, height:Math.max(h, eff === 0 ? 0 : 1.5), rx:3, fill:col}));
+        var lbl = eff === 0 ? '0' : sgn(eff, 3) + '%';
+        svg.appendChild(el('text', {x:cx, y:eff >= 0 ? Math.min(y, MID) - 8 : MID + h + 18, 'text-anchor':'middle', 'font-size':13, 'font-weight':700, fill:eff === 0 ? '#94a3b8' : '#0f172a'}, lbl));
+        svg.appendChild(el('text', {x:cx, y:Y1 + 26, 'text-anchor':'middle', 'font-size':13, fill:'#334155'}, d === 0 ? (EN ? 'today' : 'hoje') : '+' + d));
+      }
+      svg.appendChild(el('text', {x:X0, y:Y1 + 52, 'font-size':12, fill:'#64748b'}, EN ? 'trading days after the change →' : 'pregões depois da mudança →'));
+      var msg;
+      if (!v.main.length) msg = EN ? '<b>' + v.n + '</b>: no significant effect in the final model, so every bar stays at zero.' : '<b>' + v.n + '</b>: sem efeito significativo no modelo final, então todas as barras ficam em zero.';
+      else if (dP === 0) msg = EN ? 'Move the slider: with no price change, nothing happens.' : 'Mexa no controle: sem mudança no preço, nada acontece.';
+      else msg = (EN ? 'If <b>' + PHR[v.k] + '</b> moves ' + sgn(dP, 1) + '% today, adding up the next trading days the fund\'s return changes by <b>' + sgn(tot, 3) + ' percentage point</b> in all. For comparison, a fund typically swings ' + num(SD, 2) + '% in a single day.' : 'Se <b>' + PHR[v.k] + '</b> muda ' + sgn(dP, 1) + '% hoje, somando os pregões seguintes o retorno do fundo muda <b>' + sgn(tot, 3) + ' ponto percentual</b> ao todo. Para comparar, um fundo costuma subir ou descer ' + num(SD, 2) + '% num único dia.');
+      $('lag-msg').innerHTML = msg;
+    }
+    each(chips.children, function(b){ b.addEventListener('click', function(){ vi = +b.dataset.i; each(chips.children, function(x){ x.setAttribute('aria-pressed', x === b); }); draw(); }); });
+    each($('lag-zoom').children, function(b){ b.addEventListener('click', function(){ zoom = +b.dataset.z; each($('lag-zoom').children, function(x){ x.classList.toggle('on', x === b); }); draw(); }); });
+    $('lag-r').addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 08 · MENOS DE 1% ================= */
+  (function(){
+    var svg = $('grid-svg'), NS_ = 'http://www.w3.org/2000/svg', dots = [];
+    var C = 40, R = 25, sx = 500 / C, sy = 330 / R;
+    for (var r = 0; r < R; r++) for (var c = 0; c < C; c++){
+      var e = document.createElementNS(NS_, 'circle');
+      e.setAttribute('cx', sx * c + sx / 2); e.setAttribute('cy', sy * r + sy / 2); e.setAttribute('r', Math.min(sx, sy) * .36); e.setAttribute('fill', '#cbd5e1');
+      svg.appendChild(e); dots.push(e);
+    }
+    // os destacados ficam no canto de baixo à direita, juntos
+    var order = dots.slice().reverse();
+    function show(i){
+      var g = R2[i], n = Math.round(g.v * 10);
+      order.forEach(function(d, j){ d.setAttribute('fill', j < n ? '#e80734' : '#cbd5e1'); });
+      each($('r2-seg').children, function(b){ b.classList.toggle('on', +b.dataset.i === i); });
+      $('r2-msg').innerHTML = '<b>' + g.n + '</b>: ' + num(g.v, 2) + '% ' + (EN ? 'of the variation, about ' : 'da variação, cerca de ') + '<b style="color:var(--red)">' + n + (EN ? ' in 1,000' : ' em 1.000') + '</b> ' + (EN ? 'dots.' : 'pontos.');
+    }
+    each($('r2-seg').children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(2);
+  })();
+
+  /* ================= 09 · OUTRA RÉGUA ================= */
+  (function(){
+    function cell(arr){
+      if (!arr.length) return '<div class="cell">—</div>';
+      var up = arr.every(function(m){ return m[1] > 0; }), dn = arr.every(function(m){ return m[1] < 0; });
+      return '<div class="cell ' + (up ? 'up' : dn ? 'dn' : '') + '"><big>' + (up ? '↑' : dn ? '↓' : '↕') + '</big><span>' + arr.map(function(m){ return sgn(m[1], 3) + ' <small>(' + dayShort(m[0]) + ')</small>'; }).join('<br>') + '</span></div>';
+    }
+    function kind(v){
+      var a = v.main.length, b = v.lad.length;
+      if (!a && !b) return 'none';
+      if (a && b){ var sa = v.main[0][1] > 0, sb = v.lad[0][1] > 0; return sa === sb ? 'same' : 'flip'; }
+      return 'one';
+    }
+    var F = EN ? [['all', 'All'], ['same', 'Both agree'], ['flip', 'Sign flips'], ['one', 'Only in one'], ['none', 'Neither']] : [['all', 'Todas'], ['same', 'Os dois concordam'], ['flip', 'O sinal troca'], ['one', 'Só em um'], ['none', 'Em nenhum']];
+    $('cmp-chips').innerHTML = F.map(function(f, i){ return '<button class="chip" data-k="' + f[0] + '" aria-pressed="' + (i === 0) + '">' + f[1] + '</button>'; }).join('');
+    var wrap = $('cmp');
+    wrap.innerHTML = '<div class="row hd" role="presentation"><span></span><span style="text-align:center"><span class="lg">' + (EN ? 'Expected' : 'Esperado') + '</span><span class="sh">' + (EN ? 'Exp.' : 'Esp.') + '</span></span><span>' + (EN ? 'Main model' : 'Modelo principal') + '</span><span>' + (EN ? 'Other method (LAD)' : 'Outro método (LAD)') + '</span></div>' +
+      VARS.map(function(v, i){ return '<div class="row" role="listitem" tabindex="0" data-i="' + i + '" data-k="' + kind(v) + '"><span class="nm"><i style="background:' + gcol(v) + '"></i>' + v.n + '</span><span class="ex">' + v.ex + '</span>' + cell(v.main) + cell(v.lad) + '</div>'; }).join('');
+    var TXT = EN ? {same:'Sugar is the only variable that pointed the same way in both methods: a rise in its price came with lower fund returns, on the same day and four trading days later (with the other method).', flip:'The stock market and the dollar change sign when the method changes. In the main model both went against the funds; with the other method, both helped them, a few days later. That is why the author says the economic variables were not consistent.', one:'Wheat and beef cattle appear only in the main model, the Selic rate only in the other method. These are results that depend on how the calculation is done.', none:'Corn, soybeans, coffee, cotton and chicken left no mark in either method.', all:'The main model and the robustness test agree on little. Tap a row or a filter.'}
+      : {same:'O açúcar é a única variável que apontou na mesma direção nos dois métodos: a alta do seu preço veio com retorno menor dos fundos, no mesmo dia e quatro pregões depois (no outro método).', flip:'A bolsa e o dólar trocam de sinal quando o método muda. No modelo principal, os dois jogaram contra os fundos; no outro método, os dois ajudaram, alguns dias depois. Por isso a autora diz que as variáveis da economia não foram consistentes.', one:'Trigo e boi gordo aparecem só no modelo principal; a Selic, só no outro método. São resultados que dependem do jeito de fazer a conta.', none:'Milho, soja, café, algodão e frango não deixaram marca em nenhum dos dois métodos.', all:'O modelo principal e o teste de robustez concordam em pouca coisa. Toque numa linha ou num filtro.'};
+    var LBL = EN ? {same:'Both agree', flip:'Sign flips', one:'Only in one', none:'Neither', all:'All'} : {same:'Os dois concordam', flip:'O sinal troca', one:'Só em um', none:'Em nenhum', all:'Todas'};
+    function filter(k){
+      each($('cmp-chips').children, function(b){ b.setAttribute('aria-pressed', b.dataset.k === k); });
+      each(wrap.querySelectorAll('.row[data-i]'), function(r){ r.classList.remove('on'); r.classList.toggle('dim', k !== 'all' && r.dataset.k !== k); });
+      $('cmp-panel').innerHTML = '<div class="tag">' + LBL[k] + '</div><p>' + TXT[k] + '</p>';
+    }
+    function row(i){
+      var v = VARS[i], k = kind(v);
+      each(wrap.querySelectorAll('.row[data-i]'), function(r){ r.classList.toggle('on', +r.dataset.i === i); r.classList.remove('dim'); });
+      each($('cmp-chips').children, function(b){ b.setAttribute('aria-pressed', 'false'); });
+      $('cmp-panel').innerHTML = '<div class="tag">' + v.n + ' · ' + LBL[k] + '</div><p>' + DESC[v.k] + '</p>';
+    }
+    each($('cmp-chips').children, function(b){ b.addEventListener('click', function(){ filter(b.dataset.k); }); });
+    each(wrap.querySelectorAll('.row[data-i]'), function(r){
+      r.addEventListener('click', function(){ row(+r.dataset.i); });
+      r.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); row(+r.dataset.i); } });
+    });
+    filter('all');
+  })();
+
+  /* ================= 10 · RISCO E RETORNO ================= */
+  (function(){
+    var svg = $('rr-svg'), NS_ = 'http://www.w3.org/2000/svg', idx = 'sharpe', stat = 'med', sel = 7;
+    function el(t, a, txt){ var e = document.createElementNS(NS_, t); for (var k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; return e; }
+    var NAME = {sharpe:'Sharpe', sortino:'Sortino', treynor:'Treynor'};
+    var ABOUT = EN ? {
+      sharpe:'Return above the Selic rate for each unit of total swing (volatility). The author reads it as positive overall and improving at the end of the period, with dividends adding stability.',
+      sortino:'Like Sharpe, but it only counts the swings down (the risk of losses). Positive in most semesters; the overall average (0.777) is pulled up by a few extreme funds, while the median is 0.005.',
+      treynor:'Return above the Selic rate for each unit of beta, how much the fund follows the Ibovespa. As the funds\' betas are very low, small changes produce huge numbers: in 2024S1 the average reached −316,842. For the author, the index does not suit FIAGROs; only the medians are worth looking at.'
+    } : {
+      sharpe:'Retorno acima da Selic para cada unidade de sobe e desce total (volatilidade). A autora o lê como positivo no conjunto e melhor no fim do período, com os dividendos dando estabilidade.',
+      sortino:'Como o Sharpe, mas conta só as oscilações para baixo (o risco de perder). Positivo na maioria dos semestres; a média do período todo (0,777) é puxada por poucos fundos extremos, e a mediana fica em 0,005.',
+      treynor:'Retorno acima da Selic para cada unidade de beta, quanto o fundo acompanha o Ibovespa. Como os betas dos fundos são muito baixos, pequenas mudanças geram números enormes: em 2024S1, a média chegou a −316.842. Para a autora, o índice não serve para os FIAGROs; só as medianas merecem atenção.'
+    };
+    var X0 = 78, X1 = 562, Y0 = 20, Y1 = 270;
+    function draw(){
+      var d = IDX[idx][stat];
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      var vals = d.slice(), lo = Math.min.apply(null, vals.concat([0])), hi = Math.max.apply(null, vals.concat([0])), clip = false;
+      if (idx === 'treynor' && stat === 'avg'){ lo = -15000; hi = 10000; clip = true; }
+      var pad = (hi - lo) * .12; lo -= pad; hi += pad;
+      var sy = function(v){ return Y1 - (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo) * (Y1 - Y0); };
+      var sx = function(i){ return X0 + i * (X1 - X0) / (SEM.length - 1); };
+      var dec = idx === 'treynor' ? 0 : 3;
+      // grade
+      for (var g = 0; g <= 4; g++){
+        var v = lo + (hi - lo) * g / 4, y = sy(v);
+        svg.appendChild(el('line', {x1:X0, x2:X1, y1:y, y2:y, stroke:'#eef2f7'}));
+        svg.appendChild(el('text', {x:X0 - 8, y:y + 4, 'text-anchor':'end', 'font-size':11, fill:'#94a3b8'}, num(v, idx === 'treynor' ? 0 : 2)));
+      }
+      svg.appendChild(el('line', {x1:X0, x2:X1, y1:sy(0), y2:sy(0), stroke:'#334155', 'stroke-width':1.5}));
+      svg.appendChild(el('text', {'class':'sm', x:X1, y:sy(0) - 6, 'text-anchor':'end', 'font-size':11, fill:'#334155'}, EN ? 'zero: paid exactly the Selic rate' : 'zero: rendeu o mesmo que a Selic'));
+      // vale 2023S2–2024S2
+      svg.appendChild(el('rect', {x:sx(3.5), y:Y0, width:sx(6.5) - sx(3.5), height:Y1 - Y0, fill:'#e80734', opacity:.05}));
+      var pts = d.map(function(v, i){ return sx(i) + ',' + sy(v); }).join(' ');
+      svg.appendChild(el('polyline', {points:pts, fill:'none', stroke:'#1f3b73', 'stroke-width':3, 'stroke-linejoin':'round'}));
+      d.forEach(function(v, i){
+        var g2 = el('g', {'class':'pt', tabindex:0, role:'button', 'aria-label':SEM[i] + ': ' + num(v, dec)});
+        var off = clip && (v < lo || v > hi);
+        g2.appendChild(el('circle', {cx:sx(i), cy:sy(v), r:i === sel ? 9 : 6, fill:v < 0 ? '#e80734' : '#1f3b73', stroke:'#fff', 'stroke-width':2}));
+        if (i === sel || off) g2.appendChild(el('text', {x:sx(i), y:sy(v) + (off ? (v < lo ? -14 : 24) : (v < 0 ? 24 : -14)), 'text-anchor':'middle', 'font-size':12.5, 'font-weight':700, fill:'#0f172a'}, (off ? (EN ? 'off scale: ' : 'fora da escala: ') : '') + num(v, dec)));
+        g2.appendChild(el('text', {x:sx(i), y:Y1 + 20, 'text-anchor':'middle', 'font-size':11.5, fill:i === sel ? '#0f172a' : '#64748b', 'font-weight':i === sel ? 700 : 400}, SEM[i].replace('20', "'")));
+        g2.appendChild(el('text', {'class':'sm', x:sx(i), y:Y1 + 36, 'text-anchor':'middle', 'font-size':10.5, fill:'#94a3b8'}, 'N ' + NS[i]));
+        g2.appendChild(el('rect', {x:sx(i) - 26, y:Y0, width:52, height:Y1 - Y0 + 40, fill:'transparent'}));
+        g2.addEventListener('click', function(){ sel = i; draw(); });
+        g2.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); sel = i; draw(); } });
+        svg.appendChild(g2);
+      });
+      var v0 = d[sel], other = IDX[idx][stat === 'med' ? 'avg' : 'med'][sel];
+      var sName = stat === 'med' ? (EN ? 'median' : 'mediana') : (EN ? 'average' : 'média'), oName = stat === 'med' ? (EN ? 'average' : 'média') : (EN ? 'median' : 'mediana');
+      var verdict = v0 > 0 ? (EN ? 'above the Selic rate, adjusted for risk' : 'acima da Selic, já descontado o risco') : (EN ? 'below the Selic rate, adjusted for risk' : 'abaixo da Selic, já descontado o risco');
+      $('rr-panel').innerHTML = '<div class="tag">' + NAME[idx] + ' · ' + SEM[sel] + ' · ' + NS[sel] + (EN ? ' funds' : ' fundos') + '</div>' +
+        '<h3>' + sName.charAt(0).toUpperCase() + sName.slice(1) + ' ' + num(v0, dec) + ': ' + verdict + '</h3>' +
+        '<p style="font-size:.86rem">' + oName.charAt(0).toUpperCase() + oName.slice(1) + (EN ? ' in the same half-year: ' : ' no mesmo semestre: ') + num(other, dec) + '. ' + (EN ? 'Whole period: average ' : 'Período todo: média ') + num(IDX[idx].all[0], dec === 0 ? 2 : 3) + (EN ? ', median ' : ', mediana ') + num(IDX[idx].all[1], dec === 0 ? 2 : 3) + '.</p>' +
+        '<p style="font-size:.84rem">' + ABOUT[idx] + '</p>';
+    }
+    each($('rr-idx').children, function(b){ b.addEventListener('click', function(){ idx = b.dataset.k; each($('rr-idx').children, function(x){ x.classList.toggle('on', x === b); }); draw(); }); });
+    each($('rr-stat').children, function(b){ b.addEventListener('click', function(){ stat = b.dataset.k; each($('rr-stat').children, function(x){ x.classList.toggle('on', x === b); }); draw(); }); });
+    draw();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
