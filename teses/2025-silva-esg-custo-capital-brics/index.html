@@ -1,0 +1,942 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nota ESG alta deixa o dinheiro mais barato? · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Claudia Vasconcellos Silva (PPGA Mackenzie, 2025) sobre o desempenho ESG, o custo de capital e o valor de mercado de 594 empresas dos BRICS, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2025-silva-esg-custo-capital-brics/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2213%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>ESG</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em ../../assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  :root{
+    --esg:var(--navy);    /* nota ESG */
+    --cost:var(--red);    /* custo do dinheiro */
+    --off:#cbd5e1;
+    --br:var(--red); --ru:#334155; --in:#5b6f96; --cn:var(--navy); --za:#94a3b8;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+  .stripe{background-image:repeating-linear-gradient(45deg, rgb(255 255 255 / .45) 0 5px, transparent 5px 10px);}
+  .ilus{display:inline-block; font-size:.64rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4vw, 2.7rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:32em; margin-left:auto; margin-right:auto;}
+  #hero-cap{font-family:var(--serif); text-align:center; font-size:1rem; color:var(--ink); margin-bottom:2px; min-height:1.6em;}
+  #hero-cap b{color:var(--cost);}
+  #hero-scene{perspective:2200px;}
+  #hero-scene .face-label{font-size:13px; letter-spacing:.04em;}
+  #hero-scene .slab.active .f-front{box-shadow:inset 0 0 0 3px #fff;}
+
+  /* ---------- Componentes comuns ---------- */
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 20px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.05rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel .nt{text-transform:none; letter-spacing:0;}
+  .panel p{margin:0 0 8px; font-size:.9rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.35rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.76rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  details.tbl{margin-top:12px; font-size:.82rem; color:var(--ink-2);}
+  details.tbl summary{cursor:pointer; color:var(--muted); font-weight:600;}
+  details.tbl .wrap{overflow-x:auto; margin-top:8px;}
+  details.tbl table{border-collapse:collapse; width:100%; font-variant-numeric:tabular-nums;}
+  details.tbl th, details.tbl td{border-bottom:1px solid var(--border); padding:4px 6px; text-align:right; white-space:nowrap;}
+  details.tbl th:first-child, details.tbl td:first-child{text-align:left;}
+
+  /* ---------- 02 · Apostas ---------- */
+  .bets{display:grid; grid-template-columns:1fr; gap:12px; margin-top:8px;}
+  @media (min-width:700px){ .bets{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1050px){ .bets{grid-template-columns:repeat(4, 1fr);} }
+  .bet{perspective:1000px;}
+  .bet .in{position:relative; min-height:250px; transform-style:preserve-3d; transition:transform .7s cubic-bezier(.2,.8,.2,1);}
+  .bet.done .in{transform:rotateY(180deg);}
+  .bet .fc, .bet .bc{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:14px; padding:14px 16px; background:var(--card); border:1px solid var(--border); border-top:5px solid var(--ink-2); box-shadow:var(--shadow); display:flex; flex-direction:column;}
+  .bet .bc{transform:rotateY(180deg); background:#f8fafc; border-top-color:var(--esg);}
+  .bet .k{font-size:.64rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--muted);}
+  .bet h3{font-size:.98rem; margin:4px 0 6px; line-height:1.35;}
+  .bet p{font-size:.8rem; color:var(--ink-2); margin:0 0 6px; line-height:1.45;}
+  .bet .opts{display:grid; gap:5px; margin-top:auto;}
+  .bet .opts button{border:1px solid var(--border); background:var(--card); border-radius:9px; padding:8px 4px; font-size:.8rem; font-weight:600; cursor:pointer; color:var(--ink);}
+  .bet .opts.four{grid-template-columns:1fr 1fr;}
+  .bet .opts button:hover{border-color:var(--ink);}
+  .bet .mine{display:inline-block; align-self:flex-start; font-size:.78rem; font-weight:700; padding:4px 10px; border-radius:6px; color:#fff; background:var(--esg); margin:6px 0;}
+  #bet-msg{font-size:.92rem; color:var(--ink-2); margin-top:14px; min-height:1.6em;}
+  @media (max-width:600px){ .bet, .bet .in{min-height:230px;} }
+
+  /* ---------- 03 · Réguas ---------- */
+  .calc{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px;}
+  @media (max-width:1100px){ .calc{grid-template-columns:1fr;} }
+  .meas{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 16px; box-shadow:var(--shadow); border-top:5px solid var(--mc);}
+  .meas .k{font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--mc);}
+  .meas .big{font-family:var(--serif); font-weight:700; font-size:1.9rem; color:var(--ink); line-height:1.15; margin:4px 0 2px;}
+  .meas .f{font-size:.74rem; color:var(--muted); min-height:2.4em;}
+  .meas .ctl{margin-top:8px;}
+  .ctl label{display:flex; justify-content:space-between; font-size:.8rem; font-weight:600; color:var(--ink);}
+  .ctl label span{font-variant-numeric:tabular-nums; color:var(--cost);}
+  .ctl input{width:100%; accent-color:var(--cost);}
+  .ctl small{display:block; font-size:.72rem; color:var(--muted);}
+  .rng{font-size:.72rem; color:var(--ink-2); margin-top:8px; padding-top:6px; border-top:1px dashed var(--border);}
+  @media (max-width:1100px){ .meas .ctls{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;} .meas .ctl{margin-top:4px;} }
+  @media (max-width:520px){ .meas .ctls{grid-template-columns:1fr;} .meas .ctl small{display:none;} }
+
+  /* ---------- 04 · Amostra ---------- */
+  .dots-grid{display:grid; grid-template-columns:repeat(27, minmax(0, 1fr)); gap:3px; max-width:470px; margin:12px auto 0;}
+  .dots-grid i{aspect-ratio:1; border-radius:50%; background:var(--dc); transition:opacity .4s, transform .4s;}
+  .dots-grid i.gone{opacity:.13; transform:scale(.6);}
+  #smp-msg{min-height:4.6em; margin-top:14px;}
+  .crit{display:grid; gap:6px; margin:12px 0 0; padding:0; list-style:none;}
+  .crit li{font-size:.84rem; color:var(--ink-2); padding:7px 12px; border-left:3px solid var(--esg); background:var(--card); border-radius:0 8px 8px 0;}
+  .crit li b{color:var(--ink);}
+  .cbtn{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-size:.82rem; cursor:pointer; color:var(--ink-2); display:inline-flex; align-items:center; gap:6px;}
+  .cbtn[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); font-weight:700; box-shadow:0 0 0 1px var(--ink);}
+  .cbtn i{width:10px; height:10px; border-radius:50%; background:var(--dc);}
+  .cbtns{display:flex; flex-wrap:wrap; gap:6px; justify-content:center;}
+
+  /* ---------- 05 · Notas por país ---------- */
+  #esg-scene{perspective:2600px;}
+  #esg-scene .slab{transition:transform .55s cubic-bezier(.2,.8,.2,1), --h .6s;}
+  #esg-scene .face-label{font-size:16px; letter-spacing:0; font-family:var(--serif); text-transform:none; flex-direction:column; line-height:1.1;}
+  #esg-scene .face-label small{font-family:var(--sans); font-size:11px; font-weight:600; letter-spacing:.04em;}
+  #esg-panel{min-height:120px; margin-top:12px;}
+  .pairs{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px; margin-top:12px;}
+  .pair{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:8px 10px; font-size:.74rem; color:var(--ink-2);}
+  .pair b{display:block; font-family:var(--serif); font-size:1.1rem; color:var(--ink);}
+  .pair .bar{height:6px; background:#eef2f7; border-radius:3px; margin-top:5px; overflow:hidden;}
+  .pair .bar i{display:block; height:100%; background:var(--esg);}
+  @media (max-width:600px){ #esg-scene .face-label{font-size:21px;} #esg-scene .face-label small{font-size:14px;} }
+
+  /* ---------- 06 · Custos por país ---------- */
+  .guess{display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 4px;}
+  .hb{display:grid; gap:9px; margin-top:12px;}
+  .hb .row{display:grid; grid-template-columns:110px 1fr 70px; gap:10px; align-items:center; font-size:.86rem; color:var(--ink-2);}
+  .hb .tr{height:22px; background:#f1f5f9; border-radius:4px; position:relative; overflow:hidden;}
+  .hb .tr i{position:absolute; left:0; top:0; bottom:0; border-radius:4px; background:var(--dc); transition:width .7s cubic-bezier(.2,.8,.2,1);}
+  .hb .row b{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink); font-family:var(--serif);}
+  .hb.hide .tr i{width:0 !important;} .hb.hide .row b{visibility:hidden;}
+  .hb .row.top span{font-weight:700; color:var(--ink);}
+  #cost-msg{min-height:6.2em; margin-top:12px;}
+  @media (max-width:520px){ .hb .row{grid-template-columns:84px 1fr 56px; font-size:.78rem;} }
+
+  /* ---------- 07 · O inesperado ---------- */
+  #sc-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  #sc-svg text{font-family:var(--sans);}
+  #sc-svg circle, #sc-svg .lbl{transition:opacity .5s;}
+  .flipper{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .sign{border:1px solid var(--border); background:var(--card); border-radius:14px; padding:14px 16px; box-shadow:var(--shadow); text-align:left; cursor:pointer; font:inherit; color:inherit; border-top:5px solid var(--sc);}
+  .sign[aria-pressed="true"]{background:color-mix(in srgb, var(--sc) 8%, white); box-shadow:0 0 0 2px var(--sc);}
+  .sign .k{display:block; font-size:.64rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--muted);}
+  .sign .v{display:block; font-family:var(--serif); font-weight:700; font-size:1.5rem; color:var(--ink); margin-top:4px;}
+  .sign .d{display:block; font-size:.78rem; color:var(--ink-2); margin-top:3px; line-height:1.4;}
+  #ins-panel{min-height:150px; margin-top:12px;}
+  @media (max-width:600px){ #sc-svg text{font-size:20px !important;} #sc-svg text.ax{font-size:17px !important;} .sign .v{font-size:1.2rem;} }
+
+  /* ---------- 08 · Método ---------- */
+  #fe-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  #fe-svg text{font-family:var(--sans);}
+  #fe-svg .ln{transition:opacity .5s;}
+  #fe-msg{min-height:7em; margin-top:12px;}
+  @media (max-width:600px){ #fe-svg text{font-size:20px !important;} }
+
+  /* ---------- 09 · Custo do capital próprio ---------- */
+  #ke-scene{perspective:2600px;}
+  #ke-scene .slab{transition:transform .55s cubic-bezier(.2,.8,.2,1), --h .6s, --z .6s;}
+  #ke-scene .face-label{font-size:15px; letter-spacing:0; font-family:var(--serif); text-transform:none;}
+  #ke-scene .floor-label{font-size:13px;}
+  #ke-scene .slab.neg > i{background-image:repeating-linear-gradient(45deg, rgb(255 255 255 / .4) 0 5px, transparent 5px 10px);}
+  #ke-panel{min-height:130px; margin-top:12px;}
+  .klist{display:none; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .klist span{font-size:.74rem; border:1px solid var(--border); border-radius:8px; padding:3px 8px; color:var(--ink-2); background:var(--card);}
+  @media (max-width:600px){ #ke-scene .floor-label{display:none;} .klist{display:flex;} #ke-scene .face-label{font-size:20px;} }
+
+  /* ---------- 10 · Valor de mercado ---------- */
+  .dv{display:grid; gap:8px; margin-top:6px;}
+  .dv .row{display:grid; grid-template-columns:200px 1fr 70px; gap:10px; align-items:center; font-size:.84rem; color:var(--ink-2);}
+  .dv .row small{display:block; font-size:.7rem; color:var(--muted);}
+  .dv .tr{position:relative; height:22px; background:#f1f5f9; border-radius:3px;}
+  .dv .tr::before{content:""; position:absolute; left:50%; top:-4px; bottom:-4px; border-left:2px solid var(--ink-2);}
+  .dv .tr i{position:absolute; top:0; bottom:0; border-radius:3px; transition:left .6s, width .6s;}
+  .dv .tr i.pos{background:var(--cost);}
+  .dv .tr i.neg{background:var(--esg);}
+  .dv .tr i.ns{background:#cbd5e1; background-image:repeating-linear-gradient(45deg, rgb(255 255 255 / .6) 0 4px, transparent 4px 8px);}
+  .dv .row b{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink);}
+  .dv .row.esg span:first-child{font-weight:700; color:var(--ink);}
+  #q-panel{min-height:110px; margin-top:12px;}
+  @media (max-width:600px){ .dv .row{grid-template-columns:1fr 60px; } .dv .row > span:first-child{grid-column:1 / -1;} }
+
+  /* ---------- 11 · Pilar a pilar ---------- */
+  #mx-scene{perspective:2600px;}
+  #mx-scene .face-label{font-size:13px; letter-spacing:0; text-transform:none;}
+  #mx-scene .floor-label{font-size:14px;}
+  #mx-scene .slab{cursor:pointer;}
+  #mx-scene .slab.ns > i{background-image:repeating-linear-gradient(45deg, rgb(255 255 255 / .55) 0 4px, transparent 4px 8px);}
+  #mx-panel{min-height:120px; margin-top:12px;}
+  .mxbtns{display:none; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:5px; margin-top:8px;}
+  .mxbtns button{border:1px solid var(--border); background:var(--card); border-radius:8px; padding:6px 4px; font-size:.72rem; cursor:pointer; color:var(--ink-2);}
+  .mxbtns button.sig{border-color:var(--cost); color:var(--cost); font-weight:700;}
+  @media (max-width:600px){ #mx-scene .floor-label{display:none;} .mxbtns{display:grid;} }
+  .score{display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-top:6px;}
+  .score > .tag, .score > p{grid-column:1 / -1;}
+  @media (max-width:600px){ .score{grid-template-columns:1fr;} }
+  .score .sr{display:grid; grid-template-columns:1fr; gap:2px; align-items:center; font-size:.74rem; line-height:1.3; color:var(--ink-2); background:var(--card); border:1px solid var(--border); border-radius:10px; padding:5px 9px;}
+  .score .sr b{font-size:.74rem; padding:2px 8px; border-radius:6px; color:#fff; background:var(--esg); white-space:nowrap;}
+  .score .sr em{font-style:normal; font-size:.74rem; color:var(--muted); white-space:nowrap;}
+  .score .sr em.ok{color:#15803d; font-weight:700;}
+
+  /* ---------- 12 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:7px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2); line-height:1.45;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2025-silva-esg-custo-capital-brics/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2025</div>
+      <h1 class="rv" style="--d:.1s">Nota ESG alta deixa o dinheiro mais barato?</h1>
+      <p class="sub rv" style="--d:.2s">Agências dão notas de 0 a 100 para o que as empresas fazem pelo meio ambiente, pelas pessoas e pela boa gestão (ESG). A promessa é que nota alta traz investidores e crédito mais baratos e empresa mais valorizada. A pesquisa testou isso em 594 empresas do Brasil, Rússia, Índia, China e África do Sul (BRICS), de 2015 a 2022. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autora:</b> Claudia Vasconcellos Silva</span>
+        <span><b>Orientador:</b> Prof. Dr. Wilson Toshiro Nakamura</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#apostas">Começar →</a>
+        <a class="btn ghost" href="#capital">Ir direto ao resultado</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div id="hero-cap" aria-live="off"></div>
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="520x300" role="img" aria-label="Cinco colunas azuis, uma por país, com a altura da nota ESG média; sobre cada uma, um bloco vermelho com a altura do custo médio da dívida"></div></div>
+      <p class="cap-legend">Uma coluna por país: em azul, a nota ESG média; em vermelho, o custo médio da dívida (Tabelas 2 e 3). Onde a nota é mais baixa, a dívida também é mais barata.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-12"><a href="https://brasil.un.org/pt-br/sdgs/12" target="_blank" rel="noopener" title="ODS 12 · Consumo e produção responsáveis: Testa se as práticas ambientais, sociais e de governança das empresas abertas dos BRICS vêm com dinheiro mais barato e mais valor de mercado."><b>12</b>Consumo e produção responsáveis</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · APOSTAS -->
+<section class="slide" id="apostas" data-label="Faça sua aposta">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">02</span> As quatro hipóteses · faça sua aposta</div>
+    <h2 class="rv" style="--d:.1s">Quatro promessas do ESG postas à prova</h2>
+    <p class="lede rv" style="--d:.15s">Estudos em países ricos costumam achar que nota ESG alta reduz o custo do dinheiro e aumenta o valor da empresa. Nos países emergentes, os resultados são mistos. A tese testou quatro hipóteses. Aposte em cada uma: guardamos suas respostas e mostramos o placar na tela 11.</p>
+    <div class="bets rv" id="bets" style="--d:.2s"></div>
+    <div id="bet-msg" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- 03 · RÉGUAS -->
+<section class="slide" id="reguas" data-label="Três réguas">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">03</span> Experimente · o que foi medido</div>
+    <h2 class="rv" style="--d:.1s">Três réguas: dois preços do dinheiro e o valor da empresa</h2>
+    <p class="lede rv" style="--d:.15s">Toda empresa paga para usar dinheiro alheio. O <strong>custo do capital próprio</strong> é o retorno que os acionistas exigem; o <strong>custo da dívida</strong>, os juros que credores cobram. O <strong>Q de Tobin</strong> compara o que o mercado paga pela empresa com o valor dos ativos dela. Mexa numa empresa inventada.</p>
+    <div class="calc rv" style="--d:.2s">
+      <div class="meas" style="--mc:var(--cost)">
+        <div class="k">Custo do capital próprio · Ke</div>
+        <div class="big" id="ke-v">13,0%</div>
+        <div class="f" id="ke-f"></div>
+        <div class="ctls">
+          <div class="ctl"><label for="rf">Juro sem risco <span id="rf-v">7%</span></label><input type="range" id="rf" min="0" max="15" step="0.5" value="7"><small>título do governo</small></div>
+          <div class="ctl"><label for="beta">Beta da ação <span id="beta-v">1,0</span></label><input type="range" id="beta" min="0.2" max="2" step="0.1" value="1"><small>quanto a ação oscila com a bolsa</small></div>
+          <div class="ctl"><label for="pr">Prêmio da bolsa <span id="pr-v">6%</span></label><input type="range" id="pr" min="2" max="10" step="0.5" value="6"><small>a mais que a bolsa paga</small></div>
+        </div>
+        <div class="rng">Médias por país: de 11,4% (África do Sul) a 16,7% (Rússia).</div>
+      </div>
+      <div class="meas" style="--mc:#b45309">
+        <div class="k">Custo da dívida · Ki</div>
+        <div class="big" id="ki-v">6,6%</div>
+        <div class="f" id="ki-f"></div>
+        <div class="ctls">
+          <div class="ctl"><label for="sp">Risco de crédito <span id="sp-v">3%</span></label><input type="range" id="sp" min="0" max="10" step="0.5" value="3"><small>a mais por ser esta empresa</small></div>
+          <div class="ctl"><label for="tx">Imposto de renda <span id="tx-v">34%</span></label><input type="range" id="tx" min="0" max="40" step="1" value="34"><small>os juros reduzem o imposto</small></div>
+        </div>
+        <div class="rng">Médias por país: de 2,1% (China) a 12,3% (Brasil).</div>
+      </div>
+      <div class="meas" style="--mc:var(--esg)">
+        <div class="k">Valor de mercado · Q de Tobin</div>
+        <div class="big" id="q-v">1,8</div>
+        <div class="f" id="q-f"></div>
+        <div class="ctls">
+          <div class="ctl"><label for="mv">Valor das ações na bolsa <span id="mv-v">R$ 120 mi</span></label><input type="range" id="mv" min="10" max="400" step="10" value="120"><small>ações × preço</small></div>
+          <div class="ctl"><label for="dt">Dívida total <span id="dt-v">R$ 60 mi</span></label><input type="range" id="dt" min="0" max="200" step="10" value="60"><small>ativo total fixo em R$ 100 mi</small></div>
+        </div>
+        <div class="rng">Médias por país: de 1,41 (Rússia) a 3,72 (Índia). Acima de 1, o mercado paga mais do que os ativos valem.</div>
+      </div>
+    </div>
+    <p class="note rv" style="--d:.25s"><span class="ilus">ilustração</span> Empresa inventada. Fórmulas do Quadro 2: Ke = juro sem risco + beta × prêmio; Ki = (juro sem risco + risco de crédito) × (1 − imposto); Q = (valor das ações + dívida) ÷ ativo total. Na tese, os três vêm prontos da Bloomberg; as médias são das Tabelas 1 e 2.</p>
+  </div>
+</section>
+
+<!-- 04 · AMOSTRA -->
+<section class="slide" id="amostra" data-label="594 empresas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> A amostra</div>
+      <h2 class="rv" style="--d:.1s">594 empresas de cinco países, de 2015 a 2022</h2>
+      <p class="lede rv" style="--d:.15s">Empresas abertas dos BRICS com nota ESG na base Refinitiv, de 2015 (ano da Agenda 2030 da ONU) a 2022. Bancos e seguradoras ficaram de fora, porque usam dívida de outro jeito.</p>
+      <ul class="crit rv" style="--d:.2s">
+        <li><b>Notas ESG</b> da Refinitiv, de 0 a 100: uma nota total e uma para cada pilar (ambiental, social e governança).</li>
+        <li><b>Custos e valor</b> da Bloomberg: custo do capital próprio, custo da dívida, custo médio do capital e Q de Tobin.</li>
+        <li><b>Economia de cada país</b> do Banco Mundial: crescimento do PIB e inflação, além da taxa de juros.</li>
+      </ul>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="cbtns" id="smp-btns" role="group" aria-label="Destacar um país"></div>
+      <div class="dots-grid" id="dots-grid" role="img" aria-label="594 pontos, um por empresa, coloridos pelo país"></div>
+      <div class="panel" id="smp-msg" aria-live="polite"></div>
+      <p class="note">Cada ponto = 1 empresa. Contagens da seção 6.1 (somam 594). As tabelas do painel falam em 4.765 observações (empresa em um ano), um pouco acima do máximo de 594 × 8 = 4.752; a tese não explica a diferença (observação nossa).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · NOTAS POR PAÍS -->
+<section class="slide" id="notas" data-label="Notas ESG por país">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> As notas ESG</div>
+      <h2 class="rv" style="--d:.1s">As empresas chinesas têm as notas ESG mais baixas</h2>
+      <p class="lede rv" style="--d:.15s">Em todos os pilares, a China fica atrás. Brasil, África do Sul e Índia aparecem quase empatados no topo. Escolha um pilar.</p>
+      <div class="seg rv" id="esg-seg" style="--d:.2s" role="group" aria-label="Escolha o pilar">
+        <button data-m="T" aria-pressed="true">Nota total</button>
+        <button data-m="E" aria-pressed="false">Ambiental</button>
+        <button data-m="S" aria-pressed="false">Social</button>
+        <button data-m="G" aria-pressed="false">Governança</button>
+      </div>
+      <div class="panel rv" id="esg-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="esg-scene" data-fit="560x300" role="img" aria-label="Cinco barras com a nota ESG média de cada país, de 0 a 100"></div></div>
+      <div class="pairs" id="pairs"></div>
+      <p class="note">Médias da Tabela 3 (diferenças entre países com p &lt; 0,001, teste de Kruskal-Wallis). Embaixo, a correlação entre os pilares (Tabela 6): quem vai bem num pilar tende a ir bem no outro, sobretudo no ambiental e no social.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · CUSTOS POR PAÍS -->
+<section class="slide" id="custos" data-label="O dinheiro por país">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Palpite · os custos em cada país</div>
+      <h2 class="rv" style="--d:.1s">O dinheiro custa muito diferente em cada país</h2>
+      <p class="lede rv" style="--d:.15s">Antes de ver as barras, dê um palpite: em qual país a dívida das empresas é <strong>mais cara</strong>?</p>
+      <div class="guess rv" id="guess" style="--d:.2s"></div>
+      <div class="panel rv" id="cost-msg" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="cost-seg" role="group" aria-label="Escolha a medida">
+        <button data-m="ki" aria-pressed="true">Custo da dívida</button>
+        <button data-m="ke" aria-pressed="false">Capital próprio</button>
+        <button data-m="q" aria-pressed="false">Q de Tobin</button>
+        <button data-m="lev" aria-pressed="false">Dívida ÷ ativo</button>
+      </div>
+      <div class="hb hide" id="hb"></div>
+      <p class="note">Médias de 2015 a 2022, Tabelas 1 e 2. As diferenças entre países são estatisticamente significativas em todas as medidas (Kruskal-Wallis, p &lt; 0,001).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · O INESPERADO -->
+<section class="slide" id="inesperado" data-label="O inesperado">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> O inesperado</div>
+      <h2 class="rv" style="--d:.1s">Olhando por cima, nota ESG alta parece encarecer a dívida</h2>
+      <p class="lede rv" style="--d:.15s">Juntando todas as empresas, quanto maior a nota ESG, maior o custo da dívida. É o contrário da promessa. Toque nos dois cartões.</p>
+      <div class="flipper rv" id="flipper" style="--d:.2s">
+        <button class="sign" data-s="0" aria-pressed="true" style="--sc:var(--cost)"><span class="k">Correlação simples</span><span class="v">+0,42</span><span class="d">nota ESG × custo da dívida, todas as empresas juntas (Tabela 5)</span></button>
+        <button class="sign" data-s="1" aria-pressed="false" style="--sc:var(--esg)"><span class="k">Cada empresa com ela mesma</span><span class="v">sem efeito</span><span class="d">nenhum pilar mexeu no custo da dívida (Tabela 14)</span></button>
+      </div>
+      <div class="panel rv" id="ins-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="sc-svg" viewBox="0 0 560 360" role="img" aria-label="Cinco círculos, um por país: nota ESG média no eixo horizontal e custo médio da dívida no vertical"></svg>
+      <p class="note">Médias por país das Tabelas 2 e 3; círculo proporcional ao número de empresas. A leitura de que a correlação reflete a diferença entre países é nossa, não da tese.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · MÉTODO -->
+<section class="slide" id="metodo" data-label="O método">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> O método</div>
+      <h2 class="rv" style="--d:.1s">O modelo compara cada empresa com ela mesma ao longo dos anos</h2>
+      <p class="lede rv" style="--d:.15s">A tese usou <strong>regressão em painel com efeitos fixos</strong>: em vez de comparar uma empresa chinesa com uma brasileira, pergunta se, quando a nota de uma empresa sobe, o custo dela muda. Também desconta a inflação, os juros, o PIB, o tamanho, a dívida e o lucro.</p>
+      <div class="seg rv" id="fe-seg" style="--d:.2s" role="group" aria-label="Escolha a comparação">
+        <button data-m="0" aria-pressed="true">Todas juntas</button>
+        <button data-m="1" aria-pressed="false">Cada empresa com ela mesma</button>
+      </div>
+      <div class="panel rv" id="fe-msg" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="fe-svg" viewBox="0 0 560 340" role="img" aria-label="Três empresas inventadas, cada uma com quatro anos de nota ESG e custo"></svg>
+      <p class="note"><span class="ilus">ilustração</span> Números inventados para mostrar a lógica. A tese rodou três modelos (efeitos fixos, efeitos aleatórios e mínimos quadrados agrupados) e o teste de Hausman (p &lt; 0,0001) escolheu o de efeitos fixos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · CUSTO DO CAPITAL PRÓPRIO -->
+<section class="slide" id="capital" data-label="Capital próprio">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> O resultado · custo do capital próprio</div>
+      <h2 class="rv" style="--d:.1s">Nota ESG mais alta, capital próprio um pouco mais caro</h2>
+      <p class="lede rv" style="--d:.15s">No modelo escolhido, cada ponto a mais na nota ESG veio com 0,026 ponto percentual a mais no retorno exigido pelos acionistas. É o contrário da hipótese, e pequeno perto do que juros e inflação fazem.</p>
+      <div class="ctl rv" style="--d:.2s">
+        <label for="dEsg">A nota ESG sobe <span id="dEsg-v">10 pontos</span></label>
+        <input type="range" id="dEsg" min="0" max="25" step="1" value="10">
+        <small>22 pontos é a distância entre a média das empresas brasileiras e a das chinesas</small>
+      </div>
+      <div class="seg rv" id="ke-seg" style="--d:.25s; margin-top:12px" role="group" aria-label="Escolha o modelo">
+        <button data-m="0" aria-pressed="true">Efeitos fixos (escolhido)</button>
+        <button data-m="1" aria-pressed="false">Efeitos aleatórios</button>
+        <button data-m="2" aria-pressed="false">Agrupado</button>
+      </div>
+      <div class="panel rv" id="ke-panel" style="--d:.3s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="ke-scene" data-fit="560x300" role="img" aria-label="Barras com quanto o custo do capital próprio muda: nota ESG, inflação, juros e PIB"></div></div>
+      <div class="klist" id="ke-list"></div>
+      <div class="legend"><span><i class="dot" style="background:var(--cost)"></i>aumenta o custo</span><span><i class="dot stripe" style="background-color:var(--esg)"></i>reduz o custo</span><span><i class="dot stripe" style="background-color:#cbd5e1"></i>sem efeito estatístico</span></div>
+      <p class="note">Coeficientes da Tabela 10 (efeitos fixos: nota ESG 0,0261, inflação 0,2842, juros 0,2126, PIB −0,1134). A conversão em pontos percentuais supõe custo, inflação e juros medidos em % (conta nossa). Tamanho, dívida e lucro não tiveram efeito.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · VALOR DE MERCADO -->
+<section class="slide" id="valor" data-label="Valor de mercado">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> O resultado · valor de mercado</div>
+      <h2 class="rv" style="--d:.1s">No valor de mercado, a nota ESG não fez diferença</h2>
+      <p class="lede rv" style="--d:.15s">A hipótese esperava Q de Tobin maior com nota ESG maior. Nos três modelos, o efeito da nota ficou perto de zero e sem significância estatística. O valor acompanhou outras coisas: lucro, porte e economia.</p>
+      <div class="panel rv" id="q-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="dv" id="dv"></div>
+      <div class="legend"><span><i class="dot" style="background:var(--cost)"></i>aumenta o valor</span><span><i class="dot" style="background:var(--esg)"></i>reduz o valor</span><span><i class="dot stripe" style="background-color:#cbd5e1"></i>sem efeito estatístico</span></div>
+      <p class="note">Mudança no Q de Tobin para cada mudança indicada, modelo de efeitos fixos (Tabela 12). Multiplicações nossas a partir dos coeficientes. Para comparar: as médias por país vão de 1,41 a 3,72. Toque numa linha para ver o número da tese.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · PILAR A PILAR -->
+<section class="slide" id="pilares" data-label="Pilar a pilar">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> Pilar a pilar · o placar</div>
+      <h2 class="rv" style="--d:.1s">Pilar a pilar, só o social apareceu, e para o lado contrário</h2>
+      <p class="lede rv" style="--d:.15s">A tese testou cada pilar contra cada régua. Das nove combinações, só uma teve efeito. Toque nos blocos.</p>
+      <div class="panel rv" id="mx-panel" style="--d:.2s" aria-live="polite"></div>
+      <div class="score rv" id="score" style="--d:.25s"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="mx-scene" data-fit="560x320" role="img" aria-label="Matriz de nove blocos: três pilares ESG por três réguas; só o bloco social e capital próprio é alto"></div></div>
+      <div class="mxbtns" id="mx-btns"></div>
+      <p class="note">Modelos de efeitos fixos da Tabela 14. Bloco alto = efeito estatisticamente significativo; bloco baixo listrado = sem efeito. Para o custo da dívida, usamos só este modelo pilar a pilar: a tabela do modelo com a nota total (Tabela 11) repete os números da tabela do capital próprio.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e limites">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Na prática · limites · créditos</div>
+    <h2 class="rv" style="--d:.1s">O que muda para quem investe, empresta ou gere</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--cost)"><h3>Investidores e credores</h3><p>Nos BRICS, uma nota ESG alta não garantiu risco menor nem custo menor. Para a autora, os resultados ajudam a entender como as ações ESG afetam o custo de capital em cada país.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--esg)"><h3>Empresas</h3><p>Para a autora, práticas ESG podem exigir investimentos altos no começo, o que pode elevar o custo no curto prazo. A estratégia de sustentabilidade precisa se adaptar ao mercado de cada país.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ink-2)"><h3>Governos e reguladores</h3><p>As notas variam muito entre países, e a China ficou atrás em todos os pilares. A autora lembra que os reguladores chineses estão ampliando a exigência de divulgação ESG.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#5b6f96"><h3>Pesquisadores</h3><p>A tese pede novos estudos sobre custo de capital nos emergentes, com outros métodos e técnicas estatísticas e mais países.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Os modelos explicam pouco.</b> A parte do custo e do valor explicada dentro de cada empresa fica entre 1% e 3%. Custo e valor dependem de muito mais. <em>· observação nossa (Tabelas 10, 12 e 14)</em></li>
+          <li><b>Associação, não causa.</b> Comparar cada empresa com ela mesma não diz se a nota mexe no custo ou o custo mexe na nota. <em>· observação nossa</em></li>
+          <li><b>Uma régua de ESG só.</b> As notas vêm de uma agência (Refinitiv), e a própria tese lembra que agências diferentes dão notas diferentes à mesma empresa. <em>· segundo a autora e observação nossa</em></li>
+          <li><b>Seis em cada dez empresas são chinesas.</b> As médias e as correlações dos BRICS pesam muito para a China. A tese não roda os modelos país a país. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          SILVA, Claudia Vasconcellos. <em>Análise do impacto de desempenho ESG em relação ao valor e custo capital das empresas listadas no mercado de capitais dos BRICS.</em> Tese (Doutorado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2025. Orientador: Prof. Dr. Wilson Toshiro Nakamura.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Pesquisa com isenção integral de mensalidades do Instituto Presbiteriano Mackenzie. Dados da Refinitiv, da Bloomberg e do Banco Mundial. Esta versão simplifica o trabalho para o público em geral; as fórmulas e as tabelas completas estão no texto original.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function n0(n){ return n.toLocaleString(EN ? 'en-US' : 'pt-BR'); }
+  function sg(v, d){ return (v < 0 ? '−' : v > 0 ? '+' : '') + fmt(Math.abs(v), d); }
+
+  /* ================= DADOS DA TESE ================= */
+  // Seção 6.1 (empresas) e Tabelas 1, 2 e 3 (médias 2015–2022)
+  var C = [
+    {k:'BR', n:EN ? 'Brazil' : 'Brasil', c:'var(--br)', f:56, q:1.66, roa:7.21, ke:15.25, ki:12.26, lev:57.09, T:56.16, E:54.03, S:58.50, G:57.00},
+    {k:'RU', n:EN ? 'Russia' : 'Rússia', c:'var(--ru)', f:28, q:1.41, roa:12.83, ke:16.74, ki:4.67, lev:51.89, T:48.68, E:46.43, S:47.44, G:52.03},
+    {k:'IN', n:EN ? 'India' : 'Índia', c:'var(--in)', f:91, q:3.72, roa:10.00, ke:11.67, ki:6.95, lev:25.45, T:54.82, E:48.60, S:58.92, G:53.71},
+    {k:'CN', n:'China', c:'var(--cn)', f:352, q:2.77, roa:5.64, ke:12.91, ki:2.07, lev:30.22, T:34.01, E:31.95, S:28.02, G:46.36},
+    {k:'ZA', n:EN ? 'South Africa' : 'África do Sul', c:'var(--za)', f:67, q:1.61, roa:7.34, ke:11.44, ki:8.47, lev:34.64, T:55.97, E:50.06, S:58.62, G:55.57}
+  ];
+  // Tabela 6: correlação entre pilares
+  var PAIRS = [['E', 'S', 0.683], ['S', 'G', 0.339], ['E', 'G', 0.296]];
+  var PN = EN ? {T:'Total score', E:'Environmental', S:'Social', G:'Governance'} : {T:'Nota total', E:'Ambiental', S:'Social', G:'Governança'};
+  // Tabela 10: custo do capital próprio [efeitos fixos, aleatórios, agrupado]; sig = estrela na tabela
+  var KE = {esg:[0.0261, 0.0008, -0.0051], esgSE:[0.0104, 0.0067, 0.0054], esgSig:[true, false, false],
+    infl:[0.2842, 0.1833, 0.0721], inflSig:[true, true, false], jur:[0.2126, 0.2370, 0.3466], jurSig:[true, true, true],
+    pib:[-0.1134, -0.0860, -0.0512], pibSig:[true, false, false], R2:0.0316};
+  // Tabela 12: Q de Tobin, efeitos fixos (ESG nos três modelos)
+  var QT = {esg:[-0.0044, -0.0025, 0.0046], pib:0.0627, infl:-0.0553, size:-0.1365, roa:0.0108, jur:-0.0049, R2:0.0266};
+  // Tabela 14: efeitos fixos por pilar [coef, erro-padrão, significativo]
+  var T14 = {
+    ke:{G:[-0.0069, 0.0086, false], E:[0.0044, 0.0110, false], S:[0.0319, 0.0127, true]},
+    ki:{G:[0.0030, 0.0028, false], E:[0.0061, 0.0036, false], S:[0.0044, 0.0041, false]},
+    q:{G:[-0.0033, 0.0024, false], E:[0.0002, 0.0031, false], S:[-0.0020, 0.0035, false]}
+  };
+  var ON = EN ? {ke:'Cost of equity', ki:'Cost of debt', q:"Tobin's Q"} : {ke:'Capital próprio', ki:'Custo da dívida', q:'Q de Tobin'};
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), W = 460, D = 70, bw = 62, gap = 26;
+    var st = makeStage(sc, W, D, {ay:'68%', rx:'62deg'});
+    rotatable(sc, st, -18, 8);
+    var x0 = (W - (5 * bw + 4 * gap)) / 2, cols = [];
+    C.forEach(function(c, i){
+      var x = x0 + i * (bw + gap), h = c.T * 2.2, kh = c.ki * 4.4;
+      var a = box({w:bw, d:44, x:x, y:13, h:h, c:'var(--esg)', label:c.k});
+      var b = box({w:bw, d:44, x:x, y:13, z:h, h:kh, c:'var(--cost)'});
+      st.appendChild(a); st.appendChild(b); cols.push([a, b]);
+    });
+    var last = -1;
+    function show(i){
+      if (i === last) return; last = i;
+      cols.forEach(function(p, j){ p[0].classList.toggle('active', j === i); p[1].classList.toggle('active', j === i); });
+      var c = C[i];
+      $('hero-cap').innerHTML = c.n + ' · ' + (EN ? 'ESG ' : 'nota ESG ') + fmt(c.T, 0) + ' · ' + (EN ? 'debt costs ' : 'dívida a ') + '<b>' + fmt(c.ki, 1) + '%</b>';
+    }
+    if (reduce) show(0);
+    else M.onTick(function(t){ show(Math.floor(t / 2.2) % 5); });
+  })();
+
+  /* ================= 02 · APOSTAS ================= */
+  var BETS = [
+    {k:'H1', q:EN ? 'Higher ESG score, cost of equity…' : 'Nota ESG mais alta, custo do capital próprio…', p:EN ? 'The return shareholders demand to put money into the firm.' : 'O retorno que os acionistas exigem para pôr dinheiro na empresa.',
+      o:EN ? ['Lower', 'No difference', 'Higher'] : ['Mais baixo', 'Sem diferença', 'Mais alto'], a:2,
+      r:EN ? 'Slightly higher (Table 10)' : 'Um pouco mais alto (Tabela 10)'},
+    {k:'H2', q:EN ? 'Stronger E, S or G pillar, cost of debt…' : 'Pilar E, S ou G mais forte, custo da dívida…', p:EN ? 'The interest lenders charge the firm.' : 'Os juros que os credores cobram da empresa.',
+      o:EN ? ['Lower', 'No difference', 'Higher'] : ['Mais baixo', 'Sem diferença', 'Mais alto'], a:1,
+      r:EN ? 'No difference in any pillar (Table 14)' : 'Sem diferença em nenhum pilar (Tabela 14)'},
+    {k:'H3', q:EN ? 'Higher ESG score, market value…' : 'Nota ESG mais alta, valor de mercado…', p:EN ? "Measured by Tobin's Q: what the market pays relative to the firm's assets." : 'Medido pelo Q de Tobin: quanto o mercado paga perto do que a empresa tem em ativos.',
+      o:EN ? ['Higher', 'No difference', 'Lower'] : ['Mais alto', 'Sem diferença', 'Mais baixo'], a:1,
+      r:EN ? 'No difference (Table 12)' : 'Sem diferença (Tabela 12)'},
+    {k:'H4', q:EN ? 'Which pillar showed up in the cost of equity?' : 'Qual pilar apareceu no custo do capital próprio?', p:EN ? 'Environmental, social and governance were tested one by one.' : 'Ambiental, social e governança foram testados um a um.',
+      o:EN ? ['Environmental', 'Social', 'Governance', 'None'] : ['Ambiental', 'Social', 'Governança', 'Nenhum'], a:1,
+      r:EN ? 'Social, pushing the cost up (Table 14)' : 'O social, empurrando o custo para cima (Tabela 14)'}
+  ];
+  var MY = [null, null, null, null];
+  (function(){
+    var w = $('bets');
+    w.innerHTML = BETS.map(function(b, i){
+      return '<div class="bet" data-i="' + i + '"><div class="in">' +
+        '<div class="fc"><span class="k">' + (EN ? 'Hypothesis ' : 'Hipótese ') + b.k.slice(1) + '</span><h3>' + b.q + '</h3><p>' + b.p + '</p><div class="opts' + (b.o.length > 3 ? ' four' : '') + '">' +
+        b.o.map(function(o, j){ return '<button data-o="' + j + '">' + o + '</button>'; }).join('') + '</div></div>' +
+        '<div class="bc"><span class="k">' + (EN ? 'Hypothesis ' : 'Hipótese ') + b.k.slice(1) + '</span><h3 style="font-size:.9rem">' + b.q + '</h3>' + (EN ? '<p>Your bet:</p>' : '<p>Sua aposta:</p>') + '<span class="mine"></span><p style="margin-top:auto; color:var(--muted)">' + (EN ? 'The answer is on screen 11.' : 'A resposta está na tela 11.') + '</p></div>' +
+        '</div></div>';
+    }).join('');
+    each(w.querySelectorAll('.bet'), function(card){
+      var i = +card.dataset.i;
+      each(card.querySelectorAll('.opts button'), function(btn){
+        btn.addEventListener('click', function(){
+          MY[i] = +btn.dataset.o;
+          card.querySelector('.mine').textContent = BETS[i].o[MY[i]];
+          card.classList.add('done');
+          var n = MY.filter(function(x){ return x !== null; }).length;
+          $('bet-msg').innerHTML = EN ? 'You placed <strong>' + n + ' of 4</strong> bets.' + (n === 4 ? ' Keep going: the tally is on screen 11.' : '') : 'Você fez <strong>' + n + ' de 4</strong> apostas.' + (n === 4 ? ' Siga em frente: o placar está na tela 11.' : '');
+          drawScore();
+        });
+      });
+    });
+  })();
+
+  /* ================= 03 · RÉGUAS ================= */
+  (function(){
+    function v(id){ return +$(id).value; }
+    function draw(){
+      var rf = v('rf'), be = v('beta'), pr = v('pr'), sp = v('sp'), tx = v('tx'), mv = v('mv'), dt = v('dt');
+      var ke = rf + be * pr, ki = (rf + sp) * (1 - tx / 100), q = (mv + dt) / 100;
+      $('rf-v').textContent = fmt(rf, rf % 1 ? 1 : 0) + '%'; $('beta-v').textContent = fmt(be, 1); $('pr-v').textContent = fmt(pr, pr % 1 ? 1 : 0) + '%';
+      $('sp-v').textContent = fmt(sp, sp % 1 ? 1 : 0) + '%'; $('tx-v').textContent = tx + '%';
+      $('mv-v').textContent = 'R$ ' + mv + (EN ? ' m' : ' mi'); $('dt-v').textContent = 'R$ ' + dt + (EN ? ' m' : ' mi');
+      $('ke-v').textContent = fmt(ke, 1) + '%';
+      $('ke-f').textContent = fmt(rf, 1) + '% + ' + fmt(be, 1) + ' × ' + fmt(pr, 1) + '%';
+      $('ki-v').textContent = fmt(ki, 1) + '%';
+      $('ki-f').textContent = '(' + fmt(rf, 1) + '% + ' + fmt(sp, 1) + '%) × (1 − ' + fmt(tx / 100, 2) + ')';
+      $('q-v').textContent = fmt(q, 2);
+      $('q-f').textContent = '(R$ ' + mv + ' + R$ ' + dt + ') ÷ R$ 100' + (EN ? ' m' : ' mi') + ' · ' + (q >= 1 ? (EN ? 'the market pays more than the assets' : 'o mercado paga mais que os ativos') : (EN ? 'the market pays less than the assets' : 'o mercado paga menos que os ativos'));
+    }
+    ['rf', 'beta', 'pr', 'sp', 'tx', 'mv', 'dt'].forEach(function(id){ $(id).addEventListener('input', draw); });
+    draw();
+  })();
+
+  /* ================= 04 · AMOSTRA ================= */
+  (function(){
+    var g = $('dots-grid'), h = '';
+    C.forEach(function(c, ci){ for (var i = 0; i < c.f; i++) h += '<i data-c="' + ci + '" style="--dc:' + c.c + '"></i>'; });
+    g.innerHTML = h;
+    var b = $('smp-btns');
+    b.innerHTML = '<button class="cbtn" data-c="-1" aria-pressed="true">' + (EN ? 'All' : 'Todos') + '</button>' + C.map(function(c, i){ return '<button class="cbtn" data-c="' + i + '" aria-pressed="false" style="--dc:' + c.c + '"><i></i>' + c.n + '</button>'; }).join('');
+    function show(ci){
+      each(g.children, function(d){ d.classList.toggle('gone', ci >= 0 && +d.dataset.c !== ci); });
+      each(b.children, function(x){ x.setAttribute('aria-pressed', +x.dataset.c === ci); });
+      var m = $('smp-msg');
+      if (ci < 0){
+        m.innerHTML = '<div class="tag">' + (EN ? 'The five countries' : 'Os cinco países') + '</div><h3>' + (EN ? '594 firms, six in ten Chinese' : '594 empresas, seis em cada dez chinesas') + '</h3><p>' + (EN ? 'China has 352 firms in the sample; India 91, South Africa 67, Brazil 56 and Russia 28. Any average of "the BRICS" leans heavily towards China.' : 'A China tem 352 empresas na amostra; a Índia, 91; a África do Sul, 67; o Brasil, 56; e a Rússia, 28. Qualquer média "dos BRICS" pesa muito para o lado chinês.') + '</p>';
+        return;
+      }
+      var c = C[ci], pct = c.f / 594 * 100;
+      m.innerHTML = '<div class="tag">' + c.n + '</div><h3>' + c.f + (EN ? ' firms' : ' empresas') + ' <span style="font-weight:400; color:var(--muted); font-size:.9rem">(' + fmt(pct, 1) + '%)</span></h3><p>' + (EN ? 'Average ESG score ' : 'Nota ESG média ') + fmt(c.T, 1) + (EN ? ' · cost of debt ' : ' · custo da dívida ') + fmt(c.ki, 1) + '% · Q ' + fmt(c.q, 2) + '.</p><p style="font-size:.76rem; color:var(--muted)">' + (EN ? 'Share: our calculation from the counts.' : 'Percentual: conta nossa a partir das contagens.') + '</p>';
+    }
+    each(b.children, function(x){ x.addEventListener('click', function(){ show(+x.dataset.c); }); });
+    show(-1);
+  })();
+
+  /* ================= 05 · NOTAS POR PAÍS ================= */
+  (function(){
+    var sc = $('esg-scene'), W = 500, D = 80, bw = 64, gap = 30;
+    var st = makeStage(sc, W, D, {ay:'78%', rx:'60deg'});
+    rotatable(sc, st, -12, 6);
+    var x0 = (W - (5 * bw + 4 * gap)) / 2, bars = [];
+    C.forEach(function(c, i){
+      var x = x0 + i * (bw + gap);
+      st.appendChild(box({w:bw, d:44, x:x, y:18, h:200, c:'#e2e8f0', cls:'off'}));
+      var b = box({w:bw, d:44, x:x, y:18, h:10, c:c.k === 'CN' ? 'var(--cost)' : 'var(--esg)', label:' '});
+      st.appendChild(b); bars.push(b);
+    });
+    var TX = EN ? {
+      T:'China stays at 34, more than 20 points below Brazil, South Africa and India. Country alone explains 28% of the differences in the total score (Table 9).',
+      E:'The largest gap is in the environmental pillar: Brazil, with 54, stands 22 points above China.',
+      S:'In the social pillar, China gets 28, half of Brazil, India and South Africa (all close to 59).',
+      G:'Governance is the most even pillar: everyone is between 46 and 57.'
+    } : {
+      T:'A China fica em 34, mais de 20 pontos abaixo de Brasil, África do Sul e Índia. Só o país explica 28% das diferenças na nota total (Tabela 9).',
+      E:'A maior distância está no pilar ambiental: o Brasil, com 54, fica 22 pontos acima da China.',
+      S:'No pilar social, a China tem 28, metade de Brasil, Índia e África do Sul (todos perto de 59).',
+      G:'Governança é o pilar mais parelho: todos ficam entre 46 e 57.'
+    };
+    function show(m){
+      bars.forEach(function(b, i){ var v = C[i][m]; b.style.setProperty('--h', v * 2 + 'px'); b.querySelector('.face-label').innerHTML = fmt(v, 0) + '<small>' + C[i].k + '</small>'; });
+      each($('esg-seg').children, function(b){ b.setAttribute('aria-pressed', b.dataset.m === m); });
+      var top = C.slice().sort(function(a, b){ return b[m] - a[m]; })[0];
+      $('esg-panel').innerHTML = '<div class="tag">' + PN[m] + (EN ? ' · 0 to 100' : ' · de 0 a 100') + '</div><h3>' + (EN ? 'Highest: ' : 'Mais alta: ') + top.n + ' (' + fmt(top[m], 1) + ') · ' + (EN ? 'lowest: China (' : 'mais baixa: China (') + fmt(C[3][m], 1) + ')</h3><p>' + TX[m] + '</p>';
+    }
+    $('pairs').innerHTML = PAIRS.map(function(p){ return '<div class="pair">' + PN[p[0]] + ' × ' + PN[p[1]] + '<b>' + fmt(p[2], 2) + '</b><div class="bar"><i style="width:' + p[2] * 100 + '%"></i></div></div>'; }).join('');
+    each($('esg-seg').children, function(b){ b.addEventListener('click', function(){ show(b.dataset.m); }); });
+    show('T');
+  })();
+
+  /* ================= 06 · CUSTOS POR PAÍS ================= */
+  (function(){
+    var hb = $('hb'), cur = 'ki', guessed = false;
+    var MS = {
+      ki:{n:EN ? 'Cost of debt' : 'Custo da dívida', max:14, f:function(v){ return fmt(v, 1) + '%'; },
+        x:EN ? 'Brazilian firms pay the most interest (12.3%); Chinese firms, the least (2.1%), six times less.' : 'As empresas brasileiras pagam os juros mais altos (12,3%); as chinesas, os mais baixos (2,1%), seis vezes menos.'},
+      ke:{n:EN ? 'Cost of equity' : 'Custo do capital próprio', max:18, f:function(v){ return fmt(v, 1) + '%'; },
+        x:EN ? 'Shareholders demand the most in Russia (16.7%) and Brazil (15.3%).' : 'Os acionistas exigem mais na Rússia (16,7%) e no Brasil (15,3%).'},
+      q:{n:"Q de Tobin", max:4, f:function(v){ return fmt(v, 2); },
+        x:EN ? 'The market pays the most relative to assets in India (3.72) and China (2.77).' : 'O mercado paga mais perto dos ativos na Índia (3,72) e na China (2,77).'},
+      lev:{n:EN ? 'Debt ÷ assets' : 'Dívida ÷ ativo', max:60, f:function(v){ return fmt(v, 1) + '%'; },
+        x:EN ? 'Brazilian and Russian firms are the most indebted: more than half of their assets.' : 'As empresas brasileiras e russas são as mais endividadas: mais da metade do ativo.'}
+    };
+    if (EN) MS.q.n = "Tobin's Q";
+    $('guess').innerHTML = C.map(function(c, i){ return '<button class="cbtn" data-c="' + i + '" style="--dc:' + c.c + '"><i></i>' + c.n + '</button>'; }).join('');
+    function draw(){
+      var ms = MS[cur], s = C.slice().sort(function(a, b){ return b[cur] - a[cur]; });
+      hb.innerHTML = s.map(function(c, j){ return '<div class="row' + (j === 0 ? ' top' : '') + '"><span>' + c.n + '</span><span class="tr"><i style="--dc:' + c.c + '; width:' + Math.min(100, c[cur] / ms.max * 100) + '%"></i></span><b>' + ms.f(c[cur]) + '</b></div>'; }).join('');
+      each($('cost-seg').children, function(b){ b.setAttribute('aria-pressed', b.dataset.m === cur); });
+      if (guessed) $('cost-msg').innerHTML = $('cost-msg').dataset.head + '<p>' + ms.x + '</p>';
+    }
+    each($('guess').children, function(b){
+      b.addEventListener('click', function(){
+        var i = +b.dataset.c, ok = C[i].k === 'BR';
+        each($('guess').children, function(x){ x.setAttribute('aria-pressed', x === b); });
+        guessed = true; hb.classList.remove('hide');
+        $('cost-msg').dataset.head = '<div class="tag">' + (EN ? 'Your guess: ' : 'Seu palpite: ') + C[i].n + '</div><h3>' + (ok ? (EN ? 'Right: Brazil' : 'Acertou: Brasil') : (EN ? 'It was Brazil' : 'Era o Brasil')) + '</h3>';
+        draw();
+      });
+    });
+    each($('cost-seg').children, function(b){ b.addEventListener('click', function(){ cur = b.dataset.m; if (!guessed){ guessed = true; hb.classList.remove('hide'); $('cost-msg').dataset.head = ''; } draw(); }); });
+    $('cost-msg').innerHTML = '<div class="tag">' + (EN ? 'Guess first' : 'Primeiro o palpite') + '</div><h3>' + (EN ? 'The bars appear after you choose' : 'As barras aparecem depois da escolha') + '</h3><p>' + (EN ? 'Then switch the measure to compare the countries in each one.' : 'Depois, troque a medida para comparar os países em cada uma.') + '</p>';
+    draw();
+  })();
+
+  /* ================= 07 · O INESPERADO ================= */
+  (function(){
+    var svg = $('sc-svg'), X0 = 80, X1 = 530, Y0 = 300, Y1 = 30;
+    function x(v){ return X0 + (v - 30) / 30 * (X1 - X0); }
+    function y(v){ return Y0 - v / 14 * (Y0 - Y1); }
+    function draw(s){
+      var h = '<line x1="' + X0 + '" x2="' + X1 + '" y1="' + Y0 + '" y2="' + Y0 + '" stroke="var(--border)" stroke-width="2"/><line x1="' + X0 + '" x2="' + X0 + '" y1="' + Y1 + '" y2="' + Y0 + '" stroke="var(--border)" stroke-width="2"/>';
+      [30, 40, 50, 60].forEach(function(v){ h += '<text class="ax" x="' + x(v) + '" y="' + (Y0 + 20) + '" text-anchor="middle" style="font-size:12px; fill:var(--muted)">' + v + '</text>'; });
+      [0, 4, 8, 12].forEach(function(v){ h += '<text class="ax" x="' + (X0 - 10) + '" y="' + (y(v) + 4) + '" text-anchor="end" style="font-size:12px; fill:var(--muted)">' + v + '%</text>'; });
+      h += '<text class="ax" x="' + ((X0 + X1) / 2) + '" y="' + (Y0 + 44) + '" text-anchor="middle" style="font-size:12.5px; fill:var(--ink-2)">' + (EN ? 'average ESG score →' : 'nota ESG média →') + '</text>';
+      h += '<text class="ax" x="22" y="' + ((Y0 + Y1) / 2) + '" transform="rotate(-90 22 ' + ((Y0 + Y1) / 2) + ')" text-anchor="middle" style="font-size:12.5px; fill:var(--ink-2)">' + (EN ? 'cost of debt →' : 'custo da dívida →') + '</text>';
+      if (s === 0) h += '<line x1="' + x(33) + '" y1="' + y(1.2) + '" x2="' + x(58) + '" y2="' + y(11.5) + '" stroke="var(--cost)" stroke-width="3" stroke-dasharray="8 6" opacity=".8"/>';
+      C.slice().sort(function(a, b){ return b.f - a.f; }).forEach(function(c){
+        var r = 6 + Math.sqrt(c.f) * 1.5;
+        h += '<circle cx="' + x(c.T) + '" cy="' + y(c.ki) + '" r="' + r + '" style="fill:' + c.c + '; opacity:' + (s === 0 ? .85 : .3) + '" stroke="#fff" stroke-width="2"/>';
+        var lx = x(c.T) + (c.k === 'CN' ? r + 6 : c.k === 'ZA' ? -r - 6 : r + 6), anc = c.k === 'ZA' ? 'end' : 'start', ly = y(c.ki) + (c.k === 'IN' ? 20 : c.k === 'ZA' ? -6 : 5);
+        h += '<text class="lbl" x="' + lx + '" y="' + ly + '" text-anchor="' + anc + '" style="font-size:13px; font-weight:700; fill:var(--ink); opacity:' + (s === 0 ? 1 : .45) + '">' + c.n + '</text>';
+      });
+      if (s === 1){
+        h += '<rect x="' + (X0 + 30) + '" y="' + (Y1 + 6) + '" width="' + (X1 - X0 - 60) + '" height="58" rx="10" style="fill:#fff; stroke:var(--esg); stroke-width:2"/>' +
+          '<text x="' + ((X0 + X1) / 2) + '" y="' + (Y1 + 32) + '" text-anchor="middle" style="font-size:15px; font-weight:700; fill:var(--esg)">' + (EN ? 'Within each firm over time:' : 'Dentro de cada empresa, ao longo dos anos:') + '</text>' +
+          '<text x="' + ((X0 + X1) / 2) + '" y="' + (Y1 + 52) + '" text-anchor="middle" style="font-size:14px; fill:var(--ink-2)">' + (EN ? 'no pillar changed the cost of debt' : 'nenhum pilar mudou o custo da dívida') + '</text>';
+      }
+      svg.innerHTML = h;
+    }
+    var P = EN ? [
+      ['Simple correlation · all firms together', 'Higher score, more expensive debt?', 'Across all observations, the ESG score and the cost of debt rise together (Spearman correlation +0.42; social pillar +0.49, environmental +0.32). The thesis itself calls this counterintuitive. But look at the countries: China has the lowest score and by far the cheapest debt, and it is 59% of the sample.'],
+      ['Fixed effects · each firm against itself', 'Within each firm, the link disappears', 'When the model compares each firm with itself over the years, and discounts country, year, inflation, interest and GDP, none of the three pillars changed the cost of debt (Table 14). Our reading: the +0.42 mostly reflects differences between countries (low scores and cheap credit in China, high scores and expensive credit in Brazil), not the effect of the score.']
+    ] : [
+      ['Correlação simples · todas as empresas juntas', 'Nota mais alta, dívida mais cara?', 'Em todas as observações, nota ESG e custo da dívida sobem juntos (correlação de Spearman +0,42; pilar social +0,49, ambiental +0,32). A própria tese chama isso de contraintuitivo. Mas olhe os países: a China tem a nota mais baixa e, de longe, a dívida mais barata, e é 59% da amostra.'],
+      ['Efeitos fixos · cada empresa com ela mesma', 'Dentro de cada empresa, a ligação some', 'Quando o modelo compara cada empresa com ela mesma ao longo dos anos, e desconta país, ano, inflação, juros e PIB, nenhum dos três pilares mudou o custo da dívida (Tabela 14). Leitura nossa: o +0,42 reflete sobretudo a diferença entre países (nota baixa e crédito barato na China, nota alta e crédito caro no Brasil), não o efeito da nota.']
+    ];
+    var btns = $('flipper').children;
+    function show(s){
+      each(btns, function(b){ b.setAttribute('aria-pressed', +b.dataset.s === s); });
+      $('ins-panel').innerHTML = '<div class="tag">' + P[s][0] + '</div><h3>' + P[s][1] + '</h3><p>' + P[s][2] + '</p>';
+      draw(s);
+    }
+    each(btns, function(b){ b.addEventListener('click', function(){ show(+b.dataset.s); }); });
+    show(0);
+  })();
+
+  /* ================= 08 · MÉTODO (ilustração) ================= */
+  (function(){
+    var svg = $('fe-svg'), X0 = 70, X1 = 530, Y0 = 290, Y1 = 30;
+    // três empresas inventadas: notas ESG e custos em quatro anos
+    var F = [
+      {n:EN ? 'Firm A' : 'Empresa A', c:'var(--cn)', e:[22, 27, 32, 37], k:[3.0, 2.9, 3.1, 3.0]},
+      {n:EN ? 'Firm B' : 'Empresa B', c:'var(--in)', e:[42, 47, 52, 57], k:[7.1, 7.0, 7.2, 7.0]},
+      {n:EN ? 'Firm C' : 'Empresa C', c:'var(--br)', e:[58, 63, 68, 73], k:[11.0, 11.2, 10.9, 11.1]}
+    ];
+    function x(v){ return X0 + (v - 15) / 65 * (X1 - X0); }
+    function y(v){ return Y0 - v / 13 * (Y0 - Y1); }
+    var TX = EN ? [
+      ['All together', 'One line through everyone: it climbs steeply', 'Mixing the three firms, it looks as if each extra ESG point raises the cost. But that slope comes from the firms being different from one another (they could be in different countries), not from what happens when one firm improves its score.'],
+      ['Each firm against itself', 'Within each firm, the line is almost flat', 'Each firm raised its score by 15 points over the four years and its cost barely moved. Fixed effects measure this slope, within the firm. In the thesis, that is how the ESG score was tested against each cost and against value.']
+    ] : [
+      ['Todas juntas', 'Uma linha só, por todas: sobe forte', 'Misturando as três empresas, parece que cada ponto a mais de nota ESG aumenta o custo. Mas essa inclinação vem de as empresas serem diferentes entre si (podem estar em países diferentes), não do que acontece quando uma empresa melhora a nota.'],
+      ['Cada empresa com ela mesma', 'Dentro de cada empresa, a linha fica quase plana', 'Cada empresa subiu a nota 15 pontos em quatro anos e o custo quase não mudou. Os efeitos fixos medem essa inclinação, dentro da empresa. Na tese, foi assim que a nota ESG foi testada contra cada custo e contra o valor.']
+    ];
+    function draw(m){
+      var h = '<line x1="' + X0 + '" x2="' + X1 + '" y1="' + Y0 + '" y2="' + Y0 + '" stroke="var(--border)" stroke-width="2"/><line x1="' + X0 + '" x2="' + X0 + '" y1="' + Y1 + '" y2="' + Y0 + '" stroke="var(--border)" stroke-width="2"/>' +
+        '<text x="' + ((X0 + X1) / 2) + '" y="' + (Y0 + 30) + '" text-anchor="middle" style="font-size:12.5px; fill:var(--ink-2)">' + (EN ? 'ESG score →' : 'nota ESG →') + '</text>' +
+        '<text x="24" y="' + ((Y0 + Y1) / 2) + '" transform="rotate(-90 24 ' + ((Y0 + Y1) / 2) + ')" text-anchor="middle" style="font-size:12.5px; fill:var(--ink-2)">' + (EN ? 'cost →' : 'custo →') + '</text>';
+      if (m === 0) h += '<line class="ln" x1="' + x(20) + '" y1="' + y(2.4) + '" x2="' + x(75) + '" y2="' + y(11.8) + '" stroke="var(--cost)" stroke-width="4" stroke-dasharray="9 6"/>';
+      F.forEach(function(f){
+        if (m === 1) h += '<line class="ln" x1="' + x(f.e[0] - 2) + '" y1="' + y(f.k[0] + 0.02) + '" x2="' + x(f.e[3] + 2) + '" y2="' + y(f.k[3] + 0.02) + '" stroke="' + f.c + '" stroke-width="4"/>';
+        f.e.forEach(function(e, i){ h += '<circle cx="' + x(e) + '" cy="' + y(f.k[i]) + '" r="8" style="fill:' + f.c + '" stroke="#fff" stroke-width="2"/>'; });
+        h += '<text x="' + x(f.e[0]) + '" y="' + (y(f.k[0]) - 16) + '" style="font-size:13px; font-weight:700; fill:' + f.c + '">' + f.n + '</text>';
+      });
+      svg.innerHTML = h;
+      $('fe-msg').innerHTML = '<div class="tag">' + TX[m][0] + '</div><h3>' + TX[m][1] + '</h3><p>' + TX[m][2] + '</p>';
+      each($('fe-seg').children, function(b){ b.setAttribute('aria-pressed', +b.dataset.m === m); });
+    }
+    each($('fe-seg').children, function(b){ b.addEventListener('click', function(){ draw(+b.dataset.m); }); });
+    draw(0);
+  })();
+
+  /* ================= 09 · CUSTO DO CAPITAL PRÓPRIO ================= */
+  (function(){
+    var sc = $('ke-scene'), W = 480, D = 80, bw = 74, gap = 36, SC = 380;
+    var st = makeStage(sc, W, D, {ay:'64%', rx:'60deg'});
+    rotatable(sc, st, -12, 6);
+    var x0 = (W - (4 * bw + 3 * gap)) / 2, bars = [], mdl = 0;
+    var L = EN ? ['ESG score', '+1 pp inflation', '+1 pp interest', '+1 pp GDP'] : ['Nota ESG', '+1 p.p. inflação', '+1 p.p. juros', '+1 p.p. PIB'];
+    for (var i = 0; i < 4; i++){
+      var b = box({w:bw, d:44, x:x0 + i * (bw + gap), y:18, h:10, c:'var(--cost)', label:' '});
+      st.appendChild(b); bars.push(b);
+      flatLabel(st, L[i], x0 + i * (bw + gap) - 18, 70 + (i % 2) * 18, bw + 36);
+    }
+    function bar(b, v, sig){
+      var a = Math.abs(v);
+      b.style.setProperty('--h', Math.max(6, a * SC) + 'px');
+      b.style.setProperty('--c', !sig ? '#cbd5e1' : v >= 0 ? 'var(--cost)' : 'var(--esg)');
+      b.classList.toggle('neg', !sig || v < 0);
+      b.querySelector('.face-label').textContent = sg(v, 2);
+    }
+    function draw(){
+      var d = +$('dEsg').value, e = KE.esg[mdl] * d;
+      $('dEsg-v').textContent = d + (EN ? (d === 1 ? ' point' : ' points') : (d === 1 ? ' ponto' : ' pontos'));
+      bar(bars[0], e, KE.esgSig[mdl] && d > 0);
+      bar(bars[1], KE.infl[mdl], KE.inflSig[mdl]);
+      bar(bars[2], KE.jur[mdl], KE.jurSig[mdl]);
+      bar(bars[3], KE.pib[mdl], KE.pibSig[mdl]);
+      var lst = [[L[0] + ' +' + d, e], [L[1], KE.infl[mdl]], [L[2], KE.jur[mdl]], [L[3], KE.pib[mdl]]];
+      $('ke-list').innerHTML = lst.map(function(p){ return '<span>' + p[0] + ': ' + sg(p[1], 2) + (EN ? ' pp' : ' p.p.') + '</span>'; }).join('');
+      var MN = EN ? ['Fixed effects', 'Random effects', 'Pooled least squares'] : ['Efeitos fixos', 'Efeitos aleatórios', 'Mínimos quadrados agrupados'];
+      var head = '<div class="tag">' + MN[mdl] + ' · <span class="nt">' + (EN ? 'coefficient ' : 'coeficiente ') + sg(KE.esg[mdl], 4) + ' (' + (EN ? 'standard error ' : 'erro-padrão ') + fmt(KE.esgSE[mdl], 4) + ')</span></div>';
+      var body;
+      if (mdl === 0) body = EN ? '<h3>+' + d + ' points of ESG → ' + sg(e, 2) + ' pp in the cost of equity</h3><p>For comparison, 1 percentage point more inflation goes with +0.28 pp and 1 point more interest with +0.21 pp. The 22-point gap between Brazil and China is worth about +0.57 pp (our calculation). The thesis\'s hypothesis expected the opposite sign.</p>'
+        : '<h3>+' + d + ' pontos de nota ESG → ' + sg(e, 2) + ' p.p. no custo do capital próprio</h3><p>Para comparar, 1 ponto percentual a mais de inflação vem com +0,28 p.p., e 1 ponto a mais de juros com +0,21 p.p. A distância de 22 pontos entre Brasil e China vale cerca de +0,57 p.p. (conta nossa). A hipótese da tese esperava o sinal oposto.</p>';
+      else body = EN ? '<h3>In this model, the ESG score has no effect</h3><p>Without comparing each firm with itself, the coefficient is close to zero and not significant. The Hausman test chose fixed effects, the model the thesis uses for its conclusions; the others are shown for comparison.</p>'
+        : '<h3>Neste modelo, a nota ESG não tem efeito</h3><p>Sem comparar cada empresa com ela mesma, o coeficiente fica perto de zero e sem significância. O teste de Hausman escolheu os efeitos fixos, o modelo que a tese usa nas conclusões; os outros aparecem só para comparação.</p>';
+      $('ke-panel').innerHTML = head + body;
+      each($('ke-seg').children, function(b){ b.setAttribute('aria-pressed', +b.dataset.m === mdl); });
+    }
+    $('dEsg').addEventListener('input', draw);
+    each($('ke-seg').children, function(b){ b.addEventListener('click', function(){ mdl = +b.dataset.m; draw(); }); });
+    draw();
+  })();
+
+  /* ================= 10 · VALOR DE MERCADO ================= */
+  (function(){
+    var R = EN ? [
+      {n:'ESG score', d:'+10 points', v:QT.esg[0] * 10, ns:true, c:QT.esg[0], esg:1, x:'Coefficient −0.0044 per point, not significant. Random effects (−0.0025) and pooled least squares (+0.0046) were not significant either.'},
+      {n:'Profitability (ROA)', d:'+10 pp of operating profit on assets', v:QT.roa * 10, c:QT.roa, x:'Coefficient +0.0108 per point of ROA: more profitable firms are worth more relative to their assets.'},
+      {n:'GDP growth', d:'+1 pp', v:QT.pib, c:QT.pib, x:'Coefficient +0.0627: when the economy grows, firms are worth more.'},
+      {n:'Inflation', d:'+1 pp', v:QT.infl, c:QT.infl, x:'Coefficient −0.0553: inflation goes with lower value, perhaps through costs and uncertainty, according to the author.'},
+      {n:'Size', d:'+1 in the log of assets (a much bigger firm)', v:QT.size, c:QT.size, x:'Coefficient −0.1365: bigger firms have a lower Q.'},
+      {n:'Interest rate', d:'+1 pp', v:QT.jur, ns:true, c:QT.jur, x:'Coefficient −0.0049, not significant. Debt (leverage) had no effect either.'}
+    ] : [
+      {n:'Nota ESG', d:'+10 pontos', v:QT.esg[0] * 10, ns:true, c:QT.esg[0], esg:1, x:'Coeficiente −0,0044 por ponto, sem significância. Nos efeitos aleatórios (−0,0025) e nos mínimos quadrados agrupados (+0,0046), também não.'},
+      {n:'Lucratividade (ROA)', d:'+10 p.p. de lucro operacional sobre o ativo', v:QT.roa * 10, c:QT.roa, x:'Coeficiente +0,0108 por ponto de ROA: empresas mais lucrativas valem mais perto do que têm em ativos.'},
+      {n:'Crescimento do PIB', d:'+1 p.p.', v:QT.pib, c:QT.pib, x:'Coeficiente +0,0627: com a economia crescendo, as empresas valem mais.'},
+      {n:'Inflação', d:'+1 p.p.', v:QT.infl, c:QT.infl, x:'Coeficiente −0,0553: inflação vem com valor menor, talvez pelos custos e pela incerteza, segundo a autora.'},
+      {n:'Tamanho', d:'+1 no log do ativo (empresa bem maior)', v:QT.size, c:QT.size, x:'Coeficiente −0,1365: empresas maiores têm Q menor.'},
+      {n:'Taxa de juros', d:'+1 p.p.', v:QT.jur, ns:true, c:QT.jur, x:'Coeficiente −0,0049, sem significância. A dívida (alavancagem) também não teve efeito.'}
+    ];
+    var MAX = 0.16, w = $('dv');
+    w.innerHTML = R.map(function(r, i){
+      var p = Math.min(50, Math.abs(r.v) / MAX * 50), left = r.v >= 0 ? 50 : 50 - p;
+      return '<div class="row' + (r.esg ? ' esg' : '') + '" data-i="' + i + '" role="button" tabindex="0" style="cursor:pointer"><span>' + r.n + '<small>' + r.d + '</small></span><span class="tr"><i class="' + (r.ns ? 'ns' : r.v >= 0 ? 'pos' : 'neg') + '" style="left:' + left + '%; width:' + Math.max(.6, p) + '%"></i></span><b>' + sg(r.v, 3) + '</b></div>';
+    }).join('');
+    function show(i){
+      var r = R[i];
+      each(w.children, function(x){ x.style.background = +x.dataset.i === i ? '#f8fafc' : ''; });
+      $('q-panel').innerHTML = '<div class="tag">' + r.n + ' · ' + r.d + '</div><h3>' + (r.ns ? (EN ? 'No statistical effect' : 'Sem efeito estatístico') : (r.v > 0 ? (EN ? 'Q rises ' : 'O Q sobe ') : (EN ? 'Q falls ' : 'O Q cai ')) + fmt(Math.abs(r.v), 3)) + '</h3><p>' + r.x + '</p>';
+    }
+    each(w.children, function(x){ x.addEventListener('click', function(){ show(+x.dataset.i); }); x.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(+x.dataset.i); } }); });
+    show(0);
+  })();
+
+  /* ================= 11 · PILAR A PILAR ================= */
+  var drawScore;
+  (function(){
+    var sc = $('mx-scene'), W = 420, D = 240, cw = 70, ch = 50, gx = 54, gy = 26;
+    var st = makeStage(sc, W, D, {ay:'62%', rx:'56deg'});
+    rotatable(sc, st, -14, 6);
+    var OUT = ['ke', 'ki', 'q'], PIL = ['E', 'S', 'G'], x0 = 120, y0 = 10, cells = [];
+    OUT.forEach(function(o, ci){
+      flatLabel(st, ON[o], x0 + ci * (cw + gx) - 26, y0 + 3 * (ch + gy) + 6, cw + 52);
+      PIL.forEach(function(p, ri){
+        var t = T14[o][p], sig = t[2];
+        var b = box({w:cw, d:ch, x:x0 + ci * (cw + gx), y:y0 + ri * (ch + gy), h:sig ? 90 : 8, c:sig ? (t[0] > 0 ? 'var(--cost)' : 'var(--esg)') : '#cbd5e1', label:sig ? sg(t[0], 4) : '', cls:sig ? '' : 'ns'});
+        b.dataset.o = o; b.dataset.p = p; st.appendChild(b); cells.push(b);
+      });
+    });
+    PIL.forEach(function(p, ri){ flatLabel(st, PN[p], 0, y0 + ri * (ch + gy) + ch / 2 - 8, 104, 'text-align:right;'); });
+    function show(o, p){
+      var t = T14[o][p];
+      cells.forEach(function(c){ c.classList.toggle('active', c.dataset.o === o && c.dataset.p === p); });
+      var h = t[2] ? (EN ? 'Stronger social pillar, higher cost of equity' : 'Pilar social mais forte, custo do capital próprio mais alto') : (EN ? 'No statistical effect' : 'Sem efeito estatístico');
+      var x = t[2] ? (EN ? 'Each point more in the social pillar comes with 0.032 percentage points more in the return shareholders demand (our reading of the units). For the author, investors may see social practices as more risk or uncertainty. The hypothesis expected the opposite.' : 'Cada ponto a mais no pilar social vem com 0,032 ponto percentual a mais no retorno exigido pelos acionistas (leitura nossa das unidades). Para a autora, os investidores podem ver as práticas sociais como mais risco ou incerteza. A hipótese esperava o contrário.')
+        : (EN ? 'The coefficient is small next to its standard error: the data do not show that this pillar moves this measure.' : 'O coeficiente é pequeno perto do erro-padrão: os dados não mostram que este pilar mexa nesta régua.');
+      $('mx-panel').innerHTML = '<div class="tag">' + PN[p] + ' × ' + ON[o] + ' · <span class="nt">' + sg(t[0], 4) + ' (' + (EN ? 'standard error ' : 'erro-padrão ') + fmt(t[1], 4) + ')</span></div><h3>' + h + '</h3><p>' + x + '</p>';
+      each($('mx-btns').children, function(bt){ bt.style.boxShadow = bt.dataset.o === o && bt.dataset.p === p ? '0 0 0 2px var(--ink)' : ''; });
+    }
+    cells.forEach(function(c){ c.addEventListener('click', function(){ if (M.wasDrag(sc)) return; show(c.dataset.o, c.dataset.p); }); });
+    $('mx-btns').innerHTML = PIL.map(function(p){ return OUT.map(function(o){ return '<button data-o="' + o + '" data-p="' + p + '"' + (T14[o][p][2] ? ' class="sig"' : '') + '>' + PN[p] + ' × ' + ON[o] + '</button>'; }).join(''); }).join('');
+    each($('mx-btns').children, function(bt){ bt.addEventListener('click', function(){ show(bt.dataset.o, bt.dataset.p); }); });
+    show('ke', 'S');
+  })();
+  drawScore = function(){
+    var hits = 0, n = 0;
+    $('score').innerHTML = '<div class="tag" style="font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-top:4px">' + (EN ? 'Your bets from screen 02' : 'Suas apostas da tela 02') + '</div>' + BETS.map(function(b, i){
+      var mine = MY[i], ok = mine === b.a; if (mine !== null){ n++; if (ok) hits++; }
+      return '<div class="sr"><span>' + b.k + ' · ' + b.r + '</span>' + (mine === null ? '<em>' + (EN ? 'no bet' : 'sem aposta') + '</em>' : '<em class="' + (ok ? 'ok' : '') + '">' + (ok ? (EN ? '✓ you got it' : '✓ acertou') : (EN ? 'you said: ' : 'você disse: ') + b.o[mine]) + '</em>') + '</div>';
+    }).join('') + (n ? '<p style="font-size:.84rem; color:var(--ink-2); margin:4px 0 0">' + (EN ? 'You got <strong>' + hits + ' of ' + n + '</strong> right. None of the four hypotheses was confirmed.' : 'Você acertou <strong>' + hits + ' de ' + n + '</strong>. Nenhuma das quatro hipóteses se confirmou.') + '</p>' : '<p style="font-size:.84rem; color:var(--ink-2); margin:4px 0 0">' + (EN ? 'None of the four hypotheses was confirmed.' : 'Nenhuma das quatro hipóteses se confirmou.') + '</p>');
+  };
+  drawScore();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
