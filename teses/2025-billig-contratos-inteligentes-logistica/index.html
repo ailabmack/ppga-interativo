@@ -1,0 +1,1124 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contrato inteligente no transporte de cargas · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Osvaldo Alencar de Oliveira Billig (PPGA Mackenzie) sobre contrato inteligente, ecossistema logístico, custos de transação e desempenho em 126 transportadoras rodoviárias de cargas, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2025-billig-contratos-inteligentes-logistica/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2214%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>CI</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em ../../assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --eco:var(--navy);   /* ecossistema logístico */
+    --ct:#475569;        /* custos de transação */
+    --des:var(--red);    /* desempenho operacional logístico */
+    --sc:#0f766e;        /* contrato inteligente */
+    --ok:#15803d; --ns:#94a3b8; --weak:#b45309;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .eco-t{color:var(--eco); font-weight:700;} .ct-t{color:var(--ct); font-weight:700;} .des-t{color:var(--des); font-weight:700;} .sc-t{color:var(--sc); font-weight:700;}
+  .ill{display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--weak); border:1px solid color-mix(in srgb, var(--weak) 45%, white); border-radius:999px; padding:2px 9px; margin-bottom:6px;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 3.6vw, 2.55rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{display:flex; gap:8px 16px; justify-content:center; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:6px;}
+  #hero-scene .face-label{font-size:10.5px; letter-spacing:.05em; text-align:center; line-height:1.15; padding:0 4px;}
+  #hero-scene .slab.sc-off > i{opacity:.22;}
+  #hero-scene .slab.sc > i{transition:opacity .5s;}
+  #hero-state{font-size:.78rem; color:var(--ink-2); text-align:center; min-height:1.3em; margin-top:2px;}
+  #hero-state b{color:var(--sc);}
+
+  /* ---------- Componentes comuns ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.05rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel .tag .nt{text-transform:none; letter-spacing:.02em;}
+  .panel p{margin:0 0 8px; font-size:.9rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .q-ex{font-family:var(--serif); font-size:.9rem; color:var(--ink); border-left:3px solid var(--qc, var(--ink)); padding:2px 0 2px 10px; margin:8px 0;}
+  .fbtn{display:flex; flex-wrap:wrap; gap:6px; margin:8px 0 0;}
+  .fbtn button{border:1px solid var(--border); background:var(--card); border-radius:7px; padding:5px 10px; font-size:.78rem; cursor:pointer; color:var(--ink-2);}
+  .fbtn button[aria-pressed="true"]{outline:2px solid var(--ink); outline-offset:1px;}
+  .guess{display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 10px;}
+  .guess button{border:1px solid var(--border); background:var(--card); border-radius:8px; padding:6px 11px; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .guess button:hover{border-color:var(--ink);}
+  .guess button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .guess button.right{background:var(--ok); border-color:var(--ok); color:#fff;}
+  .msg{font-size:.86rem; color:var(--ink-2); min-height:2.6em;}
+
+  /* ---------- 02, 10 e 11 · Mapas ---------- */
+  .map{width:100%; display:block; overflow:visible; max-height:420px;}
+  .map text{font-family:var(--sans);}
+  .map .arr, .map .nd{cursor:pointer;}
+  .map .arr.on .pill{stroke:var(--red); stroke-width:2.5;}
+  .map .arr.on .pt{fill:var(--red) !important;}
+  .map .nd.on rect{stroke:var(--ink); stroke-width:3;}
+  .map .arr.dim{opacity:.14;}
+  #con-panel, #mod-panel{min-height:186px;}
+
+  /* ---------- 03 · O contrato que se cumpre sozinho ---------- */
+  .evs{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px; margin:10px 0 12px;}
+  .evs button{border:1px solid var(--border); background:var(--card); border-radius:12px; padding:9px 10px; font-size:.8rem; cursor:pointer; color:var(--ink-2); text-align:left; line-height:1.3; min-width:0;}
+  .evs button b{display:block; font-size:.84rem; color:var(--ink); margin-bottom:2px;}
+  .evs button:hover{border-color:var(--ink);}
+  .evs button[aria-pressed="true"]{border-color:var(--sc); box-shadow:inset 0 0 0 2px var(--sc);}
+  @media (max-width:520px){ .evs{grid-template-columns:1fr;} }
+  .rules{display:grid; gap:5px; margin:0; padding:0; list-style:none;}
+  .rules li{font-family:ui-monospace, Menlo, Consolas, monospace; font-size:.74rem; color:var(--ink-2); background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:6px 10px; transition:all .3s;}
+  .rules li b{color:var(--sc);}
+  .rules li.fire{background:color-mix(in srgb, var(--sc) 12%, white); border-color:var(--sc); color:var(--ink);}
+  #chain-scene .slab{transition:transform .5s cubic-bezier(.2,.8,.2,1), opacity .4s;}
+  #chain-scene .face-label{font-size:12px; letter-spacing:0; text-align:center; line-height:1.15;}
+  #chain-scene .slab.new{--oz:14px;}
+  #ctr-panel{min-height:150px; margin-top:10px;}
+  .vs{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;}
+  .vs > div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:9px 12px; font-size:.78rem; color:var(--ink-2); line-height:1.4;}
+  .vs h4{font-family:var(--sans); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; margin:0 0 4px; color:var(--muted);}
+  @media (max-width:520px){ .vs{grid-template-columns:1fr;} }
+
+  /* ---------- 04 · O caminho ---------- */
+  .dgrid{display:grid; gap:2px; grid-template-columns:repeat(54, minmax(0, 1fr));}
+  .dgrid i{aspect-ratio:1; border-radius:50%; background:#dbe3ee; transition:background .5s;}
+  .dgrid i.a{background:var(--navy);} .dgrid i.b{background:#94a3b8;} .dgrid i.c{background:var(--red);}
+  .people{display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:10px; max-width:420px; margin:6px auto;}
+  .people svg{width:100%; height:auto; display:block;}
+  .fun{display:grid; gap:8px; margin-top:12px;}
+  .fun .r .lb{display:flex; justify-content:space-between; gap:8px; font-size:.8rem; color:var(--ink-2); margin-bottom:3px;}
+  .fun .r .lb b{font-variant-numeric:tabular-nums; color:var(--ink);}
+  .fun .r .t{height:14px; background:#f1f5f9; border-radius:5px; overflow:hidden;}
+  .fun .r .t i{display:block; height:100%; border-radius:5px; background:var(--navy); transition:width .7s cubic-bezier(.2,.8,.2,1);}
+  #path-panel{min-height:120px; margin-top:12px;}
+
+  /* ---------- 05 · Os dez gestores ---------- */
+  .ten{display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:8px 10px;}
+  .ten button{border:1px solid var(--border); background:var(--card); border-radius:12px; padding:6px 4px 7px; cursor:pointer; text-align:center; min-width:0; transition:all .25s;}
+  .ten button svg{width:46px; height:52px; display:block; margin:0 auto 2px;}
+  .ten button b{display:block; font-size:.8rem; color:var(--ink);}
+  .ten button span{display:block; font-size:.64rem; color:var(--muted); line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .ten button.off{background:var(--bg-soft);}
+  .ten button.off svg{opacity:.35;}
+  .ten button[aria-pressed="true"]{border-color:var(--ink); box-shadow:inset 0 0 0 2px var(--ink);}
+  .ten-keys{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.74rem; color:var(--ink-2); margin-top:8px;}
+  .ten-keys i{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:5px; vertical-align:-1px;}
+  #ten-panel{min-height:190px; margin-top:12px;}
+  #ten-panel .q-ex{font-size:.88rem;}
+
+  /* ---------- 06 · As perguntas ---------- */
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  #item-scene .slab{transition:transform .55s cubic-bezier(.2,.8,.2,1), --h .7s cubic-bezier(.2,.8,.2,1); cursor:pointer;}
+  #item-scene .slab.hollow > i{background:transparent !important; border:1.5px dashed color-mix(in srgb, var(--c) 55%, white);}
+  #item-scene .slab.hollow > i.f-top{border-style:dashed;}
+  #item-scene .slab.active{--oz:10px;}
+  #item-scene .face-label{font-size:17px; letter-spacing:0;}
+  #item-scene .floor-label{font-size:13px;}
+  @media (max-width:600px){ #item-scene .floor-label{display:none;} }
+  #item-panel{min-height:190px; padding:12px 14px;}
+  .ilist{list-style:none; margin:6px 0 0; padding:0; display:grid; gap:3px;}
+  .ilist li{display:grid; grid-template-columns:1fr 50px; gap:8px; align-items:center; font-size:.76rem; color:var(--ink-2); line-height:1.3; padding:3px 8px; border-radius:6px; background:var(--bg-soft);}
+  .ilist li b{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink);}
+  .ilist li.out{color:var(--muted); background:transparent; border:1px dashed var(--border);}
+  .ilist li.out s{text-decoration-color:color-mix(in srgb, var(--red) 55%, transparent);}
+  .ilist li.out b{font-weight:500; color:var(--muted);}
+  .prompt{font-size:.78rem; color:var(--ink-2); font-style:italic; margin:2px 0 6px;}
+  .lst{max-height:158px; overflow:auto;}
+
+  /* ---------- 07 · Quem respondeu ---------- */
+  .pgrid{display:grid; grid-template-columns:repeat(14, minmax(0, 1fr)); gap:4px; max-width:440px;}
+  .pgrid i{aspect-ratio:1; border-radius:50%; background:#cbd5e1; transition:background .45s;}
+  .legend{display:grid; gap:4px; margin-top:12px; max-width:440px;}
+  .legend div{display:grid; grid-template-columns:12px 1fr auto auto; gap:8px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .legend i{width:12px; height:12px; border-radius:50%; display:block;}
+  .legend b{font-variant-numeric:tabular-nums; color:var(--ink); font-weight:600; min-width:44px; text-align:right;}
+  .legend span.pc{font-variant-numeric:tabular-nums; color:var(--muted); min-width:52px; text-align:right;}
+
+  /* ---------- 08 · Para que usam ---------- */
+  #use-scene .slab{transition:transform .55s cubic-bezier(.2,.8,.2,1), --h .7s cubic-bezier(.2,.8,.2,1); cursor:pointer;}
+  #use-scene .slab.active{--oz:10px;}
+  #use-scene .slab.hollow > i{background:transparent !important; border:1.5px dashed #cbd5e1;}
+  #use-scene .face-label{font-size:16px; letter-spacing:0; flex-direction:column; line-height:1.1;}
+  #use-scene .face-label small{font-size:10px; font-weight:600; letter-spacing:.02em; opacity:.92; margin-top:2px; max-width:96%; white-space:normal;}
+  #use-panel{min-height:110px; margin-top:12px;}
+
+  /* ---------- 09 · O inesperado ---------- */
+  .cmp2{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:6px;}
+  .cmp2 > div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 12px;}
+  .cmp2 h4{font-family:var(--sans); font-size:.76rem; color:var(--ink-2); margin:0 0 6px;}
+  .cmp2 .g{display:grid; gap:3px;}
+  .cmp2 .g.t10{grid-template-columns:repeat(10, minmax(0, 1fr)); max-width:220px;}
+  .cmp2 .g.t126{grid-template-columns:repeat(14, minmax(0, 1fr));}
+  .cmp2 .g i{aspect-ratio:1; border-radius:50%; background:#cbd5e1; transition:background .5s;}
+  .cmp2 .g i.u{background:var(--sc);} .cmp2 .g i.n{background:#fff; box-shadow:inset 0 0 0 2px var(--red);}
+  .cmp2 p{font-size:.76rem; color:var(--muted); margin:6px 0 0;}
+  @media (max-width:520px){ .cmp2{grid-template-columns:1fr;} }
+  #yrs-svg{width:100%; display:block; max-height:250px; margin-top:12px;}
+  #yrs-svg text{font-family:var(--sans);}
+  @media (max-width:600px){ #yrs-svg text{font-size:19px !important;} #yrs-svg text.sm{font-size:16px !important;} }
+  .hide{display:none !important;}
+
+  /* ---------- 10 · A descoberta ---------- */
+  .duo{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .duo > div{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:10px 12px 8px;}
+  .duo h4{font-family:var(--sans); font-size:.78rem; color:var(--ink-2); margin:0 0 2px;}
+  .duo svg{width:100%; display:block;}
+  .duo svg text{font-family:var(--sans);}
+  @media (max-width:640px){ .duo{grid-template-columns:1fr;} .duo svg{max-width:330px; margin:0 auto;} }
+  .pv{display:grid; gap:4px; margin-top:12px;}
+  .pv .r{display:grid; grid-template-columns:minmax(0, 1fr) 70px 70px; gap:8px; font-size:.8rem; color:var(--ink-2); padding:5px 10px; border-radius:8px; background:var(--bg-soft);}
+  .pv .r b{font-variant-numeric:tabular-nums; text-align:right; color:var(--ink);}
+  .pv .h{font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; font-weight:700; color:var(--muted); background:transparent;}
+  .pv .h span:not(:first-child){text-align:right;}
+  .sw{display:inline-flex; align-items:center; gap:10px; margin:6px 0 4px; font-size:.86rem; color:var(--ink-2); cursor:pointer; border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 14px 6px 8px;}
+  .sw i{width:38px; height:22px; border-radius:999px; background:#cbd5e1; position:relative; transition:background .3s;}
+  .sw i::after{content:""; position:absolute; top:3px; left:3px; width:16px; height:16px; border-radius:50%; background:#fff; transition:left .3s;}
+  .sw[aria-pressed="true"] i{background:var(--sc);}
+  .sw[aria-pressed="true"] i::after{left:19px;}
+
+  /* ---------- 12 · Na prática, limites e créditos ---------- */
+  @media (min-width:920px){ #creditos{padding-top:62px; padding-bottom:30px;} }
+  .cards3{display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px;}
+  @media (min-width:760px){ .cards3{grid-template-columns:repeat(3, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:10px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.95rem; margin-bottom:4px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:3px; font-size:.76rem; line-height:1.4; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:12px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.08rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:8px 0 0; padding:0; list-style:none;}
+  .limits li{padding:5px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.78rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.82rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; line-height:1.55; margin-top:8px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2025-billig-contratos-inteligentes-logistica/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2025</div>
+      <h1 class="rv" style="--d:.1s">Contrato inteligente melhora o transporte de cargas?</h1>
+      <p class="sub rv" style="--d:.2s">Contratos que se cumprem sozinhos, em código, prometem menos papel e mais confiança. A tese ouviu <strong>10 gestores</strong> e depois <strong>126 transportadoras rodoviárias</strong> para ver se o uso desses contratos muda a ligação entre fazer parte de um ecossistema logístico, os custos de transação e o desempenho. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Osvaldo Alencar de Oliveira Billig</span>
+        <span><b>Orientador:</b> Prof. Dr. Gilberto Perez</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#ideias">Começar →</a>
+        <a class="btn ghost" href="#descoberta">Ir direto ao resultado</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="520x360" role="img" aria-label="Três blocos: ecossistema logístico, custos de transação e desempenho. Cubos vão do ecossistema ao desempenho; um bloco de contrato inteligente acende e apaga, e o fluxo dos cubos não muda"></div></div>
+      <p id="hero-state" aria-hidden="true"></p>
+      <div class="cap-legend">
+        <span><i class="dot" style="background:var(--eco)"></i>Ecossistema logístico</span>
+        <span><i class="dot" style="background:var(--ct)"></i>Custos de transação</span>
+        <span><i class="dot" style="background:var(--des)"></i>Desempenho</span>
+        <span><i class="dot" style="background:var(--sc)"></i>Contrato inteligente</span>
+      </div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Estuda como tecnologias digitais e a integração entre parceiros se ligam ao desempenho das transportadoras rodoviárias de cargas."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · AS IDEIAS -->
+<section class="slide" id="ideias" data-label="As ideias">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O problema</div>
+      <h2 class="rv" style="--d:.1s">Quatro ideias e uma pergunta</h2>
+      <p class="rv" style="--d:.15s">O transporte rodoviário leva cerca de 65% das cargas do Brasil, e o país ficou em 51º lugar entre 139 no índice de desempenho logístico do Banco Mundial de 2023. A tese pergunta se o <strong class="sc-t">contrato inteligente</strong> muda a ligação entre o <strong class="eco-t">ecossistema logístico</strong>, os <strong class="ct-t">custos de transação</strong> e o <strong class="des-t">desempenho</strong>. Toque num bloco ou numa seta:</p>
+      <div class="panel rv" id="con-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg class="map" id="con-svg" viewBox="0 0 560 420" role="group" aria-label="Modelo proposto: ecossistema logístico, custos de transação e desempenho, ligados pelas hipóteses H1 a H3; o contrato inteligente no meio, com as hipóteses de moderação H4a, H4b e H4c"></svg>
+      <p class="note">Modelo da Figura 1 e hipóteses H1 a H5 (seção 2.5.1). Dados do setor citados na introdução (Confederação Nacional do Transporte e Logistics Performance Index de 2023).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · O CONTRATO -->
+<section class="slide" id="contrato" data-label="O contrato">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> Experimente</div>
+      <h2 class="rv" style="--d:.1s">Um contrato que se cumpre sozinho</h2>
+      <p class="rv" style="--d:.15s">Um contrato inteligente é um programa: as cláusulas viram regras do tipo “se acontecer isto, faça aquilo”. Quando um evento chega, o contrato se executa e registra tudo num <strong>blockchain</strong>, um registro compartilhado que ninguém altera sozinho. Escolha o que aconteceu com uma entrega:</p>
+      <div class="evs rv" id="evs" style="--d:.2s" role="group" aria-label="Escolher o evento"></div>
+      <ul class="rules rv" id="rules" style="--d:.25s"></ul>
+      <div class="vs rv" style="--d:.3s">
+        <div><h4>Com papel</h4><span id="vs-a"></span></div>
+        <div><h4>Com contrato inteligente</h4><span id="vs-b"></span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <span class="ill">Ilustração nossa · entrega e regras inventadas</span>
+      <div class="fit-wrap"><div class="scene draggable" id="chain-scene" data-fit="560x300" role="img" aria-label="Uma corrente de blocos; cada evento acrescenta um bloco novo ao registro"></div></div>
+      <div class="panel" id="ctr-panel" aria-live="polite"></div>
+      <p class="note">Ideia de contrato inteligente das seções 2.2 a 2.2.2 (programa que se executa quando um evento é acionado, sem intermediário, registrado em blockchain). A fala sobre negociar é do gestor P1 (seção 4.2.3.2). As regras e a entrega são exemplos nossos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · O CAMINHO -->
+<section class="slide" id="caminho" data-label="O caminho">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Como a pesquisa olhou</div>
+      <h2 class="rv" style="--d:.1s">Primeiro dez conversas, depois 126 questionários</h2>
+      <p class="rv" style="--d:.15s">A pesquisa é mista. Uma revisão da literatura deu a base das perguntas; dez gestores responderam perguntas abertas, que serviram para ajustar o questionário; e transportadoras de todo o país responderam esse questionário, com notas de 1 a 5. Toque em cada etapa:</p>
+      <div class="seg rv" id="path-seg" style="--d:.2s" role="group" aria-label="Escolher a etapa"></div>
+      <div class="fun rv" id="fun" style="--d:.22s"></div>
+      <div class="panel rv" id="path-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div id="path-vis"></div>
+      <div class="ten-keys" id="path-keys"></div>
+      <p class="note" id="path-note"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · OS DEZ GESTORES -->
+<section class="slide" id="gestores" data-label="Dez gestores">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> O que encontrou · a conversa</div>
+      <h2 class="rv" style="--d:.1s">Para os gestores, custo de transação é o gasto que pega de surpresa</h2>
+      <p class="rv" style="--d:.15s">Dez gestores de transportadoras (diretores, gerentes e coordenadores, todos homens) responderam por escrito, entre fevereiro e abril de 2024. Nem todos usavam contrato inteligente, e alguns deixaram perguntas em branco. Escolha o assunto e toque numa pessoa:</p>
+      <div class="chips rv" id="ten-chips" style="--d:.2s" role="group" aria-label="Escolher o assunto"></div>
+      <div class="panel rv" id="ten-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="ten" id="ten" role="group" aria-label="Os dez gestores, de P1 a P10"></div>
+      <div class="ten-keys" id="ten-keys"></div>
+      <p class="note">Falas literais da seção 4.2.3 (com […] nos cortes), identificadas só pelo código da tese. Cargos dos Quadros 10 e 11. A tese não liga cada gestor a uma das empresas do Quadros 12 e 13, e nós também não.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · AS PERGUNTAS -->
+<section class="slide" id="perguntas" data-label="As perguntas">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Como a pesquisa olhou · a régua</div>
+      <h2 class="rv" style="--d:.1s">Das 37 perguntas dos três blocos, 16 ficaram no modelo</h2>
+      <p class="rv" style="--d:.15s">Cada ideia virou um bloco de frases, com notas de 1 (discordo) a 5 (concordo). Na análise, ficaram só as perguntas que mediam bem o seu bloco. Troque a vista e toque numa coluna para ler as perguntas:</p>
+      <div class="seg rv" id="item-seg" style="--d:.2s" role="group" aria-label="Escolher a vista"></div>
+      <div class="panel rv" id="item-panel" style="--d:.25s; margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="item-scene" data-fit="600x330" role="group" aria-label="Quatro colunas, uma por bloco do questionário; a altura é o número de perguntas, e a caixa vazada mostra as que saíram"></div></div>
+      <div class="fbtn" id="item-btns" role="group" aria-label="Escolher o bloco"></div>
+      <p class="note">Altura = número de perguntas. Questionário do Apêndice C; perguntas que ficaram e cargas fatoriais do Quadro 15 e da Figura 7. O contrato inteligente entrou como moderador; a tese não informa quantas das 13 perguntas dele ficaram.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · QUEM RESPONDEU -->
+<section class="slide" id="quem" data-label="Quem respondeu">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Como a pesquisa olhou · a amostra</div>
+      <h2 class="rv" style="--d:.1s">126 transportadoras, quase nove em cada dez do Sul e do Sudeste</h2>
+      <p class="rv" style="--d:.15s">O questionário foi para <strong>1.512 empresas</strong> de transporte rodoviário de cargas de média e longa distância, entre junho e outubro de 2024. Voltaram 134 respostas, e 126 estavam completas. Quem respondeu foi, em geral, um gerente ou diretor de uma empresa grande e madura. Troque o recorte:</p>
+      <div class="chips rv" id="who-chips" style="--d:.2s" role="group" aria-label="Escolher o recorte"></div>
+      <p class="note rv" style="--d:.25s">Gráficos 15 a 30 (seção 4.3.1). Retorno de 8,86% dos e-mails, segundo a tese. Nenhuma resposta veio do Rio Grande do Norte, de Sergipe, da Paraíba, do Maranhão, do Acre, de Roraima, do Amapá e do Distrito Federal.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="pgrid" id="pg" role="img" aria-label="126 pontos, um por empresa que respondeu"></div>
+      <div class="legend" id="lg"></div>
+      <p class="note">Um ponto por resposta; a ordem dos pontos é só para leitura.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · PARA QUE USAM -->
+<section class="slide" id="usos" data-label="Para que usam">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> O que encontrou · o uso</div>
+      <h2 class="rv" style="--d:.1s">O contrato inteligente aparece sobretudo na gestão dos transportes</h2>
+      <p class="rv" style="--d:.15s">As empresas marcaram em que atividades usam o contrato inteligente e deram nota de 1 a 5 a oito motivos para usá-lo. Antes de ver as notas, um palpite: <strong>qual motivo recebeu a nota mais baixa?</strong></p>
+      <div class="guess rv" id="use-guess" style="--d:.2s" role="group" aria-label="Seu palpite"></div>
+      <p class="msg" id="use-msg" aria-live="polite"></p>
+      <div class="seg rv" id="use-seg" style="--d:.25s" role="group" aria-label="Escolher a medida"></div>
+      <div class="panel rv" id="use-panel" style="--d:.3s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="use-scene" data-fit="620x330" role="group" aria-label="Barras 3D: número de empresas que usam o contrato inteligente em cada atividade, ou nota média de cada motivo para usá-lo"></div></div>
+      <div class="fbtn" id="use-btns" role="group" aria-label="Escolher a barra"></div>
+      <p class="note" id="use-note"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · O INESPERADO -->
+<section class="slide" id="inesperado" data-label="O inesperado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> O inesperado</div>
+      <h2 class="rv" style="--d:.1s">Todas as 126 empresas disseram usar contrato inteligente</h2>
+      <p class="rv" style="--d:.15s">O questionário tinha a opção “não usa”. Na conversa com os dez gestores, três disseram que não trabalham com contrato inteligente. Antes de ver, um palpite: <strong>das 126 empresas do questionário, quantas marcaram “não usa”?</strong></p>
+      <div class="guess rv" id="none-guess" style="--d:.2s" role="group" aria-label="Seu palpite"></div>
+      <p class="msg" id="none-msg" aria-live="polite"></p>
+      <p class="note rv" style="--d:.25s"><b>Leitura nossa:</b> a pergunta dizia “Smart Contract (Tecnologias Digitais)”, e a tese diz que o Ethereum, plataforma marcada por 113 empresas, foi criado em 2015. Em 2024, ninguém poderia usá-lo havia mais de 10 anos, mas 21 empresas marcaram essa faixa. É possível que parte dos gestores tenha entendido a pergunta como uso de tecnologia digital em geral. A tese não discute esse ponto.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="cmp2">
+        <div><h4>Os 10 gestores da conversa</h4><div class="g t10" id="g10"></div><p id="g10-t"></p></div>
+        <div><h4>As 126 empresas do questionário</h4><div class="g t126" id="g126"></div><p id="g126-t"></p></div>
+      </div>
+      <svg id="yrs-svg" viewBox="0 0 560 250" role="img" aria-label="Há quanto tempo as empresas dizem usar contrato inteligente: menos de 1 ano, 18; 2 a 5 anos, 44; 6 a 10 anos, 43; mais de 10 anos, 21"></svg>
+      <p class="note">Gráficos 29 e 30 e Apêndice C (a opção “não usa” estava nas perguntas sobre o contrato inteligente). Os três gestores que disseram não usar são P4, P6 e P8 (seção 4.2.3.4). Ponto vazado em vermelho = disse não usar.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · A DESCOBERTA -->
+<section class="slide" id="descoberta" data-label="A descoberta">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> A descoberta</div>
+      <h2 class="rv" style="--d:.1s">Ligar o contrato inteligente não mudou as ligações</h2>
+      <p class="rv" style="--d:.15s">A hipótese principal era de <strong>moderação</strong>: quanto mais a empresa usa o contrato inteligente, mais fortes ficariam as ligações entre <strong class="eco-t">ecossistema</strong>, <strong class="ct-t">custos</strong> e <strong class="des-t">desempenho</strong>. Ligue e desligue o contrato e compare a ilustração da hipótese com o que os dados mostraram:</p>
+      <button class="sw rv" id="sw" style="--d:.2s" aria-pressed="false"><i></i><span id="sw-t">Contrato inteligente: pouco uso</span></button>
+      <div class="pv rv" id="pv" style="--d:.25s"></div>
+      <p class="note rv" style="--d:.3s">Figura 4 (modelo inicial, com o contrato inteligente como moderador). Um p acima de 0,05 quer dizer que o efeito não se distingue do acaso. Como as três moderações não se confirmaram (H4a, H4b e H4c), o autor tirou o contrato do modelo (tela 11).</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="duo">
+        <div><span class="ill">Se a hipótese estivesse certa · ilustração</span><h4>As setas engrossariam com o contrato</h4><svg id="hyp-svg" viewBox="0 0 300 250" role="img" aria-label="Ilustração: com mais uso do contrato inteligente, as três setas ficariam mais grossas"></svg></div>
+        <div><span class="ill" style="color:var(--ok); border-color:color-mix(in srgb, var(--ok) 45%, white)">O que os dados mostraram</span><h4>As setas ficam iguais</h4><svg id="dat-svg" viewBox="0 0 300 250" role="img" aria-label="Dados: as três moderações ficaram perto de zero e sem significância"></svg></div>
+      </div>
+      <p class="note">Na ilustração, a espessura que muda é inventada. No painel dos dados, as setas têm a espessura dos coeficientes do modelo inicial e não mudam, porque nenhuma moderação foi significativa. Nesse modelo inicial, a seta direta do ecossistema ao desempenho também ficou sem efeito claro (0,107, p = 0,604).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · O MODELO -->
+<section class="slide" id="modelo" data-label="O modelo">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> O que encontrou · o modelo</div>
+      <h2 class="rv" style="--d:.1s">Sem o contrato no modelo, o ecossistema é o que pesa</h2>
+      <p class="rv" style="--d:.15s">Quem diz estar mais integrado ao <strong class="eco-t">ecossistema logístico</strong> também diz dar mais atenção aos <strong class="ct-t">custos de transação</strong> e relata <strong class="des-t">desempenho</strong> melhor. A atenção aos custos não se liga ao desempenho de forma clara, então ela não faz a ponte entre os dois. Toque numa seta:</p>
+      <div class="seg rv" id="mod-seg" style="--d:.2s" role="group" aria-label="O que mostrar"></div>
+      <div class="panel rv" id="mod-panel" style="--d:.25s; margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg class="map" id="mod-svg" viewBox="0 0 560 420" role="group" aria-label="Resultados: ecossistema para custos 0,712; ecossistema para desempenho 0,364; custos para desempenho 0,171, sem significância"></svg>
+      <p class="note">Coeficientes padronizados (β) e p da Figura 9 e da Tabela 7; R² da Tabela 9. Espessura ∝ β; seta tracejada = sem efeito claro (p &gt; 0,05). R² = quanto das diferenças entre as empresas o modelo explica.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Prática e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> E daí?</div>
+    <h2 class="rv" style="--d:.1s">A integração entre parceiros pesou mais do que a ferramenta</h2>
+    <p class="lede rv" style="--d:.15s">Para o autor, o ecossistema logístico tem papel central no desempenho das transportadoras, e o contrato inteligente, que não mudou as ligações nesta amostra, precisa ser estudado em outros contextos, como outros modos de transporte.</p>
+    <div class="cards3">
+      <div class="pcard rv" style="--d:.2s; --pc:var(--eco)"><h3>Para as transportadoras</h3><ul><li>Estar integrado ao ecossistema (parceiros, clientes, logística 4.0) foi o que andou junto com o desempenho; o uso do contrato inteligente não mudou essa ligação.</li><li>Oito dos dez gestores da conversa disseram que lidar com tecnologia digital exige treinar pessoas para analisar dados e decidir.</li></ul></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--sc)"><h3>Para quem pensa em contrato inteligente</h3><ul><li>Os gestores citam ganhos de rastreabilidade, confiança e menos erros, e também riscos: mudanças de regras, vazamento de dados e complexidade técnica.</li><li>As regras legais mudam de uma região para outra, lembram alguns gestores, e isso pesa em quem opera em vários países.</li></ul></div>
+      <div class="pcard rv" style="--d:.3s; --pc:var(--des)"><h3>Para a pesquisa</h3><ul><li>O autor sugere pesquisas por região do país, por tipo de serviço e em outros modos de transporte (aéreo, ferroviário e aquaviário).</li><li>Também sugere procurar outros caminhos entre o ecossistema e o desempenho, como a tecnologia de informação e a qualidade da gestão.</li></ul></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.2s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Amostra por acessibilidade.</b> Uma única coleta, retorno de 8,86% e oito estados sem resposta; os resultados podem não valer para todo o país. <em>· segundo o autor</em></li>
+          <li><b>Tudo é opinião de quem respondeu.</b> Desempenho e custos foram notas de 1 a 5 dadas pelo gestor, num momento só, e não números da empresa. <em>· observação nossa</em></li>
+          <li><b>“Custo de transação” é atenção aos custos.</b> As perguntas que ficaram falam de analisar, compartilhar e acompanhar esses custos, não do quanto a empresa gasta. <em>· observação nossa, Apêndice C</em></li>
+          <li><b>Sem empresas que não usam.</b> Como todas disseram usar contrato inteligente, não há grupo de comparação entre quem usa e quem não usa. <em>· observação nossa</em></li>
+          <li><b>Ecossistema e custos andam muito juntos.</b> A medida de sobreposição (HTMT 0,829) ficou perto do limite de 0,85 que a própria tese adota. <em>· observação nossa, Tabela 12</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.25s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          BILLIG, Osvaldo Alencar de Oliveira. <em>O impacto do contrato inteligente (smart contract) na relação entre o ecossistema logístico e o desempenho logístico no contexto dos custos de transação.</em> Tese (Doutorado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2025. Orientador: Prof. Dr. Gilberto Perez.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Tese aprovada em 6 de fevereiro de 2025, feita no doutorado interinstitucional (DINTER) do Mackenzie com o Centro Universitário Dinâmica das Cataratas. Dados analisados no SmartPLS. Esta versão simplifica o trabalho para o público em geral.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable, ramp = M.ramp;
+  var EN = M.lang === 'en';
+  function L(p, e){ return EN ? e : p; }
+  function nloc(n){ return n.toLocaleString(EN ? 'en-US' : 'pt-BR'); }
+  function P(s){ return EN ? s.replace(/(\d),(\d)/g, '$1.$2') : s; }
+  function pv(p){ return p.charAt(0) === '<' ? 'p ' + P(p) : 'p = ' + P(p); }
+  function pct(n, t, d){ return fmt(n / t * 100, d === undefined ? 1 : d) + '%'; }
+
+  /* ================= DADOS DA TESE ================= */
+  var C = {eco:'var(--eco)', ct:'var(--ct)', des:'var(--des)', sc:'var(--sc)'};
+  var NODES = {
+    EL:{l:[L('Ecossistema', 'Logistics'), L('logístico', 'ecosystem')], c:C.eco},
+    CT:{l:[L('Custos de', 'Transaction'), L('transação', 'costs')], c:C.ct},
+    DO:{l:[L('Desempenho', 'Logistics'), L('logístico', 'performance')], c:C.des},
+    SC:{l:[L('Contrato', 'Smart'), L('inteligente', 'contract')], c:C.sc}
+  };
+  // Conceitos (seções 2.1 a 2.4)
+  var CONC = {
+    EL:{n:L('Ecossistema logístico', 'Logistics ecosystem'), t:L('Uma rede de empresas que interagem, cooperam e criam valor juntas (fornecedores, transportadoras, parceiros e clientes), em vez de cada uma cuidar só da própria logística. A tese usa a ideia de ecossistema de negócios de Moore (1996) e Adner (2017).', 'A network of companies that interact, cooperate and create value together (suppliers, carriers, partners and customers), instead of each one handling only its own logistics. The thesis draws on the idea of a business ecosystem from Moore (1996) and Adner (2017).'),
+      ex:L('Compartilha o conceito de ecossistema logístico em toda a organização.', 'Shares the logistics ecosystem concept across the whole organisation.')},
+    CT:{n:L('Custos de transação', 'Transaction costs'), t:L('Os custos de fazer negócio com outros, além do frete em si: buscar informação, escrever contratos, fiscalizar o cumprimento e renegociar quando algo muda (Williamson). Para a teoria, eles nascem da informação limitada e do risco de oportunismo.', 'The costs of doing business with others, beyond the freight itself: finding information, writing contracts, checking compliance and renegotiating when something changes (Williamson). In the theory, they arise from limited information and the risk of opportunism.'),
+      ex:L('Análise dos custos de transação.', 'Analysis of transaction costs.')},
+    DO:{n:L('Desempenho operacional logístico', 'Operational logistics performance'), t:L('O quanto a operação melhorou: prazos, custos de movimentação, uso da capacidade, estoques, avarias. Os gestores responderam pensando nos últimos três anos.', 'How much the operation improved: delivery times, handling costs, use of capacity, inventory, damage. Managers answered thinking about the last three years.'),
+      ex:L('Na minha empresa, nos últimos três anos, reduziu os custos de movimentação e armazenagem.', 'In my company, over the last three years, handling and storage costs have fallen.')},
+    SC:{n:L('Contrato inteligente', 'Smart contract'), t:L('Um programa de computador que executa sozinho as cláusulas de um acordo quando um evento acontece, sem intermediário, em geral registrado num blockchain. Na pesquisa, entrou como <strong>moderador</strong>: algo que poderia fortalecer ou enfraquecer as outras ligações.', 'A computer program that carries out the clauses of an agreement by itself when an event occurs, with no intermediary, usually recorded on a blockchain. In the study it was a <strong>moderator</strong>: something that could strengthen or weaken the other links.'),
+      ex:L('Os Smart Contract contribui no rastreamento dos produtos transportados.', 'Smart contracts help track the goods transported.')}
+  };
+  // Hipóteses (seção 2.5.1): [de, para, rótulo, texto]
+  var HYP = [
+    ['EL', 'DO', 'H1', L('O ecossistema logístico melhora o desempenho operacional logístico.', 'The logistics ecosystem improves operational logistics performance.')],
+    ['EL', 'CT', 'H2', L('O ecossistema logístico tem efeito positivo sobre os custos de transação.', 'The logistics ecosystem has a positive effect on transaction costs.')],
+    ['CT', 'DO', 'H3', L('Os custos de transação têm efeito positivo sobre o desempenho.', 'Transaction costs have a positive effect on performance.')]
+  ];
+  var MODH = [
+    ['H4a', L('O contrato inteligente modera a ligação entre ecossistema e custos de transação.', 'The smart contract moderates the link between ecosystem and transaction costs.')],
+    ['H4b', L('O contrato inteligente modera a ligação entre custos de transação e desempenho.', 'The smart contract moderates the link between transaction costs and performance.')],
+    ['H4c', L('O contrato inteligente modera a ligação entre ecossistema e desempenho.', 'The smart contract moderates the link between ecosystem and performance.')]
+  ];
+  // Modelo final (Figura 9; Tabelas 7, 9 e 10): [de, para, β, p, hipótese, f², significativo]
+  var RES = [
+    ['EL', 'DO', .364, '0,003', 'H1', .087, 1],
+    ['EL', 'CT', .712, '< 0,001', 'H2', 1.025, 1],
+    ['CT', 'DO', .171, '0,189', 'H3', .019, 0]
+  ];
+  var R2 = {CT:.506, DO:.251};
+  // Modelo inicial com moderação (Figura 4): [ligação, β da ligação, p, moderação, p da moderação]
+  var MODR = [
+    [L('Ecossistema → custos', 'Ecosystem → costs'), .432, '< 0,001', -.034, '0,487', 'H4a'],
+    [L('Custos → desempenho', 'Costs → performance'), .158, '0,360', .088, '0,429', 'H4b'],
+    [L('Ecossistema → desempenho', 'Ecosystem → performance'), .107, '0,604', -.091, '0,495', 'H4c']
+  ];
+
+  // Perguntas (Apêndice C; Quadros 15 e 16; Figura 7): [texto, carga ou null se saiu]
+  var BLK = [
+    {k:'EL', n:L('Ecossistema logístico', 'Logistics ecosystem'), c:'#1f3b73', pr:L('Nas decisões de planejamento (orçamento) relacionadas a custos de transação e desempenho logístico, a empresa…', 'In planning (budget) decisions related to transaction costs and logistics performance, the company…'), tot:14, i:[
+      [L('conhece sobre ecossistemas logísticos', 'knows about logistics ecosystems'), .769], [L('insere a empresa no ecossistema logístico', 'places the company in the logistics ecosystem'), null],
+      [L('identifica o nível de interação com seus parceiros', 'identifies its level of interaction with partners'), null], [L('interage com a logística 4.0', 'interacts with logistics 4.0'), .785],
+      [L('detecta demandas complexas no ecossistema de atuação', 'detects complex demands in its ecosystem'), .792], [L('identifica as limitações da empresa em um contexto de ecossistema', 'identifies the company’s limitations in an ecosystem context'), null],
+      [L('compartilha o conceito de ecossistema logístico em toda a organização', 'shares the logistics ecosystem concept across the organisation'), .857], [L('difunde o conceito nos níveis estratégicos', 'spreads the concept at strategic levels'), .827],
+      [L('difunde o conceito nos níveis táticos', 'spreads the concept at tactical levels'), .890], [L('difunde o conceito nos níveis operacionais', 'spreads the concept at operational levels'), null],
+      [L('mensura a eficiência em todos os processos logísticos', 'measures efficiency in all logistics processes'), null], [L('padroniza as operações logísticas', 'standardises logistics operations'), null],
+      [L('salienta a interação de colaboradores parceiros', 'stresses interaction with partner staff'), .716], [L('considera a ampliação do número de aplicativos nas plataformas', 'considers adding more apps to the platforms'), .772]]},
+    {k:'CT', n:L('Custos de transação', 'Transaction costs'), c:'#475569', pr:L('Nos atendimentos aos clientes, o efeito da burocracia nos custos de transação são considerados…', 'When serving customers, the effect of red tape on transaction costs is taken into account in…'), tot:12, i:[
+      [L('análise dos custos de transação', 'analysis of transaction costs'), .774], [L('compartilhamento dos custos de transação no nível estratégico', 'sharing of transaction costs at the strategic level'), .688],
+      [L('perdas de valor no reemprego do ativo (máquinas, veículos, conhecimento)', 'loss of value when redeploying assets (machines, vehicles, know-how)'), .752], [L('manutenção dos custos de transação nos últimos cinco anos', 'transaction costs holding steady over the last five years'), .867]],
+      out:L('As outras 8 saíram, entre elas mensuração dos custos, confiabilidade nas transações, contratos rígidos e flexibilidade para negociar (o apêndice mostra 10 das 12).', 'The other 8 dropped out, among them measuring costs, reliability of transactions, rigid contracts and flexibility to negotiate (the appendix shows 10 of the 12).')},
+    {k:'DO', n:L('Desempenho logístico', 'Logistics performance'), c:'#e80734', pr:L('Na minha empresa, nos últimos três anos…', 'In my company, over the last three years…'), tot:11, i:[
+      [L('reduziu as avarias no transporte', 'damage in transport fell'), null], [L('otimizou a utilização da capacidade de carga dos veículos', 'use of vehicle load capacity improved'), null],
+      [L('reduziu o tempo médio de permanência dos produtos em depósito', 'average time goods stay in the warehouse fell'), .915], [L('reduziu os custos de movimentação e armazenagem', 'handling and storage costs fell'), .901],
+      [L('aumentou a utilização da capacidade de estocagem', 'use of storage capacity rose'), .868], [L('reduziu o tempo de entrega dos produtos', 'delivery time fell'), null],
+      [L('melhorou os indicadores de acuracidade do inventário', 'inventory accuracy improved'), .860], [L('melhorou a taxa de atendimento do pedido', 'order fill rate improved'), null],
+      [L('aumentaram as entregas no prazo', 'on-time deliveries rose'), null], [L('melhorou a conformidade em transportes', 'compliance in transport improved'), null],
+      [L('reduziu os acidentes em transportes', 'transport accidents fell'), null]],
+      warn:L('<b>Leitura nossa:</b> o Quadro 16 repete aqui nomes do bloco de custos; achamos as quatro que ficaram (DO3, 4, 5 e 7) pela numeração do questionário. Todas falam de depósito e estoque.', '<b>Our reading:</b> Table 16 repeats names from the cost block here; we found the four kept (DO3, 4, 5 and 7) by their numbering in the questionnaire. All are about warehouse and inventory.')},
+    {k:'SC', n:L('Contrato inteligente', 'Smart contract'), c:'#0f766e', pr:L('Nos atendimentos aos clientes, o uso do Smart Contract tem sido observado na prestação de serviços logísticos com a finalidade de…', 'When serving customers, smart contracts have been used in logistics services in order to…'), tot:13, i:[
+      [L('usar intensivamente os smart contracts', 'use smart contracts intensively'), 0], [L('simplificar o processo de pagamento de serviços logísticos', 'simplify payment for logistics services'), 0],
+      [L('contribuir no rastreamento dos produtos transportados', 'help track the goods transported'), 0], [L('permitir auditar os produtos transportados', 'allow the goods transported to be audited'), 0],
+      [L('dar segurança às transações de informação', 'make information transactions secure'), 0]],
+      out:L('Mais 8 frases (transparência, proveniência, imutabilidade, tornar o uso rotineiro…). A tese não diz quantas ficaram.', '8 more sentences (transparency, provenance, immutability, making use routine…). The thesis does not say how many stayed.')}
+  ];
+
+  // Quem respondeu (Gráficos 15, 21, 26, 29 e 30; gênero na seção 4.3.1.1)
+  var WHO = [
+    {b:L('Cargo', 'Role'), r:[[L('Gerente', 'Manager'), 71], [L('Diretor', 'Director'), 41], [L('Coordenador', 'Coordinator'), 11], [L('Outros (controller, proprietário, supervisor)', 'Other (controller, owner, supervisor)'), 3]]},
+    {b:L('Região', 'Region'), r:[[L('Sul', 'South'), 61], [L('Sudeste', 'Southeast'), 49], [L('Centro-Oeste', 'Centre-West'), 8], [L('Nordeste', 'Northeast'), 7], [L('Norte', 'North'), 1]]},
+    {b:L('Porte', 'Size'), r:[[L('Grande (100 ou mais empregados)', 'Large (100+ employees)'), 82], [L('Média (50 a 99)', 'Medium (50 to 99)'), 33], [L('Pequena (10 a 49)', 'Small (10 to 49)'), 11]]},
+    {b:L('Uso do contrato', 'Contract use'), r:[[L('há menos de 1 ano', 'under 1 year'), 18], [L('de 2 a 5 anos', '2 to 5 years'), 44], [L('de 6 a 10 anos', '6 to 10 years'), 43], [L('há mais de 10 anos', 'over 10 years'), 21]]},
+    {b:L('Plataforma', 'Platform'), r:[['Ethereum', 113], ['IBM', 5], ['Amazon', 3], ['Binance (BSC)', 2], [L('Polkadot, Open Logistics, NEO', 'Polkadot, Open Logistics, NEO'), 3]]},
+    {b:L('Gênero', 'Gender'), r:[[L('Homens', 'Men'), 118], [L('Mulheres', 'Women'), 8]]}
+  ];
+
+  // Usos (Gráfico 28, várias respostas) e importância (Gráfico 31, soma das notas 1 a 5 de 126)
+  var USES = [[L('Gestão de transportes', 'Transport management'), L('Transportes', 'Transport'), 124], [L('Otimização de cargas', 'Load optimisation'), L('Cargas', 'Loads'), 94], [L('Otimização de estoques', 'Inventory optimisation'), L('Estoques', 'Inventory'), 65], [L('Previsão de demanda', 'Demand forecasting'), L('Demanda', 'Demand'), 59],
+    [L('Planejamento de distribuição', 'Distribution planning'), L('Distribuição', 'Distribution'), 37], [L('Classificação de materiais', 'Materials classification'), L('Materiais', 'Materials'), 37], [L('Avaliação de fornecedores', 'Supplier evaluation'), L('Fornecedores', 'Suppliers'), 37], [L('Classificação de clientes', 'Customer classification'), L('Clientes', 'Customers'), 19]];
+  var IMP = [[L('Auditabilidade', 'Auditability'), L('Auditar', 'Audit'), 628], [L('Rastreabilidade', 'Traceability'), L('Rastrear', 'Trace'), 625], [L('Automatização', 'Automation'), L('Automatizar', 'Automate'), 620], [L('Transparência contratual', 'Contract transparency'), L('Transparência', 'Transparency'), 609],
+    [L('Imutabilidade', 'Immutability'), L('Imutável', 'Immutable'), 608], [L('Proveniência', 'Provenance'), L('Origem', 'Provenance'), 592], [L('Redução de custos', 'Cost reduction'), L('Custos', 'Costs'), 591], [L('Governança descentralizada', 'Decentralised governance'), L('Governança', 'Governance'), 395]];
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 440, 240, {ay:'62%'});
+    var el = box({w:100, d:80, x:6, y:150, h:110, c:C.eco, label:L('Ecossis-<br>tema', 'Eco-<br>system')});
+    var ds = box({w:100, d:80, x:334, y:150, h:110, c:C.des, label:L('Desem-<br>penho', 'Perfor-<br>mance')});
+    var ct = box({w:96, d:70, x:172, y:4, h:70, c:C.ct, label:L('Custos de<br>transação', 'Transaction<br>costs')});
+    var sm = box({w:80, d:60, x:180, y:160, z:205, h:18, c:C.sc, cls:'sc', label:L('contrato', 'contract')});
+    st.appendChild(ct); st.appendChild(el); st.appendChild(ds); st.appendChild(sm);
+    var cubes = [0, 1, 2].map(function(){ var b = box({w:22, d:22, x:48, y:180, z:110, h:22, c:'#0f172a'}); b.style.transition = 'none'; st.appendChild(b); return b; });
+    rotatable(sc, st, -22, 8);
+    function state(on){ sm.classList.toggle('sc-off', !on); $('hero-state').innerHTML = on ? L('Contrato inteligente <b>ligado</b>: os cubos seguem no mesmo ritmo', 'Smart contract <b>on</b>: the cubes keep the same pace') : L('Contrato inteligente <b>desligado</b>: os cubos seguem no mesmo ritmo', 'Smart contract <b>off</b>: the cubes keep the same pace'); }
+    state(true);
+    if (reduce){ cubes[0].style.left = '200px'; return; }
+    var last = -1;
+    M.onTick(function(t){
+      var ph = Math.floor(t / 4) % 2; if (ph !== last){ last = ph; state(ph === 0); }
+      cubes.forEach(function(b, i){
+        var u = ((t + i * 1.33) % 4) / 4;
+        b.style.left = (48 + u * 320) + 'px';
+        b.style.setProperty('--z', (110 + Math.sin(u * Math.PI) * 70) + 'px');
+      });
+    });
+  })();
+
+  /* ================= MAPAS (02 e 11) ================= */
+  function drawMap(svg, o){
+    var mob = window.matchMedia('(max-width:600px)').matches, k = mob ? 1.35 : 1;
+    var NW = mob ? 196 : 150, NH = mob ? 86 : 64;
+    var POS = mob ? {CT:[280, 66], EL:[100, 330], DO:[460, 330], SC:[280, 240]} : {CT:[280, 64], EL:[105, 330], DO:[455, 330], SC:[280, 236]};
+    var nodes = o.sc ? ['CT', 'EL', 'DO', 'SC'] : ['CT', 'EL', 'DO'];
+    var h = '<defs><marker id="mk-' + svg.id + '" viewBox="0 0 10 10" refX="2" refY="5" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="16" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#475569"/></marker></defs>';
+    function clip(a, b){ var dx = b[0] - a[0], dy = b[1] - a[1], s = Math.min((NW / 2 + 4) / Math.abs(dx || 1e-6), (NH / 2 + 4) / Math.abs(dy || 1e-6)); return [a[0] + dx * s, a[1] + dy * s]; }
+    var mids = [];
+    function at(p, fr){ var A = POS[p.f], B = POS[p.t], s = clip(A, B), e = clip(B, A); return [s[0] + (e[0] - s[0]) * fr, s[1] + (e[1] - s[1]) * fr, s, e]; }
+    o.paths.forEach(function(p, i){
+      var q = at(p, .5), s = q[2], e = q[3], dx = e[0] - s[0], dy = e[1] - s[1], Ln = Math.sqrt(dx * dx + dy * dy);
+      e = [e[0] - dx / Ln * 13, e[1] - dy / Ln * 13];
+      var fr = p.fr || .5, mx = s[0] + (e[0] - s[0]) * fr, my = s[1] + (e[1] - s[1]) * fr;
+      var PW = p.pw * k, PH = 26 * k;
+      h += '<g class="arr' + (p.dim ? ' dim' : '') + '" data-i="' + i + '" role="button" tabindex="0" aria-label="' + p.aria + '">' +
+        '<path d="M' + s[0] + ' ' + s[1] + ' L' + e[0] + ' ' + e[1] + '" stroke="transparent" stroke-width="26"/>' +
+        '<path d="M' + s[0] + ' ' + s[1] + ' L' + e[0] + ' ' + e[1] + '" stroke="#475569" stroke-opacity=".75" stroke-width="' + p.w + '" stroke-linecap="round"' + (p.dash ? ' stroke-dasharray="7 7"' : '') + ' marker-end="url(#mk-' + svg.id + ')"/>' +
+        '<rect class="pill" x="' + (mx - PW / 2) + '" y="' + (my - PH / 2) + '" width="' + PW + '" height="' + PH + '" rx="' + PH / 2 + '" fill="#fff" stroke="var(--border)"/>' +
+        '<text class="pt" x="' + mx + '" y="' + (my + 5 * k) + '" text-anchor="middle" style="font-size:' + 14 * k + 'px; font-weight:700; fill:var(--ink)">' + p.lab + '</text></g>';
+    });
+    // moderações: linhas pontilhadas do contrato até um ponto de cada seta
+    if (o.sc){
+      var SW = NW * .78, SH = NH * .8;
+      o.mods.forEach(function(m, j){
+        var T = at(o.paths[m.on], m.fr), S = POS.SC, dx = T[0] - S[0], dy = T[1] - S[1];
+        var sx = Math.min((SW / 2 + 4) / Math.abs(dx || 1e-6), (SH / 2 + 4) / Math.abs(dy || 1e-6));
+        var s0 = [S[0] + dx * sx, S[1] + dy * sx], Ln = Math.sqrt(dx * dx + dy * dy), e0 = [T[0] - dx / Ln * 8, T[1] - dy / Ln * 8];
+        var lx = (s0[0] + e0[0]) / 2 + m.ox * k, ly = (s0[1] + e0[1]) / 2 + m.oy * k;
+        h += '<g class="arr" data-i="' + (o.paths.length + j) + '" role="button" tabindex="0" aria-label="' + m.aria + '">' +
+          '<path d="M' + s0[0] + ' ' + s0[1] + ' L' + e0[0] + ' ' + e0[1] + '" stroke="transparent" stroke-width="24"/>' +
+          '<path d="M' + s0[0] + ' ' + s0[1] + ' L' + e0[0] + ' ' + e0[1] + '" stroke="var(--sc)" stroke-width="2.5" stroke-dasharray="3 5" stroke-linecap="round"/>' +
+          '<circle cx="' + e0[0] + '" cy="' + e0[1] + '" r="4.5" style="fill:var(--sc)"/>' +
+          '<text class="pt" x="' + lx + '" y="' + (ly + 4.5 * k) + '" text-anchor="middle" style="font-size:' + 13 * k + 'px; font-weight:700; fill:var(--sc)">' + m.lab + '</text></g>';
+      });
+    }
+    nodes.forEach(function(key){
+      var n = NODES[key], c = POS[key], r2 = o.r2 ? o.r2[key] : null, w = key === 'SC' ? NW * .78 : NW, hh = key === 'SC' ? NH * .8 : NH;
+      h += '<g class="nd" data-k="' + key + '" role="button" tabindex="0" aria-label="' + n.l.join(' ') + '"><rect x="' + (c[0] - w / 2) + '" y="' + (c[1] - hh / 2) + '" width="' + w + '" height="' + hh + '" rx="12" style="fill:' + n.c + '"/>' +
+        '<text x="' + c[0] + '" y="' + (c[1] - (r2 ? 8 : 3) * k) + '" text-anchor="middle" style="font-size:' + 15 * k + 'px; font-weight:700; fill:#fff">' + n.l[0] + '</text>' +
+        '<text x="' + c[0] + '" y="' + (c[1] + (r2 ? 10 : 16) * k) + '" text-anchor="middle" style="font-size:' + 14 * k + 'px; fill:#fff">' + n.l[1] + '</text>' +
+        (r2 ? '<text x="' + c[0] + '" y="' + (c[1] + 26 * k) + '" text-anchor="middle" style="font-size:' + 12 * k + 'px; font-weight:700; fill:#fff; opacity:.9">R² ' + fmt(r2 * 100, 1) + '%</text>' : '') + '</g>';
+    });
+    svg.innerHTML = h;
+    each(svg.querySelectorAll('.arr'), function(g){
+      function go(){ o.arr(+g.dataset.i); }
+      g.addEventListener('click', go);
+      g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); } });
+    });
+    each(svg.querySelectorAll('.nd'), function(g){
+      function go(){ if (o.node) o.node(g.dataset.k); }
+      g.addEventListener('click', go);
+      g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); } });
+    });
+  }
+  function mark(svg, i, k){
+    each(svg.querySelectorAll('.arr'), function(g){ g.classList.toggle('on', +g.dataset.i === i); });
+    each(svg.querySelectorAll('.nd'), function(g){ g.classList.toggle('on', g.dataset.k === k); });
+  }
+  function onCross(fn){ var mq = window.matchMedia('(max-width:600px)'); var was = mq.matches; window.addEventListener('resize', function(){ if (mq.matches !== was){ was = mq.matches; fn(); } }); }
+
+  /* ================= 02 · AS IDEIAS ================= */
+  (function(){
+    var svg = $('con-svg'), cur = {t:'n', v:'SC'};
+    function nm(k){ return NODES[k].l.join(' '); }
+    var FR = [.24, .3, .7];
+    var paths = HYP.map(function(hp, i){ return {f:hp[0], t:hp[1], lab:hp[2], pw:46, w:3, dash:true, fr:FR[i], aria:hp[2] + ': ' + nm(hp[0]) + ' → ' + nm(hp[1])}; });
+    var mods = [{on:1, fr:.56, ox:10, oy:-16, lab:'H4a', aria:'H4a'}, {on:2, fr:.44, ox:-10, oy:-16, lab:'H4b', aria:'H4b'}, {on:0, fr:.5, ox:-24, oy:4, lab:'H4c', aria:'H4c'}];
+    function node(k){
+      cur = {t:'n', v:k}; mark(svg, -1, k); var c = CONC[k];
+      $('con-panel').innerHTML = '<div class="tag">' + L('Conceito', 'Concept') + '</div><h3>' + c.n + '</h3><p>' + c.t + '</p><div class="q-ex" style="--qc:' + NODES[k].c + '">“' + c.ex + '”</div><p style="font-size:.78rem; color:var(--muted)">' + L('Exemplo de pergunta do questionário (Apêndice C).', 'Example question from the questionnaire (Appendix C).') + '</p>';
+    }
+    function arr(i){
+      cur = {t:'a', v:i}; mark(svg, i, null);
+      var lab, txt;
+      if (i < 3){ lab = HYP[i][2]; txt = HYP[i][3]; } else { lab = MODH[i - 3][0]; txt = MODH[i - 3][1]; }
+      var extra = i === 1 ? L('Para o autor, um ecossistema bem estruturado deixaria as transações mais eficientes. Também testou se os custos fazem a ponte entre o ecossistema e o desempenho (H5, uma mediação).', 'For the author, a well-structured ecosystem would make transactions more efficient. He also tested whether costs bridge the ecosystem and performance (H5, a mediation).') :
+        i >= 3 ? L('Moderar quer dizer mudar a força de uma ligação: com mais contrato inteligente, a seta ficaria mais forte (ou mais fraca). O resultado está na tela 10.', 'To moderate means to change the strength of a link: with more smart-contract use, the arrow would get stronger (or weaker). The result is on screen 10.') :
+        L('O resultado está na tela 11.', 'The result is on screen 11.');
+      $('con-panel').innerHTML = '<div class="tag">' + L('Hipótese ', 'Hypothesis ') + lab + '</div><h3>' + txt + '</h3><p>' + extra + '</p>';
+    }
+    function render(){ drawMap(svg, {sc:true, paths:paths, mods:mods, arr:arr, node:node}); if (cur.t === 'n') node(cur.v); else arr(cur.v); }
+    render(); onCross(render);
+  })();
+
+  /* ================= 03 · O CONTRATO ================= */
+  (function(){
+    var EVS = [
+      {k:'ok', n:L('Chegou no prazo', 'Arrived on time'), d:L('a carga foi entregue inteira e na data', 'goods delivered whole and on the date'), top:L('no prazo', 'on time')},
+      {k:'late', n:L('Chegou atrasada', 'Arrived late'), d:L('a carga chegou dois dias depois do combinado', 'goods arrived two days after the agreed date'), top:L('atraso', 'late')},
+      {k:'fuel', n:L('O diesel subiu', 'Diesel went up'), d:L('o combustível subiu no meio de um contrato de meses', 'fuel rose in the middle of a months-long contract'), top:L('diesel', 'diesel')}
+    ];
+    var RULES = [
+      {k:'ok', t:L('<b>SE</b> entrega confirmada no prazo <b>ENTÃO</b> libera o pagamento', '<b>IF</b> delivery confirmed on time <b>THEN</b> release payment')},
+      {k:'late', t:L('<b>SE</b> atraso maior que 1 dia <b>ENTÃO</b> aplica o desconto combinado', '<b>IF</b> delay over 1 day <b>THEN</b> apply the agreed discount')},
+      {k:'fuel', t:L('<b>SE</b> índice do diesel sobe mais que 10% <b>ENTÃO</b> reajusta o frete pela fórmula', '<b>IF</b> diesel index rises over 10% <b>THEN</b> adjust the freight by the formula')}
+    ];
+    var OUT = {
+      ok:[L('Alguém confere o canhoto, lança no sistema e programa o pagamento.', 'Someone checks the receipt, enters it in the system and schedules payment.'), L('A confirmação de entrega dispara o pagamento na hora, e o registro fica no blockchain.', 'The delivery confirmation triggers payment at once, and the record stays on the blockchain.')],
+      late:[L('Transportadora e cliente discutem quem tem razão e quanto descontar.', 'Carrier and customer argue about who is right and how much to discount.'), L('A regra já previa o desconto; o contrato aplica e as duas partes veem o mesmo registro.', 'The rule already set the discount; the contract applies it and both parties see the same record.')],
+      fuel:[L('“Nesses casos, o jeito foi sentar e negociar o que tinha tratado.” (P1)', '“In those cases, the only way was to sit down and renegotiate what we had agreed.” (P1)'), L('Só funciona se a regra tiver sido escrita antes. O que ninguém previu continua exigindo conversa.', 'It only works if the rule was written in advance. What nobody foresaw still requires a conversation.')]
+    };
+    var PAN = {
+      ok:L('Este é o caso mais simples: um evento claro, uma regra clara. Os gestores da pesquisa citam ganhos de agilidade e confiança.', 'This is the simplest case: a clear event, a clear rule. Managers in the study mention gains in speed and trust.'),
+      late:L('O contrato não evita o atraso; evita a discussão sobre o que fazer com ele, porque a regra é a mesma para as duas partes e não muda depois.', 'The contract does not prevent the delay; it avoids the argument about what to do with it, because the rule is the same for both parties and cannot change afterwards.'),
+      fuel:L('Os gestores chamam de custo de transação justamente o gasto que pega de surpresa. Um contrato inteligente só cobre a surpresa que alguém transformou em regra antes.', 'Managers call a transaction cost precisely the expense that comes as a surprise. A smart contract only covers a surprise that someone turned into a rule in advance.')
+    };
+    var sc = $('chain-scene'), st = makeStage(sc, 540, 160, {ay:'60%'}), hist = [null, 'ok', 'ok'];
+    rotatable(sc, st, -18, 6);
+    function addBlock(ev){
+      if (ev !== undefined) hist.push(ev ? ev.k : null);
+      while (hist.length > 5) hist.shift();
+      each(st.querySelectorAll('.slab'), function(el){ el.remove(); });
+      hist.forEach(function(k, i){
+        var e = k ? EVS.filter(function(x){ return x.k === k; })[0] : null, x = 10 + i * 108, last = i === hist.length - 1 && ev !== undefined;
+        if (i > 0) st.appendChild(box({w:22, d:14, x:x - 22, y:76, z:20, h:12, c:'#94a3b8'}));
+        st.appendChild(box({w:86, d:86, x:x, y:40, h:56, c:e ? (last ? 'var(--sc)' : 'color-mix(in srgb, var(--sc) 55%, white)') : '#64748b', cls:last ? 'new' : '', label:e ? e.top : L('início', 'start')}));
+      });
+    }
+    addBlock();
+    $('evs').innerHTML = EVS.map(function(e){ return '<button data-k="' + e.k + '" aria-pressed="false"><b>' + e.n + '</b>' + e.d + '</button>'; }).join('');
+    $('rules').innerHTML = RULES.map(function(r){ return '<li data-k="' + r.k + '">' + r.t + '</li>'; }).join('');
+    function pick(k){
+      var ev = EVS.filter(function(e){ return e.k === k; })[0];
+      each($('evs').querySelectorAll('button'), function(b){ b.setAttribute('aria-pressed', b.dataset.k === k ? 'true' : 'false'); });
+      each($('rules').querySelectorAll('li'), function(li){ li.classList.toggle('fire', li.dataset.k === k); });
+      $('vs-a').textContent = OUT[k][0]; $('vs-b').textContent = OUT[k][1];
+      $('ctr-panel').innerHTML = '<div class="tag">' + L('Regra acionada', 'Rule triggered') + '</div><h3>' + ev.n + '</h3><p>' + PAN[k] + '</p><p style="font-size:.78rem; color:var(--muted)">' + L('Cada evento vira um bloco novo na corrente; os anteriores não podem ser alterados.', 'Each event becomes a new block in the chain; earlier ones cannot be changed.') + '</p>';
+      addBlock(ev);
+    }
+    each($('evs').querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ pick(b.dataset.k); }); });
+    $('vs-a').textContent = L('Escolha um evento.', 'Choose an event.'); $('vs-b').textContent = '';
+    $('ctr-panel').innerHTML = '<div class="tag">' + L('Como ler', 'How to read') + '</div><p>' + L('Cada botão é algo que acontece numa entrega. Veja qual regra dispara e como o caso seria resolvido com papel e com contrato inteligente.', 'Each button is something that happens on a delivery. See which rule fires and how the case would be handled on paper and with a smart contract.') + '</p>';
+  })();
+
+  /* ================= 04 · O CAMINHO ================= */
+  (function(){
+    var PH = [
+      {k:'lit', n:L('Literatura', 'Literature'), rows:[[L('publicações nas seis buscas (2015 a abril de 2024)', 'publications in the six searches (2015 to April 2024)'), 9492], [L('artigos considerados para o questionário', 'articles considered for the questionnaire'), 1133], [L('artigos usados', 'articles used'), 70]],
+        p:L('Seis buscas em pares de termos (por exemplo, “contrato inteligente” e “custo de transação”) nas bases EBSCO e Web of Science encontraram 9.492 publicações em 729 periódicos. Os artigos escolhidos, de revistas de maior impacto, deram as frases de cada bloco do questionário.', 'Six searches pairing terms (for example, “smart contract” and “transaction cost”) in the EBSCO and Web of Science databases found 9,492 publications in 729 journals. The articles chosen, from higher-impact journals, supplied the sentences for each block of the questionnaire.'),
+        note:L('Seção 4.1 e Apêndice A (1.133 artigos encontrados, 1.063 descartados, 70 selecionados). Um ponto por artigo do Apêndice A; em vermelho, os 70 usados.', 'Section 4.1 and Appendix A (1,133 articles found, 1,063 discarded, 70 selected). One dot per article in Appendix A; in red, the 70 used.')},
+      {k:'qual', n:L('Conversa', 'Conversation'), rows:[[L('gestores convidados por conveniência', 'managers invited by convenience'), 10], [L('responderam às perguntas abertas', 'answered the open questions'), 10]],
+        p:L('Dez gestores de transportadoras responderam por escrito, num formulário on-line, entre fevereiro e abril de 2024. As respostas foram lidas com análise de conteúdo, em quatro categorias definidas antes: ecossistema, custos de transação, contrato inteligente e desempenho. Serviram para ajustar o questionário.', 'Ten carrier managers answered in writing, in an online form, between February and April 2024. The answers were read with content analysis, in four categories set in advance: ecosystem, transaction costs, smart contract and performance. They were used to adjust the questionnaire.'),
+        note:L('Seções 3.6, 3.7.1 e 4.2. Cargos dos Quadros 10 e 11.', 'Sections 3.6, 3.7.1 and 4.2. Roles from Tables 10 and 11.')},
+      {k:'quant', n:L('Questionário', 'Questionnaire'), rows:[[L('e-mails enviados a transportadoras', 'emails sent to carriers'), 1512], [L('respostas que voltaram', 'replies received'), 134], [L('respostas completas, analisadas', 'complete replies, analysed'), 126]],
+        p:L('As empresas foram achadas por buscas na internet e contatos do pesquisador. O questionário tinha perfil, frases de 1 a 5 sobre os quatro blocos e perguntas sobre o uso de contrato inteligente. Os dados foram analisados com equações estruturais (PLS-SEM), que testam várias ligações de uma vez.', 'Companies were found through internet searches and the researcher’s contacts. The questionnaire had a profile section, 1-to-5 sentences on the four blocks and questions on smart-contract use. Data were analysed with structural equation modelling (PLS-SEM), which tests several links at once.'),
+        note:L('Seções 3.6 e 4.3. Um ponto por e-mail: azul = resposta analisada; cinza = resposta incompleta (8).', 'Sections 3.6 and 4.3. One dot per email: blue = reply analysed; grey = incomplete reply (8).')}
+    ];
+    var FUN = {
+      P:['Diretor', 'Gerente', 'Coordenador'],
+      r:{P1:1, P2:0, P3:0, P4:2, P5:1, P6:2, P7:1, P8:2, P9:1, P10:0}
+    };
+    $('path-seg').innerHTML = PH.map(function(p){ return '<button data-k="' + p.k + '" aria-pressed="false">' + p.n + '</button>'; }).join('');
+    function person(c){ return '<svg viewBox="0 0 40 46" aria-hidden="true"><circle cx="20" cy="12" r="8" style="fill:' + c + '"/><path d="M5 44 C5 30 12 23 20 23 C28 23 35 30 35 44 Z" style="fill:' + c + '"/></svg>'; }
+    var FC = ['#1f3b73', '#5b7bb8', '#a5b8dc'];
+    function grid(n, cls){ var h = ''; for (var i = 0; i < n; i++) h += '<i class="' + cls(i) + '"></i>'; return h; }
+    function show(k){
+      var p = PH.filter(function(x){ return x.k === k; })[0], max = p.rows[0][1];
+      each($('path-seg').querySelectorAll('button'), function(b){ b.setAttribute('aria-pressed', b.dataset.k === k ? 'true' : 'false'); });
+      $('fun').innerHTML = p.rows.map(function(r){ return '<div class="r"><div class="lb"><span>' + r[0] + '</span><b>' + nloc(r[1]) + '</b></div><div class="t"><i style="width:' + Math.max(1, r[1] / max * 100) + '%"></i></div></div>'; }).join('');
+      $('path-panel').innerHTML = '<div class="tag">' + p.n + '</div><p>' + p.p + '</p>';
+      $('path-note').textContent = p.note;
+      var v = $('path-vis');
+      if (k === 'lit'){
+        v.innerHTML = '<div class="dgrid" style="grid-template-columns:repeat(44, minmax(0, 1fr))">' + grid(1133, function(i){ return i < 70 ? 'c' : ''; }) + '</div>';
+        $('path-keys').innerHTML = '<span><i style="background:var(--red)"></i>' + L('usados (70)', 'used (70)') + '</span><span><i style="background:#dbe3ee"></i>' + L('descartados (1.063)', 'discarded (1,063)') + '</span>';
+      } else if (k === 'qual'){
+        v.innerHTML = '<div class="people">' + Object.keys(FUN.r).map(function(c){ return '<div style="text-align:center; font-size:.72rem; color:var(--ink-2)">' + person(FC[FUN.r[c]]) + c + '</div>'; }).join('') + '</div>';
+        $('path-keys').innerHTML = FUN.P.map(function(n, i){ var c = [3, 4, 3][i]; return '<span><i style="background:' + FC[i] + '"></i>' + [L('Diretor', 'Director'), L('Gerente', 'Manager'), L('Coordenador', 'Coordinator')][i] + ' (' + c + ')</span>'; }).join('');
+      } else {
+        v.innerHTML = '<div class="dgrid">' + grid(1512, function(i){ return i < 126 ? 'a' : i < 134 ? 'b' : ''; }) + '</div>';
+        $('path-keys').innerHTML = '<span><i style="background:var(--navy)"></i>' + L('analisadas (126)', 'analysed (126)') + '</span><span><i style="background:#94a3b8"></i>' + L('incompletas (8)', 'incomplete (8)') + '</span><span><i style="background:#dbe3ee"></i>' + L('sem resposta (1.378)', 'no reply (1,378)') + '</span>';
+      }
+    }
+    each($('path-seg').querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ show(b.dataset.k); }); });
+    show('quant');
+  })();
+
+  /* ================= 05 · OS DEZ GESTORES ================= */
+  (function(){
+    var ROLE = {P1:L('Gerente', 'Manager'), P2:L('Diretor', 'Director'), P3:L('Diretor', 'Director'), P4:L('Coordenador', 'Coordinator'), P5:L('Gerente', 'Manager'), P6:L('Coordenador', 'Coordinator'), P7:L('Gerente', 'Manager'), P8:L('Coordenador', 'Coordinator'), P9:L('Gerente', 'Manager'), P10:L('Diretor', 'Director')};
+    var IDS = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10'];
+    // Falas literais (seção 4.2.3). 'x' = não respondeu; 'n' = disse não usar contrato inteligente; 'h' = respondeu, fala não reproduzida
+    var T = [
+      {k:'ct', n:L('O que é custo de transação', 'What a transaction cost is'), q:L('O que você entende por custos de transação?', 'What do you understand by transaction costs?'),
+        s:L('Os dez concordaram: são gastos que surgem fora do previsto, por eventos que a empresa não controla, e que corroem a margem.', 'All ten agreed: they are expenses that arise outside the plan, from events the company does not control, and that eat into the margin.'),
+        a:{P1:L('Para nós, os custos de transação são aqueles custos que podem surgir no meio de uma operação, e que nos surpreende.', 'For us, transaction costs are the costs that can arise in the middle of an operation and take us by surprise.'),
+          P2:L('Os custos de transação, são para nós os elementos de maiores dificuldades em mensurar e gerenciar.', 'Transaction costs are, for us, the hardest things to measure and manage.'),
+          P3:L('Entendo que custo de transação estão presentes em rupturas inesperadas, que podem ser nas operações, nos processos, por forças de elementos do ambiente externo […].', 'I understand that transaction costs show up in unexpected disruptions, which can be in operations or processes, driven by forces from the outside environment […].'),
+          P4:L('São gastos excedentes que impactam na operação. O melhor exemplo e o que está acontecendo no rio Grande do Sul, nós mesmos temos dois caminhões presos nas enchentes.', 'They are extra expenses that hit the operation. The best example is what is happening in Rio Grande do Sul: we ourselves have two trucks stuck in the floods.'),
+          P5:L('[…] tem em suas peculiaridades o fato de não podermos prever ou controlar as suas ocorrências.', '[…] their peculiarity is that we cannot predict or control when they happen.'),
+          P6:L('Os custos de transação se apresentam de forma inesperada […] e que impactam na rentabilidade da empresa.', 'Transaction costs appear unexpectedly […] and hit the company’s profitability.'),
+          P7:L('Vejo que os custos de transação, são acontecimentos não previstos que impactam geralmente de forma negativa no faturamento e na lucratividade da empresa.', 'I see transaction costs as unforeseen events that usually hurt the company’s revenue and profit.'),
+          P8:L('Como são eventos externos, não temos controle e podem ocorrer a qualquer momento.', 'Since they are external events, we have no control and they can happen at any moment.'),
+          P9:L('[…] são dispêndios econômicos que não foram avaliados, ou sejam são eventos inesperados […].', '[…] they are economic outlays that were not assessed, that is, unexpected events […].'),
+          P10:L('Esses fatores externos são propícios a ocorrência de custos indesejados e inesperados.', 'These external factors make unwanted and unexpected costs likely.')}},
+      {k:'eco', n:L('Ecossistema ou gestão logística?', 'Ecosystem or logistics management?'), q:L('Você viu diferença em trabalhar entre ecossistema logístico e gestão logística?', 'Have you seen a difference between working as a logistics ecosystem and doing logistics management?'),
+        s:L('Para alguns, entrar num ecossistema trouxe escala, agilidade e serviços novos. Outros disseram que ainda cuidam só da própria logística; para o autor, nem todos entendem bem o que é um ecossistema logístico.', 'For some, joining an ecosystem brought scale, speed and new services. Others said they still handle only their own logistics; for the author, not everyone understands well what a logistics ecosystem is.'),
+        a:{P1:L('[…] não dá mais para olharmos somente para nosso negócio em separado.', '[…] we can no longer look only at our own business in isolation.'),
+          P2:L('A exemplo, os serviços com valor agregado aos clientes, só conseguimos alcançar por estar em um ambiente de ecossistema logístico.', 'For example, value-added services for customers are something we can only achieve by being in a logistics ecosystem.'),
+          P3:L('[…] ao momento que nos incorporamos na integração com fornecedores, parceiros e clientes, nos propiciou não somente ganho de escala, mas também na melhoria do desempenho dos serviços.', '[…] once we joined the integration with suppliers, partners and customers, it gave us not only scale but also better service performance.'),
+          P4:L('Pela característica e pelas atividades da nossa empresa, nós nos envolvemos basicamente com o gerenciamento da logística da organização.', 'Given our company’s nature and activities, we are basically involved with managing the organisation’s own logistics.'),
+          P5:L('[…] precisamos nos moldar ao ecossistema dos nossos clientes e também aos nossos fornecedores.', '[…] we need to adapt to the ecosystem of our customers and of our suppliers.'),
+          P6:L('Acredito que hoje as empresas que trabalham com logística estão sendo levadas a incorporar ao ecossistema.', 'I believe that companies working in logistics today are being pushed to join the ecosystem.'),
+          P7:L('Estamos passando pelo momento de reposicionamento da empesa, e ainda o universo do ecossistema logístico ainda não está maduro para nós.', 'We are repositioning the company, and the world of the logistics ecosystem is not yet mature for us.'),
+          P8:L('Nós trabalhamos basicamente com o gerenciamento dos processos logísticos.', 'We basically work with managing logistics processes.'),
+          P9:L('Sim, quando olhávamos apenas para a interação dentro da gestão logística, não conseguíamos perceber outros elementos influenciares em outros processos.', 'Yes, when we looked only at interaction within logistics management, we could not see other factors influencing other processes.'),
+          P10:L('Ganhamos em processos ágeis, ganhamos em redução de custos, em produtividade dos colaboradores, na rastreabilidade de informações e tomadas de decisões.', 'We gained faster processes, lower costs, staff productivity, traceability of information and decision-making.')}},
+      {k:'gain', n:L('O que o blockchain trouxe', 'What blockchain brought'), q:L('Como os resultados alcançados com o uso de Blockchain em sua cadeia logística impactam o desempenho global da empresa?', 'How do the results of using blockchain in your logistics chain affect the company’s overall performance?'),
+        s:L('Quem respondeu falou em menos erros, custos, riscos e perdas e em mais agilidade e confiança. Três não responderam.', 'Those who answered spoke of fewer errors, costs, risks and losses and more speed and trust. Three did not answer.'),
+        a:{P1:L('[…] fica claro que reduz erros, falhas, custos. Isso reflete na maior confiança e agilidade operacional.', '[…] it is clear that it reduces errors, failures, costs. That shows in greater trust and operational speed.'),
+          P2:L('[…] ao automatizar processos ganhamos em agilidade e o que é muito importante, conseguimos reduzir alguns custos.', '[…] by automating processes we gained speed and, very importantly, managed to cut some costs.'),
+          P3:L('Os principais ganhos foi a agilidade e confiabilidade, e isso melhorou o desempenho de toda a organização.', 'The main gains were speed and reliability, and that improved the performance of the whole organisation.'),
+          P4:'x',
+          P5:L('O Blockchain nos permitiu a melhor eficiência na operação global da empresa.', 'Blockchain gave us better efficiency in the company’s overall operation.'),
+          P6:'x',
+          P7:L('Melhoramos os tempos de entrega, reduzimos consideravelmente os custos e inadequações de informações.', 'We improved delivery times and considerably reduced costs and information errors.'),
+          P8:'x',
+          P9:L('Os resultados mais interessantes formas na redução de erros de embarques de produtos, maior automatização no armazém […].', 'The most interesting results were fewer shipping errors and more automation in the warehouse […].'),
+          P10:L('Após o do Blockchain, os indicadores de custos, riscos e perdas, reduziram sensivelmente […].', 'After blockchain, the cost, risk and loss indicators fell noticeably […].')}},
+      {k:'risk', n:L('Riscos e limites', 'Risks and limits'), q:L('Quais são os riscos das plataformas de ecossistema logístico em gerenciar os Smart Contracts?', 'What are the risks of logistics ecosystem platforms in managing smart contracts?'),
+        s:L('Os riscos mais citados foram mudanças de regras e leis, vazamento de dados e a complexidade de instalar, agravada pela falta de treinamento.', 'The risks mentioned most were changes in rules and laws, data leaks and the complexity of installation, made worse by lack of training.'),
+        a:{P1:'x',
+          P2:L('[…] o mais comum é com a chegada de um grande parceiro e a implementação dentro do ecossistema acaba trazendo alguns contratempos. Outra questão é quando há alterações em regulamentações […].', '[…] the most common is when a large partner arrives and implementation within the ecosystem brings some setbacks. Another issue is when regulations change […].'),
+          P3:L('Não considero risco, mas a implementação requer adaptabilidade, aprendizagem e treinamento que em alguns momentos foram críticos e acarretaram gargalos nos processos.', 'I do not see it as a risk, but implementation requires adaptability, learning and training, which at times were critical and caused bottlenecks in processes.'),
+          P4:'x', P5:'h', P6:'n',
+          P7:L('[…] a nossa falta de treinamento acabou atrasando o andamento do projeto.', '[…] our lack of training ended up delaying the project.'),
+          P8:'n',
+          P9:L('Sempre há um certo receio de vazamento de dados ou que esses dados sejam usados de forma equivocada […].', 'There is always some fear of data leaks or of the data being misused […].'),
+          P10:L('[…] hoje, o entendimento sobre as plataformas é completamente diferente, nós amadurecemos e as tecnologias também. Ainda temos que estar atentos as questões de regulamentação.', '[…] today our understanding of the platforms is completely different; we have matured and so has the technology. We still have to watch regulation.')}},
+      {k:'skill', n:L('O que é preciso saber', 'What people need to know'), q:L('Quais são as principais competências para gerenciar tecnologias digitais?', 'What are the main competences for managing digital technologies?'),
+        s:L('Oito dos dez falaram em treinar pessoas: não basta ter dados, é preciso saber analisar, interpretar e decidir.', 'Eight of the ten spoke of training people: having data is not enough, people must know how to analyse, interpret and decide.'),
+        a:{P1:L('Entendo que é compreender e dominar certas tecnologias. Mas para isso tem que treinar pessoas.', 'I think it means understanding and mastering certain technologies. But for that you have to train people.'),
+          P2:L('Para nós, não basta termos muitos dados a disposição, o desafio é capacidade de analisar, interpretar e tomar decisões assertivas.', 'For us, having lots of data is not enough; the challenge is the ability to analyse, interpret and make sound decisions.'),
+          P3:L('Sem dúvidas que o conhecimento e treinamento do uso das tecnologias, para tomada de decisões.', 'Without doubt, knowledge and training in using the technologies, for decision-making.'),
+          P4:'x',
+          P5:L('Para lidar com toda e qualquer tecnologia é primordial pessoas treinadas […].', 'To deal with any technology at all, trained people are essential […].'),
+          P6:L('[…] é necessário capacitação técnica e gerencial, para analisar as informações e propor ações.', '[…] technical and managerial training is needed to analyse information and propose actions.'),
+          P7:L('[…] profissionais treinados, motivados e sem medo da tecnologia.', '[…] trained, motivated professionals who are not afraid of technology.'),
+          P8:'x',
+          P9:L('O conhecimento, os preparos da equipe por meio de treinamento sobre as ferramentas.', 'Knowledge, and preparing the team through training on the tools.'),
+          P10:L('Deter habilidades e competências para analisar, interpretar e tomar e decisões a partir das informações obtidas pelas tecnologias.', 'Having the skills and competences to analyse, interpret and make decisions based on the information the technologies provide.')}}
+    ];
+    var cur = 0, who = null;
+    $('ten-chips').innerHTML = T.map(function(t, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="false">' + t.n + '</button>'; }).join('');
+    function person(c){ return '<svg viewBox="0 0 40 46" aria-hidden="true"><circle cx="20" cy="12" r="8" style="fill:' + c + '"/><path d="M5 44 C5 30 12 23 20 23 C28 23 35 30 35 44 Z" style="fill:' + c + '"/></svg>'; }
+    function col(v){ return v === 'x' ? '#cbd5e1' : v === 'n' ? '#fff' : v === 'h' ? '#94a3b8' : 'var(--navy)'; }
+    function render(){
+      var t = T[cur];
+      each($('ten-chips').querySelectorAll('.chip'), function(b){ b.setAttribute('aria-pressed', +b.dataset.i === cur ? 'true' : 'false'); });
+      $('ten').innerHTML = IDS.map(function(id){
+        var v = t.a[id], off = v === 'x' || v === 'n' || v === 'h', svg = person(col(v));
+        if (v === 'n') svg = '<svg viewBox="0 0 40 46" aria-hidden="true"><circle cx="20" cy="12" r="7" fill="#fff" stroke="#e80734" stroke-width="2"/><path d="M6 44 C6 31 12 24 20 24 C28 24 34 31 34 44 Z" fill="#fff" stroke="#e80734" stroke-width="2"/></svg>';
+        return '<button data-id="' + id + '" class="' + (off ? 'off' : '') + '" aria-pressed="' + (who === id ? 'true' : 'false') + '">' + svg + '<b>' + id + '</b><span>' + ROLE[id] + '</span></button>';
+      }).join('');
+      each($('ten').querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ who = b.dataset.id; render(); }); });
+      var nA = IDS.filter(function(id){ var v = t.a[id]; return v !== 'x' && v !== 'n'; }).length;
+      var keys = '<span><i style="background:var(--navy)"></i>' + L('respondeu', 'answered') + ' (' + nA + ')</span>';
+      if (IDS.some(function(id){ return t.a[id] === 'x'; })) keys += '<span><i style="background:#cbd5e1"></i>' + L('não respondeu', 'did not answer') + '</span>';
+      if (IDS.some(function(id){ return t.a[id] === 'n'; })) keys += '<span><i style="background:#fff; box-shadow:inset 0 0 0 2px var(--red)"></i>' + L('disse não usar contrato inteligente', 'said they do not use smart contracts') + '</span>';
+      if (IDS.some(function(id){ return t.a[id] === 'h'; })) keys += '<span><i style="background:#94a3b8"></i>' + L('fala não reproduzida', 'answer not reproduced') + '</span>';
+      $('ten-keys').innerHTML = keys;
+      var body;
+      if (who && t.a[who]){
+        var v = t.a[who];
+        body = v === 'x' ? '<p>' + L('Não respondeu a esta pergunta.', 'Did not answer this question.') + '</p>' :
+          v === 'n' ? '<p>' + L('Respondeu que a empresa não trabalha com contrato inteligente.', 'Answered that the company does not work with smart contracts.') + '</p>' :
+          v === 'h' ? '<p>' + L('Respondeu, mas a tese identifica esta fala com outro código; por isso não a reproduzimos.', 'Answered, but the thesis labels this answer with a different code, so we do not reproduce it.') + '</p>' :
+          '<div class="q-ex" style="--qc:var(--navy)">“' + v + '”</div>';
+        body = '<div class="tag">' + who + ' · ' + ROLE[who] + '</div>' + body;
+      } else {
+        body = '<div class="tag">' + L('Toque numa pessoa', 'Tap a person') + '</div>';
+      }
+      $('ten-panel').innerHTML = body + '<p style="font-size:.8rem; color:var(--muted); margin-top:8px"><b style="color:var(--ink-2)">' + L('A pergunta: ', 'The question: ') + '</b>' + t.q + '</p><p style="font-size:.84rem">' + t.s + '</p>';
+    }
+    each($('ten-chips').querySelectorAll('.chip'), function(b){ b.addEventListener('click', function(){ cur = +b.dataset.i; render(); }); });
+    who = 'P4'; render();
+  })();
+
+  /* ================= 06 · AS PERGUNTAS ================= */
+  (function(){
+    var sc = $('item-scene'), st = makeStage(sc, 520, 200, {ay:'64%'}), view = 'kept', act = 'CT', Z = 13;
+    rotatable(sc, st, -16, 6);
+    var cols = BLK.map(function(b, j){
+      var x = 20 + j * 125, kept = b.k === 'SC' ? null : b.i.filter(function(it){ return it[1]; }).length;
+      var outer = box({w:84, d:84, x:x, y:60, h:b.tot * Z, c:b.c, cls:'hollow'});
+      var inner = box({w:84, d:84, x:x, y:60, h:(kept === null ? b.tot : kept) * Z, c:b.c, label:String(kept === null ? b.tot : kept)});
+      if (b.k === 'SC') inner.querySelector('.f-front').style.backgroundImage = 'repeating-linear-gradient(135deg, transparent 0 7px, rgba(255,255,255,.28) 7px 14px)';
+      st.appendChild(outer); st.appendChild(inner);
+      flatLabel(st, b.n, x - 20, 156, 124, 'text-align:center');
+      [outer, inner].forEach(function(el){ el.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick(b.k); }); });
+      return {b:b, outer:outer, inner:inner, kept:kept};
+    });
+    $('item-seg').innerHTML = [['all', L('Todas as perguntas', 'All questions')], ['kept', L('Só as que ficaram', 'Only those kept')]].map(function(v){ return '<button data-v="' + v[0] + '" aria-pressed="false">' + v[1] + '</button>'; }).join('');
+    $('item-btns').innerHTML = BLK.map(function(b){ return '<button data-k="' + b.k + '" aria-pressed="false">' + b.n + '</button>'; }).join('');
+    function draw(){
+      each($('item-seg').querySelectorAll('button'), function(b){ b.setAttribute('aria-pressed', b.dataset.v === view ? 'true' : 'false'); });
+      cols.forEach(function(c){
+        var n = view === 'all' || c.kept === null ? c.b.tot : c.kept;
+        c.inner.style.setProperty('--h', n * Z + 'px');
+        c.inner.querySelector('.face-label').textContent = String(n);
+        c.inner.classList.toggle('active', c.b.k === act);
+      });
+    }
+    function pick(k){
+      act = k; draw();
+      each($('item-btns').querySelectorAll('button'), function(b){ b.setAttribute('aria-pressed', b.dataset.k === k ? 'true' : 'false'); });
+      var b = BLK.filter(function(x){ return x.k === k; })[0], kept = b.k === 'SC' ? null : b.i.filter(function(it){ return it[1]; }).length;
+      var li = b.i.map(function(it){
+        if (b.k === 'SC') return '<li><span>' + it[0] + '</span><b></b></li>';
+        return it[1] ? '<li><span>' + it[0] + '</span><b>' + fmt(it[1], 3) + '</b></li>' : (view === 'all' ? '<li class="out"><span><s>' + it[0] + '</s></span><b>' + L('saiu', 'out') + '</b></li>' : '');
+      }).join('');
+      var head = b.k === 'SC' ? L('13 perguntas, usadas como moderador', '13 questions, used as a moderator') : (kept + L(' de ', ' of ') + b.tot + L(' perguntas ficaram', ' questions kept'));
+      $('item-panel').innerHTML = '<div class="tag">' + b.n + ' · <span class="nt">' + head + '</span></div><p class="prompt">' + b.pr + '</p><div class="lst"><ul class="ilist">' + li + '</ul></div>' +
+        (b.out ? '<p style="font-size:.76rem; color:var(--muted); margin-top:6px">' + b.out + '</p>' : '') +
+        (b.warn ? '<p style="font-size:.76rem; color:var(--muted); margin-top:6px">' + b.warn + '</p>' : '') +
+        (b.k !== 'SC' ? '<p style="font-size:.72rem; color:var(--muted); margin-top:4px">' + L('Número à direita = carga fatorial (acima de 0,7 é bom, segundo a tese).', 'Number on the right = factor loading (above 0.7 is good, according to the thesis).') + '</p>' : '');
+    }
+    each($('item-seg').querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ view = b.dataset.v; draw(); pick(act); }); });
+    each($('item-btns').querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ pick(b.dataset.k); }); });
+    draw(); pick('CT');
+  })();
+
+  /* ================= 07 · QUEM RESPONDEU ================= */
+  (function(){
+    var PAL = ['#1f3b73', '#4a64a0', '#8aa0cc', '#c7d2e8', '#e2e8f0'];
+    var pg = $('pg'), dots = '';
+    for (var i = 0; i < 126; i++) dots += '<i></i>';
+    pg.innerHTML = dots;
+    var ds = pg.querySelectorAll('i'), cur = 0;
+    $('who-chips').innerHTML = WHO.map(function(w, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="false">' + w.b + '</button>'; }).join('');
+    function show(i){
+      cur = i; var w = WHO[i], k = 0;
+      each($('who-chips').querySelectorAll('.chip'), function(b){ b.setAttribute('aria-pressed', +b.dataset.i === i ? 'true' : 'false'); });
+      w.r.forEach(function(r, j){ for (var n = 0; n < r[1]; n++){ if (ds[k]) ds[k].style.background = PAL[j]; k++; } });
+      $('lg').innerHTML = w.r.map(function(r, j){ return '<div><i style="background:' + PAL[j] + (j === 4 ? '; box-shadow:inset 0 0 0 1px #cbd5e1' : '') + '"></i><span>' + r[0] + '</span><b>' + r[1] + '</b><span class="pc">' + pct(r[1], 126) + '</span></div>'; }).join('');
+    }
+    each($('who-chips').querySelectorAll('.chip'), function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(0);
+  })();
+
+  /* ================= 08 · PARA QUE USAM ================= */
+  (function(){
+    var sc = $('use-scene'), st = makeStage(sc, 580, 190, {ay:'66%'}), view = 'use', act = 0, revealed = false;
+    rotatable(sc, st, -14, 6);
+    var bars = [];
+    for (var j = 0; j < 8; j++){
+      (function(j){
+        var x = 10 + j * 71;
+        var hol = box({w:56, d:56, x:x, y:66, h:126, c:'#cbd5e1', cls:'hollow'});
+        var b = box({w:56, d:56, x:x, y:66, h:10, c:'#64748b', label:' '});
+        st.appendChild(hol); st.appendChild(b);
+        [hol, b].forEach(function(el){ el.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick(j); }); });
+        bars.push({b:b, hol:hol});
+      })(j);
+    }
+    $('use-seg').innerHTML = [['use', L('Onde usam', 'Where they use it')], ['imp', L('O que valorizam', 'What they value')]].map(function(v){ return '<button data-v="' + v[0] + '" aria-pressed="false">' + v[1] + '</button>'; }).join('');
+    var opts = [5, 6, 7, 1];
+    $('use-guess').innerHTML = opts.map(function(i){ return '<button data-i="' + i + '" aria-pressed="false">' + IMP[i][0] + '</button>'; }).join('');
+    function data(){ return view === 'use' ? USES : IMP; }
+    function val(r){ return view === 'use' ? r[2] : r[2] / 126; }
+    function lab(r){ return view === 'use' ? String(r[2]) : fmt(r[2] / 126, 2); }
+    function draw(){
+      each($('use-seg').querySelectorAll('button'), function(b){ b.setAttribute('aria-pressed', b.dataset.v === view ? 'true' : 'false'); });
+      var D = data();
+      bars.forEach(function(o, j){
+        var r = D[j], h = view === 'use' ? r[2] / 126 * 200 : (r[2] / 126 - 1) / 4 * 200;
+        o.hol.style.setProperty('--h', '200px');
+        o.b.style.setProperty('--h', Math.max(4, h) + 'px');
+        var hide = view === 'imp' && !revealed;
+        o.b.style.setProperty('--c', hide ? '#64748b' : (view === 'use' ? 'var(--sc)' : (j === 7 ? 'var(--red)' : 'var(--sc)')));
+        o.b.querySelector('.face-label').textContent = hide ? '?' : lab(r);
+        o.b.classList.toggle('active', j === act);
+      });
+      $('use-btns').innerHTML = D.map(function(r, j){ return '<button data-j="' + j + '" aria-pressed="' + (j === act ? 'true' : 'false') + '">' + r[0] + '</button>'; }).join('');
+      each($('use-btns').querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ pick(+b.dataset.j); }); });
+      $('use-note').innerHTML = view === 'use' ? L('Gráfico 28: cada empresa podia marcar várias atividades; a caixa vazada vai até 126 (todas). Altura = número de empresas.', 'Chart 28: each company could tick several activities; the hollow box goes up to 126 (all). Height = number of companies.') :
+        L('Gráfico 31: a tese soma as notas de 1 a 5 das 126 empresas (máximo 630). A nota média é essa soma dividida por 126 (conta nossa). O chão é 1 e a caixa vazada vai até 5.', 'Chart 31: the thesis adds up the 1-to-5 scores of the 126 companies (maximum 630). The average score is that sum divided by 126 (our calculation). The floor is 1 and the hollow box goes up to 5.');
+    }
+    function pick(j){
+      act = j; draw(); var r = data()[j];
+      if (view === 'use') $('use-panel').innerHTML = '<div class="tag">' + L('Onde usam', 'Where they use it') + '</div><h3>' + r[0] + '</h3><p>' + r[2] + L(' das 126 empresas (', ' of the 126 companies (') + pct(r[2], 126) + ').</p>';
+      else if (!revealed) $('use-panel').innerHTML = '<div class="tag">' + L('O que valorizam', 'What they value') + '</div><p>' + L('Dê seu palpite acima para ver as notas.', 'Make your guess above to see the scores.') + '</p>';
+      else $('use-panel').innerHTML = '<div class="tag">' + L('O que valorizam', 'What they value') + '</div><h3>' + r[0] + '</h3><p>' + L('Nota média ', 'Average score ') + fmt(r[2] / 126, 2) + L(' de 5 (soma ', ' out of 5 (sum ') + nloc(r[2]) + L(' de 630).', ' of 630).') + (j === 7 ? L(' Para o autor, os gestores não veem a governança como algo que pese na relação com clientes e fornecedores.', ' For the author, managers do not see governance as something that matters in their dealings with customers and suppliers.') : '') + '</p>';
+    }
+    each($('use-seg').querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ view = b.dataset.v; act = view === 'use' ? 0 : 7; draw(); pick(act); }); });
+    each($('use-guess').querySelectorAll('button'), function(b){ b.addEventListener('click', function(){
+      revealed = true; var i = +b.dataset.i;
+      each($('use-guess').querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); x.classList.toggle('right', +x.dataset.i === 7); });
+      $('use-msg').innerHTML = (i === 7 ? L('Acertou. ', 'Right. ') : L('Não foi esse. ', 'Not that one. ')) + L('A <strong>governança descentralizada</strong> ficou bem abaixo (3,13); as outras sete ficaram entre 4,69 e 4,98, quase no máximo.', '<strong>Decentralised governance</strong> came well below (3.13); the other seven were between 4.69 and 4.98, almost at the top.');
+      view = 'imp'; act = 7; draw(); pick(7);
+    }); });
+    draw(); pick(0);
+  })();
+
+  /* ================= 09 · O INESPERADO ================= */
+  (function(){
+    var g10 = '', g126 = '', NOT = {3:1, 5:1, 7:1};
+    for (var i = 0; i < 10; i++) g10 += '<i class="' + (NOT[i] ? 'n' : 'u') + '"></i>';
+    for (var j = 0; j < 126; j++) g126 += '<i></i>';
+    $('g10').innerHTML = g10; $('g126').innerHTML = g126;
+    $('g10-t').textContent = L('7 usam ou estão instalando; 3 disseram não usar (P4, P6, P8).', '7 use it or are installing it; 3 said they do not use it (P4, P6, P8).');
+    $('g126-t').textContent = L('Faça seu palpite para ver.', 'Make your guess to see.');
+    var opts = [[0, L('nenhuma', 'none')], [10, L('cerca de 10', 'about 10')], [40, L('cerca de 40', 'about 40')], [80, L('cerca de 80', 'about 80')]];
+    $('none-guess').innerHTML = opts.map(function(o){ return '<button data-v="' + o[0] + '" aria-pressed="false">' + o[1] + '</button>'; }).join('');
+    var yrs = $('yrs-svg');
+    function drawYrs(show){
+      var D = [[L('menos de 1 ano', 'under 1 year'), 18], [L('2 a 5 anos', '2 to 5 years'), 44], [L('6 a 10 anos', '6 to 10 years'), 43], [L('mais de 10 anos', 'over 10 years'), 21]];
+      var X0 = 140, W = 330, h = '<text x="0" y="16" style="font-size:13px; font-weight:700; fill:var(--ink-2)">' + L('Há quanto tempo dizem usar', 'How long they say they have used it') + '</text>';
+      D.forEach(function(d, i){
+        var y = 36 + i * 48, w = show ? d[1] / 44 * W : 0, hi = i === 3;
+        h += '<text x="' + (X0 - 10) + '" y="' + (y + 20) + '" text-anchor="end" style="font-size:13px; fill:var(--ink-2)">' + d[0] + '</text>' +
+          '<rect x="' + X0 + '" y="' + (y + 4) + '" width="' + W + '" height="24" rx="5" fill="#f1f5f9"/>' +
+          '<rect x="' + X0 + '" y="' + (y + 4) + '" width="' + w + '" height="24" rx="5" style="fill:' + (hi ? 'var(--red)' : 'var(--sc)') + '; transition:width .7s"/>' +
+          '<text x="' + (X0 + w + 8) + '" y="' + (y + 21) + '" style="font-size:14px; font-weight:700; fill:var(--ink)">' + (show ? d[1] : '') + '</text>';
+      });
+      if (show) h += '<text class="sm" x="' + X0 + '" y="244" style="font-size:12px; fill:var(--muted)">' + L('Em vermelho: mais antigo que o Ethereum (2015, diz a tese).', 'In red: older than Ethereum (2015, per the thesis).') + '</text>';
+      yrs.innerHTML = h;
+    }
+    drawYrs(false);
+    each($('none-guess').querySelectorAll('button'), function(b){ b.addEventListener('click', function(){
+      var v = +b.dataset.v;
+      each($('none-guess').querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); x.classList.toggle('right', x.dataset.v === '0'); });
+      $('none-msg').innerHTML = (v === 0 ? L('Acertou: ', 'Right: ') : L('Foi menos: ', 'Fewer: ')) + L('<strong>nenhuma</strong>. As 126 marcaram algum tempo de uso e alguma plataforma, e 124 disseram usar o contrato na gestão de transportes.', '<strong>none</strong>. All 126 ticked some length of use and some platform, and 124 said they use the contract in transport management.');
+      each($('g126').querySelectorAll('i'), function(d){ d.className = 'u'; });
+      $('g126-t').textContent = L('126 usam; nenhuma marcou “não usa”.', '126 use it; none ticked “do not use”.');
+      drawYrs(true);
+    }); });
+  })();
+
+  /* ================= 10 · A DESCOBERTA ================= */
+  (function(){
+    var on = false;
+    var PT = {EL:[52, 200], CT:[150, 46], DO:[248, 200]};
+    function tri(svg, ws, dashes, labs, scOn){
+      var A = [['EL', 'CT'], ['CT', 'DO'], ['EL', 'DO']], h = '<defs><marker id="m-' + svg.id + '" viewBox="0 0 10 10" refX="2" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#475569"/></marker></defs>';
+      A.forEach(function(a, i){
+        var s = PT[a[0]], e = PT[a[1]], dx = e[0] - s[0], dy = e[1] - s[1], Ln = Math.sqrt(dx * dx + dy * dy), r0 = 34, r1 = 44;
+        var x1 = s[0] + dx / Ln * r0, y1 = s[1] + dy / Ln * r0, x2 = e[0] - dx / Ln * r1, y2 = e[1] - dy / Ln * r1;
+        h += '<path d="M' + x1 + ' ' + y1 + ' L' + x2 + ' ' + y2 + '" stroke="#475569" stroke-opacity=".8" stroke-width="' + ws[i] + '" stroke-linecap="round"' + (dashes[i] ? ' stroke-dasharray="6 6"' : '') + ' marker-end="url(#m-' + svg.id + ')" style="transition:stroke-width .6s"/>';
+        var mx = (x1 + x2) / 2 + (i === 2 ? 0 : (i === 0 ? -22 : 22)), my = (y1 + y2) / 2 + (i === 2 ? 22 : 0);
+        h += '<text x="' + mx + '" y="' + my + '" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--ink)">' + labs[i] + '</text>';
+      });
+      [['EL', C.eco, L('Ecossist.', 'Ecosyst.')], ['CT', C.ct, L('Custos', 'Costs')], ['DO', C.des, L('Desemp.', 'Perform.')]].forEach(function(n){
+        var c = PT[n[0]];
+        h += '<rect x="' + (c[0] - 46) + '" y="' + (c[1] - 22) + '" width="92" height="44" rx="10" style="fill:' + n[1] + '"/><text class="big" x="' + c[0] + '" y="' + (c[1] + 5) + '" text-anchor="middle" style="font-size:14px; font-weight:700; fill:#fff">' + n[2] + '</text>';
+      });
+      h += '<rect x="112" y="122" width="76" height="30" rx="8" style="fill:var(--sc); opacity:' + (scOn ? 1 : .28) + '; transition:opacity .5s"/><text x="150" y="142" text-anchor="middle" style="font-size:12px; font-weight:700; fill:#fff">' + L('contrato', 'contract') + '</text>';
+      svg.innerHTML = h;
+    }
+    function draw(){
+      $('sw').setAttribute('aria-pressed', on ? 'true' : 'false');
+      $('sw-t').textContent = on ? L('Contrato inteligente: muito uso', 'Smart contract: heavy use') : L('Contrato inteligente: pouco uso', 'Smart contract: little use');
+      tri($('hyp-svg'), on ? [12, 9, 10] : [4, 3, 3], [0, 0, 0], ['', '', ''], on);
+      tri($('dat-svg'), MODR.map(function(m){ return 2 + Math.abs(m[1]) * 18; }), [0, 1, 1], [fmt(MODR[0][1], 3), fmt(MODR[1][1], 3), fmt(MODR[2][1], 3)], on);
+    }
+    $('pv').innerHTML = '<div class="r h"><span>' + L('Moderação do contrato sobre', 'Contract moderating') + '</span><span>' + L('efeito', 'effect') + '</span><span>p</span></div>' +
+      MODR.map(function(m){ return '<div class="r"><span>' + m[5] + ' · ' + m[0] + '</span><b>' + (m[3] > 0 ? '+' : '') + fmt(m[3], 3) + '</b><b>' + P(m[4]) + '</b></div>'; }).join('');
+    $('sw').addEventListener('click', function(){ on = !on; draw(); });
+    draw();
+  })();
+
+  /* ================= 11 · O MODELO ================= */
+  (function(){
+    var svg = $('mod-svg'), view = 'all', cur = 1;
+    function nm(k){ return NODES[k].l.join(' '); }
+    var TXT = [
+      L('Quem diz estar mais integrado ao ecossistema também relata desempenho melhor, mesmo descontando a parte que passa pelos custos. Sozinho, sem os custos no modelo, o ecossistema chegava a 0,491 (Figura 8). Tamanho do efeito pequeno a médio (f² = 0,087).', 'Those who say they are more integrated into the ecosystem also report better performance, even after removing the part that runs through costs. On its own, without costs in the model, the ecosystem reached 0.491 (Figure 8). Small-to-medium effect size (f² = 0.087).'),
+      L('A ligação mais forte do modelo: o ecossistema explica cerca de metade das diferenças entre as empresas na atenção aos custos de transação (R² 50,6%; f² = 1,025). As perguntas desse bloco falam de analisar, compartilhar e acompanhar os custos; por isso lemos “quem está mais integrado diz considerar mais esses custos”, e não que gaste menos.', 'The strongest link in the model: the ecosystem explains about half of the differences between companies in attention to transaction costs (R² 50.6%; f² = 1.025). The questions in this block are about analysing, sharing and tracking costs; so we read it as “those more integrated say they take these costs more into account”, not that they spend less.'),
+      L('Sem efeito claro (p = 0,189). Com isso, os custos não fazem a ponte entre o ecossistema e o desempenho: a mediação (H5) não se confirmou. O caminho indireto seria 0,712 × 0,171 ≈ 0,12 (conta nossa), pequeno diante do direto.', 'No clear effect (p = 0.189). So costs do not bridge the ecosystem and performance: the mediation (H5) was not confirmed. The indirect path would be 0.712 × 0.171 ≈ 0.12 (our calculation), small next to the direct one.')
+    ];
+    function paths(){
+      return RES.map(function(r){ return {f:r[0], t:r[1], lab:fmt(r[2], 3), pw:66, w:2 + r[2] * 22, dash:!r[6], dim:view === 'ok' && !r[6], aria:r[4] + ': ' + nm(r[0]) + ' → ' + nm(r[1]) + ', β ' + fmt(r[2], 3) + ', ' + pv(r[3])}; });
+    }
+    function arr(i){
+      cur = i; mark(svg, i, null); var r = RES[i];
+      $('mod-panel').innerHTML = '<div class="tag">' + r[4] + ' · <span class="nt">β = ' + fmt(r[2], 3) + ' · ' + pv(r[3]) + '</span> · ' + (r[6] ? L('confirmada', 'confirmed') : L('não confirmada', 'not confirmed')) + '</div><h3>' + nm(r[0]) + ' → ' + nm(r[1]) + '</h3><p>' + TXT[i] + '</p>';
+    }
+    function node(k){
+      mark(svg, -1, k);
+      var t = k === 'DO' ? L('O ecossistema e a atenção aos custos, juntos, explicam cerca de um quarto (25,1%) das diferenças de desempenho relatado. O resto depende de outras coisas, como tecnologia, gestão e flexibilidade, segundo o autor.', 'The ecosystem and attention to costs together explain about a quarter (25.1%) of the differences in reported performance. The rest depends on other things, such as technology, management and flexibility, according to the author.') :
+        k === 'CT' ? L('O ecossistema explica cerca de metade (50,6%) das diferenças na atenção aos custos de transação.', 'The ecosystem explains about half (50.6%) of the differences in attention to transaction costs.') :
+        L('O ponto de partida do modelo: oito perguntas sobre conhecer, praticar e difundir a ideia de ecossistema logístico na empresa (tela 06).', 'The model’s starting point: eight questions on knowing, practising and spreading the logistics ecosystem idea in the company (screen 06).');
+      $('mod-panel').innerHTML = '<div class="tag">' + nm(k) + '</div><p>' + t + '</p>';
+    }
+    $('mod-seg').innerHTML = [['all', L('Todas as ligações', 'All links')], ['ok', L('Só as que se confirmaram', 'Only confirmed links')]].map(function(v){ return '<button data-v="' + v[0] + '" aria-pressed="false">' + v[1] + '</button>'; }).join('');
+    function render(){
+      each($('mod-seg').querySelectorAll('button'), function(b){ b.setAttribute('aria-pressed', b.dataset.v === view ? 'true' : 'false'); });
+      drawMap(svg, {sc:false, paths:paths(), r2:R2, arr:arr, node:node}); arr(cur);
+    }
+    each($('mod-seg').querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ view = b.dataset.v; render(); }); });
+    render(); onCross(render);
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
