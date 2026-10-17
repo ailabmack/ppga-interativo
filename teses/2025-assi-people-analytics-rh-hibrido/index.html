@@ -1,0 +1,980 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quando o algoritmo entra no RH · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Ilton Luiz Assi (PPGA Mackenzie, 2025) sobre como o People Analytics, os dados e algoritmos do RH, passa a agir como um ator que muda a gestão de pessoas na indústria farmacêutica brasileira, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2025-assi-people-analytics-rh-hibrido/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><rect x=%2213%22 y=%227%22 width=%226%22 height=%2218%22 fill=%22white%22/><rect x=%227%22 y=%2213%22 width=%2218%22 height=%226%22 fill=%22white%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em ../../assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  :root{
+    --hum:#1f3b73;                                   /* atores humanos: profissionais de RH */
+    --alg:var(--red);                                /* atores não humanos: dados, sistemas, algoritmos */
+    --hyb:color-mix(in srgb, #1f3b73 50%, hsl(348 94% 47%)); /* o híbrido */
+    --t1:#1f3b73; --t2:#5b7bb5; --t3:var(--red);    /* três temas */
+    --off:#cbd5e1;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .sq{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+
+  /* ---------- Comuns ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 20px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.05rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.9rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .segs{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:4px 0 12px;}
+  .segs small{font-size:.74rem; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.08em;}
+  .svgbox{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .svgbox text{font-family:var(--sans);}
+  .boxw{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px;}
+  .q{font-family:var(--serif); font-style:italic; color:var(--ink); font-size:.92rem; line-height:1.55; margin:0 0 10px; padding-left:12px; border-left:3px solid var(--red);}
+  .q span{font-family:var(--sans); font-style:normal; font-size:.72rem; color:var(--muted); font-weight:700; letter-spacing:.06em; margin-left:6px;}
+  .btnrow{display:flex; flex-wrap:wrap; gap:10px; align-items:center;}
+  .act{border:2px solid var(--red); background:var(--card); color:var(--red); font-weight:700; border-radius:999px; padding:8px 18px; cursor:pointer; font-size:.86rem;}
+  .act[aria-pressed="true"]{background:var(--red); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:10px; margin-top:14px;}
+  .stats div{background:var(--card); border:1px solid var(--border); border-top:4px solid var(--sc, var(--ink)); border-radius:10px; padding:10px 12px;}
+  .stats b{display:block; font-family:var(--serif); font-size:1.45rem; color:var(--ink); line-height:1.15;}
+  .stats span{font-size:.74rem; color:var(--muted); line-height:1.35; display:block;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(1.9rem, 3.6vw, 2.45rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:31em; margin-left:auto; margin-right:auto;}
+  #hero-scene .face-label{font-size:12px; letter-spacing:.06em; font-weight:700;}
+  @media (max-width:600px){ #hero-scene .face-label{font-size:16px;} }
+
+  /* ---------- 02 · Duas lentes ---------- */
+  #lens-svg .nd{transition:fill .5s, opacity .5s, stroke .5s;}
+  #lens-svg .lk{transition:opacity .5s, stroke .5s;}
+  #lens-svg text{font-size:12px; font-weight:700; pointer-events:none; transition:fill .5s;}
+  @media (max-width:600px){ #lens-svg text{font-size:19px;} }
+  .cmp{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+  .cmp div{background:var(--card); border:1px solid var(--border); border-top:4px solid var(--tc); border-radius:10px; padding:10px 12px; font-size:.84rem; color:var(--ink-2); line-height:1.45; min-height:118px;}
+  .cmp div small{display:block; font-size:.66rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--tc); margin-bottom:4px;}
+  .cmp div.on{background:color-mix(in srgb, var(--tc) 7%, white);}
+  @media (max-width:600px){ .cmp div{min-height:150px; font-size:.8rem;} }
+
+  /* ---------- 03 · Quem falou ---------- */
+  .ppl{display:grid; grid-template-columns:repeat(5, 1fr); gap:12px 8px; max-width:360px; margin:0 auto;}
+  .pp{display:flex; flex-direction:column; align-items:center; gap:3px; font-size:.7rem; font-weight:700; color:var(--muted);}
+  .pp i{display:block; width:24px; height:24px; border-radius:50%; background:var(--pc, var(--off)); transition:background .45s;}
+  .pp s{display:block; width:40px; height:28px; border-radius:18px 18px 6px 6px; background:var(--pc, var(--off)); transition:background .45s; text-decoration:none;}
+  .orgs{display:grid; grid-template-columns:repeat(10, minmax(0, 1fr)); gap:5px; margin-top:16px; align-items:end;}
+  .org{display:flex; flex-direction:column; align-items:center; gap:3px; font-size:.62rem; color:var(--muted); font-weight:700;}
+  .org i{display:block; width:100%; max-width:30px; height:var(--oh, 30px); background:var(--oc, var(--off)); border-radius:3px 3px 0 0; transition:background .45s, height .45s; background-image:repeating-linear-gradient(0deg, transparent 0 5px, rgba(255,255,255,.35) 5px 7px);}
+  .sub-h{font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:800; margin:2px 0 8px; text-align:center;}
+  #who-panel{min-height:110px; margin-top:12px;}
+
+  /* ---------- 04 · Codifique ---------- */
+  .quiz{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .quiz .qtxt{font-family:var(--serif); font-style:italic; font-size:.98rem; line-height:1.5; color:var(--ink); min-height:4.6em;}
+  .quiz .qtxt span{font-family:var(--sans); font-style:normal; font-size:.72rem; font-weight:700; color:var(--muted); margin-left:6px;}
+  .opts{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px; margin-top:12px;}
+  .opts button{border:1px solid var(--border); background:var(--card); border-top:5px solid var(--oc); border-radius:10px; padding:8px 10px; font-size:.8rem; text-align:left; cursor:pointer; color:var(--ink-2); line-height:1.3;}
+  .opts button.ok{background:color-mix(in srgb, var(--oc) 14%, white); border-color:var(--oc); color:var(--ink); font-weight:700;}
+  .opts button.no{opacity:.45; text-decoration:line-through;}
+  .opts button:disabled{cursor:default;}
+  @media (max-width:600px){ .opts{grid-template-columns:1fr;} }
+  .qfb{font-size:.84rem; color:var(--ink-2); margin-top:10px; min-height:3em;}
+  .qfb b{color:var(--ink);}
+  .qnav{display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:.8rem; color:var(--muted);}
+  #layer-scene .face-label{font-size:13px; font-weight:800;}
+  #layer-scene .floor-label{font-size:13px; text-align:left; white-space:nowrap; color:var(--ink-2);}
+  @media (max-width:600px){ #layer-scene .face-label{font-size:16px;} #layer-scene .floor-label{font-size:16px;} }
+  .themes{display:grid; gap:6px; margin-top:10px;}
+  .themes div{display:grid; grid-template-columns:14px minmax(0, 1fr); gap:8px; font-size:.8rem; color:var(--ink-2); align-items:start;}
+  .themes div b{color:var(--ink);}
+
+  /* ---------- 05 · Tradução ---------- */
+  #cyc-svg .node{cursor:pointer;}
+  #cyc-svg .node circle{transition:fill .35s, stroke .35s;}
+  #cyc-svg .node.sel circle{stroke:var(--red); stroke-width:4;}
+  #cyc-svg text{font-size:13px; font-weight:700; pointer-events:none;}
+  #cyc-svg .num{font-family:var(--serif); font-size:20px; fill:#fff;}
+  @media (max-width:600px){ #cyc-svg text{font-size:16px;} #cyc-svg .num{font-size:24px;} }
+  #cyc-panel{min-height:240px;}
+  #cyc-panel .q{font-size:.86rem;}
+
+  /* ---------- 06 · Mosaico ---------- */
+  .bars3d .slab{transition:transform .5s cubic-bezier(.2,.8,.2,1); cursor:pointer;}
+  .bars3d .slab.active{--oz:10px;}
+  .bars3d .slab.active > i{box-shadow:inset 0 0 0 2px #fff;}
+  .bars3d .top-label{color:#fff; font-size:14px; font-weight:800;}
+  .bars3d .floor-label{display:none;}
+  @media (max-width:600px){ .bars3d .floor-label{display:none;} .bars3d .top-label{font-size:17px;} }
+  .tl-list{display:flex; flex-wrap:wrap; gap:5px; margin:6px 0;}
+  .tl-list button{border:1px solid var(--border); background:var(--card); border-radius:8px; padding:4px 9px; font-size:.74rem; color:var(--ink-2); cursor:pointer;}
+  .tl-list button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .who10{display:grid; grid-template-columns:repeat(10, minmax(0, 1fr)); gap:4px; margin:8px 0 2px;}
+  .who10 span{text-align:center; font-size:.66rem; font-weight:800; border-radius:6px; padding:5px 0; background:#eef2f7; color:var(--muted); transition:background .35s, color .35s;}
+  .who10 span.on{background:var(--alg); color:#fff;}
+  #tl-panel{min-height:150px; margin-top:8px;}
+  .big3{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px; margin-top:12px;}
+  .big3 div{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:9px 11px;}
+  .big3 b{display:block; font-family:var(--serif); font-size:1.3rem; color:var(--ink); line-height:1.15;}
+  .big3 span{font-size:.72rem; color:var(--muted); line-height:1.35; display:block;}
+
+  /* ---------- 07 · Fatos ---------- */
+  #exit-svg text{font-size:12px; font-weight:700; pointer-events:none;}
+  #exit-svg .ln{transition:all .8s cubic-bezier(.2,.8,.2,1);}
+  #exit-svg .bd{transition:opacity .6s;}
+  @media (max-width:600px){ #exit-svg text{font-size:19px;} }
+  #exit-out{font-family:var(--serif); color:var(--ink); font-size:.98rem; min-height:4.6em; margin:12px 0 0;}
+  #exit-out b{color:var(--red);}
+  .gain{display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; margin-top:14px;}
+  .gain div{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:10px 12px;}
+  .gain small{display:block; font-size:.66rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); font-weight:800;}
+  .gain .bars{display:grid; gap:4px; margin:6px 0 4px;}
+  .gain .bars i{display:block; height:12px; border-radius:4px; background:var(--hum); font-style:normal; width:var(--w); transition:width .8s;}
+  .gain .bars i.r{background:var(--alg);}
+  .gain span{font-size:.74rem; color:var(--ink-2); line-height:1.35; display:block;}
+
+  /* ---------- 08 · Quatro mediações ---------- */
+  #med-svg text{font-size:13px; font-weight:700; pointer-events:none;}
+  #med-svg .sm{font-size:11px; font-weight:600;}
+  #med-svg .p{transition:d .6s, opacity .5s;}
+  #med-svg .nd{transition:fill .6s;}
+  @media (max-width:600px){ #med-svg text{font-size:18px;} #med-svg .sm{font-size:17px;} }
+  .mtabs{display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:6px; margin:6px 0 12px;}
+  .mtabs button{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:8px 8px; font-size:.78rem; cursor:pointer; color:var(--ink-2); line-height:1.25; text-align:left;}
+  .mtabs button b{display:block; font-family:var(--serif); font-size:1rem; color:var(--red);}
+  .mtabs button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .mtabs button[aria-pressed="true"] b{color:#fff;}
+  @media (max-width:600px){ .mtabs{grid-template-columns:1fr 1fr;} }
+  #med-panel{min-height:250px; padding:12px 16px;} #med-panel p{font-size:.84rem;} #med-panel .q{font-size:.84rem;}
+  .io{display:grid; grid-template-columns:minmax(0, 1fr) 22px minmax(0, 1fr); gap:6px; align-items:center; margin:6px 0 10px;}
+  .io div{border-radius:8px; padding:7px 9px; font-size:.8rem; line-height:1.35;}
+  .io .in{background:color-mix(in srgb, var(--hum) 10%, white); color:var(--ink);}
+  .io .out{background:color-mix(in srgb, var(--alg) 9%, white); color:var(--ink);}
+  .io span{text-align:center; color:var(--red); font-weight:800;}
+  .io small{display:block; font-size:.62rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);}
+
+  /* ---------- 09 · Dia a dia ---------- */
+  .flips{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  @media (max-width:600px){ .flips{grid-template-columns:1fr;} }
+  .flip{border:1px solid var(--border); background:var(--card); border-radius:14px; padding:12px 16px; text-align:left; font:inherit; color:inherit; cursor:pointer; box-shadow:var(--shadow); min-height:150px; transition:border-color .3s, background .3s; display:block; width:100%;}
+  .flip .k{display:block; font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; font-weight:800; color:var(--hum); margin-bottom:6px;}
+  .flip .f, .flip .b{display:block; font-size:.84rem; line-height:1.48; color:var(--ink-2);}
+  .flip .b{display:none;}
+  .flip .hint{display:block; margin-top:8px; font-size:.74rem; color:var(--red); font-weight:700;}
+  .flip.open{border-color:var(--red); background:color-mix(in srgb, var(--red) 4%, white);}
+  .flip.open .k{color:var(--red);}
+  .flip.open .f{display:none;}
+  .flip.open .b{display:block; font-family:var(--serif); font-style:italic; color:var(--ink);}
+  .flip.open .b small{display:block; font-family:var(--sans); font-style:normal; font-size:.7rem; font-weight:700; color:var(--muted); margin-top:6px;}
+  .gauge{margin-top:16px;}
+  .gauge .row{display:grid; grid-template-columns:110px minmax(0, 1fr); gap:10px; align-items:center; font-size:.78rem; color:var(--ink-2); margin-bottom:8px;}
+  .gauge .tr{height:22px; border-radius:6px; background:#eef2f7; position:relative; overflow:hidden;}
+  .gauge .tr i{position:absolute; top:0; bottom:0; left:0; border-radius:6px;}
+  .gauge .tr i.fz{background:repeating-linear-gradient(90deg, var(--alg) 0 6px, color-mix(in srgb, var(--alg) 55%, white) 6px 12px);}
+  .gauge .tr em{position:absolute; right:8px; top:2px; font-style:normal; font-size:.72rem; font-weight:800; color:var(--ink);}
+  .areas{display:flex; gap:3px; height:22px;}
+  .areas i{flex:1; background:var(--hum); border-radius:4px; color:#fff; font-style:normal; font-size:.58rem; font-weight:700; display:flex; align-items:center; justify-content:center; overflow:hidden; white-space:nowrap; padding:0 2px;}
+
+  /* ---------- 10 · Crise ---------- */
+  #gr-scene .slab.st{cursor:pointer; transition:transform .45s cubic-bezier(.2,.8,.2,1);}
+  #gr-scene .slab.st.active{--oz:14px;}
+  #gr-scene .slab.st.active > i{box-shadow:inset 0 0 0 2px #fff;}
+  #gr-scene .face-label{font-size:12px; font-weight:800; color:#fff; text-align:center; line-height:1.1;}
+  #gr-scene .top-label{font-size:16px; font-weight:900; color:#fff; font-family:var(--serif);}
+  @media (max-width:600px){ #gr-scene .face-label{font-size:15px;} }
+  .gr-btns{display:grid; grid-template-columns:repeat(6, minmax(0, 1fr)); gap:5px; margin:8px 0;}
+  .gr-btns button{border:1px solid var(--border); background:var(--card); border-radius:8px; padding:5px 4px; font-size:.72rem; color:var(--ink-2); cursor:pointer; line-height:1.2;}
+  .gr-btns button b{display:block; font-family:var(--serif); font-size:.95rem;}
+  .gr-btns button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .gr-btns button.six{border-color:var(--red); color:var(--red);}
+  .gr-btns button.six[aria-pressed="true"]{background:var(--red); color:#fff;}
+  #gr-panel{min-height:150px; margin-top:8px;}
+  .faces3{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px; margin-top:10px;}
+  .faces3 button{border:1px solid var(--border); border-top:4px solid var(--red); background:var(--card); border-radius:10px; padding:9px 10px; text-align:left; font:inherit; cursor:pointer;}
+  .faces3 button b{display:block; font-family:var(--serif); font-size:.92rem; color:var(--ink);}
+  .faces3 button span{display:block; font-size:.74rem; color:var(--muted); line-height:1.35; margin-top:3px;}
+  .faces3 button[aria-pressed="true"]{background:color-mix(in srgb, var(--red) 7%, white); border-color:var(--red);}
+  @media (max-width:600px){ .faces3{grid-template-columns:1fr;} }
+  #face-out{font-size:.86rem; color:var(--ink-2); margin-top:10px; min-height:3.2em;}
+
+  /* ---------- 11 · Paradoxo ---------- */
+  .names{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 6px;}
+  .names button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:8px 16px; font-size:.88rem; cursor:pointer; color:var(--ink-2);}
+  .names button[aria-pressed="true"]{background:var(--hyb); color:#fff; border-color:transparent;}
+  .names button.said{border-color:var(--red); color:var(--red); font-weight:700;}
+  .names button.said[aria-pressed="true"]{color:#fff;}
+  #nm-out{font-size:.9rem; color:var(--ink-2); min-height:5.2em; margin-top:6px;}
+  #nm-out b{color:var(--ink);}
+  .sl{margin-top:8px;}
+  .sl label{display:flex; justify-content:space-between; font-size:.78rem; color:var(--muted); font-weight:700;}
+  .sl input{width:100%; accent-color:var(--hyb);}
+  .two-bars{display:grid; gap:12px; margin-top:12px;}
+  .two-bars .row small{display:flex; justify-content:space-between; font-size:.76rem; color:var(--ink-2); font-weight:700; margin-bottom:4px;}
+  .two-bars .tr{height:26px; border-radius:6px; background:#eef2f7; overflow:hidden;}
+  .two-bars .tr i{display:block; height:100%; border-radius:6px; transition:width .35s;}
+  #face-wrap{display:flex; justify-content:center; margin:2px 0 6px;}
+  #face-svg{width:190px; height:auto;}
+  #face-svg .h{transition:opacity .35s;}
+
+  /* ---------- 12 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:4px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.9rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:6px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:8px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2025-assi-people-analytics-rh-hibrido/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2025</div>
+      <h1 class="rv" style="--d:.1s">Quando o algoritmo entra no RH, ele é ferramenta ou colega?</h1>
+      <p class="sub rv" style="--d:.2s">Painéis, sistemas e inteligência artificial chegaram à gestão de pessoas com a promessa de decisões baseadas em dados. A tese ouviu <strong>10 diretores e parceiros de negócio de RH</strong> da indústria farmacêutica brasileira e conclui que esse <strong>People Analytics</strong> age como um ator: muda metas, tarefas e o próprio profissional. Disso nasce uma nova crise, a da <strong>hibridização</strong>. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Ilton Luiz Assi</span>
+        <span><b>Orientador:</b> Prof. Dr. Almir Martins Vieira</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#lentes">Começar →</a>
+        <a class="btn ghost" href="#crise">Ir direto à descoberta</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="470x340" role="img" aria-label="Um bloco azul, as pessoas do RH, e um bloco vermelho, os algoritmos, ligados por uma mesa no meio, a decisão. Cubos vão e voltam entre os dois e, na mesa, ganham uma cor misturada"></div></div>
+      <p class="cap-legend">Pessoas (azul) e algoritmos (vermelho) passam a decidir juntos (roxo, na mesa do meio). Arraste para girar.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Mostra como dados e algoritmos mudam a gestão de pessoas e por que ganhar produtividade com tecnologia (meta 8.2) pede governança e gente no comando, para não desumanizar o trabalho."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · DUAS LENTES -->
+<section class="slide" id="lentes" data-label="Ferramenta ou ator?">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> A pergunta</div>
+      <h2 class="rv" style="--d:.1s">Ferramenta ou ator? Depende da lente com que se olha</h2>
+      <p class="lede rv" style="--d:.15s"><strong>People Analytics</strong> é o uso de dados, sistemas e algoritmos para decidir sobre pessoas: quem contratar, quem pode sair, como está o clima. A tese olha para ele com <strong>duas lentes</strong> ao mesmo tempo. Troque a lente e escolha um aspecto.</p>
+      <div class="segs rv" style="--d:.2s"><div class="seg" id="lens-seg" role="group" aria-label="Lente"><button data-m="1" aria-pressed="true">Lente 1 · só as pessoas</button><button data-m="2" aria-pressed="false">Lente 2 · pessoas e coisas</button></div></div>
+      <div class="chips rv" id="asp-chips" style="--d:.25s" role="group" aria-label="Aspecto"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="lens-svg" class="svgbox" viewBox="0 0 560 300" role="img" aria-label="Rede com quatro pessoas do RH e quatro coisas: painel, sistema, algoritmo e dados. Na lente 1 só as pessoas aparecem como atores; na lente 2 as coisas também"></svg>
+      <div class="cmp" id="cmp"></div>
+      <p class="note">Tabela 12 e seção 1.6. Lente 1: Teoria da Construção Social da Realidade (Berger e Luckmann, 1966). Lente 2: Teoria Ator-Rede (Latour e Callon), que trata pessoas e coisas com o mesmo olhar. A rede é um <b>esquema nosso</b>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · QUEM FALOU -->
+<section class="slide" id="quem" data-label="10 líderes de RH">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> Como a pesquisa olhou · entrevistas</div>
+      <h2 class="rv" style="--d:.1s">Dez líderes de RH de dez farmacêuticas contaram como os dados entraram na rotina</h2>
+      <p class="lede rv" style="--d:.15s">Entre novembro de 2024 e janeiro de 2025, o autor entrevistou <strong>6 diretores e 4 parceiros de negócio de RH</strong> (os HRBPs), quase sempre no escritório de cada um. Todos respondem ao presidente da empresa e nenhum se conhecia. Veja quem são.</p>
+      <div class="segs rv" style="--d:.2s"><small>Colorir por</small><div class="seg" id="who-seg" role="group" aria-label="Recorte"><button data-m="car" aria-pressed="true">Cargo</button><button data-m="tem" aria-pressed="false">Tempo no cargo</button><button data-m="eq" aria-pressed="false">Tamanho da equipe</button></div></div>
+      <div class="panel rv" id="who-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="boxw">
+        <div class="sub-h">10 entrevistados</div>
+        <div class="ppl" id="ppl" role="img" aria-label="10 figuras, uma por entrevistado, coloridas pelo recorte escolhido"></div>
+        <div class="legend" id="who-leg" style="justify-content:center"></div>
+        <div class="sub-h" style="margin-top:16px">10 empresas</div>
+        <div class="segs" style="justify-content:center; margin:0 0 4px"><div class="seg" id="org-seg" role="group" aria-label="Recorte das empresas"><button data-m="cap" aria-pressed="true">Capital</button><button data-m="por" aria-pressed="false">Porte</button><button data-m="ges" aria-pressed="false">Gestão</button><button data-m="mer" aria-pressed="false">Mercado</button></div></div>
+        <div class="orgs" id="orgs" role="img" aria-label="10 prédios, um por empresa, coloridos pelo recorte escolhido"></div>
+        <div class="legend" id="org-leg" style="justify-content:center"></div>
+      </div>
+      <div class="stats">
+        <div style="--sc:var(--hum)"><b>62 min</b><span>de conversa, em média, por entrevista</span></div>
+        <div style="--sc:var(--hyb)"><b>~11 h</b><span>para transcrever cada uma, à mão</span></div>
+        <div style="--sc:var(--alg)"><b>197</b><span>páginas de transcrição no total</span></div>
+      </div>
+      <p class="note">Tabelas 10 e 11 e seções 2.3 e 2.4. As contagens são da tese. A numeração das empresas é a da Tabela 11; a tese não diz se a empresa 3 é a do entrevistado 03, então não ligamos as duas fileiras. Para preservar o anonimato, não mostramos gênero por pessoa (7 mulheres e 3 homens no total).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · CODIFIQUE -->
+<section class="slide" id="codigo" data-label="De 128 códigos a 3 temas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Como a pesquisa olhou · análise temática reflexiva</div>
+      <h2 class="rv" style="--d:.1s">Faça o que o autor fez: leia uma fala e diga a que tema ela pertence</h2>
+      <p class="lede rv" style="--d:.15s">As entrevistas foram lidas e relidas no programa NVivo. Cada trecho ganhou um código, os códigos foram agrupados e, no fim, sobraram <strong>três grandes temas</strong>. Escolha o tema de cada fala.</p>
+      <div class="quiz rv" style="--d:.2s">
+        <div class="qtxt" id="qz-txt" aria-live="polite"></div>
+        <div class="opts" id="qz-opts" role="group" aria-label="Três temas"></div>
+        <div class="qfb" id="qz-fb" aria-live="polite"></div>
+        <div class="qnav"><span id="qz-score"></span><button class="act" id="qz-next">Próxima fala →</button></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="layer-scene" data-fit="460x300" role="img" aria-label="Quatro camadas empilhadas, cada vez menores: 10 entrevistas, 128 códigos, 11 subtemas e 3 temas"></div></div>
+      <div class="themes" id="themes"></div>
+      <p class="note">Seções 2.5.1 a 2.5.5 e Figura 14. Os 11 subtemas são <b>contagem nossa</b> na Figura 14 (5 + 2 + 4). As falas foram <b>traduzidas por nós</b> do inglês da tese; as entrevistas foram feitas em português, mas a transcrição original não foi publicada. A tese diz que o software ajudou a organizar, mas a interpretação foi do pesquisador.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · TRADUÇÃO DA REALIDADE -->
+<section class="slide" id="traducao" data-label="Tema 1: traduzir a realidade">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Resultados · tema 1, a tradução da realidade</div>
+      <h2 class="rv" style="--d:.1s">Antes de gerar valor, o dado precisa convencer</h2>
+      <p class="lede rv" style="--d:.15s">Nenhuma empresa adotou o People Analytics de uma vez. O caminho começa em <strong>dúvidas</strong>, passa por alianças e sistemas e, quando dá certo, reorganiza o RH. Depois, novas dúvidas aparecem e o ciclo recomeça. Toque em cada etapa.</p>
+      <div class="panel rv" id="cyc-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="cyc-svg" class="svgbox" viewBox="0 0 520 440" role="img" aria-label="Ciclo de cinco etapas: incertezas, problematização, sinergias, inscrição e reestruturação, com uma seta que volta às incertezas"></svg>
+      <p class="note">Figura 15 e seção 3.1. As cinco etapas seguem a Figura 15, inspirada nos "momentos da tradução" de Callon (1986) e Latour. Falas <b>traduzidas por nós</b> do inglês da tese.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · MOSAICO DE SISTEMAS -->
+<section class="slide" id="sistemas" data-label="Um mosaico de sistemas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Resultados · tema 1, a inscrição</div>
+      <h2 class="rv" style="--d:.1s">Muitos sistemas, pouca conversa entre eles</h2>
+      <p class="lede rv" style="--d:.15s">O People Analytics só existe quando vira coisa: software, painel, algoritmo. Os entrevistados citaram <strong>15 ferramentas</strong>, e quase todos reclamaram de sistemas que não se falam. Cada barra mostra quantos citaram a ferramenta; toque numa.</p>
+      <div class="big3 rv" style="--d:.2s">
+        <div><b>8 de 10</b><span>descreveram sistemas fragmentados</span></div>
+        <div><b>6 de 10</b><span>pediram "uma ferramenta só, não várias"</span></div>
+        <div><b>1 de 10</b><span>usa o módulo de People Analytics do sistema de gestão da empresa</span></div>
+      </div>
+      <p class="q rv" style="--d:.25s; margin-top:14px">"Usamos 10, 15, 20% do que ele pode entregar."<span>E01, sobre o sistema de RH</span></p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable bars3d" id="tl-scene" data-fit="520x270" role="img" aria-label="Barras 3D com o número de entrevistados que citaram cada ferramenta"></div></div>
+      <div class="tl-list" id="tl-list" role="group" aria-label="Ferramentas"></div>
+      <div class="panel" id="tl-panel" aria-live="polite"></div>
+      <p class="note">Seções 3.1.2 e 3.1.3. Quem citou cada ferramenta é <b>contagem nossa</b> na lista da seção 3.1.3.2 (mais um uso de ChatGPT citado logo depois). "Visier" aparece na tese também como "Vizier". As marcas são as que os entrevistados citaram; a tese não avalia nenhuma delas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · FATOS -->
+<section class="slide" id="fatos" data-label="Tema 2: fatos em vez de impressões">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Resultados · tema 2, a objetividade exigida</div>
+      <h2 class="rv" style="--d:.1s">Fatos em vez de impressões: os dados mudaram uma conversa com o presidente</h2>
+      <p class="lede rv" style="--d:.15s">Em uma das empresas, o presidente achava que um concorrente estava levando os talentos da casa. O RH olhou as <strong>16 saídas</strong> no sistema de análise. Compare a impressão com os dados.</p>
+      <div class="segs rv" style="--d:.2s"><div class="seg" id="exit-seg" role="group" aria-label="Versão"><button data-m="a" aria-pressed="true">A impressão</button><button data-m="b" aria-pressed="false">O que os dados mostraram</button></div></div>
+      <p id="exit-out" aria-live="polite"></p>
+      <div class="gain rv" style="--d:.25s">
+        <div><small>Admissão digital (E02)</small><div class="bars"><i style="--w:100%"></i><i class="r" style="--w:25%"></i></div><span>de <b>2 horas</b> digitando cada admissão para <b>30 minutos</b> revisando</span></div>
+        <div><small>Análises (E06)</small><div class="bars"><i style="--w:100%"></i><i class="r" style="--w:12%"></i></div><span>o que levava <b>dois, três, quatro dias</b> agora sai <b>em horas</b></span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="exit-svg" class="svgbox" viewBox="0 0 540 380" role="img" aria-label="16 pessoas que saíram da empresa. Na impressão, todas vão para um mesmo concorrente. Nos dados, cada uma vai para uma empresa diferente e só uma era considerada talento"></svg>
+      <p class="note">Seções 3.1.2, 3.2.2 e 4.2. O desenho das 16 saídas é <b>nosso</b>: a tese diz só que 1 das 16 pessoas era classificada como talento e que as 16 foram para empresas diferentes. As barras de tempo são proporcionais ao que os entrevistados contaram (para "em horas", usamos meio dia como referência, <b>leitura nossa</b>). Para a tese, essa objetividade não vem pronta nos dados: precisa ser validada e ganhar valor aos olhos das pessoas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · QUATRO MEDIAÇÕES -->
+<section class="slide" id="mediacoes" data-label="As quatro mediações">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Resultados · tema 2, a mediação do algoritmo</div>
+      <h2 class="rv" style="--d:.1s">O algoritmo não só obedece: ele desvia, cria, assume e transforma</h2>
+      <p class="lede rv" style="--d:.15s">Inspirado em Bruno Latour, o autor mostra <strong>quatro jeitos</strong> pelos quais o People Analytics mexe no que o RH queria fazer. Escolha um e veja a meta entrar e sair do algoritmo.</p>
+      <div class="mtabs rv" id="med-tabs" style="--d:.2s" role="group" aria-label="Quatro mediações"></div>
+      <p class="note rv" style="--d:.25s">Seções 3.2.3 e 4.2.3, a partir de Latour (2001), <i>A esperança de Pandora</i>. Os exemplos são dos entrevistados; o desenho do caminho é <b>esquema nosso</b>. Falas <b>traduzidas por nós</b> do inglês da tese.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="med-svg" class="svgbox" viewBox="0 0 560 320" role="img" aria-label="Uma meta sai da pessoa do RH, passa pelo algoritmo e chega a um resultado; o caminho muda conforme a mediação escolhida"></svg>
+      <div class="panel" id="med-panel" style="margin-top:10px" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · DIA A DIA -->
+<section class="slide" id="diadia" data-label="Tema 3: o dia a dia híbrido">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Resultados · tema 3, as relações híbridas</div>
+      <h2 class="rv" style="--d:.1s">Sistema sobrando, gente sem tempo</h2>
+      <p class="lede rv" style="--d:.15s">No dia a dia, a convivência entre pessoas e algoritmos esbarra em quatro tensões. O paradoxo que a tese destaca: o profissional está <strong>sobrecarregado</strong> enquanto o sistema fica <strong>subutilizado</strong>. Vire os cartões.</p>
+      <div class="gauge rv" style="--d:.2s">
+        <div class="row"><span>Sistema de RH</span><div class="tr"><i class="fz" style="width:20%"></i><i style="width:10%; background:var(--alg)"></i><em>10 a 20% usado (E01)</em></div></div>
+        <div class="row"><span>Um dia de HRBP (E02)</span><div class="areas"><i>operações</i><i>remuneração</i><i>parceria</i><i>saúde e seg.</i><i>frota</i></div></div>
+      </div>
+      <p class="q rv" style="--d:.25s; margin-top:12px">"[…] então hoje eu cuido da parte de operações, de remuneração e benefícios, sou parceiro de negócio das áreas funcionais, cuido de saúde e segurança e de frota […] é um monstrinho."<span>E02</span></p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="flips" id="flips"></div>
+      <div class="btnrow" style="margin-top:12px"><button class="act" id="flip-all" aria-pressed="false">Virar todos</button></div>
+      <p class="note">Seções 3.3.1 a 3.3.3 e Apêndice B. A faixa listrada mostra a faixa de 10 a 20% dita por E01, não uma medição. Os cinco blocos do dia de E02 são as cinco áreas citadas, sem tamanho real. Falas <b>traduzidas por nós</b>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · CRISE -->
+<section class="slide" id="crise" data-label="A descoberta: a crise da hibridização">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> A descoberta</div>
+      <h2 class="rv" style="--d:.1s">Uma sexta crise na escada das empresas: a da hibridização</h2>
+      <p class="lede rv" style="--d:.15s">O pesquisador Larry Greiner descreveu o crescimento das organizações como uma escada de fases e crises: cada período de crescimento planta a crise seguinte. A tese propõe um <strong>sexto degrau</strong>, a <strong>algoritmização</strong>, e com ele uma crise nova. Toque nos degraus.</p>
+      <div class="gr-btns rv" id="gr-btns" style="--d:.2s" role="group" aria-label="Seis fases"></div>
+      <div class="panel rv" id="gr-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="gr-scene" data-fit="500x330" role="img" aria-label="Escada de seis degraus; os cinco primeiros em azul, as fases de Greiner, e o sexto em vermelho, a algoritmização"></div></div>
+      <div class="faces3" id="faces3" role="group" aria-label="Três faces da crise"></div>
+      <div id="face-out" aria-live="polite"></div>
+      <p class="note">Figuras 20 e 23 e seções 3.3 e 4.3. A tese usa o modelo de Greiner na versão de 1998. O próprio autor apresenta a sexta fase como uma <b>lente teórica</b>, não como um estágio universal comprovado. As alturas dos degraus são esquema.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · PARADOXO -->
+<section class="slide" id="paradoxo" data-label="O inesperado: a IA quase humana">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> O inesperado</div>
+      <h2 class="rv" style="--d:.1s">Quanto mais humana a IA parece, mais fácil esquecer o que ela é</h2>
+      <p class="lede rv" style="--d:.15s">Antes de ver o resultado: <strong>como você chamaria</strong> a inteligência artificial que usa no trabalho?</p>
+      <div class="names rv" id="names" style="--d:.2s" role="group" aria-label="Como você chamaria a IA"></div>
+      <div id="nm-out" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="boxw">
+        <div id="face-wrap"><svg id="face-svg" viewBox="0 0 200 150" role="img" aria-label="Um rosto que vai ganhando olhos e sorriso conforme a IA parece mais humana"></svg></div>
+        <div class="sl"><label for="hum-r"><span>parece máquina</span><span>parece gente</span></label><input type="range" id="hum-r" min="0" max="100" value="20" aria-label="Quanto a IA parece humana"></div>
+        <div class="two-bars">
+          <div class="row"><small><span>Facilidade de aceitar a IA</span><span>sobe</span></small><div class="tr"><i id="b-ace" style="background:var(--hyb)"></i></div></div>
+          <div class="row"><small><span>Lembrar que é estatística, com riscos</span><span>desce</span></small><div class="tr"><i id="b-ris" style="background:var(--hum)"></i></div></div>
+        </div>
+      </div>
+      <p class="note">Seção 4.3.1 e Figura 23. Os apelidos estão na seção 4.3.1, sem o código de quem falou. O controle é uma <b>ilustração nossa</b> da ideia da tese, o "paradoxo antropomórfico": as barras não têm números, só mostram a direção que o autor descreve.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Na prática, limites e créditos</div>
+    <h2 class="rv" style="--d:.1s">Usar os algoritmos sem entregar a eles o julgamento</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--hum)"><h3>Profissionais de RH</h3><p>Aprender a ler dados com senso crítico: saber de onde eles vêm, que vieses carregam e como o algoritmo transforma pessoas em números. Fazer as perguntas certas antes de pedir respostas.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--alg)"><h3>Empresas</h3><p>Governança de dados e de IA com dono, regras e papéis claros. Sistemas que conversam entre si e pilotos antes de espalhar uma ferramenta, como os entrevistados aprenderam.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--hyb)"><h3>Líderes de RH</h3><p>Conduzir a mudança: traduzir a nova realidade para as equipes, lidar com resistências e investir em requalificação. Desenhar processos em que a máquina calcula e as pessoas interpretam.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:var(--ink)"><h3>Todos</h3><p>Manter um "ceticismo humanista": usar a IA como ferramenta poderosa, nunca como oráculo. Garantir que toda decisão do algoritmo possa ser revista e contestada por uma pessoa.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Só ouviu quem decide.</b> Diretores e parceiros de negócio de RH falaram; os empregados, que são medidos pelos sistemas, ficaram de fora. A tese pede essa pesquisa.</li>
+          <li><b>Dez pessoas de um setor.</b> A indústria farmacêutica tem hierarquia forte e muita regulação; o retrato não vale como estatística para outros setores.</li>
+          <li><b>Um retrato de um momento.</b> As ferramentas mudam rápido; o autor aposta que as dinâmicas humanas descritas duram mais.</li>
+          <li><b>A crise da hibridização é uma proposta teórica.</b> Ela organiza o que as entrevistas mostram, mas não foi medida nem comparada entre empresas. <em>· observação nossa</em></li>
+          <li><b>As falas passaram por duas traduções</b>: do português para o inglês na tese e de volta para o português aqui. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          ASSI, Ilton Luiz. <em>The hybridization crisis: people analytics as an actor in the resignification of Human Resource Management in the Brazilian Pharmaceutical Industry.</em> Tese (Doutorado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2025. Orientador: Prof. Dr. Almir Martins Vieira.
+        </div>
+        <p style="margin-top:8px; font-size:.76rem">O trabalho teve apoio da CAPES. O autor usou o DeepL para melhorar a legibilidade do texto em inglês e revisou tudo; a licença do NVivo, comprada pelo autor, tem uma ferramenta de IA, mas a interpretação dos temas foi do pesquisador. Esta versão simplifica o trabalho para o público em geral; as falas completas e as referências estão no texto original.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa (em inglês)</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent, text){
+    var e = document.createElementNS(SVGNS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (text !== undefined) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function pressSet(group, attr, val){ each(group.children, function(b){ if (b.dataset) b.setAttribute('aria-pressed', String(b.dataset[attr] === val)); }); }
+  var HUM = '#1f3b73', ALG = 'hsl(348 94% 47%)', HYB = 'color-mix(in srgb, #1f3b73 50%, hsl(348 94% 47%))';
+
+  /* ================= DADOS DA TESE ================= */
+  // Tabela 10: [cargo, tempo no cargo, equipe]
+  var PEOPLE = [
+    ['dir', 't10', 'e2'], ['bp', 't5', 'e1'], ['bp', 't2', 'e0'], ['bp', 't2', 'e3'], ['bp', 't0', 'e1'],
+    ['dir', 't10', 'e4'], ['dir', 't10', 'e4'], ['dir', 't10', 'e4'], ['dir', 't2', 'e1'], ['dir', 't10', 'e4']
+  ];
+  var WHO = {
+    car:{i:0, cats:[['dir', 'Diretor(a) de RH', HUM], ['bp', 'Parceiro(a) de negócio (HRBP)', '#8ea2c6']],
+      h:'6 diretores e 4 parceiros de negócio de RH', p:'O autor escolheu esses cargos porque decidem sobre políticas de RH e conversam com a cúpula da empresa. Todos têm graduação e MBA em áreas ligadas a RH.'},
+    tem:{i:1, cats:[['t10', 'mais de 10 anos', HUM], ['t5', '5 a 10 anos', '#5b7bb5'], ['t2', '2 a 5 anos', '#8ea2c6'], ['t0', 'menos de 2 anos', '#cfd8e6']],
+      h:'Metade está no cargo há mais de 10 anos', p:'Só E05 tinha menos de dois anos de função, mas disse que "a intensidade do dia a dia é tanta que parece muito mais".'},
+    eq:{i:2, cats:[['e4', '50 a 60 pessoas', HUM], ['e3', '31 a 50', '#5b7bb5'], ['e2', '11 a 30', '#8ea2c6'], ['e1', '1 a 10', '#cfd8e6'], ['e0', 'sem equipe no Brasil', '#eef2f7']],
+      h:'6 de 10 lideram equipes grandes', p:'Quatro comandam de 50 a 60 pessoas. E03 não tem equipe no Brasil: naquela empresa, o RH fica espalhado pelo mundo, cada país com uma especialidade.'}
+  };
+  // Tabela 11: [capital, porte, gestão, mercado]
+  var ORGS = [
+    ['mul', 'g', 'pro', 'der'], ['mul', 'm', 'pro', 'bio'], ['mul', 'm', 'pro', 'onc'], ['mul', 'm', 'pro', 'ger'], ['mul', 'g', 'pro', 'ger'],
+    ['nac', 'g', 'fam', 'ger'], ['nac', 'g', 'fam', 'ger'], ['nac', 'g', 'fam', 'ger'], ['mul', 'm', 'pro', 'der'], ['mul', 'g', 'pro', 'ger']
+  ];
+  var ORGC = {
+    cap:{i:0, cats:[['mul', 'multinacional', HUM], ['nac', 'nacional', ALG]]},
+    por:{i:1, cats:[['g', 'grande', HUM], ['m', 'média', '#8ea2c6']]},
+    ges:{i:2, cats:[['pro', 'profissional', HUM], ['fam', 'familiar', ALG]]},
+    mer:{i:3, cats:[['ger', 'linha geral', '#8ea2c6'], ['der', 'dermatológicos', HUM], ['bio', 'biológicos', '#5b7bb5'], ['onc', 'oncológicos', ALG]]}
+  };
+  // Três temas (Figura 14)
+  var TH = [
+    {k:'Tradução da realidade', c:'var(--t1)', d:'como o People Analytics é vivido e ganha sentido: incertezas, alianças, sistemas, reorganização (5 subtemas)'},
+    {k:'Objetividade exigida', c:'var(--t2)', d:'como os dados viram "fatos": institucionalizar novas rotinas e legitimar os algoritmos (2 subtemas)'},
+    {k:'Relações híbridas', c:'var(--t3)', d:'o dia a dia de pessoas e máquinas: interações, estruturas, status quo e a nova identidade do RH (4 subtemas)'}
+  ];
+  // Ferramentas citadas, seção 3.1.3.2 (contagem nossa) [nome, entrevistados, descrição]
+  var TOOLS = [
+    ['IA generativa', [1, 2, 3, 7, 8, 9, 10], 'ChatGPT e Copilot: resumir artigos, escrever comunicados, achar políticas internas, analisar a própria agenda.'],
+    ['Workday', [1, 2, 3, 5], 'Sistema de informações de RH. Uma empresa migrou do SAP para ele e ainda sofre para montar as análises.'],
+    ['Vagas.com', [2, 3, 6, 7], 'Plataforma de vagas citada por quatro entrevistados.'],
+    ['SAP', [4, 10], 'Sistema de gestão da empresa; o módulo de RH (SuccessFactors) foi citado por um só entrevistado.'],
+    ['Visier', [2], 'Ferramenta de análise integrada ao Workday na empresa de E02; foi ela que deu os dados das 16 saídas.'],
+    ['SuccessFactors', [4], 'Módulo de People Analytics da SAP.'],
+    ['ADP', [2], 'Fornecedor de dados de RH, difícil de conciliar com o Workday.'],
+    ['CLIC', [5], 'Ferramenta feita sob medida, que puxa dados do Workday: "você puxa algo que deveria sair 103 nas duas e não sai".'],
+    ['Phoenix', [5], 'Outra ferramenta usada pelo RH de E05.'],
+    ['PULSE', [1], 'Projeto de análise de engajamento de um fornecedor externo; indicava risco de perder talentos. Foi interrompido quando o fornecedor foi comprado por outra empresa, não por falta de resultado.'],
+    ['Power BI', [7], 'Ferramenta citada por E07.'],
+    ['Gupy', [7], 'Plataforma de recrutamento com IA.'],
+    ['Genially', [7], 'Plataforma de treinamentos com jogos.'],
+    ['LinkedRH', [7], 'Plataforma de serviços de RH.'],
+    ['UKG', [9], 'Plataforma americana de gestão de RH.']
+  ];
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 380, 260, {ay:'62%', rx:'60deg'});
+    st.appendChild(box({w:84, d:96, h:120, x:14, y:82, c:'var(--hum)', label:'PESSOAS', top:' '}));
+    st.appendChild(box({w:120, d:120, h:22, x:130, y:70, c:'#e2e8f0', label:'DECISÃO'}));
+    st.appendChild(box({w:84, d:96, h:120, x:282, y:82, c:'var(--alg)', label:'ALGORITMOS', top:' '}));
+    var N = 6, cubes = [];
+    for (var i = 0; i < N; i++){ var b = box({w:16, d:16, h:16, x:40, y:120, z:120, c:'var(--hum)'}); st.appendChild(b); cubes.push(b); }
+    var L = [48, 122, 120], R = [316, 122, 120], C = [[150, 92], [176, 92], [202, 92], [150, 132], [176, 132], [202, 132]];
+    function place(t){
+      cubes.forEach(function(b, i){
+        var p = ((t / 8) + i / N) % 1, src = i % 2 ? R : L, x, y, z, c, e = C[i];
+        if (p < .4){ var g = p / .4; x = src[0] + (e[0] - src[0]) * g; y = src[1] + (e[1] - src[1]) * g; z = src[2] + (22 - src[2]) * g + Math.sin(g * Math.PI) * 40; c = i % 2 ? 'var(--alg)' : 'var(--hum)'; }
+        else if (p < .7){ x = e[0]; y = e[1]; z = 22; c = 'var(--hyb)'; }
+        else { var h = (p - .7) / .3, dst = i % 2 ? L : R; x = e[0] + (dst[0] - e[0]) * h; y = e[1] + (dst[1] - e[1]) * h; z = 22 + (dst[2] - 22) * h + Math.sin(h * Math.PI) * 40; c = 'var(--hyb)'; }
+        b.style.left = x + 'px'; b.style.top = y + 'px'; b.style.setProperty('--z', z + 'px'); b.style.setProperty('--c', c);
+      });
+    }
+    if (M.reduce) place(3);
+    else M.onTick(function(t){ place(t); });
+    rotatable(sc, st, -26, 10);
+  })();
+
+  /* ================= 02 · DUAS LENTES ================= */
+  (function(){
+    var svg = $('lens-svg');
+    var P = [['RH', 90, 70], ['Gestor', 90, 230], ['Diretoria', 230, 150], ['Finanças', 380, 60]];
+    var T = [['Painel', 300, 250], ['Sistema', 470, 150], ['Algoritmo', 390, 210], ['Dados', 200, 260]];
+    var LK = [[0, 2], [1, 2], [2, 3], [0, 4], [1, 7], [4, 2], [5, 6], [6, 4], [7, 6], [3, 4], [5, 3], [0, 7]];
+    var nodes = P.map(function(p){ return {n:p[0], x:p[1], y:p[2], h:true}; }).concat(T.map(function(p){ return {n:p[0], x:p[1], y:p[2], h:false}; }));
+    var lks = LK.map(function(l){ var a = nodes[l[0]], b = nodes[l[1]]; return {el:el('line', {x1:a.x, y1:a.y, x2:b.x, y2:b.y, 'class':'lk', 'stroke-width':3}, svg), h:a.h && b.h}; });
+    nodes.forEach(function(n){
+      if (n.h) n.el = el('circle', {cx:n.x, cy:n.y, r:24, 'class':'nd'}, svg);
+      else n.el = el('rect', {x:n.x - 24, y:n.y - 20, width:48, height:40, rx:8, 'class':'nd'}, svg);
+      n.t = el('text', {x:n.x, y:n.y + (n.h ? 42 : 38), 'text-anchor':'middle'}, svg, n.n);
+    });
+    var lab = el('text', {x:280, y:24, 'text-anchor':'middle', style:'font-size:13px; fill:#64748b'}, svg, '');
+    var ASP = [
+      ['Quem constrói a realidade', 'Pessoas, em conversa umas com as outras: a ação humana coletiva.', 'Uma rede misturada de pessoas (RH, gestores) e coisas (algoritmos, sistemas, dados).'],
+      ['O papel da tecnologia', 'Ferramenta criada por pessoas. Pode influenciar, mas o poder dela vem de quem a usa.', 'Mediadora com agência própria: traduz, compõe e transforma o que as pessoas queriam fazer.'],
+      ['O que é "objetivo"', 'Algo que as pessoas constroem e compartilham entre si, e que passa a parecer um fato.', 'Um efeito da rede: a "objetividade dos dados" sai do que o algoritmo inscreve e do que se negocia ao usá-lo.'],
+      ['Como os processos mudam', 'Quando as pessoas aprendem novos jeitos de fazer e passam a vê-los como "o normal".', 'Quando o algoritmo reconfigura fluxos, critérios de decisão e o que cada um consegue fazer.'],
+      ['Quem é protagonista', 'Principalmente as pessoas, "arquitetas" da realidade social.', 'Um protagonismo distribuído: pessoas e algoritmos se transformam mutuamente.']
+    ];
+    var lens = 1, asp = 0;
+    $('asp-chips').innerHTML = ASP.map(function(a, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="' + (i === 0) + '">' + a[0] + '</button>'; }).join('');
+    function render(){
+      nodes.forEach(function(n){
+        var on = n.h || lens === 2;
+        n.el.setAttribute('style', 'fill:' + (n.h ? HUM : (lens === 2 ? ALG : '#e2e8f0')) + '; stroke:' + (on ? '#fff' : '#cbd5e1') + '; stroke-width:2');
+        n.t.setAttribute('style', 'fill:' + (on ? '#0f172a' : '#94a3b8'));
+      });
+      lks.forEach(function(l){ l.el.setAttribute('style', 'stroke:' + (l.h ? HUM : (lens === 2 ? HYB : '#e2e8f0')) + '; opacity:' + (l.h || lens === 2 ? .7 : .5)); });
+      lab.textContent = lens === 1 ? 'Lente 1: só as pessoas agem; as coisas são instrumentos' : 'Lente 2: pessoas e coisas agem juntas, em rede';
+      var a = ASP[asp];
+      $('cmp').innerHTML = '<div style="--tc:var(--hum)" class="' + (lens === 1 ? 'on' : '') + '"><small>Lente 1 · construção social</small>' + a[1] + '</div><div style="--tc:var(--alg)" class="' + (lens === 2 ? 'on' : '') + '"><small>Lente 2 · ator-rede</small>' + a[2] + '</div>';
+    }
+    each($('lens-seg').children, function(b){ b.addEventListener('click', function(){ lens = +b.dataset.m; pressSet($('lens-seg'), 'm', b.dataset.m); render(); }); });
+    each($('asp-chips').children, function(b){ b.addEventListener('click', function(){ asp = +b.dataset.i; pressSet($('asp-chips'), 'i', b.dataset.i); render(); }); });
+    render();
+  })();
+
+  /* ================= 03 · QUEM FALOU ================= */
+  (function(){
+    var host = $('ppl');
+    host.innerHTML = PEOPLE.map(function(p, i){ return '<span class="pp"><i></i><s></s>E' + (i < 9 ? '0' : '') + (i + 1) + '</span>'; }).join('');
+    $('orgs').innerHTML = ORGS.map(function(o, i){ return '<span class="org"><i style="--oh:' + (o[1] === 'g' ? 40 : 26) + 'px"></i>' + (i < 9 ? '0' : '') + (i + 1) + '</span>'; }).join('');
+    function render(m){
+      pressSet($('who-seg'), 'm', m);
+      var W = WHO[m];
+      each(host.children, function(s, i){ var c = W.cats.filter(function(c){ return c[0] === PEOPLE[i][W.i]; })[0]; s.style.setProperty('--pc', c[2]); });
+      $('who-leg').innerHTML = W.cats.map(function(c){ var n = PEOPLE.filter(function(p){ return p[W.i] === c[0]; }).length; return '<span><i class="sq" style="background:' + c[2] + '"></i>' + c[1] + ' · ' + n + '</span>'; }).join('');
+      $('who-panel').innerHTML = '<div class="tag">10 entrevistados · ' + (m === 'car' ? 'cargo' : m === 'tem' ? 'tempo no cargo' : 'tamanho da equipe') + '</div><h3>' + W.h + '</h3><p>' + W.p + '</p>';
+    }
+    function renderOrg(m){
+      pressSet($('org-seg'), 'm', m);
+      var O = ORGC[m];
+      each($('orgs').children, function(s, i){ var c = O.cats.filter(function(c){ return c[0] === ORGS[i][O.i]; })[0]; s.firstChild.style.setProperty('--oc', c[2]); });
+      $('org-leg').innerHTML = O.cats.map(function(c){ var n = ORGS.filter(function(o){ return o[O.i] === c[0]; }).length; return '<span><i class="sq" style="background:' + c[2] + '"></i>' + c[1] + ' · ' + n + '</span>'; }).join('');
+    }
+    each($('who-seg').children, function(b){ b.addEventListener('click', function(){ render(b.dataset.m); }); });
+    each($('org-seg').children, function(b){ b.addEventListener('click', function(){ renderOrg(b.dataset.m); }); });
+    render('car'); renderOrg('cap');
+  })();
+
+  /* ================= 04 · CODIFIQUE ================= */
+  (function(){
+    var sc = $('layer-scene'), st = makeStage(sc, 400, 220, {ay:'64%', rx:'58deg'});
+    var LY = [[10, 'entrevistas', 260, '#cfd8e6'], [128, 'códigos iniciais', 210, '#8ea2c6'], [11, 'subtemas', 150, '#5b7bb5'], [3, 'temas', 92, 'var(--red)']];
+    LY.forEach(function(l, j){
+      var w = l[2], x = 200 - w / 2 + 40, y = 205 - w * .7;
+      st.appendChild(box({w:w, d:w * .7, h:20, x:x, y:y, z:j * 40, c:l[3], label:l[0] + ' ' + l[1]}));
+    });
+    $('themes').innerHTML = TH.map(function(t, i){ return '<div><i class="sq" style="background:' + t.c + '; margin-top:4px"></i><span><b>' + (i + 1) + '. ' + t.k + ':</b> ' + t.d + '</span></div>'; }).join('');
+    rotatable(sc, st, -20, 8);
+    var Q = [
+      {t:'E se você faz esse investimento, tem retorno ou não? Acho que é isso que é importante entender.', w:'E01', a:0, f:'Dúvida sobre o retorno do investimento: é o ponto de partida do tema 1, as <b>incertezas</b>.'},
+      {t:'Se em cada admissão eu gastava duas horas digitando, agora gasto 30 minutos para revisar.', w:'E02', a:1, f:'Uma rotina nova que vira "o jeito de fazer": tema 2, <b>institucionalizar</b> a nova ordem analítica.'},
+      {t:'O RH não tem tempo. Não tem tempo de gerir pessoas […] a gente conhece a estratégia, mas o dia a dia nos consome.', w:'E10', a:2, f:'A tensão entre o operacional e o estratégico: tema 3, <b>interações</b> no dia a dia híbrido.'},
+      {t:'Acho que estamos começando a ser vistos como uma área que gera valor, que tem "assento à mesa", que conversa com o negócio.', w:'E04', a:0, f:'O People Analytics como solução que dá protagonismo ao RH: tema 1, <b>problematização</b>.'},
+      {t:'Não dá para simplesmente deixar o processo nas mãos da IA. É preciso analisar por cima da IA.', w:'E06', a:1, f:'Validar o que o algoritmo entrega antes de agir: tema 2, <b>legitimar</b> os algoritmos.'},
+      {t:'Cada área tem o seu sistema.', w:'E05', a:2, f:'Silos e sistemas que não conversam: tema 3, a <b>estrutura multifacetada</b>.'}
+    ];
+    var i = 0, score = 0, done = 0;
+    $('qz-opts').innerHTML = TH.map(function(t, j){ return '<button data-j="' + j + '" style="--oc:' + t.c + '">' + t.k + '</button>'; }).join('');
+    function render(){
+      var q = Q[i];
+      $('qz-txt').innerHTML = '"' + q.t + '"<span>' + q.w + '</span>';
+      each($('qz-opts').children, function(b){ b.disabled = false; b.className = ''; });
+      $('qz-fb').innerHTML = '';
+      $('qz-score').textContent = 'Fala ' + (i + 1) + ' de ' + Q.length + (done ? ' · acertos: ' + score + ' de ' + done : '');
+    }
+    each($('qz-opts').children, function(b){ b.addEventListener('click', function(){
+      var q = Q[i], j = +b.dataset.j;
+      each($('qz-opts').children, function(o){ o.disabled = true; var k = +o.dataset.j; o.className = k === q.a ? 'ok' : (k === j ? 'no' : ''); });
+      done++; if (j === q.a) score++;
+      $('qz-fb').innerHTML = (j === q.a ? 'Isso. ' : 'Na tese, não. ') + q.f;
+      $('qz-score').textContent = 'Fala ' + (i + 1) + ' de ' + Q.length + ' · acertos: ' + score + ' de ' + done;
+    }); });
+    $('qz-next').addEventListener('click', function(){ i = (i + 1) % Q.length; if (i === 0){ score = 0; done = 0; } render(); });
+    render();
+  })();
+
+  /* ================= 05 · TRADUÇÃO ================= */
+  (function(){
+    var svg = $('cyc-svg'), CX = 260, CY = 225, R = 150;
+    var ST = [
+      {k:'Incertezas', t:'Vale o investimento? Por onde começar?', p:'O People Analytics chega cercado de dúvidas: retorno incerto, prioridade baixa diante de outras demandas e um RH formado para lidar com relações, não com números. Para a tese, as incertezas funcionam como uma "substância paralisante".', q:[['Em geral, a gestão de RH não é muito amiga dos números, né?', 'E06'], ['Você precisa estar muito confortável com um retorno sobre o investimento que não é muito claro.', 'E04']]},
+      {k:'Problematização', t:'O dado vira a solução que dá voz ao RH', p:'Quem defende o projeto precisa mostrar que ele resolve um problema de todos: tirar o RH do operacional e dar a ele argumentos para conversar com finanças e com a diretoria. O People Analytics vira um "ponto de passagem obrigatório" para quem quer um RH estratégico.', q:[['Acho que estamos começando a ser vistos como uma área que gera valor, que tem "assento à mesa", que conversa com o negócio.', 'E04']]},
+      {k:'Sinergias', t:'Alinhar interesses e democratizar o acesso', p:'O passo seguinte é juntar aliados e abrir os dados aos gestores, para que a gestão de pessoas vire responsabilidade de todos. Os obstáculos: falta de patrocinador, suporte analítico em outro país e sistemas que não se falam.', q:[['Eu tenho um apoio analítico, mas essa pessoa está na Costa Rica, eu nem sei o nome dela. Tenho que abrir um chamado no sistema, escrever tudo o que preciso, esperar alguém pegar o meu pedido, entrar na fila…', 'E05']]},
+      {k:'Inscrição', t:'O projeto vira sistema, painel e algoritmo', p:'Aqui o People Analytics ganha corpo: software, painéis, rotinas. E começa a agir. Os entrevistados descrevem o sistema como alguém que "indica", "filtra" e "gera": ele não é um depósito passivo de dados.', q:[['O sistema conseguiu indicar riscos de perder talentos, e a gente podia ter uma conversa.', 'E01'], ['Ele já faz um filtro.', 'E01']]},
+      {k:'(Re)estruturar', t:'Mobilizar pessoas e reorganizar o RH', p:'Para a nova ordem se firmar, é preciso governança, cultura analítica, dados, tecnologia e competências. Projetos como o de engajamento (E01), o de mobilidade global (E04) e o de rotatividade (E09) mostram esse esforço. Quando prova valor, o projeto se torna indispensável; quando não, as dúvidas voltam.', q:[['Uma coisa que a farmacêutica me ensinou foi o piloto […] um projeto importado da matriz não deu certo porque não fizemos piloto, não fizemos os ajustes envolvendo as pessoas daqui.', 'E10']]}
+    ];
+    var pos = ST.map(function(s, i){ var a = -Math.PI / 2 + i * 2 * Math.PI / 5; return [CX + R * Math.cos(a), CY + R * Math.sin(a)]; });
+    el('circle', {cx:CX, cy:CY, r:R, fill:'none', stroke:'#e2e8f0', 'stroke-width':14}, svg);
+    var arc = el('circle', {cx:CX, cy:CY, r:R, fill:'none', stroke:'#cbd5e1', 'stroke-width':3, 'stroke-dasharray':'6 8'}, svg);
+    el('text', {x:CX, y:CY - 6, 'text-anchor':'middle', style:'font-size:14px; fill:#0f172a; font-family:Merriweather, serif'}, svg, 'Tradução');
+    el('text', {x:CX, y:CY + 14, 'text-anchor':'middle', style:'font-size:14px; fill:#0f172a; font-family:Merriweather, serif'}, svg, 'da realidade');
+    var dot = el('circle', {r:9, fill:ALG}, svg);
+    var g = ST.map(function(s, i){
+      var n = el('g', {'class':'node', tabindex:0, role:'button', 'aria-label':s.k}, svg);
+      el('circle', {cx:pos[i][0], cy:pos[i][1], r:30, style:'fill:' + HUM + '; stroke:#fff; stroke-width:3'}, n);
+      el('text', {x:pos[i][0], y:pos[i][1] + 7, 'text-anchor':'middle', 'class':'num'}, n, String(i + 1));
+      var ly = pos[i][1] + (pos[i][1] < CY - 40 ? -42 : 50), lx = pos[i][0];
+      el('text', {x:lx, y:ly, 'text-anchor':'middle', style:'fill:#0f172a'}, n, s.k);
+      n.addEventListener('click', function(){ show(i); });
+      n.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(i); } });
+      return n;
+    });
+    function show(i){
+      g.forEach(function(n, j){ n.classList.toggle('sel', j === i); n.querySelector('circle').style.fill = j === i ? ALG : HUM; });
+      var s = ST[i];
+      $('cyc-panel').innerHTML = '<div class="tag">Etapa ' + (i + 1) + ' de 5 · ' + s.k + '</div><h3>' + s.t + '</h3><p>' + s.p + '</p>' + s.q.map(function(q){ return '<p class="q">"' + q[0] + '"<span>' + q[1] + '</span></p>'; }).join('');
+    }
+    function move(t){ var a = -Math.PI / 2 + (t / 12 % 1) * 2 * Math.PI; dot.setAttribute('cx', CX + R * Math.cos(a)); dot.setAttribute('cy', CY + R * Math.sin(a)); }
+    if (M.reduce) move(0); else M.onTick(move);
+    show(0);
+  })();
+
+  /* ================= 06 · FERRAMENTAS ================= */
+  (function(){
+    var sc = $('tl-scene'), st = makeStage(sc, 480, 120, {ay:'66%', rx:'58deg'}), bars = [];
+    var W = 26, G = 6;
+    TOOLS.forEach(function(t, i){
+      var n = t[1].length, b = box({w:W, d:30, h:n * 22, x:6 + i * (W + G), y:40, c:i === 0 ? 'var(--alg)' : (n > 1 ? 'var(--hum)' : '#8ea2c6'), top:String(n), cls:'tool'});
+      b.addEventListener('click', function(){ if (M.wasDrag(sc)) return; show(i); });
+      st.appendChild(b); bars.push(b);
+      flatLabel(st, t[0].replace('IA generativa', 'IA gen.').replace('SuccessFactors', 'SuccessF.'), i * (W + G) - 14, 78 + (i % 3) * 16, 56, 'font-size:10px');
+    });
+    $('tl-list').innerHTML = TOOLS.map(function(t, i){ return '<button data-i="' + i + '" aria-pressed="false">' + t[0] + '</button>'; }).join('');
+    each($('tl-list').children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    function show(i){
+      var t = TOOLS[i];
+      bars.forEach(function(b, j){ b.classList.toggle('active', j === i); });
+      pressSet($('tl-list'), 'i', String(i));
+      var w = ''; for (var k = 1; k <= 10; k++) w += '<span class="' + (t[1].indexOf(k) >= 0 ? 'on' : '') + '">E' + (k < 10 ? '0' : '') + k + '</span>';
+      $('tl-panel').innerHTML = '<div class="tag">' + t[1].length + ' de 10 entrevistados</div><h3>' + t[0] + '</h3><div class="who10">' + w + '</div><p style="margin-top:8px">' + t[2] + '</p>';
+    }
+    rotatable(sc, st, -8, 6);
+    show(0);
+  })();
+
+  /* ================= 07 · FATOS ================= */
+  (function(){
+    var svg = $('exit-svg'), N = 16, people = [], lines = [], blds = [];
+    var FX = 70;
+    el('rect', {x:20, y:20, width:110, height:340, rx:12, fill:'#f1f5f9'}, svg);
+    el('text', {x:75, y:44, 'text-anchor':'middle', style:'fill:#0f172a'}, svg, 'A empresa');
+    el('text', {x:75, y:60, 'text-anchor':'middle', style:'fill:#64748b; font-weight:600'}, svg, '16 saídas');
+    for (var i = 0; i < N; i++){
+      var y = 82 + i * 17;
+      lines.push(el('path', {d:'M ' + (FX + 18) + ' ' + y + ' L ' + (FX + 18) + ' ' + y, fill:'none', 'stroke-width':2, 'class':'ln'}, svg));
+      people.push(el('circle', {cx:FX, cy:y, r:7, 'class':'nd'}, svg));
+    }
+    // um concorrente (impressão) × 16 empresas (dados)
+    var big = el('g', {'class':'bd'}, svg);
+    el('rect', {x:390, y:150, width:120, height:80, rx:10, fill:ALG}, big);
+    el('text', {x:450, y:186, 'text-anchor':'middle', style:'fill:#fff'}, big, 'O concorrente');
+    el('text', {x:450, y:204, 'text-anchor':'middle', style:'fill:#fff; font-weight:600'}, big, 'que preocupava');
+    var many = el('g', {'class':'bd'}, svg);
+    for (var k = 0; k < N; k++){ var yy = 70 + k * 18.5; blds.push(el('rect', {x:430, y:yy, width:24, height:13, rx:2, fill:'#8ea2c6'}, many)); }
+    el('text', {x:525, y:56, 'text-anchor':'end', style:'fill:#64748b'}, many, '16 empresas diferentes');
+    var TAL = 9;
+    function render(m){
+      pressSet($('exit-seg'), 'm', m);
+      var b = m === 'b';
+      big.style.opacity = b ? 0 : 1; many.style.opacity = b ? 1 : 0;
+      people.forEach(function(p, i){
+        p.setAttribute('style', 'fill:' + (b ? (i === TAL ? ALG : '#cbd5e1') : ALG));
+        var y = 82 + i * 17, ty = b ? 76 + i * 18.5 : 190, tx = b ? 428 : 388;
+        lines[i].setAttribute('d', 'M ' + (FX + 10) + ' ' + y + ' C 250 ' + y + ' 280 ' + ty + ' ' + tx + ' ' + ty);
+        lines[i].setAttribute('style', 'stroke:' + (b ? (i === TAL ? ALG : '#cbd5e1') : 'color-mix(in srgb, ' + ALG + ' 55%, white)'));
+      });
+      blds.forEach(function(r, i){ r.setAttribute('fill', i === TAL ? ALG : '#8ea2c6'); });
+      $('exit-out').innerHTML = b ? 'Só <b>1 das 16</b> pessoas que saíram era classificada como talento, e as 16 foram para <b>empresas diferentes</b>. "Não, aqui estão os fatos", resumiu E02. O medo do presidente não se confirmou.' : 'A suspeita: os talentos estavam saindo, e <b>todos para o mesmo concorrente</b>, que estaria investindo na força de vendas. Sem dados, a conversa ficava na percepção.';
+    }
+    each($('exit-seg').children, function(b){ b.addEventListener('click', function(){ render(b.dataset.m); }); });
+    render('a');
+  })();
+
+  /* ================= 08 · QUATRO MEDIAÇÕES ================= */
+  (function(){
+    var MED = [
+      {n:'1', k:'Desvio', s:'traduz a meta', i:'"Melhorar o engajamento da equipe"', o:'Monitorar padrões e a frequência de algumas variáveis numa pesquisa', p:'O algoritmo pega uma meta ampla e a reescreve na língua dele, mais específica e mensurável. Na pesquisa de clima de E01, a nota baixa em benefícios virou "investigar o indicador X" e levou a grupos de conversa. O risco: perder o que não cabe em números. E09 teme que a IA, ao ler currículos, fique sem "feeling" do contexto e procure só palavras-chave.', q:['Temos o pior indicador de benefícios […] então fazemos grupos focais para ir ao qualitativo e tentar entender por quê.', 'E01']},
+      {n:'2', k:'Composição', s:'cria uma meta nova', i:'"Reduzir a rotatividade"', o:'Identificar quem corre risco de sair e conversar antes que a pessoa peça demissão', p:'Juntos, pessoa e algoritmo chegam a uma meta que nenhum dos dois tinha sozinho. A ferramenta PULSE (E01) passou a indicar riscos de perder talentos e abriu espaço para agir antes. E10 usa um assistente que mostra os próprios hábitos de reunião e passou a querer usar melhor o tempo e ampliar a rede de contatos.', q:['Ele mostra aqui a minha rede e quem eu encontro menos […] hábitos de reunião, que legal, né? A inteligência artificial ajuda muito.', 'E10']},
+      {n:'3', k:'Delegação reversível', s:'assume a tarefa', i:'"Ler centenas de currículos" · "Digitar cada admissão"', o:'O sistema faz a triagem e a admissão digital; a pessoa revisa e pode retomar', p:'Tarefas passam para o algoritmo, que as faz de outro jeito, com outros critérios e vieses. A delegação é negociável: o RH acompanha, ajusta e, se o resultado não for bom ou ético, devolve a tarefa às pessoas. Para isso, precisa de novas habilidades, como saber fazer as perguntas certas.', q:['Usando o nosso filtro, né? Ajudando a organização a entender que não dá para contar com a inteligência artificial para tudo.', 'E04']},
+      {n:'4', k:'Modificação de atributos', s:'transforma os dois', i:'Um profissional de RH + um algoritmo genérico', o:'Um profissional mais analítico + um algoritmo "da empresa", com dados e regras locais', p:'A mediação mais profunda: ninguém sai igual. O profissional passa a discutir dados "de igual para igual" com os gestores, como E06, que veio da área técnica. O algoritmo também muda: alimentado com dados locais e adaptado à lei de proteção de dados, vira um sistema daquela empresa, como o chatbot próprio que E06 quer construir.', q:['Eu preciso parar e pensar: primeiro, que dado é importante? Que dado eu quero mostrar? Que dado vai ser importante para a decisão?', 'E02']}
+    ];
+    var svg = $('med-svg');
+    el('text', {x:80, y:40, 'text-anchor':'middle', style:'fill:#64748b'}, svg, 'A pessoa de RH');
+    el('text', {x:280, y:40, 'text-anchor':'middle', style:'fill:#64748b'}, svg, 'O algoritmo');
+    el('text', {x:484, y:40, 'text-anchor':'middle', style:'fill:#64748b'}, svg, 'O que sai');
+    var defs = el('defs', {}, svg);
+    function mk(id, c){ var m = el('marker', {id:id, viewBox:'0 0 10 10', refX:8, refY:5, markerWidth:7, markerHeight:7, orient:'auto-start-reverse'}, defs); el('path', {d:'M0,0 L10,5 L0,10 z', fill:c}, m); }
+    mk('mh', HUM); mk('ma', ALG); mk('mg', '#94a3b8');
+    var p1 = el('path', {'class':'p', fill:'none', 'stroke-width':5, stroke:HUM, 'marker-end':'url(#mh)'}, svg);
+    var p2 = el('path', {'class':'p', fill:'none', 'stroke-width':5, stroke:ALG, 'marker-end':'url(#ma)'}, svg);
+    var p3 = el('path', {'class':'p', fill:'none', 'stroke-width':3, stroke:'#94a3b8', 'stroke-dasharray':'7 6', 'marker-end':'url(#mg)'}, svg);
+    var hum = el('circle', {cx:80, cy:165, r:44, 'class':'nd', fill:HUM}, svg);
+    var alg = el('rect', {x:236, y:121, width:88, height:88, rx:14, 'class':'nd', fill:ALG}, svg);
+    el('text', {x:80, y:170, 'text-anchor':'middle', style:'fill:#fff'}, svg, 'meta');
+    var algT = el('text', {x:280, y:170, 'text-anchor':'middle', style:'fill:#fff'}, svg, 'algoritmo');
+    var out1 = el('rect', {x:418, y:135, width:132, height:60, rx:10, fill:'#f1f5f9', stroke:'#cbd5e1'}, svg);
+    var outT = el('text', {x:484, y:170, 'text-anchor':'middle', style:'fill:#0f172a'}, svg, '');
+    var cap = el('text', {x:280, y:296, 'text-anchor':'middle', 'class':'sm', style:'fill:#334155'}, svg, '');
+    $('med-tabs').innerHTML = MED.map(function(m, i){ return '<button data-i="' + i + '" aria-pressed="false"><b>' + m.n + '</b>' + m.k + '</button>'; }).join('');
+    function show(i){
+      var m = MED[i];
+      pressSet($('med-tabs'), 'i', String(i));
+      p1.setAttribute('d', 'M 126 165 L 228 165');
+      p3.style.opacity = 0;
+      hum.style.fill = HUM; alg.style.fill = ALG; algT.textContent = 'algoritmo';
+      if (i === 0){ p2.setAttribute('d', 'M 326 165 C 380 165 380 105 412 110'); out1.setAttribute('y', 80); outT.setAttribute('y', 116); outT.textContent = 'meta medida'; cap.textContent = 'A meta sai desviada: mais estreita, no que dá para medir'; }
+      if (i === 1){ p2.setAttribute('d', 'M 326 165 C 380 165 380 240 412 240'); p3.setAttribute('d', 'M 326 150 C 370 150 380 110 412 110'); p3.style.opacity = 1; out1.setAttribute('y', 210); outT.setAttribute('y', 246); outT.textContent = 'meta nova'; cap.textContent = 'Surge uma meta que nenhum dos dois tinha sozinho'; }
+      if (i === 2){ p2.setAttribute('d', 'M 326 165 L 412 165'); p3.setAttribute('d', 'M 280 220 C 280 280 80 280 80 216'); p3.style.opacity = 1; out1.setAttribute('y', 135); outT.setAttribute('y', 170); outT.textContent = 'tarefa feita'; cap.textContent = 'A tarefa vai para a máquina, mas pode voltar (tracejado)'; }
+      if (i === 3){ p2.setAttribute('d', 'M 326 165 L 412 165'); hum.style.fill = HYB; alg.style.fill = HYB; algT.textContent = '"da empresa"'; out1.setAttribute('y', 135); outT.setAttribute('y', 170); outT.textContent = 'os dois mudam'; cap.textContent = 'Pessoa e algoritmo saem transformados um pelo outro'; }
+      $('med-panel').innerHTML = '<div class="tag">Mediação ' + m.n + ' de 4 · ' + m.k + ', o algoritmo ' + m.s + '</div><div class="io"><div class="in"><small>Entra</small>' + m.i + '</div><span>→</span><div class="out"><small>Sai</small>' + m.o + '</div></div><p>' + m.p + '</p><p class="q">"' + m.q[0] + '"<span>' + m.q[1] + '</span></p>';
+    }
+    each($('med-tabs').children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(0);
+  })();
+
+  /* ================= 09 · DIA A DIA ================= */
+  (function(){
+    var F = [
+      {k:'Individualismo × corresponsabilidade', f:'Os sistemas prometem abrir os dados aos gestores, para que todos cuidem das pessoas. Na prática, cada um quer as coisas prontas e prefere pedir ao RH.',
+       b:'"Às vezes prefiro pegar o telefone ou mandar um e-mail para o meu parceiro de negócio aqui do lado, \'pode puxar isso para mim?\', do que ir lá e extrair o dado. O dia a dia mata as pessoas."', w:'E01'},
+      {k:'Operacional × estratégico', f:'As urgências consomem o tempo que serviria para usar os dados em decisões de longo prazo. A ferramenta que exige muito preparo vira mais um fardo.',
+       b:'"Hoje, quando a gente fala de RH, você não tem um RH estratégico. Você tem um RH funcional, que atende as áreas nas necessidades operacionais."', w:'E10'},
+      {k:'Silos', f:'Cada área com o seu sistema e o seu jeito. Dados em bases separadas exigem trabalho manual, e o trabalho manual tira a confiança no número.',
+       b:'"Se eu tenho duas bases distintas e quero fazer uma análise, vou ter que fazer trabalho manual. E aí perdemos agilidade, perdemos confiança no dado."', w:'E02'},
+      {k:'A promessa de ser justo', f:'Os dados prometem corrigir os vieses das pessoas. Mas algoritmos também carregam os vieses dos dados e de quem os programou, e a "caixa-preta" os esconde.',
+       b:'"Melhorar um pouco a nossa percepção de que, às vezes, não somos uma área 100% justa, porque todo mundo tem viés. Acho que podemos decidir melhor."', w:'E04'}
+    ];
+    $('flips').innerHTML = F.map(function(f){
+      return '<button class="flip" aria-pressed="false"><span class="k">' + f.k + '</span><span class="f">' + f.f + '</span><span class="b">' + f.b + '<small>' + f.w + '</small></span><span class="hint">Toque para ouvir um entrevistado →</span></button>';
+    }).join('');
+    function set(b, o){ b.classList.toggle('open', o); b.setAttribute('aria-pressed', String(o)); b.querySelector('.hint').textContent = o ? '← Voltar' : 'Toque para ouvir um entrevistado →'; }
+    each($('flips').children, function(b){ b.addEventListener('click', function(){ set(b, !b.classList.contains('open')); }); });
+    $('flip-all').addEventListener('click', function(){
+      var o = this.getAttribute('aria-pressed') !== 'true';
+      this.setAttribute('aria-pressed', String(o)); this.textContent = o ? 'Desvirar todos' : 'Virar todos';
+      each($('flips').children, function(b){ set(b, o); });
+    });
+  })();
+
+  /* ================= 10 · CRISE ================= */
+  (function(){
+    var GR = [
+      ['Criatividade', 'Liderança', 'Uma das cinco fases do modelo original de Greiner, como aparece na Figura 20. A tese não detalha essas fases: usa a escada para mostrar que cada período de crescimento planta a crise seguinte.'],
+      ['Direção', 'Autonomia', 'Uma das cinco fases do modelo original de Greiner, como aparece na Figura 20. A tese não detalha essas fases: usa a escada para mostrar que cada período de crescimento planta a crise seguinte.'],
+      ['Delegação', 'Controle', 'Uma das cinco fases do modelo original de Greiner, como aparece na Figura 20. A tese não detalha essas fases: usa a escada para mostrar que cada período de crescimento planta a crise seguinte.'],
+      ['Coordenação', 'Burocracia', 'Uma das cinco fases do modelo original de Greiner, como aparece na Figura 20. A tese não detalha essas fases: usa a escada para mostrar que cada período de crescimento planta a crise seguinte.'],
+      ['Colaboração', 'Psicológica', 'Uma das cinco fases do modelo original de Greiner, como aparece na Figura 20. A tese não detalha essas fases: usa a escada para mostrar que cada período de crescimento planta a crise seguinte.'],
+      ['Algoritmização', 'Hibridização', 'A proposta da tese: algoritmos que aprendem entram no centro das decisões. A crise que vem é de coordenação entre inteligência humana e não humana, com três faces e um sintoma, o estupor.']
+    ];
+    var sc = $('gr-scene'), st = makeStage(sc, 450, 150, {ay:'70%', rx:'58deg'}), steps = [];
+    GR.forEach(function(g, i){
+      var b = box({w:66, d:90, h:26 + i * 26, x:8 + i * 72, y:30, c:i === 5 ? 'var(--alg)' : M.ramp('var(--hum)', 4 - i, 6), top:String(i + 1), cls:'st'});
+      b.addEventListener('click', function(){ if (M.wasDrag(sc)) return; show(i); });
+      st.appendChild(b); steps.push(b);
+    });
+    rotatable(sc, st, -14, 8);
+    $('gr-btns').innerHTML = GR.map(function(g, i){ return '<button data-i="' + i + '" aria-pressed="false" class="' + (i === 5 ? 'six' : '') + '"><b>' + (i + 1) + 'ª</b>' + g[0] + '</button>'; }).join('');
+    each($('gr-btns').children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    function show(i){
+      steps.forEach(function(s, j){ s.classList.toggle('active', j === i); });
+      pressSet($('gr-btns'), 'i', String(i));
+      var g = GR[i];
+      $('gr-panel').innerHTML = '<div class="tag">' + (i === 5 ? 'Proposta da tese · ' : 'Greiner · ') + 'fase ' + (i + 1) + '</div><h3>' + g[0] + ' → crise ' + (i === 4 ? 'psicológica' : 'de ' + g[1].toLowerCase()) + '</h3><p>' + g[2] + '</p>';
+    }
+    var FC = [
+      ['Governança', 'gerir redes de gente e máquina', 'Quem é dono do dado, do sistema e da decisão? As redes de pessoas e algoritmos são fluidas e difíceis de governar; faltam patrocinadores, regras e papéis claros.'],
+      ['Decisão', 'número × contexto', 'A tensão entre a objetividade do algoritmo e o "feeling" humano do contexto. Decidir passa a ser uma negociação entre os dois.'],
+      ['Identidade', 'o medo de desumanizar', 'O que é ser gestor e profissional de RH quando a máquina faz parte do trabalho? Preocupações com a desumanização e a objetificação das pessoas.']
+    ];
+    $('faces3').innerHTML = FC.map(function(f, i){ return '<button data-i="' + i + '" aria-pressed="false"><b>Crise de ' + f[0].toLowerCase() + '</b><span>' + f[1] + '</span></button>'; }).join('');
+    each($('faces3').children, function(b){ b.addEventListener('click', function(){ pressSet($('faces3'), 'i', b.dataset.i); $('face-out').innerHTML = FC[+b.dataset.i][2] + ' Na raiz das três, a tese vê um <b>estupor</b>: o RH parece adormecido diante da velocidade dos algoritmos, só reage a estímulos fortes e logo volta à rotina.'; }); });
+    $('face-out').innerHTML = 'Toque numa das três faces da crise.';
+    show(5);
+  })();
+
+  /* ================= 11 · PARADOXO ================= */
+  (function(){
+    var NM = [['Uma ferramenta', false], ['Meu estagiário', true], ['Meu melhor amigo', true], ['Um guia', true], ['Um colega de trabalho', true], ['Um oráculo', false]];
+    $('names').innerHTML = NM.map(function(n, i){ return '<button data-i="' + i + '" aria-pressed="false">' + n[0] + '</button>'; }).join('');
+    each($('names').children, function(b){ b.addEventListener('click', function(){
+      var i = +b.dataset.i;
+      pressSet($('names'), 'i', b.dataset.i);
+      each($('names').children, function(o, j){ o.classList.toggle('said', NM[j][1]); });
+      var pre = i === 0 ? 'Você escolheu a palavra mais fria. ' : i === 5 ? 'É justamente o que a tese pede para evitar: a IA "nunca como oráculo". ' : 'Você se parece com os entrevistados. ';
+      $('nm-out').innerHTML = pre + 'Eles chamaram a IA de <b>"meus estagiários"</b>, <b>"melhores amigos"</b>, um <b>"guia"</b> de linguagem "quase humana" e um <b>"facilitador"</b> que "encontra caminhos" (em vermelho). Para a tese, isso ajuda a aceitar a nova tecnologia, mas esconde que ela é estatística e matemática, e pode esconder o risco de tratar pessoas como números. Mexa no controle ao lado.';
+    }); });
+    $('nm-out').innerHTML = 'Escolha uma resposta para ver o que os entrevistados disseram.';
+    var svg = $('face-svg');
+    el('rect', {x:40, y:20, width:120, height:110, rx:20, fill:'#e2e8f0', stroke:'#94a3b8', 'stroke-width':2}, svg);
+    var hs = [];
+    hs.push(el('rect', {x:62, y:56, width:22, height:12, rx:3, fill:'#94a3b8', 'class':'h'}, svg));
+    hs.push(el('rect', {x:116, y:56, width:22, height:12, rx:3, fill:'#94a3b8', 'class':'h'}, svg));
+    var eyes = [el('circle', {cx:73, cy:62, r:9, fill:HUM, 'class':'h'}, svg), el('circle', {cx:127, cy:62, r:9, fill:HUM, 'class':'h'}, svg)];
+    var mouthM = el('line', {x1:72, y1:100, x2:128, y2:100, stroke:'#94a3b8', 'stroke-width':5, 'stroke-linecap':'round', 'class':'h'}, svg);
+    var mouthH = el('path', {d:'M 70 94 Q 100 120 130 94', fill:'none', stroke:ALG, 'stroke-width':5, 'stroke-linecap':'round', 'class':'h'}, svg);
+    var r = $('hum-r');
+    function upd(){
+      var v = +r.value / 100;
+      hs.forEach(function(h){ h.style.opacity = 1 - v; }); mouthM.style.opacity = 1 - v;
+      eyes.forEach(function(e){ e.style.opacity = v; }); mouthH.style.opacity = v;
+      svg.firstChild.setAttribute('fill', v > .5 ? '#fde8ec' : '#e2e8f0');
+      $('b-ace').style.width = (20 + v * 75) + '%';
+      $('b-ris').style.width = (90 - v * 72) + '%';
+    }
+    r.addEventListener('input', upd); upd();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
