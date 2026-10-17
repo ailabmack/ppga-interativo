@@ -1,0 +1,1114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The stock market's next minute · PPGA Interativo</title>
+<meta name="description" content="The doctoral thesis by João Vitor de Mattos (PPGA Mackenzie, 2024) that compared eight models for forecasting, minute by minute, the price of ten stocks on B3, explained in 12 interactive screens.">
+<link rel="alternate" hreflang="pt-BR" href="../../../teses/2024-mattos-previsao-acoes-alta-frequencia/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2214%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>AF</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/motor.css">
+<link rel="stylesheet" href="../../../assets/ods.css">
+<style>
+  /* Motor compartilhado em ../../assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  :root{
+    --eco:var(--navy);   /* modelos estatísticos (econométricos) */
+    --ml:#64748b;        /* redes neurais (machine learning) */
+    --rw:var(--red);     /* o palpite "igual ao último" (random walk) */
+    --off:#cbd5e1;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .eco-t{color:var(--eco); font-weight:700;} .ml-t{color:var(--ml); font-weight:700;} .rw-t{color:var(--rw); font-weight:700;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4.2vw, 2.9rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{display:flex; gap:8px 16px; justify-content:center; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:6px;}
+  #hero-scene .slab{transition:--h .45s ease, transform .45s ease;}
+  #hero-scene .face-label{font-size:10px; letter-spacing:0; writing-mode:vertical-rl; transform:rotate(180deg);}
+  #hero-scene .floor-label{font-size:12px;}
+
+  /* ---------- Componentes comuns ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip.on, .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .chip i{display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:6px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px 20px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.08rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.9rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button.on{background:var(--ink); color:#fff;}
+  .flag{display:inline-block; font-size:.74rem; font-weight:600; color:var(--red); background:color-mix(in srgb, var(--red) 10%, transparent); padding:3px 9px; border-radius:6px;}
+  .leg{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.76rem; color:var(--muted); margin-top:8px;}
+  .leg i{display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:5px; vertical-align:-2px;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.3rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.76rem; color:var(--muted); line-height:1.3; display:block;}
+  svg text{font-family:var(--sans);}
+  @media (max-width:600px){ #time-svg text, #game-svg text, #look-svg text{font-size:19px !important;} #funnel-svg text{font-size:18px !important;} #funnel-svg text.fv{font-size:26px !important;} }
+
+  /* ---------- 02 · O tempo da bolsa ---------- */
+  #time-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:12px;}
+  .bignum{display:flex; align-items:baseline; gap:12px; margin:10px 0 2px; flex-wrap:wrap;}
+  .bignum b{font-family:var(--serif); font-size:clamp(2rem, 4.4vw, 3rem); color:var(--ink); line-height:1; font-variant-numeric:tabular-nums;}
+  .bignum span{font-size:.86rem; color:var(--muted);}
+  #time-panel{min-height:168px; margin-top:12px;}
+  .verdict{display:inline-block; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; font-weight:700; padding:3px 9px; border-radius:6px; color:#fff; margin-bottom:8px;}
+
+  /* ---------- 03 · O palpite ---------- */
+  #game-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:12px;}
+  .guess{display:grid; grid-template-columns:repeat(5, 1fr); gap:6px; margin-top:10px;}
+  .guess button{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:8px 4px; font-size:.8rem; cursor:pointer; color:var(--ink-2); line-height:1.2;}
+  .guess button b{display:block; font-size:1.05rem; color:var(--ink);}
+  .guess button:hover:not(:disabled){border-color:var(--ink);}
+  .guess button:disabled{opacity:.45; cursor:default;}
+  .score{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+  .score div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px; border-top:4px solid var(--sc);}
+  .score b{display:block; font-family:var(--serif); font-size:1.5rem; color:var(--ink); line-height:1.1; font-variant-numeric:tabular-nums;}
+  .score span{font-size:.76rem; color:var(--muted); display:block;}
+  #game-msg{font-size:.88rem; color:var(--ink-2); min-height:4.4em; margin-top:10px;}
+  #game-msg b{color:var(--ink);}
+
+  /* ---------- 04 · A revisão ---------- */
+  #funnel-svg{width:100%; display:block; max-width:520px;}
+  #funnel-svg .stp{cursor:pointer;}
+  #funnel-svg .stp:hover rect.bar, #funnel-svg .stp.on rect.bar{stroke:var(--ink); stroke-width:2;}
+  #fun-panel{min-height:86px; margin-top:10px;}
+  .minibars{display:grid; gap:6px; margin-top:12px;}
+  .minibar{display:grid; grid-template-columns:170px 1fr 34px; gap:8px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .minibar .tr{height:12px; background:#eef2f7; border-radius:4px; overflow:hidden;}
+  .minibar .tr i{display:block; height:100%; background:var(--eco); border-radius:4px; transition:width .5s;}
+  .minibar b{text-align:right; font-variant-numeric:tabular-nums;}
+  .minibar.hl span{color:var(--red); font-weight:700;}
+  .minibar.hl .tr i{background:var(--red);}
+  .minibar.st .tr i{background-image:repeating-linear-gradient(45deg, rgb(255 255 255 / .5) 0 3px, transparent 3px 6px);}
+  @media (max-width:600px){ .minibar{grid-template-columns:118px 1fr 30px; font-size:.74rem;} }
+  #rev-txt{font-size:.84rem; color:var(--ink-2); margin-top:10px; min-height:3em;}
+
+  /* ---------- 05 · As lacunas ---------- */
+  .cats{display:grid; gap:9px; margin-top:6px;}
+  .cat{display:grid; grid-template-columns:150px 1fr; gap:10px; align-items:center; cursor:pointer; border-radius:10px; padding:4px 6px; border:1px solid transparent; background:none; text-align:left; font:inherit; color:inherit;}
+  .cat:hover{border-color:var(--border);}
+  .cat.on{border-color:var(--ink); background:var(--card);}
+  .cat .nm{font-size:.84rem; font-weight:600; color:var(--ink);}
+  .cat .bar{display:flex; height:26px; border-radius:6px; overflow:hidden; gap:2px;}
+  .cat .bar span{display:flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:700; color:#fff; overflow:hidden; white-space:nowrap;}
+  .cat .bar span.pr{background:var(--red) !important;}
+  @media (max-width:600px){ .cat{grid-template-columns:1fr; gap:3px;} }
+  #gap-panel{min-height:250px;}
+  .gl{display:grid; gap:6px; margin-top:8px;}
+  .gl div{display:grid; grid-template-columns:1fr 46px; gap:8px; font-size:.84rem; align-items:center; padding:5px 10px; border-radius:8px; background:#f1f5f9;}
+  .gl div b{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink);}
+  .gl div.top{background:color-mix(in srgb, var(--eco) 12%, white);}
+  .gl div.pr{background:color-mix(in srgb, var(--red) 10%, white); outline:1.5px dashed var(--red);}
+  .gl div small{display:block; font-size:.7rem; color:var(--muted);}
+
+  /* ---------- 06 · Os candidatos ---------- */
+  #look-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:12px;}
+  .fam{font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--muted); margin:10px 0 4px;}
+  .mchips{display:flex; flex-wrap:wrap; gap:6px;}
+  .mchips button{border:1px solid var(--border); border-left:5px solid var(--mc); background:var(--card); border-radius:8px; padding:6px 12px; font-size:.84rem; font-weight:600; cursor:pointer; color:var(--ink-2);}
+  .mchips button.on{background:var(--mc); color:#fff; border-color:var(--mc);}
+  #look-panel{min-height:190px; margin-top:12px;}
+  #look-panel .cfg{font-size:.8rem; color:var(--muted); border-top:1px solid var(--border); padding-top:8px; margin-top:8px;}
+
+  /* ---------- 07 · Os dados ---------- */
+  #obs-scene .slab{cursor:pointer;}
+  #obs-scene .slab.active{--oz:12px;}
+  #obs-scene .floor-label{font-size:13px;}
+  #obs-scene .top-label{font-size:11px; color:var(--ink) !important; text-shadow:none;}
+  @media (max-width:600px){ #obs-scene .floor-label{display:none;} }
+  .tick-btns{display:flex; flex-wrap:wrap; gap:5px; margin-top:8px;}
+  .tick-btns button{border:1px solid var(--border); background:var(--card); border-radius:7px; padding:4px 8px; font-size:.76rem; font-weight:600; cursor:pointer; color:var(--ink-2); font-variant-numeric:tabular-nums;}
+  .tick-btns button.on{background:var(--ink); color:#fff; border-color:var(--ink);}
+  #obs-panel{min-height:132px; margin-top:10px;}
+  .split{display:flex; height:28px; border-radius:8px; overflow:hidden; margin:10px 0 4px;}
+  .split div{display:flex; align-items:center; justify-content:center; font-size:.76rem; font-weight:700; color:#fff; white-space:nowrap;}
+  .split-lb{display:flex; justify-content:space-between; gap:10px; font-size:.74rem; color:var(--muted);}
+
+  /* ---------- 08 · O teste ---------- */
+  .mcs{display:grid; gap:7px; margin-top:8px;}
+  .mrow{display:grid; grid-template-columns:86px 1fr 52px; gap:8px; align-items:center; font-size:.82rem; transition:opacity .5s;}
+  .mrow .nm{font-weight:700; color:var(--ink);}
+  .mrow .tr{position:relative; height:20px; background:#f1f5f9; border-radius:5px;}
+  .mrow .tr i{position:absolute; left:0; top:0; bottom:0; border-radius:5px; background:var(--eco); transition:background .4s;}
+  .mrow .tr s{position:absolute; top:4px; bottom:4px; border-left:2px solid var(--ink); border-right:2px solid var(--ink); text-decoration:none;}
+  .mrow .tr s::after{content:""; position:absolute; left:0; right:0; top:50%; border-top:2px solid var(--ink);}
+  .mrow b{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink-2);}
+  .mrow.out{opacity:.3;}
+  .mrow.out .tr i{background:var(--off);}
+  .mrow.worst .tr i{background:var(--red);}
+  .mrow.keep .nm{color:var(--eco);}
+  .mcs-ctrl{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
+  #mcs-log{min-height:150px;}
+  #mcs-log ol{margin:6px 0 0; padding-left:20px; font-size:.84rem; display:grid; gap:4px; color:var(--ink-2);}
+
+  /* ---------- 09 · O placar ---------- */
+  #mat-scene .slab{cursor:pointer;}
+  #mat-scene .slab.dim > i{opacity:.18;}
+  #mat-scene .slab.hit{--oz:10px;}
+  #mat-scene .floor-label{font-size:12px; font-weight:700;}
+  #mat-scene .floor-label.rl{text-align:right; font-size:13px;}
+  #mat-scene .floor-label.dim{opacity:.25;}
+  @media (max-width:600px){ #mat-scene .floor-label{display:none;} }
+  .cnt{display:grid; gap:5px; margin-top:4px;}
+  .cnt button{display:grid; grid-template-columns:122px 1fr 44px; gap:8px; align-items:center; font:inherit; font-size:.82rem; background:none; border:1px solid transparent; border-radius:8px; padding:3px 6px; cursor:pointer; color:var(--ink-2); text-align:left;}
+  .cnt button:hover{border-color:var(--border);}
+  .cnt button.on{border-color:var(--ink); background:var(--card);}
+  .cnt button span{font-weight:700; color:var(--ink);}
+  .cnt .tr{height:12px; background:#eef2f7; border-radius:4px; overflow:hidden; display:flex; gap:1px;}
+  .cnt .tr i{display:block; height:100%; flex:0 0 calc(10% - 1px);}
+  .cnt b{text-align:right; font-variant-numeric:tabular-nums;}
+  #mat-panel{min-height:96px; margin-top:12px;}
+  .tick-row{display:flex; flex-wrap:wrap; gap:5px; margin-top:10px;}
+
+  /* ---------- 10 · O palpite ingênuo ---------- */
+  .stocks{display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; margin-top:8px;}
+  @media (max-width:600px){ .stocks{grid-template-columns:repeat(2, 1fr);} }
+  .stk{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 10px 8px; cursor:pointer; text-align:left; font:inherit; color:inherit; transition:opacity .35s, box-shadow .3s, border-color .3s; position:relative;}
+  .stk .tk{font-weight:700; font-size:.92rem; color:var(--ink); font-variant-numeric:tabular-nums;}
+  .stk .ms{display:flex; flex-direction:column; gap:3px; margin-top:6px;}
+  .stk .ms span{font-size:.66rem; font-weight:700; color:#fff; border-radius:4px; padding:2px 5px; letter-spacing:.02em;}
+  .stk.rwin{border-color:var(--red); box-shadow:inset 0 0 0 1px var(--red);}
+  .stk.dim{opacity:.32;}
+  .stk.on{box-shadow:0 0 0 2px var(--ink);}
+  #rw-panel{min-height:150px;}
+  .sizebar{display:flex; align-items:flex-end; gap:6px; height:92px; margin-top:10px; padding-bottom:18px; position:relative;}
+  .sizebar div{flex:1; background:var(--eco); border-radius:4px 4px 0 0; position:relative; transition:background .3s;}
+  .sizebar div.rwin{background:var(--red);}
+  .sizebar div small{position:absolute; bottom:-17px; left:50%; transform:translateX(-50%); font-size:.6rem; color:var(--muted); white-space:nowrap;}
+  .sizebar div b{position:absolute; top:-16px; left:50%; transform:translateX(-50%); font-size:.72rem; color:var(--ink);}
+  @media (max-width:600px){ .sizebar div small{font-size:.5rem;} }
+
+  /* ---------- 11 · Na prática ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:12px; margin-top:8px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:15px 17px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink)); transition:transform .2s;}
+  .pcard:hover{transform:translateY(-3px);}
+  .pcard h3{font-size:1rem; margin-bottom:6px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:5px; font-size:.84rem; line-height:1.45; color:var(--ink-2);}
+  .pcard .src{display:block; margin-top:9px; font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--muted);}
+  .callout{margin-top:22px; padding:16px 20px; border-left:4px solid var(--red); background:var(--card); border-radius:0 12px 12px 0; box-shadow:var(--shadow);}
+  .callout p{margin:0; color:var(--ink); font-family:var(--serif); font-size:1rem; line-height:1.5;}
+
+  /* ---------- 12 · Limites e créditos ---------- */
+  .end{display:grid; grid-template-columns:1fr; gap:28px; margin-top:16px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:48px;} }
+  .end h3{font-size:1.15rem; margin-bottom:6px;}
+  .limits{display:grid; gap:7px; margin:10px 0 0; padding:0; list-style:none;}
+  .limits li{padding:9px 14px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.84rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.72rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.85rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px 18px; line-height:1.6; margin-top:10px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-meta="../../../teses/2024-mattos-previsao-acoes-alta-frequencia/meta.json">
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../../teses/2024-mattos-previsao-acoes-alta-frequencia/" hreflang="pt-BR" lang="pt-BR" title="Ler em português"><img class="lang-flag" src="../../../assets/bandeira-br.svg" width="17" height="12" alt="">PT</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Previous screen">↑</button>
+    <button class="nav-btn" id="next" aria-label="Next screen">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Screen navigation"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Start">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Doctoral thesis · PPGA Mackenzie · 2024</div>
+      <h1 class="rv" style="--d:.1s">Can you predict a stock's price one minute ahead?</h1>
+      <p class="sub rv" style="--d:.2s">The research tested <strong>eight ways of forecasting</strong>, from classic statistical models to neural networks, on <strong>ten of the most traded stocks on B3</strong>, the Brazilian stock exchange, minute by minute, in 2022. A simple statistical model was among the best for all of them; neural networks, almost never. Explained in 12 screens.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Author:</b> João Vitor de Mattos</span>
+        <span><b>Advisor:</b> Prof. Dr. Eli Hadad Junior</span>
+        <span><b>Program:</b> Graduate Program in Business Administration (PPGA) · Mackenzie Presbyterian University</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#tempo">Start →</a>
+        <a class="btn ghost" href="#placar">Go straight to the results</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="540x340" role="img" aria-label="Ten blue columns, one per stock, rise and fall every minute; on top of each, a red plate marks the previous minute's price, the 'same as last' guess"></div></div>
+      <div class="cap-legend">
+        <span><i class="dot" style="background:var(--eco)"></i>Price every minute</span>
+        <span><i class="dot" style="background:var(--rw)"></i>“Same as last” guess</span>
+        <span>Illustration, not data</span>
+      </div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">Closest UN Sustainable Development Goal</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://sdgs.un.org/goals/goal8" target="_blank" rel="noopener" title="SDG 8 · Decent Work and Economic Growth: Compares forecasting tools for decision-makers in the Brazilian stock market, using data on ten of the most traded stocks on B3."><b>8</b>Decent Work and Economic Growth</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">scroll<span></span></div>
+</section>
+
+<!-- 02 · O TEMPO DA BOLSA -->
+<section class="slide" id="tempo" data-label="The market's clock">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> High frequency</div>
+      <h2 class="rv" style="--d:.1s">On the exchange, prices are recorded every millisecond</h2>
+      <p class="rv" style="--d:.15s">Classic forecasting models were born with closing data: one price per day, month or year. Today B3 records every trade, and its system captures prices every <strong>millisecond</strong>. The thesis asks whether so much detail helps decision-makers.</p>
+      <p class="rv" style="--d:.2s">Pick a scale and see how many prices fit into a single trading day, from 10:00 to 16:59.</p>
+      <div class="seg rv" style="--d:.25s" id="time-seg" role="group" aria-label="Time scale"><button data-k="d">Day</button><button data-k="m" class="on">Minute</button><button data-k="s">Second</button><button data-k="ms">Millisecond</button></div>
+      <div class="bignum rv" style="--d:.3s"><b id="time-n">420</b><span id="time-u">prices per trading day</span></div>
+      <p class="note rv" style="--d:.35s">Our calculations, based on the trading hours given in the thesis (10:00 to 16:59, 420 minutes). According to a study cited in the thesis, a computer one mile from the exchange's data centre receives orders about five millionths of a second later.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="time-svg" viewBox="0 0 560 250" role="img" aria-label="One trading day drawn at the chosen scale"></svg>
+      <div class="panel" id="time-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · O PALPITE -->
+<section class="slide" id="palpite" data-label="Your guess">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> Try it</div>
+      <h2 class="rv" style="--d:.1s">Predicting the next minute is harder than it looks</h2>
+      <p class="rv" style="--d:.15s">Below are the last 30 minutes of an imaginary stock. Say where the price will be in the next minute. Your guess competes with the simplest one of all: <span class="rw-t">“the next price is the same as the last”</span>, which economists call a <em>random walk</em>.</p>
+      <p class="rv" style="--d:.2s">The score adds up the <strong>squared error</strong>, as in the thesis: missing by 4 cents counts as 16; missing by 2 counts as 4. The lowest total wins.</p>
+      <p class="note rv" style="--d:.25s"><b>Randomly drawn series.</b> The prices are made up in each round; they are not data from the thesis.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="game-svg" viewBox="0 0 560 260" role="img" aria-label="Chart of the last 30 minutes of price, with the next minute still open"></svg>
+      <div class="guess" id="guess" role="group" aria-label="Your guess for the next minute">
+        <button data-k="2"><b>↑↑</b>up a lot</button>
+        <button data-k="1"><b>↑</b>up</button>
+        <button data-k="0"><b>=</b>same</button>
+        <button data-k="-1"><b>↓</b>down</button>
+        <button data-k="-2"><b>↓↓</b>down a lot</button>
+      </div>
+      <div class="score">
+        <div style="--sc:var(--ink)"><span>You · squared error</span><b id="sc-you">0</b></div>
+        <div style="--sc:var(--rw)"><span>“Same as last” · squared error</span><b id="sc-rw">0</b></div>
+      </div>
+      <p id="game-msg" aria-live="polite"></p>
+      <button class="btn small ghost" id="game-reset" style="display:none">Play again</button>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · A REVISÃO -->
+<section class="slide" id="revisao" data-label="What was known">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> First stage · 93 articles</div>
+      <h2 class="rv" style="--d:.1s">About a dozen articles a year try to forecast with high-frequency data</h2>
+      <p class="rv" style="--d:.15s">The author searched two large databases of scientific articles (Scopus and Web of Science), from January 2015 to August 2022, for studies that use high-frequency data to forecast prices and price swings. Tap each stage.</p>
+      <svg id="funnel-svg" class="rv" style="--d:.2s" viewBox="0 0 520 250" role="img" aria-label="Review funnel: from 369 articles to 93"></svg>
+      <div class="panel rv" style="--d:.25s" id="fun-panel" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="rev-seg" role="group" aria-label="Look at the 93 articles"><button class="on" data-k="ano">By year</button><button data-k="pal">Keywords</button><button data-k="per">Journals</button></div>
+      <div class="minibars" id="rev-bars"></div>
+      <p id="rev-txt" aria-live="polite"></p>
+      <div class="stats">
+        <div class="stat"><b>241</b><span>authors signed the 93 articles</span></div>
+        <div class="stat"><b>197</b><span>of them (82%) have only one article on the topic</span></div>
+        <div class="stat"><b>10</b><span>articles by Ma F, the most prolific author</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · AS LACUNAS -->
+<section class="slide" id="lacunas" data-label="What is missing">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> First stage · the gaps</div>
+      <h2 class="rv" style="--d:.1s">Hardly anyone looks at Latin America</h2>
+      <p class="rv" style="--d:.15s">Each article was classified on six questions: its topic, the theory it uses, its method, where its data come from, what it concluded and what it suggests next. In <span class="rw-t">red</span>, what the author points to as a priority for new research. Tap a row.</p>
+      <div class="cats rv" style="--d:.2s" id="cats" role="group" aria-label="Six classification questions"></div>
+      <p class="note rv" style="--d:.25s">Percentages of the tags in each question (an article could receive up to five), not of the 93 articles. Figure 11 of the thesis.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel" id="gap-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · OS CANDIDATOS -->
+<section class="slide" id="modelos" data-label="The eight models">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Second stage · the candidates</div>
+      <h2 class="rv" style="--d:.1s">Eight models, each looking at the past in its own way</h2>
+      <p class="rv" style="--d:.15s">They all receive the same price history and try to say what comes next. What changes is what they pay attention to: only the last minute, a long memory, the size of the swings, or patterns that a neural network learns by itself.</p>
+      <div class="rv" style="--d:.2s" id="mchips"></div>
+      <p class="note rv" style="--d:.25s">The drawings illustrate what each model takes into account, on a made-up series. The settings come from section 3.5 of the thesis.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="look-svg" viewBox="0 0 560 250" role="img" aria-label="Price series with the stretch the chosen model considers highlighted"></svg>
+      <div class="panel" id="look-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · OS DADOS -->
+<section class="slide" id="dados" data-label="The data">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Second stage · ten stocks, 2022</div>
+      <h2 class="rv" style="--d:.1s">About 96,000 minutes per stock; the last 20,000 go into the test</h2>
+      <p class="rv" style="--d:.15s">The data came from B3 itself: every trade in 2022, in milliseconds, for the ten most liquid stocks. When there was no trade, the last price stood; then each series was summarised by the <strong>last price of each minute</strong>.</p>
+      <p class="rv" style="--d:.2s">To estimate the models, the author used the <strong>20,000 most recent minutes</strong> of each stock: 16,000 for the models to <span class="eco-t">learn</span> and 4,000 to <span class="rw-t">test</span> the guesses. With the whole series, the errors were larger.</p>
+      <div class="split rv" style="--d:.25s"><div style="width:80%; background:var(--eco)">16,000 learn</div><div style="width:20%; background:var(--rw)">4,000</div></div>
+      <div class="split-lb rv" style="--d:.25s"><span>about 38 trading days</span><span>about 9.5 test days</span></div>
+      <p class="note rv" style="--d:.3s">Trading days: our calculations (420 minutes per day). Table 7 and Chart 3 of the thesis.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="obs-scene" data-fit="560x330" role="group" aria-label="Ten 3D columns, one per stock, with height proportional to the number of minutes; on top, the part used for learning (blue) and testing (red)"></div></div>
+      <div class="leg"><span><i style="background:var(--off)"></i>minutes outside the study</span><span><i style="background:var(--eco)"></i>learn (16,000)</span><span><i style="background:var(--rw)"></i>test (4,000)</span></div>
+      <div class="tick-btns" id="obs-btns" role="group" aria-label="Choose a stock"></div>
+      <div class="panel" id="obs-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · O TESTE -->
+<section class="slide" id="teste" data-label="How to choose">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Third stage · the criterion</div>
+      <h2 class="rv" style="--d:.1s">The winner is not a single model but the group tied at the top</h2>
+      <p class="rv" style="--d:.15s">Forecast errors vary by chance. To avoid crowning a model that was merely lucky, the thesis used the <strong>Model Confidence Set</strong>: a test asks whether the remaining models make the same error; if not, the worst one leaves; and so on, until a group remains that cannot be told apart.</p>
+      <p class="rv" style="--d:.2s">Run the test, one round at a time.</p>
+      <div class="mcs-ctrl rv" style="--d:.25s"><button class="btn small" id="mcs-step">Run the test →</button><button class="btn small ghost" id="mcs-reset">Start over</button></div>
+      <p class="note rv" style="--d:.3s"><b>Illustration with made-up numbers.</b> The thesis does not publish each model's error; it only shows which models made the final group for each stock (next screen).</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="mcs" id="mcs" aria-live="polite"></div>
+      <div class="leg"><span><i style="background:var(--eco)"></i>average error</span><span>⊢⊣ range of chance</span><span><i style="background:var(--red)"></i>worst in the round</span></div>
+      <div class="panel" id="mcs-log" style="margin-top:14px" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · O PLACAR -->
+<section class="slide" id="placar" data-label="Who made the top">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> The result · Chart 4</div>
+      <h2 class="rv" style="--d:.1s">ARIMA was among the best for all ten stocks</h2>
+      <p class="rv" style="--d:.15s">Each raised block is a model that made the final group for a stock. <span class="eco-t">Statistical models</span> dominate: ARIMA in all ten, ARFIMA in eight. Of the <span class="ml-t">neural networks</span>, the Transformer made it into two and the LSTM into none. Tap a model or a stock.</p>
+      <div class="cnt rv" style="--d:.2s" id="mat-cnt" role="group" aria-label="Models and the number of stocks for which they made the final group"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="mat-scene" data-fit="600x400" role="group" aria-label="3D matrix: eight models by ten stocks; a block is raised when the model made the stock's final group"></div></div>
+      <div class="tick-row" id="mat-ticks" role="group" aria-label="Choose a stock"></div>
+      <div class="panel" id="mat-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · O PALPITE INGÊNUO -->
+<section class="slide" id="ingenuo" data-label="The unexpected">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">10</span> The unexpected</div>
+    <h2 class="rv" style="--d:.1s">For six of the ten stocks, “same as last” tied with the best</h2>
+    <div class="grid2" style="align-items:start; gap:28px">
+      <div>
+        <p class="rv" style="--d:.15s">Being in the final group means it cannot be said, with statistical confidence, that the other models make smaller errors. The <span class="rw-t">naive guess</span> made the group for six stocks; it was beaten for four. For two of those, only ARIMA remained.</p>
+        <div class="seg rv" style="--d:.2s" id="rw-seg" role="group" aria-label="Highlight stocks"><button class="on" data-k="all">All</button><button data-k="tie">Tied (6)</button><button data-k="beat">Beaten (4)</button></div>
+        <div class="stocks rv" style="--d:.25s" id="stocks"></div>
+      </div>
+      <div class="rv" style="--d:.2s">
+        <div class="panel" id="rw-panel" aria-live="polite"></div>
+        <div class="sizebar" id="sizebar" aria-label="Size of the final group for each stock"></div>
+        <p class="note">Height = how many models made each stock's final group (our count, Chart 4). In red, the stocks for which the naive guess was in the group.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · NA PRÁTICA -->
+<section class="slide" id="pratica" data-label="In practice">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> Why it matters</div>
+    <h2 class="rv" style="--d:.1s">More sophistication did not guarantee better forecasts</h2>
+    <p class="lede rv" style="--d:.15s">For the author, with these data and settings, traditional statistical models had the edge over neural networks. And the best model depends on the period analysed.</p>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.2s; --pc:var(--eco)">
+        <h3>For investors</h3>
+        <ul><li>Simple models, such as ARIMA, were among the best for every stock tested.</li><li>The best model changes with the period: it is worth reviewing the choice with new data.</li></ul>
+        <span class="src">Sections 5 and 6</span>
+      </div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--rw)">
+        <h3>For banks and asset managers</h3>
+        <ul><li>The confidence set makes it possible to compare many models at once, without electing a winner by chance.</li><li>Summarising milliseconds into minutes was what made the models work.</li></ul>
+        <span class="src">Sections 3.3, 5 and 6</span>
+      </div>
+      <div class="pcard rv" style="--d:.3s; --pc:var(--ml)">
+        <h3>For AI developers</h3>
+        <ul><li>LSTM and Transformer did not capture the price dynamics well at such a high frequency.</li><li>The author suggests testing other machine learning models, such as Prophet, N-HiTS and N-BEATS.</li></ul>
+        <span class="src">Final remarks</span>
+      </div>
+      <div class="pcard rv" style="--d:.35s; --pc:#334155">
+        <h3>For researchers</h3>
+        <ul><li>Gaps from the review: the effect of economic news on price swings, price jumps, event studies and Latin American markets.</li><li>Suggested next step: trading pairs of stocks that move together (<em>pair trading</em>).</li></ul>
+        <span class="src">Sections 2.5 and 6</span>
+      </div>
+    </div>
+    <div class="callout rv" style="--d:.4s"><p>The classic volatility models (ARCH and GARCH) appeared for only a few stocks, and the Kalman filter, although it followed the prices, did not make any final group.</p></div>
+  </div>
+</section>
+
+<!-- 12 · LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Limits and credits">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Limits and credits</div>
+    <h2 class="rv" style="--d:.1s">What this research does not say</h2>
+    <div class="end">
+      <div class="rv" style="--d:.2s">
+        <ul class="limits">
+          <li><b>It holds for that period and those models.</b> The result of the confidence set depends on the sample (2022) and on the models compared; another period may pick another model. <em>· according to the author</em></li>
+          <li><b>Minutes only.</b> In milliseconds and in seconds, the models did not reach stable results; the test uses the last price of each minute. <em>· according to the author</em></li>
+          <li><b>Who won, but not by how much.</b> The thesis shows which models made the final group, without the size of each model's error. There is no way to know how much smaller ARIMA's error is. <em>· our observation</em></li>
+          <li><b>Forecasting is not profit.</b> There was no simulation of buying and selling with the guesses, nor of trading costs. <em>· our observation</em></li>
+          <li><b>Ten stocks, simple settings.</b> The most traded on B3, every model with a single lag (the previous minute). <em>· our observation</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.25s">
+        <h3>Credits</h3>
+        <div class="cite">
+          <b>How to cite</b><br>
+          MATTOS, João Vitor de. <em>Projeção de preço para ações brasileiras utilizando-se dados em alta frequência</em> [Price forecasting for Brazilian stocks using high-frequency data]. Doctoral thesis (Business Administration) — Mackenzie Presbyterian University, São Paulo, 2024. Advisor: Prof. Dr. Eli Hadad Junior.
+        </div>
+        <p style="margin-top:14px; font-size:.85rem">Research supported by Banco do Brasil. Bibliometric and systematic review in Scopus and Web of Science (R and Biblioshiny); trading data from B3; model selection by the Model Confidence Set (Hansen, Lunde and Nason). This version simplifies the work for a general audience; the formulas and the details of each model are in the original text.</p>
+        <div class="ctas" style="margin-top:16px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Read the full thesis (in Portuguese)</a>
+          <a class="btn ghost" href="#capa">↑ Back to the start</a>
+          <a class="btn ghost" href="../../">Other research</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, ramp = M.ramp, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  var LOC = EN ? 'en-US' : 'pt-BR';
+  function num(n, d){ return n.toLocaleString(LOC, {minimumFractionDigits:d || 0, maximumFractionDigits:d || 0}); }
+  var NSV = 'http://www.w3.org/2000/svg';
+  function el(t, a, txt){ var e = document.createElementNS(NSV, t); for (var k in a) e.setAttribute(k, a[k]); if (txt !== undefined) e.textContent = txt; return e; }
+  var mob = window.matchMedia('(max-width:600px)');
+  var C = {eco:'#1f3b73', ml:'#64748b', rw:'#e80734', off:'#cbd5e1', ink:'#0f172a', muted:'#64748b'};
+  var ECO = 'var(--eco)', ML = 'var(--ml)', RW = 'var(--rw)', OFF = 'var(--off)';
+  // gerador pseudoaleatório com semente (séries ilustrativas reproduzíveis)
+  function rng(seed){ return function(){ seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  // tint(hex, t): mistura a cor com branco (t = 0 a 1), em hex (atributos SVG não resolvem color-mix em todo navegador)
+  function tint(h, t){ var n = parseInt(h.slice(1), 16), rgb = [n >> 16, n >> 8 & 255, n & 255].map(function(c){ return Math.round(c + (255 - c) * t); }); return 'rgb(' + rgb.join(',') + ')'; }
+  function gauss(r){ var u = 0, v = 0; while (!u) u = r(); while (!v) v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+
+  /* ================= DADOS DA TESE ================= */
+  // Quadro 3 (empresa) e Tabela 7 (observações em minutos, 2022)
+  var STOCKS = [
+    {t:'ABEV3', n:'Cia Cervejaria das Américas', obs:73781},
+    {t:'B3SA3', n:'B3 ON', obs:95719},
+    {t:'BBAS3', n:EN ? 'Banco do Brasil common' : 'Banco do Brasil ON', obs:96143},
+    {t:'BBDC4', n:EN ? 'Banco Bradesco preferred' : 'Banco Bradesco PN', obs:96120},
+    {t:'ITSA4', n:EN ? 'Itaúsa preferred' : 'Itaúsa PN', obs:96242},
+    {t:'ITUB3', n:EN ? 'Banco Itaú common' : 'Banco Itaú ON', obs:76450},
+    {t:'ITUB4', n:EN ? 'Banco Itaú preferred' : 'Banco Itaú PN', obs:95885},
+    {t:'PETR3', n:EN ? 'Petrobras common' : 'Petrobras ON', obs:95606},
+    {t:'PETR4', n:EN ? 'Petrobras preferred' : 'Petrobras PN', obs:95853},
+    {t:'VALE3', n:'Cia Vale do Rio Doce', obs:95906}
+  ];
+  var TK = STOCKS.map(function(s){ return s.t; });
+  // Quadro 4: ações em que o modelo ficou no grupo final do Model Confidence Set
+  var MODELS = [
+    {k:'arima', n:'ARIMA', f:'eco', set:TK.slice()},
+    {k:'arfima', n:'ARFIMA', f:'eco', set:['ABEV3','B3SA3','BBAS3','BBDC4','ITUB3','PETR3','PETR4','VALE3']},
+    {k:'rw', n:EN ? 'Random walk' : 'Random walk', f:'rw', set:['B3SA3','BBAS3','ITUB3','PETR3','PETR4','VALE3']},
+    {k:'arch', n:'ARCH', f:'eco', set:['BBAS3','ITUB3','VALE3']},
+    {k:'garch', n:'GARCH', f:'eco', set:['B3SA3','BBAS3']},
+    {k:'tr', n:'Transformer', f:'ml', set:['PETR3','PETR4']},
+    {k:'kal', n:EN ? 'Kalman filter' : 'Filtro de Kalman', f:'eco', set:[]},
+    {k:'lstm', n:'LSTM', f:'ml', set:[]}
+  ];
+  function famCol(f){ return f === 'eco' ? ECO : f === 'ml' ? ML : RW; }
+  function famHex(f){ return C[f]; }
+  function inSet(m, t){ return m.set.indexOf(t) > -1; }
+
+  /* ================= 01 · CAPA ================= */
+  // Dez colunas (ações) cujo preço muda a cada "minuto"; a lâmina vermelha marca o minuto anterior. Ilustração.
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 500, 200, {ay:'66%'});
+    var r = rng(7), cols = [], plates = [], cur = [], prev = [];
+    TK.forEach(function(t, i){
+      var h = 70 + r() * 60;
+      cur.push(h); prev.push(h);
+      var x = 8 + i * 49;
+      var b = box({w:34, d:34, x:x, y:60, h:h, c:ECO});
+      var p = box({w:40, d:40, x:x - 3, y:57, z:h, h:3, c:RW});
+      st.appendChild(b); st.appendChild(p); cols.push(b); plates.push(p);
+      flatLabel(st, t, x - 12, 104, 58, 'font-size:11px');
+    });
+    rotatable(sc, st, -14, 8);
+    function step(){
+      cols.forEach(function(b, i){
+        prev[i] = cur[i];
+        cur[i] = Math.max(30, Math.min(190, cur[i] + gauss(r) * 12));
+        plates[i].style.setProperty('--z', prev[i] + 'px');
+        b.style.setProperty('--h', cur[i] + 'px');
+      });
+    }
+    if (reduce) return;
+    var last = 0;
+    M.onTick(function(t){ if (t - last > 1.3){ last = t; step(); } });
+  })();
+
+  /* ================= 02 · O TEMPO DA BOLSA ================= */
+  (function(){
+    var svg = $('time-svg'), W = 560, H = 250, X0 = 34, X1 = 540, Y0 = 26, Y1 = 196;
+    var MODES = {
+      d:{n:1, u:EN ? 'price per trading day (the close)' : 'preço por pregão (o fechamento)', draw:1,
+         v:EN ? 'Where the classic models were born' : 'Onde os modelos clássicos nasceram', vc:C.muted,
+         p:EN ? 'Most data sets on market activity are built from closing prices: annual, quarterly, monthly or daily. Classic forecasting models were designed for this kind of sample.' : 'A maior parte dos dados sobre o mercado é feita de preços de fechamento: anual, trimestral, mensal ou diário. Os modelos clássicos de previsão foram pensados para esse tipo de amostra.'},
+      m:{n:420, u:EN ? 'prices per trading day' : 'preços por pregão', draw:420,
+         v:EN ? 'The scale the thesis used' : 'A régua que a tese usou', vc:C.eco,
+         p:EN ? 'Summarising each minute by its last traded price "significantly reduced" the instability of the models, and their estimates converged in every case.' : 'Resumir cada minuto pelo último preço negociado reduziu “significativamente” a instabilidade dos modelos, e as estimativas convergiram em todos os casos.'},
+      s:{n:25200, u:EN ? 'prices per trading day' : 'preços por pregão', draw:2520,
+         v:EN ? 'Too much noise' : 'Ruído demais', vc:C.rw,
+         p:EN ? 'Collapsed into seconds, the series were still too unstable: the author reports that the estimates did not converge.' : 'Resumidas em segundos, as séries ainda eram instáveis demais: o autor relata que as estimativas não convergiram.'},
+      ms:{n:25200000, u:EN ? 'possible readings per trading day' : 'leituras possíveis por pregão', draw:5000,
+         v:EN ? 'Too much noise' : 'Ruído demais', vc:C.rw,
+         p:EN ? 'The B3 system captures prices every millisecond. In this raw frequency, the models did not reach stable results either. Trading is not continuous: between two trades, the last price stands.' : 'O sistema da B3 capta o preço a cada milissegundo. Nessa frequência pura, os modelos também não chegaram a resultados estáveis. Os negócios não são contínuos: entre dois negócios, vale o último preço.'}
+    };
+    // série base ilustrativa (um pregão), com ruído que cresce na frequência mais fina
+    var r = rng(11), base = [], v = 0;
+    for (var i = 0; i <= 420; i++){ v += gauss(r) * 0.9; base.push(v); }
+    var mn = Math.min.apply(null, base), mx = Math.max.apply(null, base);
+    function sy(y){ return Y1 - 10 - (y - mn + 6) / (mx - mn + 12) * (Y1 - Y0 - 20); }
+    function sx(i, n){ return X0 + i / n * (X1 - X0); }
+    function draw(k){
+      var md = MODES[k];
+      svg.innerHTML = '';
+      svg.appendChild(el('line', {x1:X0, y1:Y1, x2:X1, y2:Y1, stroke:'#cbd5e1'}));
+      (EN ? ['10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00'] : ['10h','11h','12h','13h','14h','15h','16h','17h']).forEach(function(h, j){
+        var x = X0 + j / 7 * (X1 - X0);
+        svg.appendChild(el('line', {x1:x, y1:Y1, x2:x, y2:Y1 + 5, stroke:'#94a3b8'}));
+        svg.appendChild(el('text', {x:x, y:Y1 + 20, 'text-anchor':'middle', 'font-size':12, fill:'#64748b'}, h));
+      });
+      var rr = rng(23), pts = [];
+      if (k === 'd'){
+        var yc = sy(base[420]);
+        svg.appendChild(el('line', {x1:X0, y1:yc, x2:X1, y2:yc, stroke:'#cbd5e1', 'stroke-dasharray':'5 5'}));
+        svg.appendChild(el('circle', {cx:X1, cy:yc, r:8, fill:C.eco}));
+        svg.appendChild(el('text', {x:X1 - 14, y:yc - 14, 'text-anchor':'end', 'font-size':13, 'font-weight':700, fill:C.ink}, EN ? 'the close: 1 price' : 'o fechamento: 1 preço'));
+      } else {
+        var n = md.draw, noise = k === 'm' ? 0 : k === 's' ? 0.55 : 1.4;
+        for (var j = 0; j <= n; j++){
+          var f = j / n * 420, a = Math.floor(f), b2 = Math.min(420, a + 1), y = base[a] + (base[b2] - base[a]) * (f - a);
+          pts.push(sx(j, n).toFixed(1) + ',' + sy(y + gauss(rr) * noise).toFixed(1));
+        }
+        svg.appendChild(el('polyline', {points:pts.join(' '), fill:'none', stroke:k === 'm' ? C.eco : C.rw, 'stroke-width':k === 'm' ? 1.6 : k === 's' ? .7 : .45, 'stroke-linejoin':'round', opacity:k === 'ms' ? .8 : 1}));
+        if (k !== 'm') svg.appendChild(el('text', {x:X1, y:Y0 - 6, 'text-anchor':'end', 'font-size':11.5, fill:'#64748b'}, EN ? ('drawn: 1 in every ' + num(md.n / md.draw) + ' (illustration)') : ('desenhado: 1 a cada ' + num(md.n / md.draw) + ' (ilustração)')));
+        else svg.appendChild(el('text', {x:X1, y:Y0 - 6, 'text-anchor':'end', 'font-size':11.5, fill:'#64748b'}, EN ? '420 points (illustration)' : '420 pontos (ilustração)'));
+      }
+      $('time-n').textContent = num(md.n);
+      $('time-u').textContent = md.u;
+      $('time-panel').innerHTML = '<span class="verdict" style="background:' + md.vc + '">' + md.v + '</span><p>' + md.p + '</p>';
+    }
+    each($('time-seg').children, function(b){ b.addEventListener('click', function(){ each($('time-seg').children, function(x){ x.classList.toggle('on', x === b); }); draw(b.dataset.k); }); });
+    draw('m');
+  })();
+
+  /* ================= 03 · O PALPITE ================= */
+  // Série sorteada (passeio aleatório). Palpite = último ± passos típicos; placar com erro ao quadrado em centavos.
+  (function(){
+    var svg = $('game-svg'), X0 = 64, X1 = 520, Y0 = 20, Y1 = 220, N = 30, SIG = 3, ROUNDS = 6;
+    var seed = 101, r, ser, round, you, rwv, done;
+    function reset(){
+      r = rng(seed++); ser = []; var p = 2000;
+      for (var i = 0; i < N; i++){ ser.push(p); p += Math.round(gauss(r) * SIG); }
+      round = 0; you = 0; rwv = 0; done = false;
+      $('sc-you').textContent = '0'; $('sc-rw').textContent = '0';
+      $('game-msg').innerHTML = EN ? '<b>Round 1 of 6.</b> Where will the price be in the next minute?' : '<b>Rodada 1 de 6.</b> Onde estará o preço no próximo minuto?';
+      $('game-reset').style.display = 'none';
+      each($('guess').children, function(b){ b.disabled = false; });
+      draw(null);
+    }
+    function fmtP(c){ return 'R$ ' + num(c / 100, 2); }
+    function draw(res){
+      svg.innerHTML = '';
+      var vis = ser.slice(-N), all = vis.slice();
+      if (res){ all.push(res.g, res.a); }
+      var mn = Math.min.apply(null, all) - 4, mx = Math.max.apply(null, all) + 4;
+      if (mx - mn < 24){ var c = (mx + mn) / 2; mn = c - 12; mx = c + 12; }
+      function sy(v){ return Y1 - (v - mn) / (mx - mn) * (Y1 - Y0); }
+      function sx(i){ return X0 + i / N * (X1 - X0); }
+      for (var g = 0; g <= 4; g++){
+        var vv = mn + g / 4 * (mx - mn), yy = sy(vv);
+        svg.appendChild(el('line', {x1:X0, y1:yy, x2:X1 + 20, y2:yy, stroke:'#eef2f7'}));
+        svg.appendChild(el('text', {x:X0 - 6, y:yy + 4, 'text-anchor':'end', 'font-size':11, fill:'#94a3b8'}, num(vv / 100, 2)));
+      }
+      svg.appendChild(el('polyline', {points:vis.map(function(v, i){ return sx(i) + ',' + sy(v); }).join(' '), fill:'none', stroke:C.eco, 'stroke-width':2.4, 'stroke-linejoin':'round'}));
+      var last = vis[N - 1], xl = sx(N - 1), xn = sx(N);
+      svg.appendChild(el('circle', {cx:xl, cy:sy(last), r:4.5, fill:C.eco}));
+      svg.appendChild(el('rect', {x:xn - 14, y:Y0, width:28, height:Y1 - Y0, fill:'#f8fafc', stroke:'#e2e8f0', 'stroke-dasharray':'4 4'}));
+      svg.appendChild(el('text', {x:xn, y:Y1 + 18, 'text-anchor':'middle', 'font-size':11.5, fill:'#64748b', 'font-weight':700}, EN ? 'next' : 'próximo'));
+      svg.appendChild(el('text', {x:X0, y:Y1 + 18, 'font-size':11.5, fill:'#64748b'}, EN ? '30 minutes ago' : 'há 30 minutos'));
+      svg.appendChild(el('line', {x1:xl, y1:sy(last), x2:xn + 14, y2:sy(last), stroke:C.rw, 'stroke-width':1.5, 'stroke-dasharray':'3 3'}));
+      if (res){
+        svg.appendChild(el('line', {x1:xn, y1:sy(res.g), x2:xn, y2:sy(res.a), stroke:'#94a3b8', 'stroke-width':1}));
+        svg.appendChild(el('circle', {cx:xn, cy:sy(res.g), r:6, fill:'#fff', stroke:C.ink, 'stroke-width':2.5}));
+        svg.appendChild(el('rect', {x:xn - 6, y:sy(last) - 6, width:12, height:12, fill:C.rw, transform:'rotate(45 ' + xn + ' ' + sy(last) + ')'}));
+        svg.appendChild(el('circle', {cx:xn, cy:sy(res.a), r:6.5, fill:C.eco}));
+        svg.appendChild(el('text', {x:xn - 18, y:sy(res.a) + 4, 'text-anchor':'end', 'font-size':12, 'font-weight':700, fill:C.eco}, EN ? 'actual' : 'real'));
+      }
+    }
+    each($('guess').children, function(b){
+      b.addEventListener('click', function(){
+        if (done) return;
+        var last = ser[ser.length - 1], g = last + Number(b.dataset.k) * SIG, a = last + Math.round(gauss(r) * SIG);
+        var ey = (g - a) * (g - a), er = (last - a) * (last - a);
+        you += ey; rwv += er; round++;
+        draw({g:g, a:a});
+        $('sc-you').textContent = num(you); $('sc-rw').textContent = num(rwv);
+        var t = EN ? ('Actual: ' + fmtP(a) + '. You missed by ' + Math.abs(g - a) + ' cents (' + ey + '); "same as last" by ' + Math.abs(last - a) + ' (' + er + ').')
+                   : ('Real: ' + fmtP(a) + '. Você errou por ' + Math.abs(g - a) + ' centavos (' + ey + '); “igual ao último”, por ' + Math.abs(last - a) + ' (' + er + ').');
+        ser.push(a);
+        if (round >= ROUNDS){
+          done = true;
+          each($('guess').children, function(x){ x.disabled = true; });
+          var w = you < rwv ? (EN ? '<b>You won this time.</b> ' : '<b>Desta vez você venceu.</b> ') : you > rwv ? (EN ? '<b>"Same as last" won.</b> ' : '<b>“Igual ao último” venceu.</b> ') : (EN ? '<b>A tie.</b> ' : '<b>Empate.</b> ');
+          $('game-msg').innerHTML = t + ' ' + w + (EN ? 'In a series drawn at random, like this one, no rule beats "same as last" on average. The thesis asks whether real stock prices, minute by minute, have some pattern that models can catch.' : 'Numa série sorteada como esta, nenhuma regra vence “igual ao último” na média. A tese pergunta se o preço real das ações, minuto a minuto, tem algum padrão que os modelos consigam captar.');
+          $('game-reset').style.display = '';
+        } else {
+          $('game-msg').innerHTML = t + ' <b>' + (EN ? 'Round ' : 'Rodada ') + (round + 1) + (EN ? ' of 6.' : ' de 6.') + '</b>';
+        }
+      });
+    });
+    $('game-reset').addEventListener('click', reset);
+    reset();
+  })();
+
+  /* ================= 04 · A REVISÃO ================= */
+  (function(){
+    // Tabelas 1 e 2
+    var F = EN ? [
+      [369, 'found', 'Scopus (196) and Web of Science (173), searching titles, abstracts and keywords for "high frequency data", "forecast" and "volatility".'],
+      [167, 'after the filters', '135 were from before 2015, 3 were not in English and 64 were outside economics, econometrics and business finance.'],
+      [118, 'without repeats', '49 articles appeared in both databases.'],
+      [93, 'final sample', '25 articles could not be found in full.']
+    ] : [
+      [369, 'encontrados', 'Scopus (196) e Web of Science (173), buscando “high frequency data”, “forecast” e “volatility” no título, no resumo e nas palavras-chave.'],
+      [167, 'depois dos filtros', '135 eram anteriores a 2015, 3 não estavam em inglês e 64 estavam fora de economia, econometria e finanças.'],
+      [118, 'sem repetidos', '49 artigos apareciam nas duas bases.'],
+      [93, 'amostra final', '25 artigos não foram localizados na íntegra.']
+    ];
+    var svg = $('funnel-svg'), sel = 3;
+    function draw(){
+      svg.innerHTML = '';
+      F.forEach(function(s, i){
+        var w = 120 + (s[0] / 369) * 380, x = (520 - w) / 2, y = 8 + i * 60;
+        var g = el('g', {'class':'stp' + (i === sel ? ' on' : ''), tabindex:0, role:'button', 'aria-label':s[0] + ' ' + s[1]});
+        g.appendChild(el('rect', {'class':'bar', x:x, y:y, width:w, height:50, rx:8, fill:i === 3 ? C.rw : tint(C.eco, i * 0.22)}));
+        g.appendChild(el('text', {'class':'fv', x:260, y:y + 23, 'text-anchor':'middle', 'font-size':20, 'font-weight':700, fill:'#fff', 'font-family':'Merriweather, serif'}, num(s[0])));
+        g.appendChild(el('text', {x:260, y:y + 41, 'text-anchor':'middle', 'font-size':12, fill:'#fff'}, s[1]));
+        g.addEventListener('click', function(){ sel = i; draw(); });
+        g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); sel = i; draw(); } });
+        svg.appendChild(g);
+      });
+      $('fun-panel').innerHTML = '<div class="tag">' + num(F[sel][0]) + ' · ' + F[sel][1] + '</div><p>' + F[sel][2] + '</p>';
+    }
+    draw();
+    // Tabela 3 (2015–2021; 2022 = 93 − 84, conta nossa), Figura 1 e Tabela 6
+    var SETS = {
+      ano:{rows:[['2015',12],['2016',9],['2017',9],['2018',13],['2019',13],['2020',11],['2021',17],[EN ? '2022 (to Aug)*' : '2022 (até ago.)*',9,'st']], max:17,
+           t:EN ? 'About 12 a year, with a peak of 17 in 2021. *2022: 93 minus the 84 counted up to 2021 (our calculation).' : 'Cerca de 12 por ano, com pico de 17 em 2021. *2022: 93 menos os 84 contados até 2021 (conta nossa).'},
+      pal:{rows:[['high-frequency data',36],['volatility forecasting',26],['realized volatility',19],['forecasting',15],['high frequency data',14],['value-at-risk',11],['volatility',9],['implied volatility',7],['har',7],['garch',6]], max:36,
+           t:EN ? 'The ten most frequent keywords (Figure 1). The topic is, above all, forecasting volatility, how much prices swing.' : 'As dez palavras-chave mais frequentes (Figura 1). O tema é, sobretudo, prever a volatilidade, o quanto os preços oscilam.'},
+      per:{rows:[['Journal of Forecasting',14,'hl'],['Int. Journal of Forecasting',8],['Int. Review of Econ. and Finance',6],['Quantitative Finance',6],['North American J. of Econ. and Finance',5],[EN ? '9 journals with 2 to 4' : '9 revistas com 2 a 4',25],[EN ? '29 journals with 1 each' : '29 revistas com 1 cada',29,'st']], max:29,
+           t:EN ? 'Bradford\'s law: a few journals concentrate many articles. 14 journals published 64 of the 93 articles (69%).' : 'Lei de Bradford: poucas revistas concentram muitos artigos. 14 revistas publicaram 64 dos 93 artigos (69%).'}
+    };
+    function bars(k){
+      var s = SETS[k];
+      $('rev-bars').innerHTML = s.rows.map(function(r){
+        return '<div class="minibar' + (r[2] ? ' ' + r[2] : '') + '"><span>' + r[0] + '</span><div class="tr"><i style="width:' + (r[1] / s.max * 100) + '%"></i></div><b>' + r[1] + '</b></div>';
+      }).join('');
+      $('rev-txt').textContent = s.t;
+    }
+    each($('rev-seg').children, function(b){ b.addEventListener('click', function(){ each($('rev-seg').children, function(x){ x.classList.toggle('on', x === b); }); bars(b.dataset.k); }); });
+    bars('ano');
+  })();
+
+  /* ================= 05 · AS LACUNAS ================= */
+  (function(){
+    // Figura 11. p = subcategoria que o autor aponta como prioridade.
+    var CATS = EN ? [
+      {n:'1 · Main topic', rows:[['Traditional forecasting models',40],['New forecasting models',23],['Risk management models',15],['Economic news and volatility',12,'p'],['High × low frequency data',6],['Other',4]]},
+      {n:'2 · Theory', rows:[['Volatility',53],['Risk management',29],['Portfolio management',12],['Event studies',4,'p'],['Other',2]]},
+      {n:'3 · Method', rows:[['Autoregressive model',59],['Risk model',21],['Other',15],['Jump analysis (price leaps)',5,'p']]},
+      {n:'4 · Where the data come from', rows:[['USA and Canada',43],['Asia/Oceania',23],['Global',19],['Europe',10],['Latin America',4,'p'],['Africa',1]]},
+      {n:'5 · Results', rows:[['New models or hypotheses confirmed',55],['Existing models or hypotheses confirmed',27],['Inconclusive',15],['Other',3]]},
+      {n:'6 · Suggested next steps', rows:[['Improve the model',51],['Use the model for new purposes',33],['Test the model on new samples',16]]}
+    ] : [
+      {n:'1 · Tema principal', rows:[['Modelos de previsão tradicionais',40],['Novos modelos de previsão',23],['Modelos de gestão de risco',15],['Notícias da economia e volatilidade',12,'p'],['Dados de alta × baixa frequência',6],['Outros',4]]},
+      {n:'2 · Teoria', rows:[['Volatilidade',53],['Gestão de riscos',29],['Gestão de carteiras',12],['Estudo de eventos',4,'p'],['Outras',2]]},
+      {n:'3 · Método', rows:[['Modelo autorregressivo',59],['Modelo de risco',21],['Outros',15],['Análise de saltos de preço (jumps)',5,'p']]},
+      {n:'4 · Origem dos dados', rows:[['EUA e Canadá',43],['Ásia/Oceania',23],['Global',19],['Europa',10],['América Latina',4,'p'],['África',1]]},
+      {n:'5 · Resultados', rows:[['Confirmaram modelos ou hipóteses novos',55],['Confirmaram modelos ou hipóteses já existentes',27],['Não conclusivos',15],['Outros',3]]},
+      {n:'6 · Caminhos sugeridos', rows:[['Aprimorar o modelo',51],['Usar o modelo para novas finalidades',33],['Testar o modelo em novas amostras',16]]}
+    ];
+    var sel = 3;
+    var box2 = $('cats');
+    CATS.forEach(function(c, i){
+      var b = document.createElement('button');
+      b.className = 'cat'; b.type = 'button';
+      b.innerHTML = '<span class="nm">' + c.n + '</span><span class="bar">' + c.rows.map(function(r, j){
+        return '<span class="' + (r[2] ? 'pr' : '') + '" style="width:' + r[1] + '%; background:' + ramp('#1f3b73', j, c.rows.length) + '" title="' + r[0] + ': ' + r[1] + '%">' + (r[1] >= 9 ? r[1] + '%' : '') + '</span>';
+      }).join('') + '</span>';
+      b.setAttribute('aria-label', c.n);
+      b.addEventListener('click', function(){ sel = i; show(); });
+      box2.appendChild(b);
+    });
+    function show(){
+      each(box2.children, function(x, i){ x.classList.toggle('on', i === sel); x.setAttribute('aria-pressed', i === sel); });
+      var c = CATS[sel], pr = c.rows.filter(function(r){ return r[2]; })[0];
+      $('gap-panel').innerHTML = '<div class="tag">' + c.n + '</div>' +
+        '<h3>' + (pr ? (EN ? 'Priority: ' : 'Prioridade: ') + pr[0] + ' (' + pr[1] + '%)' : (EN ? 'Most frequent: ' : 'Mais frequente: ') + c.rows[0][0] + ' (' + c.rows[0][1] + '%)') + '</h3>' +
+        '<div class="gl">' + c.rows.map(function(r, j){
+          var cl = r[2] ? 'pr' : j === 0 ? 'top' : '';
+          var sm = r[2] ? (EN ? 'priority for future research' : 'prioridade para novas pesquisas') : j === 0 ? (EN ? 'most frequent' : 'mais frequente') : '';
+          return '<div class="' + cl + '"><span>' + r[0] + (sm ? '<small>' + sm + '</small>' : '') + '</span><b>' + r[1] + '%</b></div>';
+        }).join('') + '</div>';
+    }
+    show();
+  })();
+
+  /* ================= 06 · OS CANDIDATOS ================= */
+  (function(){
+    var LOOK = [
+      {k:'rw', f:'rw', n:'Random walk', g:EN ? 'Reference' : 'Referência',
+       h:EN ? 'Only the last minute' : 'Só o último minuto',
+       p:EN ? 'The next price is the last one. It assumes prices move unpredictably, so the best guess is to repeat the last one. It is the benchmark every model has to beat.' : 'O próximo preço é o último. Supõe que o preço anda sem padrão, então o melhor palpite é repetir o último. É a régua que todo modelo precisa superar.',
+       c:EN ? 'No parameters.' : 'Sem parâmetros.'},
+      {k:'arima', f:'eco', n:'ARIMA', g:EN ? 'Statistical models' : 'Modelos estatísticos',
+       h:EN ? 'The last change and the last mistake' : 'A última variação e o último erro',
+       p:EN ? 'A classic from the 1970s (Box and Jenkins). It works with the minute-to-minute change in price and corrects itself with the error it made in the previous minute.' : 'Clássico dos anos 1970 (Box e Jenkins). Trabalha com a variação do preço de um minuto para o outro e se corrige com o erro que cometeu no minuto anterior.',
+       c:EN ? 'In the thesis: 1 autoregressive lag, 1 moving-average lag and one difference (chosen by AIC and the Dickey-Fuller test).' : 'Na tese: 1 defasagem autorregressiva, 1 de média móvel e uma diferença (escolhidas pelo critério AIC e pelo teste de Dickey-Fuller).'},
+      {k:'arfima', f:'eco', n:'ARFIMA', g:EN ? 'Statistical models' : 'Modelos estatísticos',
+       h:EN ? 'A long memory that fades' : 'Uma memória longa que vai se apagando',
+       p:EN ? 'A relative of ARIMA that lets the distant past still count a little. Studies of high-frequency data use it to capture long memory in volatility.' : 'Parente do ARIMA que deixa o passado distante ainda pesar um pouco. Estudos com dados de alta frequência o usam para captar a memória longa da volatilidade.',
+       c:EN ? 'In the thesis: the differencing parameter can take fractional values between 0 and 1.' : 'Na tese: o parâmetro de diferença pode assumir valores fracionários, entre 0 e 1.'},
+      {k:'arch', f:'eco', n:'ARCH', g:EN ? 'Statistical models' : 'Modelos estatísticos',
+       h:EN ? 'The size of the latest swings' : 'O tamanho das últimas oscilações',
+       p:EN ? 'Created by Engle (1982) for volatility: after big swings, more big swings are expected. The thesis calls ARCH and GARCH the "classic volatility models".' : 'Criado por Engle (1982) para a volatilidade: depois de grandes oscilações, espera mais oscilações grandes. A tese chama ARCH e GARCH de “modelos clássicos de volatilidade”.',
+       c:EN ? 'In the thesis: 1 lag.' : 'Na tese: 1 defasagem.'},
+      {k:'garch', f:'eco', n:'GARCH', g:EN ? 'Statistical models' : 'Modelos estatísticos',
+       h:EN ? 'The swings and a level of agitation that persists' : 'As oscilações e um nível de agitação que persiste',
+       p:EN ? 'A generalisation of ARCH: besides the latest swings, it carries forward its own estimate of how agitated the market is, with fewer parameters.' : 'Generalização do ARCH: além das últimas oscilações, carrega adiante sua própria estimativa de quão agitado está o mercado, com menos parâmetros.',
+       c:EN ? 'In the thesis: 1 autoregressive lag and 1 moving-average lag.' : 'Na tese: 1 defasagem autorregressiva e 1 de média móvel.'},
+      {k:'kal', f:'eco', n:EN ? 'Kalman filter' : 'Filtro de Kalman', g:EN ? 'Statistical models' : 'Modelos estatísticos',
+       h:EN ? 'A hidden "true price" corrected each minute' : 'Um “preço verdadeiro” escondido, corrigido a cada minuto',
+       p:EN ? 'Born in 1960 to guide aircraft and spacecraft. It estimates a state that cannot be seen behind the noise, predicts it, and updates it when the new price arrives.' : 'Nasceu em 1960 para guiar aviões e naves. Estima um estado que não se vê por trás do ruído, prevê esse estado e o atualiza quando chega o preço novo.',
+       c:EN ? 'In the thesis: linear dynamics, matrices initialised with zeros.' : 'Na tese: dinâmica linear, matrizes iniciadas com zeros.'},
+      {k:'lstm', f:'ml', n:'LSTM', g:EN ? 'Neural networks' : 'Redes neurais',
+       h:EN ? 'What the network learns to keep and to forget' : 'O que a rede aprende a guardar e a esquecer',
+       p:EN ? 'A recurrent neural network with "gates" that decide what to forget, what to add and what to pass on. It can learn sequences more than a thousand steps long.' : 'Rede neural recorrente com “portões” que decidem o que esquecer, o que acrescentar e o que passar adiante. Consegue aprender sequências de mais de mil passos.',
+       c:EN ? 'In the thesis: 2 or 3 layers, 1 to 10 neurons each, learning rates from 0.01 to 0.25, Adam optimiser.' : 'Na tese: 2 ou 3 camadas, de 1 a 10 neurônios cada, taxas de aprendizado de 0,01 a 0,25, otimizador Adam.'},
+      {k:'tr', f:'ml', n:'Transformer', g:EN ? 'Neural networks' : 'Redes neurais',
+       h:EN ? 'Attention spread over a long window' : 'Atenção espalhada por uma janela longa',
+       p:EN ? 'Proposed by Vaswani et al. (2017), it uses an attention mechanism that looks at every element in the window, not only the most recent.' : 'Proposta por Vaswani e outros (2017), usa um mecanismo de atenção que olha para todos os elementos da janela, não só o mais recente.',
+       c:EN ? 'In the thesis: window of 1,000 minutes, 3 attention heads, 100 epochs.' : 'Na tese: janela de 1.000 minutos, 3 cabeças de atenção, 100 épocas.'}
+    ];
+    // chips agrupados por família
+    var wrap = $('mchips'), groups = {};
+    LOOK.forEach(function(m){ (groups[m.g] = groups[m.g] || []).push(m); });
+    Object.keys(groups).forEach(function(g){
+      var h = document.createElement('div'); h.className = 'fam'; h.textContent = g; wrap.appendChild(h);
+      var d = document.createElement('div'); d.className = 'mchips';
+      groups[g].forEach(function(m){
+        var b = document.createElement('button'); b.type = 'button'; b.textContent = m.n; b.dataset.k = m.k;
+        b.style.setProperty('--mc', famCol(m.f));
+        b.addEventListener('click', function(){ show(m.k); });
+        d.appendChild(b);
+      });
+      wrap.appendChild(d);
+    });
+    // série ilustrativa
+    var svg = $('look-svg'), X0 = 20, X1 = 470, Y0 = 26, Y1 = 214, N = 60;
+    var r = rng(31), ser = [], v = 0;
+    for (var i = 0; i < N; i++){ v += gauss(r) * (i > 40 ? 2.2 : 1); ser.push(v); }
+    var mn = Math.min.apply(null, ser) - 3, mx = Math.max.apply(null, ser) + 3;
+    function sx(i){ return X0 + i / (N - 1) * (X1 - X0); }
+    function sy(y){ return Y1 - (y - mn) / (mx - mn) * (Y1 - Y0); }
+    var XN = 520;
+    function show(k){
+      var m = LOOK.filter(function(x){ return x.k === k; })[0], col = famHex(m.f);
+      each(wrap.querySelectorAll('.mchips button'), function(b){ b.classList.toggle('on', b.dataset.k === k); b.setAttribute('aria-pressed', b.dataset.k === k); });
+      svg.innerHTML = '';
+      var defs = el('defs', {});
+      var lg = el('linearGradient', {id:'fade', x1:0, x2:1, y1:0, y2:0});
+      lg.appendChild(el('stop', {offset:'0', 'stop-color':col, 'stop-opacity':'0.02'}));
+      lg.appendChild(el('stop', {offset:'1', 'stop-color':col, 'stop-opacity':'0.38'}));
+      defs.appendChild(lg); svg.appendChild(defs);
+      var hl = el('g', {});
+      svg.appendChild(hl);
+      // série
+      svg.appendChild(el('polyline', {points:ser.map(function(y, i){ return sx(i) + ',' + sy(y); }).join(' '), fill:'none', stroke:'#94a3b8', 'stroke-width':1.8, 'stroke-linejoin':'round'}));
+      svg.appendChild(el('rect', {x:XN - 16, y:Y0, width:32, height:Y1 - Y0, fill:'#f8fafc', stroke:'#e2e8f0', 'stroke-dasharray':'4 4'}));
+      svg.appendChild(el('text', {x:XN, y:Y1 + 18, 'text-anchor':'middle', 'font-size':11.5, 'font-weight':700, fill:'#64748b'}, '?'));
+      svg.appendChild(el('text', {x:X0, y:Y1 + 18, 'font-size':11.5, fill:'#94a3b8'}, EN ? '60 minutes ago' : 'há 60 minutos'));
+      svg.appendChild(el('text', {x:X1, y:Y1 + 18, 'text-anchor':'end', 'font-size':11.5, fill:'#94a3b8'}, EN ? 'now' : 'agora'));
+      var last = ser[N - 1];
+      function dotsFrom(a, op){ for (var i = a; i < N; i++) hl.appendChild(el('circle', {cx:sx(i), cy:sy(ser[i]), r:3.6, fill:col, opacity:op ? op(i) : 1})); }
+      if (k === 'rw'){
+        hl.appendChild(el('circle', {cx:sx(N - 1), cy:sy(last), r:9, fill:'none', stroke:col, 'stroke-width':3}));
+        hl.appendChild(el('line', {x1:sx(N - 1), y1:sy(last), x2:XN, y2:sy(last), stroke:col, 'stroke-width':2.5, 'stroke-dasharray':'5 4'}));
+      } else if (k === 'arima'){
+        hl.appendChild(el('rect', {x:sx(N - 2) - 8, y:Y0, width:sx(N - 1) - sx(N - 2) + 16, height:Y1 - Y0, fill:col, opacity:.1, rx:6}));
+        hl.appendChild(el('line', {x1:sx(N - 2), y1:sy(ser[N - 2]), x2:sx(N - 1), y2:sy(last), stroke:col, 'stroke-width':4}));
+        dotsFrom(N - 2);
+        hl.appendChild(el('text', {x:sx(N - 2) - 12, y:Y0 + 14, 'text-anchor':'end', 'font-size':12, 'font-weight':700, fill:col}, EN ? 'last change' : 'última variação'));
+      } else if (k === 'arfima'){
+        hl.appendChild(el('rect', {x:X0, y:Y0, width:X1 - X0, height:Y1 - Y0, fill:'url(#fade)'}));
+        dotsFrom(0, function(i){ return 0.1 + 0.9 * Math.pow(i / (N - 1), 2); });
+        hl.appendChild(el('text', {x:X0 + 6, y:Y0 + 14, 'font-size':12, 'font-weight':700, fill:col}, EN ? 'the distant past still counts a little' : 'o passado distante ainda pesa um pouco'));
+      } else if (k === 'arch' || k === 'garch'){
+        var base = Y1 - 2;
+        for (var j = N - (k === 'arch' ? 6 : 20); j < N; j++){
+          var dv = Math.abs(ser[j] - ser[j - 1]), hh = dv / (mx - mn) * (Y1 - Y0) * 1.6;
+          hl.appendChild(el('rect', {x:sx(j) - 3, y:base - hh, width:6, height:hh, fill:col, opacity:.75}));
+        }
+        if (k === 'garch'){
+          var lv = 0, pts = [];
+          for (var q = 1; q < N; q++){ lv = 0.8 * lv + 0.2 * Math.abs(ser[q] - ser[q - 1]); pts.push(sx(q) + ',' + (base - lv / (mx - mn) * (Y1 - Y0) * 1.6)); }
+          hl.appendChild(el('polyline', {points:pts.join(' '), fill:'none', stroke:C.rw, 'stroke-width':2, 'stroke-dasharray':'2 0'}));
+          hl.appendChild(el('text', {x:X0 + 6, y:Y0 + 14, 'font-size':12, 'font-weight':700, fill:C.rw}, EN ? 'red line: the level of agitation it carries forward' : 'linha vermelha: o nível de agitação que ele carrega'));
+        } else hl.appendChild(el('text', {x:X0 + 6, y:Y0 + 14, 'font-size':12, 'font-weight':700, fill:col}, EN ? 'bars: size of each recent swing' : 'barras: tamanho de cada oscilação recente'));
+      } else if (k === 'kal'){
+        var est = ser[0], ep = [];
+        for (var u = 0; u < N; u++){ est = est + 0.35 * (ser[u] - est); ep.push(sx(u) + ',' + sy(est)); }
+        hl.appendChild(el('polyline', {points:ep.join(' '), fill:'none', stroke:col, 'stroke-width':3.2}));
+        hl.appendChild(el('text', {x:X0 + 6, y:Y0 + 14, 'font-size':12, 'font-weight':700, fill:col}, EN ? 'thick line: the estimated hidden price' : 'linha grossa: o preço escondido estimado'));
+      } else if (k === 'lstm'){
+        var keep = [[2, 9], [18, 24], [33, 37], [46, 59]];
+        keep.forEach(function(s){ hl.appendChild(el('rect', {x:sx(s[0]) - 3, y:Y0, width:sx(s[1]) - sx(s[0]) + 6, height:Y1 - Y0, fill:col, opacity:.16, rx:4})); });
+        keep.forEach(function(s){ for (var i = s[0]; i <= s[1]; i++) hl.appendChild(el('circle', {cx:sx(i), cy:sy(ser[i]), r:3.2, fill:col})); });
+        hl.appendChild(el('text', {x:X0 + 6, y:Y0 + 14, 'font-size':12, 'font-weight':700, fill:col}, EN ? 'shaded: what the gates keep (illustration)' : 'sombreado: o que os portões guardam (ilustração)'));
+      } else if (k === 'tr'){
+        hl.appendChild(el('rect', {x:X0, y:Y0, width:X1 - X0, height:Y1 - Y0, fill:col, opacity:.07}));
+        [3, 12, 21, 27, 38, 44, 52, 57].forEach(function(i, z){
+          var x = sx(i), y = sy(ser[i]);
+          hl.appendChild(el('path', {d:'M' + XN + ',' + Y0 + ' Q' + ((XN + x) / 2) + ',' + (Y0 - 30 + z * 3) + ' ' + x + ',' + y, fill:'none', stroke:col, 'stroke-width':1 + (z % 3) * 0.9, opacity:.65}));
+          hl.appendChild(el('circle', {cx:x, cy:y, r:4, fill:col}));
+        });
+        hl.appendChild(el('text', {x:X0 + 6, y:Y1 - 8, 'font-size':12, 'font-weight':700, fill:col}, EN ? 'in the thesis the window has 1,000 minutes' : 'na tese, a janela tem 1.000 minutos'));
+      }
+      $('look-panel').innerHTML = '<div class="tag" style="color:' + col + '">' + m.g + ' · ' + m.n + '</div><h3>' + m.h + '</h3><p>' + m.p + '</p><div class="cfg">' + m.c + '</div>';
+    }
+    show('rw');
+  })();
+
+  /* ================= 07 · OS DADOS ================= */
+  (function(){
+    var sc = $('obs-scene'), st = makeStage(sc, 520, 120, {ay:'74%', rx:'62deg'});
+    var K = 0.0021, W = 34, GAP = 51, sel = 2, cols = [];
+    STOCKS.forEach(function(s, i){
+      var x = 6 + i * GAP, rest = (s.obs - 20000) * K, tr = 16000 * K, te = 4000 * K;
+      var parts = [
+        box({w:W, d:W, x:x, y:40, h:rest, c:OFF}),
+        box({w:W, d:W, x:x, y:40, z:rest, h:tr, c:ECO}),
+        box({w:W, d:W, x:x, y:40, z:rest + tr, h:te, c:RW})
+      ];
+      parts.forEach(function(p){ st.appendChild(p); p.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick(i); }); });
+      cols.push(parts);
+      flatLabel(st, s.t, x - 14, 80, 62, 'font-size:12px' + (i % 2 ? '; top:96px' : ''));
+    });
+    rotatable(sc, st, -6, 5);
+    var btns = $('obs-btns');
+    STOCKS.forEach(function(s, i){ var b = document.createElement('button'); b.type = 'button'; b.textContent = s.t; b.addEventListener('click', function(){ pick(i); }); btns.appendChild(b); });
+    function pick(i){
+      sel = i;
+      cols.forEach(function(p, j){ p.forEach(function(x){ x.classList.toggle('active', j === i); }); });
+      each(btns.children, function(b, j){ b.classList.toggle('on', j === i); b.setAttribute('aria-pressed', j === i); });
+      var s = STOCKS[i], d = Math.round(s.obs / 420);
+      $('obs-panel').innerHTML = '<div class="tag">' + s.t + ' · ' + s.n + '</div><h3>' + num(s.obs) + (EN ? ' minutes in 2022' : ' minutos em 2022') + '</h3>' +
+        '<p>' + (EN ? 'About ' + d + ' full trading days of 420 minutes (our calculation). Of these, the most recent 20,000 entered the study.' : 'Cerca de ' + d + ' pregões completos de 420 minutos (conta nossa). Desses, os 20.000 mais recentes entraram no estudo.') + '</p>' +
+        (s.obs < 80000 ? '<p style="font-size:.84rem; color:var(--muted)">' + (EN ? 'Fewer minutes than the others: the number of observations varies from stock to stock after the series were filled in and collapsed into minutes.' : 'Menos minutos que as outras: o número de observações varia de ação para ação depois que as séries foram preenchidas e resumidas em minutos.') + '</p>' : '');
+    }
+    pick(2);
+  })();
+
+  /* ================= 08 · O TESTE (ilustração) ================= */
+  (function(){
+    // Números inventados: erro médio e faixa do acaso de oito modelos genéricos.
+    var MS = [['A', 1.00], ['B', 1.01], ['C', 1.03], ['D', 1.04], ['E', 1.11], ['F', 1.19], ['G', 1.31], ['H', 1.46]];
+    var BAND = 0.05, MAX = 1.6, out, log, finished;
+    function reset(){ out = []; log = []; finished = false; draw(-1); $('mcs-step').disabled = false; }
+    function alive(){ return MS.filter(function(m){ return out.indexOf(m[0]) < 0; }); }
+    function draw(worst){
+      $('mcs').innerHTML = MS.map(function(m){
+        var o = out.indexOf(m[0]) > -1, w = m[1] / MAX * 100;
+        var cl = o ? ' out' : m[0] === worst ? ' worst' : finished ? ' keep' : '';
+        return '<div class="mrow' + cl + '"><span class="nm">' + (EN ? 'Model ' : 'Modelo ') + m[0] + '</span><div class="tr"><i style="width:' + w + '%"></i><s style="left:' + ((m[1] - BAND) / MAX * 100) + '%; width:' + (2 * BAND / MAX * 100) + '%"></s></div><b>' + fmt(m[1], 2) + '</b></div>';
+      }).join('');
+      var head = finished ? (EN ? '<div class="tag">Confidence set</div><h3>' + alive().length + ' models remain, statistically tied</h3>' : '<div class="tag">Conjunto de confiança</div><h3>Sobram ' + alive().length + ' modelos, empatados</h3>')
+                          : (EN ? '<div class="tag">Elimination rounds</div><h3>' + alive().length + ' models in the race</h3>' : '<div class="tag">Rodadas de eliminação</div><h3>' + alive().length + ' modelos na disputa</h3>');
+      $('mcs-log').innerHTML = head + (log.length ? '<ol>' + log.map(function(t){ return '<li>' + t + '</li>'; }).join('') + '</ol>' : '<p>' + (EN ? 'Question of each round: do the remaining models make the same error, allowing for chance?' : 'A pergunta de cada rodada: os modelos que sobraram erram igual, descontado o acaso?') + '</p>');
+    }
+    $('mcs-step').addEventListener('click', function(){
+      if (finished) return;
+      var a = alive(), best = a[0][1], worst = a[a.length - 1];
+      if (worst[1] - best > 2 * BAND){
+        out.push(worst[0]);
+        log.push(EN ? ('Not all equal: model ' + worst[0] + ' (the worst) is out.') : ('Não erram igual: sai o modelo ' + worst[0] + ', o pior.'));
+        draw(null);
+      } else {
+        finished = true;
+        log.push(EN ? 'The differences fit within chance: the test stops. This group is the confidence set.' : 'As diferenças cabem no acaso: o teste para. Este grupo é o conjunto de confiança.');
+        draw(null); $('mcs-step').disabled = true;
+      }
+    });
+    $('mcs-reset').addEventListener('click', reset);
+    reset();
+  })();
+
+  /* ================= 09 · O PLACAR (Quadro 4) ================= */
+  (function(){
+    var sc = $('mat-scene'), CW = 46, RH = 40, X0 = 104, st = makeStage(sc, X0 + 10 * CW + 10, 8 * RH + 30, {ay:'60%', rx:'47deg'});
+    // linhas: as de mais blocos atrás (primeira linha = fundo)
+    var cells = [], rowLabels = [], colLabels = [], selM = null, selT = null;
+    MODELS.forEach(function(m, r){
+      rowLabels.push(flatLabel(st, m.n, 0, r * RH + 10, X0 - 12, 'text-align:right; font-size:13px; color:' + famHex(m.f)));
+      rowLabels[r].classList.add('rl');
+      STOCKS.forEach(function(s, c){
+        var on = inSet(m, s.t);
+        var b = box({w:32, d:28, x:X0 + c * CW, y:r * RH + 6, h:on ? 26 : 2, c:on ? famCol(m.f) : OFF, cls:on ? '' : 'off'});
+        b.dataset.m = m.k; b.dataset.t = s.t;
+        b.addEventListener('click', function(){ if (M.wasDrag(sc)) return; selM = m.k; selT = s.t; apply(); });
+        st.appendChild(b); cells.push(b);
+      });
+    });
+    STOCKS.forEach(function(s, c){ colLabels.push(flatLabel(st, s.t, X0 + c * CW - 12, 8 * RH + 8 + (c % 2 ? 16 : 0), 56, 'font-size:11.5px')); });
+    rotatable(sc, st, -8, 5);
+    // contagens por modelo
+    var cnt = $('mat-cnt');
+    MODELS.forEach(function(m){
+      var b = document.createElement('button'); b.type = 'button'; b.dataset.k = m.k;
+      b.innerHTML = '<span style="color:' + famHex(m.f) + '">' + m.n + '</span><div class="tr">' + TK.map(function(t){ return '<i style="background:' + (inSet(m, t) ? famHex(m.f) : 'transparent') + '"></i>'; }).join('') + '</div><b>' + m.set.length + '/10</b>';
+      b.addEventListener('click', function(){ selM = selM === m.k && !selT ? null : m.k; selT = null; apply(); });
+      cnt.appendChild(b);
+    });
+    var tr = $('mat-ticks');
+    var all = document.createElement('button'); all.className = 'chip on'; all.type = 'button'; all.textContent = EN ? 'All' : 'Todas';
+    all.addEventListener('click', function(){ selM = null; selT = null; apply(); }); tr.appendChild(all);
+    STOCKS.forEach(function(s){ var b = document.createElement('button'); b.className = 'chip'; b.type = 'button'; b.textContent = s.t; b.dataset.t = s.t;
+      b.addEventListener('click', function(){ selT = selT === s.t && !selM ? null : s.t; selM = null; apply(); }); tr.appendChild(b); });
+    function apply(){
+      cells.forEach(function(b){
+        var hitM = !selM || b.dataset.m === selM, hitT = !selT || b.dataset.t === selT;
+        b.classList.toggle('dim', !(hitM && hitT));
+        b.classList.toggle('hit', !!(selM && selT) && hitM && hitT && !b.classList.contains('off'));
+      });
+      rowLabels.forEach(function(l, r){ l.classList.toggle('dim', !!selM && MODELS[r].k !== selM); });
+      colLabels.forEach(function(l, c){ l.classList.toggle('dim', !!selT && TK[c] !== selT); });
+      each(cnt.children, function(b){ b.classList.toggle('on', b.dataset.k === selM); });
+      each(tr.children, function(b, i){ b.classList.toggle('on', i === 0 ? (!selM && !selT) : b.dataset.t === selT); });
+      var h;
+      if (selM && selT){
+        var m = MODELS.filter(function(x){ return x.k === selM; })[0], ok = inSet(m, selT);
+        h = '<div class="tag">' + m.n + ' · ' + selT + '</div><h3>' + (ok ? (EN ? 'In the final group' : 'No grupo final') : (EN ? 'Out of the final group' : 'Fora do grupo final')) + '</h3><p>' + finalTxt(selT) + '</p>';
+      } else if (selM){
+        var mm = MODELS.filter(function(x){ return x.k === selM; })[0];
+        h = '<div class="tag">' + mm.n + '</div><h3>' + (EN ? 'In the final group of ' + mm.set.length + ' of the 10 stocks' : 'No grupo final de ' + mm.set.length + ' das 10 ações') + '</h3><p>' + (mm.set.length ? mm.set.join(', ') + '.' : MODEL_NOTE[mm.k]) + '</p>';
+      } else if (selT){
+        h = '<div class="tag">' + selT + '</div><h3>' + (EN ? 'Final group' : 'Grupo final') + '</h3><p>' + finalTxt(selT) + '</p>';
+      } else {
+        h = '<div class="tag">' + (EN ? 'Chart 4 of the thesis' : 'Quadro 4 da tese') + '</div><p>' + (EN ? 'Of the places in the final groups, statistical models took 23, neural networks 2, and "same as last" was in 6 groups (our count).' : 'Dos lugares nos grupos finais, os modelos estatísticos ocuparam 23, as redes neurais 2, e o “igual ao último” esteve em 6 grupos (contagem nossa).') + '</p>';
+      }
+      $('mat-panel').innerHTML = h;
+    }
+    var MODEL_NOTE = {
+      kal:EN ? 'According to the author, the Kalman filter followed the price dynamics but did not produce good enough results to enter any final group.' : 'Segundo o autor, o filtro de Kalman acompanhou a dinâmica dos preços, mas não produziu resultados suficientes para entrar em nenhum grupo final.',
+      lstm:EN ? 'The LSTM networks did not capture the price path of any of the stocks analysed.' : 'As redes LSTM não captaram a trajetória de preço de nenhuma das ações analisadas.'
+    };
+    function finalTxt(t){
+      var inn = MODELS.filter(function(m){ return inSet(m, t); }).map(function(m){ return m.n; });
+      return (EN ? 'Remained: ' : 'Ficaram: ') + inn.join(', ') + (EN ? ' (' + inn.length + ' model' + (inn.length > 1 ? 's' : '') + ').' : ' (' + inn.length + (inn.length > 1 ? ' modelos).' : ' modelo).'));
+    }
+    apply();
+  })();
+
+  /* ================= 10 · O PALPITE INGÊNUO ================= */
+  (function(){
+    var rwm = MODELS.filter(function(m){ return m.k === 'rw'; })[0];
+    var wrap = $('stocks'), sb = $('sizebar'), mode = 'all', sel = null;
+    STOCKS.forEach(function(s){
+      var inn = MODELS.filter(function(m){ return inSet(m, s.t); });
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'stk' + (inSet(rwm, s.t) ? ' rwin' : ''); b.dataset.t = s.t;
+      b.innerHTML = '<div class="tk">' + s.t + '</div><div class="ms">' + inn.map(function(m){ return '<span style="background:' + famHex(m.f) + '">' + m.n + '</span>'; }).join('') + '</div>';
+      b.addEventListener('click', function(){ sel = sel === s.t ? null : s.t; apply(); });
+      wrap.appendChild(b);
+      var bar = document.createElement('div'); bar.className = inSet(rwm, s.t) ? 'rwin' : ''; bar.style.height = (inn.length / 5 * 100) + '%';
+      bar.innerHTML = '<b>' + inn.length + '</b><small>' + s.t + '</small>'; sb.appendChild(bar);
+    });
+    function apply(){
+      each(wrap.children, function(b){
+        var rwIn = inSet(rwm, b.dataset.t);
+        b.classList.toggle('dim', (mode === 'tie' && !rwIn) || (mode === 'beat' && rwIn));
+        b.classList.toggle('on', b.dataset.t === sel);
+      });
+      var h;
+      if (sel){
+        var inn = MODELS.filter(function(m){ return inSet(m, sel); }), rwIn = inSet(rwm, sel), s = STOCKS[TK.indexOf(sel)];
+        h = '<div class="tag">' + sel + ' · ' + s.n + '</div><h3>' + (rwIn ? (EN ? '"Same as last" tied with the best' : '“Igual ao último” empatou com os melhores') : (EN ? '"Same as last" was beaten' : '“Igual ao último” foi superado')) + '</h3><p>' + (EN ? 'Final group: ' : 'Grupo final: ') + inn.map(function(m){ return m.n; }).join(', ') + '.</p>' +
+          (inn.length === 1 ? '<p>' + (EN ? 'Only ARIMA remained: here the test separated one model from all the others.' : 'Só o ARIMA sobrou: aqui o teste separou um modelo de todos os outros.') + '</p>' : '');
+      } else if (mode === 'beat'){
+        h = '<div class="tag">' + (EN ? '4 stocks' : '4 ações') + '</div><h3>' + (EN ? 'Where some model did better than "same as last"' : 'Onde algum modelo fez melhor que “igual ao último”') + '</h3><p>ABEV3, BBDC4, ITSA4 ' + (EN ? 'and' : 'e') + ' ITUB4. ' + (EN ? 'ARIMA was in all four groups; ARFIMA in two.' : 'O ARIMA estava nos quatro grupos; o ARFIMA, em dois.') + '</p>';
+      } else if (mode === 'tie'){
+        h = '<div class="tag">' + (EN ? '6 stocks' : '6 ações') + '</div><h3>' + (EN ? 'Where no model was shown to beat the naive guess' : 'Onde nenhum modelo provou ser melhor que o palpite ingênuo') + '</h3><p>B3SA3, BBAS3, ITUB3, PETR3, PETR4 ' + (EN ? 'and' : 'e') + ' VALE3. ' + (EN ? 'The author reads this as a sign of how dynamic these price series are.' : 'O autor lê isso como sinal do dinamismo dessas séries de preço.') + '</p>';
+      } else {
+        h = '<div class="tag">' + (EN ? 'Our reading' : 'Leitura nossa') + '</div><h3>' + (EN ? 'Why ARIMA was always there' : 'Por que o ARIMA esteve sempre lá') + '</h3><p>' + (EN ? 'As configured in the thesis, ARIMA works with the change from one minute to the next, like "same as last", and adds a small one-minute correction. Being close to the naive guess may help explain why it never fell out. Touch a stock to see its final group.' : 'Do jeito que foi configurado na tese, o ARIMA trabalha com a variação de um minuto para o outro, como o “igual ao último”, e acrescenta uma pequena correção de um minuto. Ser parecido com o palpite ingênuo pode ajudar a explicar por que nunca saiu. Toque numa ação para ver o grupo final.') + '</p>';
+      }
+      $('rw-panel').innerHTML = h;
+    }
+    each($('rw-seg').children, function(b){ b.addEventListener('click', function(){ mode = b.dataset.k; sel = null; each($('rw-seg').children, function(x){ x.classList.toggle('on', x === b); }); apply(); }); });
+    apply();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
