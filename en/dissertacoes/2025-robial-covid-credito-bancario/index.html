@@ -1,0 +1,950 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Did Covid make banks lend less? · PPGA Interativo</title>
+<meta name="description" content="The master's dissertation by Karina Robial (PPGA Mackenzie, 2025) on the effect of Covid-19 on lending by 1,153 banks in 65 countries, from 2016 to 2023, explained in 12 interactive screens.">
+<link rel="alternate" hreflang="pt-BR" href="../../../dissertacoes/2025-robial-covid-credito-bancario/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2216%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>$</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/motor.css">
+<link rel="stylesheet" href="../../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  :root{
+    --dev:var(--navy);    /* países desenvolvidos */
+    --em:var(--red);      /* países emergentes */
+    --hi:var(--red);      /* alto contágio */
+    --lo:#94a3b8;         /* baixo contágio / comparação */
+    --off:#cbd5e1;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+  .stripe{background-image:repeating-linear-gradient(45deg, rgb(255 255 255 / .45) 0 5px, transparent 5px 10px);}
+  .ilus{display:inline-block; font-size:.64rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+
+  /* ---------- Componentes comuns ---------- */
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 20px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.05rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel .nt{text-transform:none; letter-spacing:0;}
+  .panel p{margin:0 0 8px; font-size:.9rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.3rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.76rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4vw, 2.8rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:34em; margin-left:auto; margin-right:auto;}
+  #hero-year{font-family:var(--serif); text-align:center; font-size:1.05rem; color:var(--ink); margin-bottom:2px; min-height:1.5em;}
+  #hero-year b{color:var(--red); font-size:1.4rem;}
+  #hero-scene{perspective:2200px;}
+  #hero-scene .face-label{font-size:12px; letter-spacing:.02em;}
+  #hero-scene .floor-label{font-size:13px; color:var(--muted);}
+  #hero-scene .slab.active{--oz:14px;}
+
+  /* ---------- 02 · O banco no meio ---------- */
+  #flow-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  #flow-svg text{font-family:var(--sans);}
+  #flow-svg .ar{transition:stroke-width .7s cubic-bezier(.2,.8,.2,1), opacity .5s;}
+  #flow-panel{min-height:150px; margin-top:12px;}
+  @media (max-width:600px){ #flow-svg text{font-size:19px !important;} #flow-svg text.sm{font-size:16px !important;} }
+
+  /* ---------- 03 · Renda ---------- */
+  #inc-scene{perspective:2400px;}
+  #inc-scene .slab{transition:transform .55s cubic-bezier(.2,.8,.2,1), --h .6s;}
+  #inc-scene .face-label{font-size:17px; font-family:var(--serif); letter-spacing:0; text-transform:none;}
+  #inc-scene .floor-label{font-size:14px;}
+  #inc-panel{min-height:120px; margin-top:12px;}
+  @media (max-width:600px){ #inc-scene .floor-label{font-size:19px;} #inc-scene .face-label{font-size:21px;} }
+
+  /* ---------- 04 · Estudos anteriores ---------- */
+  .bets{display:grid; grid-template-columns:1fr; gap:12px; margin-top:8px;}
+  @media (min-width:700px){ .bets{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .bets{grid-template-columns:repeat(5, 1fr);} }
+  .bet{perspective:1000px;}
+  .bet .in{position:relative; min-height:262px; transform-style:preserve-3d; transition:transform .7s cubic-bezier(.2,.8,.2,1);}
+  .bet.done .in{transform:rotateY(180deg);}
+  .bet .fc, .bet .bc{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:14px; padding:14px 16px; background:var(--card); border:1px solid var(--border); border-top:5px solid var(--ink-2); box-shadow:var(--shadow); display:flex; flex-direction:column;}
+  .bet .bc{transform:rotateY(180deg); background:color-mix(in srgb, var(--vc) 7%, white); border-top-color:var(--vc);}
+  .bet .k{font-size:.64rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--muted);}
+  .bet h3{font-size:.95rem; margin:4px 0 6px; line-height:1.35;}
+  .bet p{font-size:.79rem; color:var(--ink-2); margin:0 0 6px; line-height:1.45;}
+  .bet .opts{display:flex; gap:5px; margin-top:auto;}
+  .bet .opts button{flex:1; border:1px solid var(--border); background:var(--card); border-radius:9px; padding:8px 2px; font-size:.78rem; font-weight:600; cursor:pointer; color:var(--ink);}
+  .bet .opts button:hover{border-color:var(--ink);}
+  .bet .verdict{display:inline-block; align-self:flex-start; font-size:.74rem; font-weight:700; padding:3px 10px; border-radius:6px; color:#fff; background:var(--vc); margin-bottom:6px;}
+  .bet .you{font-size:.74rem; color:var(--muted); margin-top:auto;}
+  #bet-score{font-size:.92rem; color:var(--ink-2); margin-top:14px; min-height:1.6em;}
+  @media (max-width:600px){ .bet .in{min-height:232px;} }
+
+  /* ---------- 05 · Amostra ---------- */
+  .banks{display:grid; grid-template-columns:repeat(40, minmax(0, 1fr)); gap:2px; max-width:480px; margin:10px auto 0;}
+  .banks i{aspect-ratio:1; border-radius:50%; background:var(--dev); transition:background .4s, opacity .4s, transform .4s;}
+  .banks i.e{background:var(--em);}
+  .banks i.dim{opacity:.13;}
+  .banks i.sel{transform:scale(1.25);}
+  .ctry{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:12px; font-size:.84rem; color:var(--ink-2);}
+  .ctry select{font:inherit; font-size:.86rem; border:1px solid var(--border); border-radius:9px; padding:6px 10px; background:var(--card); color:var(--ink); max-width:100%;}
+  #smp-msg{min-height:4.4em; font-size:.88rem; color:var(--ink-2); margin-top:10px;}
+
+  /* ---------- 06 · Régua do crédito ---------- */
+  .lgcalc{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .bk{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px 14px; box-shadow:var(--shadow);}
+  .bk .k{font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--muted);}
+  .bk .bar{position:relative; height:120px; width:70px; margin:8px auto 4px; border:2px solid var(--ink-2); border-radius:6px; background:#f1f5f9; overflow:hidden; transition:height .4s;}
+  .bk .bar i{position:absolute; left:0; right:0; bottom:0; background:var(--navy); transition:height .4s;}
+  .bk .v{text-align:center; font-size:.8rem; color:var(--ink-2);}
+  .bk .v b{font-family:var(--serif); font-size:1.15rem; color:var(--ink);}
+  .lgout{margin-top:12px; text-align:center;}
+  .lgout .big{font-family:var(--serif); font-weight:700; font-size:2.1rem; line-height:1.1;}
+  .lgout small{display:block; font-size:.76rem; color:var(--muted);}
+  .rul{position:relative; height:44px; margin:12px 6px 0;}
+  .rul::before{content:""; position:absolute; left:0; right:0; top:12px; height:6px; border-radius:3px; background:#e2e8f0;}
+  .rul .band{position:absolute; top:10px; height:10px; background:color-mix(in srgb, var(--navy) 22%, white); border-radius:3px;}
+  .rul .mk{position:absolute; top:4px; width:2px; height:22px; margin-left:-1px; background:var(--ink);}
+  .rul .mk span{position:absolute; top:24px; left:50%; transform:translateX(-50%); font-size:.62rem; white-space:nowrap; color:var(--ink-2); font-weight:600;}
+  .rul .mk.l span{left:0; transform:none;} .rul .mk.r span{left:auto; right:0; transform:none;}
+  .rul .you{position:absolute; top:7px; width:16px; height:16px; margin-left:-8px; border-radius:50%; background:#fff; border:3px solid var(--red); transition:left .2s;}
+  .ctl{margin-top:12px;}
+  .ctl label{display:flex; justify-content:space-between; font-size:.86rem; font-weight:600; color:var(--ink);}
+  .ctl label span{font-variant-numeric:tabular-nums; color:var(--red);}
+  .ctl input{width:100%; accent-color:var(--red);}
+  .ctl small{display:block; font-size:.74rem; color:var(--muted);}
+  .pres{display:flex; flex-wrap:wrap; gap:6px; margin-top:12px;}
+  .pres button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-size:.78rem; cursor:pointer; color:var(--ink-2);}
+  .pres button:hover{border-color:var(--ink);}
+
+  /* ---------- 07 · Método ---------- */
+  #did-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  #did-svg text{font-family:var(--sans);}
+  #did-msg{min-height:5.5em; margin-top:12px;}
+  @media (max-width:600px){ #did-svg text{font-size:19px !important;} #did-svg text.big{font-size:26px !important;} }
+
+  /* ---------- 08 · Pareamento ---------- */
+  .bias{display:grid; gap:8px; margin-top:6px;}
+  .brow{display:grid; grid-template-columns:150px 1fr 62px; gap:10px; align-items:center; font-size:.82rem; color:var(--ink-2);}
+  .brow small{display:block; font-size:.68rem; color:var(--muted);}
+  .brow .tr{position:relative; height:20px; background:#f1f5f9; border-radius:3px;}
+  .brow .tr::before{content:""; position:absolute; left:50%; top:-4px; bottom:-4px; border-left:2px solid var(--ink-2);}
+  .brow .tr i{position:absolute; top:0; bottom:0; border-radius:3px; background:var(--lo); transition:left .7s cubic-bezier(.2,.8,.2,1), width .7s cubic-bezier(.2,.8,.2,1), background .4s;}
+  .brow .tr i.m{background:var(--navy);}
+  .brow b{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink);}
+  .axis{position:relative; height:16px; margin-left:160px; margin-right:72px; font-size:.64rem; color:var(--muted);}
+  .axis span{position:absolute; transform:translateX(-50%);}
+  @media (max-width:520px){ .brow{grid-template-columns:96px 1fr 52px; font-size:.74rem;} .axis{margin-left:106px; margin-right:62px;} }
+
+  /* ---------- 09 · Hipóteses ---------- */
+  .hyps{display:grid; gap:8px; margin-top:10px;}
+  .hyp{display:grid; grid-template-columns:40px 1fr; gap:8px; align-items:start; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:7px 12px; box-shadow:var(--shadow); border-left:5px solid var(--hc, var(--border));}
+  .hyp .hn{font-family:var(--serif); font-weight:900; font-size:1.2rem; color:var(--ink);}
+  .hyp .q{font-size:.86rem; color:var(--ink); font-weight:600; line-height:1.35;}
+  .hyp .opts{display:flex; gap:6px; margin-top:6px;}
+  .hyp .opts button{border:1px solid var(--border); background:var(--card); border-radius:8px; padding:5px 10px; font-size:.78rem; font-weight:600; cursor:pointer; color:var(--ink);}
+  .hyp .opts button:hover{border-color:var(--ink);}
+  .hyp .res{display:none; font-size:.74rem; color:var(--ink-2); margin-top:4px; line-height:1.4;}
+  .hyp .res b{color:var(--hc);}
+  .hyp.done .opts{display:none;}
+  .hyp.done .res{display:block;}
+  #hyp-score{font-size:.84rem; color:var(--ink-2); margin-top:8px; min-height:1.5em;}
+  #res-scene{perspective:2400px;}
+  #res-scene .slab{transition:transform .55s cubic-bezier(.2,.8,.2,1), --h .6s;}
+  #res-scene .face-label{font-size:13px; letter-spacing:.04em;}
+  #res-scene .top-label{font-size:18px; color:#fff;}
+  #res-scene .floor-label{font-size:20px;}
+  #res-scene .slab.up > i{background-image:repeating-linear-gradient(45deg, rgb(255 255 255 / .35) 0 6px, transparent 6px 12px);}
+  #res-panel{min-height:96px; margin-top:10px;}
+  @media (max-width:600px){ #res-scene .floor-label{font-size:20px;} #res-scene .face-label{font-size:16px;} }
+
+  /* ---------- 10 · O inesperado ---------- */
+  .flipper{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;}
+  .sign{border:1px solid var(--border); background:var(--card); border-radius:14px; padding:12px 14px; box-shadow:var(--shadow); text-align:left; cursor:pointer; font:inherit; color:inherit; border-top:5px solid var(--sc);}
+  .sign[aria-pressed="true"]{background:color-mix(in srgb, var(--sc) 8%, white); box-shadow:0 0 0 2px var(--sc);}
+  .sign .k{display:block; font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--muted);}
+  .sign .ar{display:block; font-size:2.2rem; line-height:1; color:var(--sc); margin:6px 0 2px;}
+  .sign .v{display:block; font-family:var(--serif); font-weight:700; font-size:1.25rem; color:var(--ink);}
+  .sign .d{display:block; font-size:.74rem; color:var(--ink-2); margin-top:3px; line-height:1.4;}
+  #ins-panel{min-height:150px; margin-top:12px;}
+  @media (max-width:600px){ .flipper{grid-template-columns:1fr;} .sign{display:grid; grid-template-columns:44px 1fr; column-gap:8px;} .sign .ar{grid-row:1 / span 3; margin:0;} }
+
+  /* ---------- 11 · Outros fatores ---------- */
+  .fq{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:800px){ .fq{grid-template-columns:repeat(5, 1fr);} }
+  .fc{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); display:flex; flex-direction:column;}
+  @media (min-width:800px){ .fc{min-height:226px;} }
+  .fc .k{font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--muted);}
+  .fc h3{font-size:.9rem; line-height:1.35; margin:4px 0 8px;}
+  .fc .opts{display:flex; gap:5px; margin-top:auto;}
+  .fc .opts button{flex:1; border:1px solid var(--border); background:var(--card); border-radius:9px; padding:7px 2px; font-size:.76rem; font-weight:600; cursor:pointer; color:var(--ink);}
+  .fc .res{display:none; font-size:.76rem; color:var(--ink-2); line-height:1.45;}
+  .fc.done .opts{display:none;}
+  .fc.done .res{display:block;}
+  .fc .row{display:flex; justify-content:space-between; gap:6px; padding:3px 0; border-bottom:1px dashed var(--border); font-size:.76rem;}
+  .fc .up{color:var(--red);} .fc .dn{color:var(--navy);} .fc .nn{color:var(--muted);}
+  .fc .flag{display:inline-block; align-self:flex-start; font-size:.6rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:2px 6px; border-radius:5px; margin:2px 0 4px; color:#fff; background:var(--fl);}
+  #fq-score{font-size:.9rem; color:var(--ink-2); margin-top:12px; min-height:1.5em;}
+  .r2{margin-top:12px; max-width:640px;}
+  .r2 .row2{display:grid; grid-template-columns:120px 1fr 52px; gap:8px; align-items:center; font-size:.8rem; color:var(--ink-2); margin-top:4px;}
+  .r2 .bar{height:14px; background:#eef2f7; border-radius:4px; overflow:hidden;}
+  .r2 .bar i{display:block; height:100%; background:var(--ink-2);}
+  .r2 b{font-variant-numeric:tabular-nums; color:var(--ink);}
+
+  /* ---------- 12 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.78rem; color:var(--ink-2); line-height:1.42;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-meta="../../../dissertacoes/2025-robial-covid-credito-bancario/meta.json">
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../../dissertacoes/2025-robial-covid-credito-bancario/" hreflang="pt-BR" lang="pt-BR" title="Ler em português"><img class="lang-flag" src="../../../assets/bandeira-br.svg" width="17" height="12" alt="">PT</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Previous screen">↑</button>
+    <button class="nav-btn" id="next" aria-label="Next screen">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Screen navigation"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Start">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Master’s dissertation · PPGA Mackenzie · 2025</div>
+      <h1 class="rv" style="--d:.1s">Did Covid make banks lend less?</h1>
+      <p class="sub rv" style="--d:.2s">During the pandemic, governments cut interest rates and released money so that credit would reach firms and households. But banks did not always follow the script. The study followed 1,153 banks in 65 countries, from 2016 to 2023, to see where lending slowed down. Explained in 12 screens.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Author:</b> Karina Robial</span>
+        <span><b>Advisor:</b> Prof. Dr. Michele Nascimento Jucá</span>
+        <span><b>Program:</b> Graduate Program in Business Administration (PPGA) · Mackenzie Presbyterian University</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#banco">Start →</a>
+        <a class="btn ghost" href="#resultado">Go straight to the result</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div id="hero-year" aria-live="off"></div>
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="520x300" role="img" aria-label="Eight columns, one per year from 2016 to 2023, each with banks from developed countries below and from emerging countries on top; a thin wall marks Covid’s arrival in 2020"></div></div>
+      <p class="cap-legend">One column per year. Blue: 767 banks in developed countries; red: 386 in emerging countries. The heights are equal on purpose: the same 1,153 banks appear in every year (Table 3 and Appendix A).</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">Closest UN Sustainable Development Goals</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://sdgs.un.org/goals/goal8" target="_blank" rel="noopener" title="SDG 8 · Decent Work and Economic Growth: Shows how banks in 65 countries changed their lending during the pandemic, slowing more in the hardest-hit countries and in emerging ones."><b>8</b>Decent Work and Economic Growth</a></li>
+          <li class="ods-10"><a href="https://sdgs.un.org/goals/goal10" target="_blank" rel="noopener" title="SDG 10 · Reduced Inequalities: Gives governments and regulators evidence to adjust banking rules in crises, especially in emerging countries, where lending slowed more."><b>10</b>Reduced Inequalities</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">scroll<span></span></div>
+</section>
+
+<!-- 02 · O BANCO NO MEIO -->
+<section class="slide" id="banco" data-label="The bank in the middle">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> The problem</div>
+      <h2 class="rv" style="--d:.1s">In a crisis, the bank stands between the government and those who need credit</h2>
+      <p class="lede rv" style="--d:.15s">The bank takes money from savers and lends it to those who need it. During Covid, governments used banks to keep money flowing: lower interest rates, more liquidity, loan guarantees. But uncertainty also makes banks afraid of not being paid back.</p>
+      <div class="seg rv" id="flow-seg" style="--d:.2s" role="group" aria-label="Choose the scenario">
+        <button data-m="0" aria-pressed="true">Normal times</button>
+        <button data-m="1" aria-pressed="false">The government stimulates</button>
+        <button data-m="2" aria-pressed="false">The bank protects itself</button>
+      </div>
+      <div class="panel rv" id="flow-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="flow-svg" viewBox="0 0 560 330" role="img" aria-label="Diagram: savers deposit in the bank, the bank lends to firms and households, and the government pushes credit from above"></svg>
+      <div class="stats">
+        <div class="stat"><b>2.6% → −2.9%</b><span>world GDP growth from 2019 to 2020</span></div>
+        <div class="stat"><b>−6.7% × −2.4%</b><span>GDP per person in 2020: emerging × advanced</span></div>
+        <div class="stat"><b>65</b><span>countries in the study’s sample</span></div>
+      </div>
+      <p class="note"><span class="ilus">illustration</span> Arrow thickness shows the idea, not numbers. The scenarios summarize sections 1.1, 2.1.4 and 2.1.5; the GDP figures come from studies cited by the dissertation (World Bank; Alon and colleagues, 2023).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · RENDA -->
+<section class="slide" id="renda" data-label="Income and fatality">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> The context</div>
+      <h2 class="rv" style="--d:.1s">Covid killed proportionally more in lower-income countries</h2>
+      <p class="lede rv" style="--d:.15s">Rich countries recorded more cases. But for every 100 cases, deaths were three times more frequent in low-income countries. Emerging economies have fewer resources to protect themselves from a health crisis, and that is what led the study to separate developed and emerging countries.</p>
+      <div class="seg rv" id="inc-seg" style="--d:.2s" role="group" aria-label="Choose the measure">
+        <button data-m="c" aria-pressed="false">Cases</button>
+        <button data-m="d" aria-pressed="false">Deaths</button>
+        <button data-m="r" aria-pressed="true">Deaths per 100 cases</button>
+      </div>
+      <div class="panel rv" id="inc-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="inc-scene" data-fit="540x330" role="img" aria-label="Four columns, one per country income group, with Covid cases, deaths or deaths per 100 cases"></div></div>
+      <p class="note">World Health Organization data up to December 2024, cited in section 2.1.1; World Bank income groups. In the study, "developed" means high income and "emerging" groups the other three.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · ESTUDOS ANTERIORES -->
+<section class="slide" id="estudos" data-label="Earlier studies">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">04</span> What others found · place your bet</div>
+    <h2 class="rv" style="--d:.1s">Five studies looked at lending in the pandemic with the same method</h2>
+    <p class="lede rv" style="--d:.15s">All of them compare a hard-hit group with a less affected one, before and after Covid (the method on screen 07). Bet: did the highlighted group get less, the same or more credit than the other?</p>
+    <div class="bets rv" id="bets" style="--d:.2s"></div>
+    <div id="bet-score" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- 05 · AMOSTRA -->
+<section class="slide" id="amostra" data-label="1,153 banks">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> The sample</div>
+      <h2 class="rv" style="--d:.1s">1,153 banks in 65 countries, eight years each</h2>
+      <p class="lede rv" style="--d:.15s">Publicly listed commercial banks, with positive equity and assets above US$ 1 million, followed from 2016 to 2023: four years before Covid and four after. That makes 9,224 observations (one bank in one year). Data from Capital IQ, the World Bank and the WHO.</p>
+      <div class="stats rv" style="--d:.2s">
+        <div class="stat"><b>767</b><span>banks in 33 developed countries</span></div>
+        <div class="stat"><b>386</b><span>banks in 32 emerging countries</span></div>
+        <div class="stat"><b>432</b><span>banks in the United States alone (37%, our count)</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="smp-seg" role="group" aria-label="What to highlight">
+        <button data-m="inc" aria-pressed="true">Developed × emerging</button>
+        <button data-m="big" aria-pressed="false">US and Japan</button>
+      </div>
+      <div class="banks" id="banks" role="img" aria-label="1,153 dots, one per bank, grouped by country"></div>
+      <div class="ctry"><label for="ctry-sel">Highlight a country:</label><select id="ctry-sel"></select></div>
+      <div id="smp-msg" aria-live="polite"></div>
+      <div class="legend"><span><i class="dot" style="background:var(--dev)"></i>developed (high income)</span><span><i class="dot" style="background:var(--em)"></i>emerging</span></div>
+      <p class="note">Each dot = 1 bank. Banks and Covid cases from 2020 to 2023 by country: Appendix A (totals checked: 767 and 386 banks).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · RÉGUA DO CRÉDITO -->
+<section class="slide" id="regua" data-label="How to measure lending">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Try it · the measure</div>
+      <h2 class="rv" style="--d:.1s">The study measures lending as a share of the bank’s assets</h2>
+      <p class="lede rv" style="--d:.15s"><strong>Loan growth</strong> compares this year’s share of loans in total assets with last year’s. Play with the made-up bank on the right.</p>
+      <div class="ctl rv" style="--d:.2s">
+        <label for="ln">Loans this year <span id="ln-v">63</span></label>
+        <input type="range" id="ln" min="30" max="100" step="1" value="63">
+        <small>last year: 60</small>
+      </div>
+      <div class="ctl rv" style="--d:.25s">
+        <label for="as">Total assets this year <span id="as-v">100</span></label>
+        <input type="range" id="as" min="70" max="150" step="1" value="100">
+        <small>last year: 100</small>
+      </div>
+      <div class="pres rv" id="pres" style="--d:.3s">
+        <button data-l="63" data-a="100">Lent more</button>
+        <button data-l="66" data-a="120">Lent more, but assets grew more</button>
+        <button data-l="60" data-a="90">Lent the same, assets shrank</button>
+      </div>
+      <p class="note rv" style="--d:.35s"><b>Made-up bank.</b> Formula from Table 2: growth = (loans ÷ assets this year) ÷ (loans ÷ assets last year) − 1. Our reading: because it is a share, the measure can fall even when the bank lends more, if assets grow faster.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="lgcalc">
+        <div class="bk"><div class="k">Last year</div><div class="bar" id="bar0"><i style="height:60%"></i></div><div class="v">loans <b>60%</b> of assets</div></div>
+        <div class="bk"><div class="k">This year</div><div class="bar" id="bar1"><i></i></div><div class="v">loans <b id="sh1">63%</b> of assets</div></div>
+      </div>
+      <div class="lgout"><small>loan growth of the made-up bank</small><div class="big" id="lg-v">+5,0%</div></div>
+      <div class="rul" id="lg-rul"></div>
+      <div class="stats">
+        <div class="stat"><b>0.3%</b><span>average growth across the 9,224 observations</span></div>
+        <div class="stat"><b>±9.6 pp</b><span>standard deviation (the blue band on the ruler)</span></div>
+        <div class="stat"><b>−87.9% to 99.1%</b><span>from the lowest to the highest value</span></div>
+      </div>
+      <p class="note">Mean, standard deviation and extremes from Table 3 (full sample). The red circle is the made-up bank.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · O MÉTODO -->
+<section class="slide" id="metodo" data-label="The method">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> The method</div>
+      <h2 class="rv" style="--d:.1s">The study compares how much each group changed after 2020</h2>
+      <p class="lede rv" style="--d:.15s">The method is called <strong>difference-in-differences</strong> (DID). Countries with Covid cases per million inhabitants at or above the median form the <strong>high-contagion</strong> group; the rest form the comparison group. The same logic compares emerging and developed countries.</p>
+      <div class="seg rv" id="did-seg" style="--d:.2s" role="group" aria-label="Choose the comparison">
+        <button data-m="0" aria-pressed="true">1 · Before × after</button>
+        <button data-m="1" aria-pressed="false">2 · One group × the other</button>
+        <button data-m="2" aria-pressed="false">3 · Difference in differences</button>
+      </div>
+      <div class="panel rv" id="did-msg" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="did-svg" viewBox="0 0 560 330" role="img" aria-label="Two lines, before and after 2020: high-contagion and comparison countries"></svg>
+      <p class="note"><span class="ilus">illustration</span> Made-up numbers to show the logic. The method’s premise: without Covid, both groups would have followed the same trend. In the real model, the study also holds constant the banks’ size, cash and capital, GDP growth and the quality of each country’s government.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · PAREAMENTO -->
+<section class="slide" id="pareamento" data-label="The robustness test">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Robustness test</div>
+      <h2 class="rv" style="--d:.1s">Matching made the groups more alike</h2>
+      <p class="lede rv" style="--d:.15s">High-contagion banks were different from the others. To compare like with like, the study redid the analysis with <strong>propensity score matching</strong> (PSM): for each observation in the high-contagion group, it picked the most similar one in the comparison group, without repeats.</p>
+      <div class="stats rv" style="--d:.2s">
+        <div class="stat"><b>5,436 → 3,788</b><span>observations in the comparison group</span></div>
+        <div class="stat"><b>1,153 → 947</b><span>banks in the sample</span></div>
+        <div class="stat"><b>26.2% → 10.4%</b><span>average gap between the groups</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="bias-seg" role="group" aria-label="Before or after matching" style="margin-bottom:12px">
+        <button data-m="u" aria-pressed="true">Before matching</button>
+        <button data-m="m" aria-pressed="false">After</button>
+      </div>
+      <div class="bias" id="bias"></div>
+      <div class="axis" id="bias-axis" aria-hidden="true"></div>
+      <p class="note">Standardized gap between the groups, in % (bias), Table B.1. Zero = identical groups. Country governance came closest; cash barely changed. The table itself flags that the overall imbalance (indicator B: 63.1% → 27.8%) stayed above the 25% reference.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · RESULTADO -->
+<section class="slide" id="resultado" data-label="The result">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> The result · place your bet</div>
+      <h2 class="rv" style="--d:.1s">Each hypothesis got a clear answer from the model</h2>
+      <p class="lede rv" style="--d:.15s">The study started from three hypotheses. Before seeing the columns, bet: did the model confirm each one?</p>
+      <div class="hyps rv" id="hyps" style="--d:.2s"></div>
+      <div id="hyp-score" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="res-scene" data-fit="560x290" role="img" aria-label="Six columns: the three hypotheses in the main test and in the robustness test; height is the significance level and color is the direction"></div></div>
+      <div class="legend"><span><i class="dot" style="background:var(--navy); border-radius:2px"></i>lending slowed, as predicted</span><span><i class="dot stripe" style="background-color:var(--red); border-radius:2px"></i>lending rose, against the prediction</span><span><i class="dot" style="background:#fff; box-shadow:inset 0 0 0 1px var(--muted); border-radius:2px"></i>no bet yet</span></div>
+      <div class="panel" id="res-panel" aria-live="polite"></div>
+      <p class="note">Table 5: M1 = main test (1,153 banks), M2 = matched test (947). Height = significance: three steps for p &lt; 0.01, two for p &lt; 0.05. We show only direction and significance, because the size of the coefficients does not fit the scale of the measure (see the limits).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · O INESPERADO -->
+<section class="slide" id="inesperado" data-label="The unexpected">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> The unexpected</div>
+      <h2 class="rv" style="--d:.1s">At first glance, lending grew less after 2020</h2>
+      <p class="lede rv" style="--d:.15s">In the simple correlation, the years after Covid go together with <strong>lower</strong> loan growth. In the model, the "after Covid" term turns positive, which is why the first hypothesis was not confirmed. Tap the three cards.</p>
+      <div class="panel rv" id="ins-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="flipper" id="flipper">
+        <button class="sign" data-s="0" aria-pressed="true" style="--sc:var(--navy)"><span class="k">Simple correlation</span><span class="ar">↓</span><span class="v">−0.07</span><span class="d">after Covid × loan growth (Table 4)</span></button>
+        <button class="sign" data-s="1" aria-pressed="false" style="--sc:var(--red)"><span class="k">In the model</span><span class="ar">↑</span><span class="v">p = 0.007</span><span class="d">the "after Covid" term, with the controls (Table 5)</span></button>
+        <button class="sign" data-s="2" aria-pressed="false" style="--sc:var(--ink-2)"><span class="k">Read together</span><span class="ar">⇅</span><span class="v">0.83</span><span class="d">correlation between "after Covid" and "high contagion" (Table 4)</span></button>
+      </div>
+      <p class="note">Correlations from Table 4 (unmatched panel); in the matched one, −0.07 and 0.91. Coefficients and p from Table 5, model 1.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · OUTROS FATORES -->
+<section class="slide" id="fatores" data-label="Other factors">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> The other factors · place your bet</div>
+    <h2 class="rv" style="--d:.1s">Five features of the banks and the countries also enter the calculation</h2>
+    <p class="lede rv" style="--d:.15s">Theory expected all of them to make lending grow more. Bet on each: with more of it, does lending grow more, less, or is there no clear effect?</p>
+    <div class="fq rv" id="fq" style="--d:.2s"></div>
+    <div id="fq-score" aria-live="polite"></div>
+    <div class="r2 rv" style="--d:.25s" id="r2"></div>
+    <p class="note rv" style="--d:.3s">Expected sign: Table 2. Sign found: Table 5. "Hint" = p between 0.05 and 0.10. R² from Table 5: the share of the differences in loan growth that the model explains.</p>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="In practice and limits">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> In practice · limits · credits</div>
+    <h2 class="rv" style="--d:.1s">What changes for those who regulate, lend or invest</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Governments and regulators</h3><p>Low rates and easy money are not enough if banks pull back. Knowing where lending slows most (the hardest-hit and emerging countries) helps tailor measures to each country.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Banks</h3><p>Spotting periods of greater uncertainty early, when they come from outside shocks, helps adjust capital before the crisis.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ink-2)"><h3>Investors</h3><p>The different reactions of banks in each group of countries can be taken into account when diversifying portfolio risk.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#5b6f96"><h3>Researchers</h3><p>Suggested next steps: check whether who owns the bank changes its reaction, and look at other credit channels, such as receivables funds, peer-to-peer loans and bonds.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>What this study does not say</h3>
+        <ul class="limits">
+          <li><b>Only listed banks.</b> Privately held banks were left out for lack of data. <em>· according to the author</em></li>
+          <li><b>Direction, not size.</b> The coefficients in Table 5 are too large for the scale of the measure (a mean of 0.3% and a standard deviation of 9.6 points), so the page shows only which way lending went and how reliably. <em>· our note</em></li>
+          <li><b>The model explains little.</b> 3.1% of the differences in loan growth (0.8% with matching): lending depends on much more. <em>· our note</em></li>
+          <li><b>The group is the country, not the bank.</b> Every bank in a high-contagion country is in the same group, and the US has 37% of the banks. The dissertation does not show whether the groups followed the same trend before 2020. <em>· our note</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Credits</h3>
+        <div class="cite">
+          <b>How to cite</b><br>
+          ROBIAL, Karina. <em>O impacto da Covid na concessão de crédito bancário.</em> Master’s dissertation (Business Administration), Mackenzie Presbyterian University, São Paulo, 2025. Advisor: Prof. Dr. Michele Nascimento Jucá.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Research supported by CAPES (Brazil’s federal agency for graduate education). Data from Capital IQ, the World Bank and the WHO; analysis in Stata. This version simplifies the work for a general audience; the formulas and full tables are in the original text.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Read the full dissertation (in Portuguese)</a>
+          <a class="btn ghost" href="#capa">↑ Back to the start</a>
+          <a class="btn ghost" href="../../">More research</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  function n0(n){ return n.toLocaleString(EN ? 'en-US' : 'pt-BR'); }
+  function sgn(v, d){ return (v < 0 ? '−' : '+') + fmt(Math.abs(v), d); }
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // Apêndice A, Tabela A.1: país (PT, EN), bancos, casos de Covid 2020–2023
+  var DEV = [
+    ['Estados Unidos','United States',432,103436829],['Japão','Japan',74,33803572],['Noruega','Norway',30,1503931],['Dinamarca','Denmark',17,3432346],['Emirados Árabes Unidos','United Arab Emirates',17,1067030],['França','France',15,38997490],['Suíça','Switzerland',13,4446938],['Itália','Italy',12,26661619],['Reino Unido','United Kingdom',11,24865162],['Polônia','Poland',10,6632065],['Arábia Saudita','Saudi Arabia',10,841469],['Coreia do Sul','South Korea',9,34571873],['Kuwait','Kuwait',9,666586],['Canadá','Canada',8,4774236],['Israel','Israel',8,4841558],['Catar','Qatar',8,514524],['Austrália','Australia',7,11721535],['Áustria','Austria',7,6082170],['Bahrein','Bahrain',7,696614],['Chile','Chile',6,5332977],['Croácia','Croatia',6,1309728],['Omã','Oman',6,399449],['Espanha','Spain',6,13980340],['Suécia','Sweden',6,2746617],['Rússia','Russia',5,23746552],['Bulgária','Bulgaria',4,1323578],['Alemanha','Germany',4,38437756],['Grécia','Greece',4,5570360],['Malta','Malta',4,121022],['Chipre','Cyprus',3,675109],['Irlanda','Ireland',3,1728954],['Singapura','Singapore',3,2924515],['Eslovênia','Slovenia',3,1354415]
+  ];
+  var EMG = [
+    ['China','China',63,99322727],['Indonésia','Indonesia',42,6821770],['Bangladesh','Bangladesh',33,2046292],['Paquistão','Pakistan',18,1580631],['Vietnã','Vietnam',16,11624000],['Brasil','Brazil',15,37511921],['Jordânia','Jordan',14,1746997],['Filipinas','Philippines',14,4132200],['Egito','Egypt',12,516023],['Sri Lanka','Sri Lanka',12,672707],['Tailândia','Thailand',12,4762375],['Turquia','Turkey',12,17004690],['Malásia','Malaysia',11,5227322],['Quênia','Kenya',10,344094],['Nigéria','Nigeria',10,267188],['Iraque','Iraq',9,2465545],['Peru','Peru',9,4505220],['Tunísia','Tunisia',9,1153361],['Colômbia','Colombia',8,6365994],['Marrocos','Morocco',7,1278269],['Gana','Ghana',6,171834],['Argentina','Argentina',5,10077406],['Malawi','Malawi',5,89168],['África do Sul','South Africa',5,4072636],['Tanzânia','Tanzania',5,43223],['Botsuana','Botswana',4,330417],['Costa do Marfim','Côte d’Ivoire',4,88384],['México','Mexico',4,7709747],['Maurício','Mauritius',3,323720],['Namíbia','Namibia',3,172249],['Uganda','Uganda',3,171888],['Zimbábue','Zimbabwe',3,266071]
+  ];
+  // Seção 2.1.1 (OMS até dez/2024): casos e mortes por faixa de renda
+  var INC = [
+    {n:L('Renda baixa','Low income'), s:L('baixa','low'), c:2035684, d:44982},
+    {n:L('Renda média-baixa','Lower-middle income'), s:L('média-baixa','lower-mid'), c:82799744, d:1036900},
+    {n:L('Renda média-alta','Upper-middle income'), s:L('média-alta','upper-mid'), c:260874744, d:2972442},
+    {n:L('Renda alta','High income'), s:L('alta','high'), c:429775853, d:3017899}
+  ];
+  // Tabela 5: [coeficiente, p] no modelo 1 (DID, sem pareamento) e 2 (PSM-DID)
+  var T5 = {
+    POST:[[0.4572, 0.007], [0.7688, 0.000]], TREAT:[[-0.4151, 0.013], [-0.7163, 0.000]], POSTEC:[[-0.0798, 0.000], [-0.0874, 0.000]],
+    SIZ:[[-0.0174, 0.085], [-0.0369, 0.001]], LIQ:[[-0.5319, 0.000], [-0.5738, 0.000]], SOL:[[0.1536, 0.182], [0.1480, 0.391]],
+    GDPG:[[0.0259, 0.823], [-0.1384, 0.163]], WGI:[[0.0313, 0.156], [0.0111, 0.704]], R2:[0.0308, 0.0077]
+  };
+  // Tabela B.1: viés padronizado (%) antes (u) e depois (m) do pareamento
+  var BIAS = [
+    {n:L('Tamanho','Size'), d:L('log do ativo','log of assets'), u:24.7, m:16.4},
+    {n:L('Caixa','Cash'), d:L('caixa ÷ ativo','cash ÷ assets'), u:12.6, m:12.2},
+    {n:L('Capital próprio','Equity'), d:L('patrimônio ÷ ativo','equity ÷ assets'), u:-24.6, m:-9.2},
+    {n:L('Crescimento do PIB','GDP growth'), d:L('do país, no ano','country, per year'), u:-32.8, m:-11.6},
+    {n:L('Governança do país','Country governance'), d:'WGI', u:36.1, m:-2.8}
+  ];
+  // Tabela 3: crescimento do crédito (fração)
+  var LG = {mean:0.003, sd:0.096, min:-0.879, max:0.991};
+  function pTxt(p){ return p < 0.001 ? 'p < 0' + (EN ? '.' : ',') + '001' : 'p = ' + fmt(p, 3); }
+  function stars(p){ return p < 0.01 ? 3 : p < 0.05 ? 2 : p < 0.10 ? 1 : 0; }
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), W = 470, D = 70, bw = 40, gap = 11, mid = 26, kH = 0.115;
+    var st = makeStage(sc, W, D, {ay:'66%', rx:'62deg'});
+    rotatable(sc, st, -20, 8);
+    var hD = 767 * kH, hE = 386 * kH, x0 = (W - (8 * bw + 7 * gap + mid)) / 2, cols = [];
+    for (var i = 0; i < 8; i++){
+      var x = x0 + i * (bw + gap) + (i >= 4 ? mid : 0), y = 2016 + i;
+      var a = box({w:bw, d:40, x:x, y:15, h:hD, c:'var(--dev)', label:String(y).slice(2)});
+      var b = box({w:bw, d:40, x:x, y:15, z:hD, h:hE, c:'var(--em)'});
+      st.appendChild(a); st.appendChild(b); cols.push([a, b]);
+    }
+    st.appendChild(box({w:4, d:56, x:x0 + 4 * (bw + gap) + mid / 2 - 8, y:7, h:hD + hE + 30, c:'var(--ink-2)'}));
+    flatLabel(st, L('antes da Covid', 'before Covid'), x0, 62, 4 * bw + 3 * gap);
+    flatLabel(st, L('depois da Covid', 'after Covid'), x0 + 4 * (bw + gap) + mid, 62, 4 * bw + 3 * gap);
+    var last = null;
+    function show(i){
+      if (i === last) return; last = i;
+      cols.forEach(function(c, j){ c[0].classList.toggle('active', j === i); c[1].classList.toggle('active', j === i); });
+      var y = 2016 + i;
+      $('hero-year').innerHTML = '<b>' + y + '</b> · ' + (i < 4 ? L((4 - i) + (4 - i === 1 ? ' ano antes' : ' anos antes') + ' da pandemia', (4 - i) + (4 - i === 1 ? ' year' : ' years') + ' before the pandemic') : L((i - 3) + 'º ano da pandemia', 'pandemic year ' + (i - 3)));
+    }
+    if (reduce) show(4);
+    else M.onTick(function(t){ show(Math.floor(t / 1.2) % 8); });
+  })();
+
+  /* ================= 02 · O BANCO NO MEIO ================= */
+  (function(){
+    var svg = $('flow-svg');
+    var S = [
+      {cred:16, gov:0, brake:false, tag:L('Tempos normais','Normal times'), h:L('O banco transforma depósitos em crédito','The bank turns deposits into loans'), p:L('Quem poupa deposita no banco; o banco empresta a empresas e famílias, por prazos mais longos. É assim que o dinheiro vira consumo e investimento. Por isso o banco é o primeiro a sentir quando a oferta e a demanda dão um tranco.','Savers deposit in the bank; the bank lends to firms and households, for longer terms. That is how money becomes consumption and investment. That is why the bank is the first to feel it when supply and demand are jolted.')},
+      {cred:26, gov:12, brake:false, tag:L('O que os governos esperavam','What governments expected'), h:L('Juros menores e mais dinheiro para emprestar','Lower rates and more money to lend'), p:L('Para conter a recessão, governos e bancos centrais cortaram juros, recompraram títulos, deram garantias e afrouxaram regras de capital. O banco é o canal: com mais liquidez e juros menores, a ideia era que o crédito engrossasse.','To contain the recession, governments and central banks cut rates, bought back bonds, gave guarantees and eased capital rules. The bank is the channel: with more liquidity and lower rates, lending was supposed to grow.')},
+      {cred:7, gov:12, brake:true, tag:L('O que pode acontecer','What may happen'), h:L('Com medo de não receber, o banco aperta a análise','Afraid of not being repaid, the bank tightens its checks'), p:L('Na incerteza, ninguém consegue dar probabilidade ao futuro. O risco de calote sobe e alguns bancos elevaram os padrões de análise de risco, emprestando menos mesmo com o estímulo do governo. Estudos citados pela dissertação viram isso nos EUA e na Europa.','Under uncertainty, nobody can put probabilities on the future. Default risk rises and some banks raised their risk standards, lending less even with the government’s stimulus. Studies cited by the dissertation saw this in the US and in Europe.')}
+    ];
+    function node(x, y, w, h, t1, t2, col){
+      return '<rect x="' + (x - w / 2) + '" y="' + (y - h / 2) + '" width="' + w + '" height="' + h + '" rx="12" style="fill:' + col + '"/>' +
+        '<text x="' + x + '" y="' + (y + (t2 ? -3 : 6)) + '" text-anchor="middle" style="font-size:15px; font-weight:700; fill:#fff">' + t1 + '</text>' +
+        (t2 ? '<text x="' + x + '" y="' + (y + 16) + '" text-anchor="middle" class="sm" style="font-size:12.5px; fill:#fff; opacity:.9">' + t2 + '</text>' : '');
+    }
+    function draw(m){
+      var s = S[m], h = '<defs><marker id="ah" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="26" markerHeight="26" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#64748b"/></marker><marker id="ahr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="30" markerHeight="30" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--red)"/></marker></defs>';
+      h += '<line class="ar" x1="120" y1="230" x2="196" y2="230" stroke="#94a3b8" stroke-width="14" marker-end="url(#ah)"/>';
+      h += '<text x="158" y="268" text-anchor="middle" class="sm" style="font-size:12.5px; fill:var(--muted)">' + L('depósitos', 'deposits') + '</text>';
+      h += '<line class="ar" x1="362" y1="230" x2="' + (434 - s.cred * 0.4) + '" y2="230" stroke="var(--red)" stroke-width="' + s.cred + '" marker-end="url(#ahr)"/>';
+      h += '<text x="398" y="' + (268 + s.cred / 4) + '" text-anchor="middle" class="sm" style="font-size:12.5px; fill:var(--red); font-weight:700">' + L('crédito', 'credit') + '</text>';
+      h += '<line class="ar" x1="280" y1="92" x2="280" y2="166" stroke="var(--navy)" stroke-width="' + Math.max(1, s.gov) + '" stroke-dasharray="' + (s.gov ? '0' : '4 6') + '" opacity="' + (s.gov ? 1 : .35) + '" marker-end="url(#ah)"/>';
+      h += '<text x="296" y="128" class="sm" style="font-size:12.5px; fill:var(--navy); opacity:' + (s.gov ? 1 : .4) + '">' + L('juros menores, liquidez', 'lower rates, liquidity') + '</text>';
+      h += node(62, 230, 112, 64, L('Quem', 'Savers'), L('poupa', ''), '#64748b');
+      h += node(280, 230, 150, 84, L('Banco', 'Bank'), L('intermediário', 'intermediary'), 'var(--ink)');
+      h += node(492, 230, 120, 64, L('Empresas', 'Firms and'), L('e famílias', 'households'), '#334155');
+      h += node(280, 56, 220, 60, L('Governo e', 'Government and'), L('banco central', 'central bank'), 'var(--navy)');
+      if (s.brake){
+        h += '<g><circle cx="340" cy="186" r="22" style="fill:var(--red)"/><text x="340" y="193" text-anchor="middle" style="font-size:20px; font-weight:900; fill:#fff">!</text>' +
+          '<text x="370" y="168" class="sm" style="font-size:12.5px; font-weight:700; fill:var(--red)">' + L('mais exigência', 'stricter checks') + '</text></g>';
+      }
+      svg.innerHTML = h;
+      $('flow-panel').innerHTML = '<div class="tag">' + s.tag + '</div><h3>' + s.h + '</h3><p>' + s.p + '</p>';
+      each($('flow-seg').children, function(b){ b.setAttribute('aria-pressed', +b.dataset.m === m); });
+    }
+    each($('flow-seg').children, function(b){ b.addEventListener('click', function(){ draw(+b.dataset.m); }); });
+    draw(0);
+  })();
+
+  /* ================= 03 · RENDA ================= */
+  (function(){
+    var sc = $('inc-scene'), W = 460, D = 80, bw = 74, gap = 34;
+    var st = makeStage(sc, W, D, {ay:'72%', rx:'58deg'});
+    rotatable(sc, st, -10, 6);
+    var x0 = (W - (4 * bw + 3 * gap)) / 2, bars = [];
+    INC.forEach(function(g, i){
+      var b = box({w:bw, d:46, x:x0 + i * (bw + gap), y:12, h:10, c:i === 0 ? 'var(--red)' : M.ramp('var(--navy)', 3 - i, 5), label:' '});
+      st.appendChild(b); bars.push(b);
+      flatLabel(st, g.s, x0 + i * (bw + gap) - 10, 66 + (i % 2) * 18, bw + 20);
+    });
+    var MODES = {
+      c:{v:function(g){ return g.c / 1e6; }, lab:function(v){ return fmt(v, v < 10 ? 1 : 0) + (EN ? ' M' : ' mi'); }, max:430, tag:L('Casos registrados','Recorded cases'), h:L('Os países ricos somaram mais casos','Rich countries added up more cases'), p:L('429,8 milhões de casos nos países de renda alta, contra 2,0 milhões nos de renda baixa. Ao todo, 777 milhões de casos até dezembro de 2024.','429.8 million cases in high-income countries, against 2.0 million in low-income ones. In all, 777 million cases up to December 2024.')},
+      d:{v:function(g){ return g.d / 1e3; }, lab:function(v){ return n0(Math.round(v)) + (EN ? 'k' : ' mil'); }, max:3020, tag:L('Mortes','Deaths'), h:L('Renda média-alta e alta tiveram quase o mesmo número de mortes','Upper-middle and high income had almost the same number of deaths'), p:L('Cerca de 3 milhões de mortes em cada uma dessas faixas, mesmo com a renda alta tendo 1,6 vez mais casos (conta nossa). No total, 7,1 milhões de mortes.','About 3 million deaths in each of these groups, even though high income had 1.6 times more cases (our calculation). In all, 7.1 million deaths.')},
+      r:{v:function(g){ return g.d / g.c * 100; }, lab:function(v){ return fmt(v, 2); }, max:2.3, tag:L('Mortes a cada 100 casos','Deaths per 100 cases'), h:L('Quanto menor a renda, mais letal','The lower the income, the more lethal'), p:L('2,21 mortes a cada 100 casos na renda baixa, 1,25 na média-baixa, 1,14 na média-alta e 0,70 na alta. A dissertação chama isso de relação inversa entre renda e letalidade.','2.21 deaths per 100 cases in low income, 1.25 in lower-middle, 1.14 in upper-middle and 0.70 in high income. The dissertation calls this an inverse relation between income and fatality.')}
+    };
+    function show(m){
+      var md = MODES[m];
+      bars.forEach(function(b, i){
+        var v = md.v(INC[i]);
+        b.style.setProperty('--h', Math.max(30, v / md.max * 200) + 'px');
+        b.querySelector('.face-label').textContent = md.lab(v);
+      });
+      each($('inc-seg').children, function(b){ b.setAttribute('aria-pressed', b.dataset.m === m); });
+      $('inc-panel').innerHTML = '<div class="tag">' + md.tag + '</div><h3>' + md.h + '</h3><p>' + md.p + '</p>';
+    }
+    each($('inc-seg').children, function(b){ b.addEventListener('click', function(){ show(b.dataset.m); }); });
+    show('r');
+  })();
+
+  /* ================= 04 · ESTUDOS ANTERIORES ================= */
+  (function(){
+    var S = [
+      {k:'Çolak e Oztekin (2021)', q:L('Bancos de países com mais infectados e mortos','Banks in countries with more infections and deaths'), m:L('14.163 bancos em 125 países, 2017 a 2020.','14,163 banks in 125 countries, 2017 to 2020.'), a:'less', x:L('O crédito caiu na Covid, e caiu mais quanto mais gente infectada ou morta no país.','Lending fell during Covid, and fell more the more people were infected or died in the country.')},
+      {k:'Cao e Chou (2022)', q:L('Bancos dos EUA com mais capital antes da crise','US banks with more capital before the crisis'), m:L('5.843 bancos em 4.191 cidades, 2017 a 2021.','5,843 banks in 4,191 cities, 2017 to 2021.'), a:'more', x:L('Quem entrou na crise com mais capital regulatório concedeu mais crédito durante ela.','Banks that entered the crisis with more regulatory capital lent more during it.')},
+      {k:L('Liu e colegas (2022a)','Liu and colleagues (2022a)'), q:L('Pequenas e médias empresas de Hubei, na China','Small and medium firms in Hubei, China'), m:L('1.692 empresas, 2019 × 2020, em torno do lockdown.','1,692 firms, 2019 × 2020, around the lockdown.'), a:'less', x:L('Houve menos crédito para as empresas de Hubei e das províncias com mais infecções e mortes.','There was less credit for firms in Hubei and in provinces with more infections and deaths.')},
+      {k:L('Liu e colegas (2022b)','Liu and colleagues (2022b)'), q:L('Agricultores de Hubei em empréstimos entre pessoas','Hubei farmers in peer-to-peer loans'), m:L('1.074 operações, 2019 × 2020.','1,074 loans, 2019 × 2020.'), a:'less', x:L('Os empréstimos entre pessoas (P2P) para agricultores caíram onde a pandemia bateu mais forte.','Peer-to-peer (P2P) loans to farmers fell where the pandemic hit hardest.')},
+      {k:L('Silva e colegas (2023)','Silva and colleagues (2023)'), q:L('Agências bancárias em lugares com mais infectados','Bank branches in places with more infections'), m:L('74 bancos em 508 localidades, 2015 a 2020.','74 banks in 508 locations, 2015 to 2020.'), a:'less', x:L('O crédito concedido caiu depois da Covid, sobretudo nos bancos com agências mais digitalizadas.','Credit granted fell after Covid, especially at banks with more digitized branches.')}
+    ];
+    var LBL = {less:L('Menos','Less'), same:L('Igual','Same'), more:L('Mais','More')}, VC = {less:'var(--navy)', more:'var(--red)'}, hits = 0, done = 0, w = $('bets');
+    w.innerHTML = S.map(function(s, i){
+      return '<div class="bet" style="--vc:' + VC[s.a] + '" data-i="' + i + '"><div class="in">' +
+        '<div class="fc"><span class="k">' + s.k + '</span><h3>' + s.q + '</h3><p>' + s.m + '</p><div class="opts">' +
+        ['less', 'same', 'more'].map(function(o){ return '<button data-o="' + o + '">' + LBL[o] + '</button>'; }).join('') + '</div></div>' +
+        '<div class="bc"><span class="verdict">' + LBL[s.a] + L(' crédito', ' credit') + '</span><h3 style="font-size:.88rem">' + s.k + '</h3><p>' + s.x + '</p><span class="you"></span></div>' +
+        '</div></div>';
+    }).join('');
+    each(w.querySelectorAll('.bet'), function(card){
+      var s = S[+card.dataset.i];
+      each(card.querySelectorAll('.opts button'), function(btn){
+        btn.addEventListener('click', function(){
+          var ok = btn.dataset.o === s.a; if (ok) hits++; done++;
+          card.querySelector('.you').textContent = L('Você apostou "', 'You bet "') + LBL[btn.dataset.o] + '": ' + (ok ? L('acertou.', 'right.') : L('errou.', 'wrong.'));
+          card.classList.add('done');
+          $('bet-score').innerHTML = L('Você acertou <strong>' + hits + ' de ' + done + '</strong>.', 'You got <strong>' + hits + ' of ' + done + '</strong> right.') + (done === 5 ? L(' Quatro estudos acharam menos crédito onde a Covid bateu mais; o quinto mostra que ter capital antes da crise ajudou a emprestar. Todos olham um país ou um grupo amplo; nenhum compara emergentes e desenvolvidos, a lacuna que a dissertação quer cobrir (Tabela 1 e seção 2.2).', ' Four studies found less credit where Covid hit harder; the fifth shows that having capital before the crisis helped banks lend. All look at one country or a broad group; none compares emerging and developed countries, the gap the dissertation aims to fill (Table 1 and section 2.2).') : '');
+        });
+      });
+    });
+  })();
+
+  /* ================= 05 · AMOSTRA ================= */
+  (function(){
+    var g = $('banks'), ALL = [], h = '';
+    DEV.forEach(function(c){ ALL.push({c:c, e:false}); });
+    EMG.forEach(function(c){ ALL.push({c:c, e:true}); });
+    ALL.forEach(function(o, ci){ for (var k = 0; k < o.c[2]; k++) h += '<i data-c="' + ci + '"' + (o.e ? ' class="e"' : '') + '></i>'; });
+    g.innerHTML = h;
+    var dots = g.children, sel = $('ctry-sel');
+    var sorted = ALL.map(function(o, i){ return {i:i, n:o.c[EN ? 1 : 0]}; }).sort(function(a, b){ return a.n.localeCompare(b.n, EN ? 'en' : 'pt'); });
+    sel.innerHTML = '<option value="">' + L('(nenhum)', '(none)') + '</option>' + sorted.map(function(s){ return '<option value="' + s.i + '">' + s.n + '</option>'; }).join('');
+    var MSG = {
+      inc:L('<strong>767 bancos</strong> em 33 países de renda alta (desenvolvidos) e <strong>386</strong> em 32 emergentes. Os emergentes têm um terço dos bancos, mas mais casos de Covid por banco: 603 mil contra 534 mil (Apêndice A).', '<strong>767 banks</strong> in 33 high-income (developed) countries and <strong>386</strong> in 32 emerging ones. Emerging countries have a third of the banks, but more Covid cases per bank: 603 thousand against 534 thousand (Appendix A).'),
+      big:L('Os <strong>Estados Unidos</strong> (432 bancos) e o <strong>Japão</strong> (74) somam 506 dos 1.153 bancos, 44% da amostra (conta nossa). O que acontece com os bancos desses dois países pesa muito no resultado dos desenvolvidos.', 'The <strong>United States</strong> (432 banks) and <strong>Japan</strong> (74) add up to 506 of the 1,153 banks, 44% of the sample (our count). What happens to the banks of these two countries weighs heavily on the result for developed countries.')
+    };
+    var mode = 'inc';
+    function paint(ci){
+      each(dots, function(d){
+        var c = +d.dataset.c;
+        var on = ci !== null ? c === ci : mode === 'big' ? c <= 1 : true;
+        d.classList.toggle('dim', !on); d.classList.toggle('sel', ci !== null && on);
+      });
+      if (ci !== null){
+        var o = ALL[ci], c = o.c;
+        $('smp-msg').innerHTML = '<strong>' + c[EN ? 1 : 0] + '</strong> · ' + (o.e ? L('emergente', 'emerging') : L('desenvolvido', 'developed')) + ' · ' + c[2] + (c[2] === 1 ? L(' banco', ' bank') : L(' bancos', ' banks')) + L(' na amostra', ' in the sample') + '<br>' + n0(c[3]) + L(' casos de Covid de 2020 a 2023 · ', ' Covid cases from 2020 to 2023 · ') + n0(Math.round(c[3] / c[2])) + L(' casos por banco (conta nossa)', ' cases per bank (our calculation)');
+      } else $('smp-msg').innerHTML = MSG[mode];
+    }
+    each($('smp-seg').children, function(b){ b.addEventListener('click', function(){ mode = b.dataset.m; sel.value = ''; each($('smp-seg').children, function(x){ x.setAttribute('aria-pressed', x === b); }); paint(null); }); });
+    sel.addEventListener('change', function(){ paint(sel.value === '' ? null : +sel.value); });
+    paint(null);
+  })();
+
+  /* ================= 06 · RÉGUA DO CRÉDITO ================= */
+  (function(){
+    var LO = -0.9, HI = 1.0;
+    function pos(v){ return (v - LO) / (HI - LO) * 100; }
+    $('lg-rul').innerHTML = '<div class="band" style="left:' + pos(LG.mean - LG.sd) + '%; width:' + (pos(LG.mean + LG.sd) - pos(LG.mean - LG.sd)) + '%"></div>' +
+      '<div class="mk l" style="left:' + pos(LG.min) + '%"><span>' + L('mín.', 'min') + ' −87,9%</span></div>' +
+      '<div class="mk" style="left:' + pos(LG.mean) + '%"><span>' + L('média', 'mean') + ' 0,3%</span></div>' +
+      '<div class="mk r" style="left:' + pos(LG.max) + '%"><span>' + L('máx.', 'max') + ' 99,1%</span></div><div class="you" id="lg-you"></div>';
+    if (EN) each(document.querySelectorAll('#lg-rul .mk span'), function(s){ s.textContent = s.textContent.replace(',', '.'); });
+    function draw(){
+      var l = +$('ln').value, a = +$('as').value, sh = l / a, lg = sh / 0.6 - 1;
+      $('ln-v').textContent = l; $('as-v').textContent = a;
+      $('bar1').style.height = (120 * a / 100) + 'px';
+      $('bar1').querySelector('i').style.height = Math.min(100, sh * 100) + '%';
+      $('sh1').textContent = fmt(sh * 100, 0) + '%';
+      $('lg-v').textContent = sgn(lg * 100, 1) + '%';
+      $('lg-v').style.color = lg < 0 ? 'var(--navy)' : 'var(--red)';
+      $('lg-you').style.left = Math.max(0, Math.min(100, pos(lg))) + '%';
+    }
+    $('ln').addEventListener('input', draw); $('as').addEventListener('input', draw);
+    each($('pres').children, function(b){ b.addEventListener('click', function(){ $('ln').value = b.dataset.l; $('as').value = b.dataset.a; draw(); }); });
+    draw();
+  })();
+
+  /* ================= 07 · MÉTODO (ilustração) ================= */
+  (function(){
+    var svg = $('did-svg'), XA = 150, XB = 410;
+    function y(v){ return 290 - (v - 0.8) / 2.6 * 240; }
+    var T = [2.6, 1.4], C = [1.6, 2.1], CF = 3.1;
+    var TXT = [
+      [L('Comparação 1','Comparison 1'), L('Antes × depois, só nos países de alto contágio','Before × after, only in high-contagion countries'), L('O crescimento do crédito dos bancos de alto contágio foi de 2,6% para 1,4%: caiu 1,2 ponto. Mas talvez o crédito tenha mudado em toda parte, com ou sem muitos casos. Essa comparação não sabe dizer.','Loan growth at high-contagion banks went from 2.6% to 1.4%: down 1.2 points. But perhaps lending changed everywhere, with or without many cases. This comparison cannot tell.')],
+      [L('Comparação 2','Comparison 2'), L('Um grupo × o outro, depois de 2020','One group × the other, after 2020'), L('Depois de 2020, o grupo de alto contágio (1,4%) fica 0,7 ponto abaixo do de comparação (2,1%). Mas os grupos já eram diferentes antes, quando o de alto contágio estava acima: a diferença não é só da Covid.','After 2020, the high-contagion group (1.4%) is 0.7 points below the comparison group (2.1%). But the groups were already different before, when the high-contagion group was above: the gap is not only due to Covid.')],
+      [L('Comparação 3','Comparison 3'), L('Diferença das diferenças','Difference in differences'), L('O grupo de comparação subiu 0,5 ponto; o de alto contágio caiu 1,2. A diferença entre as duas mudanças, −1,7 ponto, é o efeito atribuído ao contágio. A linha tracejada é onde o grupo estaria sem a Covid forte, seguindo a mesma tendência do outro.','The comparison group rose 0.5 points; the high-contagion group fell 1.2. The difference between the two changes, −1.7 points, is the effect attributed to contagion. The dashed line is where the group would be without heavy Covid, following the same trend as the other.')]
+    ];
+    function br(x, y1, y2, txt, col){
+      return '<line x1="' + x + '" x2="' + x + '" y1="' + y1 + '" y2="' + y2 + '" stroke="' + col + '" stroke-width="3"/>' +
+        '<line x1="' + (x - 7) + '" x2="' + (x + 7) + '" y1="' + y1 + '" y2="' + y1 + '" stroke="' + col + '" stroke-width="3"/><line x1="' + (x - 7) + '" x2="' + (x + 7) + '" y1="' + y2 + '" y2="' + y2 + '" stroke="' + col + '" stroke-width="3"/>' +
+        '<text x="' + (x + 12) + '" y="' + ((y1 + y2) / 2 + 9) + '" class="big" style="font-size:24px; font-weight:700; font-family:Merriweather, serif; fill:' + col + '">' + txt + '</text>';
+    }
+    function pt(v){ return fmt(v, 1) + '%'; }
+    function draw(m){
+      var h = '<line x1="' + ((XA + XB) / 2) + '" x2="' + ((XA + XB) / 2) + '" y1="30" y2="292" stroke="var(--ink-2)" stroke-dasharray="5 5" stroke-width="2"/>' +
+        '<text x="' + ((XA + XB) / 2) + '" y="22" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--ink-2)">' + L('chega a Covid', 'Covid arrives') + '</text>' +
+        '<line x1="60" x2="520" y1="292" y2="292" stroke="var(--border)" stroke-width="2"/>' +
+        '<text x="' + XA + '" y="314" text-anchor="middle" style="font-size:13px; fill:var(--muted)">2016–2019</text><text x="' + XB + '" y="314" text-anchor="middle" style="font-size:13px; fill:var(--muted)">2020–2023</text>' +
+        '<text x="20" y="160" transform="rotate(-90 20 160)" text-anchor="middle" style="font-size:12px; fill:var(--muted)">' + L('crescimento do crédito', 'loan growth') + '</text>';
+      var dimC = m === 0 ? .25 : 1;
+      h += '<line x1="' + XA + '" x2="' + XB + '" y1="' + y(C[0]) + '" y2="' + y(C[1]) + '" stroke="var(--lo)" stroke-width="5" opacity="' + dimC + '"/>';
+      h += '<circle cx="' + XA + '" cy="' + y(C[0]) + '" r="7" fill="var(--lo)" opacity="' + dimC + '"/><circle cx="' + XB + '" cy="' + y(C[1]) + '" r="7" fill="var(--lo)" opacity="' + dimC + '"/>';
+      h += '<text x="' + (XA - 14) + '" y="' + (y(C[0]) + 5) + '" text-anchor="end" style="font-size:14px; font-weight:700; fill:#64748b; opacity:' + dimC + '">' + pt(C[0]) + '</text>';
+      h += '<text x="' + XA + '" y="' + (y(C[0]) + 30) + '" text-anchor="middle" class="sm" style="font-size:12.5px; fill:#64748b; opacity:' + dimC + '">' + L('comparação', 'comparison') + '</text>';
+      h += '<line x1="' + XA + '" x2="' + XB + '" y1="' + y(T[0]) + '" y2="' + y(T[1]) + '" stroke="var(--hi)" stroke-width="5"/>';
+      h += '<circle cx="' + XA + '" cy="' + y(T[0]) + '" r="7" fill="var(--hi)"/><circle cx="' + XB + '" cy="' + y(T[1]) + '" r="7" fill="var(--hi)"/>';
+      h += '<text x="' + (XA - 14) + '" y="' + (y(T[0]) + 5) + '" text-anchor="end" style="font-size:14px; font-weight:700; fill:var(--hi)">' + pt(T[0]) + '</text>';
+      h += '<text x="' + XA + '" y="' + (y(T[0]) - 16) + '" text-anchor="middle" class="sm" style="font-size:12.5px; fill:var(--hi)">' + L('alto contágio', 'high contagion') + '</text>';
+      if (m === 0){ h += '<line x1="' + XA + '" x2="' + XB + '" y1="' + y(T[0]) + '" y2="' + y(T[0]) + '" stroke="var(--hi)" stroke-dasharray="3 5" opacity=".5"/>' + br(XB + 22, y(T[0]), y(T[1]), '−1,2', 'var(--hi)'); }
+      if (m === 1){ h += br(XB + 22, y(C[1]), y(T[1]), '−0,7', 'var(--ink-2)'); }
+      if (m === 2){
+        h += '<line x1="' + XA + '" x2="' + XB + '" y1="' + y(T[0]) + '" y2="' + y(CF) + '" stroke="var(--hi)" stroke-width="3" stroke-dasharray="8 6" opacity=".7"/>' +
+          '<circle cx="' + XB + '" cy="' + y(CF) + '" r="6" fill="#fff" stroke="var(--hi)" stroke-width="2.5"/>' +
+          '<text x="' + (XB - 12) + '" y="' + (y(CF) - 12) + '" text-anchor="end" class="sm" style="font-size:12.5px; fill:var(--hi)">' + L('sem a Covid forte', 'without heavy Covid') + '</text>' +
+          br(XB + 22, y(CF), y(T[1]), '−1,7', 'var(--hi)');
+      }
+      if (EN) h = h.replace(/(\d),(\d)/g, '$1.$2');
+      svg.innerHTML = h;
+      var t = TXT[m];
+      $('did-msg').innerHTML = '<div class="tag">' + t[0] + '</div><h3>' + t[1] + '</h3><p>' + t[2] + '</p>';
+      each($('did-seg').children, function(b){ b.setAttribute('aria-pressed', +b.dataset.m === m); });
+    }
+    each($('did-seg').children, function(b){ b.addEventListener('click', function(){ draw(+b.dataset.m); }); });
+    draw(0);
+  })();
+
+  /* ================= 08 · PAREAMENTO ================= */
+  (function(){
+    var LO = -40, HI = 40, w = $('bias');
+    w.innerHTML = BIAS.map(function(b, i){
+      return '<div class="brow" data-i="' + i + '"><span>' + b.n + '<small>' + b.d + '</small></span><span class="tr"><i></i></span><b></b></div>';
+    }).join('');
+    $('bias-axis').innerHTML = [-40, -20, 0, 20, 40].map(function(v){ return '<span style="left:' + ((v - LO) / (HI - LO) * 100) + '%">' + (v < 0 ? '−' : v > 0 ? '+' : '') + Math.abs(v) + '%</span>'; }).join('');
+    function show(m){
+      each(w.children, function(r, i){
+        var b = BIAS[i], v = m === 'u' ? b.u : b.m, p = (v - LO) / (HI - LO) * 100, bar = r.querySelector('i');
+        bar.style.left = Math.min(p, 50) + '%'; bar.style.width = Math.abs(p - 50) + '%'; bar.classList.toggle('m', m === 'm');
+        r.querySelector('b').textContent = sgn(v, 1) + '%';
+      });
+      each($('bias-seg').children, function(b){ b.setAttribute('aria-pressed', b.dataset.m === m); });
+    }
+    each($('bias-seg').children, function(b){ b.addEventListener('click', function(){ show(b.dataset.m); }); });
+    show('u');
+  })();
+
+  /* ================= 09 · RESULTADO ================= */
+  (function(){
+    var H = [
+      {k:'POSTEC', id:'H3', q:L('Nos países emergentes, o crédito freou mais que nos desenvolvidos depois da Covid','In emerging countries, lending slowed more than in developed ones after Covid'), ok:true, r:L('<b>Confirmada.</b> Depois de 2020, o crescimento do crédito dos bancos de emergentes ficou abaixo do dos desenvolvidos, nos dois testes (p &lt; 0,001). Para a autora, pesam a economia mais frágil e a resposta mais lenta dos governos.','<b>Confirmed.</b> After 2020, loan growth at banks in emerging countries fell below that of developed ones, in both tests (p &lt; 0.001). For the author, a more fragile economy and slower government responses weigh in.')},
+      {k:'TREAT', id:'H2', q:L('Nos países com mais contágio, o crédito freou mais','In countries with more contagion, lending slowed more'), ok:true, r:L('<b>Confirmada.</b> Os bancos dos países de alto contágio tiveram crescimento do crédito menor (p = 0,013 no teste principal; p &lt; 0,001 no pareado). Mais casos, mais incerteza, mais cautela, como em Çolak e Oztekin (2021).','<b>Confirmed.</b> Banks in high-contagion countries had lower loan growth (p = 0.013 in the main test; p &lt; 0.001 in the matched one). More cases, more uncertainty, more caution, as in Çolak and Oztekin (2021).')},
+      {k:'POST', id:'H1', q:L('A Covid reduziu o crédito dos bancos em geral','Covid reduced bank lending overall'), ok:false, r:L('<b>Não confirmada: sinal contrário.</b> No modelo, o termo "depois da Covid" fez o crescimento do crédito <em>subir</em> (p = 0,007 e p &lt; 0,001). A autora atribui isso aos estímulos e ao afrouxamento das regras dos bancos. A tela 10 mostra por que vale ler com cuidado.','<b>Not confirmed: opposite sign.</b> In the model, the "after Covid" term made loan growth <em>rise</em> (p = 0.007 and p &lt; 0.001). The author attributes this to stimulus and the easing of banking rules. Screen 10 shows why it is worth reading carefully.')}
+    ].reverse();
+    var sc = $('res-scene'), W = 470, D = 80, bw = 58, gin = 8, ggap = 46;
+    var st = makeStage(sc, W, D, {ay:'74%', rx:'58deg'});
+    rotatable(sc, st, -12, 6);
+    var x0 = (W - (3 * (2 * bw + gin) + 2 * ggap)) / 2, bars = {};
+    H.forEach(function(h, gi){
+      var gx = x0 + gi * (2 * bw + gin + ggap); bars[h.k] = [];
+      [0, 1].forEach(function(mi){
+        var b = box({w:bw, d:44, x:gx + mi * (bw + gin), y:14, h:30, c:'#94a3b8', label:'M' + (mi + 1), top:' ', cls:'off'});
+        st.appendChild(b); bars[h.k].push(b);
+        b.addEventListener('click', function(){ if (!M.wasDrag(sc)) panel(h, mi); });
+      });
+      flatLabel(st, h.id, gx, 62, 2 * bw + gin, 'font-family:Merriweather, serif;');
+    });
+    function reveal(h){
+      bars[h.k].forEach(function(b, mi){
+        var r = T5[h.k][mi], s = stars(r[1]);
+        b.classList.remove('off'); b.classList.toggle('up', r[0] > 0);
+        b.style.setProperty('--c', r[0] > 0 ? 'var(--red)' : 'var(--navy)');
+        b.style.setProperty('--h', (s * 44) + 'px');
+        b.querySelector('.top-label').textContent = r[0] > 0 ? '↑' : '↓';
+      });
+    }
+    function panel(h, mi){
+      var r = T5[h.k][mi];
+      if (!$('hyps').querySelector('[data-k="' + h.k + '"]').classList.contains('done')){
+        $('res-panel').innerHTML = '<div class="tag">' + h.id + '</div><h3>' + L('Aposte primeiro', 'Bet first') + '</h3><p>' + L('A coluna aparece depois da sua aposta, à esquerda.', 'The column appears after your bet, on the left.') + '</p>'; return;
+      }
+      $('res-panel').innerHTML = '<div class="tag">' + h.id + ' · ' + (mi ? L('teste com pareamento (947 bancos)', 'matched test (947 banks)') : L('teste principal (1.153 bancos)', 'main test (1,153 banks)')) + ' · <span class="nt">' + pTxt(r[1]) + '</span></div><h3>' + (r[0] > 0 ? L('O crescimento do crédito subiu', 'Loan growth rose') : L('O crescimento do crédito ficou menor', 'Loan growth was lower')) + '</h3><p>' + h.q + (h.ok ? L(': confirmada.', ': confirmed.') : L(': não confirmada, sinal contrário ao previsto.', ': not confirmed, sign opposite to the prediction.')) + '</p>';
+    }
+    var hits = 0, done = 0;
+    $('hyps').innerHTML = H.map(function(h){
+      return '<div class="hyp" data-k="' + h.k + '" style="--hc:' + (h.ok ? 'var(--navy)' : 'var(--red)') + '"><span class="hn">' + h.id + '</span><div><div class="q">' + h.q + '</div>' +
+        '<div class="opts"><button data-g="1">' + L('Confirmou', 'Confirmed') + '</button><button data-g="0">' + L('Não confirmou', 'Not confirmed') + '</button></div><div class="res"></div></div></div>';
+    }).join('');
+    each($('hyps').children, function(el){
+      var h = H.filter(function(x){ return x.k === el.dataset.k; })[0];
+      each(el.querySelectorAll('.opts button'), function(b){
+        b.addEventListener('click', function(){
+          var ok = (b.dataset.g === '1') === h.ok; if (ok) hits++; done++;
+          el.querySelector('.res').innerHTML = h.r + ' <span style="color:var(--muted)">' + (ok ? L('Você acertou.', 'You got it right.') : L('Você errou.', 'You got it wrong.')) + '</span>';
+          el.classList.add('done'); reveal(h); panel(h, 0);
+          $('hyp-score').innerHTML = L('Você acertou <strong>' + hits + ' de ' + done + '</strong>.', 'You got <strong>' + hits + ' of ' + done + '</strong> right.') + (done === 3 ? L(' Placar da pesquisa: duas hipóteses confirmadas (H2 e H3) e uma com sinal contrário (H1).', ' The study’s score: two hypotheses confirmed (H2 and H3) and one with the opposite sign (H1).') : '');
+        });
+      });
+    });
+    $('res-panel').innerHTML = '<div class="tag">' + L('Como ler', 'How to read') + '</div><h3>' + L('Duas colunas por hipótese', 'Two columns per hypothesis') + '</h3><p>' + L('Uma para o teste principal (M1) e outra para o teste com pareamento (M2). Aposte à esquerda para acender cada par; depois toque nas colunas.', 'One for the main test (M1) and one for the matched test (M2). Bet on the left to light up each pair; then tap the columns.') + '</p>';
+  })();
+
+  /* ================= 10 · O INESPERADO ================= */
+  (function(){
+    var P = [
+      [L('Correlação simples','Simple correlation'), L('Depois de 2020, o crédito cresceu menos','After 2020, lending grew less'), L('Juntando todas as observações, "depois da Covid" e o crescimento do crédito andam em sentidos opostos (correlação −0,07, significativa). O mesmo vale para "alto contágio" (−0,05). A própria dissertação lê essas correlações como uma redução do crédito depois da Covid.','Putting all observations together, "after Covid" and loan growth move in opposite directions (correlation −0.07, significant). The same holds for "high contagion" (−0.05). The dissertation itself reads these correlations as a fall in lending after Covid.')],
+      [L('No modelo','In the model'), L('Com os controles, o termo "depois da Covid" sobe','With the controls, the "after Covid" term rises'), L('Quando o modelo separa os efeitos e mantém fixos tamanho, caixa e capital dos bancos, PIB e governança, o termo "depois da Covid" fica positivo. Para a autora, juros menores, mais dinheiro na economia e regras de capital e de provisão mais frouxas sustentaram o crédito; a Turquia, por exemplo, teve 9,4% a mais de crédito com uma política de estímulo.','When the model separates the effects and holds bank size, cash and capital, GDP and governance constant, the "after Covid" term turns positive. For the author, lower rates, more money in the economy and looser capital and provisioning rules sustained lending; Turkey, for instance, saw 9.4% more lending with a stimulus policy.')],
+      [L('Leia junto','Read together'), L('"Depois da Covid" e "alto contágio" andam quase juntos','"After Covid" and "high contagion" move almost together'), L('As duas medidas têm correlação de 0,83 (0,91 no pareado), e no modelo seus coeficientes têm tamanhos parecidos e sinais opostos. Para os bancos dos países de alto contágio depois de 2020, os dois quase se anulam (conta nossa). Por isso, o "sobe" da H1 e o "desce" da H2 são melhor lidos juntos do que separados. (Observação nossa.)','The two measures have a correlation of 0.83 (0.91 when matched), and in the model their coefficients are of similar size and opposite sign. For banks in high-contagion countries after 2020, the two nearly cancel out (our calculation). So the "rise" in H1 and the "fall" in H2 are better read together than apart. (Our note.)')]
+    ];
+    var btns = $('flipper').children;
+    function show(s){
+      each(btns, function(b){ b.setAttribute('aria-pressed', +b.dataset.s === s); });
+      $('ins-panel').innerHTML = '<div class="tag">' + P[s][0] + '</div><h3>' + P[s][1] + '</h3><p>' + P[s][2] + '</p>';
+    }
+    each(btns, function(b){ b.addEventListener('click', function(){ show(+b.dataset.s); }); });
+    show(0);
+  })();
+
+  /* ================= 11 · OUTROS FATORES ================= */
+  (function(){
+    var F = [
+      {k:'SIZ', n:L('Tamanho do banco','Bank size'), q:L('Bancos maiores ampliaram mais o crédito?','Did bigger banks expand lending more?'), x:L('Para a autora, bancos grandes diversificam os investimentos em vez de focar só no crédito.','For the author, big banks diversify their investments instead of focusing only on lending.')},
+      {k:'LIQ', n:L('Caixa','Cash'), q:L('Com mais caixa, o banco ampliou mais o crédito?','With more cash, did the bank expand lending more?'), x:L('Na Covid, guardar caixa foi um colchão contra problemas de solvência, e esse dinheiro não virou crédito.','During Covid, holding cash was a cushion against solvency problems, and that money did not become loans.')},
+      {k:'SOL', n:L('Capital próprio','Equity'), q:L('Com mais capital próprio, o banco ampliou mais o crédito?','With more equity, did the bank expand lending more?'), x:L('Sem efeito claro nos dois testes.','No clear effect in either test.')},
+      {k:'GDPG', n:L('Crescimento do PIB','GDP growth'), q:L('Com a economia crescendo, o crédito cresceu mais?','With the economy growing, did lending grow more?'), x:L('Sem efeito claro. A autora sugere que as variáveis da Covid já carregam o ciclo da economia.','No clear effect. The author suggests the Covid variables already carry the economic cycle.')},
+      {k:'WGI', n:L('Governança do país','Country governance'), q:L('Com governo e leis melhores, o crédito cresceu mais?','With better government and laws, did lending grow more?'), x:L('Sem efeito claro nos dois testes.','No clear effect in either test.')}
+    ];
+    function dir(r){ var s = stars(r[1]); return s === 0 ? 0 : s === 1 ? (r[0] > 0 ? 0.5 : -0.5) : (r[0] > 0 ? 1 : -1); }
+    function lab(r){
+      var d = dir(r);
+      return d === 0 ? '<b class="nn">' + L('sem efeito', 'no effect') + '</b>' : '<b class="' + (d > 0 ? 'up' : 'dn') + '">' + (d > 0 ? '↑' : '↓') + ' ' + (Math.abs(d) < 1 ? L('pista', 'hint') : (d > 0 ? L('mais', 'more') : L('menos', 'less'))) + '</b>';
+    }
+    var hits = 0, done = 0, w = $('fq');
+    w.innerHTML = F.map(function(f, i){
+      var a = dir(T5[f.k][0]), b = dir(T5[f.k][1]);
+      var ans = (a < 0 || b < 0) ? -1 : (a > 0 || b > 0) ? 1 : 0;
+      f.ans = ans;
+      return '<div class="fc" data-i="' + i + '"><span class="k">' + f.n + '</span><h3>' + f.q + '</h3>' +
+        '<div class="opts"><button data-g="1">↑ ' + L('Mais', 'More') + '</button><button data-g="-1">↓ ' + L('Menos', 'Less') + '</button><button data-g="0">' + L('Sem efeito', 'No effect') + '</button></div>' +
+        '<div class="res"><span class="flag" style="--fl:' + (ans === 0 ? '#64748b' : ans > 0 ? '#15803d' : 'var(--red)') + '">' + (ans === 0 ? L('sem efeito claro', 'no clear effect') : ans > 0 ? L('como esperado', 'as expected') : L('na contramão', 'against expectations')) + '</span>' +
+        '<div class="row"><span>' + L('Teoria esperava', 'Theory expected') + '</span><b class="up">↑ ' + L('mais', 'more') + '</b></div>' +
+        '<div class="row"><span>' + L('Teste principal', 'Main test') + '</span>' + lab(T5[f.k][0]) + '</div>' +
+        '<div class="row"><span>' + L('Com pareamento', 'Matched') + '</span>' + lab(T5[f.k][1]) + '</div>' +
+        '<p style="margin:6px 0 0">' + f.x + '</p><p class="you" style="margin:6px 0 0; color:var(--muted)"></p></div></div>';
+    }).join('');
+    each(w.querySelectorAll('.fc'), function(card){
+      var f = F[+card.dataset.i];
+      each(card.querySelectorAll('.opts button'), function(b){
+        b.addEventListener('click', function(){
+          var g = +b.dataset.g, ok = g === f.ans; if (ok) hits++; done++;
+          card.querySelector('.you').textContent = L('Você apostou: ', 'You bet: ') + b.textContent + ' · ' + (ok ? L('acertou.', 'right.') : L('errou.', 'wrong.'));
+          card.classList.add('done');
+          $('fq-score').innerHTML = L('Você acertou <strong>' + hits + ' de ' + done + '</strong>.', 'You got <strong>' + hits + ' of ' + done + '</strong> right.') + (done === 5 ? L(' Nenhum dos cinco foi para o lado previsto: tamanho e caixa andaram com menos crédito; os outros três não mostraram efeito claro.', ' None of the five went the predicted way: size and cash went with less lending; the other three showed no clear effect.') : '');
+        });
+      });
+    });
+    $('r2').innerHTML = '<div style="font-size:.86rem; font-weight:600; color:var(--ink)">' + L('Quanto das diferenças no crescimento do crédito o modelo explica', 'How much of the differences in loan growth the model explains') + '</div>' +
+      [[L('Teste principal', 'Main test'), T5.R2[0]], [L('Com pareamento', 'Matched'), T5.R2[1]]].map(function(r){
+        return '<div class="row2"><span>' + r[0] + '</span><div class="bar"><i style="width:' + (r[1] * 100) + '%"></i></div><b>' + fmt(r[1] * 100, 1) + '%</b></div>';
+      }).join('');
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
