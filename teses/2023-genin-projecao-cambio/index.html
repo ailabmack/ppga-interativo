@@ -1,0 +1,1044 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qual modelo prevê melhor o câmbio? · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Camila de Souza Vasconcelos Genin (PPGA Mackenzie, 2023) sobre modelos de projeção de câmbio em cinco países, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2023-genin-projecao-cambio/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2214%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>US$</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em ../../assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --rw:var(--navy);                                   /* o palpite "amanhã = hoje" (passeio aleatório) */
+    --tay:var(--red);                                   /* Regra de Taylor com filtros */
+    --comb:color-mix(in srgb, var(--red) 52%, white);   /* combinação de projeções */
+    --var:#94a3b8;                                      /* VAR ou VEC sozinho */
+    --nn:#334155;                                       /* rede neural LSTM */
+    --off:#cbd5e1;
+  }
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4vw, 2.6rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:32em; margin-left:auto; margin-right:auto;}
+  .hz-badge{display:block; text-align:center; font-family:var(--serif); font-weight:700; font-size:1rem; color:var(--ink); margin-bottom:2px; min-height:1.5em;}
+  #hero-scene .floor-label{font-size:16px; font-weight:700;}
+  @media (max-width:600px){ #hero-scene .floor-label{font-size:18px;} }
+
+  /* ---------- Componentes comuns ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px 22px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.1rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.92rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:18px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  @media (max-width:560px){ .seg button{padding:7px 10px; font-size:.8rem;} }
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.4rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.76rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  details.tbl{margin-top:12px; font-size:.82rem; color:var(--ink-2);}
+  details.tbl summary{cursor:pointer; color:var(--muted); font-weight:600;}
+  details.tbl .wrap{overflow-x:auto; margin-top:8px;}
+  details.tbl table{border-collapse:collapse; width:100%; font-variant-numeric:tabular-nums;}
+  details.tbl th, details.tbl td{border-bottom:1px solid var(--border); padding:4px 6px; text-align:right; white-space:nowrap;}
+  details.tbl th:first-child, details.tbl td:first-child{text-align:left;}
+
+  /* ---------- 02 · Sobe ou desce ---------- */
+  #game-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  #game-svg text{font-family:var(--sans);}
+  .guess{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 4px;}
+  .guess button{flex:1; min-width:110px; border:1px solid var(--border); background:var(--card); border-radius:10px; padding:11px 8px; font-size:.95rem; font-weight:600; cursor:pointer; color:var(--ink);}
+  .guess button:hover{border-color:var(--red);}
+  .guess button:disabled{opacity:.45; cursor:default;}
+  .score{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:12px;}
+  .score div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:9px 12px; font-size:.76rem; color:var(--muted); line-height:1.3;}
+  .score b{font-family:var(--serif); font-size:1.2rem; color:var(--ink); display:block; font-variant-numeric:tabular-nums;}
+  .score .you b{color:var(--red);} .score .rule b{color:var(--rw);}
+  #game-msg{min-height:3.2em; font-size:.9rem; color:var(--ink-2); margin-top:10px;}
+  @media (max-width:600px){ #game-svg text{font-size:16px !important;} .score b{font-size:1.05rem;} }
+
+  /* ---------- 03 · Literatura ---------- */
+  .funnel{display:grid; gap:6px; margin:6px 0 14px;}
+  .funnel div{display:grid; grid-template-columns:1fr 54px; gap:10px; align-items:center; font-size:.82rem; color:var(--ink-2);}
+  .funnel i{display:block; height:26px; border-radius:6px; background:var(--fc); position:relative;}
+  .funnel i span{position:absolute; left:10px; top:4px; font-style:normal; font-size:.78rem; font-weight:600; color:#fff; white-space:nowrap;}
+  .funnel b{font-family:var(--serif); font-size:1.05rem; color:var(--ink); text-align:right; font-variant-numeric:tabular-nums;}
+  .dots69{display:grid; grid-template-columns:repeat(12, 1fr); gap:7px; max-width:430px; margin:4px auto 0;}
+  .dots69 span{aspect-ratio:1; border-radius:50%; background:var(--off); transition:background .45s, transform .45s;}
+  .dots69 span.on{transform:scale(1.08);}
+  #lit-legend{justify-content:center;}
+  #lit-panel{min-height:120px; margin-top:14px;}
+
+  /* ---------- 04 · Clássicos ---------- */
+  .cbars{display:grid; gap:6px; margin-top:12px; position:relative;}
+  .cbar{display:grid; grid-template-columns:170px 1fr 58px; gap:10px; align-items:center; height:32px; font-size:.8rem; line-height:1.15; color:var(--ink-2); transition:transform .55s cubic-bezier(.2,.8,.2,1);}
+  .cbar .tr{height:16px; background:#eef2f7; border-radius:4px; position:relative;}
+  .cbar .tr i{position:absolute; left:0; top:0; bottom:0; border-radius:4px; background:var(--bc, #8494ab); transition:width .6s cubic-bezier(.2,.8,.2,1);}
+  .cbar b{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink);}
+  .cbar.me{font-weight:700; color:var(--ink);}
+  @media (max-width:520px){ .cbar{grid-template-columns:112px 1fr 50px; font-size:.74rem;} }
+  .clusters{display:grid; grid-template-columns:1fr; gap:8px; margin-top:14px;}
+  @media (min-width:700px){ .clusters{grid-template-columns:repeat(3, 1fr);} }
+  .cl{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:11px 13px; font-size:.8rem; color:var(--ink-2); line-height:1.4;}
+  .cl b{display:block; font-family:var(--serif); color:var(--ink); font-size:.92rem; margin-bottom:3px;}
+  .cl em{display:block; font-style:normal; font-size:.7rem; color:var(--muted); margin-top:5px;}
+
+  /* ---------- 05 · Dados ---------- */
+  #q-svg{width:100%; display:block;}
+  #q-svg text{font-family:var(--sans);}
+  #cty-panel{min-height:150px;}
+  .flagrow{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;}
+  .pill{display:inline-block; font-size:.7rem; font-weight:700; padding:3px 9px; border-radius:6px; background:var(--bg-soft); color:var(--ink-2);}
+  @media (max-width:600px){ #q-svg text{font-size:15px !important;} }
+
+  /* ---------- 06 · Receitas ---------- */
+  .ing{display:grid; gap:4px; margin-top:4px;}
+  .ing .hd, .ing .rrow{display:grid; grid-template-columns:minmax(120px, 190px) repeat(8, 1fr); gap:4px; align-items:center;}
+  .ing .hd span{font-size:.68rem; font-weight:700; color:var(--muted); text-align:center; line-height:1.1;}
+  .ing .hd span.c{color:var(--red);}
+  .ing .rrow{border:1px solid transparent; background:transparent; border-radius:8px; padding:3px 4px; cursor:pointer; font:inherit; text-align:left; transition:background .25s, border-color .25s, opacity .35s;}
+  .ing .rrow:hover{border-color:var(--border);}
+  .ing .rrow[aria-pressed="true"]{background:var(--card); border-color:var(--ink); box-shadow:var(--shadow);}
+  .ing .rrow.hid{display:none;}
+  .ing .rrow > b{font-size:.76rem; font-weight:600; color:var(--ink-2); line-height:1.2;}
+  .ing .rrow > b small{display:inline-block; min-width:18px; color:var(--muted); font-weight:700;}
+  .ing i{display:block; height:20px; border-radius:5px; background:transparent; border:1px dashed #e2e8f0; transition:background .4s, border-color .4s, transform .4s;}
+  .ing i.on{border:0; background:#94a3b8;}
+  .ing i.on.s{background:var(--rw);}
+  .ing i.on.c{background:var(--red); transform:scale(1.04);}
+  #rec-panel{min-height:160px;}
+  .vers{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .vers span{font-size:.72rem; padding:4px 9px; border-radius:6px; border:1px solid var(--border); background:var(--card); color:var(--ink-2);}
+  @media (max-width:560px){ .ing .hd, .ing .rrow{grid-template-columns:104px repeat(8, 1fr); gap:3px;} .ing .hd span{writing-mode:vertical-rl; transform:rotate(180deg); height:62px; font-size:.64rem; justify-self:center;} .ing .rrow > b{font-size:.68rem;} .ing i{height:16px;} }
+
+  /* ---------- 07 · Pelo erro ---------- */
+  #mcs-scene .floor-label{font-size:15px; white-space:nowrap;}
+  #mcs-scene .floor-label.row{text-align:right;}
+  #mcs-scene .floor-label.col{font-weight:700; text-align:center;}
+  #mcs-scene .slab{cursor:pointer;}
+  #mcs-scene .slab.dim > i{opacity:.16;}
+  #mcs-scene .cell.active .slab{--oz:10px;}
+  #mcs-panel{min-height:170px;}
+  .mlist{margin:6px 0 0; padding:0; list-style:none; display:grid; gap:4px; font-size:.84rem; color:var(--ink-2);}
+  .mlist li{display:flex; gap:8px; align-items:flex-start;}
+  .mlist li i{flex:none; width:12px; height:12px; border-radius:3px; margin-top:4px; background:var(--mc);}
+  @media (max-width:600px){ #mcs-scene .floor-label{font-size:19px;} #mcs-scene .floor-label.col{font-size:17px;} }
+
+  /* ---------- 08 · Direção ---------- */
+  .dgrid{display:grid; grid-template-columns:42px repeat(5, 1fr); gap:6px; margin-top:8px; font-variant-numeric:tabular-nums;}
+  .dgrid .h{font-size:.72rem; font-weight:700; color:var(--muted); text-align:center; align-self:end;}
+  .dgrid .r{font-size:.74rem; font-weight:700; color:var(--muted); display:flex; align-items:center;}
+  .dcell{position:relative; height:52px; background:#eef2f7; border-radius:6px; overflow:hidden;}
+  .dcell i{position:absolute; left:0; right:0; bottom:0; background:var(--red); transition:height .6s cubic-bezier(.2,.8,.2,1), background .4s;}
+  .dcell.low i{background:var(--off);}
+  .dcell.mid i{background:var(--comb);}
+  .dcell b{position:absolute; left:0; right:0; top:4px; text-align:center; font-size:.8rem; color:var(--ink); z-index:2;}
+  .dcell .ln{position:absolute; left:0; right:0; border-top:2px dashed var(--ink-2); z-index:1; transition:bottom .5s, opacity .3s;}
+  .dcell .band{position:absolute; left:0; right:0; bottom:31%; height:38%; background:color-mix(in srgb, var(--rw) 14%, transparent); z-index:1; opacity:0; transition:opacity .3s;}
+  .dgrid.acaso .dcell .band{opacity:1;}
+  .dcell.rw{background:color-mix(in srgb, var(--rw) 12%, white);}
+  .dcell.rw b{top:10px; font-size:.72rem; color:var(--rw);}
+  #dir-panel{min-height:110px; margin-top:14px;}
+  #dir-mode button{font-size:.78rem; padding:7px 11px;}
+  .coins{display:flex; flex-wrap:wrap; gap:3px; margin-top:8px;}
+  .coins span{width:14px; height:14px; border-radius:50%; background:var(--off); font-size:9px; line-height:14px; text-align:center; color:#fff; font-weight:700;}
+  .coins span.hit{background:var(--rw);}
+  #coin-msg{min-height:2.4em; font-size:.86rem; color:var(--ink-2); margin-top:8px;}
+
+  /* ---------- 09 · CDS ---------- */
+  #cds-svg{width:100%; display:block;}
+  #cds-svg text{font-family:var(--sans);}
+  #cds-panel{min-height:170px;}
+  @media (max-width:600px){ #cds-svg text{font-size:15px !important;} }
+
+  /* ---------- 10 · Rede neural ---------- */
+  #nn-scene{perspective:3200px;}
+  #nn-scene .slab{transition:transform .55s cubic-bezier(.2,.8,.2,1), --h .6s cubic-bezier(.2,.8,.2,1);}
+  #nn-scene .top-label{font-size:19px; color:#fff; font-weight:700;}
+  #nn-scene .floor-label{font-size:16px; font-weight:700;}
+  #nn-scene .rwplane > i{opacity:.55;}
+  .rng{display:grid; gap:6px; margin:10px 0 4px;}
+  .rng input{width:100%; accent-color:var(--nn);}
+  .rng .ticks{display:flex; justify-content:space-between; font-size:.72rem; color:var(--muted); font-variant-numeric:tabular-nums;}
+  .rng .ticks span{width:30px; text-align:center;}
+  .rng .ticks span.on{color:var(--ink); font-weight:700;}
+  #nn-panel{min-height:150px; margin-top:12px;}
+  .net{display:block; width:100%; max-width:360px; margin:6px auto 0;}
+  @media (max-width:600px){ #nn-scene .floor-label{font-size:21px;} #nn-scene .top-label{font-size:23px;} }
+
+  /* ---------- 11 · Pandemia ---------- */
+  #line-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  #line-svg text{font-family:var(--sans);}
+  .unc{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px;}
+  .unc button{border:1px solid var(--border); background:var(--card); border-radius:12px; padding:12px 14px; text-align:left; cursor:pointer; font:inherit; color:var(--ink-2); font-size:.82rem; line-height:1.42; border-top:5px solid var(--uc);}
+  .unc button b{display:block; font-family:var(--serif); color:var(--ink); font-size:.98rem; margin-bottom:4px;}
+  .unc button[aria-pressed="true"]{box-shadow:var(--shadow); background:color-mix(in srgb, var(--uc) 6%, white);}
+  @media (max-width:520px){ .unc{grid-template-columns:1fr;} #line-svg text{font-size:15px !important;} }
+
+  /* ---------- 12 · Prática, limites e créditos ---------- */
+  .cards3{display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px;}
+  @media (min-width:800px){ .cards3{grid-template-columns:repeat(3, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 15px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:5px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.78rem; line-height:1.45; color:var(--ink-2);}
+  .pcard .src{display:block; margin-top:7px; font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--muted);}
+  .end{display:grid; grid-template-columns:1fr; gap:24px; margin-top:20px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:44px;} }
+  .end h3{font-size:1.1rem; margin-bottom:6px;}
+  .limits{display:grid; gap:7px; margin:8px 0 0; padding:0; list-style:none;}
+  .limits li{padding:8px 13px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.82rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.84rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; line-height:1.6; margin-top:8px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2023-genin-projecao-cambio/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2023</div>
+      <h1 class="rv" style="--d:.1s">Qual modelo prevê melhor o câmbio?</h1>
+      <p class="sub rv" style="--d:.2s">Desde 1983, economistas tentam vencer um palpite simples: <strong>o câmbio do próximo período será igual ao de hoje</strong>. A tese testou modelos econômicos e uma rede neural com cinco moedas contra o dólar, de 1995 a 2020. Nenhum modelo venceu sempre. Mas, de dois trimestres à frente em diante, o palpite simples saiu do grupo dos melhores. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autora:</b> Camila de Souza Vasconcelos Genin</span>
+        <span><b>Orientador:</b> Prof. Dr. Eli Hadad Junior</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#palpite">Começar →</a>
+        <a class="btn ghost" href="#erro">Ir direto ao resultado</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <span class="hz-badge" id="hero-hz" aria-live="off">1 trimestre à frente</span>
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="520x290" role="img" aria-label="Cinco pedestais, um por país; sobre cada um, os modelos que empataram entre os melhores em cada horizonte, de 1 a 6 trimestres. O azul do amanhã igual a hoje só aparece no primeiro trimestre."></div></div>
+      <div class="legend" style="justify-content:center"><span><i class="dot" style="background:var(--rw)"></i>"amanhã = hoje"</span><span><i class="dot" style="background:var(--tay)"></i>Regra de Taylor com filtros</span><span><i class="dot" style="background:var(--comb)"></i>combinação de modelos</span><span><i class="dot" style="background:var(--var)"></i>VAR ou VEC sozinho</span></div>
+      <p class="cap-legend">Cada bloco é um modelo no grupo dos melhores pelo erro (Quadro 9 da tese), de 1 a 6 trimestres à frente.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-17"><a href="https://brasil.un.org/pt-br/sdgs/17" target="_blank" rel="noopener" title="ODS 17 · Parcerias e meios de implementação: Compara formas de prever o câmbio de cinco países, informação que empresas, investidores e governos usam em decisões ligadas à estabilidade econômica."><b>17</b>Parcerias e meios de implementação</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · SOBE OU DESCE -->
+<section class="slide" id="palpite" data-label="Sobe ou desce?">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> Experimente</div>
+      <h2 class="rv" style="--d:.1s">Duas réguas para julgar uma previsão</h2>
+      <p class="lede rv" style="--d:.15s">O palpite mais difícil de bater é repetir o último valor: o dólar do próximo trimestre será igual ao de hoje. Os economistas chamam isso de <strong>passeio aleatório</strong> (<em>random walk</em>). Em 1983, Meese e Rogoff mostraram que ele errava menos que os modelos econômicos da época.</p>
+      <p class="rv" style="--d:.2s">A tese julga os modelos por duas réguas: <strong>quanto erram no valor</strong> e <strong>se acertam a direção</strong> (sobe ou desce), que importa para quem investe. Tente com o real de verdade, trimestre a trimestre.</p>
+      <p class="note rv" style="--d:.25s"><b>Valores aproximados</b>, lidos por nós do gráfico da tese (Figura 11): reais por dólar no fim de cada trimestre.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="game-svg" viewBox="0 0 560 270" role="img" aria-label="Gráfico do real por dólar nos últimos trimestres"></svg>
+      <div class="guess" role="group" aria-label="Seu palpite para o próximo trimestre">
+        <button data-g="1">↑ Sobe</button>
+        <button data-g="-1">↓ Desce</button>
+      </div>
+      <div class="score">
+        <div class="you">Você<b id="sc-you">–</b>acertos de direção</div>
+        <div class="rule">"Amanhã = hoje"<b id="sc-rule">–</b>acertos de direção</div>
+        <div class="rule">"Amanhã = hoje"<b id="sc-err">–</b>erro médio no valor</div>
+      </div>
+      <div id="game-msg" aria-live="polite">Rodada 1 de 8. O real vai subir ou descer no próximo trimestre?</div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · A LITERATURA -->
+<section class="slide" id="literatura" data-label="O que se sabia">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> Artigo 1 · 775 artigos</div>
+      <h2 class="rv" style="--d:.1s">Quase ninguém olhou para as moedas de países emergentes</h2>
+      <p class="lede rv" style="--d:.15s">A autora reuniu 775 artigos da Web of Science sobre modelos de câmbio, mediu quem publica e quem é citado, e leu por inteiro os 69 que comparam modelos de previsão.</p>
+      <div class="funnel rv" id="funnel" style="--d:.2s"></div>
+      <p class="rv" style="--d:.25s">Entre os 69, só 4 incluem moedas de países emergentes, e o real aparece em apenas 2. Ela também viu poucos estudos que usam vários tipos de modelo e várias réguas ao mesmo tempo. A tese nasce dessas lacunas.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="chips" id="lit-chips" role="group" aria-label="Recorte dos 69 artigos"></div>
+      <div class="dots69" id="dots69" role="img" aria-label="Os 69 artigos lidos, um ponto por artigo"></div>
+      <div class="legend" id="lit-legend"></div>
+      <div class="panel" id="lit-panel" aria-live="polite"></div>
+      <p class="note">Um ponto por artigo lido. Nos recortes dados em percentual pela tese (abordagem, frequência, período), os pontos são uma aproximação nossa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · OS CLÁSSICOS -->
+<section class="slide" id="classicos" data-label="Os mais citados">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Artigo 1 · quem a área cita</div>
+      <h2 class="rv" style="--d:.1s">Um artigo de 1983 ainda é o mais citado</h2>
+      <p class="lede rv" style="--d:.15s">O estudo de Meese e Rogoff tem 1.543 citações na base. Foi ele que criou o "quebra-cabeça": por que modelos baseados na economia (juros, inflação, moeda, produção) não superam o palpite de repetir o último valor?</p>
+      <p class="rv" style="--d:.2s">As citações em comum separam três grupos de estudos:</p>
+      <div class="clusters rv" style="--d:.25s">
+        <div class="cl"><b>Modelos econômicos × outros</b>Testam se os modelos baseados na economia vencem outras formas de prever. Meese e Rogoff estão no centro.<em>palavras: models, fit, fundamentals</em></div>
+        <div class="cl"><b>Os modelos monetários clássicos</b>Os artigos que criaram os modelos de preços flexíveis e de preços rígidos, nos anos 1970 e 1980.<em>palavras: purchasing power parity, cointegration, tests</em></div>
+        <div class="cl"><b>Volatilidade</b>Estudos sobre o quanto o câmbio oscila, com os modelos ARCH.<em>palavras: volatility, time-series, models</em></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="cit-mode" role="group" aria-label="Medida">
+        <button data-m="t" aria-pressed="true">Citações no total</button>
+        <button data-m="a" aria-pressed="false">Citações por ano</button>
+      </div>
+      <div class="cbars" id="cbars"></div>
+      <p class="note">Os 10 artigos mais citados entre os 775 (Tabela 4 da tese). Por ano, o de Patton (2006), sobre como as moedas se movem juntas, passa à frente.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · OS DADOS -->
+<section class="slide" id="dados" data-label="Os dados">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Como a pesquisa olhou</div>
+      <h2 class="rv" style="--d:.1s">Cinco moedas e 104 trimestres</h2>
+      <p class="lede rv" style="--d:.15s">O iene japonês, uma moeda central do mercado mundial, e quatro moedas de países emergentes: real, peso mexicano, peso chileno e peso colombiano, todas contra o dólar, de 1995 (início do Plano Real) a 2020.</p>
+      <p class="rv" style="--d:.2s">Os modelos aprendem com os primeiros 75% dos trimestres e são testados nos 25% finais, de 1 a 6 trimestres à frente. A cada passo, recebem o valor real antes de prever o seguinte.</p>
+      <div class="chips rv" id="cty-chips" style="--d:.25s" role="group" aria-label="Escolha o país"></div>
+      <div class="panel rv" id="cty-panel" style="--d:.3s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="q-svg" viewBox="0 0 560 300" role="img" aria-label="Linha do tempo com 104 trimestres: 78 para aprender e 26 para testar"></svg>
+      <div class="seg" id="hz-seg" role="group" aria-label="Horizonte de previsão" style="margin-top:8px"></div>
+      <p class="note">Dados trimestrais do FMI, da OCDE e do FRED (Federal Reserve de St. Louis); CDS da Bloomberg. A divisão em trimestres de aprendizado e de teste é uma conta nossa a partir dos 75% e 25% da tese.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · AS RECEITAS -->
+<section class="slide" id="receitas" data-label="Os modelos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Artigo 2 · os competidores</div>
+      <h2 class="rv" style="--d:.1s">Dezoito receitas com ingredientes da economia</h2>
+      <p class="lede rv" style="--d:.15s">Cada modelo econômico prevê o câmbio a partir de diferenças entre o país e os EUA: moeda em circulação, PIB, juros, inflação, comércio exterior. A novidade da tese é um ingrediente a mais, o <strong>CDS</strong>, um termômetro do risco de calote do país.</p>
+      <div class="panel rv" id="rec-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="cds-tog" role="group" aria-label="Ingrediente CDS">
+        <button data-c="0" aria-pressed="true">Sem o CDS (8 receitas)</button>
+        <button data-c="1" aria-pressed="false">Com o CDS (+9)</button>
+      </div>
+      <div class="ing" id="ing" style="margin-top:12px"></div>
+      <p style="font-size:.82rem; margin:12px 0 0">Cada receita rodou em <b>6 versões</b>, e as previsões ainda foram combinadas entre si:</p>
+      <div class="vers"><span>VAR</span><span>VAR, viés corrigido para cima</span><span>VAR, para baixo</span><span>VEC</span><span>VEC, para cima</span><span>VEC, para baixo</span></div>
+      <p class="note">Quadro 5 da tese. Toque numa linha para ver a receita. VAR e VEC preveem várias séries juntas; o VEC também usa o equilíbrio de longo prazo entre elas. A 18ª receita, a Regra de Taylor, usa os hiatos de PIB, juros e inflação calculados com cinco filtros (BK, BW, CF, HP e HM). Os 150 melhores modelos de cada país seguiram para a comparação final.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · PELO ERRO -->
+<section class="slide" id="erro" data-label="Pela régua do erro">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Artigo 2 · o resultado principal</div>
+      <h2 class="rv" style="--d:.1s">O palpite simples só ficou entre os melhores no 1º trimestre</h2>
+      <p class="lede rv" style="--d:.15s">Um teste estatístico (o <em>Model Confidence Set</em>) separou, para cada país e cada horizonte, o grupo de modelos que erraram menos e empataram entre si. O "amanhã = hoje" entrou nesse grupo só um trimestre à frente, em três países. Do 2º ao 6º trimestre, ficou de fora em todos.</p>
+      <div class="chips rv" id="fam-chips" style="--d:.2s" role="group" aria-label="Destacar uma família de modelos"></div>
+      <div class="panel rv" id="mcs-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="mcs-scene" data-fit="600x440" role="group" aria-label="Matriz país por horizonte: em cada célula, uma pilha com um bloco por modelo no grupo dos melhores"></div></div>
+      <div class="legend"><span><i class="dot" style="background:var(--rw)"></i>"amanhã = hoje"</span><span><i class="dot" style="background:var(--tay)"></i>Regra de Taylor com filtros</span><span><i class="dot" style="background:var(--comb)"></i>combinação de modelos</span><span><i class="dot" style="background:var(--var)"></i>VAR ou VEC sozinho</span></div>
+      <p class="note">Quadro 9 da tese. Cada bloco é um modelo no grupo dos melhores; toque numa pilha para ver quais são. As contagens por família são nossas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · PELA DIREÇÃO -->
+<section class="slide" id="direcao" data-label="Pela régua da direção">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Artigo 2 · a outra régua</div>
+      <h2 class="rv" style="--d:.1s">Pela direção, vários acertos ficaram perto da sorte</h2>
+      <p class="lede rv" style="--d:.15s">Entre os modelos empatados, a tese escolheu o que mais acertou se o câmbio subiria ou desceria. Por essa régua, os modelos superaram o "amanhã = hoje" em todos os trimestres, menos no 1º do Chile e da Colômbia.</p>
+      <p class="rv" style="--d:.2s">Há um detalhe: o "amanhã = hoje" nunca diz "sobe" nem "desce", então acerta 0% das direções. A comparação justa é com <strong>uma moeda jogada ao ar: 50%</strong>. Troque a régua.</p>
+      <div class="panel rv" id="dir-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="dir-mode" role="group" aria-label="Régua de comparação">
+        <button data-m="tese" aria-pressed="true">Contra o "amanhã = hoje"</button>
+        <button data-m="moeda" aria-pressed="false">Contra a moeda (50%)</button>
+        <button data-m="acaso" aria-pressed="false">Com a faixa do acaso</button>
+      </div>
+      <div class="dgrid" id="dgrid"></div>
+      <div class="ctas" style="margin-top:14px"><button class="btn small" id="coin-btn">Jogar uma moeda 26 vezes</button></div>
+      <div class="coins" id="coins" aria-hidden="true"></div>
+      <div id="coin-msg" aria-live="polite"></div>
+      <p class="note"><b>Leitura nossa.</b> Acertos de direção do Quadro 11 da tese ("= hoje": a tese indica o próprio "amanhã = hoje"). O teste usa os 25% finais, cerca de 26 trimestres. Com 26 lances, uma moeda honesta acerta entre 31% e 69% em mais de 95% das vezes (faixa azul). A tese não testa se os acertos diferem do acaso.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · O CDS -->
+<section class="slide" id="cds" data-label="O termômetro do risco">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> O inesperado</div>
+      <h2 class="rv" style="--d:.1s">O termômetro do risco não melhorou as previsões</h2>
+      <p class="lede rv" style="--d:.15s">A aposta da tese era incluir o CDS de cinco anos, o preço de um seguro contra o calote do governo, como medida de incerteza. Estudos anteriores ligam o CDS ao câmbio, sobretudo em crises. No resultado, os modelos com CDS apareceram entre os melhores, mas não se mostraram superiores aos outros.</p>
+      <div class="seg rv" id="cds-seg" style="--d:.2s" role="group" aria-label="Parte da história">
+        <button data-k="aposta" aria-pressed="true">A aposta</button>
+        <button data-k="res" aria-pressed="false">O resultado</button>
+        <button data-k="pq" aria-pressed="false">Por quê?</button>
+      </div>
+      <div class="panel rv" id="cds-panel" style="--d:.25s; margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="cds-svg" viewBox="0 0 560 290" role="img" aria-label="Linha do tempo de 1995 a 2020 por país, com o trecho em que há dados de CDS"></svg>
+      <p class="note">Início das séries de CDS: Quadro 7 da tese. Trimestres com CDS até o fim de 2020: contagem nossa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · A REDE NEURAL -->
+<section class="slide" id="rede" data-label="A rede neural">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Artigo 3 · inteligência artificial</div>
+      <h2 class="rv" style="--d:.1s">Uma rede neural maior errou menos que o palpite simples</h2>
+      <p class="lede rv" style="--d:.15s">No terceiro artigo, a autora treinou uma rede neural LSTM, um tipo de rede com memória, só com a série do próprio câmbio, para prever um trimestre à frente. Testou sete tamanhos, de 1 a 100 neurônios em 3 camadas. Arraste o controle.</p>
+      <div class="rng rv" style="--d:.2s">
+        <label for="nn-range" style="font-size:.8rem; color:var(--muted)">Neurônios em cada desenho de rede</label>
+        <input type="range" id="nn-range" min="1" max="7" step="1" value="7">
+        <div class="ticks" id="nn-ticks"></div>
+      </div>
+      <div class="panel rv" id="nn-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="nn-scene" data-fit="560x380" role="group" aria-label="Quatro barras, uma por país: o erro da rede neural em relação ao erro do amanhã igual a hoje, marcado por uma lâmina azul"></div></div>
+      <p class="note"><b>Escala logarítmica:</b> cada degrau de altura multiplica o erro por 10. A lâmina azul é o erro do "amanhã = hoje"; abaixo dela, a rede errou menos. O número na barra é o erro médio da rede dividido pelo do palpite simples, conta nossa com o Quadro 13. O Japão fica de fora: no Quadro 13, os valores dele repetem os da Colômbia (iguais ou divididos por mil), o que não combina com um iene entre 100 e 125 por dólar.</p>
+      <details class="tbl"><summary>Ver os erros da tese (Quadro 13)</summary><div class="wrap" id="nn-table"></div></details>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · A PANDEMIA -->
+<section class="slide" id="pandemia" data-label="O choque de 2020">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> Artigo 3 · o limite</div>
+      <h2 class="rv" style="--d:.1s">A rede acompanhou o real de perto até a pandemia</h2>
+      <p class="lede rv" style="--d:.15s">Com 100 neurônios, a previsão um trimestre à frente quase se confunde com o câmbio real de 2014 a 2019. Em 2020, o real disparou e a rede ficou para trás. A autora aponta essa sensibilidade a choques nos países emergentes.</p>
+      <p class="rv" style="--d:.2s">Para explicar, ela cita dois tipos de incerteza (Gaba, Hogarth e Makridakis, 2010). Toque neles:</p>
+      <div class="unc rv" id="unc" style="--d:.25s">
+        <button style="--uc:var(--rw)" data-u="metro" aria-pressed="true"><b>A incerteza do metrô</b>Dá para estimar quanto tempo o metrô leva até o trabalho pela média dos dias anteriores, se o futuro repetir o padrão do passado.</button>
+        <button style="--uc:var(--red)" data-u="coco" aria-pressed="false"><b>A incerteza do coco</b>Ninguém prevê o coco que cai na cabeça durante as férias. Para a autora, a pandemia de 2020 foi um evento assim.</button>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="line-mode" role="group" aria-label="Período">
+        <button data-v="all" aria-pressed="true">2014 a 2020</button>
+        <button data-v="zoom" aria-pressed="false">Ampliar 2019 e 2020</button>
+      </div>
+      <svg id="line-svg" viewBox="0 0 560 300" role="img" aria-label="Real por dólar e a previsão da rede neural, por trimestre" style="margin-top:10px"></svg>
+      <div class="legend"><span><i class="dot" style="background:var(--ink)"></i>câmbio real</span><span><i class="dot" style="background:var(--nn); box-shadow:inset 0 0 0 2px #fff"></i>previsão da rede (100 neurônios)</span></div>
+      <p class="note"><b>Valores aproximados</b>, lidos por nós da Figura 11 da tese (3º trimestre de 2014 ao 3º de 2020, reais por dólar).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Na prática, limites e créditos</div>
+    <h2 class="rv" style="--d:.1s">O que a pesquisa muda e o que ela não diz</h2>
+    <div class="cards3">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--rw)">
+        <h3>Para quem se protege do câmbio</h3>
+        <p>Empresas que usam contratos futuros (<em>hedge</em>) buscam medir melhor o risco. De 2 a 6 trimestres à frente, modelos econômicos e combinações de modelos erraram menos que repetir o último valor, nos cinco países.</p>
+        <span class="src">Resumo e Quadro 9</span>
+      </div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--red)">
+        <h3>Para quem monta carteiras de moedas</h3>
+        <p>Para a autora, acertar a direção é o que interessa a quem investe, e os modelos fizeram isso melhor que o palpite simples. Em vários casos, porém, o acerto ficou perto de cara ou coroa.</p>
+        <span class="src">Seção 5.3; ressalva: leitura nossa</span>
+      </div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--nn)">
+        <h3>Para pesquisadores</h3>
+        <p>Olhar o mesmo problema com vários modelos, várias técnicas e várias réguas, e incluir moedas de países emergentes, ainda pouco estudadas.</p>
+        <span class="src">Seções 2.2.3 e 7.1</span>
+      </div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Sem margem de erro da previsão.</b> A tese não calculou intervalos de confiança das projeções; a autora sugere isso para estudos futuros. <em>· segundo a autora</em></li>
+          <li><b>A direção sem teste contra o acaso.</b> Com cerca de 26 trimestres de teste, acertos entre 31% e 69% cabem na sorte. <em>· observação nossa</em></li>
+          <li><b>Rede neural com um horizonte e um ingrediente.</b> A LSTM previu só um trimestre à frente e só com o próprio câmbio, sem dados da economia. <em>· observação nossa</em></li>
+          <li><b>Dados do Japão no Quadro 13.</b> Os erros do Japão repetem os da Colômbia; por isso a tela 10 mostra quatro países. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          GENIN, Camila de Souza Vasconcelos. <em>Modelos de projeção de câmbio: uma investigação múltipla com séries de tempo, modelos estruturais e model selection.</em> Tese (Doutorado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2023. Orientador: Prof. Dr. Eli Hadad Junior.
+        </div>
+        <p style="margin-top:12px; font-size:.82rem">Pesquisa com apoio da CAPES e do Instituto Presbiteriano Mackenzie. Dados do FMI, da OCDE, do FRED e da Bloomberg; análises no Stata e no OxMetrics. Esta versão simplifica o trabalho para o público em geral; as equações e as tabelas completas estão no texto original.</p>
+        <div class="ctas" style="margin-top:14px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+
+  /* ================= DADOS DA TESE ================= */
+  var CTY = [
+    {k:'BR', n:'Brasil', m:'real', cds:'4º tri. de 2001', q:77, role:'Emergente. O real está entre as moedas de países emergentes mais negociadas do mundo (BIS, 2019).'},
+    {k:'MX', n:'México', m:'peso mexicano', cds:'4º tri. de 2001', q:77, role:'Emergente. Moeda periférica, escolhida para preencher a lacuna de estudos com países emergentes.'},
+    {k:'CL', n:'Chile', m:'peso chileno', cds:'1º tri. de 2003', q:72, role:'Emergente. Moeda periférica, escolhida pela disponibilidade de dados em todo o período.'},
+    {k:'CO', n:'Colômbia', m:'peso colombiano', cds:'1º tri. de 2003', q:72, role:'Emergente. Moeda periférica, escolhida pela disponibilidade de dados em todo o período.'},
+    {k:'JP', n:'Japão', m:'iene', cds:'1º tri. de 2006', q:60, role:'Desenvolvido. O iene é a terceira moeda mais negociada do mundo: está em 16,8% das transações (BIS, 2019).'}
+  ];
+  var HZ = ['1T', '2T', '3T', '4T', '5T', '6T'];
+  // Quadro 9 (MCS): modelos no grupo dos melhores, por país e horizonte
+  var MCS = {
+    BR:[['RW','2','3','C33'], ['8','C36'], ['5','8','C36'], ['5','8','C36'], ['8','C36'], ['8','C35','C36','C22']],
+    MX:[['C36'], ['9'], ['8','C35','C36'], ['8','C35','C36'], ['8','C35','C36'], ['8','C35','C36']],
+    CL:[['RW','C22'], ['9'], ['5','8','C36'], ['8','C35','C36'], ['8','C35','C36'], ['8','C35','C36']],
+    CO:[['RW','8','2','C34','C22'], ['10'], ['5','8','C36'], ['8','C36'], ['8','C35','C36'], ['8','C35','C36']],
+    JP:[['C35','C36'], ['8','C35','C36'], ['8','C35','C36'], ['8','C34','C35','C36'], ['2','8','C22','C23','C34','C35','C36'], ['2','8','C22','C23','C34','C35','C36']]
+  };
+  // Quadro 10: classes de modelos
+  var CLS = {'2':'VAR', '3':'VAR com correção de viés para cima', '4':'VAR com correção de viés para baixo', '5':'VEC', '6':'VEC com correção de viés para cima', '7':'VEC com correção de viés para baixo'};
+  var FAM = {
+    rw:  {n:'"Amanhã = hoje"', c:'var(--rw)'},
+    tay: {n:'Regra de Taylor com filtros', c:'var(--tay)'},
+    comb:{n:'Combinação de modelos', c:'var(--comb)'},
+    var: {n:'VAR ou VEC sozinho', c:'var(--var)'}
+  };
+  function fam(code){ return code === 'RW' ? 'rw' : (code === '8' || code === '9' || code === '10') ? 'tay' : code.charAt(0) === 'C' ? 'comb' : 'var'; }
+  function describe(code){
+    if (code === 'RW') return '"Amanhã = hoje" (passeio aleatório)';
+    if (code === '8') return 'Regra de Taylor com os cinco filtros (BK, BW, CF, HP, HM)';
+    if (code === '9') return 'Regra de Taylor com o filtro Baxter-King (BK), sozinha';
+    if (code === '10') return 'Regra de Taylor com o filtro Christiano-Fitzgerald (CF), sozinha';
+    if (code.charAt(0) === 'C'){ var a = code.charAt(1), b = code.charAt(2); return a === b ? 'Combinação de projeções de vários ' + CLS[a] : 'Combinação de ' + CLS[a] + ' e ' + CLS[b]; }
+    return CLS[code] + ' sozinho';
+  }
+  // Quadro 11 (DA, %): null = a tese indica "RW"
+  var DA = {BR:[60,64,58,61,55,38], MX:[62,44,46,48,59,52], CL:[null,36,40,48,54,61], CO:[null,65,54,52,56,62], JP:[84,60,63,70,50,52]};
+  // Quadro 13 (erro quadrático médio, 1 trimestre). Japão fora (repete a Colômbia). México, desenho 1: impresso "6,859,013".
+  var NEU = [1, 2, 5, 10, 20, 50, 100];
+  var EQM = {
+    rw:[0.069077, 0.754578, 9.865087, 30246.62],
+    m:[[0.876253, 6.859013, 10.70979, 447909.9],
+       [0.041922, 0.399991, 22.50633, 404058.2],
+       [0.020462, 0.134102, 14.53673, 3755.005],
+       [0.02539, 0.175606, 13.55421, 6070.584],
+       [0.025989, 0.195275, 10.81031, 2080.471],
+       [0.01243, 0.014276, 10.28487, 556.5258],
+       [0.001568, 0.01362, 8.101191, 459.2235]]
+  };
+  var NNC = ['Brasil', 'México', 'Chile', 'Colômbia'];
+  // Figura 11 (lida por nós, aproximada): real por dólar, 3º tri. de 2014 a 3º tri. de 2020
+  var BRL = [2.47,2.66,3.20,3.15,4.15,3.90,3.58,3.24,3.25,3.26,3.17,3.31,3.17,3.31,3.32,3.86,4.02,3.88,3.90,3.83,4.18,4.04,5.22,5.48,5.63];
+  var M7 = BRL.slice(0, 23).concat([5.33, 5.34]);
+  function qlab(i){ var q = 3 + i, y = 2014 + Math.floor((q - 1) / 4); return ((q - 1) % 4 + 1) + 'º tri. ' + y; }
+  function qshort(i){ var q = 3 + i, y = 2014 + Math.floor((q - 1) / 4); return ((q - 1) % 4 + 1) + 'T' + String(y).slice(2); }
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), W = 500, D = 150;
+    var st = makeStage(sc, W, D, {ay:'64%', rx:'60deg'});
+    rotatable(sc, st, -14, 10);
+    var bw = 64, gap = 24, x0 = (W - (5 * bw + 4 * gap)) / 2, stacks = [];
+    CTY.forEach(function(c, i){
+      var x = x0 + i * (bw + gap);
+      st.appendChild(box({w:bw, d:56, x:x, y:D / 2 - 28, h:22, c:'#e2e8f0'}));
+      flatLabel(st, c.n, x - 12, D / 2 + 36, bw + 24);
+      stacks.push({x:x, els:[]});
+    });
+    var h = -1;
+    function show(k){
+      if (k === h) return; h = k;
+      $('hero-hz').textContent = (k + 1) + (k ? ' trimestres à frente' : ' trimestre à frente');
+      CTY.forEach(function(c, i){
+        var s = stacks[i];
+        s.els.forEach(function(e){ e.remove(); }); s.els = [];
+        MCS[c.k][k].forEach(function(code, j){
+          var b = box({w:bw - 10, d:46, x:s.x + 5, y:D / 2 - 23, z:22 + j * 17, h:14, c:FAM[fam(code)].c});
+          st.appendChild(b); s.els.push(b);
+        });
+      });
+    }
+    show(0);
+    if (!reduce) M.onTick(function(t){ show(Math.floor(t / 2.4) % 6); });
+  })();
+
+  /* ================= 02 · SOBE OU DESCE ================= */
+  (function(){
+    var svg = $('game-svg'), START = 16, ROUNDS = 8;
+    var cur, hits, err, pending, done;
+    function reset(){
+      cur = START; hits = 0; err = 0; pending = false; done = false;
+      each(document.querySelectorAll('.guess button'), function(b){ b.disabled = false; });
+      score(); draw();
+      $('game-msg').textContent = 'Rodada 1 de ' + ROUNDS + '. O real vai subir ou descer no próximo trimestre?';
+    }
+    function rounds(){ return cur - START; }
+    function score(){
+      var r = rounds();
+      $('sc-you').textContent = r ? hits + '/' + r : '–';
+      $('sc-rule').textContent = r ? '0/' + r : '–';
+      $('sc-err').textContent = r ? 'R$ ' + fmt(err / r, 2) : '–';
+    }
+    function draw(){
+      var from = Math.max(0, cur - 8), to = pending ? cur + 1 : cur;
+      var vals = BRL.slice(from, pending ? cur + 2 : cur + 1);
+      var lo = Math.floor((Math.min.apply(null, vals) - 0.15) * 2) / 2, hi = Math.ceil((Math.max.apply(null, vals) + 0.15) * 2) / 2;
+      var X0 = 52, X1 = 528, Y0 = 22, Y1 = 226, n = 10;
+      function x(i){ return X0 + (X1 - X0) * (i - from) / (n - 1); }
+      function y(v){ return Y1 - (Y1 - Y0) * (v - lo) / (hi - lo); }
+      var h = '';
+      for (var v = lo; v <= hi + 1e-9; v += 0.5){
+        h += '<line x1="' + X0 + '" x2="' + X1 + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="#eef2f7"/><text x="' + (X0 - 8) + '" y="' + (y(v) + 4) + '" text-anchor="end" style="font-size:11px; fill:var(--muted)">' + fmt(v, 1) + '</text>';
+      }
+      var pts = [];
+      for (var i = from; i <= to; i++) pts.push(x(i) + ',' + y(BRL[i]));
+      h += '<polyline fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round" points="' + pts.join(' ') + '"/>';
+      for (i = from; i <= to; i++) h += '<circle cx="' + x(i) + '" cy="' + y(BRL[i]) + '" r="3.5" fill="var(--ink)"/>';
+      h += '<text x="' + x(from) + '" y="250" style="font-size:11px; fill:var(--muted)">' + qlab(from) + '</text>';
+      h += '<text x="' + X1 + '" y="250" text-anchor="end" style="font-size:11px; font-weight:700; fill:var(--ink)">' + (pending ? qlab(cur + 1) : 'próximo: ' + qlab(cur + 1)) + '</text>';
+      h += '<text x="' + (x(cur) - 6) + '" y="' + (y(BRL[cur]) - 12) + '" text-anchor="end" style="font-size:12px; font-weight:700; fill:var(--ink)">hoje R$ ' + fmt(BRL[cur], 2) + '</text>';
+      // o palpite "amanhã = hoje": linha reta
+      h += '<line x1="' + x(cur) + '" x2="' + x(cur + 1) + '" y1="' + y(BRL[cur]) + '" y2="' + y(BRL[cur]) + '" stroke="var(--rw)" stroke-width="2.5" stroke-dasharray="5 4"/><circle cx="' + x(cur + 1) + '" cy="' + y(BRL[cur]) + '" r="6" fill="#fff" stroke="var(--rw)" stroke-width="2.5"/>';
+      if (pending) h += '<circle cx="' + x(cur + 1) + '" cy="' + y(BRL[cur + 1]) + '" r="6.5" fill="var(--red)"/>';
+      svg.innerHTML = h;
+    }
+    function play(g){
+      if (pending || done) return;
+      var d = BRL[cur + 1] - BRL[cur], ok = (g > 0) === (d > 0);
+      if (ok) hits++;
+      err += Math.abs(d);
+      pending = true; draw();
+      var msg = 'No ' + qlab(cur + 1) + ', o real ' + (d > 0 ? 'subiu' : 'desceu') + ' para cerca de R$ ' + fmt(BRL[cur + 1], 2) + '. Você ' + (ok ? 'acertou' : 'errou') + ' a direção.';
+      cur++; score();
+      if (rounds() < ROUNDS){
+        $('game-msg').textContent = msg + ' Rodada ' + (rounds() + 1) + ' de ' + ROUNDS + '.';
+        setTimeout(function(){ pending = false; draw(); }, reduce ? 0 : 1000);
+      } else {
+        done = true;
+        each(document.querySelectorAll('.guess button'), function(b){ b.disabled = true; });
+        $('game-msg').innerHTML = msg + '<br><strong>O "amanhã = hoje" não acertou nenhuma direção; no valor, errou em média R$ ' + fmt(err / ROUNDS, 2) + ' por trimestre. Cada régua conta uma história.</strong> <button class="btn small ghost" id="game-again" style="margin-left:6px">Jogar de novo</button>';
+        $('game-again').addEventListener('click', reset);
+      }
+    }
+    each(document.querySelectorAll('.guess button'), function(b){ b.addEventListener('click', function(){ play(+b.dataset.g); }); });
+    reset();
+  })();
+
+  /* ================= 03 · LITERATURA ================= */
+  (function(){
+    var F = [['Artigos encontrados na Web of Science', 775, '#8494ab'], ['Selecionados por citações e leitura do resumo', 109, '#475569'], ['Comparam modelos de previsão e foram lidos inteiros', 69, 'var(--red)']];
+    $('funnel').innerHTML = F.map(function(f){ return '<div><i style="--fc:' + f[2] + '; width:' + Math.max(22, f[1] / 775 * 100) + '%"></i><b>' + f[1].toLocaleString('pt-BR') + '</b></div><div style="margin-top:-4px; font-size:.74rem; color:var(--muted)">' + f[0] + '</div>'; }).join('');
+    // recortes: [rótulo, cor, quantidade de pontos]
+    var CUTS = [
+      {k:'ab', n:'Abordagem', g:[['lineares', 'var(--rw)', 37], ['não lineares', 'var(--red)', 20], ['as duas', 'var(--comb)', 11], ['sobra do arredondamento', 'var(--off)', 1]],
+        t:'Lineares dominam', p:'54% dos estudos usam modelos lineares, 29% modelos não lineares (como redes neurais) e 16% os dois. A análise de séries de tempo predomina; só um estudo usa dados em painel.'},
+      {k:'fr', n:'Frequência', g:[['mensais', 'var(--rw)', 28], ['trimestrais', 'var(--red)', 13], ['diários', 'var(--comb)', 11], ['outras ou várias', 'var(--off)', 17]],
+        t:'Dados mensais são os mais comuns', p:'40% dos estudos usam dados mensais, 19% trimestrais (como esta tese) e 16% diários. Alguns usam mais de uma frequência.'},
+      {k:'pe', n:'Período', g:[['dados depois de 2000', 'var(--red)', 43], ['só até 2000', 'var(--rw)', 26]],
+        t:'Muita pesquisa com dados antigos', p:'62% dos estudos incluem dados posteriores a 2000; 38% param antes disso.'},
+      {k:'em', n:'Emergentes', g:[['incluem o real', 'var(--red)', 2], ['outras moedas emergentes', 'var(--comb)', 2], ['sem moedas emergentes', 'var(--off)', 65]],
+        t:'Só 4 de 69 incluem países emergentes', p:'As moedas mais estudadas são a libra, o iene, o marco alemão e o dólar canadense. O real aparece em 2 artigos (Shen, Chao e Zhao, 2015; Kouwenberg e colegas, 2017).'},
+      {k:'rn', n:'Redes neurais', g:[['usam redes neurais', 'var(--nn)', 13], ['não usam', 'var(--off)', 56]],
+        t:'Redes neurais em 13 dos 69', p:'A tendência é recente: dos artigos de 2019 a 2021, só 26% ainda avaliam modelos monetários; os outros testam métodos não lineares, sobretudo redes neurais.'}
+    ];
+    var wrap = $('dots69'), chips = $('lit-chips');
+    wrap.innerHTML = new Array(70).join('<span></span>');
+    chips.innerHTML = CUTS.map(function(c, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="' + (i === 3) + '">' + c.n + '</button>'; }).join('');
+    function show(i){
+      var c = CUTS[i], cols = [];
+      c.g.forEach(function(g){ for (var j = 0; j < g[2]; j++) cols.push(g[1]); });
+      each(wrap.children, function(s, j){ s.style.background = cols[j] || 'var(--off)'; s.classList.toggle('on', cols[j] && cols[j] !== 'var(--off)'); });
+      $('lit-legend').innerHTML = c.g.map(function(g){ return '<span><i class="dot" style="border-radius:50%; background:' + g[1] + '"></i>' + g[0] + ' (' + g[2] + ')</span>'; }).join('');
+      $('lit-panel').innerHTML = '<div class="tag">Os 69 artigos · ' + c.n.toLowerCase() + '</div><h3>' + c.t + '</h3><p>' + c.p + '</p>';
+      each(chips.children, function(b, j){ b.setAttribute('aria-pressed', i === j); });
+    }
+    each(chips.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(3);
+  })();
+
+  /* ================= 04 · OS MAIS CITADOS ================= */
+  (function(){
+    var A = [['Meese e Rogoff (1983)', 1543, 39.56], ['Patton (2006)', 939, 58.68], ['Cheung e colegas (2005)', 285, 16.76], ['Diebold e Nerlove (1989)', 271, 8.21], ['Betts e Devereux (2000)', 249, 11.31], ['Diebold e Nason (1990)', 229, 7.15], ['Rossi (2013)', 179, 19.88], ['Reboredo (2012)', 172, 17.20], ['Calvo e Rodriguez (1977)', 168, 3.73], ['Zhang e Hu (1998)', 158, 6.58]];
+    var w = $('cbars'), mode = 't';
+    w.innerHTML = A.map(function(a, i){ return '<div class="cbar' + (i === 0 ? ' me' : '') + '" style="--bc:' + (i === 0 ? 'var(--red)' : '#8494ab') + '"><span>' + a[0] + '</span><div class="tr"><i></i></div><b></b></div>'; }).join('');
+    var rows = w.children, RH = 22;
+    function render(){
+      var idx = A.map(function(a, i){ return i; }).sort(function(p, q){ return mode === 't' ? A[q][1] - A[p][1] : A[q][2] - A[p][2]; });
+      var mx = mode === 't' ? 1543 : 58.68;
+      idx.forEach(function(i, pos){
+        var r = rows[i], v = mode === 't' ? A[i][1] : A[i][2];
+        r.style.transform = 'translateY(' + ((pos - i) * RH) + 'px)';
+        r.querySelector('i').style.width = (v / mx * 100) + '%';
+        r.querySelector('b').textContent = mode === 't' ? v.toLocaleString('pt-BR') : fmt(v, 1);
+      });
+    }
+    function measure(){ if (rows.length > 1) RH = rows[1].offsetTop - rows[0].offsetTop || 22; render(); }
+    each($('cit-mode').children, function(b){ b.addEventListener('click', function(){ mode = b.dataset.m; each($('cit-mode').children, function(c){ c.setAttribute('aria-pressed', c === b); }); render(); }); });
+    window.addEventListener('resize', measure);
+    measure(); setTimeout(measure, 300);
+  })();
+
+  /* ================= 05 · OS DADOS ================= */
+  (function(){
+    var svg = $('q-svg'), hz = 1, TRAIN = 78;
+    var seg = $('hz-seg');
+    seg.innerHTML = HZ.map(function(h, i){ return '<button data-h="' + (i + 1) + '" aria-pressed="' + (i === 0) + '">' + (i + 1) + ' tri.</button>'; }).join('');
+    function draw(){
+      // 26 anos em colunas, 4 trimestres em linhas
+      var X0 = 34, Y0 = 34, cw = 19.2, ch = 30, h = '';
+      for (var y = 0; y < 26; y++){
+        for (var q = 0; q < 4; q++){
+          var i = y * 4 + q, test = i >= TRAIN;
+          var hot = i === TRAIN - 1 ? 'today' : (i === TRAIN - 1 + hz ? 'target' : (i > TRAIN - 1 && i < TRAIN - 1 + hz ? 'mid' : ''));
+          var fill = hot === 'today' ? 'var(--ink)' : hot === 'target' ? 'var(--red)' : test ? 'color-mix(in srgb, var(--red) 28%, white)' : '#cbd5e1';
+          h += '<rect x="' + (X0 + y * cw) + '" y="' + (Y0 + q * ch) + '" width="' + (cw - 3) + '" height="' + (ch - 4) + '" rx="3" fill="' + fill + '"' + (hot === 'mid' ? ' stroke="var(--red)" stroke-width="1.5" stroke-dasharray="3 2"' : '') + '/>';
+        }
+        if (y % 5 === 0 || y === 25) h += '<text x="' + (X0 + y * cw + (cw - 3) / 2) + '" y="' + (Y0 + 4 * ch + 14) + '" text-anchor="middle" style="font-size:11px; fill:var(--muted)">' + (1995 + y) + '</text>';
+      }
+      ['1º', '2º', '3º', '4º'].forEach(function(t, q){ h += '<text x="' + (X0 - 6) + '" y="' + (Y0 + q * ch + 17) + '" text-anchor="end" style="font-size:10px; fill:var(--muted)">' + t + '</text>'; });
+      h += '<text x="' + X0 + '" y="20" style="font-size:12px; font-weight:700; fill:var(--ink-2)">78 trimestres para aprender</text>';
+      h += '<text x="' + (X0 + 26 * cw - 3) + '" y="20" text-anchor="end" style="font-size:12px; font-weight:700; fill:var(--red)">26 para testar</text>';
+      var ty = Y0 + 4 * ch + 50;
+      h += '<rect x="' + X0 + '" y="' + (ty - 11) + '" width="13" height="13" rx="3" fill="var(--ink)"/><text x="' + (X0 + 19) + '" y="' + ty + '" style="font-size:12px; fill:var(--ink-2)">hoje: o último valor conhecido</text>';
+      h += '<rect x="' + (X0 + 250) + '" y="' + (ty - 11) + '" width="13" height="13" rx="3" fill="var(--red)"/><text x="' + (X0 + 269) + '" y="' + ty + '" style="font-size:12px; fill:var(--ink-2)">o trimestre a prever (' + hz + ' à frente)</text>';
+      h += '<text x="' + X0 + '" y="' + (ty + 26) + '" style="font-size:12px; fill:var(--muted)">104 trimestres, do 1º de 1995 ao 4º de 2020</text>';
+      svg.innerHTML = h;
+    }
+    each(seg.children, function(b){ b.addEventListener('click', function(){ hz = +b.dataset.h; each(seg.children, function(c){ c.setAttribute('aria-pressed', c === b); }); draw(); }); });
+    draw();
+    var chips = $('cty-chips');
+    chips.innerHTML = CTY.map(function(c, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="' + (i === 0) + '">' + c.n + '</button>'; }).join('');
+    function show(i){
+      var c = CTY[i];
+      each(chips.children, function(b, j){ b.setAttribute('aria-pressed', i === j); });
+      $('cty-panel').innerHTML = '<div class="tag">' + c.n + ' · ' + c.m + ' por dólar</div><h3>' + c.role.split('. ')[0] + '</h3><p>' + c.role.split('. ').slice(1).join('. ') + '</p><div class="flagrow"><span class="pill">104 trimestres de câmbio</span><span class="pill">CDS desde o ' + c.cds + '</span></div>';
+    }
+    each(chips.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(0);
+  })();
+
+  /* ================= 06 · AS RECEITAS ================= */
+  (function(){
+    var VARS = [['S', 'câmbio', 'o próprio câmbio, no passado'], ['m', 'moeda', 'moeda em circulação (M1)'], ['y', 'PIB', 'PIB'], ['i', 'juros', 'juros de curto prazo'], ['π', 'inflação', 'inflação'], ['TB', 'comércio', 'balança comercial'], ['Nfa', 'ativos ext.', 'ativos externos líquidos dos bancos'], ['CDS', 'CDS', 'CDS de cinco anos, o risco de calote']];
+    var REC = [
+      {n:1, nm:'Preços flexíveis', full:'Preços flexíveis (Frenkel-Bilson)', v:['S','m','y','i'], d:'Os preços se ajustam na hora; o câmbio sai do equilíbrio entre moeda, produção e juros dos dois países.'},
+      {n:2, nm:'Preços rígidos 1', full:'Preços rígidos (Dornbusch-Frankel)', v:['S','m','y','i','π'], d:'Os mercados financeiros reagem mais rápido que os preços dos bens; no curto prazo, o câmbio "passa do ponto" (overshooting).'},
+      {n:3, nm:'Preços rígidos 2', full:'Preços rígidos (Hooper-Morton 1)', v:['S','m','y','i','π','TB'], d:'Acrescenta a balança comercial: déficits e superávits mudam o câmbio de equilíbrio.'},
+      {n:4, nm:'Preços rígidos 3', full:'Preços rígidos (Hooper-Morton 2)', v:['S','m','y','i','π','Nfa'], d:'Versão com os ativos externos líquidos no lugar da balança comercial.'},
+      {n:5, nm:'Paridade de juros', full:'Paridade descoberta de juros', v:['S','i'], d:'Só a diferença de juros: o investidor fica indiferente entre os dois países porque o câmbio compensa os juros.'},
+      {n:6, nm:'Exploratório 1', full:'Exploratório 1', v:['S','i','π'], d:'Combinação testada pela autora: juros e inflação.'},
+      {n:7, nm:'Exploratório 2', full:'Exploratório 2', v:['S','Nfa'], d:'Combinação testada pela autora: só os ativos externos líquidos.'},
+      {n:8, nm:'Exploratório 3', full:'Exploratório 3', v:['S','i','Nfa'], d:'Combinação testada pela autora: juros e ativos externos.'},
+      {n:17, nm:'Exploratório 4', full:'Exploratório 4 (só o CDS)', v:['S','CDS'], d:'Só o termômetro de risco, sem outros ingredientes da economia.', cds:true}
+    ];
+    var ing = $('ing'), cds = false, act = 0;
+    ing.innerHTML = '<div class="hd" aria-hidden="true"><span></span>' + VARS.map(function(v){ return '<span' + (v[0] === 'CDS' ? ' class="c"' : '') + '>' + v[1] + '</span>'; }).join('') + '</div>' +
+      REC.map(function(r, ri){
+        return '<button class="rrow" data-i="' + ri + '" aria-pressed="false"><b><small>' + r.n + '</small>' + r.nm + '</b>' +
+          VARS.map(function(v){ var on = r.v.indexOf(v[0]) >= 0; return '<i class="' + (on ? 'on' : '') + (v[0] === 'S' ? ' s' : '') + (v[0] === 'CDS' ? ' c' : '') + '"></i>'; }).join('') + '</button>';
+      }).join('');
+    var rows = ing.querySelectorAll('.rrow');
+    function paint(){
+      each(rows, function(b, ri){
+        var r = REC[ri];
+        b.classList.toggle('hid', !!r.cds && !cds);
+        b.setAttribute('aria-pressed', ri === act);
+        var cells = b.querySelectorAll('i');
+        cells[7].classList.toggle('on', r.cds || cds);
+        b.querySelector('small').textContent = cds && !r.cds ? r.n + 8 : r.n;
+        var vs = r.v.concat(cds && !r.cds ? ['CDS'] : []);
+        b.setAttribute('aria-label', 'Receita ' + (cds && !r.cds ? r.n + 8 : r.n) + ', ' + r.full + (cds && !r.cds ? ' com CDS' : '') + ': ' + vs.map(function(k){ return VARS.filter(function(v){ return v[0] === k; })[0][1]; }).join(', '));
+      });
+      var r = REC[act];
+      var vs = r.v.concat(cds && !r.cds ? ['CDS'] : []);
+      var num = cds && !r.cds ? r.n + 8 : r.n;
+      $('rec-panel').innerHTML = '<div class="tag">Receita ' + num + (cds && !r.cds ? ' (a ' + r.n + ' com CDS)' : '') + '</div><h3>' + r.full + (cds && !r.cds ? ' + CDS' : '') + '</h3><p>' + r.d + '</p>' +
+        '<p style="font-size:.84rem; color:var(--muted)">Ingredientes: ' + vs.map(function(k){ return VARS.filter(function(v){ return v[0] === k; })[0][2]; }).join(', ') + '.</p>';
+    }
+    each(rows, function(b){ b.addEventListener('click', function(){ act = +b.dataset.i; paint(); }); });
+    each($('cds-tog').children, function(b){ b.addEventListener('click', function(){ cds = b.dataset.c === '1'; if (!cds && REC[act].cds) act = 0; each($('cds-tog').children, function(c){ c.setAttribute('aria-pressed', c === b); }); paint(); }); });
+    paint();
+  })();
+
+  /* ================= 07 · PELA RÉGUA DO ERRO ================= */
+  (function(){
+    var sc = $('mcs-scene'), CW = 64, CD = 40, GX = 14, GY = 12, LW = 110;
+    var W = LW + 5 * CW + 4 * GX, D = 6 * CD + 5 * GY;
+    var st = makeStage(sc, W, D, {ay:'56%', rx:'50deg'});
+    rotatable(sc, st, -6, 4);
+    var cells = [], flt = null, act = null;
+    HZ.forEach(function(hz, r){
+      var l = flatLabel(st, (r + 1) + ' tri.', 0, r * (CD + GY) + 10, LW - 24, 'text-align:right'); l.classList.add('row');
+      CTY.forEach(function(c, j){
+        var g = document.createElement('div'); g.className = 'cell';
+        var list = MCS[c.k][r], blocks = [];
+        list.forEach(function(code, k){
+          var b = box({w:CW, d:CD, x:LW + j * (CW + GX), y:r * (CD + GY), z:k * 11, h:10, c:FAM[fam(code)].c});
+          b.dataset.f = fam(code);
+          b.setAttribute('role', 'button'); b.tabIndex = 0; b.setAttribute('aria-label', c.n + ', ' + (r + 1) + ' trimestre(s): ' + list.length + ' modelo(s) no grupo dos melhores');
+          b.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick(j, r); });
+          b.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); pick(j, r); } });
+          st.appendChild(b); blocks.push(b);
+        });
+        cells.push({j:j, r:r, blocks:blocks});
+      });
+    });
+    CTY.forEach(function(c, j){ var l = flatLabel(st, c.n, LW + j * (CW + GX) - 10, D + 10, CW + 20); l.classList.add('col'); });
+    // contagens nossas por família (células com pelo menos um modelo da família)
+    var CNT = {rw:0, tay:0, comb:0, var:0};
+    cells.forEach(function(cl){ var seen = {}; MCS[CTY[cl.j].k][cl.r].forEach(function(code){ seen[fam(code)] = 1; }); Object.keys(seen).forEach(function(f){ CNT[f]++; }); });
+    var TXT = {
+      rw:'Só no 1º trimestre, empatado com outros modelos, no Brasil, no Chile e na Colômbia. Do 2º trimestre em diante, nunca.',
+      tay:'Os modelos da Regra de Taylor, em que os juros respondem à inflação e ao PIB, com filtros que separam tendência e ciclo. No 2º trimestre, a versão com um filtro só venceu sozinha no México, no Chile e na Colômbia.',
+      comb:'Juntar as previsões de vários modelos foi a técnica mais presente. A combinação mais comum mistura VAR e VEC com correção de viés.',
+      var:'Modelos VAR ou VEC sem combinação aparecem em poucas células. No Brasil, em três horizontes.'
+    };
+    var chips = $('fam-chips');
+    chips.innerHTML = '<button class="chip" data-f="" aria-pressed="true">Todos</button>' + ['rw', 'tay', 'comb', 'var'].map(function(f){ return '<button class="chip" data-f="' + f + '" aria-pressed="false">' + FAM[f].n + '</button>'; }).join('');
+    function paint(){
+      cells.forEach(function(cl){
+        cl.blocks.forEach(function(b){ b.classList.toggle('dim', !!flt && b.dataset.f !== flt); b.classList.toggle('active', !!act && act.j === cl.j && act.r === cl.r); });
+      });
+      var h;
+      if (act){
+        var c = CTY[act.j], list = MCS[c.k][act.r];
+        h = '<div class="tag">' + c.n + ' · ' + (act.r + 1) + (act.r ? ' trimestres' : ' trimestre') + ' à frente</div><h3>' + list.length + (list.length > 1 ? ' modelos empatados entre os melhores' : ' modelo, sozinho, foi o melhor') + '</h3><ul class="mlist">' +
+          list.map(function(code){ return '<li style="--mc:' + FAM[fam(code)].c + '"><i></i>' + describe(code) + '</li>'; }).join('') + '</ul>';
+      } else if (flt){
+        h = '<div class="tag">' + FAM[flt].n + ' · contagem nossa</div><h3>Aparece em ' + CNT[flt] + ' das 30 células</h3><p>' + TXT[flt] + '</p>';
+      } else {
+        h = '<div class="tag">30 células · 5 países × 6 horizontes</div><h3>Nenhum modelo vence sempre</h3><p>Em 26 das 30 células há um modelo da Regra de Taylor com filtros; em 27, uma combinação de modelos; o "amanhã = hoje", só em 3 (contagens nossas). Toque numa pilha para ver quais modelos empataram.</p>';
+      }
+      $('mcs-panel').innerHTML = h;
+    }
+    function pick(j, r){ act = act && act.j === j && act.r === r ? null : {j:j, r:r}; paint(); }
+    each(chips.children, function(b){ b.addEventListener('click', function(){ flt = b.dataset.f || null; act = null; each(chips.children, function(c){ c.setAttribute('aria-pressed', c === b); }); paint(); }); });
+    paint();
+  })();
+
+  /* ================= 08 · PELA RÉGUA DA DIREÇÃO ================= */
+  (function(){
+    var g = $('dgrid'), mode = 'tese';
+    var h = '<div></div>' + CTY.map(function(c){ return '<div class="h">' + c.n + '</div>'; }).join('');
+    HZ.forEach(function(hz, r){
+      h += '<div class="r">' + (r + 1) + ' tri.</div>';
+      CTY.forEach(function(c){
+        var v = DA[c.k][r];
+        h += v === null ? '<div class="dcell rw" title="A tese indica o próprio amanhã = hoje"><b>= hoje</b></div>' :
+          '<div class="dcell" data-v="' + v + '"><i style="height:' + v + '%"></i><span class="band"></span><span class="ln"></span><b>' + v + '%</b></div>';
+      });
+    });
+    g.innerHTML = h;
+    var vals = []; CTY.forEach(function(c){ DA[c.k].forEach(function(v){ if (v !== null) vals.push(v); }); });
+    var above = vals.filter(function(v){ return v > 50; }).length, eq = vals.filter(function(v){ return v === 50; }).length, below = vals.filter(function(v){ return v < 50; }).length;
+    var out = vals.filter(function(v){ return v > 69; }).length;
+    function render(){
+      g.classList.toggle('acaso', mode === 'acaso');
+      each(g.querySelectorAll('.dcell[data-v]'), function(d){
+        var v = +d.dataset.v, ln = d.querySelector('.ln');
+        ln.style.bottom = (mode === 'tese' ? 0 : 50) + '%';
+        ln.style.opacity = mode === 'tese' ? 0 : 1;
+        d.classList.toggle('low', mode !== 'tese' && v < 50);
+        d.classList.toggle('mid', mode === 'acaso' && v >= 50 && v <= 69);
+      });
+      var p;
+      if (mode === 'tese') p = '<div class="tag">Régua da tese</div><h3>Os modelos venceram nas ' + vals.length + ' células com percentual</h3><p>Como o palpite simples acerta 0% das direções, qualquer acerto acima de zero o supera. No 1º trimestre do Chile e da Colômbia, a tese indica o próprio passeio aleatório.</p>';
+      else if (mode === 'moeda') p = '<div class="tag">Régua da moeda · leitura nossa</div><h3>' + above + ' acima de 50%, ' + eq + ' empate e ' + below + ' abaixo</h3><p>Abaixo de 50% (em cinza): o México e o Chile do 2º ao 4º trimestre, e o Brasil no 6º. Nesses casos, uma moeda jogada ao ar acertaria mais vezes.</p>';
+      else p = '<div class="tag">Faixa do acaso · leitura nossa</div><h3>Só ' + out + ' resultados passam de 69%</h3><p>O Japão um trimestre à frente (84%) passa com folga; o Japão no 4º trimestre (70%) fica na borda. Os demais cabem na faixa em que a sorte também chegaria, com cerca de 26 trimestres de teste.</p>';
+      $('dir-panel').innerHTML = p;
+    }
+    each($('dir-mode').children, function(b){ b.addEventListener('click', function(){ mode = b.dataset.m; each($('dir-mode').children, function(c){ c.setAttribute('aria-pressed', c === b); }); render(); }); });
+    $('coin-btn').addEventListener('click', function(){
+      var hits = 0, s = '';
+      for (var i = 0; i < 26; i++){ var hit = Math.random() < 0.5; if (hit) hits++; s += '<span class="' + (hit ? 'hit' : '') + '">' + (hit ? '✓' : '') + '</span>'; }
+      $('coins').innerHTML = s;
+      $('coin-msg').innerHTML = 'Sua moeda acertou <strong>' + hits + ' de 26</strong> direções (' + Math.round(hits / 26 * 100) + '%), só por sorte. Jogue de novo e veja quanto o resultado varia.';
+    });
+    render();
+  })();
+
+  /* ================= 09 · O CDS ================= */
+  (function(){
+    var svg = $('cds-svg'), k = 'aposta';
+    var X0 = 96, X1 = 540, Y0 = 34, RH = 40;
+    function x(yr){ return X0 + (X1 - X0) * (yr - 1995) / 26; }
+    var START = {BR:2001.75, MX:2001.75, CL:2003, CO:2003, JP:2006};
+    function draw(){
+      var h = '';
+      [1995, 2000, 2005, 2010, 2015, 2020].forEach(function(y){ h += '<line x1="' + x(y) + '" x2="' + x(y) + '" y1="' + (Y0 - 6) + '" y2="' + (Y0 + 5 * RH) + '" stroke="#eef2f7"/><text x="' + x(y) + '" y="' + (Y0 + 5 * RH + 16) + '" text-anchor="middle" style="font-size:11px; fill:var(--muted)">' + y + '</text>'; });
+      CTY.forEach(function(c, i){
+        var y = Y0 + i * RH;
+        h += '<text x="' + (X0 - 10) + '" y="' + (y + 17) + '" text-anchor="end" style="font-size:12px; font-weight:600; fill:var(--ink-2)">' + c.n + '</text>';
+        h += '<rect x="' + x(1995) + '" y="' + (y + 4) + '" width="' + (x(2021) - x(1995)) + '" height="18" rx="4" fill="#e2e8f0"/>';
+        h += '<rect x="' + x(START[c.k]) + '" y="' + (y + 4) + '" width="' + (x(2021) - x(START[c.k])) + '" height="18" rx="4" fill="var(--red)" opacity="' + (k === 'aposta' ? .55 : 1) + '"/>';
+        h += '<text x="' + (x(2021) - 6) + '" y="' + (y + 17) + '" text-anchor="end" style="font-size:11px; font-weight:700; fill:#fff">' + c.q + ' de 104</text>';
+      });
+      h += '<rect x="' + X0 + '" y="6" width="12" height="12" rx="3" fill="#e2e8f0"/><text x="' + (X0 + 17) + '" y="16" style="font-size:11px; fill:var(--muted)">câmbio e economia</text>';
+      h += '<rect x="' + (X0 + 200) + '" y="6" width="12" height="12" rx="3" fill="var(--red)"/><text x="' + (X0 + 217) + '" y="16" style="font-size:11px; fill:var(--muted)">trimestres com CDS</text>';
+      svg.innerHTML = h;
+    }
+    var P = {
+      aposta:'<div class="tag">A aposta</div><h3>Medir a incerteza com o CDS</h3><p>O CDS é um contrato que protege contra o calote da dívida de um governo: quanto mais caro, maior o medo. Estudos mostram que ele anda junto com o câmbio, sobretudo em crises como a da COVID-19. Para a autora, o CDS de cinco anos ainda não tinha sido testado nos modelos monetários de câmbio.</p>',
+      res:'<div class="tag">O resultado</div><h3>Entre os melhores, mas sem ganho claro</h3><p>Os modelos com CDS apareceram na classe de modelos escolhida no teste de erro, mas não se mostraram superiores. Na conclusão, a autora resume: o CDS não melhorou de forma evidente as previsões dos modelos econômicos.</p>',
+      pq:'<div class="tag">Por quê? · segundo a autora</div><h3>Duas explicações</h3><p><b>O prazo.</b> O CDS de cinco anos, embora seja o mais negociado, mede um risco de prazo muito maior que o trimestre das previsões.</p><p><b>Os dados.</b> As séries de CDS começam em 2001, 2003 ou 2006, conforme o país, e não cobrem os anos 1990.</p>'
+    };
+    each($('cds-seg').children, function(b){ b.addEventListener('click', function(){ k = b.dataset.k; each($('cds-seg').children, function(c){ c.setAttribute('aria-pressed', c === b); }); $('cds-panel').innerHTML = P[k]; draw(); }); });
+    $('cds-panel').innerHTML = P[k]; draw();
+  })();
+
+  /* ================= 10 · A REDE NEURAL ================= */
+  (function(){
+    var sc = $('nn-scene'), W = 480, D = 140, BASE = 140, SC = 66;
+    var st = makeStage(sc, W, D, {ay:'74%', rx:'58deg'});
+    rotatable(sc, st, -6, 5);
+    var bw = 74, gap = 34, x0 = (W - (4 * bw + 3 * gap)) / 2, bars = [];
+    function hgt(r){ return Math.max(8, BASE + Math.log10(r) * SC); }
+    NNC.forEach(function(n, i){
+      var b = box({w:bw, d:54, x:x0 + i * (bw + gap), y:D / 2 - 27, h:BASE, c:'var(--nn)', top:' '});
+      st.appendChild(b); bars.push(b);
+      flatLabel(st, n, x0 + i * (bw + gap) - 14, D / 2 + 36, bw + 28);
+    });
+    var plane = box({w:W - 20, d:D - 30, x:10, y:15, z:BASE, h:2, c:'var(--rw)', cls:'rwplane'});
+    st.appendChild(plane);
+    function rtxt(r){ return r < 1 ? Math.max(1, Math.round(r * 100)) + '%' : fmt(r, 1) + '×'; }
+    var rng = $('nn-range');
+    $('nn-ticks').innerHTML = NEU.map(function(n){ return '<span>' + n + '</span>'; }).join('');
+    function render(){
+      var k = +rng.value - 1, beat = [];
+      bars.forEach(function(b, i){
+        var r = EQM.m[k][i] / EQM.rw[i];
+        b.style.setProperty('--h', hgt(r) + 'px');
+        b.style.setProperty('--c', r < 1 ? 'var(--nn)' : '#b6c2d2');
+        b.querySelector('.top-label').textContent = rtxt(r);
+        b.setAttribute('aria-label', NNC[i] + ': erro da rede = ' + rtxt(r) + ' do erro do amanhã igual a hoje');
+        if (r < 1) beat.push(NNC[i]);
+      });
+      each($('nn-ticks').children, function(s, j){ s.classList.toggle('on', j === k); });
+      rng.setAttribute('aria-valuetext', NEU[k] + ' neurônios');
+      var t;
+      if (k === 6) t = 'O melhor desenho em todos os países. No Brasil, no México e na Colômbia, o erro médio da rede ficou em cerca de 2% do erro do palpite simples. No Chile, a vantagem foi pequena: 82%.';
+      else if (k === 0) t = 'Com 1 neurônio, a rede errou mais que o palpite simples nos quatro países.';
+      else t = 'Venceram o palpite simples: ' + (beat.length ? beat.join(', ') : 'nenhum país') + '. No Chile, só o desenho de 100 neurônios errou menos que ele.';
+      $('nn-panel').innerHTML = '<div class="tag">3 camadas · ' + NEU[k] + (NEU[k] > 1 ? ' neurônios' : ' neurônio') + '</div><h3>' + (beat.length === 4 ? 'Errou menos nos quatro países' : beat.length ? 'Errou menos em ' + beat.length + ' de 4 países' : 'Errou mais em todos') + '</h3><p>' + t + '</p>' +
+        '<svg class="net" viewBox="0 0 360 84" aria-hidden="true">' + net(NEU[k]) + '</svg>';
+    }
+    function net(n){
+      var s = '', cols = [40, 140, 240], shown = Math.min(n, 10);
+      cols.forEach(function(cx, ci){
+        for (var j = 0; j < shown; j++){ var cy = 35 + (j - (shown - 1) / 2) * 6.4; s += '<circle cx="' + cx + '" cy="' + cy + '" r="2.6" fill="var(--nn)"/>'; if (ci < 2) s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + cols[ci + 1] + '" y2="35" stroke="#cbd5e1" stroke-width=".6"/>'; }
+      });
+      s += '<line x1="240" y1="35" x2="320" y2="35" stroke="#cbd5e1"/><circle cx="324" cy="35" r="5" fill="var(--red)"/>';
+      if (n > 10) s += '<text x="140" y="81" text-anchor="middle" style="font-size:9px; fill:var(--muted)">10 de ' + n + ' neurônios desenhados por camada</text>';
+      return s;
+    }
+    rng.addEventListener('input', render);
+    render();
+    $('nn-table').innerHTML = '<table><tr><th>Neurônios</th>' + NNC.map(function(n){ return '<th>' + n + '</th>'; }).join('') + '</tr><tr><td>"amanhã = hoje"</td>' + EQM.rw.map(function(v){ return '<td>' + num(v) + '</td>'; }).join('') + '</tr>' +
+      EQM.m.map(function(r, i){ return '<tr><td>' + NEU[i] + '</td>' + r.map(function(v){ return '<td>' + num(v) + '</td>'; }).join('') + '</tr>'; }).join('') + '</table><p style="margin-top:6px">México, 1 neurônio: impresso na tese como "6,859,013"; lido como 6,859013.</p>';
+    function num(v){ return v >= 1000 ? fmt(v, 0).replace(/\B(?=(\d{3})+(?!\d))/g, M.lang === 'en' ? ',' : '.') : v >= 1 ? fmt(v, 2) : fmt(v, 4); }
+  })();
+
+  /* ================= 11 · A PANDEMIA ================= */
+  (function(){
+    var svg = $('line-svg'), mode = 'all';
+    function draw(){
+      var from = mode === 'all' ? 0 : 18, to = BRL.length - 1;
+      var lo = mode === 'all' ? 2 : 3.5, hi = 6;
+      var X0 = 46, X1 = 532, Y0 = 20, Y1 = 250;
+      function x(i){ return X0 + (X1 - X0) * (i - from) / (to - from); }
+      function y(v){ return Y1 - (Y1 - Y0) * (v - lo) / (hi - lo); }
+      var h = '';
+      for (var v = lo; v <= hi + 1e-9; v += 0.5){ h += '<line x1="' + X0 + '" x2="' + X1 + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="#eef2f7"/><text x="' + (X0 - 8) + '" y="' + (y(v) + 4) + '" text-anchor="end" style="font-size:11px; fill:var(--muted)">' + fmt(v, 1) + '</text>'; }
+      // faixa de 2020
+      h += '<rect x="' + x(22) + '" y="' + Y0 + '" width="' + (x(24) - x(22)) + '" height="' + (Y1 - Y0) + '" fill="color-mix(in srgb, var(--red) 8%, transparent)"/><text x="' + (x(23)) + '" y="' + (Y0 + 14) + '" text-anchor="middle" style="font-size:11px; font-weight:700; fill:var(--red)">2020</text>';
+      function line(arr, col, w, dash){ var p = []; for (var i = from; i <= to; i++) p.push(x(i) + ',' + y(arr[i])); return '<polyline fill="none" stroke="' + col + '" stroke-width="' + w + '"' + (dash ? ' stroke-dasharray="' + dash + '"' : '') + ' stroke-linejoin="round" points="' + p.join(' ') + '"/>'; }
+      h += line(BRL, 'var(--ink)', 3) + line(M7, 'var(--nn)', 2.2, '6 4');
+      var step = mode === 'all' ? 4 : 1;
+      for (var i = from; i <= to; i += step) h += '<text x="' + x(i) + '" y="' + (Y1 + 18) + '" text-anchor="middle" style="font-size:10.5px; fill:var(--muted)">' + qshort(i) + '</text>';
+      if (mode === 'zoom'){
+        for (i = from; i <= to; i++){ h += '<circle cx="' + x(i) + '" cy="' + y(BRL[i]) + '" r="4" fill="var(--ink)"/>'; }
+        h += '<circle cx="' + x(23) + '" cy="' + y(M7[23]) + '" r="4.5" fill="#fff" stroke="var(--nn)" stroke-width="2.5"/><circle cx="' + x(24) + '" cy="' + y(M7[24]) + '" r="4.5" fill="#fff" stroke="var(--nn)" stroke-width="2.5"/>';
+        h += '<text x="' + (x(24) - 8) + '" y="' + (y(M7[24]) + 20) + '" text-anchor="end" style="font-size:12px; font-weight:700; fill:var(--nn)">rede: ~R$ ' + fmt(M7[24], 2) + '</text>';
+        h += '<text x="' + (x(24) - 8) + '" y="' + (y(BRL[24]) - 10) + '" text-anchor="end" style="font-size:12px; font-weight:700; fill:var(--ink)">real: ~R$ ' + fmt(BRL[24], 2) + '</text>';
+      }
+      svg.innerHTML = h;
+    }
+    function setMode(m){ mode = m; each($('line-mode').children, function(c){ c.setAttribute('aria-pressed', c.dataset.v === m); }); each($('unc').children, function(c){ c.setAttribute('aria-pressed', (c.dataset.u === 'coco') === (m === 'zoom')); }); draw(); }
+    each($('line-mode').children, function(b){ b.addEventListener('click', function(){ setMode(b.dataset.v); }); });
+    each($('unc').children, function(b){ b.addEventListener('click', function(){ setMode(b.dataset.u === 'coco' ? 'zoom' : 'all'); }); });
+    draw();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>

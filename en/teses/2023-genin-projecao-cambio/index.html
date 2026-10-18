@@ -1,0 +1,1044 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Which model forecasts the exchange rate best? · PPGA Interativo</title>
+<meta name="description" content="The doctoral thesis of Camila de Souza Vasconcelos Genin (PPGA Mackenzie, 2023) on exchange rate forecasting models in five countries, explained in 12 interactive screens.">
+<link rel="alternate" hreflang="pt-BR" href="../../../teses/2023-genin-projecao-cambio/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2214%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>US$</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/motor.css">
+<link rel="stylesheet" href="../../../assets/ods.css">
+<style>
+  /* Motor compartilhado em ../../assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --rw:var(--navy);                                   /* o palpite "amanhã = hoje" (passeio aleatório) */
+    --tay:var(--red);                                   /* Regra de Taylor com filtros */
+    --comb:color-mix(in srgb, var(--red) 52%, white);   /* combinação de projeções */
+    --var:#94a3b8;                                      /* VAR ou VEC sozinho */
+    --nn:#334155;                                       /* rede neural LSTM */
+    --off:#cbd5e1;
+  }
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4vw, 2.6rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:32em; margin-left:auto; margin-right:auto;}
+  .hz-badge{display:block; text-align:center; font-family:var(--serif); font-weight:700; font-size:1rem; color:var(--ink); margin-bottom:2px; min-height:1.5em;}
+  #hero-scene .floor-label{font-size:16px; font-weight:700;}
+  @media (max-width:600px){ #hero-scene .floor-label{font-size:18px;} }
+
+  /* ---------- Componentes comuns ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px 22px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.1rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.92rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:18px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  @media (max-width:560px){ .seg button{padding:7px 10px; font-size:.8rem;} }
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.4rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.76rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  details.tbl{margin-top:12px; font-size:.82rem; color:var(--ink-2);}
+  details.tbl summary{cursor:pointer; color:var(--muted); font-weight:600;}
+  details.tbl .wrap{overflow-x:auto; margin-top:8px;}
+  details.tbl table{border-collapse:collapse; width:100%; font-variant-numeric:tabular-nums;}
+  details.tbl th, details.tbl td{border-bottom:1px solid var(--border); padding:4px 6px; text-align:right; white-space:nowrap;}
+  details.tbl th:first-child, details.tbl td:first-child{text-align:left;}
+
+  /* ---------- 02 · Sobe ou desce ---------- */
+  #game-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  #game-svg text{font-family:var(--sans);}
+  .guess{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 4px;}
+  .guess button{flex:1; min-width:110px; border:1px solid var(--border); background:var(--card); border-radius:10px; padding:11px 8px; font-size:.95rem; font-weight:600; cursor:pointer; color:var(--ink);}
+  .guess button:hover{border-color:var(--red);}
+  .guess button:disabled{opacity:.45; cursor:default;}
+  .score{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:12px;}
+  .score div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:9px 12px; font-size:.76rem; color:var(--muted); line-height:1.3;}
+  .score b{font-family:var(--serif); font-size:1.2rem; color:var(--ink); display:block; font-variant-numeric:tabular-nums;}
+  .score .you b{color:var(--red);} .score .rule b{color:var(--rw);}
+  #game-msg{min-height:3.2em; font-size:.9rem; color:var(--ink-2); margin-top:10px;}
+  @media (max-width:600px){ #game-svg text{font-size:16px !important;} .score b{font-size:1.05rem;} }
+
+  /* ---------- 03 · Literatura ---------- */
+  .funnel{display:grid; gap:6px; margin:6px 0 14px;}
+  .funnel div{display:grid; grid-template-columns:1fr 54px; gap:10px; align-items:center; font-size:.82rem; color:var(--ink-2);}
+  .funnel i{display:block; height:26px; border-radius:6px; background:var(--fc); position:relative;}
+  .funnel i span{position:absolute; left:10px; top:4px; font-style:normal; font-size:.78rem; font-weight:600; color:#fff; white-space:nowrap;}
+  .funnel b{font-family:var(--serif); font-size:1.05rem; color:var(--ink); text-align:right; font-variant-numeric:tabular-nums;}
+  .dots69{display:grid; grid-template-columns:repeat(12, 1fr); gap:7px; max-width:430px; margin:4px auto 0;}
+  .dots69 span{aspect-ratio:1; border-radius:50%; background:var(--off); transition:background .45s, transform .45s;}
+  .dots69 span.on{transform:scale(1.08);}
+  #lit-legend{justify-content:center;}
+  #lit-panel{min-height:120px; margin-top:14px;}
+
+  /* ---------- 04 · Clássicos ---------- */
+  .cbars{display:grid; gap:6px; margin-top:12px; position:relative;}
+  .cbar{display:grid; grid-template-columns:170px 1fr 58px; gap:10px; align-items:center; height:32px; font-size:.8rem; line-height:1.15; color:var(--ink-2); transition:transform .55s cubic-bezier(.2,.8,.2,1);}
+  .cbar .tr{height:16px; background:#eef2f7; border-radius:4px; position:relative;}
+  .cbar .tr i{position:absolute; left:0; top:0; bottom:0; border-radius:4px; background:var(--bc, #8494ab); transition:width .6s cubic-bezier(.2,.8,.2,1);}
+  .cbar b{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink);}
+  .cbar.me{font-weight:700; color:var(--ink);}
+  @media (max-width:520px){ .cbar{grid-template-columns:112px 1fr 50px; font-size:.74rem;} }
+  .clusters{display:grid; grid-template-columns:1fr; gap:8px; margin-top:14px;}
+  @media (min-width:700px){ .clusters{grid-template-columns:repeat(3, 1fr);} }
+  .cl{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:11px 13px; font-size:.8rem; color:var(--ink-2); line-height:1.4;}
+  .cl b{display:block; font-family:var(--serif); color:var(--ink); font-size:.92rem; margin-bottom:3px;}
+  .cl em{display:block; font-style:normal; font-size:.7rem; color:var(--muted); margin-top:5px;}
+
+  /* ---------- 05 · Dados ---------- */
+  #q-svg{width:100%; display:block;}
+  #q-svg text{font-family:var(--sans);}
+  #cty-panel{min-height:150px;}
+  .flagrow{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;}
+  .pill{display:inline-block; font-size:.7rem; font-weight:700; padding:3px 9px; border-radius:6px; background:var(--bg-soft); color:var(--ink-2);}
+  @media (max-width:600px){ #q-svg text{font-size:15px !important;} }
+
+  /* ---------- 06 · Receitas ---------- */
+  .ing{display:grid; gap:4px; margin-top:4px;}
+  .ing .hd, .ing .rrow{display:grid; grid-template-columns:minmax(120px, 190px) repeat(8, 1fr); gap:4px; align-items:center;}
+  .ing .hd span{font-size:.68rem; font-weight:700; color:var(--muted); text-align:center; line-height:1.1;}
+  .ing .hd span.c{color:var(--red);}
+  .ing .rrow{border:1px solid transparent; background:transparent; border-radius:8px; padding:3px 4px; cursor:pointer; font:inherit; text-align:left; transition:background .25s, border-color .25s, opacity .35s;}
+  .ing .rrow:hover{border-color:var(--border);}
+  .ing .rrow[aria-pressed="true"]{background:var(--card); border-color:var(--ink); box-shadow:var(--shadow);}
+  .ing .rrow.hid{display:none;}
+  .ing .rrow > b{font-size:.76rem; font-weight:600; color:var(--ink-2); line-height:1.2;}
+  .ing .rrow > b small{display:inline-block; min-width:18px; color:var(--muted); font-weight:700;}
+  .ing i{display:block; height:20px; border-radius:5px; background:transparent; border:1px dashed #e2e8f0; transition:background .4s, border-color .4s, transform .4s;}
+  .ing i.on{border:0; background:#94a3b8;}
+  .ing i.on.s{background:var(--rw);}
+  .ing i.on.c{background:var(--red); transform:scale(1.04);}
+  #rec-panel{min-height:160px;}
+  .vers{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .vers span{font-size:.72rem; padding:4px 9px; border-radius:6px; border:1px solid var(--border); background:var(--card); color:var(--ink-2);}
+  @media (max-width:560px){ .ing .hd, .ing .rrow{grid-template-columns:104px repeat(8, 1fr); gap:3px;} .ing .hd span{writing-mode:vertical-rl; transform:rotate(180deg); height:62px; font-size:.64rem; justify-self:center;} .ing .rrow > b{font-size:.68rem;} .ing i{height:16px;} }
+
+  /* ---------- 07 · Pelo erro ---------- */
+  #mcs-scene .floor-label{font-size:15px; white-space:nowrap;}
+  #mcs-scene .floor-label.row{text-align:right;}
+  #mcs-scene .floor-label.col{font-weight:700; text-align:center;}
+  #mcs-scene .slab{cursor:pointer;}
+  #mcs-scene .slab.dim > i{opacity:.16;}
+  #mcs-scene .cell.active .slab{--oz:10px;}
+  #mcs-panel{min-height:170px;}
+  .mlist{margin:6px 0 0; padding:0; list-style:none; display:grid; gap:4px; font-size:.84rem; color:var(--ink-2);}
+  .mlist li{display:flex; gap:8px; align-items:flex-start;}
+  .mlist li i{flex:none; width:12px; height:12px; border-radius:3px; margin-top:4px; background:var(--mc);}
+  @media (max-width:600px){ #mcs-scene .floor-label{font-size:19px;} #mcs-scene .floor-label.col{font-size:17px;} }
+
+  /* ---------- 08 · Direção ---------- */
+  .dgrid{display:grid; grid-template-columns:42px repeat(5, 1fr); gap:6px; margin-top:8px; font-variant-numeric:tabular-nums;}
+  .dgrid .h{font-size:.72rem; font-weight:700; color:var(--muted); text-align:center; align-self:end;}
+  .dgrid .r{font-size:.74rem; font-weight:700; color:var(--muted); display:flex; align-items:center;}
+  .dcell{position:relative; height:52px; background:#eef2f7; border-radius:6px; overflow:hidden;}
+  .dcell i{position:absolute; left:0; right:0; bottom:0; background:var(--red); transition:height .6s cubic-bezier(.2,.8,.2,1), background .4s;}
+  .dcell.low i{background:var(--off);}
+  .dcell.mid i{background:var(--comb);}
+  .dcell b{position:absolute; left:0; right:0; top:4px; text-align:center; font-size:.8rem; color:var(--ink); z-index:2;}
+  .dcell .ln{position:absolute; left:0; right:0; border-top:2px dashed var(--ink-2); z-index:1; transition:bottom .5s, opacity .3s;}
+  .dcell .band{position:absolute; left:0; right:0; bottom:31%; height:38%; background:color-mix(in srgb, var(--rw) 14%, transparent); z-index:1; opacity:0; transition:opacity .3s;}
+  .dgrid.acaso .dcell .band{opacity:1;}
+  .dcell.rw{background:color-mix(in srgb, var(--rw) 12%, white);}
+  .dcell.rw b{top:10px; font-size:.72rem; color:var(--rw);}
+  #dir-panel{min-height:110px; margin-top:14px;}
+  #dir-mode button{font-size:.78rem; padding:7px 11px;}
+  .coins{display:flex; flex-wrap:wrap; gap:3px; margin-top:8px;}
+  .coins span{width:14px; height:14px; border-radius:50%; background:var(--off); font-size:9px; line-height:14px; text-align:center; color:#fff; font-weight:700;}
+  .coins span.hit{background:var(--rw);}
+  #coin-msg{min-height:2.4em; font-size:.86rem; color:var(--ink-2); margin-top:8px;}
+
+  /* ---------- 09 · CDS ---------- */
+  #cds-svg{width:100%; display:block;}
+  #cds-svg text{font-family:var(--sans);}
+  #cds-panel{min-height:170px;}
+  @media (max-width:600px){ #cds-svg text{font-size:15px !important;} }
+
+  /* ---------- 10 · Rede neural ---------- */
+  #nn-scene{perspective:3200px;}
+  #nn-scene .slab{transition:transform .55s cubic-bezier(.2,.8,.2,1), --h .6s cubic-bezier(.2,.8,.2,1);}
+  #nn-scene .top-label{font-size:19px; color:#fff; font-weight:700;}
+  #nn-scene .floor-label{font-size:16px; font-weight:700;}
+  #nn-scene .rwplane > i{opacity:.55;}
+  .rng{display:grid; gap:6px; margin:10px 0 4px;}
+  .rng input{width:100%; accent-color:var(--nn);}
+  .rng .ticks{display:flex; justify-content:space-between; font-size:.72rem; color:var(--muted); font-variant-numeric:tabular-nums;}
+  .rng .ticks span{width:30px; text-align:center;}
+  .rng .ticks span.on{color:var(--ink); font-weight:700;}
+  #nn-panel{min-height:150px; margin-top:12px;}
+  .net{display:block; width:100%; max-width:360px; margin:6px auto 0;}
+  @media (max-width:600px){ #nn-scene .floor-label{font-size:21px;} #nn-scene .top-label{font-size:23px;} }
+
+  /* ---------- 11 · Pandemia ---------- */
+  #line-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  #line-svg text{font-family:var(--sans);}
+  .unc{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px;}
+  .unc button{border:1px solid var(--border); background:var(--card); border-radius:12px; padding:12px 14px; text-align:left; cursor:pointer; font:inherit; color:var(--ink-2); font-size:.82rem; line-height:1.42; border-top:5px solid var(--uc);}
+  .unc button b{display:block; font-family:var(--serif); color:var(--ink); font-size:.98rem; margin-bottom:4px;}
+  .unc button[aria-pressed="true"]{box-shadow:var(--shadow); background:color-mix(in srgb, var(--uc) 6%, white);}
+  @media (max-width:520px){ .unc{grid-template-columns:1fr;} #line-svg text{font-size:15px !important;} }
+
+  /* ---------- 12 · Prática, limites e créditos ---------- */
+  .cards3{display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px;}
+  @media (min-width:800px){ .cards3{grid-template-columns:repeat(3, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 15px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:5px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.78rem; line-height:1.45; color:var(--ink-2);}
+  .pcard .src{display:block; margin-top:7px; font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--muted);}
+  .end{display:grid; grid-template-columns:1fr; gap:24px; margin-top:20px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:44px;} }
+  .end h3{font-size:1.1rem; margin-bottom:6px;}
+  .limits{display:grid; gap:7px; margin:8px 0 0; padding:0; list-style:none;}
+  .limits li{padding:8px 13px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.82rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.84rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; line-height:1.6; margin-top:8px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Anonymous visit count (GoatCounter, no cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-meta="../../../teses/2023-genin-projecao-cambio/meta.json">
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../../teses/2023-genin-projecao-cambio/" hreflang="pt-BR" lang="pt-BR" title="Ler em português"><img class="lang-flag" src="../../../assets/bandeira-br.svg" width="17" height="12" alt="">PT</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Previous screen">↑</button>
+    <button class="nav-btn" id="next" aria-label="Next screen">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Screen navigation"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Start">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Doctoral thesis · PPGA Mackenzie · 2023</div>
+      <h1 class="rv" style="--d:.1s">Which model forecasts the exchange rate best?</h1>
+      <p class="sub rv" style="--d:.2s">Since 1983, economists have tried to beat a simple guess: <strong>next period's exchange rate will equal today's</strong>. The thesis tested economic models and a neural network on five currencies against the dollar, 1995 to 2020. No model won every time, but from two quarters ahead on, the simple guess dropped out of the best group. Explained in 12 screens.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Author:</b> Camila de Souza Vasconcelos Genin</span>
+        <span><b>Advisor:</b> Prof. Dr. Eli Hadad Junior</span>
+        <span><b>Program:</b> Graduate Program in Business Administration (PPGA) · Mackenzie Presbyterian University</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#palpite">Start →</a>
+        <a class="btn ghost" href="#erro">Skip to the result</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <span class="hz-badge" id="hero-hz" aria-live="off">1 quarter ahead</span>
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="520x290" role="img" aria-label="Five pedestals, one per country; on each, the models tied among the best at each horizon, from 1 to 6 quarters. The blue of tomorrow equals today appears only in the first quarter."></div></div>
+      <div class="legend" style="justify-content:center"><span><i class="dot" style="background:var(--rw)"></i>"tomorrow = today"</span><span><i class="dot" style="background:var(--tay)"></i>Taylor rule with filters</span><span><i class="dot" style="background:var(--comb)"></i>combination of models</span><span><i class="dot" style="background:var(--var)"></i>VAR or VEC alone</span></div>
+      <p class="cap-legend">Each block is a model in the best group by error (Table 9 of the thesis), from 1 to 6 quarters ahead.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">Closest UN Sustainable Development Goals</span>
+        <ul class="ods">
+          <li class="ods-17"><a href="https://sdgs.un.org/goals/goal17" target="_blank" rel="noopener" title="SDG 17 · Partnerships for the Goals: Compares ways of forecasting the exchange rates of five countries, information that companies, investors and governments use in decisions tied to economic stability."><b>17</b>Partnerships for the Goals</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">scroll<span></span></div>
+</section>
+
+<!-- 02 · SOBE OU DESCE -->
+<section class="slide" id="palpite" data-label="Up or down?">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> Try it</div>
+      <h2 class="rv" style="--d:.1s">Two yardsticks for judging a forecast</h2>
+      <p class="lede rv" style="--d:.15s">The hardest guess to beat is repeating the last value: next quarter's dollar will be the same as today's. Economists call this the <strong>random walk</strong>. In 1983, Meese and Rogoff showed that it erred less than the economic models of the time.</p>
+      <p class="rv" style="--d:.2s">The thesis judges the models by two yardsticks: <strong>how far off the value they are</strong> and <strong>whether they get the direction right</strong> (up or down), which matters to investors. Try it with the real Brazilian real, quarter by quarter.</p>
+      <p class="note rv" style="--d:.25s"><b>Approximate values</b>, read by us from the thesis chart (Figure 11): Brazilian reais per dollar at the end of each quarter.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="game-svg" viewBox="0 0 560 270" role="img" aria-label="Chart of the real per dollar over the last quarters"></svg>
+      <div class="guess" role="group" aria-label="Your guess for next quarter">
+        <button data-g="1">↑ Up</button>
+        <button data-g="-1">↓ Down</button>
+      </div>
+      <div class="score">
+        <div class="you">You<b id="sc-you">–</b>right directions</div>
+        <div class="rule">"Tomorrow = today"<b id="sc-rule">–</b>right directions</div>
+        <div class="rule">"Tomorrow = today"<b id="sc-err">–</b>average error in value</div>
+      </div>
+      <div id="game-msg" aria-live="polite">Round 1 of 8. Will the real go up or down next quarter?</div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · A LITERATURA -->
+<section class="slide" id="literatura" data-label="What was known">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> Article 1 · 775 articles</div>
+      <h2 class="rv" style="--d:.1s">Almost no one looked at the currencies of emerging countries</h2>
+      <p class="lede rv" style="--d:.15s">The author gathered 775 Web of Science articles on exchange rate models, measured who publishes and who is cited, and read in full the 69 that compare forecasting models.</p>
+      <div class="funnel rv" id="funnel" style="--d:.2s"></div>
+      <p class="rv" style="--d:.25s">Of the 69, only 4 include currencies of emerging countries, and the Brazilian real appears in just 2. She also found few studies that use several kinds of model and several yardsticks at once. The thesis grows out of these gaps.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="chips" id="lit-chips" role="group" aria-label="Slice of the 69 articles"></div>
+      <div class="dots69" id="dots69" role="img" aria-label="The 69 articles read, one dot per article"></div>
+      <div class="legend" id="lit-legend"></div>
+      <div class="panel" id="lit-panel" aria-live="polite"></div>
+      <p class="note">One dot per article read. For the slices the thesis gives as percentages (approach, frequency, period), the dots are our approximation.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · OS CLÁSSICOS -->
+<section class="slide" id="classicos" data-label="The most cited">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Article 1 · who the field cites</div>
+      <h2 class="rv" style="--d:.1s">An article from 1983 is still the most cited</h2>
+      <p class="lede rv" style="--d:.15s">Meese and Rogoff's study has 1,543 citations in the database. It created the "puzzle": why don't models based on the economy (interest rates, inflation, money, output) beat the guess of repeating the last value?</p>
+      <p class="rv" style="--d:.2s">Shared citations split the studies into three groups:</p>
+      <div class="clusters rv" style="--d:.25s">
+        <div class="cl"><b>Economic models × others</b>They test whether models based on the economy beat other ways of forecasting. Meese and Rogoff are at the center.<em>keywords: models, fit, fundamentals</em></div>
+        <div class="cl"><b>The classic monetary models</b>The articles that created the flexible-price and sticky-price models, in the 1970s and 1980s.<em>keywords: purchasing power parity, cointegration, tests</em></div>
+        <div class="cl"><b>Volatility</b>Studies of how much the exchange rate swings, with ARCH models.<em>keywords: volatility, time-series, models</em></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="cit-mode" role="group" aria-label="Measure">
+        <button data-m="t" aria-pressed="true">Total citations</button>
+        <button data-m="a" aria-pressed="false">Citations per year</button>
+      </div>
+      <div class="cbars" id="cbars"></div>
+      <p class="note">The 10 most cited articles among the 775 (Table 4 of the thesis). Per year, Patton (2006), on how currencies move together, takes the lead.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · OS DADOS -->
+<section class="slide" id="dados" data-label="The data">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> How the research looked</div>
+      <h2 class="rv" style="--d:.1s">Five currencies and 104 quarters</h2>
+      <p class="lede rv" style="--d:.15s">The Japanese yen, a core currency of the world market, and four currencies of emerging countries: the Brazilian real and the Mexican, Chilean and Colombian pesos, all against the dollar, from 1995 (start of Brazil's Real Plan) to 2020.</p>
+      <p class="rv" style="--d:.2s">The models learn from the first 75% of the quarters and are tested on the final 25%, from 1 to 6 quarters ahead. At each step, they receive the actual value before forecasting the next one.</p>
+      <div class="chips rv" id="cty-chips" style="--d:.25s" role="group" aria-label="Choose the country"></div>
+      <div class="panel rv" id="cty-panel" style="--d:.3s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="q-svg" viewBox="0 0 560 300" role="img" aria-label="Timeline of 104 quarters: 78 to learn and 26 to test"></svg>
+      <div class="seg" id="hz-seg" role="group" aria-label="Forecast horizon" style="margin-top:8px"></div>
+      <p class="note">Quarterly data from the IMF, the OECD and FRED (Federal Reserve Bank of St. Louis); CDS from Bloomberg. The split into learning and test quarters is our calculation from the thesis's 75% and 25%.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · AS RECEITAS -->
+<section class="slide" id="receitas" data-label="The models">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Article 2 · the competitors</div>
+      <h2 class="rv" style="--d:.1s">Eighteen recipes made with ingredients from the economy</h2>
+      <p class="lede rv" style="--d:.15s">Each economic model forecasts the exchange rate from differences between the country and the US: money in circulation, GDP, interest rates, inflation, foreign trade. The thesis's novelty is one more ingredient, the <strong>CDS</strong>, a thermometer of the country's default risk.</p>
+      <div class="panel rv" id="rec-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="cds-tog" role="group" aria-label="CDS ingredient">
+        <button data-c="0" aria-pressed="true">Without the CDS (8 recipes)</button>
+        <button data-c="1" aria-pressed="false">With the CDS (+9)</button>
+      </div>
+      <div class="ing" id="ing" style="margin-top:12px"></div>
+      <p style="font-size:.82rem; margin:12px 0 0">Each recipe ran in <b>6 versions</b>, and the forecasts were also combined with one another:</p>
+      <div class="vers"><span>VAR</span><span>VAR, bias corrected upward</span><span>VAR, downward</span><span>VEC</span><span>VEC, upward</span><span>VEC, downward</span></div>
+      <p class="note">Table 5 of the thesis. Tap a row to see the recipe. VAR and VEC forecast several series together; VEC also uses the long-run equilibrium between them. The 18th recipe, the Taylor rule, uses GDP, interest and inflation gaps computed with five filters (BK, BW, CF, HP and HM). The 150 best models for each country went on to the final comparison.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · PELO ERRO -->
+<section class="slide" id="erro" data-label="By the error yardstick">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Article 2 · the main result</div>
+      <h2 class="rv" style="--d:.1s">The simple guess was among the best only one quarter ahead</h2>
+      <p class="lede rv" style="--d:.15s">A statistical test (the <em>Model Confidence Set</em>) picked out, for each country and each horizon, the group of models that erred least and tied with one another. "Tomorrow = today" made that group only one quarter ahead, in three countries. From the 2nd to the 6th quarter, it was left out everywhere.</p>
+      <div class="chips rv" id="fam-chips" style="--d:.2s" role="group" aria-label="Highlight a family of models"></div>
+      <div class="panel rv" id="mcs-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="mcs-scene" data-fit="600x440" role="group" aria-label="Country by horizon matrix: in each cell, a stack with one block per model in the best group"></div></div>
+      <div class="legend"><span><i class="dot" style="background:var(--rw)"></i>"tomorrow = today"</span><span><i class="dot" style="background:var(--tay)"></i>Taylor rule with filters</span><span><i class="dot" style="background:var(--comb)"></i>combination of models</span><span><i class="dot" style="background:var(--var)"></i>VAR or VEC alone</span></div>
+      <p class="note">Table 9 of the thesis. Each block is a model in the best group; tap a stack to see which ones. The counts by family are ours.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · PELA DIREÇÃO -->
+<section class="slide" id="direcao" data-label="By the direction yardstick">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Article 2 · the other yardstick</div>
+      <h2 class="rv" style="--d:.1s">By direction, several hit rates were close to luck</h2>
+      <p class="lede rv" style="--d:.15s">Among the tied models, the thesis picked the one that most often got right whether the exchange rate would rise or fall. By this yardstick, the models beat "tomorrow = today" in every quarter except the 1st in Chile and Colombia.</p>
+      <p class="rv" style="--d:.2s">There is a catch: "tomorrow = today" never says "up" or "down", so it gets 0% of the directions right. The fair comparison is with <strong>a coin toss: 50%</strong>. Switch the yardstick.</p>
+      <div class="panel rv" id="dir-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="dir-mode" role="group" aria-label="Comparison yardstick">
+        <button data-m="tese" aria-pressed="true">Against "tomorrow = today"</button>
+        <button data-m="moeda" aria-pressed="false">Against a coin (50%)</button>
+        <button data-m="acaso" aria-pressed="false">With the chance band</button>
+      </div>
+      <div class="dgrid" id="dgrid"></div>
+      <div class="ctas" style="margin-top:14px"><button class="btn small" id="coin-btn">Toss a coin 26 times</button></div>
+      <div class="coins" id="coins" aria-hidden="true"></div>
+      <div id="coin-msg" aria-live="polite"></div>
+      <p class="note"><b>Our reading.</b> Direction hit rates from Table 11 of the thesis ("= today": the thesis indicates "tomorrow = today" itself). The test uses the final 25%, about 26 quarters. With 26 tosses, a fair coin gets between 31% and 69% right more than 95% of the time (blue band). The thesis does not test whether the hit rates differ from chance.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · O CDS -->
+<section class="slide" id="cds" data-label="The risk thermometer">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> The unexpected</div>
+      <h2 class="rv" style="--d:.1s">The risk thermometer did not improve the forecasts</h2>
+      <p class="lede rv" style="--d:.15s">The thesis's bet was to add the five-year CDS, the price of insurance against a government default, as a measure of uncertainty. Earlier studies link the CDS to the exchange rate, especially in crises. In the result, models with the CDS appeared among the best, but they did not prove superior to the others.</p>
+      <div class="seg rv" id="cds-seg" style="--d:.2s" role="group" aria-label="Part of the story">
+        <button data-k="aposta" aria-pressed="true">The bet</button>
+        <button data-k="res" aria-pressed="false">The result</button>
+        <button data-k="pq" aria-pressed="false">Why?</button>
+      </div>
+      <div class="panel rv" id="cds-panel" style="--d:.25s; margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="cds-svg" viewBox="0 0 560 290" role="img" aria-label="Timeline from 1995 to 2020 by country, with the stretch that has CDS data"></svg>
+      <p class="note">Start of the CDS series: Table 7 of the thesis. Quarters with CDS through the end of 2020: our count.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · A REDE NEURAL -->
+<section class="slide" id="rede" data-label="The neural network">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Article 3 · artificial intelligence</div>
+      <h2 class="rv" style="--d:.1s">A larger neural network erred less than the simple guess</h2>
+      <p class="lede rv" style="--d:.15s">In the third article, the author trained an LSTM neural network, a type of network with memory, using only the exchange rate series itself, to forecast one quarter ahead. She tested seven sizes, from 1 to 100 neurons in 3 layers. Drag the slider.</p>
+      <div class="rng rv" style="--d:.2s">
+        <label for="nn-range" style="font-size:.8rem; color:var(--muted)">Neurons in each network design</label>
+        <input type="range" id="nn-range" min="1" max="7" step="1" value="7">
+        <div class="ticks" id="nn-ticks"></div>
+      </div>
+      <div class="panel rv" id="nn-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="nn-scene" data-fit="560x380" role="group" aria-label="Four bars, one per country: the neural network's error relative to the error of tomorrow equals today, marked by a blue sheet"></div></div>
+      <p class="note"><b>Logarithmic scale:</b> each step in height multiplies the error by 10. The blue sheet is the error of "tomorrow = today"; below it, the network erred less. The number on the bar is the network's average error divided by the simple guess's, our calculation from Table 13. Japan is left out: in Table 13, its values repeat Colombia's (equal or divided by a thousand), which does not fit a yen between 100 and 125 per dollar.</p>
+      <details class="tbl"><summary>See the thesis's errors (Table 13)</summary><div class="wrap" id="nn-table"></div></details>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · A PANDEMIA -->
+<section class="slide" id="pandemia" data-label="The 2020 shock">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> Article 3 · the limit</div>
+      <h2 class="rv" style="--d:.1s">The network tracked the real closely until the pandemic</h2>
+      <p class="lede rv" style="--d:.15s">With 100 neurons, the one-quarter-ahead forecast almost merges with the actual exchange rate from 2014 to 2019. In 2020, the real shot up and the network fell behind. The author points to this sensitivity to shocks in emerging countries.</p>
+      <p class="rv" style="--d:.2s">To explain it, she cites two kinds of uncertainty (Gaba, Hogarth and Makridakis, 2010). Tap them:</p>
+      <div class="unc rv" id="unc" style="--d:.25s">
+        <button style="--uc:var(--rw)" data-u="metro" aria-pressed="true"><b>Subway uncertainty</b>You can estimate how long the subway takes to get to work from the average of previous days, if the future repeats the pattern of the past.</button>
+        <button style="--uc:var(--red)" data-u="coco" aria-pressed="false"><b>Coconut uncertainty</b>No one can predict the coconut that falls on your head on vacation. For the author, the 2020 pandemic was an event like that.</button>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="line-mode" role="group" aria-label="Period">
+        <button data-v="all" aria-pressed="true">2014 to 2020</button>
+        <button data-v="zoom" aria-pressed="false">Zoom in on 2019 and 2020</button>
+      </div>
+      <svg id="line-svg" viewBox="0 0 560 300" role="img" aria-label="Real per dollar and the neural network's forecast, by quarter" style="margin-top:10px"></svg>
+      <div class="legend"><span><i class="dot" style="background:var(--ink)"></i>actual exchange rate</span><span><i class="dot" style="background:var(--nn); box-shadow:inset 0 0 0 2px #fff"></i>network forecast (100 neurons)</span></div>
+      <p class="note"><b>Approximate values</b>, read by us from Figure 11 of the thesis (3rd quarter of 2014 to 3rd quarter of 2020, reais per dollar).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="In practice and credits">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> In practice, limits and credits</div>
+    <h2 class="rv" style="--d:.1s">What the research changes and what it does not say</h2>
+    <div class="cards3">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--rw)">
+        <h3>For those who hedge currency risk</h3>
+        <p>Companies that use futures contracts (<em>hedging</em>) want to measure risk better. From 2 to 6 quarters ahead, economic models and combinations of models erred less than repeating the last value, in all five countries.</p>
+        <span class="src">Abstract and Table 9</span>
+      </div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--red)">
+        <h3>For those who build currency portfolios</h3>
+        <p>For the author, getting the direction right is what matters to investors, and the models did that better than the simple guess. In several cases, however, the hit rate was close to a coin toss.</p>
+        <span class="src">Section 5.3; caveat: our reading</span>
+      </div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--nn)">
+        <h3>For researchers</h3>
+        <p>Look at the same problem with several models, several techniques and several yardsticks, and include currencies of emerging countries, which are still little studied.</p>
+        <span class="src">Sections 2.2.3 and 7.1</span>
+      </div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>What this research does not say</h3>
+        <ul class="limits">
+          <li><b>No margin of error for the forecasts.</b> The thesis did not compute confidence intervals for the projections; the author suggests this for future studies. <em>· according to the author</em></li>
+          <li><b>Direction not tested against chance.</b> With about 26 test quarters, hit rates between 31% and 69% are within reach of luck. <em>· our observation</em></li>
+          <li><b>A neural network with one horizon and one ingredient.</b> The LSTM forecast only one quarter ahead and only from the exchange rate itself, with no economic data. <em>· our observation</em></li>
+          <li><b>Japan's data in Table 13.</b> Japan's errors repeat Colombia's; that is why screen 10 shows four countries. <em>· our observation</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Credits</h3>
+        <div class="cite">
+          <b>How to cite</b><br>
+          GENIN, Camila de Souza Vasconcelos. <em>Modelos de projeção de câmbio: uma investigação múltipla com séries de tempo, modelos estruturais e model selection.</em> Doctoral thesis (Business Administration), Mackenzie Presbyterian University, São Paulo, 2023. Advisor: Prof. Dr. Eli Hadad Junior.
+        </div>
+        <p style="margin-top:12px; font-size:.82rem">Research supported by CAPES (the Brazilian federal agency for graduate education) and the Mackenzie Presbyterian Institute. Data from the IMF, the OECD, FRED and Bloomberg; analyses in Stata and OxMetrics. This version simplifies the work for a general audience; the equations and full tables are in the original text.</p>
+        <div class="ctas" style="margin-top:14px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Read the full thesis (in Portuguese)</a>
+          <a class="btn ghost" href="#capa">↑ Back to the start</a>
+          <a class="btn ghost" href="../../">More research</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+
+  /* ================= DADOS DA TESE ================= */
+  var CTY = [
+    {k:'BR', n:'Brazil', m:'reais', cds:'Q4 2001', q:77, role:'Emerging. The real is among the most traded emerging-country currencies in the world (BIS, 2019).'},
+    {k:'MX', n:'Mexico', m:'Mexican pesos', cds:'Q4 2001', q:77, role:'Emerging. A peripheral currency, chosen to fill the gap in studies with emerging countries.'},
+    {k:'CL', n:'Chile', m:'Chilean pesos', cds:'Q1 2003', q:72, role:'Emerging. A peripheral currency, chosen because data were available for the whole period.'},
+    {k:'CO', n:'Colombia', m:'Colombian pesos', cds:'Q1 2003', q:72, role:'Emerging. A peripheral currency, chosen because data were available for the whole period.'},
+    {k:'JP', n:'Japan', m:'yen', cds:'Q1 2006', q:60, role:'Developed. The yen is the third most traded currency in the world: it is on one side of 16.8% of transactions (BIS, 2019).'}
+  ];
+  var HZ = ['1T', '2T', '3T', '4T', '5T', '6T'];
+  // Quadro 9 (MCS): modelos no grupo dos melhores, por país e horizonte
+  var MCS = {
+    BR:[['RW','2','3','C33'], ['8','C36'], ['5','8','C36'], ['5','8','C36'], ['8','C36'], ['8','C35','C36','C22']],
+    MX:[['C36'], ['9'], ['8','C35','C36'], ['8','C35','C36'], ['8','C35','C36'], ['8','C35','C36']],
+    CL:[['RW','C22'], ['9'], ['5','8','C36'], ['8','C35','C36'], ['8','C35','C36'], ['8','C35','C36']],
+    CO:[['RW','8','2','C34','C22'], ['10'], ['5','8','C36'], ['8','C36'], ['8','C35','C36'], ['8','C35','C36']],
+    JP:[['C35','C36'], ['8','C35','C36'], ['8','C35','C36'], ['8','C34','C35','C36'], ['2','8','C22','C23','C34','C35','C36'], ['2','8','C22','C23','C34','C35','C36']]
+  };
+  // Quadro 10: classes de modelos
+  var CLS = {'2':'VAR', '3':'VAR with upward bias correction', '4':'VAR with downward bias correction', '5':'VEC', '6':'VEC with upward bias correction', '7':'VEC with downward bias correction'};
+  var FAM = {
+    rw:  {n:'"Tomorrow = today"', c:'var(--rw)'},
+    tay: {n:'Taylor rule with filters', c:'var(--tay)'},
+    comb:{n:'Combination of models', c:'var(--comb)'},
+    var: {n:'VAR or VEC alone', c:'var(--var)'}
+  };
+  function fam(code){ return code === 'RW' ? 'rw' : (code === '8' || code === '9' || code === '10') ? 'tay' : code.charAt(0) === 'C' ? 'comb' : 'var'; }
+  function describe(code){
+    if (code === 'RW') return '"Tomorrow = today" (random walk)';
+    if (code === '8') return 'Taylor rule with the five filters (BK, BW, CF, HP, HM)';
+    if (code === '9') return 'Taylor rule with the Baxter-King (BK) filter, alone';
+    if (code === '10') return 'Taylor rule with the Christiano-Fitzgerald (CF) filter, alone';
+    if (code.charAt(0) === 'C'){ var a = code.charAt(1), b = code.charAt(2); return a === b ? 'Combination of forecasts from several ' + CLS[a] + ' models' : 'Combination of ' + CLS[a] + ' and ' + CLS[b]; }
+    return CLS[code] + ' alone';
+  }
+  // Quadro 11 (DA, %): null = a tese indica "RW"
+  var DA = {BR:[60,64,58,61,55,38], MX:[62,44,46,48,59,52], CL:[null,36,40,48,54,61], CO:[null,65,54,52,56,62], JP:[84,60,63,70,50,52]};
+  // Quadro 13 (erro quadrático médio, 1 trimestre). Japão fora (repete a Colômbia). México, desenho 1: impresso "6,859,013".
+  var NEU = [1, 2, 5, 10, 20, 50, 100];
+  var EQM = {
+    rw:[0.069077, 0.754578, 9.865087, 30246.62],
+    m:[[0.876253, 6.859013, 10.70979, 447909.9],
+       [0.041922, 0.399991, 22.50633, 404058.2],
+       [0.020462, 0.134102, 14.53673, 3755.005],
+       [0.02539, 0.175606, 13.55421, 6070.584],
+       [0.025989, 0.195275, 10.81031, 2080.471],
+       [0.01243, 0.014276, 10.28487, 556.5258],
+       [0.001568, 0.01362, 8.101191, 459.2235]]
+  };
+  var NNC = ['Brazil', 'Mexico', 'Chile', 'Colombia'];
+  // Figura 11 (lida por nós, aproximada): real por dólar, 3º tri. de 2014 a 3º tri. de 2020
+  var BRL = [2.47,2.66,3.20,3.15,4.15,3.90,3.58,3.24,3.25,3.26,3.17,3.31,3.17,3.31,3.32,3.86,4.02,3.88,3.90,3.83,4.18,4.04,5.22,5.48,5.63];
+  var M7 = BRL.slice(0, 23).concat([5.33, 5.34]);
+  function qlab(i){ var q = 3 + i, y = 2014 + Math.floor((q - 1) / 4); return 'Q' + ((q - 1) % 4 + 1) + ' ' + y; }
+  function qshort(i){ var q = 3 + i, y = 2014 + Math.floor((q - 1) / 4); return 'Q' + ((q - 1) % 4 + 1) + "'" + String(y).slice(2); }
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), W = 500, D = 150;
+    var st = makeStage(sc, W, D, {ay:'64%', rx:'60deg'});
+    rotatable(sc, st, -14, 10);
+    var bw = 64, gap = 24, x0 = (W - (5 * bw + 4 * gap)) / 2, stacks = [];
+    CTY.forEach(function(c, i){
+      var x = x0 + i * (bw + gap);
+      st.appendChild(box({w:bw, d:56, x:x, y:D / 2 - 28, h:22, c:'#e2e8f0'}));
+      flatLabel(st, c.n, x - 12, D / 2 + 36, bw + 24);
+      stacks.push({x:x, els:[]});
+    });
+    var h = -1;
+    function show(k){
+      if (k === h) return; h = k;
+      $('hero-hz').textContent = (k + 1) + (k ? ' quarters ahead' : ' quarter ahead');
+      CTY.forEach(function(c, i){
+        var s = stacks[i];
+        s.els.forEach(function(e){ e.remove(); }); s.els = [];
+        MCS[c.k][k].forEach(function(code, j){
+          var b = box({w:bw - 10, d:46, x:s.x + 5, y:D / 2 - 23, z:22 + j * 17, h:14, c:FAM[fam(code)].c});
+          st.appendChild(b); s.els.push(b);
+        });
+      });
+    }
+    show(0);
+    if (!reduce) M.onTick(function(t){ show(Math.floor(t / 2.4) % 6); });
+  })();
+
+  /* ================= 02 · SOBE OU DESCE ================= */
+  (function(){
+    var svg = $('game-svg'), START = 16, ROUNDS = 8;
+    var cur, hits, err, pending, done;
+    function reset(){
+      cur = START; hits = 0; err = 0; pending = false; done = false;
+      each(document.querySelectorAll('.guess button'), function(b){ b.disabled = false; });
+      score(); draw();
+      $('game-msg').textContent = 'Round 1 of ' + ROUNDS + '. Will the real go up or down next quarter?';
+    }
+    function rounds(){ return cur - START; }
+    function score(){
+      var r = rounds();
+      $('sc-you').textContent = r ? hits + '/' + r : '–';
+      $('sc-rule').textContent = r ? '0/' + r : '–';
+      $('sc-err').textContent = r ? 'R$ ' + fmt(err / r, 2) : '–';
+    }
+    function draw(){
+      var from = Math.max(0, cur - 8), to = pending ? cur + 1 : cur;
+      var vals = BRL.slice(from, pending ? cur + 2 : cur + 1);
+      var lo = Math.floor((Math.min.apply(null, vals) - 0.15) * 2) / 2, hi = Math.ceil((Math.max.apply(null, vals) + 0.15) * 2) / 2;
+      var X0 = 52, X1 = 528, Y0 = 22, Y1 = 226, n = 10;
+      function x(i){ return X0 + (X1 - X0) * (i - from) / (n - 1); }
+      function y(v){ return Y1 - (Y1 - Y0) * (v - lo) / (hi - lo); }
+      var h = '';
+      for (var v = lo; v <= hi + 1e-9; v += 0.5){
+        h += '<line x1="' + X0 + '" x2="' + X1 + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="#eef2f7"/><text x="' + (X0 - 8) + '" y="' + (y(v) + 4) + '" text-anchor="end" style="font-size:11px; fill:var(--muted)">' + fmt(v, 1) + '</text>';
+      }
+      var pts = [];
+      for (var i = from; i <= to; i++) pts.push(x(i) + ',' + y(BRL[i]));
+      h += '<polyline fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round" points="' + pts.join(' ') + '"/>';
+      for (i = from; i <= to; i++) h += '<circle cx="' + x(i) + '" cy="' + y(BRL[i]) + '" r="3.5" fill="var(--ink)"/>';
+      h += '<text x="' + x(from) + '" y="250" style="font-size:11px; fill:var(--muted)">' + qlab(from) + '</text>';
+      h += '<text x="' + X1 + '" y="250" text-anchor="end" style="font-size:11px; font-weight:700; fill:var(--ink)">' + (pending ? qlab(cur + 1) : 'next: ' + qlab(cur + 1)) + '</text>';
+      h += '<text x="' + (x(cur) - 6) + '" y="' + (y(BRL[cur]) - 12) + '" text-anchor="end" style="font-size:12px; font-weight:700; fill:var(--ink)">today R$ ' + fmt(BRL[cur], 2) + '</text>';
+      // o palpite "amanhã = hoje": linha reta
+      h += '<line x1="' + x(cur) + '" x2="' + x(cur + 1) + '" y1="' + y(BRL[cur]) + '" y2="' + y(BRL[cur]) + '" stroke="var(--rw)" stroke-width="2.5" stroke-dasharray="5 4"/><circle cx="' + x(cur + 1) + '" cy="' + y(BRL[cur]) + '" r="6" fill="#fff" stroke="var(--rw)" stroke-width="2.5"/>';
+      if (pending) h += '<circle cx="' + x(cur + 1) + '" cy="' + y(BRL[cur + 1]) + '" r="6.5" fill="var(--red)"/>';
+      svg.innerHTML = h;
+    }
+    function play(g){
+      if (pending || done) return;
+      var d = BRL[cur + 1] - BRL[cur], ok = (g > 0) === (d > 0);
+      if (ok) hits++;
+      err += Math.abs(d);
+      pending = true; draw();
+      var msg = 'In ' + qlab(cur + 1) + ', the dollar ' + (d > 0 ? 'rose' : 'fell') + ' to about R$ ' + fmt(BRL[cur + 1], 2) + '. You got the direction ' + (ok ? 'right' : 'wrong') + '.';
+      cur++; score();
+      if (rounds() < ROUNDS){
+        $('game-msg').textContent = msg + ' Round ' + (rounds() + 1) + ' of ' + ROUNDS + '.';
+        setTimeout(function(){ pending = false; draw(); }, reduce ? 0 : 1000);
+      } else {
+        done = true;
+        each(document.querySelectorAll('.guess button'), function(b){ b.disabled = true; });
+        $('game-msg').innerHTML = msg + '<br><strong>"Tomorrow = today" got no direction right; in value, it was off by R$ ' + fmt(err / ROUNDS, 2) + ' per quarter on average. Each yardstick tells a story.</strong> <button class="btn small ghost" id="game-again" style="margin-left:6px">Play again</button>';
+        $('game-again').addEventListener('click', reset);
+      }
+    }
+    each(document.querySelectorAll('.guess button'), function(b){ b.addEventListener('click', function(){ play(+b.dataset.g); }); });
+    reset();
+  })();
+
+  /* ================= 03 · LITERATURA ================= */
+  (function(){
+    var F = [['Articles found in the Web of Science', 775, '#8494ab'], ['Selected by citations and by reading the abstract', 109, '#475569'], ['Compare forecasting models and were read in full', 69, 'var(--red)']];
+    $('funnel').innerHTML = F.map(function(f){ return '<div><i style="--fc:' + f[2] + '; width:' + Math.max(22, f[1] / 775 * 100) + '%"></i><b>' + f[1].toLocaleString('en-US') + '</b></div><div style="margin-top:-4px; font-size:.74rem; color:var(--muted)">' + f[0] + '</div>'; }).join('');
+    // recortes: [rótulo, cor, quantidade de pontos]
+    var CUTS = [
+      {k:'ab', n:'Approach', g:[['linear', 'var(--rw)', 37], ['nonlinear', 'var(--red)', 20], ['both', 'var(--comb)', 11], ['rounding leftover', 'var(--off)', 1]],
+        t:'Linear models dominate', p:'54% of the studies use linear models, 29% nonlinear models (such as neural networks) and 16% both. Time series analysis prevails; only one study uses panel data.'},
+      {k:'fr', n:'Frequency', g:[['monthly', 'var(--rw)', 28], ['quarterly', 'var(--red)', 13], ['daily', 'var(--comb)', 11], ['other or several', 'var(--off)', 17]],
+        t:'Monthly data are the most common', p:'40% of the studies use monthly data, 19% quarterly (like this thesis) and 16% daily. Some use more than one frequency.'},
+      {k:'pe', n:'Period', g:[['data after 2000', 'var(--red)', 43], ['only up to 2000', 'var(--rw)', 26]],
+        t:'Much research with old data', p:'62% of the studies include data from after 2000; 38% stop before that.'},
+      {k:'em', n:'Emerging', g:[['include the real', 'var(--red)', 2], ['other emerging currencies', 'var(--comb)', 2], ['no emerging currencies', 'var(--off)', 65]],
+        t:'Only 4 of 69 include emerging countries', p:'The most studied currencies are the pound, the yen, the Deutsche mark and the Canadian dollar. The Brazilian real appears in 2 articles (Shen, Chao and Zhao, 2015; Kouwenberg and colleagues, 2017).'},
+      {k:'rn', n:'Neural networks', g:[['use neural networks', 'var(--nn)', 13], ['do not', 'var(--off)', 56]],
+        t:'Neural networks in 13 of the 69', p:'The trend is recent: of the articles from 2019 to 2021, only 26% still evaluate monetary models; the others test nonlinear methods, mostly neural networks.'}
+    ];
+    var wrap = $('dots69'), chips = $('lit-chips');
+    wrap.innerHTML = new Array(70).join('<span></span>');
+    chips.innerHTML = CUTS.map(function(c, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="' + (i === 3) + '">' + c.n + '</button>'; }).join('');
+    function show(i){
+      var c = CUTS[i], cols = [];
+      c.g.forEach(function(g){ for (var j = 0; j < g[2]; j++) cols.push(g[1]); });
+      each(wrap.children, function(s, j){ s.style.background = cols[j] || 'var(--off)'; s.classList.toggle('on', cols[j] && cols[j] !== 'var(--off)'); });
+      $('lit-legend').innerHTML = c.g.map(function(g){ return '<span><i class="dot" style="border-radius:50%; background:' + g[1] + '"></i>' + g[0] + ' (' + g[2] + ')</span>'; }).join('');
+      $('lit-panel').innerHTML = '<div class="tag">The 69 articles · ' + c.n.toLowerCase() + '</div><h3>' + c.t + '</h3><p>' + c.p + '</p>';
+      each(chips.children, function(b, j){ b.setAttribute('aria-pressed', i === j); });
+    }
+    each(chips.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(3);
+  })();
+
+  /* ================= 04 · OS MAIS CITADOS ================= */
+  (function(){
+    var A = [['Meese and Rogoff (1983)', 1543, 39.56], ['Patton (2006)', 939, 58.68], ['Cheung et al. (2005)', 285, 16.76], ['Diebold and Nerlove (1989)', 271, 8.21], ['Betts and Devereux (2000)', 249, 11.31], ['Diebold and Nason (1990)', 229, 7.15], ['Rossi (2013)', 179, 19.88], ['Reboredo (2012)', 172, 17.20], ['Calvo and Rodriguez (1977)', 168, 3.73], ['Zhang and Hu (1998)', 158, 6.58]];
+    var w = $('cbars'), mode = 't';
+    w.innerHTML = A.map(function(a, i){ return '<div class="cbar' + (i === 0 ? ' me' : '') + '" style="--bc:' + (i === 0 ? 'var(--red)' : '#8494ab') + '"><span>' + a[0] + '</span><div class="tr"><i></i></div><b></b></div>'; }).join('');
+    var rows = w.children, RH = 22;
+    function render(){
+      var idx = A.map(function(a, i){ return i; }).sort(function(p, q){ return mode === 't' ? A[q][1] - A[p][1] : A[q][2] - A[p][2]; });
+      var mx = mode === 't' ? 1543 : 58.68;
+      idx.forEach(function(i, pos){
+        var r = rows[i], v = mode === 't' ? A[i][1] : A[i][2];
+        r.style.transform = 'translateY(' + ((pos - i) * RH) + 'px)';
+        r.querySelector('i').style.width = (v / mx * 100) + '%';
+        r.querySelector('b').textContent = mode === 't' ? v.toLocaleString('en-US') : fmt(v, 1);
+      });
+    }
+    function measure(){ if (rows.length > 1) RH = rows[1].offsetTop - rows[0].offsetTop || 22; render(); }
+    each($('cit-mode').children, function(b){ b.addEventListener('click', function(){ mode = b.dataset.m; each($('cit-mode').children, function(c){ c.setAttribute('aria-pressed', c === b); }); render(); }); });
+    window.addEventListener('resize', measure);
+    measure(); setTimeout(measure, 300);
+  })();
+
+  /* ================= 05 · OS DADOS ================= */
+  (function(){
+    var svg = $('q-svg'), hz = 1, TRAIN = 78;
+    var seg = $('hz-seg');
+    seg.innerHTML = HZ.map(function(h, i){ return '<button data-h="' + (i + 1) + '" aria-pressed="' + (i === 0) + '">' + (i + 1) + ' qtr.</button>'; }).join('');
+    function draw(){
+      // 26 anos em colunas, 4 trimestres em linhas
+      var X0 = 34, Y0 = 34, cw = 19.2, ch = 30, h = '';
+      for (var y = 0; y < 26; y++){
+        for (var q = 0; q < 4; q++){
+          var i = y * 4 + q, test = i >= TRAIN;
+          var hot = i === TRAIN - 1 ? 'today' : (i === TRAIN - 1 + hz ? 'target' : (i > TRAIN - 1 && i < TRAIN - 1 + hz ? 'mid' : ''));
+          var fill = hot === 'today' ? 'var(--ink)' : hot === 'target' ? 'var(--red)' : test ? 'color-mix(in srgb, var(--red) 28%, white)' : '#cbd5e1';
+          h += '<rect x="' + (X0 + y * cw) + '" y="' + (Y0 + q * ch) + '" width="' + (cw - 3) + '" height="' + (ch - 4) + '" rx="3" fill="' + fill + '"' + (hot === 'mid' ? ' stroke="var(--red)" stroke-width="1.5" stroke-dasharray="3 2"' : '') + '/>';
+        }
+        if (y % 5 === 0 || y === 25) h += '<text x="' + (X0 + y * cw + (cw - 3) / 2) + '" y="' + (Y0 + 4 * ch + 14) + '" text-anchor="middle" style="font-size:11px; fill:var(--muted)">' + (1995 + y) + '</text>';
+      }
+      ['Q1', 'Q2', 'Q3', 'Q4'].forEach(function(t, q){ h += '<text x="' + (X0 - 6) + '" y="' + (Y0 + q * ch + 17) + '" text-anchor="end" style="font-size:10px; fill:var(--muted)">' + t + '</text>'; });
+      h += '<text x="' + X0 + '" y="20" style="font-size:12px; font-weight:700; fill:var(--ink-2)">78 quarters to learn</text>';
+      h += '<text x="' + (X0 + 26 * cw - 3) + '" y="20" text-anchor="end" style="font-size:12px; font-weight:700; fill:var(--red)">26 to test</text>';
+      var ty = Y0 + 4 * ch + 50;
+      h += '<rect x="' + X0 + '" y="' + (ty - 11) + '" width="13" height="13" rx="3" fill="var(--ink)"/><text x="' + (X0 + 19) + '" y="' + ty + '" style="font-size:12px; fill:var(--ink-2)">today: the last known value</text>';
+      h += '<rect x="' + (X0 + 250) + '" y="' + (ty - 11) + '" width="13" height="13" rx="3" fill="var(--red)"/><text x="' + (X0 + 269) + '" y="' + ty + '" style="font-size:12px; fill:var(--ink-2)">the quarter to forecast (' + hz + ' ahead)</text>';
+      h += '<text x="' + X0 + '" y="' + (ty + 26) + '" style="font-size:12px; fill:var(--muted)">104 quarters, from Q1 1995 to Q4 2020</text>';
+      svg.innerHTML = h;
+    }
+    each(seg.children, function(b){ b.addEventListener('click', function(){ hz = +b.dataset.h; each(seg.children, function(c){ c.setAttribute('aria-pressed', c === b); }); draw(); }); });
+    draw();
+    var chips = $('cty-chips');
+    chips.innerHTML = CTY.map(function(c, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="' + (i === 0) + '">' + c.n + '</button>'; }).join('');
+    function show(i){
+      var c = CTY[i];
+      each(chips.children, function(b, j){ b.setAttribute('aria-pressed', i === j); });
+      $('cty-panel').innerHTML = '<div class="tag">' + c.n + ' · ' + c.m + ' per dollar</div><h3>' + c.role.split('. ')[0] + '</h3><p>' + c.role.split('. ').slice(1).join('. ') + '</p><div class="flagrow"><span class="pill">104 quarters of exchange rates</span><span class="pill">CDS since ' + c.cds + '</span></div>';
+    }
+    each(chips.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(0);
+  })();
+
+  /* ================= 06 · AS RECEITAS ================= */
+  (function(){
+    var VARS = [['S', 'exch. rate', 'the exchange rate itself, in the past'], ['m', 'money', 'money in circulation (M1)'], ['y', 'GDP', 'GDP'], ['i', 'interest', 'short-term interest rates'], ['π', 'inflation', 'inflation'], ['TB', 'trade', 'trade balance'], ['Nfa', 'foreign assets', 'banks\' net foreign assets'], ['CDS', 'CDS', 'five-year CDS, the default risk']];
+    var REC = [
+      {n:1, nm:'Flexible prices', full:'Flexible prices (Frenkel-Bilson)', v:['S','m','y','i'], d:'Prices adjust at once; the exchange rate comes from the balance between money, output and interest rates in the two countries.'},
+      {n:2, nm:'Sticky prices 1', full:'Sticky prices (Dornbusch-Frankel)', v:['S','m','y','i','π'], d:'Financial markets react faster than goods prices; in the short run, the exchange rate overshoots.'},
+      {n:3, nm:'Sticky prices 2', full:'Sticky prices (Hooper-Morton 1)', v:['S','m','y','i','π','TB'], d:'Adds the trade balance: deficits and surpluses shift the equilibrium exchange rate.'},
+      {n:4, nm:'Sticky prices 3', full:'Sticky prices (Hooper-Morton 2)', v:['S','m','y','i','π','Nfa'], d:'A version with net foreign assets in place of the trade balance.'},
+      {n:5, nm:'Interest parity', full:'Uncovered interest parity', v:['S','i'], d:'Only the interest rate gap: investors are indifferent between the two countries because the exchange rate offsets the interest.'},
+      {n:6, nm:'Exploratory 1', full:'Exploratory 1', v:['S','i','π'], d:'A combination tested by the author: interest rates and inflation.'},
+      {n:7, nm:'Exploratory 2', full:'Exploratory 2', v:['S','Nfa'], d:'A combination tested by the author: net foreign assets only.'},
+      {n:8, nm:'Exploratory 3', full:'Exploratory 3', v:['S','i','Nfa'], d:'A combination tested by the author: interest rates and foreign assets.'},
+      {n:17, nm:'Exploratory 4', full:'Exploratory 4 (CDS only)', v:['S','CDS'], d:'Only the risk thermometer, with no other ingredients from the economy.', cds:true}
+    ];
+    var ing = $('ing'), cds = false, act = 0;
+    ing.innerHTML = '<div class="hd" aria-hidden="true"><span></span>' + VARS.map(function(v){ return '<span' + (v[0] === 'CDS' ? ' class="c"' : '') + '>' + v[1] + '</span>'; }).join('') + '</div>' +
+      REC.map(function(r, ri){
+        return '<button class="rrow" data-i="' + ri + '" aria-pressed="false"><b><small>' + r.n + '</small>' + r.nm + '</b>' +
+          VARS.map(function(v){ var on = r.v.indexOf(v[0]) >= 0; return '<i class="' + (on ? 'on' : '') + (v[0] === 'S' ? ' s' : '') + (v[0] === 'CDS' ? ' c' : '') + '"></i>'; }).join('') + '</button>';
+      }).join('');
+    var rows = ing.querySelectorAll('.rrow');
+    function paint(){
+      each(rows, function(b, ri){
+        var r = REC[ri];
+        b.classList.toggle('hid', !!r.cds && !cds);
+        b.setAttribute('aria-pressed', ri === act);
+        var cells = b.querySelectorAll('i');
+        cells[7].classList.toggle('on', r.cds || cds);
+        b.querySelector('small').textContent = cds && !r.cds ? r.n + 8 : r.n;
+        var vs = r.v.concat(cds && !r.cds ? ['CDS'] : []);
+        b.setAttribute('aria-label', 'Recipe ' + (cds && !r.cds ? r.n + 8 : r.n) + ', ' + r.full + (cds && !r.cds ? ' with CDS' : '') + ': ' + vs.map(function(k){ return VARS.filter(function(v){ return v[0] === k; })[0][1]; }).join(', '));
+      });
+      var r = REC[act];
+      var vs = r.v.concat(cds && !r.cds ? ['CDS'] : []);
+      var num = cds && !r.cds ? r.n + 8 : r.n;
+      $('rec-panel').innerHTML = '<div class="tag">Recipe ' + num + (cds && !r.cds ? ' (no. ' + r.n + ' with CDS)' : '') + '</div><h3>' + r.full + (cds && !r.cds ? ' + CDS' : '') + '</h3><p>' + r.d + '</p>' +
+        '<p style="font-size:.84rem; color:var(--muted)">Ingredients: ' + vs.map(function(k){ return VARS.filter(function(v){ return v[0] === k; })[0][2]; }).join(', ') + '.</p>';
+    }
+    each(rows, function(b){ b.addEventListener('click', function(){ act = +b.dataset.i; paint(); }); });
+    each($('cds-tog').children, function(b){ b.addEventListener('click', function(){ cds = b.dataset.c === '1'; if (!cds && REC[act].cds) act = 0; each($('cds-tog').children, function(c){ c.setAttribute('aria-pressed', c === b); }); paint(); }); });
+    paint();
+  })();
+
+  /* ================= 07 · PELA RÉGUA DO ERRO ================= */
+  (function(){
+    var sc = $('mcs-scene'), CW = 64, CD = 40, GX = 14, GY = 12, LW = 110;
+    var W = LW + 5 * CW + 4 * GX, D = 6 * CD + 5 * GY;
+    var st = makeStage(sc, W, D, {ay:'56%', rx:'50deg'});
+    rotatable(sc, st, -6, 4);
+    var cells = [], flt = null, act = null;
+    HZ.forEach(function(hz, r){
+      var l = flatLabel(st, (r + 1) + ' qtr.', 0, r * (CD + GY) + 10, LW - 24, 'text-align:right'); l.classList.add('row');
+      CTY.forEach(function(c, j){
+        var g = document.createElement('div'); g.className = 'cell';
+        var list = MCS[c.k][r], blocks = [];
+        list.forEach(function(code, k){
+          var b = box({w:CW, d:CD, x:LW + j * (CW + GX), y:r * (CD + GY), z:k * 11, h:10, c:FAM[fam(code)].c});
+          b.dataset.f = fam(code);
+          b.setAttribute('role', 'button'); b.tabIndex = 0; b.setAttribute('aria-label', c.n + ', ' + (r + 1) + ' quarter(s): ' + list.length + ' model(s) in the best group');
+          b.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick(j, r); });
+          b.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); pick(j, r); } });
+          st.appendChild(b); blocks.push(b);
+        });
+        cells.push({j:j, r:r, blocks:blocks});
+      });
+    });
+    CTY.forEach(function(c, j){ var l = flatLabel(st, c.n, LW + j * (CW + GX) - 10, D + 10, CW + 20); l.classList.add('col'); });
+    // contagens nossas por família (células com pelo menos um modelo da família)
+    var CNT = {rw:0, tay:0, comb:0, var:0};
+    cells.forEach(function(cl){ var seen = {}; MCS[CTY[cl.j].k][cl.r].forEach(function(code){ seen[fam(code)] = 1; }); Object.keys(seen).forEach(function(f){ CNT[f]++; }); });
+    var TXT = {
+      rw:'Only in the 1st quarter, tied with other models, in Brazil, Chile and Colombia. From the 2nd quarter on, never.',
+      tay:'Taylor rule models, in which interest rates respond to inflation and GDP, with filters that separate trend from cycle. In the 2nd quarter, the version with a single filter won alone in Mexico, Chile and Colombia.',
+      comb:'Combining the forecasts of several models was the most frequent technique. The most common combination mixes VAR and VEC with bias correction.',
+      var:'VAR or VEC models without combination appear in few cells. In Brazil, at three horizons.'
+    };
+    var chips = $('fam-chips');
+    chips.innerHTML = '<button class="chip" data-f="" aria-pressed="true">All</button>' + ['rw', 'tay', 'comb', 'var'].map(function(f){ return '<button class="chip" data-f="' + f + '" aria-pressed="false">' + FAM[f].n + '</button>'; }).join('');
+    function paint(){
+      cells.forEach(function(cl){
+        cl.blocks.forEach(function(b){ b.classList.toggle('dim', !!flt && b.dataset.f !== flt); b.classList.toggle('active', !!act && act.j === cl.j && act.r === cl.r); });
+      });
+      var h;
+      if (act){
+        var c = CTY[act.j], list = MCS[c.k][act.r];
+        h = '<div class="tag">' + c.n + ' · ' + (act.r + 1) + (act.r ? ' quarters' : ' quarter') + ' ahead</div><h3>' + list.length + (list.length > 1 ? ' models tied among the best' : ' model was the best on its own') + '</h3><ul class="mlist">' +
+          list.map(function(code){ return '<li style="--mc:' + FAM[fam(code)].c + '"><i></i>' + describe(code) + '</li>'; }).join('') + '</ul>';
+      } else if (flt){
+        h = '<div class="tag">' + FAM[flt].n + ' · our count</div><h3>Appears in ' + CNT[flt] + ' of the 30 cells</h3><p>' + TXT[flt] + '</p>';
+      } else {
+        h = '<div class="tag">30 cells · 5 countries × 6 horizons</div><h3>No model wins every time</h3><p>In 26 of the 30 cells there is a Taylor rule model with filters; in 27, a combination of models; "tomorrow = today", in only 3 (our counts). Tap a stack to see which models tied.</p>';
+      }
+      $('mcs-panel').innerHTML = h;
+    }
+    function pick(j, r){ act = act && act.j === j && act.r === r ? null : {j:j, r:r}; paint(); }
+    each(chips.children, function(b){ b.addEventListener('click', function(){ flt = b.dataset.f || null; act = null; each(chips.children, function(c){ c.setAttribute('aria-pressed', c === b); }); paint(); }); });
+    paint();
+  })();
+
+  /* ================= 08 · PELA RÉGUA DA DIREÇÃO ================= */
+  (function(){
+    var g = $('dgrid'), mode = 'tese';
+    var h = '<div></div>' + CTY.map(function(c){ return '<div class="h">' + c.n + '</div>'; }).join('');
+    HZ.forEach(function(hz, r){
+      h += '<div class="r">' + (r + 1) + ' qtr.</div>';
+      CTY.forEach(function(c){
+        var v = DA[c.k][r];
+        h += v === null ? '<div class="dcell rw" title="The thesis indicates tomorrow = today itself"><b>= today</b></div>' :
+          '<div class="dcell" data-v="' + v + '"><i style="height:' + v + '%"></i><span class="band"></span><span class="ln"></span><b>' + v + '%</b></div>';
+      });
+    });
+    g.innerHTML = h;
+    var vals = []; CTY.forEach(function(c){ DA[c.k].forEach(function(v){ if (v !== null) vals.push(v); }); });
+    var above = vals.filter(function(v){ return v > 50; }).length, eq = vals.filter(function(v){ return v === 50; }).length, below = vals.filter(function(v){ return v < 50; }).length;
+    var out = vals.filter(function(v){ return v > 69; }).length;
+    function render(){
+      g.classList.toggle('acaso', mode === 'acaso');
+      each(g.querySelectorAll('.dcell[data-v]'), function(d){
+        var v = +d.dataset.v, ln = d.querySelector('.ln');
+        ln.style.bottom = (mode === 'tese' ? 0 : 50) + '%';
+        ln.style.opacity = mode === 'tese' ? 0 : 1;
+        d.classList.toggle('low', mode !== 'tese' && v < 50);
+        d.classList.toggle('mid', mode === 'acaso' && v >= 50 && v <= 69);
+      });
+      var p;
+      if (mode === 'tese') p = '<div class="tag">The thesis\'s yardstick</div><h3>The models won in all ' + vals.length + ' cells with a percentage</h3><p>Since the simple guess gets 0% of the directions right, any hit rate above zero beats it. In the 1st quarter in Chile and Colombia, the thesis indicates the random walk itself.</p>';
+      else if (mode === 'moeda') p = '<div class="tag">The coin yardstick · our reading</div><h3>' + above + ' above 50%, ' + eq + ' tie and ' + below + ' below</h3><p>Below 50% (in gray): Mexico and Chile from the 2nd to the 4th quarter, and Brazil in the 6th. In those cases, a coin toss would be right more often.</p>';
+      else p = '<div class="tag">Chance band · our reading</div><h3>Only ' + out + ' results go above 69%</h3><p>Japan one quarter ahead (84%) clears it easily; Japan in the 4th quarter (70%) is on the edge. The rest fit within the band that luck could also reach, with about 26 test quarters.</p>';
+      $('dir-panel').innerHTML = p;
+    }
+    each($('dir-mode').children, function(b){ b.addEventListener('click', function(){ mode = b.dataset.m; each($('dir-mode').children, function(c){ c.setAttribute('aria-pressed', c === b); }); render(); }); });
+    $('coin-btn').addEventListener('click', function(){
+      var hits = 0, s = '';
+      for (var i = 0; i < 26; i++){ var hit = Math.random() < 0.5; if (hit) hits++; s += '<span class="' + (hit ? 'hit' : '') + '">' + (hit ? '✓' : '') + '</span>'; }
+      $('coins').innerHTML = s;
+      $('coin-msg').innerHTML = 'Your coin got <strong>' + hits + ' of 26</strong> directions right (' + Math.round(hits / 26 * 100) + '%), by luck alone. Toss again and see how much the result varies.';
+    });
+    render();
+  })();
+
+  /* ================= 09 · O CDS ================= */
+  (function(){
+    var svg = $('cds-svg'), k = 'aposta';
+    var X0 = 96, X1 = 540, Y0 = 34, RH = 40;
+    function x(yr){ return X0 + (X1 - X0) * (yr - 1995) / 26; }
+    var START = {BR:2001.75, MX:2001.75, CL:2003, CO:2003, JP:2006};
+    function draw(){
+      var h = '';
+      [1995, 2000, 2005, 2010, 2015, 2020].forEach(function(y){ h += '<line x1="' + x(y) + '" x2="' + x(y) + '" y1="' + (Y0 - 6) + '" y2="' + (Y0 + 5 * RH) + '" stroke="#eef2f7"/><text x="' + x(y) + '" y="' + (Y0 + 5 * RH + 16) + '" text-anchor="middle" style="font-size:11px; fill:var(--muted)">' + y + '</text>'; });
+      CTY.forEach(function(c, i){
+        var y = Y0 + i * RH;
+        h += '<text x="' + (X0 - 10) + '" y="' + (y + 17) + '" text-anchor="end" style="font-size:12px; font-weight:600; fill:var(--ink-2)">' + c.n + '</text>';
+        h += '<rect x="' + x(1995) + '" y="' + (y + 4) + '" width="' + (x(2021) - x(1995)) + '" height="18" rx="4" fill="#e2e8f0"/>';
+        h += '<rect x="' + x(START[c.k]) + '" y="' + (y + 4) + '" width="' + (x(2021) - x(START[c.k])) + '" height="18" rx="4" fill="var(--red)" opacity="' + (k === 'aposta' ? .55 : 1) + '"/>';
+        h += '<text x="' + (x(2021) - 6) + '" y="' + (y + 17) + '" text-anchor="end" style="font-size:11px; font-weight:700; fill:#fff">' + c.q + ' of 104</text>';
+      });
+      h += '<rect x="' + X0 + '" y="6" width="12" height="12" rx="3" fill="#e2e8f0"/><text x="' + (X0 + 17) + '" y="16" style="font-size:11px; fill:var(--muted)">exchange rate and economy</text>';
+      h += '<rect x="' + (X0 + 200) + '" y="6" width="12" height="12" rx="3" fill="var(--red)"/><text x="' + (X0 + 217) + '" y="16" style="font-size:11px; fill:var(--muted)">quarters with CDS</text>';
+      svg.innerHTML = h;
+    }
+    var P = {
+      aposta:'<div class="tag">The bet</div><h3>Measuring uncertainty with the CDS</h3><p>A CDS is a contract that protects against a government defaulting on its debt: the more expensive it is, the greater the fear. Studies show that it moves together with the exchange rate, especially in crises such as COVID-19. According to the author, the five-year CDS had not yet been tested in monetary exchange rate models.</p>',
+      res:'<div class="tag">The result</div><h3>Among the best, but with no clear gain</h3><p>Models with the CDS appeared in the class of models chosen by the error test, but they did not prove superior. In the conclusion, the author sums up: the CDS did not clearly improve the economic models\' forecasts.</p>',
+      pq:'<div class="tag">Why? · according to the author</div><h3>Two explanations</h3><p><b>The time frame.</b> The five-year CDS, although it is the most traded, measures a risk over a much longer period than the quarter being forecast.</p><p><b>The data.</b> The CDS series start in 2001, 2003 or 2006, depending on the country, and do not cover the 1990s.</p>'
+    };
+    each($('cds-seg').children, function(b){ b.addEventListener('click', function(){ k = b.dataset.k; each($('cds-seg').children, function(c){ c.setAttribute('aria-pressed', c === b); }); $('cds-panel').innerHTML = P[k]; draw(); }); });
+    $('cds-panel').innerHTML = P[k]; draw();
+  })();
+
+  /* ================= 10 · A REDE NEURAL ================= */
+  (function(){
+    var sc = $('nn-scene'), W = 480, D = 140, BASE = 140, SC = 66;
+    var st = makeStage(sc, W, D, {ay:'74%', rx:'58deg'});
+    rotatable(sc, st, -6, 5);
+    var bw = 74, gap = 34, x0 = (W - (4 * bw + 3 * gap)) / 2, bars = [];
+    function hgt(r){ return Math.max(8, BASE + Math.log10(r) * SC); }
+    NNC.forEach(function(n, i){
+      var b = box({w:bw, d:54, x:x0 + i * (bw + gap), y:D / 2 - 27, h:BASE, c:'var(--nn)', top:' '});
+      st.appendChild(b); bars.push(b);
+      flatLabel(st, n, x0 + i * (bw + gap) - 14, D / 2 + 36, bw + 28);
+    });
+    var plane = box({w:W - 20, d:D - 30, x:10, y:15, z:BASE, h:2, c:'var(--rw)', cls:'rwplane'});
+    st.appendChild(plane);
+    function rtxt(r){ return r < 1 ? Math.max(1, Math.round(r * 100)) + '%' : fmt(r, 1) + '×'; }
+    var rng = $('nn-range');
+    $('nn-ticks').innerHTML = NEU.map(function(n){ return '<span>' + n + '</span>'; }).join('');
+    function render(){
+      var k = +rng.value - 1, beat = [];
+      bars.forEach(function(b, i){
+        var r = EQM.m[k][i] / EQM.rw[i];
+        b.style.setProperty('--h', hgt(r) + 'px');
+        b.style.setProperty('--c', r < 1 ? 'var(--nn)' : '#b6c2d2');
+        b.querySelector('.top-label').textContent = rtxt(r);
+        b.setAttribute('aria-label', NNC[i] + ': network error = ' + rtxt(r) + ' of the error of tomorrow equals today');
+        if (r < 1) beat.push(NNC[i]);
+      });
+      each($('nn-ticks').children, function(s, j){ s.classList.toggle('on', j === k); });
+      rng.setAttribute('aria-valuetext', NEU[k] + ' neurons');
+      var t;
+      if (k === 6) t = 'The best design in every country. In Brazil, Mexico and Colombia, the network\'s average error was about 2% of the simple guess\'s error. In Chile, the edge was small: 82%.';
+      else if (k === 0) t = 'With 1 neuron, the network erred more than the simple guess in all four countries.';
+      else t = 'Beat the simple guess: ' + (beat.length ? beat.join(', ') : 'no country') + '. In Chile, only the 100-neuron design erred less than it.';
+      $('nn-panel').innerHTML = '<div class="tag">3 layers · ' + NEU[k] + (NEU[k] > 1 ? ' neurons' : ' neuron') + '</div><h3>' + (beat.length === 4 ? 'Erred less in all four countries' : beat.length ? 'Erred less in ' + beat.length + ' of 4 countries' : 'Erred more in all of them') + '</h3><p>' + t + '</p>' +
+        '<svg class="net" viewBox="0 0 360 84" aria-hidden="true">' + net(NEU[k]) + '</svg>';
+    }
+    function net(n){
+      var s = '', cols = [40, 140, 240], shown = Math.min(n, 10);
+      cols.forEach(function(cx, ci){
+        for (var j = 0; j < shown; j++){ var cy = 35 + (j - (shown - 1) / 2) * 6.4; s += '<circle cx="' + cx + '" cy="' + cy + '" r="2.6" fill="var(--nn)"/>'; if (ci < 2) s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + cols[ci + 1] + '" y2="35" stroke="#cbd5e1" stroke-width=".6"/>'; }
+      });
+      s += '<line x1="240" y1="35" x2="320" y2="35" stroke="#cbd5e1"/><circle cx="324" cy="35" r="5" fill="var(--red)"/>';
+      if (n > 10) s += '<text x="140" y="81" text-anchor="middle" style="font-size:9px; fill:var(--muted)">10 of ' + n + ' neurons drawn per layer</text>';
+      return s;
+    }
+    rng.addEventListener('input', render);
+    render();
+    $('nn-table').innerHTML = '<table><tr><th>Neurons</th>' + NNC.map(function(n){ return '<th>' + n + '</th>'; }).join('') + '</tr><tr><td>"tomorrow = today"</td>' + EQM.rw.map(function(v){ return '<td>' + num(v) + '</td>'; }).join('') + '</tr>' +
+      EQM.m.map(function(r, i){ return '<tr><td>' + NEU[i] + '</td>' + r.map(function(v){ return '<td>' + num(v) + '</td>'; }).join('') + '</tr>'; }).join('') + '</table><p style="margin-top:6px">Mexico, 1 neuron: printed in the thesis as "6,859,013"; read as 6.859013.</p>';
+    function num(v){ return v >= 1000 ? fmt(v, 0).replace(/\B(?=(\d{3})+(?!\d))/g, M.lang === 'en' ? ',' : '.') : v >= 1 ? fmt(v, 2) : fmt(v, 4); }
+  })();
+
+  /* ================= 11 · A PANDEMIA ================= */
+  (function(){
+    var svg = $('line-svg'), mode = 'all';
+    function draw(){
+      var from = mode === 'all' ? 0 : 18, to = BRL.length - 1;
+      var lo = mode === 'all' ? 2 : 3.5, hi = 6;
+      var X0 = 46, X1 = 532, Y0 = 20, Y1 = 250;
+      function x(i){ return X0 + (X1 - X0) * (i - from) / (to - from); }
+      function y(v){ return Y1 - (Y1 - Y0) * (v - lo) / (hi - lo); }
+      var h = '';
+      for (var v = lo; v <= hi + 1e-9; v += 0.5){ h += '<line x1="' + X0 + '" x2="' + X1 + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="#eef2f7"/><text x="' + (X0 - 8) + '" y="' + (y(v) + 4) + '" text-anchor="end" style="font-size:11px; fill:var(--muted)">' + fmt(v, 1) + '</text>'; }
+      // faixa de 2020
+      h += '<rect x="' + x(22) + '" y="' + Y0 + '" width="' + (x(24) - x(22)) + '" height="' + (Y1 - Y0) + '" fill="color-mix(in srgb, var(--red) 8%, transparent)"/><text x="' + (x(23)) + '" y="' + (Y0 + 14) + '" text-anchor="middle" style="font-size:11px; font-weight:700; fill:var(--red)">2020</text>';
+      function line(arr, col, w, dash){ var p = []; for (var i = from; i <= to; i++) p.push(x(i) + ',' + y(arr[i])); return '<polyline fill="none" stroke="' + col + '" stroke-width="' + w + '"' + (dash ? ' stroke-dasharray="' + dash + '"' : '') + ' stroke-linejoin="round" points="' + p.join(' ') + '"/>'; }
+      h += line(BRL, 'var(--ink)', 3) + line(M7, 'var(--nn)', 2.2, '6 4');
+      var step = mode === 'all' ? 4 : 1;
+      for (var i = from; i <= to; i += step) h += '<text x="' + x(i) + '" y="' + (Y1 + 18) + '" text-anchor="middle" style="font-size:10.5px; fill:var(--muted)">' + qshort(i) + '</text>';
+      if (mode === 'zoom'){
+        for (i = from; i <= to; i++){ h += '<circle cx="' + x(i) + '" cy="' + y(BRL[i]) + '" r="4" fill="var(--ink)"/>'; }
+        h += '<circle cx="' + x(23) + '" cy="' + y(M7[23]) + '" r="4.5" fill="#fff" stroke="var(--nn)" stroke-width="2.5"/><circle cx="' + x(24) + '" cy="' + y(M7[24]) + '" r="4.5" fill="#fff" stroke="var(--nn)" stroke-width="2.5"/>';
+        h += '<text x="' + (x(24) - 8) + '" y="' + (y(M7[24]) + 20) + '" text-anchor="end" style="font-size:12px; font-weight:700; fill:var(--nn)">network: ~R$ ' + fmt(M7[24], 2) + '</text>';
+        h += '<text x="' + (x(24) - 8) + '" y="' + (y(BRL[24]) - 10) + '" text-anchor="end" style="font-size:12px; font-weight:700; fill:var(--ink)">actual: ~R$ ' + fmt(BRL[24], 2) + '</text>';
+      }
+      svg.innerHTML = h;
+    }
+    function setMode(m){ mode = m; each($('line-mode').children, function(c){ c.setAttribute('aria-pressed', c.dataset.v === m); }); each($('unc').children, function(c){ c.setAttribute('aria-pressed', (c.dataset.u === 'coco') === (m === 'zoom')); }); draw(); }
+    each($('line-mode').children, function(b){ b.addEventListener('click', function(){ setMode(b.dataset.v); }); });
+    each($('unc').children, function(b){ b.addEventListener('click', function(){ setMode(b.dataset.u === 'coco' ? 'zoom' : 'all'); }); });
+    draw();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
