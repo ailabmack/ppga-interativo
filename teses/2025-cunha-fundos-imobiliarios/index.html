@@ -1,0 +1,1006 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O que faz um fundo imobiliário render bem · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Talita Ferreira Cunha (PPGA Mackenzie, 2025) sobre a eficiência dos fundos de investimento imobiliário brasileiros e o uso do dividend yield em estratégias de momento, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2025-cunha-fundos-imobiliarios/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2214%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>FII</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --fii:var(--navy);    /* os fundos imobiliarios */
+    --ifix:var(--red);    /* o indice do mercado (IFIX) e destaques */
+    --eco:#334155;        /* a economia (juros, inflacao, cambio) */
+    --tij:#1f3b73; --pap:#64748b; --fof:#8aa0cc;
+    --lose:#94a3b8;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .ours{display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--red); background:color-mix(in srgb, var(--red) 9%, transparent); padding:2px 7px; border-radius:5px; vertical-align:1px;}
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 12px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel .nt{text-transform:none; letter-spacing:0;}
+  .panel p{margin:0 0 6px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:18px; padding:3px; background:var(--card); gap:2px; margin:0 8px 8px 0;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.82rem; cursor:pointer; color:var(--ink-2);}
+  .seg button.on{background:var(--ink); color:#fff;}
+  .range{width:100%; -webkit-appearance:none; appearance:none; height:30px; background:transparent; cursor:pointer;}
+  .range::-webkit-slider-runnable-track{height:6px; border-radius:3px; background:#e2e8f0;}
+  .range::-moz-range-track{height:6px; border-radius:3px; background:#e2e8f0;}
+  .range::-webkit-slider-thumb{-webkit-appearance:none; width:22px; height:22px; border-radius:50%; background:#fff; border:3px solid var(--ink); margin-top:-8px; box-shadow:var(--shadow);}
+  .range::-moz-range-thumb{width:18px; height:18px; border-radius:50%; background:#fff; border:3px solid var(--ink);}
+  .stats{display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; margin-top:12px;}
+  @media (min-width:600px){ .stats.s4{grid-template-columns:repeat(4, 1fr);} .stats.s3{grid-template-columns:repeat(3, 1fr);} }
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 12px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.74rem; color:var(--muted); line-height:1.3; display:block;}
+  .leg{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.76rem; color:var(--muted); margin-top:6px;}
+  .leg i{display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:5px; vertical-align:-2px;}
+  svg text{font-family:var(--sans);}
+  .q-guess{background:var(--card); border:1px solid var(--border); border-left:6px solid var(--red); border-radius:12px; padding:11px 14px; margin-top:12px;}
+  .q-guess .q{font-family:var(--serif); font-weight:700; font-size:.92rem; color:var(--ink);}
+  .q-guess .opts{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .q-guess .opts button{border:1px solid var(--border); background:var(--bg-soft); border-radius:8px; padding:6px 12px; font-size:.82rem; cursor:pointer; font-weight:600; color:var(--ink-2);}
+  .q-guess .opts button.pick{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .q-guess .ans{font-size:.82rem; color:var(--ink-2); margin-top:8px; display:none; line-height:1.45;}
+  .q-guess.done .ans{display:block;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4.2vw, 2.8rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{display:flex; gap:8px 16px; justify-content:center; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:6px; text-align:center;}
+  #hero-year{font-family:var(--serif); font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums;}
+  #hero-scene .slab{transition:transform .5s, --c .4s;}
+
+  /* ---------- 02 · O que é um FII ---------- */
+  #fii-scene .slab{transition:transform .6s cubic-bezier(.2,.8,.2,1), opacity .4s;}
+  #fii-scene .slab.gone > i{opacity:0;}
+  #fii-scene .slab.hl{--oz:10px;}
+  .facts{display:grid; gap:7px; margin:10px 0 0;}
+  .facts div{display:grid; grid-template-columns:28px 1fr; gap:10px; align-items:start; font-size:.86rem; color:var(--ink-2);}
+  .facts b.ic{width:28px; height:28px; border-radius:8px; background:color-mix(in srgb, var(--fii) 12%, white); color:var(--fii); display:flex; align-items:center; justify-content:center; font-family:var(--serif);}
+  #fii-panel{min-height:118px; margin-top:6px;}
+
+  /* ---------- 03 · Revisão ---------- */
+  .funnel{display:grid; gap:7px; margin-top:4px;}
+  .funnel .fr{display:grid; grid-template-columns:1fr; gap:3px;}
+  .funnel .fr span{font-size:.78rem; color:var(--ink-2);}
+  .funnel .fr .bar{height:26px; border-radius:6px; background:var(--fii); color:#fff; font-weight:700; font-size:.86rem; display:flex; align-items:center; padding:0 10px; min-width:52px; transition:width .8s cubic-bezier(.2,.8,.2,1);}
+  .hb{display:grid; gap:5px; margin-top:4px;}
+  .hb .r{display:grid; grid-template-columns:118px 1fr 34px; gap:8px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .hb .r .t{height:18px; background:#eef2f7; border-radius:5px; overflow:hidden;}
+  .hb .r .t i{display:block; height:100%; background:var(--fii); border-radius:5px; transition:width .7s;}
+  .hb .r b{font-variant-numeric:tabular-nums; color:var(--ink); text-align:right;}
+  .hb .r.zero b{color:var(--red);}
+  .hb .r.zero .lab{color:var(--red); font-weight:700;}
+  #rev-panel{min-height:300px;}
+  .squares{display:flex; flex-wrap:wrap; gap:5px; margin:8px 0 6px;}
+  .squares i{width:22px; height:22px; border-radius:4px; background:#e2e8f0;}
+  .squares i.on{background:var(--fii);}
+  .squares i.red{background:var(--red);}
+
+  /* ---------- 04 · DEA ilustrada ---------- */
+  #dea-svg{width:100%; display:block;}
+  #dea-svg circle{cursor:pointer;}
+  @media (max-width:600px){ #dea-svg text{font-size:19px !important;} #dea-svg text.sm{display:none;} }
+  #dea-msg{font-size:.86rem; color:var(--ink-2); min-height:3.2em; margin-top:6px;}
+
+  /* ---------- 05 · Eficiência por ano ---------- */
+  #ef-scene .slab{cursor:pointer; transition:transform .5s cubic-bezier(.2,.8,.2,1), --h .6s;}
+  #ef-scene .slab.active{--oz:12px;}
+  #ef-scene .floor-label{font-size:13px;}
+  @media (max-width:600px){ #ef-scene .floor-label{display:none;} }
+  .yearbars{display:grid; grid-template-columns:repeat(12, minmax(0, 1fr)); gap:4px; margin-top:8px;}
+  .yearbars button{border:1px solid var(--border); background:var(--card); border-radius:7px; padding:5px 1px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:1px; font-size:.64rem; color:var(--muted); min-width:0;}
+  .yearbars button b{font-size:.72rem; color:var(--ink); font-variant-numeric:tabular-nums;}
+  .yearbars button.on{border-color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink);}
+  .yearbars button.low b{color:var(--red);}
+  @media (max-width:600px){ .yearbars{grid-template-columns:repeat(6, minmax(0, 1fr));} }
+  #ef-panel{min-height:112px; margin-top:10px;}
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+
+  /* ---------- 06 · IFIX × fundos ---------- */
+  #ix-svg{width:100%; display:block;}
+  #ix-svg circle{cursor:pointer;}
+  @media (max-width:600px){ #ix-svg text{font-size:19px !important;} #ix-svg text.sm{display:none;} }
+  .corr{display:flex; align-items:center; gap:14px; margin-top:12px; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px;}
+  .corr b{font-family:var(--serif); font-size:1.6rem; color:var(--ink);}
+  .corr span{font-size:.8rem; color:var(--ink-2); line-height:1.4;}
+  #ix-panel{min-height:70px; margin-top:8px;}
+
+  /* ---------- 07 · Classes ---------- */
+  #bx-svg{width:100%; display:block;}
+  #bx-svg g.bx{cursor:pointer;}
+  @media (max-width:600px){ #bx-svg text{font-size:18px !important;} #bx-svg text.sm{display:none;} }
+  #bx-panel{min-height:120px; margin-top:8px;}
+  .trend{display:grid; gap:4px; margin-top:6px;}
+  .trend .r{display:grid; grid-template-columns:minmax(0, 1fr) 160px 52px; gap:8px; align-items:center; font-size:.78rem; color:var(--ink-2);}
+  .trend .r .nm{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .trend .r .tr{position:relative; height:16px; background:#f1f5f9; border-radius:4px;}
+  .trend .r .tr .ax{position:absolute; left:50%; top:-2px; bottom:-2px; width:1px; background:#64748b;}
+  .trend .r .tr i{position:absolute; top:2px; height:12px; border-radius:3px;}
+  .trend .r b{font-variant-numeric:tabular-nums; text-align:right; color:var(--ink);}
+  @media (max-width:600px){ .trend .r{grid-template-columns:minmax(0, 1fr) 96px 46px;} }
+
+  /* ---------- 08 · Painel ---------- */
+  .bets{display:grid; gap:8px; margin-top:10px;}
+  .bet{background:var(--card); border:1px solid var(--border); border-left:6px solid var(--bc, var(--ink)); border-radius:12px; padding:9px 12px;}
+  .bet .q{font-weight:700; font-size:.86rem; color:var(--ink); line-height:1.35;}
+  .bet .opts{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;}
+  .bet .opts button{border:1px solid var(--border); background:var(--bg-soft); border-radius:8px; padding:4px 10px; font-size:.78rem; cursor:pointer; font-weight:600; color:var(--ink-2);}
+  .bet .opts button.pick{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .bet .ans{font-size:.8rem; color:var(--ink-2); margin-top:6px; display:none; line-height:1.4;}
+  .bet.done .ans{display:block;}
+  .bet .ans b.v{display:inline-block; font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; padding:2px 7px; border-radius:5px; color:#fff; margin-right:6px; background:#64748b;}
+  #pn-scene .slab{cursor:pointer; transition:transform .5s cubic-bezier(.2,.8,.2,1);}
+  #pn-scene .slab.active{--oz:12px;}
+  #pn-scene .slab.str > i{background-image:repeating-linear-gradient(45deg, rgb(255 255 255 / .32) 0 5px, transparent 5px 10px);}
+  #pn-scene .slab.plane > i{opacity:.2;}
+  #pn-scene .slab.plane{pointer-events:none;}
+  #pn-scene .face-label{font-size:12px; letter-spacing:0;}
+  #pn-scene .floor-label{font-size:13px;}
+  @media (max-width:600px){ #pn-scene .floor-label{display:none;} }
+  .vlist{display:flex; flex-wrap:wrap; gap:5px; margin:8px 0 4px;}
+  .vlist button{border:1px solid var(--border); background:var(--card); border-radius:8px; padding:4px 9px; font-size:.76rem; cursor:pointer; color:var(--ink-2); display:flex; align-items:center; gap:6px;}
+  .vlist button i{width:10px; height:10px; border-radius:3px; display:block;}
+  .vlist button.on{border-color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink); color:var(--ink);}
+  #pn-panel{min-height:96px; margin-top:6px;}
+
+  /* ---------- 09 · Regra do momento ---------- */
+  .calc label{font-size:.84rem; font-weight:600; color:var(--ink-2); display:flex; justify-content:space-between; gap:10px; margin-top:2px;}
+  .calc label b{font-variant-numeric:tabular-nums; color:var(--ink); white-space:nowrap;}
+  .dyout{display:flex; align-items:baseline; gap:10px; margin:4px 0 2px;}
+  .dyout b{font-family:var(--serif); font-size:1.7rem; color:var(--ink); font-variant-numeric:tabular-nums;}
+  .dyout span{font-size:.8rem; color:var(--muted);}
+  #mo-svg{width:100%; display:block; margin-top:6px;}
+  @media (max-width:600px){ #mo-svg text{font-size:19px !important;} }
+  #mo-msg{font-size:.84rem; color:var(--ink-2); min-height:3em; margin-top:4px;}
+
+  /* ---------- 10 · O inesperado ---------- */
+  #wl-svg{width:100%; display:block;}
+  @media (max-width:600px){ #wl-svg text{font-size:19px !important;} #wl-svg text.sm{display:none;} }
+  #wl-panel{min-height:70px; margin-top:6px;}
+
+  /* ---------- 11 · Teste ---------- */
+  .hm{display:grid; grid-template-columns:96px repeat(5, minmax(0, 1fr)); gap:3px; font-size:.76rem; font-variant-numeric:tabular-nums;}
+  .hm span{padding:6px 2px; border-radius:6px; text-align:center;}
+  .hm span.h{color:var(--muted); font-weight:700; text-align:left; padding-left:4px; background:transparent;}
+  .hm span.hc{color:var(--muted); font-weight:700; background:transparent;}
+  .hm button{border:1px solid transparent; border-radius:6px; padding:6px 2px; cursor:pointer; font:inherit; font-weight:600; color:var(--ink);}
+  .hm button.on{border-color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink);}
+  @media (max-width:600px){ .hm{grid-template-columns:62px repeat(5, minmax(0, 1fr)); font-size:.68rem;} }
+  #pv-svg{width:100%; display:block; margin-top:10px;}
+  @media (max-width:600px){ #pv-svg text{font-size:19px !important;} }
+  #hm-panel{min-height:84px; margin-top:8px;}
+
+  /* ---------- 12 · Prática, limites e créditos ---------- */
+  .cards3{display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px;}
+  @media (min-width:800px){ .cards3{grid-template-columns:repeat(3, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:11px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.95rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  #creditos h2{font-size:clamp(1.5rem, 2.6vw, 2rem);}
+  .end{display:grid; grid-template-columns:1fr; gap:18px; margin-top:12px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:6px;}
+  .limits{display:grid; gap:5px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.78rem; color:var(--ink-2); line-height:1.4;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.82rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; line-height:1.55; margin-top:8px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2025-cunha-fundos-imobiliarios/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2025</div>
+      <h1 class="rv" style="--d:.1s">O que faz um fundo imobiliário render bem?</h1>
+      <p class="sub rv" style="--d:.2s">Com um fundo imobiliário, qualquer pessoa compra um pedaço de prédios, galpões e shoppings pela bolsa. A tese mediu a <strong>eficiência</strong> de 102 desses fundos entre 2012 e 2023 (quanto retorno entregam para o risco que correm) e testou uma regra popular: escolher fundos pelo <em>dividend yield</em>. O que mais pesou foi o próprio fundo, não a economia. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autora:</b> Talita Ferreira Cunha</span>
+        <span><b>Orientador:</b> Prof. Dr. Leonardo Fernando Cruz Basso</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#oque">Começar →</a>
+        <a class="btn ghost" href="#eficiencia">Ir direto aos resultados</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="540x360" role="img" aria-label="Doze colunas azuis, uma por ano de 2012 a 2023, com a nota média de eficiência dos 102 fundos; quase todas têm a mesma altura, com uma queda em 2019 e um pico em 2020"></div></div>
+      <div class="cap-legend">
+        <span><i class="dot" style="background:var(--fii)"></i>Nota média de eficiência dos fundos, por ano</span>
+        <span><i class="dot" style="background:var(--ifix)"></i><span id="hero-year">2012</span></span>
+      </div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximo</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Avalia, com métricas de risco e retorno, fundos em que milhares de pequenos investidores aplicam, e oferece ferramentas para gestores e investidores escolherem melhor."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · O QUE É UM FII -->
+<section class="slide" id="oque" data-label="O que é um fundo imobiliário">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O ponto de partida · capítulo 1</div>
+      <h2 class="rv" style="--d:.1s">Um fundo imobiliário divide imóveis em cotas negociadas na bolsa</h2>
+      <p class="rv" style="--d:.15s">O fundo junta o dinheiro de muitos cotistas e um gestor aplica em imóveis ou em títulos ligados a imóveis. Quem compra cotas ganha de duas formas: com os <strong>rendimentos</strong> distribuídos e com a <strong>valorização</strong> da cota.</p>
+      <div class="facts rv" style="--d:.2s">
+        <div><b class="ic">1</b><span>Não dá para resgatar a cota no fundo: quem quer sair <strong>vende na B3</strong> para outro investidor.</span></div>
+        <div><b class="ic">2</b><span>A lei manda distribuir pelo menos <strong>95% do resultado</strong> a cada semestre; na prática, a maioria paga todo mês.</span></div>
+        <div><b class="ic">3</b><span>Para pessoas físicas, os rendimentos são isentos de imposto de renda, com algumas condições.</span></div>
+      </div>
+      <p class="note rv" style="--d:.25s">Seções 1 e 3.1. O IFIX, índice dos fundos imobiliários da B3, existe desde 2012 e reúne os fundos mais negociados. Ao lado, os três grandes tipos que a tese usa no terceiro artigo.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="chips" id="fii-btns" role="group" aria-label="Tipos de fundo"></div>
+      <div class="fit-wrap"><div class="scene draggable" id="fii-scene" data-fit="500x300" role="img" aria-label="Ilustração de um fundo: blocos que mudam conforme o tipo (prédio, pilha de títulos ou vários fundos pequenos)"></div></div>
+      <div class="panel" id="fii-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · A REVISÃO -->
+<section class="slide" id="revisao" data-label="O que já se sabia">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> Artigo 1 · revisão da literatura</div>
+      <h2 class="rv" style="--d:.1s">Quase tudo o que se sabia vinha de fora do Brasil</h2>
+      <p class="rv" style="--d:.15s">A autora vasculhou duas grandes bases de artigos científicos (Web of Science e Scopus) atrás de estudos sobre o desempenho de fundos imobiliários e leu a fundo os 23 que sobraram. Nenhum usava dados da América Latina, e quase todos usavam o mesmo tipo de estatística.</p>
+      <div class="stats s3 rv" style="--d:.2s">
+        <div class="stat"><b>23</b><span>artigos lidos a fundo</span></div>
+        <div class="stat"><b>21 de 23</b><span>usavam dados em painel, o método mais comum</span></div>
+        <div class="stat"><b>0</b><span>com dados da América Latina</span></div>
+      </div>
+      <p class="note rv" style="--d:.25s">Seções 2.3 e 2.4. Daí saíram as duas apostas da tese: medir a eficiência com outro método (a DEA, próxima tela) e olhar o tipo de imóvel e o efeito momento, pouco estudados.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="rev-seg" role="group" aria-label="O que ver"><button class="on" data-k="f">A busca</button><button data-k="p">De onde vêm os dados</button><button data-k="m">Lacunas</button></div>
+      <div class="panel" id="rev-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · COMO MEDIR EFICIÊNCIA -->
+<section class="slide" id="dea" data-label="Como mediu a eficiência">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Artigo 2 · método · seções 3.4 e 3.5</div>
+      <h2 class="rv" style="--d:.1s">Eficiente é o fundo que rende mais para o mesmo risco</h2>
+      <p class="rv" style="--d:.15s">A tese usou a <strong>Análise Envoltória de Dados (DEA)</strong>: os melhores fundos de cada ano desenham uma fronteira, e cada fundo recebe uma nota de 0 a 1 conforme a distância até ela. O risco entra de duas formas: a oscilação total da cota e a oscilação que acompanha o mercado (base dos índices de Sharpe e de Treynor).</p>
+      <div class="stats s4 rv" style="--d:.2s">
+        <div class="stat"><b>465</b><span>fundos listados na B3</span></div>
+        <div class="stat"><b>111</b><span>no índice IFIX</span></div>
+        <div class="stat"><b>102</b><span>com dados suficientes</span></div>
+        <div class="stat"><b>1.224</b><span>observações: 102 fundos × 12 anos</span></div>
+      </div>
+      <p class="note rv" style="--d:.25s">Dados da Economática e da B3, 2012 a 2023. A versão da DEA usada (com o Range Directional Model) aceita retornos negativos. Quando faltava um dado, a autora usou a média do próprio fundo.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="chips" id="dea-btns" role="group" aria-label="Escolha um fundo"></div>
+      <svg id="dea-svg" viewBox="0 0 560 330" role="img" aria-label="Gráfico ilustrativo: sete fundos inventados num plano risco × retorno e a fronteira dos melhores"></svg>
+      <div class="calc"><label for="dea-r">Retorno do fundo escolhido <b id="dea-rv"></b></label><input class="range" type="range" id="dea-r" min="1" max="10" step="0.1" value="5"></div>
+      <div id="dea-msg" aria-live="polite"></div>
+      <p class="note"><span class="ours">Ilustração nossa</span> Fundos e números inventados, com uma régua de risco só. Na tese, a fronteira usa as duas medidas de risco ao mesmo tempo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · EFICIÊNCIA POR ANO -->
+<section class="slide" id="eficiencia" data-label="A eficiência ano a ano">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Resultado · Tabelas 3.2 e 3.6</div>
+      <h2 class="rv" style="--d:.1s">A nota média ficou perto de 0,46 e só caiu de forma clara em 2019</h2>
+      <p class="rv" style="--d:.15s">De um ano para outro, a eficiência média dos 102 fundos quase não mudou. A exceção foi 2019: a média caiu para 0,406 e as notas ficaram muito mais espalhadas. Em 2020, ano em que a Selic chegou à mínima de 2%, veio a melhor média da série.</p>
+      <div class="panel rv" id="ef-panel" style="--d:.2s" aria-live="polite"></div>
+      <p class="note rv" style="--d:.25s">Depois de um ajuste das medidas de risco (a tese chama de “orientado às entradas”), a média subiu um pouco em todos os anos, e o teste estatístico (t pareado) indicou diferença significativa em cada um.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="ef-m" role="group" aria-label="Medida"><button class="on" data-k="m">Média</button><button data-k="d">Mediana</button><button data-k="s">Dispersão (desvio-padrão)</button></div>
+      <div class="seg" id="ef-a" role="group" aria-label="Versão"><button class="on" data-k="0">Antes do ajuste</button><button data-k="1">Depois do ajuste</button></div>
+      <div class="seg" id="ef-z" role="group" aria-label="Escala"><button class="on" data-k="0">Régua de 0 a 1</button><button data-k="1">Lupa</button></div>
+      <div class="fit-wrap"><div class="scene draggable" id="ef-scene" data-fit="600x300" role="img" aria-label="Doze colunas, uma por ano, com a eficiência dos fundos"></div></div>
+      <div class="yearbars" id="ef-years" role="group" aria-label="Anos"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · IFIX × FUNDOS -->
+<section class="slide" id="ifix" data-label="O índice e os fundos">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Fundos × mercado · Tabela 3.5</div>
+      <h2 class="rv" style="--d:.1s">O índice do mercado oscilou muito mais que a média dos fundos</h2>
+      <p class="rv" style="--d:.15s">A autora calculou a mesma nota de eficiência para o IFIX, o índice que resume o mercado de fundos imobiliários. A nota do índice subiu e desceu de um ano para outro, enquanto a média dos fundos ficou quase parada.</p>
+      <div class="q-guess rv" style="--d:.2s" id="ix-guess">
+        <div class="q">Palpite: em quantos dos 12 anos a nota do IFIX foi zero?</div>
+        <div class="opts"><button data-v="0">nenhum</button><button data-v="1">1</button><button data-v="3">3</button><button data-v="6">6</button></div>
+        <div class="ans"><b>Em 3:</b> 2013, 2019 e 2020. Nesses anos, a média dos fundos continuou acima de 0,40.</div>
+      </div>
+      <div class="corr rv" style="--d:.25s"><b>−0,09</b><span>correlação entre o retorno dos fundos e a variação do IFIX no ano: praticamente nenhuma. Para a autora, cada fundo tem dinâmica própria.</span></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="leg" style="margin:0 0 6px"><span><i style="background:var(--fii)"></i>Média dos 102 fundos</span><span><i style="background:var(--ifix)"></i>Índice IFIX</span></div>
+      <svg id="ix-svg" viewBox="0 0 560 330" role="img" aria-label="Duas linhas de 2012 a 2023: a média dos fundos, quase reta perto de 0,46, e o IFIX, que vai de 0 a 0,28"></svg>
+      <div class="panel" id="ix-panel" aria-live="polite"></div>
+      <p class="note">A Tabela 3.5 também traz 2024 (nota 0), fora do período do estudo, que não mostramos. A tese não explica por que o índice tem notas tão abaixo das dos fundos; compare a forma das linhas, não o nível.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · CLASSES E FUNDOS -->
+<section class="slide" id="classes" data-label="Tipos de imóvel">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Por tipo de imóvel · Gráfico 3.5 e Tabelas 3.3 e 3.4</div>
+      <h2 class="rv" style="--d:.1s">Os fundos de lajes corporativas tiveram as notas mais parecidas entre si</h2>
+      <p class="rv" style="--d:.15s">A B3 classifica os fundos em oito tipos de ativo. A nota típica muda pouco de um tipo para outro; o que muda é o quanto os fundos de um mesmo tipo diferem. Para a autora, lajes corporativas e shoppings mostram gestões mais estáveis, com contratos longos e valores altos. Toque num tipo.</p>
+      <div class="panel rv" id="bx-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="bx-seg" role="group" aria-label="O que ver"><button class="on" data-k="c">Por tipo de imóvel</button><button data-k="f">Fundos que mais mudaram</button></div>
+      <div id="bx-a">
+        <svg id="bx-svg" viewBox="0 0 560 334" role="img" aria-label="Oito caixas, uma por tipo de imóvel, com a faixa das notas de eficiência; a de lajes corporativas é a mais estreita"></svg>
+        <p class="note">Valores aproximados (~), lidos do Gráfico 3.5. A caixa vai do primeiro ao terceiro quartil (a metade do meio dos fundos); o traço é a mediana. Fundos isolados bem abaixo das caixas (alguns com nota perto de zero, sobretudo em títulos e valores mobiliários, híbridos e logística) não aparecem.</p>
+      </div>
+      <div id="bx-b" hidden>
+        <div class="leg" style="margin:0 0 4px"><span>Inclinação da tendência da nota ao longo dos anos (por ano)</span></div>
+        <div class="trend" id="tr-list"></div>
+        <p class="note">Os seis de maior melhora e os seis de maior piora, como a tese lista. A maioria dos 102 ficou com inclinação perto de zero (Gráfico 3.4). Isto não é recomendação de investimento.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · O QUE EXPLICA A NOTA -->
+<section class="slide" id="painel" data-label="O que explica a nota">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Artigo 2 · painel com efeitos fixos · Tabela 3.9</div>
+      <h2 class="rv" style="--d:.1s">Só um fator teve efeito claro sobre a nota</h2>
+      <p class="rv" style="--d:.15s">A autora comparou a nota de eficiência com onze indicadores: oito do próprio fundo e três da economia, num modelo que compara cada fundo com ele mesmo ao longo dos anos. Antes de ver, aposte:</p>
+      <div class="bets rv" style="--d:.2s" id="bets"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="pn-scene" data-fit="600x290" role="img" aria-label="Onze colunas, uma por indicador, com a força da evidência; só a negociabilidade passa da lâmina vermelha do teste a 5%"></div></div>
+      <div class="vlist" id="pn-list" role="group" aria-label="Indicadores"></div>
+      <div class="leg"><span><i style="background:var(--fii)"></i>Do fundo</span><span><i style="background:var(--eco)"></i>Da economia</span><span><i style="background:var(--red); opacity:.4"></i>Lâmina: limite do teste a 5%</span><span><i style="background:repeating-linear-gradient(45deg,#334155 0 3px,#94a3b8 3px 6px)"></i>Listrado: pista (abaixo de 10%)</span></div>
+      <div class="panel" id="pn-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · A REGRA DO MOMENTO -->
+<section class="slide" id="momento" data-label="A regra do dividend yield">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Artigo 3 · método · seções 4.3 e 4.5</div>
+      <h2 class="rv" style="--d:.1s">A regra testada: comprar os fundos cujo dividend yield mais subiu</h2>
+      <p class="rv" style="--d:.15s">O <em>dividend yield</em> (DY) é quanto o fundo pagou em 12 meses dividido pelo preço da cota. A ideia de <strong>momento</strong> diz que quem vai bem continua indo bem por um tempo. A autora ordenou os fundos pela variação do DY e montou carteiras com os de cima (“vencedoras”) e os de baixo (“perdedoras”).</p>
+      <div class="stats s4 rv" style="--d:.2s">
+        <div class="stat"><b>109</b><span>fundos do IFIX</span></div>
+        <div class="stat"><b>2012–2024</b><span>janeiro a abril</span></div>
+        <div class="stat"><b>3</b><span>tipos: tijolo, papel e fundo de fundos (FOF)</span></div>
+        <div class="stat"><b>5</b><span>janelas: 1, 3, 6, 9 e 12 meses</span></div>
+      </div>
+      <p class="note rv" style="--d:.25s">Carteiras com pesos iguais, refeitas todo mês e comparadas com o IFIX e com a Selic. Três estratégias: comprar as vencedoras (V), vender as perdedoras (P) ou fazer as duas coisas ao mesmo tempo (VP). Tijolo: imóveis físicos; papel: títulos de crédito imobiliário (CRI); FOF: cotas de outros fundos.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel">
+        <div class="tag">Calcule um dividend yield <span class="ours nt">números inventados</span></div>
+        <div class="calc">
+          <label for="dy-d">Rendimentos pagos em 12 meses, por cota <b id="dy-dv"></b></label><input class="range" type="range" id="dy-d" min="6" max="12" step="0.1" value="9">
+          <label for="dy-p">Preço da cota hoje <b id="dy-pv"></b></label><input class="range" type="range" id="dy-p" min="70" max="130" step="1" value="100">
+        </div>
+        <div class="dyout"><b id="dy-out"></b><span id="dy-sub"></span></div>
+      </div>
+      <svg id="mo-svg" viewBox="0 0 560 230" role="img" aria-label="Nove fundos inventados ordenados pela variação do dividend yield; o terço de cima forma a carteira vencedora e o de baixo, a perdedora"></svg>
+      <div class="seg" id="mo-seg" role="group" aria-label="Estratégia"><button class="on" data-k="V">V: comprar vencedoras</button><button data-k="P">P: vender perdedoras</button><button data-k="VP">VP: as duas</button></div>
+      <div id="mo-msg" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · O INESPERADO -->
+<section class="slide" id="inesperado" data-label="O inesperado">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> O inesperado · Tabela 4.3</div>
+      <h2 class="rv" style="--d:.1s">No tijolo, as “perdedoras” renderam mais que as “vencedoras”</h2>
+      <p class="rv" style="--d:.15s">Se o momento valesse, as carteiras vencedoras deveriam render mais. Nos fundos de tijolo, aconteceu o contrário em todas as janelas: as perdedoras tiveram retorno médio positivo e crescente (até 1,47% na janela de 12 meses) e as vencedoras, negativo.</p>
+      <div class="q-guess rv" style="--d:.2s" id="wl-guess">
+        <div class="q">Palpite: e nos fundos de papel, com a janela de 12 meses?</div>
+        <div class="opts"><button data-v="v">Vencedoras renderam mais</button><button data-v="p">Perdedoras renderam mais</button></div>
+        <div class="ans"><b>Vencedoras:</b> 0,76% contra 0,23%. Mas as vencedoras de papel oscilaram muito mais (desvio de 13,4% contra 5,0%). Troque o tipo e a medida no gráfico.</div>
+      </div>
+      <p class="note rv" style="--d:.25s"><span class="ours">Leitura nossa</span> No tijolo, os fundos cujo DY subiu menos (ou caiu) renderam mais, o que lembra uma volta à média, e não momento. A autora lê o resultado como “capacidade de recuperação” dos fundos de tijolo.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="wl-t" role="group" aria-label="Tipo de fundo"><button class="on" data-k="Tijolo">Tijolo</button><button data-k="Papel">Papel</button><button data-k="FOF">FOF</button></div>
+      <div class="seg" id="wl-m" role="group" aria-label="Medida"><button class="on" data-k="r">Retorno médio</button><button data-k="s">Sharpe</button><button data-k="d">Oscilação</button></div>
+      <div class="leg" style="margin:0 0 4px"><span><i style="background:var(--fii)"></i>Vencedoras (DY subiu mais)</span><span><i style="background:var(--lose)"></i>Perdedoras (DY subiu menos ou caiu)</span></div>
+      <svg id="wl-svg" viewBox="0 0 560 300" role="img" aria-label="Pares de barras por janela de formação, vencedoras e perdedoras"></svg>
+      <div class="panel" id="wl-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · O TESTE -->
+<section class="slide" id="teste" data-label="O teste das estratégias">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> O teste · Tabela 4.4</div>
+      <h2 class="rv" style="--d:.1s">Nenhuma das 45 estratégias passou no teste estatístico</h2>
+      <p class="rv" style="--d:.15s">Três estratégias, três tipos de fundo e cinco janelas dão 45 combinações. A autora testou se o retorno de cada uma superava o do IFIX. Em nenhuma a diferença foi grande o bastante para descartar o acaso: o menor valor-p foi 0,325, longe do 0,05 usual.</p>
+      <div class="panel rv" id="hm-panel" style="--d:.2s" aria-live="polite"></div>
+      <p class="note rv" style="--d:.25s">A mais promissora foi comprar as vencedoras de papel com janela de 12 meses (+1,2% em média), que a autora vê como “tendência” sem significância. Para ela, separar os fundos por tipo pode ter diluído o efeito, e o mercado recente pode estar precificando melhor o DY.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="hm-seg" role="group" aria-label="Estratégia"><button class="on" data-k="V">V: comprar vencedoras</button><button data-k="P">P: vender perdedoras</button><button data-k="VP">VP: as duas</button></div>
+      <div class="hm" id="hm" role="group" aria-label="Retorno médio por tipo e janela"></div>
+      <div class="leg"><span>Retorno médio da estratégia (%). Toque numa célula.</span></div>
+      <svg id="pv-svg" viewBox="0 0 560 120" role="img" aria-label="Régua de 0 a 1 com os 45 valores-p; todos ficam à direita de 0,3, longe da linha de 0,05"></svg>
+      <div class="leg"><span>Valor-p de cada uma das 45 combinações; em azul, as da estratégia escolhida.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Na prática · limites · créditos</div>
+    <h2 class="rv" style="--d:.1s">Olhe o fundo e o tipo de imóvel antes do dividendo</h2>
+    <div class="cards3">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--fii)"><h3>Para gestores</h3><p>A eficiência dependeu mais de fatores internos (o tipo de ativo e a gestão do risco) do que de juros e inflação. Fundos muito negociados tiveram notas menores; a autora sugere que uma base de cotistas estável favorece estratégias de longo prazo.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--ifix)"><h3>Para quem investe</h3><p>Compare fundos pelo retorno ajustado ao risco e dentro do mesmo tipo de imóvel. A variação do dividend yield, sozinha, não garantiu ganho no período estudado. Esta página não é recomendação de investimento.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:#64748b"><h3>Para pesquisadores</h3><p>Estudar como diferentes formas de gestão afetam a eficiência, incluir características dos imóveis (localização, tamanho, perfil da região) e usar séries mais longas, que cubram ciclos completos.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Associação, não causa.</b> Que fundos mais negociados tenham notas menores não prova que a negociação reduz a eficiência. <em>· observação nossa</em></li>
+          <li><b>Só o passado.</b> Dados históricos não preveem crises nem eventos extraordinários; gestão e estratégia de longo prazo são difíceis de medir. <em>· segundo a autora</em></li>
+          <li><b>Os imóveis ficaram de fora.</b> Localização, tamanho e perfil da região não entraram na nota. <em>· segundo a autora</em></li>
+          <li><b>Dados faltantes pela média.</b> Trocar valores ausentes pela média do fundo deixa as séries mais lisas e pode esconder oscilações. <em>· segundo a autora</em></li>
+          <li><b>Números para conferir.</b> O texto situa a queda da eficiência em 2016, mas as tabelas a mostram em 2019; seguimos as tabelas. No artigo 3, a tese não diz se as carteiras usam o corte de 10%, 20% ou 30% dos fundos. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          CUNHA, Talita Ferreira. <em>Performance financeira de fundos de investimentos imobiliários brasileiros: estratégias e modelos de avaliação.</em> Tese (Doutorado em Administração de Empresas) – Universidade Presbiteriana Mackenzie, São Paulo, 2025. Orientador: Prof. Dr. Leonardo Fernando Cruz Basso.
+        </div>
+        <p style="margin-top:12px; font-size:.82rem">Pesquisa com bolsa de estudos da Caixa Econômica Federal. Dados da Economática, da Comdinheiro e da B3. Esta versão simplifica o trabalho para o público em geral; as tabelas completas estão no texto original.</p>
+        <div class="ctas" style="margin-top:14px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  var LOC = EN ? 'en-US' : 'pt-BR';
+  function num(n, d){ return n.toLocaleString(LOC, {minimumFractionDigits:d, maximumFractionDigits:d}); }
+  function sgn(n, d){ return (n > 0 ? '+' : n < 0 ? '−' : '') + num(Math.abs(n), d); }
+  var NS_ = 'http://www.w3.org/2000/svg';
+  function el(t, a, txt){ var e = document.createElementNS(NS_, t); for (var k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; return e; }
+  var NAVY = '#1f3b73', RED = '#e80734', SLATE = '#334155', GREY = '#94a3b8';
+  function segOn(seg, b){ each(seg.children, function(x){ x.classList.toggle('on', x === b); }); }
+
+  /* ================= DADOS DA TESE ================= */
+  var YEARS = [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023];
+  // Tabela 3.2 (antes do ajuste) e Tabela 3.6 (depois): [média, mediana, desvio-padrão]
+  var EF0 = [[.463,.477,.065],[.465,.477,.064],[.467,.480,.064],[.469,.482,.064],[.465,.479,.065],[.465,.477,.066],[.459,.484,.084],[.406,.451,.124],[.486,.499,.065],[.455,.470,.069],[.452,.462,.070],[.443,.455,.072]];
+  var EF1 = [[.477,.488,.064],[.480,.488,.062],[.483,.492,.062],[.484,.492,.062],[.480,.491,.063],[.481,.491,.064],[.486,.493,.062],[.425,.481,.123],[.494,.503,.062],[.485,.494,.064],[.488,.501,.063],[.479,.490,.068]];
+  // Tabela 3.7: t do teste pareado por ano
+  var TT = [-5.66, -5.91, -5.92, -6.08, -5.69, -5.83, -5.91, -4.76, -3.78, -8.45, -10.30, -9.38];
+  // Tabela 3.5: eficiência do IFIX (2024 fora do período)
+  var IFIX = [.2829, 0, .0479, .0947, .2177, .1567, .0570, 0, 0, .0569, .0644, .0784];
+  // Gráfico 3.5 (lido da figura, aproximado): [q1, mediana, q3]
+  var CLS = [
+    {k:'ag', n:"Agências bancárias", s:"Agência", b:[.415,.455,.47], d:"Imóveis alugados para agências bancárias: contratos longos com grandes bancos, risco baixo."},
+    {k:'hi', n:"Híbrido", s:"Híbrido", b:[.435,.475,.495], d:"Mistura de tipos de imóvel; o gestor tem mais liberdade para ajustar a estratégia."},
+    {k:'ho', n:"Hotel", s:"Hotel", b:[.44,.46,.485], d:"Imóveis usados pela indústria hoteleira."},
+    {k:'la', n:"Lajes corporativas", s:"Lajes", b:[.485,.49,.495], d:"Andares de prédios comerciais de grande porte, alugados a grandes empresas. A autora cita estudos que associam esses fundos a retornos mais estáveis, por causa de contratos longos e boa localização."},
+    {k:'lo', n:"Logística", s:"Logíst.", b:[.48,.495,.505], d:"Galpões e centros de distribuição para comércio eletrônico, indústria e logística. Caixa estreita, mas com alguns fundos bem abaixo dela."},
+    {k:'ou', n:"Outros", s:"Outros", b:[.46,.48,.50], d:"Tipos não cobertos pelas outras classes, como escolas, hospitais e centros de dados."},
+    {k:'sh', n:"Shopping center", s:"Shopping", b:[.445,.48,.49], d:"Shoppings. A autora destaca a estabilidade desses fundos, pouco estudada na literatura."},
+    {k:'tv', n:"Títulos e valores mobiliários", s:"TVM", b:[.43,.47,.49], d:"Títulos ligados a imóveis, como Certificados de Recebíveis Imobiliários (CRI). A classe com mais fundos isolados bem abaixo da caixa."}
+  ];
+  // Tabelas 3.3 e 3.4: [nome, eficiência média, tendência]
+  var TREND = [["FII BTG Pactual Fundo de Fundos", .453, .008], ["FII TG Ativo Real", .388, .003], ["BTG Pactual Corporate Office Fund", .460, .002], ["CSHG Real Estate", .477, .002], ["Rio Bravo Fundo de FII", .476, .001], ["Pátria Logística", .500, .000],
+               ["Kinea Rendimentos Imobiliários", .404, -.017], ["CSHG Logística", .452, -.009], ["Plural Recebíveis Imobiliários", .480, -.008], ["FII Agências Caixa", .427, -.007], ["Maxi Renda", .424, -.007], ["Hotel Maxinvest", .447, -.007]];
+  // Tabela 3.9: [chave, nome, grupo (f = fundo, e = economia), coeficiente, t, p]
+  var PN = [
+    ['vpa', "Valor patrimonial por cota", 'VPA', 'f', .037, .902, .367],
+    ['pvpa', "Preço ÷ valor patrimonial", 'P/VPA', 'f', .012, .753, .452],
+    ['div', "Dividendo por cota", "Div.", 'f', .001, .089, .929],
+    ['dy', 'Dividend yield', 'DY', 'f', -.013, -.614, .539],
+    ['neg', "Negociabilidade", "Negoc.", 'f', -.035, -2.843, .005],
+    ['vol', "Volatilidade", 'Vol.', 'f', 0, 0, 1],
+    ['var', "Valor em risco (VaR %)", 'VaR', 'f', -.014, -.055, .956],
+    ['sh', "Índice de Sharpe", 'Sharpe', 'f', -.008, -.614, .540],
+    ['cam', "Taxa de câmbio", "Câmbio", 'e', -.047, -1.719, .086],
+    ['incc', "INCC (custo da construção)", 'INCC', 'e', .298, .608, .543],
+    ['selic', "Taxa Selic", 'Selic', 'e', -1.189, -.243, .808]
+  ];
+  var PND = {
+    neg:"O número de negócios com as cotas no ano. Mais negociação veio com nota de eficiência menor (p = 0,005). Para a autora, fundos muito negociados atraem investidores de curto prazo e especulação; uma base estável de cotistas favorece a gestão de longo prazo.",
+    cam:"Câmbio mais alto veio com nota um pouco menor, mas é só uma pista (p = 0,086, acima de 0,05). A autora cogita custos de materiais importados ou investidores estrangeiros; a tese não testa essa explicação.",
+    selic:"A taxa básica de juros. Sem efeito claro na eficiência (p = 0,808).",
+    incc:"A inflação dos custos da construção civil. Sem efeito claro (p = 0,543).",
+    vol:"Coeficiente zero (p = 1). A autora atribui isso ao ajuste ao risco já feito na nota da DEA e refez o modelo sem a volatilidade: os demais resultados não mudaram (Tabela 3.10)."
+  };
+  // Tabela 4.3: retorno médio (%), desvio-padrão (%), Sharpe; ordem das janelas 1, 3, 6, 9, 12
+  var WIN = [1, 3, 6, 9, 12];
+  var T43 = {
+    Tijolo:{p:{r:[.51,.77,.98,1.18,1.47], d:[8.01,5.25,7.17,6.78,6.36], s:[.06,.15,.14,.17,.23]}, v:{r:[-.03,-.24,-.39,-.36,-.64], d:[10.39,10.47,10.52,11.24,11.05], s:[0,-.02,-.04,-.03,-.06]}},
+    Papel:{p:{r:[.36,.03,.05,.26,.23], d:[5.27,5.07,5.07,5.08,5.03], s:[.07,.01,.01,.05,.05]}, v:{r:[-.38,.22,.16,.44,.76], d:[12.78,12.17,13.07,14.39,13.39], s:[-.03,.02,.01,.03,.06]}},
+    FOF:{p:{r:[.19,.29,.49,.32,.31], d:[10.93,11.63,10.20,10.18,10.19], s:[.02,.03,.05,.03,.03]}, v:{r:[.41,-.02,-1.32,.37,.24], d:[13.15,15.66,14.95,14.37,13.91], s:[.03,0,-.09,.03,.02]}}
+  };
+  // Tabela 4.4: [média (fração), valor-p] por estratégia, tipo e janela
+  var T44 = {
+    V:{Tijolo:[[.003,.442],[.001,.482],[-.001,.510],[0,.499],[-.003,.553]], Papel:[[0,.513],[.006,.433],[.006,.411],[.009,.374],[.012,.325]], FOF:[[.008,.398],[.004,.339],[-.010,.632],[.008,.388],[.007,.403]]},
+    P:{Tijolo:[[-.003,.587],[-.007,.743],[-.008,.723],[-.011,.786],[-.014,.861]], Papel:[[-.004,.666],[-.001,.551],[-.001,.549],[-.003,.629],[-.003,.616]], FOF:[[-.005,.585],[-.005,.595],[-.008,.648],[-.005,.609],[-.005,.608]]},
+    VP:{Tijolo:[[-.001,.546],[-.002,.639],[-.001,.604],[-.002,.645],[-.003,.756]], Papel:[[-.001,.760],[0,.548],[-.001,.758],[-.002,.910],[-.002,.868]], FOF:[[0,.571],[-.001,.820],[-.002,.995],[-.001,.804],[0,.544]]}
+  };
+  var TYPES = ['Tijolo', 'Papel', 'FOF'];
+  var TNAME = {Tijolo:"Tijolo", Papel:"Papel", FOF:'FOF'};
+  var SNAME = {V:"comprar as vencedoras", P:"vender as perdedoras", VP:"comprar as vencedoras e vender as perdedoras"};
+  function mo(n){ return n + (EN ? (n === 1 ? ' month' : ' months') : (n === 1 ? ' mês' : ' meses')); }
+
+  /* ================= 01 · CAPA ================= */
+  // 12 colunas (eficiência média por ano, Tabela 3.2), uma acende por vez.
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 470, 120, {ay:'64%', rx:'62deg'});
+    var K = 330, cols = [];
+    YEARS.forEach(function(y, i){
+      var b = box({w:28, d:28, x:6 + i * 39, y:44, h:EF0[i][0] * K, c:NAVY});
+      st.appendChild(b); cols.push(b);
+      if (i % 2 === 0) flatLabel(st, String(y), i * 39 - 4, 82, 48);
+    });
+    rotatable(sc, st, -18, 8);
+    var cur = -1;
+    function show(i){
+      if (i === cur) return; cur = i;
+      cols.forEach(function(b, j){ b.style.setProperty('--c', j === i ? RED : NAVY); b.style.setProperty('--oz', j === i ? '10px' : '0px'); });
+      $('hero-year').textContent = YEARS[i] + ': ' + num(EF0[i][0], 3);
+    }
+    show(7);
+    if (reduce) return;
+    M.onTick(function(t){ show(Math.floor(t / 1.4) % 12); });
+  })();
+
+  /* ================= 02 · O QUE É UM FII ================= */
+  (function(){
+    var sc = $('fii-scene'), st = makeStage(sc, 400, 220, {ay:'68%', rx:'58deg'});
+    rotatable(sc, st, -24, 9);
+    var TY = [
+      {k:'Tijolo', c:'var(--tij)', t:"Tijolo (renda)", d:"O fundo é dono de imóveis prontos (lajes corporativas, galpões, shoppings, hotéis, agências) e repassa os <strong>aluguéis</strong> aos cotistas."},
+      {k:'Papel', c:'var(--pap)', t:"Papel (recebíveis)", d:"O fundo compra títulos de crédito imobiliário, como os CRI, e repassa os <strong>juros</strong> que recebe. Um só fundo pode ter dezenas de títulos."},
+      {k:'FOF', c:'var(--fof)', t:"Fundo de fundos (FOF)", d:"O fundo compra <strong>cotas de outros fundos imobiliários</strong>: com uma cota, o investidor fica exposto a uma cesta de fundos."}
+    ];
+    // Três arranjos de 12 blocos
+    var blocks = [];
+    for (var i = 0; i < 12; i++){ var b = box({w:40, d:40, x:0, y:0, h:30, c:NAVY}); st.appendChild(b); blocks.push(b); }
+    function layout(k){
+      blocks.forEach(function(b, i){
+        var x, y, z, h, w = 40, d = 40, c;
+        if (k === 'Tijolo'){ var col = i % 2, row = Math.floor(i / 2) % 2, lv = Math.floor(i / 4); x = 140 + col * 56; y = 60 + row * 56; z = lv * 42; h = 40; w = 52; d = 52; c = 'var(--tij)'; }
+        else if (k === 'Papel'){ x = 120 + (i % 2) * 90; y = 90; z = Math.floor(i / 2) * 12; h = 9; w = 80; d = 56; c = 'var(--pap)'; }
+        else { var g = i % 4; x = 40 + g * 86; y = 60 + Math.floor(i / 4) * 0; z = Math.floor(i / 4) * 26; h = 24; w = 36; d = 36; c = 'var(--fof)'; }
+        b.style.left = x + 'px'; b.style.top = y + 'px'; b.style.width = w + 'px'; b.style.height = d + 'px';
+        b.style.setProperty('--z', z + 'px'); b.style.setProperty('--h', h + 'px'); b.style.setProperty('--c', c);
+      });
+    }
+    var btns = $('fii-btns');
+    btns.innerHTML = TY.map(function(t, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="false">' + t.t + '</button>'; }).join('');
+    function show(i){
+      each(btns.children, function(b){ b.setAttribute('aria-pressed', +b.dataset.i === i); });
+      layout(TY[i].k);
+      $('fii-panel').innerHTML = '<div class="tag">' + TY[i].t + '</div><p>' + TY[i].d + '</p><p style="font-size:.8rem; color:var(--muted)">' + "Ilustração: cada bloco é uma parte do patrimônio do fundo." + '</p>';
+    }
+    each(btns.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(0);
+  })();
+
+  /* ================= 03 · REVISÃO ================= */
+  (function(){
+    var seg = $('rev-seg'), pnl = $('rev-panel');
+    var FUN = [[5531, "artigos na primeira busca (inglês e espanhol, 1980 a 2021)"], [57, "com a busca refinada: 24 na Web of Science e 33 na Scopus"], [23, "depois de tirar 16 repetidos e 18 sem acesso ao texto"]];
+    var COUNTRY = [["Estados Unidos", 10], ["Alemanha", 2], ["Malásia", 2], ["Reino Unido", 2], ["Ásia (vários)", 1], ["Espanha", 1], ["Países Baixos", 1], ["Japão", 1], ["Nigéria", 1], ["Turquia", 1], ["América Latina", 0]];
+    function f(){
+      var mx = Math.log10(5531);
+      pnl.innerHTML = '<div class="tag">' + "Da busca aos artigos lidos (seção 2.3)" + '</div><div class="funnel">' + FUN.map(function(r){
+        var w = Math.max(10, Math.log10(r[0]) / mx * 100);
+        return '<div class="fr"><span>' + r[1] + '</span><div class="bar" style="width:' + w + '%">' + r[0].toLocaleString(LOC) + '</div></div>';
+      }).join('') + '</div><p class="note" style="margin-top:12px">' + "Larguras em escala logarítmica: de 5.531 para 23 a queda é de mais de 99%. Uma busca extra pelo método DEA achou 6 artigos sobre fundos de investimento, nenhum de fundos imobiliários." + '</p>';
+    }
+    function p(){
+      pnl.innerHTML = '<div class="tag">' + "Países de origem dos dados (Gráfico 2.2)" + '</div><div class="hb">' + COUNTRY.map(function(r){
+        return '<div class="r' + (r[1] === 0 ? ' zero' : '') + '"><span class="lab">' + r[0] + '</span><div class="t"><i style="width:' + (r[1] / 10 * 100) + '%"></i></div><b>' + r[1] + '</b></div>';
+      }).join('') + '</div><p class="note">' + "Contagens lidas do gráfico, que soma 22 artigos (não 23). Os Estados Unidos lideram porque lá os fundos imobiliários (REITs) existem desde 1960." + '</p>';
+    }
+    function m(){
+      var sq = function(n, on, red){ var s = ''; for (var i = 0; i < 23; i++) s += '<i class="' + (i < n ? (red ? 'red' : 'on') : '') + '"></i>'; return '<div class="squares">' + s + '</div>'; };
+      pnl.innerHTML = '<div class="tag">' + "Cada quadradinho é um dos 23 artigos (Quadro 2.2)" + '</div>' +
+        '<p><strong>' + "21 de 23" + '</strong> ' + "usaram dados em painel, o que deixa espaço para outros métodos." + '</p>' + sq(21) +
+        '<p><strong>' + "15 de 23" + '</strong> ' + "estudaram os REITs, o modelo americano." + '</p>' + sq(15) +
+        '<p><strong>' + "14 de 23" + '</strong> ' + "não apontaram nenhuma lacuna para estudos futuros." + '</p>' + sq(14, 0, 1) +
+        '<p style="font-size:.8rem; color:var(--muted)">' + "Medidas de momento e o tipo de imóvel apareceram pouco: uma busca específica sobre o tipo de ativo achou só 2 artigos." + '</p>';
+    }
+    var V = {f:f, p:p, m:m};
+    each(seg.children, function(b){ b.addEventListener('click', function(){ segOn(seg, b); V[b.dataset.k](); }); });
+    f();
+  })();
+
+  /* ================= 04 · DEA ILUSTRADA ================= */
+  (function(){
+    var svg = $('dea-svg'), W = 560, H = 330, X0 = 56, Y0 = 290, XW = 480, YH = 260;
+    // fundos inventados: [nome, risco, retorno]
+    var F = [['A', 1.5, 3], ['B', 3, 5.6], ['C', 5, 7.6], ['D', 8, 8.6], ['E', 3.6, 3.4], ['F', 6, 5.2], ['G', 7.2, 4.2]];
+    var sel = 5, R = $('dea-r');
+    function sx(v){ return X0 + v / 10 * XW; } function sy(v){ return Y0 - v / 10 * YH; }
+    function hull(pts){
+      var p = [[0, 0]].concat(pts.map(function(q){ return [q[1], q[2]]; })).sort(function(a, b){ return a[0] - b[0] || b[1] - a[1]; });
+      var h = [];
+      p.forEach(function(q){
+        while (h.length >= 2){ var a = h[h.length - 2], b = h[h.length - 1]; if ((b[0] - a[0]) * (q[1] - a[1]) - (b[1] - a[1]) * (q[0] - a[0]) >= 0) h.pop(); else break; }
+        h.push(q);
+      });
+      // depois do ponto mais alto, a fronteira fica plana
+      var top = 0; h.forEach(function(q, i){ if (q[1] > h[top][1]) top = i; });
+      h = h.slice(0, top + 1); h.push([10, h[top][1]]);
+      return h;
+    }
+    function fr(h, x){ for (var i = 1; i < h.length; i++){ if (x <= h[i][0]){ var a = h[i - 1], b = h[i]; return a[1] + (b[1] - a[1]) * (x - a[0]) / Math.max(1e-9, b[0] - a[0]); } } return h[h.length - 1][1]; }
+    function draw(){
+      svg.innerHTML = '';
+      for (var g = 0; g <= 10; g += 2){
+        svg.appendChild(el('line', {x1:X0, x2:X0 + XW, y1:sy(g), y2:sy(g), stroke:'#eef2f7'}));
+        svg.appendChild(el('text', {x:X0 - 8, y:sy(g) + 4, 'text-anchor':'end', 'font-size':11, fill:'#64748b', 'class':'sm'}, g));
+      }
+      svg.appendChild(el('line', {x1:X0, x2:X0 + XW, y1:Y0, y2:Y0, stroke:'#94a3b8'}));
+      svg.appendChild(el('line', {x1:X0, x2:X0, y1:Y0, y2:Y0 - YH, stroke:'#94a3b8'}));
+      svg.appendChild(el('text', {x:X0 + XW, y:Y0 + 30, 'text-anchor':'end', 'font-size':13, fill:'#334155'}, "risco →"));
+      svg.appendChild(el('text', {x:X0 - 40, y:Y0 - YH - 10, 'font-size':13, fill:'#334155'}, "retorno ↑"));
+      var h = hull(F);
+      var d = h.map(function(q, i){ return (i ? 'L' : 'M') + sx(q[0]) + ',' + sy(q[1]); }).join(' ');
+      var area = el('path', {d:d + ' L' + sx(10) + ',' + Y0 + ' L' + sx(0) + ',' + Y0 + ' Z', fill:'#1f3b73', opacity:.05}); svg.appendChild(area);
+      svg.appendChild(el('path', {d:d, fill:'none', stroke:RED, 'stroke-width':3}));
+      svg.appendChild(el('text', {x:sx(9.9), y:sy(0.5), 'font-size':13, fill:RED, 'font-weight':700, 'text-anchor':'end'}, "fronteira dos melhores"));
+      var s = F[sel], fx = fr(h, s[1]);
+      svg.appendChild(el('line', {x1:sx(s[1]), x2:sx(s[1]), y1:sy(s[2]), y2:sy(fx), stroke:'#334155', 'stroke-dasharray':'4 4', 'stroke-width':2}));
+      F.forEach(function(q, i){
+        var on = fr(h, q[1]) - q[2] < 1e-6;
+        var c = el('circle', {cx:sx(q[1]), cy:sy(q[2]), r:i === sel ? 13 : 10, fill:on ? RED : (i === sel ? NAVY : '#8aa0cc'), stroke:'#fff', 'stroke-width':2});
+        c.addEventListener('click', function(){ pick(i); }); svg.appendChild(c);
+        var t = el('text', {x:sx(q[1]), y:sy(q[2]) + 4, 'text-anchor':'middle', 'font-size':11, 'font-weight':700, fill:'#fff'}, q[0]); t.style.pointerEvents = 'none'; svg.appendChild(t);
+      });
+      var score = Math.min(1, s[2] / fx);
+      $('dea-rv').textContent = num(s[2], 1);
+      $('dea-msg').innerHTML = score >= .999 ?
+        "<strong>Fundo NOME: nota 1.</strong> Ele está na fronteira: ninguém rende mais com o mesmo risco. Se subir mais, empurra a fronteira e as notas dos outros caem.".replace('NOME', s[0]) :
+        "<strong>Fundo NOME: nota NOTA.</strong> Com o mesmo risco, a fronteira chega a FRONT de retorno; o fundo entrega PCT disso. Arraste o controle para aproximá-lo da fronteira.".replace('NOME', s[0]).replace('NOTA', num(score, 2)).replace('FRONT', num(fx, 1)).replace('PCT', Math.round(score * 100) + '%');
+    }
+    function pick(i){ sel = i; R.value = F[i][2]; each($('dea-btns').children, function(b){ b.setAttribute('aria-pressed', +b.dataset.i === i); }); draw(); }
+    $('dea-btns').innerHTML = F.map(function(q, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="false">' + "Fundo " + q[0] + '</button>'; }).join('');
+    each($('dea-btns').children, function(b){ b.addEventListener('click', function(){ pick(+b.dataset.i); }); });
+    R.addEventListener('input', function(){ F[sel][2] = +R.value; draw(); });
+    pick(5);
+  })();
+
+  /* ================= 05 · EFICIÊNCIA POR ANO ================= */
+  (function(){
+    var sc = $('ef-scene'), st = makeStage(sc, 560, 110, {ay:'70%', rx:'62deg'});
+    rotatable(sc, st, -5, 3);
+    var m = 0, adj = 0, zoom = 0, cur = 7, cols = [];
+    YEARS.forEach(function(y, i){
+      var b = box({w:32, d:32, x:4 + i * 46, y:40, h:10, c:NAVY});
+      b.setAttribute('role', 'button'); b.tabIndex = 0; b.setAttribute('aria-label', String(y));
+      st.appendChild(b); cols.push(b);
+      if (i % 2 === 0) flatLabel(st, String(y), i * 46 - 4, 80, 48);
+      b.addEventListener('click', function(){ if (M.wasDrag(sc)) return; show(i); });
+      b.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(i); } });
+    });
+    var yb = $('ef-years');
+    function val(i){ return (adj ? EF1 : EF0)[i][m]; }
+    function hgt(v){ if (m === 2) return v * 1500; return zoom ? Math.max(2, (v - .38) * 1500) : v * 330; }
+    function draw(){
+      var low = 0; for (var i = 1; i < 12; i++) if ((m === 2 ? -val(i) : val(i)) < (m === 2 ? -val(low) : val(low))) low = i;
+      cols.forEach(function(b, i){ b.style.setProperty('--h', hgt(val(i)) + 'px'); b.style.setProperty('--c', i === low ? RED : NAVY); b.classList.toggle('active', i === cur); });
+      yb.innerHTML = YEARS.map(function(y, i){ return '<button class="' + (i === cur ? 'on' : '') + (i === low ? ' low' : '') + '" data-i="' + i + '">' + y + '<b>' + num(val(i), 3) + '</b></button>'; }).join('');
+      each(yb.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+      $('ef-z').style.display = m === 2 ? 'none' : '';
+      panel();
+    }
+    function panel(){
+      var i = cur, a = EF0[i], b = EF1[i];
+      $('ef-panel').innerHTML = '<div class="tag">' + YEARS[i] + ' · <span class="nt">' + (adj ? "depois do ajuste" : "antes do ajuste") + '</span></div>' +
+        '<p>' + "Média <strong>" + num((adj ? b : a)[0], 3) + '</strong> · ' + "mediana <strong>" + num((adj ? b : a)[1], 3) + '</strong> · ' + "desvio-padrão <strong>" + num((adj ? b : a)[2], 3) + '</strong></p>' +
+        '<p style="font-size:.82rem; color:var(--ink-2)">' + "Com o ajuste, a média vai de ANTES para DEPOIS (t pareado = TT).".replace('ANTES', num(a[0], 3)).replace('DEPOIS', num(b[0], 3)).replace('TT', num(TT[i], 2)) +
+        (i === 7 ? ' ' + "Em 2019, a mediana (0,451) ficou bem acima da média: alguns fundos com notas muito baixas puxaram a média para baixo." : '') + '</p>' +
+        (m !== 2 && zoom ? '<p style="font-size:.78rem; color:var(--red)">' + "Lupa: as colunas começam em 0,38, o que exagera as diferenças." + '</p>' : '');
+    }
+    function show(i){ cur = i; draw(); }
+    each($('ef-m').children, function(b){ b.addEventListener('click', function(){ segOn($('ef-m'), b); m = {m:0, d:1, s:2}[b.dataset.k]; draw(); }); });
+    each($('ef-a').children, function(b){ b.addEventListener('click', function(){ segOn($('ef-a'), b); adj = +b.dataset.k; draw(); }); });
+    each($('ef-z').children, function(b){ b.addEventListener('click', function(){ segOn($('ef-z'), b); zoom = +b.dataset.k; draw(); }); });
+    draw();
+  })();
+
+  /* ================= 06 · IFIX × FUNDOS ================= */
+  (function(){
+    var svg = $('ix-svg'), X0 = 54, XW = 480, Y0 = 290, YH = 260, MAX = .5, sel = 7;
+    function sx(i){ return X0 + i / 11 * XW; } function sy(v){ return Y0 - v / MAX * YH; }
+    function draw(){
+      svg.innerHTML = '';
+      [0, .1, .2, .3, .4, .5].forEach(function(g){
+        svg.appendChild(el('line', {x1:X0, x2:X0 + XW, y1:sy(g), y2:sy(g), stroke:'#eef2f7'}));
+        svg.appendChild(el('text', {x:X0 - 8, y:sy(g) + 4, 'text-anchor':'end', 'font-size':11, fill:'#64748b'}, num(g, 1)));
+      });
+      YEARS.forEach(function(y, i){ if (i % 2 === 0 || i === 11) svg.appendChild(el('text', {x:sx(i), y:Y0 + 22, 'text-anchor':'middle', 'font-size':11, fill:'#64748b', 'class':i % 2 ? 'sm' : ''}, y)); });
+      svg.appendChild(el('line', {x1:sx(sel), x2:sx(sel), y1:Y0, y2:Y0 - YH, stroke:'#cbd5e1', 'stroke-dasharray':'3 4'}));
+      [[EF0.map(function(r){ return r[0]; }), NAVY], [IFIX, RED]].forEach(function(s){
+        svg.appendChild(el('path', {d:s[0].map(function(v, i){ return (i ? 'L' : 'M') + sx(i) + ',' + sy(v); }).join(' '), fill:'none', stroke:s[1], 'stroke-width':3}));
+        s[0].forEach(function(v, i){ var c = el('circle', {cx:sx(i), cy:sy(v), r:i === sel ? 8 : 5.5, fill:(s[1] === RED && v === 0) ? '#fff' : s[1], stroke:s[1], 'stroke-width':2.5}); c.addEventListener('click', function(){ sel = i; draw(); }); svg.appendChild(c); });
+      });
+      var hit = el('rect', {x:X0 - 20, y:Y0 - YH, width:XW + 40, height:YH, fill:'transparent'});
+      hit.addEventListener('click', function(e){ var r = svg.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * 560; sel = Math.max(0, Math.min(11, Math.round((x - X0) / XW * 11))); draw(); });
+      svg.insertBefore(hit, svg.firstChild);
+      $('ix-panel').innerHTML = '<div class="tag">' + YEARS[sel] + '</div><p>' + "Média dos fundos <strong>" + num(EF0[sel][0], 3) + '</strong> · IFIX <strong>' + num(IFIX[sel], 3) + '</strong>' + (IFIX[sel] === 0 ? ' · ' + "nota zero para o índice" : '') + '</p>';
+    }
+    draw();
+    var g = $('ix-guess');
+    each(g.querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ each(g.querySelectorAll('button'), function(x){ x.classList.toggle('pick', x === b); }); g.classList.add('done'); }); });
+  })();
+
+  /* ================= 07 · CLASSES E FUNDOS ================= */
+  (function(){
+    var svg = $('bx-svg'), X0 = 58, XW = 488, Y0 = 280, YH = 250, LO = .38, HI = .53, sel = 3;
+    function sy(v){ return Y0 - (v - LO) / (HI - LO) * YH; }
+    function draw(){
+      svg.innerHTML = '';
+      [.40, .44, .48, .52].forEach(function(g){
+        svg.appendChild(el('line', {x1:X0, x2:X0 + XW, y1:sy(g), y2:sy(g), stroke:'#eef2f7'}));
+        svg.appendChild(el('text', {x:X0 - 8, y:sy(g) + 4, 'text-anchor':'end', 'font-size':11, fill:'#64748b'}, num(g, 2)));
+      });
+      var cw = XW / 8;
+      CLS.forEach(function(c, i){
+        var g = el('g', {'class':'bx', tabindex:0, role:'button', 'aria-label':c.n});
+        var x = X0 + i * cw + cw * .2, w = cw * .6, on = i === sel;
+        g.appendChild(el('rect', {x:X0 + i * cw, y:Y0 - YH, width:cw, height:YH, fill:'transparent'}));
+        var r = el('rect', {x:x, y:sy(c.b[2]), width:w, height:Math.max(3, sy(c.b[0]) - sy(c.b[2])), rx:4}); r.style.fill = on ? RED : (c.k === 'la' ? NAVY : '#8aa0cc'); g.appendChild(r);
+        g.appendChild(el('line', {x1:x, x2:x + w, y1:sy(c.b[1]), y2:sy(c.b[1]), stroke:'#fff', 'stroke-width':3}));
+        g.appendChild(el('text', {x:x + w / 2, y:Y0 + 22 + (i % 2) * 22, 'text-anchor':'middle', 'font-size':12, fill:on ? RED : '#334155', 'font-weight':on ? 700 : 400}, c.s));
+        g.addEventListener('click', function(){ sel = i; draw(); });
+        g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); sel = i; draw(); } });
+        svg.appendChild(g);
+      });
+      var c = CLS[sel];
+      $('bx-panel').innerHTML = '<div class="tag">' + c.n + '</div><p>' + c.d + '</p><p style="font-size:.82rem">' + "Mediana ~" + num(c.b[1], 3) + ' · ' + "metade do meio entre ~" + num(c.b[0], 3) + " e " + '~' + num(c.b[2], 3) + ' (' + "largura ~" + num(c.b[2] - c.b[0], 3) + ')</p>';
+    }
+    draw();
+    $('tr-list').innerHTML = TREND.map(function(f){
+      var w = Math.abs(f[2]) / .018 * 50, pos = f[2] >= 0;
+      return '<div class="r"><span class="nm" title="' + f[0] + '">' + f[0] + '</span><div class="tr"><span class="ax"></span><i style="' + (pos ? 'left:50%' : 'right:50%') + '; width:' + Math.max(1, w) + '%; background:' + (pos ? NAVY : RED) + '"></i></div><b>' + sgn(f[2], 3) + '</b></div>';
+    }).join('');
+    var seg = $('bx-seg');
+    each(seg.children, function(b){ b.addEventListener('click', function(){ segOn(seg, b); var a = b.dataset.k === 'c'; $('bx-a').hidden = !a; $('bx-b').hidden = a; }); });
+  })();
+
+  /* ================= 08 · PAINEL ================= */
+  (function(){
+    var sc = $('pn-scene'), st = makeStage(sc, 560, 110, {ay:'70%', rx:'62deg'});
+    rotatable(sc, st, -6, 3);
+    var K = 42, tiles = [], cur = 4;
+    PN.forEach(function(v, i){
+      var t = Math.abs(v[5]), sig = v[6] < .05, pista = v[6] < .1 && !sig;
+      var b = box({w:32, d:32, x:4 + i * 50, y:40, h:Math.max(3, t * K), c:sig ? RED : (v[3] === 'f' ? NAVY : SLATE), cls:pista ? 'str' : '', label:t * K >= 26 ? num(t, 1) : ''});
+      b.setAttribute('role', 'button'); b.tabIndex = 0; b.setAttribute('aria-label', v[1]);
+      st.appendChild(b); tiles.push(b);
+      flatLabel(st, v[2], i * 50 - 6, 80 + (i % 2) * 16, 46);
+      b.addEventListener('click', function(){ if (M.wasDrag(sc)) return; show(i); });
+      b.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(i); } });
+    });
+    st.appendChild(box({w:556, d:72, x:0, y:22, z:1.96 * K, h:1, c:RED, cls:'plane'}));
+    var list = $('pn-list');
+    list.innerHTML = PN.map(function(v, i){ return '<button data-i="' + i + '"><i style="background:' + (v[6] < .05 ? RED : v[3] === 'f' ? NAVY : SLATE) + '"></i>' + v[2] + '</button>'; }).join('');
+    each(list.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    function show(i){
+      cur = i; var v = PN[i];
+      tiles.forEach(function(b, j){ b.classList.toggle('active', j === i); });
+      each(list.children, function(b){ b.classList.toggle('on', +b.dataset.i === i); });
+      var verdict = v[6] < .05 ? "efeito claro" : v[6] < .1 ? "pista" : "sem efeito claro";
+      $('pn-panel').innerHTML = '<div class="tag">' + v[1] + ' · <span class="nt">' + verdict + ' · t = ' + num(v[5], 2) + ' · p = ' + num(v[6], 3) + '</span></div><p>' + (PND[v[0]] || "Sem relação estatisticamente clara com a nota de eficiência. Para a autora, os indicadores financeiros clássicos não refletem diretamente a eficiência do fundo.") + '</p>';
+    }
+    show(4);
+    // apostas
+    var BETS = [
+      {q:"Com juros (Selic) mais altos, a nota de eficiência muda?", o:["Sobe", "Cai", "Nada claro"], a:2, t:"Nada claro.", x:"p = 0,808. Nem a Selic nem o INCC tiveram efeito claro.", c:'var(--eco)', k:10},
+      {q:"E o câmbio (o preço do dólar)?", o:["Sobe", "Cai", "Nada claro"], a:1, t:"Cai, mas é só pista.", x:"p = 0,086: abaixo de 10%, acima de 5%.", c:'var(--eco)', k:8},
+      {q:"Fundos com cotas mais negociadas são mais eficientes?", o:["Mais", "Menos", "Nada claro"], a:1, t:"Menos.", x:"p = 0,005, o único efeito claro do modelo.", c:'var(--red)', k:4}
+    ];
+    var bets = $('bets');
+    bets.innerHTML = BETS.map(function(b, i){ return '<div class="bet" style="--bc:' + b.c + '" data-i="' + i + '"><div class="q">' + b.q + '</div><div class="opts">' + b.o.map(function(o, j){ return '<button data-j="' + j + '">' + o + '</button>'; }).join('') + '</div><div class="ans"></div></div>'; }).join('');
+    each(bets.children, function(card){
+      var b = BETS[+card.dataset.i];
+      each(card.querySelectorAll('button'), function(btn){ btn.addEventListener('click', function(){
+        each(card.querySelectorAll('button'), function(x){ x.classList.toggle('pick', x === btn); });
+        var ok = +btn.dataset.j === b.a;
+        card.querySelector('.ans').innerHTML = '<b class="v" style="background:' + (ok ? NAVY : '#64748b') + '">' + (ok ? "Acertou" : "Não foi") + '</b>' + b.t + ' ' + b.x;
+        card.classList.add('done'); show(b.k);
+      }); });
+    });
+  })();
+
+  /* ================= 09 · REGRA DO MOMENTO ================= */
+  (function(){
+    var D = $('dy-d'), P = $('dy-p');
+    function calc(){
+      var d = +D.value, p = +P.value, dy = d / p * 100, base = d / 100 * 100;
+      $('dy-dv').textContent = 'R$ ' + num(d, 2); $('dy-pv').textContent = 'R$ ' + num(p, 0);
+      $('dy-out').textContent = num(dy, 1) + '%';
+      $('dy-sub').textContent = p < 100 ? "o preço caiu e o DY subiu, mesmo sem pagar mais" : p > 100 ? "o preço subiu e o DY caiu" : "ao ano, sobre o preço de hoje";
+    }
+    D.addEventListener('input', calc); P.addEventListener('input', calc); calc();
+    // nove fundos inventados: variação do DY no período de formação (p.p.)
+    var FX = [['A', .9], ['B', .6], ['C', .45], ['D', .2], ['E', .1], ['F', -.05], ['G', -.2], ['H', -.45], ['I', -.8]];
+    var svg = $('mo-svg'), mode = 'V';
+    function draw(){
+      svg.innerHTML = '';
+      var X0 = 40, cw = 56, Y0 = 120, K = 95;
+      svg.appendChild(el('line', {x1:20, x2:540, y1:Y0, y2:Y0, stroke:'#94a3b8'}));
+      FX.forEach(function(f, i){
+        var x = X0 + i * cw, h = f[1] * K, top = i < 3, bot = i > 5;
+        var c = top ? NAVY : bot ? GREY : '#e2e8f0';
+        var act = (mode === 'V' && top) || (mode === 'P' && bot) || (mode === 'VP' && (top || bot));
+        var r = el('rect', {x:x, y:h >= 0 ? Y0 - h : Y0, width:cw - 14, height:Math.abs(h), rx:4}); r.style.fill = c; r.style.opacity = act || (!top && !bot) ? 1 : .35; svg.appendChild(r);
+        if (act){ svg.appendChild(el('rect', {x:x - 3, y:(h >= 0 ? Y0 - h : Y0) - 3, width:cw - 8, height:Math.abs(h) + 6, rx:6, fill:'none', stroke:RED, 'stroke-width':2.5})); }
+        svg.appendChild(el('text', {x:x + (cw - 14) / 2, y:h >= 0 ? Y0 + 18 : Y0 - 8, 'text-anchor':'middle', 'font-size':12, fill:'#334155', 'font-weight':700}, f[0]));
+      });
+      svg.appendChild(el('text', {x:X0 + 1.5 * cw - 7, y:20, 'text-anchor':'middle', 'font-size':12, fill:NAVY, 'font-weight':700}, "vencedoras"));
+      svg.appendChild(el('text', {x:X0 + 7.5 * cw - 7, y:222, 'text-anchor':'middle', 'font-size':12, fill:'#64748b', 'font-weight':700}, "perdedoras"));
+      svg.appendChild(el('text', {x:540, y:20, 'text-anchor':'end', 'font-size':11, fill:'#64748b'}, "altura: variação do DY no período"));
+      $('mo-msg').innerHTML = {
+        V:"<strong>V:</strong> compra as vencedoras (A, B e C) e espera que continuem indo bem no mês seguinte.",
+        P:"<strong>P:</strong> vende as perdedoras (G, H e I), apostando que continuem mal, e aplica o dinheiro na Selic e no IFIX. No Brasil, vender cotas de fundos imobiliários que não se tem é difícil; a autora cita esse limite.",
+        VP:"<strong>VP:</strong> compra as vencedoras e vende as perdedoras no mesmo valor, para ganhar só com a diferença entre os dois grupos, qualquer que seja o rumo do mercado."
+      }[mode] + ' <span class="ours">' + "fundos inventados" + '</span>';
+    }
+    var seg = $('mo-seg');
+    each(seg.children, function(b){ b.addEventListener('click', function(){ segOn(seg, b); mode = b.dataset.k; draw(); }); });
+    draw();
+  })();
+
+  /* ================= 10 · O INESPERADO ================= */
+  (function(){
+    var svg = $('wl-svg'), t = 'Tijolo', m = 'r';
+    var SC = {r:[-1.6, 1.6], s:[-.12, .28], d:[0, 16]};
+    function draw(){
+      svg.innerHTML = '';
+      var X0 = 60, XW = 480, Y0 = 20, YH = 240, lo = SC[m][0], hi = SC[m][1];
+      function sy(v){ return Y0 + (hi - v) / (hi - lo) * YH; }
+      var ticks = m === 'r' ? [-1.5, -1, -.5, 0, .5, 1, 1.5] : m === 's' ? [-.1, 0, .1, .2] : [0, 4, 8, 12, 16];
+      ticks.forEach(function(g){
+        svg.appendChild(el('line', {x1:X0, x2:X0 + XW, y1:sy(g), y2:sy(g), stroke:g === 0 ? '#64748b' : '#eef2f7'}));
+        svg.appendChild(el('text', {x:X0 - 8, y:sy(g) + 4, 'text-anchor':'end', 'font-size':11, fill:'#64748b'}, num(g, m === 'r' ? 1 : m === 's' ? 1 : 0) + (m === 's' ? '' : '%')));
+      });
+      var gw = XW / 5, d = T43[t];
+      WIN.forEach(function(w, i){
+        [['v', NAVY], ['p', GREY]].forEach(function(s, j){
+          var v = d[s[0]][m][i], x = X0 + i * gw + 14 + j * (gw / 2 - 10), bw = gw / 2 - 18;
+          var y1 = sy(Math.max(0, v)), y2 = sy(Math.min(0, v));
+          var r = el('rect', {x:x, y:y1, width:bw, height:Math.max(2, y2 - y1), rx:3}); r.style.fill = s[1]; svg.appendChild(r);
+          svg.appendChild(el('text', {x:x + bw / 2, y:v >= 0 ? y1 - 5 : y2 + 13, 'text-anchor':'middle', 'font-size':10.5, fill:'#334155', 'class':'sm'}, num(v, 2)));
+        });
+        svg.appendChild(el('text', {x:X0 + i * gw + gw / 2, y:Y0 + YH + 22, 'text-anchor':'middle', 'font-size':12, fill:'#334155'}, w + (EN ? ' mo' : (w === 1 ? ' mês' : ' meses'))));
+      });
+      var last = 4, v = d.v[m][last], p = d.p[m][last];
+      var name = {r:"retorno médio", s:"índice de Sharpe", d:"oscilação (desvio-padrão)"}[m];
+      $('wl-panel').innerHTML = '<div class="tag">' + TNAME[t] + ' · ' + name + '</div><p>' + "Na janela de 12 meses: vencedoras <strong>" + num(v, 2) + (m === 's' ? '' : '%') + '</strong> · ' + "perdedoras <strong>" + num(p, 2) + (m === 's' ? '' : '%') + '</strong>.' + (m === 'd' ? ' ' + "Barra mais alta = mais oscilação, ou seja, mais risco." : '') + '</p>';
+    }
+    each($('wl-t').children, function(b){ b.addEventListener('click', function(){ segOn($('wl-t'), b); t = b.dataset.k; draw(); }); });
+    each($('wl-m').children, function(b){ b.addEventListener('click', function(){ segOn($('wl-m'), b); m = b.dataset.k; draw(); }); });
+    draw();
+    var g = $('wl-guess');
+    each(g.querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ each(g.querySelectorAll('button'), function(x){ x.classList.toggle('pick', x === b); }); g.classList.add('done'); segOn($('wl-t'), $('wl-t').children[1]); t = 'Papel'; draw(); }); });
+  })();
+
+  /* ================= 11 · O TESTE ================= */
+  (function(){
+    var hm = $('hm'), s = 'V', sel = [1, 4];
+    function col(v){ if (v > 0) return 'color-mix(in srgb, #1f3b73 ' + Math.min(55, 8 + v * 3500) + '%, white)'; if (v < 0) return 'color-mix(in srgb, #94a3b8 ' + Math.min(70, 10 + -v * 3500) + '%, white)'; return '#f1f5f9'; }
+    function draw(){
+      var h = '<span class="h"></span>' + WIN.map(function(w){ return '<span class="hc">' + w + (EN ? ' mo' : (w === 1 ? ' mês' : ' m')) + '</span>'; }).join('');
+      TYPES.forEach(function(t, r){
+        h += '<span class="h">' + TNAME[t] + '</span>';
+        T44[s][t].forEach(function(c, j){
+          var on = sel[0] === r && sel[1] === j, v = c[0] * 100;
+          h += '<button data-r="' + r + '" data-j="' + j + '" class="' + (on ? 'on' : '') + '" style="background:' + col(c[0]) + '; color:' + (c[0] * 3500 + 8 > 40 ? '#fff' : 'var(--ink)') + '">' + sgn(v, 1) + '%</button>';
+        });
+      });
+      hm.innerHTML = h;
+      each(hm.querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ sel = [+b.dataset.r, +b.dataset.j]; draw(); }); });
+      var t = TYPES[sel[0]], c = T44[s][t][sel[1]];
+      $('hm-panel').innerHTML = '<div class="tag">' + s.replace('V', EN ? 'W' : 'V').replace('P', EN ? 'L' : 'P') + ' · ' + TNAME[t] + ' · ' + mo(WIN[sel[1]]) + '</div><p>' + "Estratégia: " + SNAME[s] + '. ' + "Retorno médio <strong>" + sgn(c[0] * 100, 1) + '%</strong>, ' + "valor-p <strong>" + num(c[1], 3) + '</strong>: ' + "sem diferença estatística em relação ao IFIX." + '</p>';
+      pv();
+    }
+    function pv(){
+      var svg = $('pv-svg'), X0 = 30, XW = 500, Y = 70; svg.innerHTML = '';
+      svg.appendChild(el('line', {x1:X0, x2:X0 + XW, y1:Y, y2:Y, stroke:'#94a3b8', 'stroke-width':2}));
+      [0, .25, .5, .75, 1].forEach(function(g){ svg.appendChild(el('text', {x:X0 + g * XW, y:Y + 40, 'text-anchor':'middle', 'font-size':11, fill:'#64748b'}, num(g, 2))); });
+      var x5 = X0 + .05 * XW;
+      svg.appendChild(el('rect', {x:X0, y:Y - 40, width:.05 * XW, height:56, fill:RED, opacity:.12}));
+      svg.appendChild(el('line', {x1:x5, x2:x5, y1:Y - 44, y2:Y + 18, stroke:RED, 'stroke-width':2}));
+      svg.appendChild(el('text', {x:x5 + 6, y:Y - 46, 'font-size':11.5, fill:RED, 'font-weight':700}, "0,05: abaixo daqui, efeito claro"));
+      var cnt = {};
+      ['V', 'P', 'VP'].forEach(function(k){ TYPES.forEach(function(t){ T44[k][t].forEach(function(c){
+        var x = X0 + c[1] * XW, key = Math.round(c[1] * 60); cnt[key] = (cnt[key] || 0) + 1;
+        svg.appendChild(el('circle', {cx:x, cy:Y - 4 - (cnt[key] - 1) * 7, r:4.2, fill:k === s ? NAVY : '#cbd5e1'}));
+      }); }); });
+    }
+    each($('hm-seg').children, function(b){ b.addEventListener('click', function(){ segOn($('hm-seg'), b); s = b.dataset.k; draw(); }); });
+    draw();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
