@@ -1,0 +1,957 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A IA fácil faz a gente aprender errado? · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Walter Shuiti Kussano (PPGA Mackenzie, 2026) sobre a propensão à aprendizagem supersticiosa de quem usa IA generativa no trabalho e o efeito no desempenho, com 126 profissionais, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2026-kussano-aprendizagem-supersticiosa-ia/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2216%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>A</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  :root{
+    --ind:var(--navy);   /* sinais da pessoa */
+    --ctx:var(--red);    /* sinais do ambiente */
+    --gai:#334155;       /* IA generativa / incerteza */
+    --off:#cbd5e1;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+  .ilus{display:inline-block; font-size:.64rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:4px;}
+  .panel .nt{text-transform:none; letter-spacing:0;}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.82rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:11px 13px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.75rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  .gbtn{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .gbtn button{border:1px solid var(--border); background:var(--card); border-radius:8px; padding:5px 10px; font-size:.78rem; cursor:pointer; color:var(--ink-2); border-left:4px solid var(--bc, var(--border));}
+  .gbtn button[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); font-weight:600; box-shadow:0 0 0 1px var(--ink); border-left-color:var(--bc, var(--ink));}
+  .slab.off .top-label, .slab.off .face-label{color:var(--navy) !important;}
+  .scene .top-label{font-family:var(--sans);}
+  .stripe{background:repeating-linear-gradient(45deg, #cbd5e1 0 5px, #f1f5f9 5px 10px) !important;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4vw, 2.8rem);}
+  html[lang="en"] #capa h1{font-size:clamp(2rem, 3.8vw, 2.6rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:34em; margin-left:auto; margin-right:auto;}
+  #hero-cap{font-family:var(--serif); text-align:center; font-size:1rem; color:var(--ink); min-height:1.6em;}
+  #hero-cap b{color:var(--red);}
+  #hero-scene{perspective:2200px;}
+  #hero-scene .slab.active{--oz:16px;}
+  #hero-scene .top-label{font-size:18px;}
+  #hero-scene .floor-label{font-size:15px; font-weight:700;}
+
+  /* ---------- 02 · Pombo ---------- */
+  #pg-box{position:relative; aspect-ratio:400/170; background:linear-gradient(#f8fafc, #eef2f7); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-top:6px;}
+  #pg-svg{width:100%; height:100%; display:block;}
+  #pg-bird{transform-box:fill-box; transform-origin:center; transition:transform .4s;}
+  #pg-bird.spin{animation:pgspin .8s linear;}
+  #pg-bird.peck{animation:pgpeck .5s ease 2;}
+  #pg-bird.flap .wing{animation:pgflap .25s ease 4;}
+  .wing{transform-box:fill-box; transform-origin:top right;}
+  @keyframes pgspin{to{transform:rotate(360deg);}}
+  @keyframes pgpeck{50%{transform:translateY(14px) rotate(18deg);}}
+  @keyframes pgflap{50%{transform:rotate(-40deg);}}
+  #pg-food{transition:transform .6s cubic-bezier(.5,0,.8,1), opacity .3s;}
+  .pg-timer{height:6px; border-radius:6px; background:#e2e8f0; margin-top:8px; overflow:hidden;}
+  .pg-timer i{display:block; height:100%; width:0; background:var(--red);}
+  .pg-acts{display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; margin-top:10px;}
+  .pg-acts button{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:8px 6px; font-size:.8rem; cursor:pointer; color:var(--ink-2); text-align:left;}
+  .pg-acts button[aria-pressed="true"]{border-color:var(--navy); box-shadow:0 0 0 1px var(--navy); color:var(--ink); font-weight:600;}
+  .pg-acts small{display:block; font-size:.7rem; color:var(--muted); font-weight:400;}
+  .pg-bar{height:6px; border-radius:6px; background:var(--navy); margin-top:5px; width:0; transition:width .4s;}
+  #pg-msg{min-height:3.2em; margin-top:10px; font-size:.86rem;}
+
+  /* ---------- 03 · Cinco sinais ---------- */
+  #sig-scene{perspective:2200px;}
+  #sig-scene .slab{cursor:pointer;}
+  #sig-scene .slab.active{--oz:22px;}
+  #sig-scene .slab.dim > i{opacity:.35;}
+  #sig-scene .top-label{font-size:15px; font-weight:700; color:#fff;}
+  #sig-scene .floor-label{font-size:14px; font-weight:700;}
+  #sig-panel{min-height:170px; margin-top:10px;}
+  #sig-panel .q{font-family:var(--serif); font-style:italic; color:var(--ink); font-size:.92rem;}
+
+  /* ---------- 04 · Rodadas ---------- */
+  #st-scene{perspective:2400px;}
+  #st-scene .slab{cursor:pointer;}
+  #st-scene .slab.active{--oz:16px;}
+  #st-scene .slab.active > i{--c:var(--red);}
+  #st-scene .top-label{font-size:20px; font-weight:700; font-family:var(--serif);}
+  #st-panel{min-height:150px; margin-top:10px;}
+  .funnel{display:grid; gap:4px; margin-top:12px;}
+  .funnel div{display:grid; grid-template-columns:1fr 3.4em; align-items:center; gap:8px; font-size:.76rem; color:var(--ink-2);}
+  .funnel i{display:block; height:16px; border-radius:4px; background:var(--navy); font-style:normal; color:#fff; font-size:.68rem; line-height:16px; padding-left:6px; white-space:nowrap; overflow:hidden;}
+  .funnel b{font-family:var(--sans); text-align:right;}
+
+  /* ---------- 05 · Perfil ---------- */
+  .dots126{display:grid; grid-template-columns:repeat(14, minmax(0,1fr)); gap:4px; max-width:360px; margin:12px auto 0;}
+  .dots126 i{aspect-ratio:1; border-radius:50%; background:var(--off); transition:background .45s;}
+  #pf-leg{justify-content:center;}
+  #pf-leg span{display:inline-flex; align-items:center;}
+  .usebar{display:flex; height:30px; border-radius:8px; overflow:hidden; margin-top:8px;}
+  .usebar i{display:flex; align-items:center; justify-content:center; color:#fff; font-style:normal; font-size:.72rem; font-weight:600; min-width:0;}
+  .uselist{display:grid; gap:2px; margin-top:8px; font-size:.78rem; color:var(--ink-2);}
+
+  /* ---------- 06 · Responda ---------- */
+  .qs{display:grid; gap:5px; margin-top:6px;}
+  .qq{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:6px 12px; display:grid; grid-template-columns:1fr 250px; gap:10px; align-items:center;}
+  .qq p{margin:0; font-size:.84rem; color:var(--ink);}
+  .qq p small{display:block; font-size:.68rem; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; font-weight:700;}
+  .lk{display:grid; grid-template-columns:repeat(7, minmax(0,1fr)); gap:3px; position:relative;}
+  .lk button{border:1px solid var(--border); background:#fff; border-radius:7px; padding:6px 0; font-size:.78rem; cursor:pointer; color:var(--ink-2);}
+  .lk button[aria-pressed="true"]{background:var(--navy); border-color:var(--navy); color:#fff;}
+  .lk .avg{position:absolute; top:-7px; width:2px; height:calc(100% + 14px); background:var(--red); opacity:0; transition:opacity .4s, left .4s; pointer-events:none;}
+  .qq.done .avg{opacity:1;}
+  .qq .res{font-size:.7rem; line-height:1.3; color:var(--muted); display:none; margin-top:3px;}
+  .qq.done .res{display:block;} .qq.done .lkl{display:none;}
+  .lkl{display:flex; justify-content:space-between; font-size:.66rem; color:var(--muted); margin-top:2px;}
+  @media (max-width:760px){ .qq{grid-template-columns:1fr;} }
+
+  /* ---------- 07 · Mapa ---------- */
+  #map-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  #map-svg text{font-family:var(--sans);}
+  #map-svg .arr{cursor:pointer;}
+  .bets{display:grid; gap:6px; margin-top:8px;}
+  .bet{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:7px 12px;}
+  .bet p{margin:0 0 6px; font-size:.84rem; color:var(--ink);}
+  .bet .yn{display:flex; gap:6px; flex-wrap:wrap;}
+  .bet .yn button{border:1px solid var(--border); background:#fff; border-radius:8px; padding:5px 12px; font-size:.8rem; cursor:pointer;}
+  .bet .yn button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .bet .ans{font-size:.74rem; line-height:1.35; margin-top:5px; display:none; color:var(--ink-2);}
+  .bet.shown .ans{display:block;}
+  #map-panel{min-height:84px; margin-top:8px;}
+
+  /* ---------- 08 · Placar ---------- */
+  #sc-scene{perspective:2600px;}
+  #sc-scene .slab{cursor:pointer; transition:transform .5s cubic-bezier(.2,.8,.2,1), --h .7s;}
+  #sc-scene .slab.active{--oz:14px;}
+  #sc-scene .top-label{font-size:14px; font-weight:700; color:var(--ink);}
+  #sc-scene .slab.ns > i{background:repeating-linear-gradient(45deg, #cbd5e1 0 5px, #f1f5f9 5px 10px);}
+  #sc-panel{min-height:120px; margin-top:10px;}
+  .hbtn{display:grid; grid-template-columns:repeat(10, minmax(0,1fr)); gap:4px; margin-top:8px;}
+  .hbtn button{border:1px solid var(--border); background:var(--card); border-radius:7px; padding:5px 0; font-size:.74rem; cursor:pointer; color:var(--ink-2); border-bottom:4px solid var(--bc, var(--border)); min-width:0;}
+  .hbtn button[aria-pressed="true"]{border-color:var(--ink); font-weight:700; color:var(--ink); border-bottom-color:var(--bc, var(--ink));}
+  @media (max-width:600px){ .hbtn{grid-template-columns:repeat(5, minmax(0,1fr));} }
+
+  /* ---------- 09 · Inesperado ---------- */
+  .guess{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;}
+  .guess button{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:8px 12px; font-size:.84rem; cursor:pointer;}
+  .guess button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  #un-out{min-height:96px; margin-top:10px;}
+  .rng{display:grid; grid-template-columns:9em 1fr 4.6em; gap:10px; align-items:center; margin-top:8px; font-size:.84rem; color:var(--ink-2);}
+  .rng input{width:100%; accent-color:var(--red);}
+  .rng b{font-family:var(--sans); color:var(--ink); text-align:right;}
+  .dbars{display:grid; gap:10px; margin-top:12px;}
+  .dbar{display:grid; grid-template-columns:9.5em 1fr; gap:10px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .dbar .tr{position:relative; height:22px; background:#f1f5f9; border-radius:6px;}
+  .dbar .tr::before{content:""; position:absolute; left:50%; top:-4px; bottom:-4px; width:1px; background:#94a3b8;}
+  .dbar .tr i{position:absolute; top:3px; bottom:3px; border-radius:4px; transition:left .4s, width .4s;}
+  .dbar .tr span{position:absolute; top:2px; font-size:.72rem; font-weight:700; color:var(--ink); transition:left .4s;}
+  #un-sim{opacity:.35; pointer-events:none; transition:opacity .4s;}
+  #un-sim.on{opacity:1; pointer-events:auto;}
+
+  /* ---------- 10 · Desempenho ---------- */
+  #pf-scene{perspective:2200px;}
+  #pf-scene .slab{transition:--h .5s, transform .5s;}
+  #pf-scene .top-label{font-size:17px; font-weight:700;}
+  #pf-scene .floor-label{font-size:14px; font-weight:700;}
+  .sl{display:grid; grid-template-columns:13em 1fr 3.6em; gap:8px; align-items:center; font-size:.8rem; color:var(--ink-2); margin-top:4px;}
+  .sl input{width:100%; accent-color:var(--navy);}
+  .sl b{font-family:var(--sans); text-align:right; color:var(--ink);}
+  .sl.ns{color:var(--muted);}
+  .sl.ns input{accent-color:#94a3b8;}
+  .sl .pill{font-size:.62rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); background:#eef2f7; border-radius:4px; padding:1px 5px; margin-left:4px;}
+  #pf-out{min-height:72px; margin-top:10px;}
+  @media (max-width:600px){ .sl{grid-template-columns:8.6em 1fr 3em;} .sl .pill{display:block; width:max-content; margin:1px 0 0;} }
+
+  /* ---------- 11 · Contexto ---------- */
+  #cx-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  #cx-svg text{font-family:var(--sans);}
+  #cx-out{min-height:80px; margin-top:10px;}
+
+  /* ---------- 12 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.73rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:12px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:5px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.74rem; color:var(--ink-2); line-height:1.4;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2026-kussano-aprendizagem-supersticiosa-ia/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2026</div>
+      <h1 class="rv" style="--d:.1s">A IA fácil faz a gente aprender errado?</h1>
+      <p class="sub rv" style="--d:.2s">Às vezes a experiência ensina errado: a pessoa liga um resultado a uma causa que não é a verdadeira. A tese mediu cinco sinais desse risco em 126 profissionais que usam IA generativa no trabalho e viu o que eles têm a ver com o desempenho. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Walter Shuiti Kussano</span>
+        <span><b>Orientador:</b> Prof. Dr. Diógenes de Souza Bido</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#pombo">Começar →</a>
+        <a class="btn ghost" href="#placar">Ir direto ao resultado</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div id="hero-cap" aria-live="off"></div>
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="520x330" role="img" aria-label="Cinco colunas, uma por sinal de risco, com a média das respostas de 1 a 7; três azuis da pessoa e duas vermelhas do ambiente"></div></div>
+      <p class="cap-legend">Altura = média das respostas dos 126 profissionais (1 = nunca, 7 = sempre) nas frases de cada sinal, conta nossa com a Tabela 6. Azul: sinais da pessoa. Vermelho: sinais do ambiente.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Estuda como o uso da IA generativa no trabalho se liga à reflexão, ao feedback e ao desempenho dos profissionais."><b>8</b>Trabalho decente e crescimento econômico</a></li><li class="ods-4"><a href="https://brasil.un.org/pt-br/sdgs/4" target="_blank" rel="noopener" title="ODS 4 · Educação de qualidade: Aponta a capacidade de analisar as respostas da IA e de refletir sobre a própria experiência como competências para o emprego."><b>4</b>Educação de qualidade</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · POMBO -->
+<section class="slide" id="pombo" data-label="Aprender errado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> A ideia</div>
+      <h2 class="rv" style="--d:.1s">Aprender errado é tomar uma coincidência por causa</h2>
+      <p class="lede rv" style="--d:.15s">O nome vem dos experimentos de Skinner, em 1947: pombos com fome recebiam comida em intervalos fixos, fizessem o que fizessem. Mesmo assim, passaram a repetir o gesto que tinham feito pouco antes, como se ele trouxesse a comida.</p>
+      <p class="rv" style="--d:.2s; font-size:.92rem">No trabalho acontece igual. A tese cita o médico que credita a melhora do paciente à própria intervenção, quando ela pode ter vindo da recuperação natural ou de outros profissionais, e repete a prática. A tese não trata de crendices como gato preto ou número da sorte, e sim dessas ligações erradas entre o que se fez e o que aconteceu, que a literatura chama de <b>aprendizagem supersticiosa</b>.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel">
+        <div class="tag">Seja o pombo por alguns segundos <span class="ilus">ilustração</span></div>
+        <div id="pg-box">
+          <svg id="pg-svg" viewBox="0 0 400 170" aria-hidden="true">
+            <rect x="0" y="140" width="400" height="30" fill="#e2e8f0"/>
+            <rect x="300" y="0" width="70" height="26" rx="4" fill="#94a3b8"/>
+            <circle id="pg-food" cx="335" cy="30" r="7" fill="#e80734"/>
+            <g id="pg-bird">
+              <ellipse cx="170" cy="110" rx="46" ry="28" fill="#64748b"/>
+              <path class="wing" d="M150,98 Q178,80 196,104 Q170,112 150,98 Z" fill="#475569"/>
+              <circle cx="212" cy="86" r="17" fill="#64748b"/>
+              <circle cx="218" cy="82" r="3" fill="#fff"/>
+              <path d="M228,86 L242,90 L228,94 Z" fill="#f59e0b"/>
+              <path d="M126,106 L106,98 L112,116 Z" fill="#475569"/>
+              <path d="M162,136 L162,142 M182,136 L182,142" stroke="#f59e0b" stroke-width="3"/>
+            </g>
+          </svg>
+        </div>
+        <div class="pg-timer"><i id="pg-t"></i></div>
+        <div class="pg-acts" id="pg-acts"></div>
+        <div id="pg-msg" aria-live="polite"></div>
+      </div>
+      <p class="note">A comida cai a cada 5 segundos, faça o pombo o que fizer. A barra de cada gesto conta quantas vezes a comida chegou logo depois dele.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · CINCO SINAIS -->
+<section class="slide" id="sinais" data-label="Cinco sinais">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> O que a tese mede</div>
+      <h2 class="rv" style="--d:.1s">Como não dá para medir o erro em si, a tese mede cinco sinais de risco</h2>
+      <p class="lede rv" style="--d:.15s">Quem soubesse que aprendeu errado já não aprenderia errado. Por isso o autor mede a <b>propensão</b> à aprendizagem supersticiosa: três sinais da pessoa e dois do ambiente em que ela recebe retorno sobre o que fez.</p>
+      <div class="gbtn rv" id="sig-btn" style="--d:.2s"></div>
+      <div class="panel rv" id="sig-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="sig-scene" data-fit="520x340" role="img" aria-label="Cinco blocos: três azuis da pessoa e dois vermelhos do ambiente; clique em um para ver a definição"></div></div>
+      <p class="cap-legend">Os cinco sinais formam o modelo da tese (Figura 4). Altura = número de frases de cada sinal no modelo final. Clique num bloco ou num botão. As frases são do questionário, respondidas de 1 (nunca) a 7 (sempre), pensando no uso da IA generativa no trabalho.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · RODADAS -->
+<section class="slide" id="rodadas" data-label="Três rodadas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Como a pesquisa foi feita</div>
+      <h2 class="rv" style="--d:.1s">Foram três rodadas de questionário até chegar ao modelo final</h2>
+      <p class="lede rv" style="--d:.15s">Primeiro, uma revisão da literatura juntou o que se sabia sobre o tema. Depois, dois testes do questionário mostraram o que precisava mudar. Clique em cada degrau.</p>
+      <div class="panel rv" id="st-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="st-scene" data-fit="520x320" role="img" aria-label="Escada de quatro degraus: revisão da literatura, primeiro teste, segundo teste e coleta final"></div></div>
+      <div class="gbtn" id="st-btn" style="justify-content:center"></div>
+      <div class="funnel" id="st-fun" aria-label="Funil da revisão da literatura"></div>
+      <p class="cap-legend">A altura dos degraus marca a ordem das etapas, não o tamanho. Em cima, o número de artigos (revisão) ou de respostas. O funil é da Figura 1 (busca em outubro de 2024, em seis bases).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · PERFIL -->
+<section class="slide" id="perfil" data-label="Quem respondeu">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Coleta final · jan. a mar. de 2026</div>
+      <h2 class="rv" style="--d:.1s">Responderam 126 profissionais que usam IA generativa no trabalho</h2>
+      <p class="lede rv" style="--d:.15s">O questionário circulou no LinkedIn, no Facebook e no Instagram, sem pedir nome. O convite buscava gestores, especialistas e empreendedores que usam ferramentas como ChatGPT, Copilot e Gemini.</p>
+      <div class="panel rv" style="--d:.2s">
+        <div class="tag">Para que usam a IA generativa (Tabela 5)</div>
+        <div class="usebar" id="use-bar"></div>
+        <div class="uselist" id="use-list"></div>
+        <p style="font-size:.74rem; color:var(--muted); margin-top:6px">As fatias somam 100%: são a divisão das finalidades citadas.</p>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="pf-seg" role="group" aria-label="Escolha o recorte"></div>
+      <div class="dots126" id="pf-dots" role="img" aria-label="126 pontos, um por profissional, coloridos pelo recorte escolhido"></div>
+      <div class="legend" id="pf-leg"></div>
+      <p class="note" id="pf-note"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · RESPONDA -->
+<section class="slide" id="responda" data-label="Responda">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">06</span> Você no lugar de quem respondeu</div>
+    <h2 class="rv" style="--d:.1s">Responda cinco frases do questionário e compare com a média</h2>
+    <p class="lede rv" style="--d:.15s; max-width:46em">Pense no uso de ferramentas de IA generativa no trabalho ou num projeto. De 1 (nunca) a 7 (sempre), com que frequência...</p>
+    <div class="qs rv" id="qs" style="--d:.2s"></div>
+    <p class="note rv" style="--d:.25s">A linha vermelha é a média dos 126 (Tabela 6). Na frase sobre refletir, a tese usa a resposta invertida para medir a <b>falta</b> de reflexão (média 2,2); a média mostrada aqui, 5,8, é a da frase como está escrita (conta nossa: 8 menos 2,2).</p>
+  </div>
+</section>
+
+<!-- 07 · MAPA -->
+<section class="slide" id="mapa" data-label="Dez apostas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> As hipóteses</div>
+      <h2 class="rv" style="--d:.1s">A tese apostou em dez caminhos entre a IA, o ambiente e o desempenho</h2>
+      <p class="lede rv" style="--d:.15s">Achar a IA fácil levaria a confiar demais, a se sentir no controle e a refletir menos; trabalho incerto deixaria o feedback confuso e lento; e tudo isso pioraria o desempenho. Aposte em três antes de ver.</p>
+      <div class="bets rv" id="bets" style="--d:.2s"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="map-svg" viewBox="0 0 640 420" role="img" aria-label="Mapa das dez hipóteses: facilidade de uso da IA leva a três sinais da pessoa, incerteza do ambiente leva a dois sinais do ambiente, e os cinco levam ao desempenho"></svg>
+      <div class="legend" id="map-leg"></div>
+      <div class="panel" id="map-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · PLACAR -->
+<section class="slide" id="placar" data-label="O placar">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Resultado · 126 profissionais</div>
+      <h2 class="rv" style="--d:.1s">Seis caminhos se confirmaram, um saiu ao contrário e três não tiveram efeito</h2>
+      <p class="lede rv" style="--d:.15s">Cada coluna é uma hipótese. A altura é a força da ligação (o β, de 0 a 1, em desvios-padrão). Troque o modelo: os números quase não mudam com os controles nem com o teste de viés do questionário.</p>
+      <div class="seg rv" id="sc-seg" style="--d:.2s" role="group" aria-label="Escolha o modelo">
+        <button data-m="1" aria-pressed="true">Com controles</button>
+        <button data-m="0" aria-pressed="false">Sem controles</button>
+        <button data-m="2" aria-pressed="false">Teste de viés</button>
+      </div>
+      <div class="panel rv" id="sc-panel" style="--d:.25s" aria-live="polite"></div>
+      <div class="stats rv" style="--d:.3s">
+        <div class="stat"><b>23,1%</b><span>da variação do desempenho explicada pelo modelo</span></div>
+        <div class="stat"><b>0,190</b><span>gestores relataram um pouco mais de confiança em si (controle)</span></div>
+        <div class="stat"><b>&lt; 0,05</b><span>mudança máxima nos β com o teste de viés do método</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="sc-scene" data-fit="560x360" role="img" aria-label="Dez colunas, uma por hipótese, com altura igual à força da ligação; azul confirmada, vermelha ao contrário, listrada sem efeito"></div></div>
+      <div class="hbtn" id="sc-btn"></div>
+      <div class="legend" style="justify-content:center"><span><i class="dot" style="background:var(--navy)"></i>confirmada</span><span><i class="dot" style="background:var(--red)"></i>significativa, mas ao contrário</span><span><i class="dot stripe"></i>sem efeito claro</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · INESPERADO -->
+<section class="slide" id="inesperado" data-label="O inesperado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> O inesperado</div>
+      <h2 class="rv" style="--d:.1s">Quem acha a IA fácil reflete mais, não menos</h2>
+      <p class="lede rv" style="--d:.15s">A tese esperava que a facilidade levasse a aceitar as respostas da máquina sem pensar. Antes de ver: quem acha a IA generativa mais fácil de usar...</p>
+      <div class="guess rv" id="un-guess" style="--d:.2s"></div>
+      <div class="panel rv" id="un-out" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel" id="un-sim">
+        <div class="tag">Mude a facilidade de uso e veja os três sinais da pessoa <span class="ilus">ilustração</span></div>
+        <div class="rng"><span>Facilidade de uso</span><input type="range" id="un-z" min="-2" max="2" step="0.5" value="1" aria-label="Facilidade de uso, em desvios-padrão"><b id="un-zv"></b></div>
+        <div class="dbars" id="un-bars"></div>
+        <p style="font-size:.74rem; color:var(--muted); margin-top:10px">Tudo em desvios-padrão, a partir da média. Cada barra = β da Tabela 13 × o valor escolhido (conta nossa). Mostra a direção e o tamanho relativo das ligações, não uma previsão para uma pessoa.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · DESEMPENHO -->
+<section class="slide" id="desempenho" data-label="O que pesa no desempenho">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> A descoberta</div>
+      <h2 class="rv" style="--d:.1s">No desempenho, pesaram a falta de reflexão e o feedback confuso, não a confiança</h2>
+      <p class="lede rv" style="--d:.15s">Mexa nos cinco sinais e veja a coluna do desempenho que os profissionais relataram (cumprir prazos e compromissos, tomar iniciativa, se adaptar). Só dois controles movem a coluna; os outros três ficaram sem efeito claro.</p>
+      <div class="gbtn rv" id="pf-pre" style="--d:.2s"></div>
+      <div class="rv" id="pf-sl" style="--d:.25s"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="pf-scene" data-fit="460x330" role="img" aria-label="Coluna do desempenho que sobe ou desce conforme os controles, ao lado de uma coluna de referência na média"></div></div>
+      <div class="panel" id="pf-out" aria-live="polite"></div>
+      <p class="cap-legend">Ilustração com os β da Tabela 13, em desvios-padrão a partir da média, somados (conta nossa). Os três sinais sem efeito claro não mudam a coluna. O modelo explica 23,1% da variação do desempenho.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · CONTEXTO -->
+<section class="slide" id="contexto" data-label="Ambiente incerto">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> O ambiente</div>
+      <h2 class="rv" style="--d:.1s">Quando o trabalho muda rápido, o feedback fica mais confuso e mais lento</h2>
+      <p class="lede rv" style="--d:.15s">A incerteza foi medida por frases como “as tarefas mudaram de forma rápida” e “as demandas dos gestores e clientes foram difíceis de prever”. Ela se ligou aos dois feedbacks ruins, mas só o confuso chegou ao desempenho.</p>
+      <div class="rng rv" style="--d:.2s"><span>Incerteza do trabalho</span><input type="range" id="cx-z" min="-2" max="2" step="0.5" value="1" aria-label="Incerteza do trabalho, em desvios-padrão"><b id="cx-zv"></b></div>
+      <div class="panel rv" id="cx-out" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="cx-svg" viewBox="0 0 560 330" role="img" aria-label="Cadeia: incerteza leva ao feedback ambíguo e ao feedback tardio; só o ambíguo leva ao desempenho"></svg>
+      <p class="cap-legend">Espessura das setas = β da Tabela 13; tracejada = sem efeito claro. Valores em desvios-padrão; o efeito que passa pelo feedback confuso é o produto dos dois β (conta nossa, sem teste próprio na tese). <span class="ilus">ilustração</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e limites">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Na prática · limites · créditos</div>
+    <h2 class="rv" style="--d:.1s">O que a pesquisa sugere para quem trabalha com IA generativa</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--navy)"><h3>Gestores e equipes</h3><p>Reservar tempo para refletir antes das decisões e depois dos resultados, bons ou ruins, e criar momentos fixos de feedback claro com a equipe, dentro de uma cultura que trate o erro como fonte de aprendizado.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--red)"><h3>Organizações e RH</h3><p>O autor sugere um núcleo de aprendizagem que analise sucessos e fracassos, registre lições e trabalhe com o RH em diagnósticos e capacitações, sobretudo de quem toma decisões.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ink-2)"><h3>Quem usa IA no trabalho</h3><p>Para o autor, saber usar as ferramentas e, sobretudo, analisar as respostas que elas geram pode ser decisivo para a empregabilidade. O questionário serve como um alerta para a própria pessoa.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#5b6f96"><h3>Pesquisadores</h3><p>Aplicar o modelo dentro de uma mesma empresa ou setor, comparar níveis hierárquicos e gerações, acompanhar decisões ao longo do tempo e testar a segurança psicológica como moderadora.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Se as pessoas aprenderam errado.</b> A tese mede sinais de risco, a propensão, e não casos de aprendizagem supersticiosa, que só aparecem depois de uma falha analisada. <em>· segundo o autor</em></li>
+          <li><b>Que vale para todos.</b> A amostra é de conveniência, recrutada em redes sociais, com 126 profissionais. <em>· segundo o autor</em></li>
+          <li><b>Causa e efeito.</b> Tudo foi respondido num só momento, e o desempenho é o relatado pela própria pessoa. O autor sugere medir o desempenho depois, num segundo momento. <em>· segundo o autor e observação nossa</em></li>
+          <li><b>Um número que depende do cálculo.</b> Os p da tese vêm do método de Kock, adotado porque o bootstrap ficou instável. No diagrama do software (Figura 8, bootstrap, sem controles), o caminho do feedback confuso ao desempenho tem p 0,118. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          KUSSANO, Walter Shuiti. <em>Propensão à aprendizagem supersticiosa em contextos de percepção da facilidade de uso da inteligência artificial generativa e seus efeitos no desempenho individual no trabalho.</em> Tese (Doutorado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2026. Orientador: Prof. Dr. Diógenes de Souza Bido.
+        </div>
+        <p style="margin-top:10px; font-size:.78rem">Apoio do MackPesquisa. Análises no SmartPLS 4. As frases novas de feedback foram geradas com ChatGPT, Copilot e Gemini e revisadas por pesquisadores e especialistas; o autor usou ChatGPT e Grammarly na revisão do texto. Os dois testes viraram artigos (CASI 2024 e SemeAd 2025). Esta versão simplifica o trabalho; as tabelas completas estão no original.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable, ramp = M.ramp;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  function n0(n){ return Math.round(n).toLocaleString(EN ? 'en-US' : 'pt-BR'); }
+  function fx(v, d){ var p = Math.pow(10, d === undefined ? 2 : d); return fmt(Math.round(v * p + (v >= 0 ? 1e-9 : -1e-9)) / p, d === undefined ? 2 : d); }
+  function sg(v, d){ return (v > 0 ? '+' : v < 0 ? '−' : '') + fx(Math.abs(v), d); }
+  function pv(p){ return p < 0.001 ? L('p < 0,001', 'p < 0.001') : 'p ' + fx(p, 3); }
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent){ var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+  function txt(parent, x, y, s, css){ var t = el('text', {x:x, y:y}, parent); t.textContent = s; if (css) t.setAttribute('style', css); return t; }
+  function seg(id, fn){ var g = $(id); each(g.querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ press(g.querySelectorAll('button'), b); fn(b); }); }); }
+  function press(list, on){ each(list, function(x){ x.setAttribute('aria-pressed', x === on ? 'true' : 'false'); }); }
+  var mobile = window.matchMedia('(max-width:600px)');
+
+  /* ================= DADOS DA TESE ================= */
+  // Cinco sinais (dimensões da PAS). m = média das frases que ficaram (Tabela 6, conta nossa); n = frases no modelo final
+  var D = {
+    oc:{n:L('Excesso de confiança', 'Overconfidence'), sn:L('Confiança', 'Confidence'), ab:'EC', g:0, m:5.00, k:3,
+        def:L('Superestimar a precisão dos próprios conhecimentos e julgamentos, a "probabilidade de estar certo".', 'Overestimating the accuracy of one’s own knowledge and judgment, the “probability of being right”.'),
+        q:L('“...confiei em minha capacidade de fazer melhor do que outros na tomada de decisões estratégicas.”', '“...I trusted my ability to do better than others in strategic decision-making.”')},
+    ic:{n:L('Ilusão de controle', 'Illusion of control'), sn:L('Controle', 'Control'), ab:'IC', g:0, m:4.87, k:3,
+        def:L('Acreditar que dá para influenciar ou prever resultados que dependem do acaso.', 'Believing one can influence or predict outcomes that depend on chance.'),
+        q:L('“...acreditei que poderia prever com precisão o volume de trabalho na minha área de atuação.”', '“...I believed I could accurately predict the workload in my field.”')},
+    fr:{n:L('Falta de reflexão', 'Lack of reflection'), sn:L('Sem reflexão', 'No reflection'), ab:'FR', g:0, m:2.23, k:6,
+        def:L('Não parar para rever o que aconteceu, as causas e os efeitos, antes de tirar conclusões para a próxima vez.', 'Not stopping to review what happened, its causes and effects, before drawing conclusions for next time.'),
+        q:L('“...refleti sobre minhas ações para ver se eu posso melhorá-las.” (resposta invertida: quem marca pouco tem mais falta de reflexão)', '“...I reflected on my actions to see if I can improve them.” (reversed answer: a low score means more lack of reflection)')},
+    fa:{n:L('Feedback ambíguo', 'Ambiguous feedback'), sn:L('F. ambíguo', 'Ambig. fb.'), ab:'FA', g:1, m:3.17, k:7,
+        def:L('Um retorno vago, que não deixa claro o que foi bem ou mal feito e gera dúvida em quem recebe.', 'Vague feedback that does not make clear what was done well or badly and leaves the receiver in doubt.'),
+        q:L('“...o feedback gerado trouxe mais confusão do que clareza sobre como devia melhorar.”', '“...the feedback I got brought more confusion than clarity about how I should improve.”')},
+    ft:{n:L('Feedback tardio', 'Delayed feedback'), sn:L('F. tardio', 'Delayed fb.'), ab:'FT', g:1, m:3.15, k:4,
+        def:L('Um retorno que chega muito depois da ação, tarde demais para ajustar o comportamento a tempo.', 'Feedback that arrives long after the action, too late to adjust behavior in time.'),
+        q:L('“...o feedback chegou tarde demais para que eu pudesse ajustar meu comportamento a tempo.”', '“...the feedback came too late for me to adjust my behavior in time.”')}
+  };
+  var ORD = ['oc', 'ic', 'fr', 'fa', 'ft'];
+  ORD.forEach(function(k, i){ D[k].c = D[k].g ? ramp('var(--ctx)', i - 3, 4) : ramp('var(--ind)', i, 5); });
+  var NODE = {
+    eou:{n:L('Facilidade de uso da IA', 'AI ease of use'), c:'var(--gai)'},
+    unc:{n:L('Incerteza do trabalho', 'Work uncertainty'), c:'var(--gai)'},
+    perf:{n:L('Desempenho', 'Performance'), c:'#0f172a'}
+  };
+  ORD.forEach(function(k){ NODE[k] = {n:D[k].n, c:D[k].c}; });
+  // Dez hipóteses. b e p por modelo: [0] sem controles (Tabela 12), [1] com controles (Tabela 13), [2] com marcador de viés (Tabela 14)
+  var H = [
+    {h:'H1', f:'unc', t:'fa', e:1, b:[0.232, 0.236, 0.245], p:[0.006, 0.005, 0.004], f2:0.059},
+    {h:'H2', f:'unc', t:'ft', e:1, b:[0.315, 0.315, 0.317], p:[0.000, 0.000, 0.000], f2:0.110},
+    {h:'H3', f:'eou', t:'fr', e:1, b:[-0.406, -0.417, -0.400], p:[0.000, 0.000, 0.000], f2:0.203},
+    {h:'H4', f:'eou', t:'ic', e:1, b:[0.365, 0.365, 0.346], p:[0.000, 0.000, 0.000], f2:0.153},
+    {h:'H5', f:'eou', t:'oc', e:1, b:[0.338, 0.323, 0.310], p:[0.000, 0.000, 0.000], f2:0.116},
+    {h:'H6', f:'fa', t:'perf', e:-1, b:[-0.204, -0.207, -0.185], p:[0.029, 0.027, 0.047], f2:0.032},
+    {h:'H7', f:'ft', t:'perf', e:-1, b:[0.049, 0.052, 0.044], p:[0.578, 0.554, 0.618], f2:0.002},
+    {h:'H8', f:'fr', t:'perf', e:-1, b:[-0.317, -0.316, -0.310], p:[0.001, 0.001, 0.001], f2:0.087},
+    {h:'H9', f:'ic', t:'perf', e:-1, b:[0.123, 0.124, 0.111], p:[0.155, 0.152, 0.201], f2:0.009},
+    {h:'H10', f:'oc', t:'perf', e:-1, b:[0.049, 0.049, 0.043], p:[0.578, 0.578, 0.626], f2:0.002}
+  ];
+  function status(hh, m){ var b = hh.b[m], p = hh.p[m]; if (p >= 0.05) return 'ns'; return (b > 0 ? 1 : -1) === hh.e ? 'ok' : 'opp'; }
+  var STC = {ok:'var(--navy)', opp:'var(--red)', ns:'#94a3b8'};
+  var STN = {ok:L('confirmada', 'held up'), opp:L('significativa, mas ao contrário', 'significant, but the other way'), ns:L('sem efeito claro', 'no clear effect')};
+  var MODN = [L('sem controles (Tabela 12)', 'no controls (Table 12)'), L('com controles (Tabela 13)', 'with controls (Table 13)'), L('com o marcador de viés do método (Tabela 14)', 'with the method bias marker (Table 14)')];
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 470, 120, {ay:'66%', rx:'60deg'});
+    rotatable(sc, st, -24, 8);
+    var X = [0, 86, 172, 310, 396], bx = [];
+    ORD.forEach(function(k, i){
+      var b = box({w:66, d:66, x:X[i], y:30, h:D[k].m * 30, c:D[k].c, top:fx(D[k].m, 1)});
+      st.appendChild(b); bx.push(b);
+    });
+    flatLabel(st, L('PESSOA', 'PERSON'), 0, 104, 238, 'text-align:center; color:#1f3b73');
+    flatLabel(st, L('AMBIENTE', 'ENVIRONMENT'), 310, 104, 152, 'text-align:center; color:#e80734');
+    var cap = $('hero-cap'), cur = -1;
+    function show(i){ cur = i; bx.forEach(function(b, j){ b.classList.toggle('active', j === i); }); var d = D[ORD[i]]; cap.innerHTML = '<b>' + d.n + '</b> · ' + L('média ', 'average ') + fx(d.m, 1) + L(' de 7', ' out of 7'); }
+    show(0);
+    if (!reduce) M.onTick(function(t){ if (t < 0) return; var i = Math.floor(t / 2.6) % 5; if (i !== cur) show(i); });
+  })();
+
+  /* ================= 02 · POMBO ================= */
+  (function(){
+    var A = [
+      {k:'spin', n:L('Girar', 'Turn around'), s:L('dar uma volta', 'spin in place')},
+      {k:'peck', n:L('Bicar o chão', 'Peck the floor'), s:L('abaixar a cabeça', 'bow the head')},
+      {k:'flap', n:L('Bater as asas', 'Flap the wings'), s:L('agitar as asas', 'shake the wings')}
+    ], cnt = [0, 0, 0], last = -1, drops = 0, acts = $('pg-acts'), bird = $('pg-bird'), food = $('pg-food'), msg = $('pg-msg'), bars = [];
+    A.forEach(function(a, i){
+      var b = document.createElement('button'); b.setAttribute('aria-pressed', 'false');
+      b.innerHTML = a.n + '<small>' + a.s + '</small><div class="pg-bar"></div>';
+      b.addEventListener('click', function(){
+        last = i; press(acts.children, b);
+        bird.classList.remove('spin', 'peck', 'flap'); void bird.getBBox(); bird.classList.add(a.k);
+      });
+      acts.appendChild(b); bars.push(b.querySelector('.pg-bar'));
+    });
+    msg.innerHTML = L('Escolha um gesto para o pombo. Ele está com fome.', 'Pick a gesture for the pigeon. It is hungry.');
+    var visible = false, T = 5, start = null;
+    new IntersectionObserver(function(es){ es.forEach(function(e){ visible = e.isIntersecting; }); }).observe($('pg-box'));
+    function drop(){
+      drops++;
+      food.style.transform = 'translateY(108px)';
+      setTimeout(function(){ food.style.opacity = '0'; }, 650);
+      setTimeout(function(){ food.style.transition = 'none'; food.style.transform = 'none'; void food.getBBox(); food.style.transition = ''; food.style.opacity = '1'; }, 1100);
+      if (last >= 0){
+        cnt[last]++;
+        var mx = Math.max.apply(null, cnt);
+        bars.forEach(function(b, j){ b.style.width = (cnt[j] / Math.max(1, mx) * 100) + '%'; });
+        var a = A[last];
+        msg.innerHTML = drops < 3
+          ? L('A comida caiu logo depois de <b>' + a.n.toLowerCase() + '</b>. Para o pombo, foi o gesto que trouxe a comida (' + cnt[last] + (cnt[last] > 1 ? ' vezes' : ' vez') + ').', 'Food dropped right after <b>' + a.n.toLowerCase() + '</b>. For the pigeon, that gesture brought the food (' + cnt[last] + (cnt[last] > 1 ? ' times' : ' time') + ').')
+          : L('Já são ' + drops + ' quedas. A comida cai sozinha a cada 5 segundos: nenhum gesto a trouxe. A ligação que parecia clara é coincidência, e é isso que a tese chama de aprender errado.', 'That makes ' + drops + ' drops. The food falls on its own every 5 seconds: no gesture brought it. The link that looked clear is a coincidence, and that is what the thesis calls learning wrong.');
+      } else {
+        msg.innerHTML = L('A comida caiu sem o pombo fazer nada. Escolha um gesto e espere a próxima.', 'Food dropped with the pigeon doing nothing. Pick a gesture and wait for the next one.');
+      }
+    }
+    var tm = $('pg-t');
+    M.onTick(function(t){
+      if (!visible){ start = null; return; }
+      if (start === null) start = t;
+      var e = t - start;
+      if (e >= T){ start = t; e = 0; drop(); }
+      tm.style.width = (e / T * 100) + '%';
+    });
+  })();
+
+  /* ================= 03 · CINCO SINAIS ================= */
+  (function(){
+    var sc = $('sig-scene'), st = makeStage(sc, 470, 130, {ay:'64%', rx:'58deg'});
+    rotatable(sc, st, -22, 7);
+    var X = [0, 86, 172, 310, 396], bx = [], btn = $('sig-btn');
+    ORD.forEach(function(k, i){
+      var b = box({w:66, d:66, x:X[i], y:30, h:D[k].k * 24, c:D[k].c, top:D[k].ab});
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)) show(i); });
+      st.appendChild(b); bx.push(b);
+      var bb = document.createElement('button'); bb.textContent = D[k].n; bb.style.setProperty('--bc', D[k].c);
+      bb.addEventListener('click', function(){ show(i); }); btn.appendChild(bb);
+    });
+    flatLabel(st, L('PESSOA', 'PERSON'), 0, 108, 238, 'text-align:center; color:#1f3b73');
+    flatLabel(st, L('AMBIENTE', 'ENVIRONMENT'), 310, 108, 152, 'text-align:center; color:#e80734');
+    function show(i){
+      var k = ORD[i], d = D[k];
+      bx.forEach(function(b, j){ b.classList.toggle('active', j === i); b.classList.toggle('dim', j !== i); });
+      press(btn.children, btn.children[i]);
+      $('sig-panel').innerHTML = '<div class="tag">' + (d.g ? L('Sinal do ambiente', 'Sign about the environment') : L('Sinal da pessoa', 'Sign about the person')) + ' · <span class="nt">' + d.k + L(' frases no modelo final', ' statements in the final model') + '</span></div><h3>' + d.n + '</h3><p>' + d.def + '</p><p class="q">' + d.q + '</p>';
+    }
+    show(0);
+    $('sig-panel').insertAdjacentHTML('beforeend', '');
+  })();
+
+  /* ================= 04 · RODADAS ================= */
+  (function(){
+    var S = [
+      {n:L('Revisão', 'Review'), v:'71', t:L('Revisão sistemática · out. 2024', 'Systematic review · Oct. 2024'),
+       p:L('Busca por “superstitious learning” e “aprendizagem supersticiosa” em Scopus, Web of Science, EBSCO, Google Scholar, SciELO e SPELL. Dos 267 encontrados, 71 artigos serviram de base. Deles saíram os cinco sinais e os efeitos esperados.', 'Search for “superstitious learning” in Scopus, Web of Science, EBSCO, Google Scholar, SciELO and SPELL. Of the 267 found, 71 articles formed the basis. The five signs and the expected effects came from them.')},
+      {n:L('1º teste', '1st trial'), v:'173', t:L('Primeiro teste · junho de 2024', 'First trial · June 2024'),
+       p:L('173 respostas, com três sinais (excesso de confiança, falta de reflexão e um feedback “tardio ou ambíguo”). Só a ligação do feedback se confirmou (β 0,328), o que levou a rever o modelo e a separar os dois feedbacks.', '173 responses, with three signs (overconfidence, lack of reflection and a “delayed or ambiguous” feedback). Only the feedback link held up (β 0.328), which led to revising the model and splitting the two kinds of feedback.')},
+      {n:L('2º teste', '2nd trial'), v:'95', t:L('Segundo teste · mar. e abr. de 2025', 'Second trial · Mar. and Apr. 2025'),
+       p:L('95 respostas, já com os cinco sinais, a facilidade de uso da IA e o desempenho. As frases novas de feedback (4 para cada tipo) foram geradas com ChatGPT, Copilot e Gemini, revisadas pelos pesquisadores e avaliadas por especialistas. Algumas frases não funcionaram, e cada feedback ganhou 7 frases.', '95 responses, now with the five signs, AI ease of use and performance. The new feedback statements (4 per type) were generated with ChatGPT, Copilot and Gemini, reviewed by the researchers and rated by experts. Some statements did not work, and each feedback got 7 statements.')},
+      {n:L('Coleta final', 'Final survey'), v:'126', t:L('Coleta final · jan. a mar. de 2026', 'Final survey · Jan. to Mar. 2026'),
+       p:L('126 respostas válidas em 70 itens, de 1 (nunca) a 7 (sempre). Na análise, saíram frases que mediam mal (como as invertidas da facilidade de uso), e as três partes do desempenho (tarefa, contexto e adaptação) foram juntadas numa medida geral. Quatro frases sem relação com o tema entraram para testar o viés do próprio questionário.', '126 valid responses on 70 items, from 1 (never) to 7 (always). In the analysis, statements that measured poorly were dropped (such as the reversed ease-of-use ones), and the three parts of performance (task, contextual and adaptive) were combined into an overall measure. Four statements unrelated to the topic were included to test the questionnaire’s own bias.')}
+    ];
+    var sc = $('st-scene'), st = makeStage(sc, 440, 110, {ay:'70%', rx:'58deg'});
+    rotatable(sc, st, -20, 6);
+    var bx = [], btn = $('st-btn');
+    S.forEach(function(s, i){
+      var b = box({w:96, d:96, x:i * 112, y:8, h:40 + i * 42, c:ramp('var(--navy)', 3 - i, 5), top:s.v});
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)) show(i); });
+      st.appendChild(b); bx.push(b);
+      var bb = document.createElement('button'); bb.textContent = s.n; bb.addEventListener('click', function(){ show(i); }); btn.appendChild(bb);
+    });
+    function show(i){
+      bx.forEach(function(b, j){ b.classList.toggle('active', j === i); });
+      press(btn.children, btn.children[i]);
+      $('st-panel').innerHTML = '<div class="tag">' + S[i].t + '</div><p>' + S[i].p + '</p>';
+    }
+    show(3);
+    var FU = [[267, L('encontrados (266 nas bases + 1)', 'found (266 in databases + 1)')], [257, L('sem duplicados, lidos pelo resumo', 'without duplicates, screened by abstract')], [120, L('lidos por inteiro', 'read in full')], [71, L('base do referencial', 'basis of the framework')]];
+    $('st-fun').innerHTML = FU.map(function(f){ return '<div><i style="width:' + (f[0] / 267 * 100) + '%">' + f[1] + '</i><b>' + f[0] + '</b></div>'; }).join('');
+  })();
+
+  /* ================= 05 · PERFIL ================= */
+  (function(){
+    var PAL = ['#1f3b73', '#4a64a0', '#8aa0cc', '#c7d2e8', '#e80734'];
+    var R = [
+      {n:L('Cargo', 'Role'), g:[[L('Gestor ou cargo de comando', 'Manager or leadership role'), 72], [L('Proprietário', 'Owner'), 17], [L('Membro de equipe', 'Team member'), 37]],
+       note:L('89 de 126 (71%) são gestores ou donos de empresa, ou seja, tomam decisões (conta nossa; a tese diz “mais de 70%”).', '89 of 126 (71%) are managers or business owners, that is, they make decisions (our calculation; the thesis says “over 70%”).')},
+      {n:L('Idade', 'Age'), g:[['20–29', 20], ['30–39', 37], ['40–49', 43], ['50–59', 20], [L('60 ou mais', '60 or older'), 6]],
+       note:L('69 (55%) têm 40 anos ou mais.', '69 (55%) are 40 or older.')},
+      {n:L('Experiência', 'Experience'), g:[[L('até 5 anos', 'up to 5 years'), 39], [L('6 a 10', '6 to 10'), 26], [L('11 a 15', '11 to 15'), 21], [L('16 a 20', '16 to 20'), 13], [L('mais de 20', 'over 20'), 27]],
+       note:L('Tempo na área de atuação: 61 (48%) têm mais de 10 anos (Tabela 4). O convite pedia mais de 5 anos de experiência, e 39 marcaram até 5 anos na área.', 'Time in their field: 61 (48%) have more than 10 years (Table 4). The invitation asked for over 5 years of experience, and 39 marked up to 5 years in their field.')},
+      {n:L('Porte', 'Company size'), g:[[L('Grande', 'Large'), 72], [L('Média', 'Medium'), 15], [L('Pequena', 'Small'), 16], [L('Micro', 'Micro'), 7], [L('Microempreendedor', 'Sole trader'), 16]],
+       note:L('72 (57%) trabalham em empresas grandes, com 250 empregados ou mais.', '72 (57%) work at large companies, with 250 or more employees.')},
+      {n:L('Área', 'Field'), g:[[L('Negócios e gestão', 'Business and management'), 73], [L('Tecnologia, saúde e ciências', 'Technology, health and sciences'), 38], [L('Educação', 'Education'), 15]],
+       note:L('A área de atuação entrou como controle e se ligou ao feedback ambíguo (0,223, Tabela 13).', 'Field of work entered as a control and was linked to ambiguous feedback (0.223, Table 13).')},
+      {n:L('Setor', 'Sector'), g:[[L('Privado', 'Private'), 102], [L('Público', 'Public'), 13], [L('Outros', 'Other'), 11]],
+       note:L('102 (81%) estão no setor privado.', '102 (81%) are in the private sector.')},
+      {n:L('Contrato', 'Contract'), g:[[L('CLT (carteira assinada)', 'Formal employee'), 85], [L('Pessoa jurídica', 'Contractor'), 35], [L('Outros', 'Other'), 6]],
+       note:L('85 (67%) têm carteira assinada (CLT).', '85 (67%) are formal employees under Brazil’s labor code (CLT).')}
+    ];
+    var dots = $('pf-dots'), dd = [];
+    for (var i = 0; i < 126; i++){ var d = document.createElement('i'); dots.appendChild(d); dd.push(d); }
+    var sg2 = $('pf-seg');
+    R.forEach(function(r, k){ var b = document.createElement('button'); b.textContent = r.n; b.setAttribute('aria-pressed', k ? 'false' : 'true'); b.addEventListener('click', function(){ press(sg2.children, b); show(k); }); sg2.appendChild(b); });
+    function show(k){
+      var r = R[k], j = 0, leg = '';
+      r.g.forEach(function(g, gi){ var c = PAL[gi]; for (var n = 0; n < g[1]; n++) dd[j++].style.background = c; leg += '<span><i class="dot" style="background:' + c + '"></i>' + g[0] + ' · ' + g[1] + '</span>'; });
+      $('pf-leg').innerHTML = leg; $('pf-note').innerHTML = r.note;
+    }
+    show(0);
+    var U = [[L('Análise de dados e geração de ideias', 'Data analysis and idea generation'), 35], [L('Tradução e revisão de textos', 'Translation and text revision'), 30], [L('Automação de tarefas repetitivas', 'Automating repetitive tasks'), 18], [L('Imagens, vídeos ou músicas', 'Images, videos or music'), 12], [L('Outros', 'Other'), 5]];
+    $('use-bar').innerHTML = U.map(function(u, i){ return '<i style="width:' + u[1] + '%; background:' + PAL[i === 4 ? 3 : i] + (i >= 3 ? '; color:#1f3b73' : '') + '">' + u[1] + '%</i>'; }).join('');
+    $('use-list').innerHTML = U.map(function(u, i){ return '<span><i class="dot" style="background:' + PAL[i === 4 ? 3 : i] + '"></i>' + u[0] + ' · ' + u[1] + '%</span>'; }).join('');
+  })();
+
+  /* ================= 06 · RESPONDA ================= */
+  (function(){
+    var Q = [
+      {d:L('Facilidade de uso', 'Ease of use'), t:L('...achou as ferramentas de IA generativa fáceis de usar, no geral?', '...did you find generative AI tools easy to use, overall?'), m:5.6},
+      {d:L('Excesso de confiança', 'Overconfidence'), t:L('...confiou na sua capacidade de fazer melhor do que outros na tomada de decisões estratégicas?', '...did you trust your ability to do better than others in strategic decision-making?'), m:5.0},
+      {d:L('Reflexão', 'Reflection'), t:L('...refletiu sobre suas ações para ver se poderia melhorá-las?', '...did you reflect on your actions to see if you could improve them?'), m:5.8},
+      {d:L('Feedback ambíguo', 'Ambiguous feedback'), t:L('...o feedback trouxe mais confusão do que clareza sobre como melhorar?', '...did the feedback bring more confusion than clarity about how to improve?'), m:2.9},
+      {d:L('Feedback tardio', 'Delayed feedback'), t:L('...continuou com práticas possivelmente ineficazes porque o feedback não veio a tempo?', '...did you keep possibly ineffective practices because feedback did not come in time?'), m:2.8}
+    ];
+    var qs = $('qs');
+    Q.forEach(function(q){
+      var w = document.createElement('div'); w.className = 'qq';
+      w.innerHTML = '<p><small>' + q.d + '</small>' + q.t + '</p><div><div class="lk"></div><div class="lkl"><span>' + L('nunca', 'never') + '</span><span>' + L('sempre', 'always') + '</span></div><div class="res"></div></div>';
+      var lk = w.querySelector('.lk');
+      for (var v = 1; v <= 7; v++){ (function(v){ var b = document.createElement('button'); b.textContent = v; b.setAttribute('aria-pressed', 'false'); b.setAttribute('aria-label', v + L(' de 7', ' out of 7')); b.addEventListener('click', function(){ press(lk.querySelectorAll('button'), b); w.classList.add('done'); var diff = v - q.m;
+        w.querySelector('.res').innerHTML = L('Você: ', 'You: ') + '<b>' + v + '</b> · ' + L('média dos 126: ', 'average of the 126: ') + '<b>' + fx(q.m, 1) + '</b>. ' + (Math.abs(diff) < 0.75 ? L('Bem perto da média.', 'Very close to the average.') : diff > 0 ? L('Acima da média.', 'Above the average.') : L('Abaixo da média.', 'Below the average.'));
+      }); lk.appendChild(b); })(v); }
+      var a = document.createElement('i'); a.className = 'avg'; a.style.left = 'calc(' + ((q.m - 1) / 6 * (100 - 100 / 7) + 50 / 7) + '% - 1px)'; lk.appendChild(a);
+      qs.appendChild(w);
+    });
+  })();
+
+  /* ================= 07 · MAPA ================= */
+  var revealMap;
+  (function(){
+    var svg = $('map-svg'), revealed = false, sel = -1;
+    var POS = {
+      d:{vb:'0 0 640 420', w:{eou:132, unc:132, perf:120, x:142}, h:48, k:1,
+         p:{eou:[78, 130], unc:[78, 330], oc:[318, 46], ic:[318, 128], fr:[318, 210], fa:[318, 292], ft:[318, 374], perf:[566, 210]}},
+      m:{vb:'0 0 360 600', w:{eou:170, unc:170, perf:150, x:106}, h:56, k:1.12,
+         p:{eou:[180, 40], oc:[60, 160], ic:[180, 160], fr:[300, 160], perf:[180, 300], fa:[105, 430], ft:[255, 430], unc:[180, 555]}}
+    };
+    function wOf(L0, k){ return L0.w[k] || L0.w.x; }
+    function edge(c, o, w, h){ var dx = o[0] - c[0], dy = o[1] - c[1]; var t = Math.min(dx ? (w / 2) / Math.abs(dx) : 1e9, dy ? (h / 2) / Math.abs(dy) : 1e9); return [c[0] + dx * t, c[1] + dy * t]; }
+    function wrap(s, max){ var w = s.split(' '), out = [''], i = 0; w.forEach(function(x){ if ((out[i] + ' ' + x).trim().length > max){ out.push(x); i++; } else out[i] = (out[i] + ' ' + x).trim(); }); return out; }
+    function draw(){
+      var Lo = mobile.matches ? POS.m : POS.d, k = Lo.k;
+      svg.setAttribute('viewBox', Lo.vb); svg.innerHTML = '';
+      var defs = el('defs', {}, svg);
+      ['ok', 'opp', 'ns', 'pre'].forEach(function(s){ var mk = el('marker', {id:'mk-' + s, viewBox:'0 0 10 10', refX:'8', refY:'5', markerWidth:'14', markerHeight:'14', markerUnits:'userSpaceOnUse', orient:'auto-start-reverse'}, defs); var pth = el('path', {d:'M0,0 L10,5 L0,10 z'}, mk); pth.style.fill = s === 'pre' ? '#94a3b8' : STC[s]; });
+      var gA = el('g', {}, svg), gN = el('g', {}, svg), gP = el('g', {}, svg);
+      H.forEach(function(hh, i){
+        var a = Lo.p[hh.f], b = Lo.p[hh.t];
+        var s = edge(a, b, wOf(Lo, hh.f) + 6, Lo.h + 6), e = edge(b, a, wOf(Lo, hh.t) + 16, Lo.h + 16);
+        var st = revealed ? status(hh, 1) : 'pre';
+        var ln = el('line', {x1:s[0], y1:s[1], x2:e[0], y2:e[1], class:'arr', 'marker-end':'url(#mk-' + st + ')'}, gA);
+        ln.style.stroke = st === 'pre' ? '#94a3b8' : STC[st];
+        ln.style.strokeWidth = revealed ? (2 + Math.abs(hh.b[1]) * 14) : 2.5;
+        if (st === 'ns' || st === 'pre') ln.style.strokeDasharray = '7 6';
+        ln.addEventListener('click', function(){ pick(i); });
+        var fr = hh.t === 'perf' ? (mobile.matches ? 0.5 : 0.42) : 0.55, px = s[0] + (e[0] - s[0]) * fr, py = s[1] + (e[1] - s[1]) * fr;
+        var lab = revealed ? sg(hh.b[1], 2) : hh.h, wpx = (revealed ? 46 : 34) * k;
+        var g = el('g', {class:'arr'}, gP);
+        var r = el('rect', {x:px - wpx / 2, y:py - 10 * k, width:wpx, height:20 * k, rx:10 * k}, g);
+        r.style.fill = '#fff'; r.style.stroke = i === sel ? '#e80734' : (st === 'pre' ? '#94a3b8' : STC[st]); r.style.strokeWidth = i === sel ? 2.5 : 1.5;
+        txt(g, px, py + 4.5 * k, lab, 'font-size:' + (12 * k) + 'px; font-weight:700; text-anchor:middle; fill:' + (i === sel ? '#e80734' : '#0f172a'));
+        g.addEventListener('click', function(){ pick(i); });
+      });
+      Object.keys(Lo.p).forEach(function(nk){
+        var c = Lo.p[nk], w = wOf(Lo, nk), hh = Lo.h, n = NODE[nk];
+        var r = el('rect', {x:c[0] - w / 2, y:c[1] - hh / 2, width:w, height:hh, rx:10}, gN); r.style.fill = n.c;
+        var lines = wrap(n.n, mobile.matches ? (w > 140 ? 18 : 11) : 17);
+        var ml = Math.max.apply(null, lines.map(function(l){ return l.length; })), fs = Math.min(13 * k, (w - 10) * 1.8 / ml);
+        lines.forEach(function(l, j){ txt(gN, c[0], c[1] + (j - (lines.length - 1) / 2) * 15 * k + 5 * k, l, 'font-size:' + fs + 'px; font-weight:600; text-anchor:middle; fill:#fff'); });
+      });
+    }
+    function pick(i){
+      sel = i; var hh = H[i];
+      if (!revealed){ $('map-panel').innerHTML = '<div class="tag">' + hh.h + '</div><p>' + NODE[hh.f].n + ' → ' + NODE[hh.t].n + ': ' + L('a tese esperava uma ligação ', 'the thesis expected a ') + (hh.e > 0 ? L('positiva (mais de um, mais do outro).', 'positive link (more of one, more of the other).') : L('negativa (mais de um, menos do outro).', 'negative link (more of one, less of the other).')) + ' ' + L('Responda às apostas para ver o resultado.', 'Answer the bets to see the result.') + '</p>'; draw(); return; }
+      var st = status(hh, 1);
+      $('map-panel').innerHTML = '<div class="tag">' + hh.h + ' · <span class="nt">' + STN[st] + '</span></div><p><b>' + NODE[hh.f].n + ' → ' + NODE[hh.t].n + '</b>: β ' + sg(hh.b[1], 3) + ', ' + pv(hh.p[1]) + '. ' + L('Esperado: ', 'Expected: ') + (hh.e > 0 ? L('positivo', 'positive') : L('negativo', 'negative')) + '.</p>';
+      draw();
+    }
+    revealMap = function(){ revealed = true; $('map-leg').innerHTML = '<span><i class="dot" style="background:var(--navy)"></i>' + STN.ok + '</span><span><i class="dot" style="background:var(--red)"></i>' + STN.opp + '</span><span><i class="dot" style="background:#94a3b8"></i>' + STN.ns + L(' (tracejada)', ' (dashed)') + '</span><span>' + L('espessura = força da ligação', 'thickness = strength of the link') + '</span>'; pick(2); };
+    draw();
+    $('map-panel').innerHTML = '<p style="color:var(--muted)">' + L('As setas tracejadas são as dez hipóteses. Clique numa seta para ler o que a tese esperava.', 'The dashed arrows are the ten hypotheses. Click an arrow to read what the thesis expected.') + '</p>';
+    var was = mobile.matches; window.addEventListener('resize', function(){ if (mobile.matches !== was){ was = mobile.matches; draw(); } });
+
+    var B = [
+      {q:L('Quem acha a IA fácil confia mais em si?', 'Do people who find AI easy trust themselves more?'), r:1, a:L('Sim. É a H5: β 0,323, p < 0,001. Também se sentem mais no controle (H4, 0,365).', 'Yes (H5: β 0.323, p < 0.001). They also feel more in control (H4, 0.365).')},
+      {q:L('Quem acha a IA fácil reflete menos?', 'Do people who find AI easy reflect less?'), r:0, a:L('Não. Saiu o contrário: quem acha a IA fácil reflete mais (H3, β −0,417 na falta de reflexão). Veja a tela 09.', 'No. The opposite: they reflect more (H3, β −0.417 on lack of reflection). See screen 09.')},
+      {q:L('Quem confia demais em si tem desempenho pior?', 'Do overconfident people perform worse?'), r:0, a:L('Não houve efeito claro (H10, β 0,049, p 0,578), nem para a ilusão de controle (H9).', 'No clear effect (H10, β 0.049, p 0.578), nor for illusion of control (H9).')}
+    ];
+    var bets = $('bets'), done = 0;
+    B.forEach(function(b){
+      var w = document.createElement('div'); w.className = 'bet';
+      w.innerHTML = '<p>' + b.q + '</p><div class="yn"></div><div class="ans"></div>';
+      var yn = w.querySelector('.yn');
+      [L('Sim', 'Yes'), L('Não', 'No')].forEach(function(t, j){ var x = document.createElement('button'); x.textContent = t; x.setAttribute('aria-pressed', 'false'); x.addEventListener('click', function(){
+        press(yn.children, x); var first = !w.classList.contains('shown'); w.classList.add('shown');
+        w.querySelector('.ans').innerHTML = '<b>' + ((j === 0 ? 1 : 0) === b.r ? L('Você acertou. ', 'You got it. ') : L('Não foi assim. ', 'Not quite. ')) + '</b>' + b.a;
+        if (first){ done++; if (done === B.length && !revealed) revealMap(); }
+      }); yn.appendChild(x); });
+      bets.appendChild(w);
+    });
+    var sk = document.createElement('button'); sk.className = 'btn ghost small'; sk.textContent = L('Mostrar o resultado sem apostar', 'Show the result without betting'); sk.style.justifySelf = 'start';
+    sk.addEventListener('click', function(){ each(bets.querySelectorAll('.bet'), function(w, i){ w.classList.add('shown'); w.querySelector('.ans').innerHTML = B[i].a; }); done = B.length; if (!revealed) revealMap(); });
+    bets.appendChild(sk);
+  })();
+
+  /* ================= 08 · PLACAR ================= */
+  (function(){
+    var sc = $('sc-scene'), st = makeStage(sc, 530, 120, {ay:'70%', rx:'58deg'});
+    rotatable(sc, st, -8, 5);
+    var mod = 1, sel = 2, bx = [], hb = $('sc-btn');
+    H.forEach(function(hh, i){
+      var b = box({w:38, d:38, x:i * 53, y:40, h:4, c:'var(--navy)', top:' '});
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)) show(i); });
+      st.appendChild(b); bx.push(b);
+      flatLabel(st, hh.h, i * 53 - 8, 86 + (i % 2) * 18, 54, 'text-align:center');
+      var bb = document.createElement('button'); bb.textContent = hh.h; bb.addEventListener('click', function(){ show(i); }); hb.appendChild(bb);
+    });
+    function draw(){
+      H.forEach(function(hh, i){
+        var s = status(hh, mod), b = bx[i];
+        b.style.setProperty('--h', Math.max(4, Math.abs(hh.b[mod]) * 300) + 'px');
+        b.style.setProperty('--c', s === 'ns' ? '#cbd5e1' : STC[s]);
+        b.classList.toggle('ns', s === 'ns');
+        b.querySelector('.top-label').textContent = fx(hh.b[mod], 2);
+        b.querySelector('.top-label').style.color = s === 'ns' ? '#0f172a' : '#fff';
+        hb.children[i].style.setProperty('--bc', s === 'ns' ? '#cbd5e1' : STC[s]);
+      });
+    }
+    function show(i){
+      sel = i; var hh = H[i], s = status(hh, mod);
+      bx.forEach(function(b, j){ b.classList.toggle('active', j === i); });
+      press(hb.children, hb.children[i]);
+      var extra = '';
+      if (hh.h === 'H3') extra = L(' A tese esperava menos reflexão; veio mais (veja a próxima tela).', ' The thesis expected less reflection; it got more (see the next screen).');
+      if (hh.h === 'H6' && mod === 1) extra = L(' Pelo bootstrap do software (Figura 8, sem controles), este caminho teria p 0,118; a tese usa o cálculo de Kock.', ' Under the software’s bootstrap (Figure 8, no controls), this path would have p 0.118; the thesis uses Kock’s calculation.');
+      $('sc-panel').innerHTML = '<div class="tag">' + hh.h + ' · <span class="nt">' + STN[s] + ' · ' + MODN[mod] + '</span></div><p><b>' + NODE[hh.f].n + ' → ' + NODE[hh.t].n + '</b></p><p>β ' + sg(hh.b[mod], 3) + ' · ' + pv(hh.p[mod]) + (mod === 1 ? ' · f² ' + fx(hh.f2, 3) : '') + '. ' + L('Esperado: ', 'Expected: ') + (hh.e > 0 ? L('positivo.', 'positive.') : L('negativo.', 'negative.')) + extra + '</p>';
+    }
+    draw(); show(sel);
+    seg('sc-seg', function(b){ mod = +b.dataset.m; draw(); show(sel); });
+  })();
+
+  /* ================= 09 · INESPERADO ================= */
+  (function(){
+    var G = [L('refletem menos', 'reflect less'), L('refletem igual', 'reflect the same'), L('refletem mais', 'reflect more')], gg = $('un-guess'), guessed = false;
+    G.forEach(function(g, i){ var b = document.createElement('button'); b.textContent = g; b.setAttribute('aria-pressed', 'false'); b.addEventListener('click', function(){ press(gg.children, b); guessed = true; reveal(i); }); gg.appendChild(b); });
+    $('un-out').innerHTML = '<p style="color:var(--muted)">' + L('Escolha uma resposta. O simulador ao lado se abre depois.', 'Pick an answer. The simulator alongside opens afterwards.') + '</p>';
+    function reveal(i){
+      $('un-sim').classList.add('on');
+      $('un-out').innerHTML = '<div class="tag">' + (i === 2 ? L('Você acertou', 'You got it') : L('Não foi isso', 'Not quite')) + '</div><p>' + L('Refletem mais. A ligação entre a facilidade de uso e a <b>falta</b> de reflexão saiu negativa (β −0,417, p < 0,001): é o caminho mais forte do modelo, na direção oposta à hipótese.', 'They reflect more. The link between ease of use and <b>lack</b> of reflection came out negative (β −0.417, p < 0.001): it is the strongest path in the model, in the opposite direction to the hypothesis.') + '</p><p>' + L('<b>Leitura do autor:</b> a adoção da IA generativa ainda está no começo, com uma “desconfiança saudável” das respostas, e quem respondeu tem perfil maduro.', '<b>The author’s reading:</b> generative AI adoption is still at an early stage, with a “healthy skepticism” about its answers, and the respondents have a mature profile.') + '</p><p style="font-size:.8rem; color:var(--muted)">' + L('Leitura nossa: as mesmas pessoas que acham a IA fácil também relatam mais confiança e mais controle. A facilidade veio junto com refletir, e não com descuido.', 'Our reading: the same people who find AI easy also report more confidence and more control. Ease came together with reflecting, not with carelessness.') + '</p>';
+    }
+    var B = [['oc', 0.323], ['ic', 0.365], ['fr', -0.417]], bars = $('un-bars');
+    B.forEach(function(b){ var w = document.createElement('div'); w.className = 'dbar'; w.innerHTML = '<span>' + D[b[0]].n + '</span><div class="tr"><i></i><span></span></div>'; w.querySelector('i').style.background = b[1] < 0 ? 'var(--red)' : D[b[0]].c; bars.appendChild(w); });
+    function upd(){
+      var z = +$('un-z').value; $('un-zv').textContent = sg(z, 1) + L(' DP', ' SD');
+      each(bars.children, function(w, j){ var v = B[j][1] * z, i = w.querySelector('i'), s = w.querySelector('.tr span');
+        i.style.left = (v < 0 ? 50 + v * 50 : 50) + '%'; i.style.width = Math.abs(v) * 50 + '%';
+        s.textContent = sg(v, 2); s.style.left = (v < 0 ? Math.max(0, 50 + v * 50 - 13) : Math.min(84, 50 + v * 50 + 2)) + '%'; });
+    }
+    $('un-z').addEventListener('input', upd); upd();
+  })();
+
+  /* ================= 10 · DESEMPENHO ================= */
+  (function(){
+    var P = [['fr', -0.316, 1], ['fa', -0.207, 1], ['oc', 0.049, 0], ['ic', 0.124, 0], ['ft', 0.052, 0]], z = {};
+    var sc = $('pf-scene'), st = makeStage(sc, 300, 110, {ay:'72%', rx:'58deg'});
+    rotatable(sc, st, -18, 6);
+    var ref = box({w:80, d:80, x:20, y:10, h:150, c:'#cbd5e1', top:L('média', 'average')});
+    var col = box({w:80, d:80, x:170, y:10, h:150, c:'var(--navy)', top:' '});
+    st.appendChild(ref); st.appendChild(col);
+    ref.querySelector('.top-label').style.color = '#0f172a';
+    flatLabel(st, L('Referência', 'Reference'), 0, 100, 120, 'text-align:center');
+    flatLabel(st, L('Desempenho', 'Performance'), 150, 100, 120, 'text-align:center; color:#1f3b73');
+    var box2 = $('pf-sl');
+    P.forEach(function(p){
+      z[p[0]] = 0;
+      var w = document.createElement('div'); w.className = 'sl' + (p[2] ? '' : ' ns');
+      w.innerHTML = '<span>' + D[p[0]].n + (p[2] ? '' : '<span class="pill">' + L('sem efeito', 'no effect') + '</span>') + '</span><input type="range" min="-2" max="2" step="0.5" value="0" aria-label="' + D[p[0]].n + '"><b>0</b>';
+      var inp = w.querySelector('input');
+      inp.addEventListener('input', function(){ z[p[0]] = +inp.value; upd(); });
+      box2.appendChild(w);
+    });
+    function setAll(o){ each(box2.children, function(w, j){ var k = P[j][0]; z[k] = o[k] || 0; w.querySelector('input').value = z[k]; }); upd(); }
+    var PRE = [[L('Reflete pouco', 'Reflects little'), {fr:2}], [L('Feedback confuso', 'Confusing feedback'), {fa:2}], [L('Confiante demais', 'Overconfident'), {oc:2, ic:2}], [L('Reflete e entende o feedback', 'Reflects and understands feedback'), {fr:-2, fa:-2}], [L('Zerar', 'Reset'), {}]];
+    var pre = $('pf-pre');
+    PRE.forEach(function(p){ var b = document.createElement('button'); b.textContent = p[0]; b.addEventListener('click', function(){ press(pre.children, b); setAll(p[1]); }); pre.appendChild(b); });
+    function upd(){
+      var d = 0;
+      each(box2.children, function(w, j){ var p = P[j]; w.querySelector('b').textContent = sg(z[p[0]], 1); if (p[2]) d += p[1] * z[p[0]]; });
+      col.style.setProperty('--h', (150 + d * 100) + 'px');
+      col.style.setProperty('--c', d < -0.001 ? 'var(--red)' : 'var(--navy)');
+      col.querySelector('.top-label').textContent = sg(d, 2) + L(' DP', ' SD');
+      var ns = (z.oc || z.ic || z.ft) ? L(' Os sinais sem efeito claro (confiança, controle e feedback tardio) não mudam a coluna: na tese, os β deles não se distinguiram de zero.', ' Signs with no clear effect (confidence, control and delayed feedback) do not change the column: in the thesis, their β could not be told apart from zero.') : '';
+      $('pf-out').innerHTML = '<p>' + L('Desempenho relatado: <b>' + sg(d, 2) + ' DP</b> (desvios-padrão) em relação à média.', 'Reported performance: <b>' + sg(d, 2) + ' SD</b> (standard deviations) from the average.') + ns + '</p><p style="font-size:.78rem; color:var(--muted)">' + L('Falta de reflexão: β −0,316 (p 0,001). Feedback ambíguo: β −0,207 (p 0,027).', 'Lack of reflection: β −0.316 (p 0.001). Ambiguous feedback: β −0.207 (p 0.027).') + '</p>';
+    }
+    upd();
+  })();
+
+  /* ================= 11 · CONTEXTO ================= */
+  (function(){
+    var svg = $('cx-svg');
+    function draw(){
+      var z = +$('cx-z').value, mob = mobile.matches, k = mob ? 1.15 : 1, nw = mob ? 150 : 140, nh = mob ? 62 : 54;
+      $('cx-zv').textContent = sg(z, 1) + L(' DP', ' SD');
+      svg.innerHTML = ''; svg.setAttribute('viewBox', mob ? '0 0 360 430' : '0 0 560 330');
+      var N = mob ? {unc:[180, 45], fa:[92, 210], ft:[268, 210], perf:[180, 385]} : {unc:[90, 165], fa:[290, 80], ft:[290, 250], perf:[480, 165]};
+      function WW(kk){ return mob && (kk === 'unc' || kk === 'perf') ? 200 : nw; }
+      function edge(c, o, w, h){ var dx = o[0] - c[0], dy = o[1] - c[1]; var t = Math.min(dx ? (w / 2) / Math.abs(dx) : 1e9, dy ? (h / 2) / Math.abs(dy) : 1e9); return [c[0] + dx * t, c[1] + dy * t]; }
+      var defs = el('defs', {}, svg);
+      ['n', 'r', 'g'].forEach(function(c){ var mk = el('marker', {id:'cx-' + c, viewBox:'0 0 10 10', refX:'8', refY:'5', markerWidth:'14', markerHeight:'14', markerUnits:'userSpaceOnUse', orient:'auto'}, defs); var p = el('path', {d:'M0,0 L10,5 L0,10 z'}, mk); p.style.fill = c === 'n' ? '#1f3b73' : c === 'r' ? '#e80734' : '#94a3b8'; });
+      var A = [['unc', 'fa', 0.236, 'n', 1], ['unc', 'ft', 0.315, 'n', 1], ['fa', 'perf', -0.207, 'r', 1], ['ft', 'perf', 0.052, 'g', 0]];
+      var vals = {fa:0.236 * z, ft:0.315 * z, perf:0.236 * -0.207 * z};
+      A.forEach(function(a){
+        var s = edge(N[a[0]], N[a[1]], WW(a[0]) + 6, nh + 6), e = edge(N[a[1]], N[a[0]], WW(a[1]) + 22, nh + 22);
+        var ln = el('line', {x1:s[0], y1:s[1], x2:e[0], y2:e[1], 'marker-end':'url(#cx-' + a[3] + ')'}, svg);
+        ln.style.stroke = a[3] === 'n' ? '#1f3b73' : a[3] === 'r' ? '#e80734' : '#94a3b8'; ln.style.strokeWidth = 2 + Math.abs(a[2]) * 22;
+        if (!a[4]) ln.style.strokeDasharray = '8 7';
+        var mx = (s[0] + e[0]) / 2, my = (s[1] + e[1]) / 2, left = N[a[0]][0] + N[a[1]][0] < (mob ? 360 : 560) * (mob ? 1 : 0.9) ? (mob ? -1 : 1) : 1;
+        if (mob){ left = (a[0] === 'fa' || a[1] === 'fa') ? -1 : 1; }
+        var lab = a[4] ? 'β ' + sg(a[2], 3) : L('sem efeito', 'no effect');
+        txt(svg, mob ? mx + left * 14 : mx, mob ? my + 5 : my - 12, lab, 'font-size:' + (13 * k) + 'px; font-weight:700; text-anchor:' + (mob ? (left < 0 ? 'end' : 'start') : 'middle') + '; fill:#0f172a; paint-order:stroke; stroke:#fff; stroke-width:5px');
+      });
+      Object.keys(N).forEach(function(kk){
+        var c = N[kk], r = el('rect', {x:c[0] - WW(kk) / 2, y:c[1] - nh / 2, width:WW(kk), height:nh, rx:10}, svg);
+        r.style.fill = kk === 'unc' ? 'var(--gai)' : kk === 'perf' ? '#0f172a' : D[kk].c;
+        txt(svg, c[0], c[1] - 3 * k, NODE[kk].n, 'font-size:' + (13 * k) + 'px; font-weight:600; text-anchor:middle; fill:#fff');
+        var v = kk === 'unc' ? z : vals[kk];
+        txt(svg, c[0], c[1] + 15 * k, sg(v, 2) + L(' DP', ' SD'), 'font-size:' + (12 * k) + 'px; text-anchor:middle; fill:#fff; opacity:.9');
+      });
+      $('cx-out').innerHTML = '<p>' + L('Com a incerteza em ' + sg(z, 1) + ' DP: feedback ambíguo <b>' + sg(vals.fa, 2) + '</b>, tardio <b>' + sg(vals.ft, 2) + '</b>. Pelo feedback confuso, o desempenho muda <b>' + sg(vals.perf, 2) + '</b> DP (conta nossa). O tardio não chegou ao desempenho (β 0,052, p 0,554).', 'With uncertainty at ' + sg(z, 1) + ' SD: ambiguous feedback <b>' + sg(vals.fa, 2) + '</b>, delayed <b>' + sg(vals.ft, 2) + '</b>. Through confusing feedback, performance changes <b>' + sg(vals.perf, 2) + '</b> SD (our calculation). Delayed feedback did not reach performance (β 0.052, p 0.554).') + '</p><p style="font-size:.78rem; color:var(--muted)">' + L('Leitura do autor: as pessoas decidem com os dados que têm na hora, mesmo que ambíguos. A incerteza explica pouco dos feedbacks (6,5% e 9,9% da variação).', 'The author’s reading: people decide with the data they have at the time, even if ambiguous. Uncertainty explains little of the feedback (6.5% and 9.9% of the variation).') + '</p>';
+    }
+    $('cx-z').addEventListener('input', draw); draw();
+    var was = mobile.matches; window.addEventListener('resize', function(){ if (mobile.matches !== was){ was = mobile.matches; draw(); } });
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
