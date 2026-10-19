@@ -1,0 +1,961 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quem cuida melhor da sua previdência? · PPGA Interativo</title>
+<meta name="description" content="A dissertação de mestrado de Vanessa Andrade de Castro Schionato (PPGA Mackenzie, 2024) sobre o desempenho dos fundos de previdência aberta (PGBL e VGBL) dos cinco grandes bancos e das gestoras independentes, de 2010 a 2022, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/dissertacoes/2024-schionato-previdencia-bancos-independentes/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2216%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>$</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  :root{
+    --bk:var(--navy);   /* gestoras dos cinco grandes bancos */
+    --ind:var(--red);   /* gestoras independentes */
+    --off:#cbd5e1;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+  .ilus{display:inline-block; font-size:.64rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:4px;}
+  .panel .nt{text-transform:none; letter-spacing:0;}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.82rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:11px 13px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.75rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  .scene .floor-label{font-size:14px;}
+  .stripe > i{background-image:repeating-linear-gradient(45deg, rgb(255 255 255 / .4) 0 6px, transparent 6px 12px);}
+  .gbtn{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .gbtn button{border:1px solid var(--border); background:var(--card); border-radius:8px; padding:5px 10px; font-size:.78rem; cursor:pointer; color:var(--ink-2);}
+  .gbtn button[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); font-weight:600; box-shadow:0 0 0 1px var(--ink);}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4vw, 2.8rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:34em; margin-left:auto; margin-right:auto;}
+  #hero-year{font-family:var(--serif); text-align:center; font-size:1.05rem; color:var(--ink); min-height:1.6em;}
+  #hero-year b{color:var(--red); font-size:1.4rem;}
+  #hero-scene{perspective:2200px;}
+  #hero-scene .slab{transition:transform .55s cubic-bezier(.2,.8,.2,1), --h .9s;}
+  #hero-scene .top-label{font-size:19px; font-family:var(--sans);}
+  #hero-scene .floor-label{font-size:16px;}
+
+  /* ---------- 02 · INSS ---------- */
+  .ppl{display:flex; flex-wrap:wrap; gap:4px; align-items:flex-end; min-height:92px; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; margin-top:10px;}
+  .ppl svg{width:30px; height:46px; transition:opacity .4s, transform .4s;}
+  .ppl .old{width:38px; height:58px; margin-left:12px;}
+  .ppl .lbl{width:100%; font-size:.76rem; color:var(--muted); margin-top:4px;}
+  .reforms{display:grid; grid-template-columns:repeat(7, minmax(0, 1fr)); gap:5px; margin-top:12px;}
+  .reforms button{border:1px solid var(--border); background:var(--card); border-radius:9px; padding:8px 2px; font-family:var(--serif); font-weight:700; font-size:.86rem; cursor:pointer; color:var(--ink);}
+  .reforms button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  #ref-panel{min-height:118px; margin-top:10px;}
+
+  /* ---------- 03 · PGBL e VGBL ---------- */
+  #tax-scene{perspective:2200px;}
+  #tax-scene .slab{transition:transform .5s cubic-bezier(.2,.8,.2,1);}
+  #tax-scene .slab.active{--oz:18px;}
+  #tax-scene .top-label{font-size:17px; font-family:var(--serif);}
+  #tax-scene .floor-label{font-size:13px;}
+  .rng{display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; margin-top:10px; font-size:.84rem; color:var(--ink-2);}
+  .rng input{width:100%; accent-color:var(--red);}
+  .rng b{font-family:var(--serif); color:var(--ink); min-width:5.5em; text-align:right;}
+  #n-v{font-family:var(--sans); font-size:.86rem;}
+  .calc{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+  .calc .c{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 12px; border-top:4px solid var(--cc);}
+  .calc .c .k{font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--muted);}
+  .calc .c b{display:block; font-family:var(--serif); font-size:1.2rem; color:var(--ink);}
+  .calc .c span{display:block; font-size:.74rem; color:var(--ink-2); line-height:1.4;}
+
+  /* ---------- 04 · Concentração ---------- */
+  .grid100{display:grid; grid-template-columns:repeat(10, 1fr); gap:4px; max-width:360px; margin:0 auto;}
+  .grid100 i{aspect-ratio:1; border-radius:3px; background:var(--off); transition:background .4s;}
+  #conc-panel{min-height:108px; margin-top:12px;}
+
+  /* ---------- 05 · Amostra ---------- */
+  #t1-scene{perspective:2400px;}
+  #t1-scene .slab{transition:transform .5s cubic-bezier(.2,.8,.2,1), --h .6s;}
+  #t1-scene .slab.dim > i{opacity:.12;}
+  #t1-scene .top-label{font-size:15px;}
+  #t1-scene .floor-label{font-size:13px;}
+  #t1-panel{min-height:112px; margin-top:10px;}
+  @media (max-width:600px){ #t1-scene .floor-label{display:none;} }
+
+  /* ---------- 06 · Bancos × independentes ---------- */
+  #n-scene{perspective:2600px;}
+  #n-scene .slab{transition:transform .5s cubic-bezier(.2,.8,.2,1), --h .6s;}
+  #n-scene .slab.dim > i{opacity:.28;}
+  #n-scene .floor-label{font-size:13px;}
+  .dumb{margin-top:10px; display:grid; gap:10px;}
+  .dumb .row{display:grid; grid-template-columns:150px 1fr; gap:10px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .dumb .tr{position:relative; height:26px; background:#eef2f7; border-radius:6px;}
+  .dumb .tr i{position:absolute; top:3px; height:20px; border-radius:4px; transition:width .6s;}
+  .dumb .tr span{position:absolute; top:4px; font-size:.74rem; font-weight:700; white-space:nowrap; transition:left .6s;}
+  @media (max-width:520px){ .dumb .row{grid-template-columns:1fr;} }
+
+  /* ---------- 07 · Réguas ---------- */
+  .idx{display:grid; grid-template-columns:repeat(2, 1fr); gap:9px; margin-top:12px;}
+  .idx .c{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:9px 12px;}
+  .idx .c .k{font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--muted);}
+  .idx .c b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink);}
+  .idx .c span{display:block; font-size:.74rem; line-height:1.4; color:var(--ink-2);}
+  .idx .c.neg b{color:var(--red);}
+  #fund-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  #fund-svg text{font-family:var(--sans);}
+  @media (max-width:600px){ #fund-svg text{font-size:18px !important;} }
+
+  /* ---------- 08 · Placar ---------- */
+  .bets{display:grid; grid-template-columns:repeat(2, 1fr); gap:7px; margin-top:6px;}
+  .bet{background:var(--card); border:1px solid var(--border); border-radius:11px; padding:7px 10px; box-shadow:var(--shadow);}
+  .bet .q{font-size:.8rem; font-weight:600; color:var(--ink); line-height:1.3;}
+  .bet .opts{display:flex; gap:4px; margin-top:5px;}
+  .bet .opts button{flex:1; border:1px solid var(--border); background:var(--card); border-radius:7px; padding:4px 2px; font-size:.72rem; cursor:pointer; color:var(--ink);}
+  .bet .opts button:hover{border-color:var(--ink);}
+  .bet .res{display:none; font-size:.72rem; color:var(--ink-2); margin-top:4px; line-height:1.35;}
+  .bet.done .opts{display:none;}
+  .bet.done .res{display:block;}
+  #bet-score{font-size:.84rem; color:var(--ink-2); margin-top:8px; min-height:1.4em;}
+  #sc-scene{perspective:2400px;}
+  #sc-scene .slab{transition:transform .5s cubic-bezier(.2,.8,.2,1), --h .7s;}
+  #sc-scene .slab.active{--oz:14px;}
+  #sc-scene .top-label{font-size:16px;}
+  #sc-scene .slab.ns .top-label{color:var(--ink-2);}
+  #sc-scene .floor-label{font-size:13px;}
+  #sc-panel{min-height:120px; margin-top:10px;}
+  @media (max-width:600px){ #sc-scene .floor-label{display:none;} }
+
+  /* ---------- 09 · O inesperado ---------- */
+  #fo-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  #fo-svg text{font-family:var(--sans);}
+  .guess{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;}
+  .guess button{border:1px solid var(--border); background:var(--card); border-radius:9px; padding:7px 12px; font-size:.82rem; cursor:pointer; color:var(--ink);}
+  .guess button:hover{border-color:var(--ink);}
+  #guess-res{font-size:.84rem; color:var(--ink-2); margin-top:8px; min-height:1.4em;}
+  .steps{display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:5px; margin-top:10px;}
+  .steps button{border:1px solid var(--border); background:var(--card); border-radius:9px; padding:6px 4px; font-size:.72rem; line-height:1.25; cursor:pointer; color:var(--ink-2); text-align:left;}
+  .steps button b{display:block; font-family:var(--serif); font-size:.9rem; color:var(--ink);}
+  .steps button[aria-pressed="true"]{border-color:var(--red); box-shadow:0 0 0 1px var(--red);}
+  #fo-panel{min-height:96px; margin-top:10px;}
+  #fo-panel p{font-size:.84rem;}
+  #guess-res{font-size:.8rem !important;}
+  @media (max-width:600px){ #fo-svg text{font-size:19px !important;} #fo-svg text.sm{font-size:15px !important;} #fo-svg text.rl{font-size:16px !important;} .steps{grid-template-columns:repeat(3, minmax(0, 1fr));} }
+
+  /* ---------- 10 · Ano a ano ---------- */
+  #yr-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  #yr-svg text{font-family:var(--sans);}
+  #yr-svg rect.b{cursor:pointer;}
+  #yr-panel{min-height:96px; margin-top:10px;}
+  .tally{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:12px;}
+  .tally div{background:var(--card); border:1px solid var(--border); border-radius:11px; padding:8px 10px; font-size:.74rem; color:var(--muted); line-height:1.35;}
+  .tally b{display:block; font-family:var(--serif); font-size:1.3rem; color:var(--ink);}
+  @media (max-width:600px){ #yr-svg text{font-size:19px !important;} #yr-svg text.yl{font-size:17px !important;} #yr-svg text.lg{font-size:14px !important;} }
+
+  /* ---------- 11 · Por tipo de fundo ---------- */
+  #cl-scene{perspective:2400px;}
+  #cl-scene .slab{transition:transform .5s cubic-bezier(.2,.8,.2,1), --h .6s;}
+  #cl-scene .slab.dim > i{opacity:.18;}
+  #cl-scene .slab.active{--oz:12px;}
+  #cl-scene .floor-label{font-size:14px;}
+  #cl-panel{min-height:120px; margin-top:10px;}
+  details.alt{margin-top:10px; font-size:.78rem; color:var(--ink-2);}
+  details.alt summary{cursor:pointer; color:var(--muted);}
+  details.alt table{border-collapse:collapse; width:100%; margin-top:6px; font-size:.74rem;}
+  details.alt td, details.alt th{border-bottom:1px solid var(--border); padding:3px 5px; text-align:right;}
+  details.alt td:first-child, details.alt th:first-child{text-align:left;}
+  @media (max-width:600px){ #cl-scene .floor-label{font-size:18px;} }
+
+  /* ---------- 12 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.77rem; color:var(--ink-2); line-height:1.42;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+  .warn{font-size:.74rem; color:#92400e; background:#fef3c7; border-radius:8px; padding:6px 10px; margin-top:10px;}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/dissertacoes/2024-schionato-previdencia-bancos-independentes/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Dissertação de mestrado · PPGA Mackenzie · 2024</div>
+      <h1 class="rv" style="--d:.1s">Quem cuida melhor da sua previdência?</h1>
+      <p class="sub rv" style="--d:.2s">Quase todo o dinheiro novo da previdência privada aberta do Brasil (PGBL e VGBL) vai para empresas ligadas aos grandes bancos. A pesquisa comparou 4.090 fundos de previdência, de 2010 a 2022, para ver se as gestoras dos cinco maiores bancos entregam mais ou menos que as gestoras independentes. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autora:</b> Vanessa Andrade de Castro Schionato</span>
+        <span><b>Orientador:</b> Prof. Dr. Denis Forte</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#inss">Começar →</a>
+        <a class="btn ghost" href="#placar">Ir direto ao resultado</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div id="hero-year" aria-live="off"></div>
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="500x320" role="img" aria-label="Duas colunas, bancos e gestoras independentes, cuja altura acompanha o número de fundos de previdência ano a ano, de 2010 a 2022"></div></div>
+      <p class="cap-legend">Altura = número de fundos de previdência de cada grupo no ano (azul: cinco grandes bancos; vermelho: gestoras independentes). Valores aproximados, lidos do Gráfico 9 da dissertação. Em 2022, as independentes passam a ter mais fundos.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Compara o que a previdência aberta dos grandes bancos e das gestoras independentes entrega a quem poupa para a aposentadoria."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · INSS -->
+<section class="slide" id="inss" data-label="A aposentadoria pública">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O problema</div>
+      <h2 class="rv" style="--d:.1s">A aposentadoria do INSS vai pesar cada vez mais sobre menos gente</h2>
+      <p class="lede rv" style="--d:.15s">No INSS, quem trabalha hoje paga a aposentadoria de quem já parou. Com menos filhos e vidas mais longas, a conta aperta, e o país já fez sete reformas desde 1993. Por isso, cada família passa a carregar parte do próprio planejamento.</p>
+      <div class="seg rv" id="ppl-seg" style="--d:.2s" role="group" aria-label="Escolha a época">
+        <button data-m="0" aria-pressed="true">Há um século</button>
+        <button data-m="1" aria-pressed="false">2023</button>
+      </div>
+      <div class="ppl rv" id="ppl" style="--d:.25s" aria-live="polite"></div>
+      <p class="note">Dados citados pela dissertação (Agência Senado; INSS). Em 2022, o INSS concedeu 1.327.990 aposentadorias, com valor médio de R$ 1.710,18.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="tag" style="font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted)">As sete reformas (Figura 1) · toque num ano</div>
+      <div class="reforms" id="reforms"></div>
+      <div class="panel" id="ref-panel" aria-live="polite"></div>
+      <div class="stats">
+        <div class="stat"><b>13 → 4</b><span>pessoas em idade ativa por idoso, há um século e em 2023</span></div>
+        <div class="stat"><b>4% → 15%</b><span>fatia da população com mais de 60 anos</span></div>
+        <div class="stat"><b>7</b><span>reformas desde 1993</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · PGBL E VGBL -->
+<section class="slide" id="planos" data-label="PGBL × VGBL">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> O produto</div>
+      <h2 class="rv" style="--d:.1s">Na previdência, o imposto cai quanto mais tempo o dinheiro fica</h2>
+      <p class="lede rv" style="--d:.15s">No PGBL, quem faz a declaração completa desconta os aportes (até 12% da renda bruta) e paga imposto sobre tudo no resgate. No VGBL, o imposto incide só sobre o rendimento. Na tabela regressiva, a alíquota cai de 35% para 10% com o tempo.</p>
+      <div class="seg rv" id="plan-seg" style="--d:.2s" role="group" aria-label="Escolha o plano">
+        <button data-m="v" aria-pressed="true">VGBL</button>
+        <button data-m="p" aria-pressed="false">PGBL</button>
+      </div>
+      <div class="calc rv" id="calc" style="--d:.25s" aria-live="polite"></div>
+      <p class="note"><span class="ilus">ilustração</span> Aplicação de R$ 10.000 que rendeu R$ 6.000: números inventados. As alíquotas são as da Tabela 3. A conta não inclui o desconto que o PGBL dá na declaração de cada ano, nem a tabela progressiva (15% na fonte, ajuste de 0% a 27,5%).</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="tax-scene" data-fit="540x300" role="img" aria-label="Escada de seis degraus com as alíquotas da tabela regressiva, de 35% a 10%"></div></div>
+      <div class="rng"><span>Anos até o resgate</span><input type="range" id="tax-rng" min="1" max="12" value="3" aria-label="Anos até o resgate"><b id="tax-v"></b></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · CONCENTRAÇÃO -->
+<section class="slide" id="mercado" data-label="Um mercado concentrado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> O mercado</div>
+      <h2 class="rv" style="--d:.1s">Cinco empresas ligadas a bancos ficam com quase todo o dinheiro novo</h2>
+      <p class="lede rv" style="--d:.15s">A rede de agências dos bancos facilita a venda dos planos, e o resultado é um mercado que a autora chama de oligopólio. A pergunta da pesquisa nasce daí: quem compra no banco recebe uma gestão melhor ou só mais cara?</p>
+      <div class="seg rv" id="conc-seg" style="--d:.2s" role="group" aria-label="Escolha o dado">
+        <button data-m="0" aria-pressed="true">Quem captou em 2022</button>
+        <button data-m="1" aria-pressed="false">Tipos de plano em 2023</button>
+      </div>
+      <div class="panel rv" id="conc-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="grid100" id="g100" role="img" aria-label="Cem quadradinhos, cada um é 1% do total"></div>
+      <div class="legend" id="g100-leg" style="justify-content:center"></div>
+      <div class="stats">
+        <div class="stat"><b>R$ 1,4 tri</b><span>em planos de previdência aberta, 13% do PIB (2023)</span></div>
+        <div class="stat"><b>14 milhões</b><span>de planos no fim de 2023</span></div>
+        <div class="stat"><b>R$ 156,2 bi</b><span>de dinheiro novo em 2022</span></div>
+      </div>
+      <p class="note">Dados da Fenaprevi citados pela dissertação (seções 1 e 2.1).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · AMOSTRA -->
+<section class="slide" id="amostra" data-label="4.090 fundos">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Os dados</div>
+      <h2 class="rv" style="--d:.1s">A pesquisa reuniu 4.090 fundos de previdência e os separou em dois times</h2>
+      <p class="lede rv" style="--d:.15s">De um lado, os fundos das gestoras do Itaú, do Bradesco, do Banco do Brasil, do Santander e da Caixa (1.788 fundos, conta nossa). Do outro, os de todas as demais gestoras (2.302), como XP, BTG Pactual, Icatu, SulAmérica e JGP.</p>
+      <div class="seg rv" id="t1-seg" style="--d:.2s" role="group" aria-label="Escolha a classe">
+        <button data-c="-1" aria-pressed="true">Todas</button>
+        <button data-c="0" aria-pressed="false">Renda fixa</button>
+        <button data-c="1" aria-pressed="false">Multimercado</button>
+        <button data-c="2" aria-pressed="false">Ações</button>
+      </div>
+      <div class="panel rv" id="t1-panel" style="--d:.25s" aria-live="polite"></div>
+      <p class="note">Tabela 1 (Economatica). Só fundos ativos em janeiro de 2023 (a autora fala em viés de sobrevivência). O fundo é do time dos bancos quando o nome do banco está no nome do fundo.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="t1-scene" data-fit="560x340" role="img" aria-label="Seis colunas empilhadas por classe: cinco bancos e as gestoras independentes"></div></div>
+      <div class="gbtn" id="t1-btn" style="justify-content:center"></div>
+      <div class="legend" style="justify-content:center"><span><i class="dot" style="background:var(--bk)"></i>bancos</span><span><i class="dot" style="background:var(--ind)"></i>independentes</span><span>tom mais forte embaixo: renda fixa · meio: multimercado · topo: ações</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · BANCOS × INDEPENDENTES -->
+<section class="slide" id="times" data-label="Os dois times">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Os dois times</div>
+      <h2 class="rv" style="--d:.1s">Os fundos dos bancos são maiores e cobram um pouco mais</h2>
+      <p class="lede rv" style="--d:.15s">O número de fundos independentes cresceu rápido depois de 2018 e, em 2022, passou o dos bancos. Mas, em tamanho, os fundos dos bancos ainda são muito maiores. E a taxa de administração média deles é um pouco mais alta.</p>
+      <div class="seg rv" id="tm-seg" style="--d:.2s" role="group" aria-label="Escolha a medida">
+        <button data-m="0" aria-pressed="true">Tamanho médio</button>
+        <button data-m="1" aria-pressed="false">Tamanho típico</button>
+        <button data-m="2" aria-pressed="false">Taxa</button>
+        <button data-m="3" aria-pressed="false">Aplicação mínima</button>
+      </div>
+      <div class="dumb rv" id="dumb" style="--d:.25s" aria-live="polite"></div>
+      <p class="note" id="tm-note"></p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="n-scene" data-fit="580x340" role="img" aria-label="Pares de colunas por ano, de 2010 a 2022, com o número de fundos dos bancos e das independentes"></div></div>
+      <div class="rng"><span>Ano</span><input type="range" id="n-rng" min="2010" max="2022" value="2022" aria-label="Ano"><b id="n-v"></b></div>
+      <p class="note">Número de fundos por ano lido do Gráfico 9 (valores aproximados; a soma, ~16,6 mil fundos-ano, confere com as 16.573 observações do primeiro modelo da Tabela 6). Tamanho, taxa e aplicação mínima: Tabela 4, janeiro de 2023.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · RÉGUAS -->
+<section class="slide" id="reguas" data-label="Cinco réguas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Como medir</div>
+      <h2 class="rv" style="--d:.1s">Render mais não basta: é preciso ver quanto risco o fundo correu</h2>
+      <p class="lede rv" style="--d:.15s">A dissertação mediu cada fundo com réguas clássicas. Todas comparam o fundo com a Selic, o que se ganharia sem risco. Escolha um fundo inventado e mexa no retorno para ver como cada régua reage.</p>
+      <div class="seg rv" id="fd-seg" style="--d:.2s" role="group" aria-label="Escolha o fundo inventado">
+        <button data-f="0" aria-pressed="true">Renda fixa</button>
+        <button data-f="1" aria-pressed="false">Multimercado</button>
+        <button data-f="2" aria-pressed="false">Ações</button>
+      </div>
+      <div class="rng rv" style="--d:.25s"><span>Retorno no ano</span><input type="range" id="fd-rng" min="0" max="25" step="0.5" value="11" aria-label="Retorno do fundo no ano"><b id="fd-v"></b></div>
+      <p class="note"><span class="ilus">ilustração</span> Fundos, Selic (10%) e Ibovespa (15%) inventados. As fórmulas seguem a seção 2.9; a dissertação calcula as réguas com as cotas diárias de cada fundo, ano a ano.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="fund-svg" viewBox="0 0 560 210" role="img" aria-label="Linha do valor do fundo inventado ao longo de um ano, com as quedas destacadas"></svg>
+      <div class="idx" id="idx" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · PLACAR -->
+<section class="slide" id="placar" data-label="O resultado">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> O resultado · 7.973 fundos-ano</div>
+      <h2 class="rv" style="--d:.1s">Seis réguas comparam os dois times em fundos parecidos</h2>
+      <p class="lede rv" style="--d:.15s; margin-bottom:6px">O modelo compara fundos do mesmo ano, de tamanho, risco e taxa parecidos. Aposte: em cada régua, os fundos dos bancos ficaram melhor, igual ou pior para quem poupa?</p>
+      <div class="bets rv" id="bets" style="--d:.2s"></div>
+      <div id="bet-score" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="sc-scene" data-fit="560x330" role="img" aria-label="Seis colunas, uma por régua; a altura mostra a segurança do resultado e a coluna plana quer dizer sem diferença clara"></div></div>
+      <div class="gbtn" id="sc-btn" style="justify-content:center"></div>
+      <div class="panel" id="sc-panel" aria-live="polite"></div>
+      <p class="note">Modelo completo das Tabelas 6, 11, 13, 15, 17 e 19. Altura = degraus de segurança (p < 0,10; < 0,05; < 0,01); coluna plana e cinza = sem diferença clara. A dissertação não informa a unidade de alpha, Sharpe, Sortino e Treynor, por isso só o retorno e a taxa aparecem em pontos percentuais.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · O INESPERADO -->
+<section class="slide" id="inesperado" data-label="O inesperado">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> O inesperado</div>
+      <h2 class="rv" style="--d:.1s">Na conta simples, os dois times parecem empatar no retorno</h2>
+      <p class="lede rv" style="--d:.15s">Antes de comparar fundos parecidos, olhe só a média. Palpite: na comparação simples, os fundos dos bancos renderam mais, igual ou menos?</p>
+      <div class="guess rv" id="guess" style="--d:.2s">
+        <button data-g="1">Mais</button><button data-g="0">Igual</button><button data-g="-1">Menos</button>
+      </div>
+      <div id="guess-res" aria-live="polite"></div>
+      <div class="steps rv" id="steps" style="--d:.25s"></div>
+      <div class="panel" id="fo-panel" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="fo-seg" role="group" aria-label="Escolha a régua" style="margin-bottom:8px"></div>
+      <svg id="fo-svg" viewBox="0 0 560 300" role="img" aria-label="Diferença entre bancos e independentes em cada um dos cinco modelos, com a faixa de incerteza"></svg>
+      <p class="note">Tabelas 6, 13, 15, 17 e 19. Ponto = diferença dos bancos em relação às independentes; traço = faixa de 95% (coeficiente ± 1,96 erro-padrão, conta nossa). Atenção: quando a taxa entra (modelos 4 e 5), o modelo usa só os fundos com taxa informada, cerca de metade das observações (observação nossa).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · ANO A ANO -->
+<section class="slide" id="anos" data-label="Ano a ano">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Ano a ano · Tabelas 8 e 9</div>
+      <h2 class="rv" style="--d:.1s">Os fundos dos bancos renderam menos em 7 dos 13 anos</h2>
+      <p class="lede rv" style="--d:.15s">Como o número de fundos mudou muito no período, a autora também rodou o modelo ano a ano. A diferença não é sempre igual: em três anos, os bancos ficaram na frente. Toque numa barra para ver o ano.</p>
+      <div class="seg rv" id="yr-seg" style="--d:.2s" role="group" aria-label="Escolha o que mostrar">
+        <button data-m="0" aria-pressed="true">Todos os anos</button>
+        <button data-m="1" aria-pressed="false">Só os resultados claros</button>
+      </div>
+      <div class="tally rv" style="--d:.25s">
+        <div><b>7</b>anos com retorno menor nos bancos</div>
+        <div><b>3</b>anos com retorno maior nos bancos (2016, 2017, 2019)</div>
+        <div><b>3</b>anos sem diferença clara (2013, 2018, 2020)</div>
+      </div>
+      <p class="note">Contagem nossa, com p < 0,01 em todos os anos contados (as Tabelas 8 e 9 usam os fundos com taxa informada, de 144 em 2010 a 2.000 em 2022).</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="yr-svg" viewBox="0 0 560 320" role="img" aria-label="Barras por ano de 2010 a 2022 com a diferença de retorno dos bancos em pontos percentuais"></svg>
+      <div class="panel" id="yr-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · POR TIPO DE FUNDO -->
+<section class="slide" id="classes" data-label="Por tipo de fundo">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> Por tipo de fundo · Tabelas 10, 12, 14, 16, 18 e 20</div>
+      <h2 class="rv" style="--d:.1s">A diferença aparece sobretudo nos multimercados e na renda fixa</h2>
+      <p class="lede rv" style="--d:.15s">Separando os fundos por tipo, os multimercados dos bancos ficam atrás em todas as seis réguas. Na renda fixa, em quatro. Nas ações, o grupo é pequeno (339 fundos-ano) e só aparecem pistas fracas. Toque numa coluna ou escolha um tipo.</p>
+      <div class="seg rv" id="cl-seg" style="--d:.2s" role="group" aria-label="Escolha o tipo de fundo">
+        <button data-c="-1" aria-pressed="true">Todos</button>
+        <button data-c="0" aria-pressed="false">Ações</button>
+        <button data-c="1" aria-pressed="false">Multimercado</button>
+        <button data-c="2" aria-pressed="false">Renda fixa</button>
+      </div>
+      <div class="panel rv" id="cl-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="cl-scene" data-fit="560x360" role="img" aria-label="Matriz de colunas: seis réguas por três tipos de fundo; a altura mostra a segurança da diferença"></div></div>
+      <div class="legend" style="justify-content:center"><span><i class="dot" style="background:var(--bk)"></i>pior para quem poupa (bancos atrás)</span><span><i class="dot stripe" style="background:var(--bk); opacity:.6"></i>listrado: pista fraca (p < 0,10)</span><span><i class="dot" style="background:var(--off)"></i>plano: sem diferença clara</span></div>
+      <details class="alt"><summary>Ver em tabela</summary><div id="cl-table"></div></details>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e limites">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Na prática · limites · créditos</div>
+    <h2 class="rv" style="--d:.1s">O que muda para quem poupa, gere ou regula</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Quem poupa</h3><p>Olhe a taxa e as réguas de risco antes de aceitar o plano da agência. A portabilidade permite trocar de fundo ou de empresa sem resgatar e sem pagar imposto na troca.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Bancos e gestoras</h3><p>A dissertação lembra que taxas mais altas se justificam em fundos de gestão ativa, que buscam superar o mercado. Com mais gestoras e plataformas abertas, a concorrência tende a pressionar as taxas.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ink-2)"><h3>Reguladores</h3><p>A autora vê no open banking e no open finance um caminho para o poupador comparar produtos e para o mercado concentrado ficar mais competitivo.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#5b6f96"><h3>Pesquisadores</h3><p>Próximo passo sugerido: ver se os fundos dos bancos rendem menos porque seguem mais de perto os índices de referência, numa gestão mais passiva.</p></div>
+    </div>
+    <p class="warn rv" style="--d:.3s">Esta página divulga uma pesquisa acadêmica; não é recomendação de investimento.</p>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Só os fundos que sobreviveram.</b> A base tem os fundos ativos em janeiro de 2023; os que fecharam no caminho ficaram de fora. <em>· segundo a autora</em></li>
+          <li><b>Taxa máxima e time pelo nome.</b> A pesquisa usou a taxa máxima de cada fundo (quem aplica mais costuma pagar menos) e classificou o fundo como de banco pelo nome. <em>· segundo a autora</em></li>
+          <li><b>Associação, não causa.</b> O modelo mostra que os fundos dos bancos andaram com resultados piores, não por que isso aconteceu. A própria autora fala em "correlação" e em resultados "parciais". <em>· observação nossa</em></li>
+          <li><b>Direção, mais que tamanho.</b> Sem a unidade de alpha, Sharpe, Sortino e Treynor, a página mostra só para que lado foram. E os modelos completos usam cerca de metade dos dados e explicam pouco do que muda dentro de cada ano (13,8% no retorno). <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          SCHIONATO, Vanessa Andrade de Castro. <em>Análise de desempenho dos fundos de previdência complementar aberto VGBL/PGBL entre 2012 e 2022.</em> Dissertação (Mestrado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2024. Orientador: Prof. Dr. Denis Forte.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Pesquisa com apoio da CAPES. Dados da Economatica; análise no software R. O título fala em 2012 a 2022, mas as tabelas de resultado cobrem 2010 a 2022. Esta versão simplifica o trabalho para o público em geral; as fórmulas e as tabelas completas estão no texto original.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a dissertação completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable, ramp = M.ramp;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  function n0(n){ return Math.round(n).toLocaleString(EN ? 'en-US' : 'pt-BR'); }
+  function sgn(v, d){ return (v < 0 ? '−' : '+') + fmt(Math.abs(v), d); }
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent){ var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+  function txt(parent, x, y, s, css, cls){ var t = el('text', {x:x, y:y}, parent); t.textContent = s; if (css) t.setAttribute('style', css); if (cls) t.setAttribute('class', cls); return t; }
+  function seg(id, fn){ var g = $(id); each(g.querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ each(g.querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); fn(b); }); }); }
+  function starTxt(s){ return s === 3 ? 'p < 0' + (EN ? '.' : ',') + '01' : s === 2 ? 'p < 0' + (EN ? '.' : ',') + '05' : s === 1 ? 'p < 0' + (EN ? '.' : ',') + '10' : L('sem diferença clara', 'no clear difference'); }
+  var mobile = window.matchMedia('(max-width:600px)');
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  var YEARS = [2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022];
+  // Gráfico 9: número de fundos por ano (lido da figura, medido em pixels; soma 16.589 ≈ 16.573 obs. do modelo 1)
+  var NIND = [132,142,158,196,235,279,318,362,455,659,908,1269,1693];
+  var NBK  = [289,324,388,464,509,573,630,723,815,943,1138,1396,1591];
+  // Tabela 1: [gestora, renda fixa, multimercado, ações]
+  var T1 = [
+    ['Itaú', 184, 354, 22, 1], ['Bradesco', 147, 305, 22, 1], ['Banco do Brasil', 108, 299, 15, 1],
+    ['Santander', 84, 131, 10, 1], ['Caixa', 58, 47, 2, 1], [L('Independentes', 'Independents'), 475, 1576, 251, 0]
+  ];
+  // Tabela 4 (janeiro de 2023): independentes × bancos
+  var T4 = [
+    {n:L('Patrimônio médio do fundo', 'Average fund size'), a:198.84, b:1160.62, u:L(' mi', ' m'), pre:'R$ ', d:0, note:L('Média do patrimônio líquido, em milhões de reais. A média dos bancos é puxada por fundos gigantes (o maior tem R$ 140 bilhões).', 'Average net assets, in millions of reais. The banks’ average is pulled up by giant funds (the largest has R$ 140 billion).')},
+    {n:L('Patrimônio mediano', 'Median fund size'), a:31.26, b:66.92, u:L(' mi', ' m'), pre:'R$ ', d:1, note:L('Mediana: metade dos fundos tem menos que isso. Mesmo assim, o fundo típico do banco tem o dobro do tamanho.', 'Median: half the funds have less than this. Even so, the typical bank fund is twice the size.')},
+    {n:L('Taxa de administração média', 'Average management fee'), a:1.65, b:1.79, u:L('% ao ano', '% a year'), pre:'', d:2, note:L('Taxa máxima informada na base, em % do patrimônio ao ano. A diferença simples é de 0,14 ponto percentual.', 'Maximum fee reported in the database, in % of assets per year. The simple difference is 0.14 percentage points.')},
+    {n:L('Aplicação mínima média', 'Average minimum investment'), a:43875, b:217410, u:'', pre:'R$ ', d:0, note:L('Valor mínimo médio para entrar no fundo, em reais.', 'Average minimum amount to enter the fund, in reais.')}
+  ];
+  // Modelos completos: coeficiente de "gestora de banco" [coef, estrelas], interação com fundo grande [coef, estrelas]
+  // dir: +1 quando um valor maior é melhor para quem poupa; -1 quando é pior (taxa)
+  var FULL = [
+    {k:'ret', n:L('Retorno', 'Return'), sn:L('Retorno', 'Return'), c:-1.406, s:3, g:-0.3677, gs:3, dir:1, tb:6, N:7973, unit:L(' ponto percentual por ano', ' percentage points a year'), q:L('Retorno no ano', 'Return in the year')},
+    {k:'fee', n:L('Taxa de administração', 'Management fee'), sn:L('Taxa', 'Fee'), c:0.3114, s:3, g:-0.2855, gs:3, dir:-1, tb:11, N:7973, unit:L(' ponto percentual', ' percentage points'), q:L('Taxa cobrada', 'Fee charged')},
+    {k:'alpha', n:'Alpha de Jensen', sn:'Alpha', c:-1.165, s:3, g:-0.342, gs:3, dir:1, tb:13, N:7973, q:L('Alpha (ganho além do risco)', 'Alpha (gain beyond risk)')},
+    {k:'sharpe', n:L('Índice de Sharpe', 'Sharpe ratio'), sn:'Sharpe', c:-0.1996, s:3, g:-0.3042, gs:3, dir:1, tb:15, N:7973, q:L('Sharpe (ganho por oscilação)', 'Sharpe (gain per swing)')},
+    {k:'sortino', n:L('Índice de Sortino', 'Sortino ratio'), sn:'Sortino', c:-0.444, s:3, g:-0.2485, gs:3, dir:1, tb:19, N:7388, q:L('Sortino (ganho por queda)', 'Sortino (gain per drop)')},
+    {k:'treynor', n:L('Índice de Treynor', 'Treynor ratio'), sn:'Treynor', c:-0.4817, s:0, g:0.3658, gs:0, dir:1, tb:17, N:7973, q:L('Treynor (ganho por risco de mercado)', 'Treynor (gain per market risk)')}
+  ];
+  // Cinco modelos (Tabelas 6, 13, 15, 17, 19): [coef, erro-padrão, estrelas]
+  var MOD = {
+    ret:{n:L('Retorno', 'Return'), u:'p.p.', N:[16573,16545,16506,7973,7973], v:[[0.1511,0.1041,0],[0.0974,0.1050,0],[-0.5257,0.1020,3],[-1.568,0.1364,3],[-1.406,0.1461,3]]},
+    alpha:{n:'Alpha', N:[16506,16506,16506,7973,7973], v:[[-0.3235,0.0845,3],[-0.3551,0.0852,3],[-0.4656,0.0841,3],[-1.316,0.1207,3],[-1.165,0.1265,3]]},
+    sharpe:{n:'Sharpe', N:[16506,16506,16506,7973,7973], v:[[-0.1686,0.0471,3],[-0.1877,0.0472,3],[-0.1104,0.0505,2],[-0.3339,0.0632,3],[-0.1996,0.0676,3]]},
+    sortino:{n:'Sortino', N:[14941,14941,14941,7388,7388], v:[[-0.4782,0.0287,3],[-0.4814,0.0288,3],[-0.4346,0.0297,3],[-0.5518,0.0412,3],[-0.444,0.0464,3]]},
+    treynor:{n:'Treynor', N:[16506,16506,16506,7973,7973], v:[[-0.7777,0.2928,3],[-0.8273,0.2945,3],[-0.7264,0.3099,2],[-0.3202,0.3064,0],[-0.4817,0.3963,0]]}
+  };
+  var STEPS = [
+    {t:L('Só o time', 'Team only'), d:L('compara as médias, sem levar nada em conta', 'compares the averages, accounting for nothing')},
+    {t:L('+ tamanho', '+ size'), d:L('fundos de patrimônio parecido (e quanto ele oscilou no ano)', 'funds of similar size (and how much it swung during the year)')},
+    {t:L('+ risco', '+ risk'), d:L('fundos com o mesmo beta, a sensibilidade à bolsa', 'funds with the same beta, the sensitivity to the stock market')},
+    {t:L('+ taxa', '+ fee'), d:L('fundos com a mesma taxa de administração', 'funds with the same management fee')},
+    {t:L('+ banco grande', '+ big bank'), d:L('separa os fundos grandes dos bancos dos pequenos', 'separates the banks’ big funds from their small ones')}
+  ];
+  // Tabelas 8 e 9: retorno, coeficiente de "gestora de banco" por ano [coef, estrelas, observações]
+  var YR = [[-2.607,3,144],[-2.769,3,173],[-4.230,3,204],[0.752,0,249],[-2.058,3,283],[-3.036,3,324],[1.548,3,370],[1.598,3,417],[-0.0405,0,508],[1.390,3,727],[0.3919,0,1059],[-1.380,3,1515],[-1.282,3,2000]];
+  // Tabelas 10, 12, 14, 16, 18, 20: por classe [ações, multimercado, renda fixa] = [coef, estrelas]
+  var CL = {
+    ret:[[-0.7505,0],[-1.285,3],[-0.7832,3]], fee:[[-0.1292,0],[0.1998,3],[0.3183,3]], alpha:[[-0.7712,0],[-1.05,3],[-0.8735,3]],
+    sharpe:[[-0.1485,1],[-0.1497,3],[-0.4148,0]], sortino:[[-0.2484,1],[-0.2831,3],[-1.267,3]], treynor:[[0.073,0],[-0.8932,3],[2.03,0]]
+  };
+  var CLN = [L('Ações', 'Equity'), L('Multimercado', 'Multi-asset'), L('Renda fixa', 'Fixed income')];
+  var CLOBS = [[339, 5637, 1997], [335, 5419, 1634]]; // Sortino tem outro N
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 300, 120, {ay:'76%', rx:'60deg'});
+    rotatable(sc, st, -24, 9);
+    var K = 0.12;
+    var a = box({w:100, d:100, x:20, y:10, h:NBK[0] * K, c:'var(--bk)', top:' '});
+    var b = box({w:100, d:100, x:180, y:10, h:NIND[0] * K, c:'var(--ind)', top:' '});
+    st.appendChild(a); st.appendChild(b);
+    flatLabel(st, L('5 grandes bancos', '5 big banks'), 0, 122, 140);
+    flatLabel(st, L('independentes', 'independents'), 160, 122, 140);
+    var last = -1;
+    function show(i){
+      a.style.setProperty('--h', (NBK[i] * K) + 'px'); b.style.setProperty('--h', (NIND[i] * K) + 'px');
+      a.querySelector('.top-label').textContent = '~' + n0(Math.round(NBK[i] / 10) * 10);
+      b.querySelector('.top-label').textContent = '~' + n0(Math.round(NIND[i] / 10) * 10);
+      $('hero-year').innerHTML = L('Fundos de previdência em ', 'Pension funds in ') + '<b>' + YEARS[i] + '</b>';
+    }
+    show(12);
+    if (!reduce) M.onTick(function(t){ var i = Math.floor(t / 1.3) % 16; i = Math.min(i, 12); if (i !== last){ last = i; show(i); } });
+  })();
+
+  /* ================= 02 · INSS ================= */
+  (function(){
+    function person(c, cls){ return '<svg class="' + (cls || '') + '" viewBox="0 0 30 46" aria-hidden="true"><circle cx="15" cy="8" r="7" fill="' + c + '"/><path d="M3 46 V26 a12 12 0 0 1 24 0 V46 Z" fill="' + c + '"/></svg>'; }
+    function draw(m){
+      var n = m ? 4 : 13, h = '';
+      for (var i = 0; i < n; i++) h += person('#1f3b73');
+      h += person('#e80734', 'old');
+      h += '<span class="lbl">' + (m ? L('Em 2023: 4 pessoas em idade ativa (azul) para cada idoso (vermelho).', 'In 2023: 4 working-age people (blue) for each older person (red).') : L('Há um século: 13 pessoas em idade ativa (azul) para cada idoso (vermelho).', 'A century ago: 13 working-age people (blue) for each older person (red).')) + '</span>';
+      $('ppl').innerHTML = h;
+    }
+    draw(0); seg('ppl-seg', function(b){ draw(+b.dataset.m); });
+    var R = [
+      [1993, L('Servidores públicos federais passam a pagar contribuição previdenciária.', 'Federal civil servants start paying pension contributions.'), 'EC 3'],
+      [1998, L('A aposentadoria passa a considerar a contribuição, não só o tempo de serviço.', 'Retirement starts to count contributions, not just years of service.'), 'EC 20'],
+      [2003, L('O benefício deixa de seguir o último salário e passa a seguir a média das contribuições.', 'Benefits stop following the last salary and follow the average of contributions.'), 'EC 41'],
+      [2005, L('Regra de transição para a aposentadoria integral dos servidores.', 'Transition rule for civil servants’ full pensions.'), 'EC 47'],
+      [2012, L('A aposentadoria por invalidez passa a usar a média das remunerações.', 'Disability pensions start using the average of earnings.'), 'EC 70'],
+      [2015, L('A aposentadoria compulsória de servidores sobe de 70 para 75 anos.', 'Mandatory retirement for civil servants rises from 70 to 75.'), 'EC 88'],
+      [2019, L('Fim da aposentadoria por tempo de contribuição; idade mínima de 62 anos para mulheres e 65 para homens.', 'End of retirement by contribution time alone; minimum age of 62 for women and 65 for men.'), 'EC 103']
+    ];
+    var g = $('reforms');
+    R.forEach(function(r, i){
+      var b = document.createElement('button'); b.textContent = r[0]; b.setAttribute('aria-pressed', i === 6 ? 'true' : 'false');
+      b.addEventListener('click', function(){ each(g.children, function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); show(i); });
+      g.appendChild(b);
+    });
+    function show(i){ $('ref-panel').innerHTML = '<div class="tag">' + R[i][0] + ' · ' + R[i][2] + '</div><p>' + R[i][1] + '</p><p style="font-size:.78rem; color:var(--muted)">' + L('Cada reforma aperta a regra ou reduz o benefício. Para a autora, a previdência complementar vira uma necessidade para quem quer manter a renda.', 'Each reform tightens the rules or reduces the benefit. For the author, supplementary pensions become a necessity for those who want to keep their income.') + '</p>'; }
+    show(6);
+  })();
+
+  /* ================= 03 · PGBL E VGBL ================= */
+  (function(){
+    var RATES = [35, 30, 25, 20, 15, 10], LBL = [L('até 2', 'up to 2'), '2–4', '4–6', '6–8', '8–10', L('10+', '10+')];
+    var sc = $('tax-scene'), st = makeStage(sc, 480, 110, {ay:'72%', rx:'60deg'});
+    rotatable(sc, st, -18, 7);
+    var steps = RATES.map(function(r, i){
+      var b = box({w:66, d:80, x:i * 80, y:12, h:r * 5.2, c:ramp('var(--red)', i, 9), top:r + '%'});
+      st.appendChild(b); flatLabel(st, LBL[i] + L(' anos', ' yrs'), i * 80 - 6, 98, 78); return b;
+    });
+    var plan = 'v';
+    function rateFor(y){ return y <= 2 ? 0 : y <= 4 ? 1 : y <= 6 ? 2 : y <= 8 ? 3 : y <= 10 ? 4 : 5; }
+    function upd(){
+      var y = +$('tax-rng').value, i = rateFor(y), r = RATES[i];
+      steps.forEach(function(s, j){ s.classList.toggle('active', j === i); });
+      $('tax-v').textContent = y + L(y === 1 ? ' ano' : ' anos', y === 1 ? ' year' : ' years');
+      var base = plan === 'v' ? 6000 : 16000, tax = base * r / 100, net = 16000 - tax;
+      $('calc').innerHTML =
+        '<div class="c" style="--cc:var(--red)"><span class="k">' + L('Imposto no resgate', 'Tax on withdrawal') + '</span><b>R$ ' + n0(tax) + '</b><span>' + r + '% ' + L('sobre ', 'on ') + 'R$ ' + n0(base) + (plan === 'v' ? L(' (só o rendimento)', ' (earnings only)') : L(' (aporte + rendimento)', ' (contribution + earnings)')) + '</span></div>' +
+        '<div class="c" style="--cc:var(--navy)"><span class="k">' + L('Fica com você', 'You keep') + '</span><b>R$ ' + n0(net) + '</b><span>' + L('de R$ 16.000 no plano', 'of R$ 16,000 in the plan') + (plan === 'p' ? L('; o desconto anual na declaração compensa parte disso', '; the yearly tax-return deduction offsets part of this') : '') + '</span></div>';
+    }
+    $('tax-rng').addEventListener('input', upd);
+    seg('plan-seg', function(b){ plan = b.dataset.m; upd(); });
+    upd();
+  })();
+
+  /* ================= 04 · CONCENTRAÇÃO ================= */
+  (function(){
+    var g = $('g100'), cells = [];
+    for (var i = 0; i < 100; i++){ var c = document.createElement('i'); g.appendChild(c); cells.push(c); }
+    function draw(m){
+      if (m === 0){
+        cells.forEach(function(c, i){ c.style.background = i < 91 ? 'var(--bk)' : i === 91 ? 'linear-gradient(90deg, var(--bk) 51%, var(--off) 51%)' : 'var(--off)'; });
+        $('g100-leg').innerHTML = '<span><i class="dot" style="background:var(--bk)"></i>' + L('cinco companhias ligadas a bancos de varejo: 91,51%', 'five companies linked to retail banks: 91.51%') + '</span><span><i class="dot" style="background:var(--off)"></i>' + L('todas as outras', 'all the others') + '</span>';
+        $('conc-panel').innerHTML = '<div class="tag">' + L('Captação de 2022 · R$ 156,2 bilhões', 'Money raised in 2022 · R$ 156.2 billion') + '</div><p>' + L('Brasilprev, Bradesco Vida e Previdência, Caixa Vida e Previdência, Zurich Santander e Itaú Vida e Previdência captaram 91,51% de todo o dinheiro novo. Cada quadradinho é 1%.', 'Brasilprev, Bradesco Vida e Previdência, Caixa Vida e Previdência, Zurich Santander and Itaú Vida e Previdência raised 91.51% of all new money. Each square is 1%.') + '</p>';
+      } else {
+        cells.forEach(function(c, i){ c.style.background = i < 62 ? 'var(--red)' : i < 84 ? 'var(--navy)' : '#94a3b8'; });
+        $('g100-leg').innerHTML = '<span><i class="dot" style="background:var(--red)"></i>VGBL 62%</span><span><i class="dot" style="background:var(--navy)"></i>PGBL 22%</span><span><i class="dot" style="background:#94a3b8"></i>' + L('tradicionais 16%', 'traditional 16%') + '</span>';
+        $('conc-panel').innerHTML = '<div class="tag">' + L('14 milhões de planos · fim de 2023', '14 million plans · end of 2023') + '</div><p>' + L('O VGBL domina. Em 2022, 90% da captação foi para o VGBL e 8% para o PGBL. São cerca de 11 milhões de pessoas com algum plano, 8,8 milhões em planos individuais.', 'VGBL dominates. In 2022, 90% of the money raised went to VGBL and 8% to PGBL. About 11 million people have some plan, 8.8 million in individual plans.') + '</p>';
+      }
+    }
+    draw(0); seg('conc-seg', function(b){ draw(+b.dataset.m); });
+  })();
+
+  /* ================= 05 · AMOSTRA ================= */
+  (function(){
+    var sc = $('t1-scene'), st = makeStage(sc, 520, 120, {ay:'80%', rx:'58deg'});
+    rotatable(sc, st, -16, 7);
+    var K = 0.105, cls = -1, sel = 5, cols = [];
+    var CN = [L('renda fixa', 'fixed income'), L('multimercado', 'multi-asset'), L('ações', 'equity')];
+    T1.forEach(function(r, i){
+      var x = i * 86 + (i === 5 ? 14 : 0), z = 0, base = r[4] ? 'var(--bk)' : 'var(--ind)', parts = [];
+      for (var j = 0; j < 3; j++){
+        var h = r[j + 1] * K;
+        var b = box({w:62, d:62, x:x, y:20, z:z, h:Math.max(h, 0.6), c:ramp(base, j * 3, 9), top:j === 2 ? n0(r[1] + r[2] + r[3]) : ''});
+        b.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick(i); });
+        st.appendChild(b); parts.push(b); z += h;
+      }
+      cols.push(parts);
+      flatLabel(st, r[0], x - 12, 90, 86);
+    });
+    var bt = $('t1-btn');
+    T1.forEach(function(r, i){ var b = document.createElement('button'); b.textContent = r[0]; b.addEventListener('click', function(){ pick(i); }); bt.appendChild(b); });
+    function pick(i){ sel = i; render(); }
+    function render(){
+      cols.forEach(function(parts, i){ parts.forEach(function(p, j){ p.classList.toggle('dim', cls >= 0 && j !== cls); p.classList.toggle('active', i === sel && (cls < 0 || j === cls)); }); });
+      each(bt.children, function(b, i){ b.setAttribute('aria-pressed', i === sel ? 'true' : 'false'); });
+      var r = T1[sel], tot = r[1] + r[2] + r[3];
+      var tag = r[4] ? L('Gestora de banco', 'Bank manager') : L('Todas as outras gestoras', 'All other managers');
+      var line = cls < 0 ? CN.map(function(c, j){ return n0(r[j + 1]) + ' ' + c; }).join(' · ') : n0(r[cls + 1]) + ' ' + L('fundos de ', 'funds of ') + CN[cls] + ' (' + fmt(r[cls + 1] / tot * 100, 0) + '% ' + L('dos fundos dela', 'of its funds') + ')';
+      var totC = cls < 0 ? [1056, 2712, 322] : null;
+      $('t1-panel').innerHTML = '<div class="tag">' + tag + '</div><h3>' + r[0] + ' · ' + n0(tot) + L(' fundos', ' funds') + '</h3><p>' + line + '.</p><p style="font-size:.78rem; color:var(--muted)">' + L('No total: 1.056 de renda fixa, 2.712 multimercados e 322 de ações. Os multimercados são dois terços da amostra.', 'In total: 1,056 fixed income, 2,712 multi-asset and 322 equity. Multi-asset funds are two thirds of the sample.') + '</p>';
+    }
+    seg('t1-seg', function(b){ cls = +b.dataset.c; render(); });
+    render();
+  })();
+
+  /* ================= 06 · BANCOS × INDEPENDENTES ================= */
+  (function(){
+    var sc = $('n-scene'), st = makeStage(sc, 540, 90, {ay:'80%', rx:'60deg'});
+    rotatable(sc, st, -14, 6);
+    var K = 0.13, pairs = [];
+    YEARS.forEach(function(y, i){
+      var x = i * 41;
+      var a = box({w:17, d:30, x:x, y:20, h:NBK[i] * K, c:'var(--bk)'});
+      var b = box({w:17, d:30, x:x + 18, y:20, h:NIND[i] * K, c:'var(--ind)'});
+      st.appendChild(a); st.appendChild(b); pairs.push([a, b]);
+      [a, b].forEach(function(s){ s.addEventListener('click', function(){ if (!M.wasDrag(sc)){ $('n-rng').value = y; yr(); } }); });
+      if (i % 2 === 0) flatLabel(st, String(y), x - 6, 56, 48);
+    });
+    function yr(){
+      var y = +$('n-rng').value, i = y - 2010;
+      pairs.forEach(function(p, j){ p.forEach(function(s){ s.classList.toggle('dim', j !== i); }); });
+      $('n-v').innerHTML = y + ' · <span style="color:var(--bk)">~' + n0(Math.round(NBK[i] / 10) * 10) + '</span> × <span style="color:var(--ind)">~' + n0(Math.round(NIND[i] / 10) * 10) + '</span>';
+    }
+    $('n-rng').addEventListener('input', yr); yr();
+    function dumb(m){
+      var r = T4[m], mx = Math.max(r.a, r.b) * 1.18;
+      function f(v){ return r.pre + (r.d ? fmt(v, r.d) : n0(v)) + r.u; }
+      $('dumb').innerHTML = [[L('Independentes', 'Independents'), r.a, 'var(--ind)'], [L('5 grandes bancos', '5 big banks'), r.b, 'var(--bk)']].map(function(x){
+        var w = x[1] / mx * 100;
+        return '<div class="row"><span>' + x[0] + '</span><div class="tr"><i style="left:0; width:' + w + '%; background:' + x[2] + '"></i><span style="left:calc(' + w + '% + 6px); color:' + x[2] + '">' + f(x[1]) + '</span></div></div>';
+      }).join('');
+      $('tm-note').textContent = r.note;
+    }
+    dumb(0); seg('tm-seg', function(b){ dumb(+b.dataset.m); });
+  })();
+
+  /* ================= 07 · RÉGUAS ================= */
+  (function(){
+    var SELIC = 10, IBOV = 15;
+    var F = [
+      {n:L('renda fixa', 'fixed income'), r:11, sd:2, dn:1, beta:0.05},
+      {n:L('multimercado', 'multi-asset'), r:12, sd:5, dn:3, beta:0.3},
+      {n:L('ações', 'equity'), r:14, sd:20, dn:14, beta:1.0}
+    ];
+    var f = 0, svg = $('fund-svg');
+    function path(fd, R){
+      // série inventada e fixa por fundo (pseudoaleatória com semente), ajustada para terminar no retorno escolhido
+      var n = 52, seed = 7 + f * 13, pts = [], v = 0;
+      function rnd(){ seed = (seed * 9301 + 49297) % 233280; return seed / 233280 - 0.5; }
+      for (var i = 0; i <= n; i++){ pts.push(v); v += rnd() * fd.sd * 0.55; }
+      var drift = (R - pts[n]) / n;
+      return pts.map(function(p, i){ return p + drift * i; });
+    }
+    function draw(){
+      var fd = F[f], R = +$('fd-rng').value, pts = path(fd, R);
+      var mn = Math.min.apply(null, pts.concat([0, SELIC])) - 2, mx = Math.max.apply(null, pts.concat([SELIC])) + 2;
+      var X = function(i){ return 40 + i * (500 / 52); }, Y = function(v){ return 185 - (v - mn) / (mx - mn) * 160; };
+      svg.innerHTML = '';
+      el('line', {x1:40, x2:540, y1:Y(0), y2:Y(0), stroke:'#cbd5e1'}, svg);
+      el('line', {x1:40, x2:540, y1:Y(0), y2:Y(SELIC), stroke:'#1f3b73', 'stroke-dasharray':'5 5', 'stroke-width':2}, svg);
+      txt(svg, 44, Y(SELIC) - 8, 'Selic ' + SELIC + '%', 'font-size:12px; fill:#1f3b73; font-weight:600');
+      for (var i = 1; i < pts.length; i++){
+        el('line', {x1:X(i - 1), y1:Y(pts[i - 1]), x2:X(i), y2:Y(pts[i]), stroke:pts[i] < pts[i - 1] ? '#e80734' : '#334155', 'stroke-width':2.4, 'stroke-linecap':'round'}, svg);
+      }
+      txt(svg, 540, Y(pts[52]) - 8, sgn(R, 1) + '%', 'font-size:13px; font-weight:700; fill:#0f172a; text-anchor:end');
+      txt(svg, 40, 205, L('um ano de semanas · trechos vermelhos = quedas', 'a year of weeks · red stretches = drops'), 'font-size:11px; fill:#64748b');
+      var ex = R - SELIC, alpha = R - (SELIC + fd.beta * (IBOV - SELIC));
+      var C = [
+        {k:L('Retorno acima da Selic', 'Return above Selic'), v:sgn(ex, 1) + ' p.p.', d:L('o ponto de partida de todas as réguas', 'the starting point of every yardstick'), neg:ex < 0},
+        {k:'Sharpe', v:fmt(ex / fd.sd, 2), d:L('ganho acima da Selic ÷ quanto o fundo oscila (' + fmt(fd.sd, 0) + '%)', 'gain above Selic ÷ how much the fund swings (' + fmt(fd.sd, 0) + '%)'), neg:ex < 0},
+        {k:'Sortino', v:fmt(ex / fd.dn, 2), d:L('o mesmo, mas só conta as quedas (' + fmt(fd.dn, 0) + '%)', 'the same, but counts only the drops (' + fmt(fd.dn, 0) + '%)'), neg:ex < 0},
+        {k:'Treynor', v:fmt(ex / fd.beta, 1), d:L('ganho ÷ beta (' + fmt(fd.beta, 2) + '), o quanto o fundo segue a bolsa; com beta perto de zero, explode', 'gain ÷ beta (' + fmt(fd.beta, 2) + '), how much the fund follows the stock market; with beta near zero, it explodes'), neg:ex < 0},
+        {k:'Alpha', v:sgn(alpha, 1) + ' p.p.', d:L('ganho além do que o risco de bolsa já explicaria', 'gain beyond what stock market risk would already explain'), neg:alpha < 0}
+      ];
+      $('idx').innerHTML = C.map(function(c){ return '<div class="c' + (c.neg ? ' neg' : '') + '"><span class="k">' + c.k + '</span><b>' + c.v + '</b><span>' + c.d + '</span></div>'; }).join('') +
+        '<div class="c"><span class="k">Beta</span><b>' + fmt(fd.beta, 2) + '</b><span>' + L('1 = sobe e desce como a bolsa; 0 = não liga para ela', '1 = moves up and down like the stock market; 0 = ignores it') + '</span></div>';
+      $('fd-v').textContent = fmt(R, 1) + '%';
+    }
+    $('fd-rng').addEventListener('input', draw);
+    seg('fd-seg', function(b){ f = +b.dataset.f; $('fd-rng').value = F[f].r; draw(); });
+    draw();
+  })();
+
+  /* ================= 08 · PLACAR ================= */
+  var placarSel;
+  (function(){
+    var sc = $('sc-scene'), st = makeStage(sc, 500, 110, {ay:'76%', rx:'58deg'});
+    rotatable(sc, st, -18, 7);
+    var cols = [], revealed = {}, hits = 0, done = 0, sel = 0;
+    FULL.forEach(function(r, i){
+      var b = box({w:56, d:56, x:i * 84, y:24, h:2, c:r.s ? 'var(--bk)' : 'var(--off)', top:' ', cls:r.s ? '' : 'ns'});
+      b.classList.add('off');
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick(i); });
+      st.appendChild(b); cols.push(b);
+      flatLabel(st, r.sn, i * 84 - 12, 88, 80);
+    });
+    function verdict(r){ if (!r.s) return 0; return r.c * r.dir < 0 ? -1 : 1; }
+    function vTxt(v){ return v < 0 ? L('pior', 'worse') : v > 0 ? L('melhor', 'better') : L('igual', 'same'); }
+    var bets = $('bets');
+    FULL.forEach(function(r, i){
+      var d = document.createElement('div'); d.className = 'bet';
+      d.innerHTML = '<div class="q">' + r.q + '</div><div class="opts"><button data-g="1">' + L('melhor', 'better') + '</button><button data-g="0">' + L('igual', 'same') + '</button><button data-g="-1">' + L('pior', 'worse') + '</button></div><div class="res"></div>';
+      each(d.querySelectorAll('.opts button'), function(b){
+        b.addEventListener('click', function(){
+          var g = +b.dataset.g, v = verdict(r), ok = g === v; if (ok) hits++; done++;
+          d.querySelector('.res').innerHTML = L('Você: ', 'You: ') + b.textContent + ' · ' + L('resultado: ', 'result: ') + '<b>' + vTxt(v) + '</b>' + (ok ? ' ✓' : '');
+          d.classList.add('done'); reveal(i);
+          $('bet-score').innerHTML = L('Você acertou <strong>' + hits + ' de ' + done + '</strong>.', 'You got <strong>' + hits + ' of ' + done + '</strong> right.') + (done === 6 ? L(' Em cinco réguas os fundos dos bancos ficaram pior para quem poupa; no Treynor, sem diferença clara.', ' On five yardsticks the banks’ funds came out worse for savers; on Treynor, no clear difference.') : '');
+        });
+      });
+      bets.appendChild(d);
+    });
+    var bt = $('sc-btn');
+    FULL.forEach(function(r, i){ var b = document.createElement('button'); b.textContent = r.sn; b.addEventListener('click', function(){ pick(i); }); bt.appendChild(b); });
+    function reveal(i){ revealed[i] = true; cols[i].classList.remove('off'); cols[i].style.setProperty('--h', (FULL[i].s ? FULL[i].s * 40 : 2) + 'px'); cols[i].querySelector('.top-label').textContent = vTxt(verdict(FULL[i])); pick(i); }
+    function pick(i){
+      sel = i;
+      cols.forEach(function(c, j){ c.classList.toggle('active', j === i); });
+      each(bt.children, function(b, j){ b.setAttribute('aria-pressed', j === i ? 'true' : 'false'); });
+      var r = FULL[i];
+      if (!revealed[i]){ $('sc-panel').innerHTML = '<div class="tag">' + r.n + '</div><p>' + L('Faça a aposta ao lado para revelar esta coluna (ou toque em "revelar tudo").', 'Place the bet on the left to reveal this column (or tap "reveal all").') + '</p><button class="btn small ghost" id="rev-all">' + L('Revelar tudo', 'Reveal all') + '</button>'; $('rev-all').onclick = function(){ FULL.forEach(function(x, j){ if (!revealed[j]) reveal(j); }); pick(i); }; return; }
+      var main;
+      if (r.k === 'ret') main = L('Os fundos dos bancos renderam, em média, <b>1,4 ponto percentual a menos por ano</b> que fundos parecidos das independentes.', 'The banks’ funds earned, on average, <b>1.4 percentage points less per year</b> than similar independent funds.');
+      else if (r.k === 'fee') main = L('Os fundos dos bancos cobraram <b>cerca de 0,31 ponto percentual a mais</b> de taxa que fundos parecidos das independentes.', 'The banks’ funds charged <b>about 0.31 percentage points more</b> in fees than similar independent funds.');
+      else if (!r.s) main = L('Os fundos dos bancos ficaram um pouco abaixo, mas <b>sem diferença clara</b>: no modelo completo, o resultado pode ser acaso.', 'The banks’ funds came out a little lower, but <b>with no clear difference</b>: in the full model, the result could be chance.');
+      else main = L('Os fundos dos bancos ficaram <b>abaixo</b> dos fundos parecidos das independentes.', 'The banks’ funds came out <b>below</b> similar independent funds.');
+      var big = r.gs ? (r.k === 'fee' ? L('Nos fundos <b>grandes</b> dos bancos, a taxa é menor que nos pequenos deles (' + sgn(r.g, 2) + ' p.p.).', 'In the banks’ <b>big</b> funds, the fee is lower than in their small ones (' + sgn(r.g, 2) + ' p.p.).') : L('E os fundos <b>grandes</b> dos bancos ficaram ainda mais abaixo que os pequenos deles.', 'And the banks’ <b>big</b> funds came out even lower than their small ones.')) : L('Ser um fundo grande do banco não mudou nada de forma clara.', 'Being one of the bank’s big funds made no clear difference.');
+      $('sc-panel').innerHTML = '<div class="tag">' + r.n + ' · <span class="nt">' + L('Tabela ', 'Table ') + r.tb + ' · ' + n0(r.N) + L(' fundos-ano', ' fund-years') + '</span></div><p>' + main + '</p><p style="font-size:.8rem">' + big + '</p><p style="font-size:.74rem; color:var(--muted)">' + L('Coeficiente: ', 'Coefficient: ') + sgn(r.c, r.k === 'ret' || r.k === 'alpha' ? 2 : 2) + ' · ' + starTxt(r.s) + '</p>';
+    }
+    placarSel = pick;
+    pick(0);
+  })();
+
+  /* ================= 09 · O INESPERADO ================= */
+  (function(){
+    var meas = 'ret', step = 0, guessed = false, svg = $('fo-svg');
+    var sg = $('fo-seg');
+    ['ret', 'alpha', 'sharpe', 'sortino', 'treynor'].forEach(function(k, i){
+      var b = document.createElement('button'); b.textContent = MOD[k].n; b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+      b.addEventListener('click', function(){ each(sg.children, function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); meas = k; draw(); });
+      sg.appendChild(b);
+    });
+    var sp = $('steps');
+    STEPS.forEach(function(s, i){
+      var b = document.createElement('button'); b.innerHTML = '<b>' + (i + 1) + '</b>' + s.t; b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+      b.addEventListener('click', function(){ step = i; guessed = true; $('guess-res').innerHTML = $('guess-res').innerHTML || ''; draw(); });
+      sp.appendChild(b);
+    });
+    each($('guess').querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){
+        var g = +b.dataset.g; guessed = true;
+        $('guess-res').innerHTML = (g === 0 ? L('Acertou: ', 'Right: ') : L('Na verdade: ', 'Actually: ')) + L('na comparação simples, os bancos ficaram até um pouco acima (+0,15 p.p.), mas <b>sem diferença clara</b>. Agora acrescente as comparações uma a uma.', 'in the simple comparison, the banks were even slightly above (+0.15 p.p.), but <b>with no clear difference</b>. Now add the comparisons one by one.');
+        draw();
+      });
+    });
+    function draw(){
+      var m = MOD[meas], mob = mobile.matches;
+      each(sp.children, function(b, i){ b.setAttribute('aria-pressed', i === step ? 'true' : 'false'); });
+      svg.innerHTML = '';
+      var lim = 0; m.v.forEach(function(v){ lim = Math.max(lim, Math.abs(v[0]) + 1.96 * v[1]); }); lim *= 1.12;
+      var X0 = mob ? 190 : 170, X1 = 540, ZX = function(v){ return X0 + (v + lim) / (2 * lim) * (X1 - X0); };
+      el('line', {x1:ZX(0), x2:ZX(0), y1:20, y2:272, stroke:'#94a3b8', 'stroke-dasharray':'4 4'}, svg);
+      txt(svg, ZX(0) - 6, 292, L('← bancos atrás', '← banks behind'), 'font-size:12px; fill:#64748b; text-anchor:end', 'sm');
+      txt(svg, ZX(0) + 6, 292, L('bancos à frente →', 'banks ahead →'), 'font-size:12px; fill:#64748b', 'sm');
+      m.v.forEach(function(v, i){
+        var y = 40 + i * 52, on = i <= step || !guessed && i === 0, cur = i === step;
+        if (!guessed && i > 0) on = false;
+        var col = !on ? '#e2e8f0' : v[2] ? '#1f3b73' : '#94a3b8';
+        txt(svg, 14, y + 5, (i + 1) + '. ' + STEPS[i].t, 'font-size:13px; font-weight:' + (cur ? 700 : 500) + '; fill:' + (on ? '#0f172a' : '#cbd5e1'), 'rl');
+        if (!on) return;
+        el('line', {x1:ZX(v[0] - 1.96 * v[1]), x2:ZX(v[0] + 1.96 * v[1]), y1:y, y2:y, stroke:col, 'stroke-width':cur ? 5 : 3, 'stroke-linecap':'round'}, svg);
+        el('circle', {cx:ZX(v[0]), cy:y, r:cur ? 9 : 7, fill:cur ? '#e80734' : col}, svg);
+        txt(svg, ZX(v[0]), y - 14, sgn(v[0], 2), 'font-size:12px; font-weight:700; text-anchor:middle; fill:#0f172a');
+      });
+      var v = m.v[step], s = STEPS[step];
+      $('fo-panel').innerHTML = '<div class="tag">' + L('Modelo ', 'Model ') + (step + 1) + ' · ' + m.n + ' · <span class="nt">' + n0(m.N[step]) + L(' observações', ' observations') + '</span></div><p><b>' + s.t + ':</b> ' + s.d + '. ' + L('Diferença dos bancos: ', 'Banks’ difference: ') + '<b>' + sgn(v[0], 2) + (meas === 'ret' ? ' p.p.' : '') + '</b> · ' + starTxt(v[2]) + '.</p>' +
+        (meas === 'ret' ? '<p style="font-size:.78rem; color:var(--muted)">' + (step < 2 ? L('Até aqui, empate. A virada vem quando o beta entra: no período, beta mais baixo andou com retorno maior, e os números sugerem que os fundos dos bancos têm beta um pouco menor; comparados a fundos com o mesmo beta, rendem menos (leitura nossa).', 'So far, a tie. The turn comes when beta enters: over the period, a lower beta went with a higher return, and the numbers suggest the banks’ funds have a slightly lower beta; compared with funds of the same beta, they earn less (our reading).') : L('Como diz a autora, ao incluir os controles a relação passa de positiva para negativa e de não significativa para significativa.', 'As the author puts it, including the controls turns the relationship from positive to negative and from non-significant to significant.')) + '</p>' : '');
+    }
+    draw();
+    var lastMob = mobile.matches; window.addEventListener('resize', function(){ if (mobile.matches !== lastMob){ lastMob = mobile.matches; draw(); } });
+  })();
+
+  /* ================= 10 · ANO A ANO ================= */
+  (function(){
+    var svg = $('yr-svg'), only = false, sel = 12;
+    function draw(){
+      svg.innerHTML = '';
+      var Z = 165, K = 32, W = 560, x0 = 34, bw = 30, step = (W - x0 - 20) / 13;
+      for (var g = -4; g <= 2; g += 2){ el('line', {x1:x0, x2:W - 10, y1:Z - g * K, y2:Z - g * K, stroke:g === 0 ? '#94a3b8' : '#eef2f7'}, svg); txt(svg, x0 - 6, Z - g * K + 4, (g > 0 ? '+' : g < 0 ? '−' : '') + Math.abs(g), 'font-size:11px; fill:#64748b; text-anchor:end'); }
+      txt(svg, x0, 18, L('p.p. por ano (bancos − independentes)', 'p.p. a year (banks − independents)'), 'font-size:11px; fill:#64748b', 'lg');
+      txt(svg, x0, 36, L('vermelho: independentes na frente · azul: bancos na frente', 'red: independents ahead · blue: banks ahead'), 'font-size:11px; fill:#64748b', 'lg');
+      YR.forEach(function(r, i){
+        var x = x0 + i * step + (step - bw) / 2, h = Math.abs(r[0]) * K, y = r[0] < 0 ? Z : Z - h;
+        var show = !only || r[1];
+        var col = !r[1] ? '#cbd5e1' : r[0] < 0 ? '#e80734' : '#1f3b73';
+        var rc = el('rect', {x:x, y:y, width:bw, height:Math.max(h, 2), rx:3, class:'b', opacity:show ? 1 : 0.12, stroke:i === sel ? '#0f172a' : 'none', 'stroke-width':2}, svg);
+        rc.style.fill = col;
+        rc.addEventListener('click', function(){ sel = i; draw(); });
+        txt(svg, x + bw / 2, r[0] < 0 ? Z - 8 : Z + 16, "'" + String(YEARS[i]).slice(2), 'font-size:12px; fill:#334155; text-anchor:middle; font-weight:' + (i === sel ? 700 : 500), 'yl');
+      });
+      var r = YR[sel], y = YEARS[sel];
+      var msg = !r[1] ? L('sem diferença clara entre os dois times.', 'no clear difference between the two teams.') : r[0] < 0 ? L('os fundos dos bancos renderam <b>' + fmt(Math.abs(r[0]), 1) + ' ponto percentual a menos</b>.', 'the banks’ funds earned <b>' + fmt(Math.abs(r[0]), 1) + ' percentage points less</b>.') : L('os fundos dos bancos renderam <b>' + fmt(r[0], 1) + ' ponto percentual a mais</b>.', 'the banks’ funds earned <b>' + fmt(r[0], 1) + ' percentage points more</b>.');
+      $('yr-panel').innerHTML = '<div class="tag">' + y + ' · <span class="nt">' + n0(r[2]) + L(' fundos', ' funds') + '</span></div><p>' + L('Comparando fundos parecidos naquele ano, ', 'Comparing similar funds that year, ') + msg + '</p><p style="font-size:.74rem; color:var(--muted)">' + L('Coeficiente ', 'Coefficient ') + sgn(r[0], 2) + ' · ' + starTxt(r[1]) + L('. Juntando 2010–2016: −1,63; juntando 2017–2022: −1,14 (os dois com p < 0,01).', '. Pooling 2010–2016: −1.63; pooling 2017–2022: −1.14 (both with p < 0.01).') + '</p>';
+    }
+    seg('yr-seg', function(b){ only = b.dataset.m === '1'; draw(); });
+    draw();
+  })();
+
+  /* ================= 11 · POR TIPO DE FUNDO ================= */
+  (function(){
+    var sc = $('cl-scene'), st = makeStage(sc, 540, 250, {ay:'64%', rx:'54deg'});
+    rotatable(sc, st, -24, 7);
+    var KEYS = ['ret', 'fee', 'alpha', 'sharpe', 'sortino', 'treynor'], cells = [], cls = -1, sel = [1, 0];
+    var NM = {}; FULL.forEach(function(r){ NM[r.k] = r; });
+    KEYS.forEach(function(k, i){
+      CL[k].forEach(function(v, j){
+        var r = NM[k], bad = v[1] && v[0] * r.dir < 0, good = v[1] && !bad;
+        var b = box({w:46, d:46, x:i * 72 + 110, y:j * 70 + 20, h:v[1] ? v[1] * 26 : 2, c:v[1] ? (bad ? 'var(--bk)' : 'var(--red)') : 'var(--off)', cls:v[1] === 1 ? 'stripe' : ''});
+        b.addEventListener('click', function(){ if (!M.wasDrag(sc)){ sel = [i, j]; render(); } });
+        st.appendChild(b); cells.push({b:b, i:i, j:j});
+      });
+      flatLabel(st, NM[k].sn, i * 72 + 96, 226, 74);
+    });
+    CLN.forEach(function(n, j){ flatLabel(st, n, -16, j * 70 + 32, 120, 'text-align:right'); });
+    function render(){
+      cells.forEach(function(c){ c.b.classList.toggle('dim', cls >= 0 && c.j !== cls); c.b.classList.toggle('active', c.i === sel[0] && c.j === sel[1]); });
+      var k = KEYS[sel[0]], r = NM[k], v = CL[k][sel[1]], N = CLOBS[k === 'sortino' ? 1 : 0][sel[1]];
+      var bad = v[1] && v[0] * r.dir < 0;
+      var msg = !v[1] ? L('sem diferença clara entre bancos e independentes', 'no clear difference between banks and independents') : (bad ? L('os fundos dos bancos ficaram <b>pior para quem poupa</b>', 'the banks’ funds came out <b>worse for savers</b>') : L('os fundos dos bancos ficaram melhor', 'the banks’ funds came out better')) + (v[1] === 1 ? L(', mas é só uma pista fraca', ', but it is only a weak hint') : '');
+      var extra = k === 'ret' && v[1] ? L(' (' + fmt(Math.abs(v[0]), 2) + ' ponto percentual a menos por ano)', ' (' + fmt(Math.abs(v[0]), 2) + ' percentage points less per year)') : k === 'fee' && v[1] ? L(' (' + fmt(v[0], 2) + ' ponto percentual a mais de taxa)', ' (' + fmt(v[0], 2) + ' percentage points more in fees)') : '';
+      $('cl-panel').innerHTML = '<div class="tag">' + CLN[sel[1]] + ' · ' + r.n + ' · <span class="nt">' + n0(N) + L(' fundos-ano', ' fund-years') + '</span></div><p>' + L('Em fundos parecidos, ', 'Among similar funds, ') + msg + extra + '.</p><p style="font-size:.74rem; color:var(--muted)">' + L('Coeficiente ', 'Coefficient ') + sgn(v[0], 2) + ' · ' + starTxt(v[1]) + '. ' + L('A autora pede cautela: o número de fundos de cada tipo é muito diferente, e o de ações é o menor.', 'The author urges caution: the number of funds of each type is very different, and the equity group is the smallest.') + '</p>';
+    }
+    seg('cl-seg', function(b){ cls = +b.dataset.c; if (cls >= 0) sel[1] = cls; render(); });
+    render();
+    var h = '<table><tr><th></th>' + CLN.map(function(n){ return '<th>' + n + '</th>'; }).join('') + '</tr>';
+    KEYS.forEach(function(k){ h += '<tr><td>' + NM[k].sn + '</td>' + CL[k].map(function(v){ return '<td>' + sgn(v[0], 2) + (v[1] === 3 ? '***' : v[1] === 2 ? '**' : v[1] === 1 ? '*' : '') + '</td>'; }).join('') + '</tr>'; });
+    $('cl-table').innerHTML = h + '</table><p style="margin-top:4px">' + L('*** p < 0,01 · * p < 0,10. Na taxa, sinal positivo quer dizer taxa maior nos bancos.', '*** p < 0.01 · * p < 0.10. For the fee, a positive sign means a higher fee at the banks.') + '</p>';
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
