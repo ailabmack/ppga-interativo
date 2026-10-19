@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sustentabilidade e o custo do capital próprio · PPGA Interativo</title>
+<meta name="description" content="A dissertação de mestrado de Rafael Salim Balassiano (PPGA Mackenzie) sobre notas ESG e o retorno que os acionistas exigem de 5.638 empresas de 10 países, explicada em 11 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/dissertacoes/2023-balassiano-esg-custo-capital-proprio/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2213%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>ESG</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  :root{
+    --dev:var(--navy);   /* países desenvolvidos */
+    --emg:var(--red);    /* países emergentes */
+    --rf:#94a3b8;        /* juro sem risco */
+    --ok:#15803d; --weak:#b45309;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .dev-t{color:var(--dev); font-weight:700;} .emg-t{color:var(--emg); font-weight:700;}
+  .ok-t{color:var(--ok); font-weight:700;} .ns-t{color:var(--muted); font-weight:700;} .wk-t{color:var(--weak); font-weight:700;}
+  .ill{display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--weak); border:1px solid color-mix(in srgb, var(--weak) 45%, white); border-radius:999px; padding:2px 9px; margin-bottom:6px;}
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  @property --z{syntax:'<length>'; inherits:true; initial-value:0px;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4.2vw, 2.8rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{display:flex; gap:8px 16px; justify-content:center; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:6px; text-align:center;}
+  #hero-scene .top-label{font-size:20px; font-weight:800;}
+  #hero-scene .floor-label{font-size:15px;}
+
+  /* ---------- Componentes comuns ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.05rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel .tag .nt{text-transform:none; letter-spacing:.02em;}
+  .panel p{margin:0 0 8px; font-size:.9rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .fbtn{display:flex; flex-wrap:wrap; gap:5px; margin:8px 0 0;}
+  .fbtn button{border:1px solid var(--border); background:var(--card); border-radius:7px; padding:4px 8px; font-size:.74rem; cursor:pointer; color:var(--ink-2); min-width:0;}
+  .fbtn button[aria-pressed="true"]{outline:2px solid var(--ink); outline-offset:1px;}
+  .sl{margin:6px 0 4px;}
+  .sl label{display:flex; justify-content:space-between; font-size:.8rem; color:var(--ink-2); gap:8px;}
+  .sl label b{color:var(--red); font-variant-numeric:tabular-nums;}
+  .sl input[type=range]{width:100%; accent-color:var(--red);}
+  .bigs{display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:8px; margin-top:14px;}
+  @media (max-width:600px){ .bigs{grid-template-columns:repeat(2, minmax(0, 1fr));} }
+  .bigs div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 10px; font-size:.74rem; color:var(--ink-2); line-height:1.3;}
+  .bigs b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink);}
+  .slab.gone > i{opacity:.28;}
+
+  /* ---------- 02 · A receita ---------- */
+  #rc-scene .slab{transition:--h .5s cubic-bezier(.2,.8,.2,1), --z .5s cubic-bezier(.2,.8,.2,1);}
+  #rc-scene .face-label{font-size:15px; letter-spacing:0;}
+  #rc-scene .top-label{font-size:20px; font-weight:800;}
+  .eq{font-family:var(--serif); font-size:1.02rem; color:var(--ink); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px; line-height:1.6; margin:10px 0;}
+  .eq span{white-space:nowrap;}
+  .eq .k1{color:#64748b;} .eq .k2{color:var(--navy);} .eq .k3{color:var(--red);}
+  #rc-panel{margin-top:10px;}
+
+  /* ---------- 03 · Apostas ---------- */
+  .bets{display:grid; gap:6px;}
+  .bet{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:7px 10px; display:grid; grid-template-columns:auto 1fr auto; gap:6px 10px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .bet .hk{font-family:var(--serif); font-weight:700; color:var(--ink); font-size:.95rem; white-space:nowrap;}
+  .bet .bb{display:flex; gap:5px;}
+  .bet .bb button{border:1px solid var(--border); background:var(--bg-soft); border-radius:7px; padding:4px 9px; font-size:.74rem; cursor:pointer; color:var(--ink-2); font-weight:600;}
+  .bet .bb button[aria-pressed="true"]{background:var(--ink); border-color:var(--ink); color:#fff;}
+  @media (max-width:600px){ .bet{grid-template-columns:auto 1fr;} .bet .bb{grid-column:1 / -1;} }
+  #bet-msg{font-size:.84rem; color:var(--ink-2); min-height:2.6em; margin-top:8px;}
+  #th-panel{min-height:190px;}
+  #th-panel .side{display:inline-block; font-size:.7rem; font-weight:700; border-radius:999px; padding:2px 9px; margin-left:6px; text-transform:none; letter-spacing:.02em;}
+
+  /* ---------- 04 · Amostra ---------- */
+  #am-scene .slab{cursor:pointer; transition:--h .7s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1);}
+  #am-scene .slab.active{--oz:14px;}
+  #am-scene .face-label{font-size:11px; letter-spacing:0; font-weight:700;}
+  #am-scene .floor-label{font-size:12px;}
+  #am-panel{min-height:120px; margin-top:12px;}
+
+  /* ---------- 05 · Três andares ---------- */
+  #an-scene .slab{cursor:pointer; transition:transform .5s cubic-bezier(.2,.8,.2,1);}
+  #an-scene .slab.active{--ox:40px;}
+  #an-scene .face-label{font-size:17px; font-weight:800; letter-spacing:0;}
+  #an-panel{min-height:150px; margin-top:12px;}
+
+  /* ---------- 06 · Notas ---------- */
+  #nt-scene .slab{transition:--h .7s cubic-bezier(.2,.8,.2,1);}
+  #nt-scene .face-label{font-size:12.5px; letter-spacing:0;}
+  #nt-scene .floor-label{font-size:13px;}
+  #nt-panel{min-height:110px; margin-top:12px;}
+
+  /* ---------- 07 · Resultado ---------- */
+  #rs-svg{width:100%; display:block;}
+  #rs-svg text{font-family:var(--sans);}
+  #rs-svg .row{cursor:pointer;}
+  #rs-svg .row.on .bgr{fill:#f1f5f9;}
+  @media (max-width:600px){ #rs-svg text{font-size:19px !important;} #rs-svg text.sm{font-size:16px !important;} }
+  #rs-panel{min-height:100px; margin-top:10px;}
+  .sgrid{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:6px; margin-top:10px;}
+  .sgrid button{border:1px solid var(--border); background:var(--card); border-radius:9px; padding:6px 5px; font-size:.72rem; color:var(--ink-2); cursor:pointer; line-height:1.3; min-width:0;}
+  .sgrid button b{display:block; font-family:var(--serif); font-size:.9rem; color:var(--ink);}
+  .sgrid button[aria-pressed="true"]{outline:2px solid var(--ink); outline-offset:1px;}
+  .sgrid .y{color:var(--ok); font-weight:700;} .sgrid .n{color:var(--muted); font-weight:700;} .sgrid .p{color:var(--weak); font-weight:700;}
+  #sc-panel{margin-top:10px;}
+
+  /* ---------- 08 · Tamanho ---------- */
+  #tm-scene .slab{transition:--h .5s cubic-bezier(.2,.8,.2,1), --z .5s cubic-bezier(.2,.8,.2,1);}
+  #tm-scene .face-label{font-size:14px; letter-spacing:0;}
+  #tm-scene .top-label{font-size:17px; font-weight:800;}
+  #tm-scene .floor-label{font-size:13px;}
+  #tm-scene .neg .top-label{color:var(--navy);}
+  .big2{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px;}
+  .big2 div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-size:.78rem; color:var(--ink-2); line-height:1.35;}
+  .big2 b{display:block; font-family:var(--serif); font-size:1.5rem; color:var(--ink);}
+
+  /* ---------- 09 · O inesperado ---------- */
+  .quiz{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0;}
+  .quiz button{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:8px 14px; font-size:.86rem; cursor:pointer; color:var(--ink-2); font-weight:600;}
+  .quiz button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  #wf-svg{width:100%; display:block;}
+  #wf-svg text{font-family:var(--sans);}
+  #wf-svg .st{transition:opacity .5s;}
+  @media (max-width:600px){ #wf-svg text{font-size:17px !important;} #wf-svg text.sm{font-size:15px !important;} }
+  #wf-panel{min-height:120px; margin-top:10px;}
+
+  /* ---------- 10 · Na prática ---------- */
+  .cards3{display:grid; grid-template-columns:1fr; gap:12px; margin-top:12px;}
+  @media (min-width:760px){ .cards3{grid-template-columns:repeat(3, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:14px 16px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:1rem; margin-bottom:6px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:5px; font-size:.84rem; line-height:1.45; color:var(--ink-2);}
+  .pcard em{font-style:normal; font-size:.74rem; color:var(--muted);}
+
+  /* ---------- 11 · Limites e créditos ---------- */
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:12px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.08rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:8px 0 0; padding:0; list-style:none;}
+  .limits li{padding:7px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.72rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.5; margin-top:8px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/dissertacoes/2023-balassiano-esg-custo-capital-proprio/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 11</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Dissertação de mestrado · PPGA Mackenzie · 2023</div>
+      <h1 class="rv" style="--d:.1s">Ser sustentável deixa mais barato o dinheiro dos acionistas?</h1>
+      <p class="sub rv" style="--d:.2s">Quem compra ações de uma empresa exige um retorno em troca: é o <strong>custo do capital próprio</strong>. A dissertação acompanhou <strong>5.638 empresas de 10 países</strong>, de 2010 a 2022, para ver se notas ESG (ambiental, social e de governança) mais altas baixam esse custo, e se o país faz diferença. Explicada em 11 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Rafael Salim Balassiano</span>
+        <span><b>Orientadora:</b> Profa. Dra. Michele Nascimento Jucá</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#receita">Começar →</a>
+        <a class="btn ghost" href="#resultado">Ir direto ao resultado</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="440x350" role="img" aria-label="Duas pilhas de moedas: a vermelha, dos países emergentes, com 16,5 moedas; a azul, dos desenvolvidos, com 12,9. Cada moeda é um ponto percentual de retorno exigido por ano"></div></div>
+      <div class="cap-legend">
+        <span>Cada moeda = 1 ponto percentual de retorno que o acionista exige por ano (média de 2010 a 2022, Tabela 3)</span>
+      </div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-12"><a href="https://brasil.un.org/pt-br/sdgs/12" target="_blank" rel="noopener" title="ODS 12 · Consumo e produção responsáveis: Testa, em 5.638 empresas de 10 países, se divulgar mais sobre práticas sustentáveis muda o retorno que os acionistas exigem; o pilar social baixou um pouco esse custo."><b>12</b>Consumo e produção responsáveis</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · A RECEITA -->
+<section class="slide" id="receita" data-label="A receita do custo">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O que se mede</div>
+      <h2 class="rv" style="--d:.1s">O retorno que o acionista exige tem uma receita de três ingredientes</h2>
+      <p class="rv" style="--d:.15s">Quem põe dinheiro numa empresa podia deixá-lo num título do governo sem risco. Para aceitar o risco da ação, cobra mais. A dissertação calculou esse custo pelo CAPM, a fórmula mais usada para isso:</p>
+      <div class="eq rv" style="--d:.2s"><span>custo = <span class="k1">juro sem risco</span></span> <span>+ <span class="k2">beta × prêmio do mercado</span></span> <span>+ <span class="k3">risco-país</span></span></div>
+      <div class="sl rv" style="--d:.25s"><label for="rc-b"><span>Beta da empresa (quanto a ação balança com o mercado)</span><b id="rc-bv"></b></label><input type="range" id="rc-b" min="0" max="2" step="0.1" value="1"></div>
+      <div class="sl rv" style="--d:.28s"><label for="rc-c"><span>Risco do país (pontos percentuais)</span><b id="rc-cv"></b></label><input type="range" id="rc-c" min="0" max="8" step="0.5" value="2"></div>
+      <div class="panel rv" id="rc-panel" style="--d:.3s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <span class="ill">ilustração com números inventados</span>
+      <div class="fit-wrap"><div class="scene draggable" id="rc-scene" data-fit="440x380" role="img" aria-label="Uma coluna em três camadas: juro sem risco em cinza, beta vezes prêmio em azul e risco-país em vermelho; a altura total é o custo do capital próprio"></div></div>
+      <p class="note">Fórmula da Tabela 2: juro do título de 10 anos dos EUA, beta de 60 meses contra o índice S&amp;P 500, prêmio = retorno do S&amp;P 500 menos o juro, e risco-país = CDS do país menos o dos EUA. Na ilustração, juro de 3% e prêmio de 5% são inventados.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · APOSTAS -->
+<section class="slide" id="apostas" data-label="As apostas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> As hipóteses</div>
+      <h2 class="rv" style="--d:.1s">A dissertação fez três apostas sobre ESG, país e custo</h2>
+      <p class="rv" style="--d:.15s">A maioria dos estudos anteriores encontrou custo menor para empresas com notas ESG altas, mas alguns acharam o contrário. Antes de ver os resultados, aposte em cada hipótese. O placar aparece na tela 07.</p>
+      <div class="bets rv" id="bets" style="--d:.2s"></div>
+      <p id="bet-msg" aria-live="polite"></p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <p style="font-size:.88rem; margin-bottom:4px">Por que se espera isso? Toque numa ideia:</p>
+      <div class="chips" id="th-chips" role="group" aria-label="Ideias da revisão"></div>
+      <div class="panel" id="th-panel" aria-live="polite"></div>
+      <p class="note">Resumo nosso das seções 2.1.2 a 2.1.7 da dissertação, com os autores que ela cita.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · AMOSTRA -->
+<section class="slide" id="amostra" data-label="10 países">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Como a pesquisa olhou</div>
+      <h2 class="rv" style="--d:.1s">5.638 empresas em 10 países, e o custo muda muito de um para outro</h2>
+      <p class="rv" style="--d:.15s">Cinco países ricos da OCDE (a organização dos países desenvolvidos) e cinco grandes emergentes que ela chama de parceiros-chave. Entraram empresas não financeiras com nota ESG em pelo menos cinco anos. Troque o que as colunas mostram e toque num país:</p>
+      <div class="seg rv" id="am-seg" style="--d:.2s" role="group" aria-label="O que as colunas mostram"></div>
+      <div class="panel rv" id="am-panel" style="--d:.25s" aria-live="polite"></div>
+      <div class="bigs rv" style="--d:.3s">
+        <div><b>5.638</b>empresas</div>
+        <div><b>10</b>países</div>
+        <div><b>72.873</b>empresas-ano</div>
+        <div><b>13</b>anos, 2010 a 2022</div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="am-scene" data-fit="580x330" role="group" aria-label="Dez colunas, uma por país: as cinco vermelhas são os emergentes e as cinco azuis, os desenvolvidos"></div></div>
+      <div class="cap-legend"><span><i class="dot" style="background:var(--emg)"></i>Emergentes: Brasil, China, Índia, Indonésia, África do Sul</span><span><i class="dot" style="background:var(--dev)"></i>Desenvolvidos: França, Alemanha, Japão, Reino Unido, EUA</span></div>
+      <p class="note" id="am-note"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · TRÊS ANDARES -->
+<section class="slide" id="andares" data-label="Três andares">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> O método</div>
+      <h2 class="rv" style="--d:.1s">Um quinto das diferenças no custo vem do país</h2>
+      <p class="rv" style="--d:.15s">Os dados estão em andares: cada ano pertence a uma empresa, e cada empresa, a um país. Por isso a dissertação usou um <strong>modelo multinível</strong>, que separa o que muda entre países, entre empresas do mesmo país e de um ano para outro. O primeiro passo, sem nenhum fator, mostra quanto pesa cada andar. Toque num andar:</p>
+      <div class="fbtn rv" id="an-btns" style="--d:.2s" role="group" aria-label="Escolher o andar"></div>
+      <div class="panel rv" id="an-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="an-scene" data-fit="420x400" role="group" aria-label="Uma torre de três andares que soma 100% das diferenças no custo: país em baixo, 19,6%; empresa no meio, 8,8%; ano a ano em cima, 71,7%"></div></div>
+      <p class="note">Modelo nulo, Tabela 5 (72.873 observações): correlação intraclasse do país 0,1959 e da mesma empresa 0,2834. A fatia só da empresa (28,3 − 19,6 = 8,8%) e a do ano a ano (100 − 28,3 = 71,7%) são contas nossas. O teste de razão de verossimilhança (p &lt; 0,001) indicou o modelo multinível em vez de uma regressão comum.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · AS NOTAS -->
+<section class="slide" id="notas" data-label="As notas ESG">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> O retrato</div>
+      <h2 class="rv" style="--d:.1s">A governança tira nota alta; o meio ambiente, baixa, sobretudo nos emergentes</h2>
+      <p class="rv" style="--d:.15s">As notas vêm da Bloomberg, de 1 a 100, e medem <strong>quanto a empresa divulga</strong> sobre cada pilar. Há uma nota geral (ESG) e uma por pilar: ambiental (E), social (S) e governança (G). Troque a régua:</p>
+      <div class="seg rv" id="nt-seg" style="--d:.2s" role="group" aria-label="Régua"></div>
+      <div class="panel rv" id="nt-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="nt-scene" data-fit="560x330" role="img" aria-label="Quatro pares de colunas, nota geral, ambiental, social e governança; em cada par, a azul é dos desenvolvidos e a vermelha, dos emergentes"></div></div>
+      <div class="cap-legend"><span><i class="dot" style="background:var(--dev)"></i>Desenvolvidos</span><span><i class="dot" style="background:var(--emg)"></i>Emergentes</span></div>
+      <p class="note">Tabela 4: médias e número de observações com nota em cada grupo (de 51.285 empresas-ano nos desenvolvidos e 21.588 nos emergentes). Notas de divulgação (“disclosure score”) da Bloomberg, Tabela 2.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · RESULTADO -->
+<section class="slide" id="resultado" data-label="O resultado">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> O que encontrou</div>
+      <h2 class="rv" style="--d:.1s">Cada pilar do ESG puxou o custo para um lado</h2>
+      <p class="rv" style="--d:.15s">Com tamanho, dívida, beta e valor de mercado das empresas, mais o crescimento e a qualidade das instituições de cada país, o modelo isola o que acompanha cada nota. As barras mostram quanto o custo muda com <strong>10 pontos a mais</strong> na nota. Troque o modelo e toque numa barra:</p>
+      <div class="seg rv" id="rs-seg" style="--d:.2s" role="group" aria-label="Modelo"></div>
+      <div class="panel rv" id="rs-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="rs-svg" viewBox="0 0 560 330" role="group" aria-label="Barras horizontais em pontos percentuais: para a direita, em vermelho, o custo sobe; para a esquerda, em azul, o custo cai; em cinza, sem efeito claro"></svg>
+      <div class="sgrid" id="sgrid"></div>
+      <div class="panel" id="sc-panel" aria-live="polite"></div>
+      <p class="note" id="rs-note"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · O TAMANHO -->
+<section class="slide" id="tamanho" data-label="O tamanho">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> A descoberta</div>
+      <h2 class="rv" style="--d:.1s">Mesmo onde aparece, o efeito da nota é de décimos de ponto</h2>
+      <p class="rv" style="--d:.15s">Escolha um pilar e suba a nota. A coluna parte do custo médio do grupo e mostra a mudança. Ao lado, para comparar, o que acontece quando o beta da empresa sobe o quanto costuma variar entre empresas:</p>
+      <div class="chips rv" id="tm-chips" style="--d:.2s" role="group" aria-label="Pilar e grupo"></div>
+      <div class="sl rv" style="--d:.25s"><label for="tm-r"><span>Pontos a mais na nota (de 1 a 100)</span><b id="tm-v"></b></label><input type="range" id="tm-r" min="0" max="40" step="5" value="10"></div>
+      <div class="big2 rv" style="--d:.3s"><div id="tm-a"></div><div id="tm-b"></div></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="tm-scene" data-fit="440x380" role="img" aria-label="Duas colunas na mesma escala: o custo médio do grupo com a mudança causada pela nota no topo, quase invisível, e o mesmo custo com o beta mais alto, bem maior"></div></div>
+      <p class="note" id="tm-note"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · O INESPERADO -->
+<section class="slide" id="inesperado" data-label="O inesperado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> O inesperado</div>
+      <h2 class="rv" style="--d:.1s">Na média, o país rico tem custo menor; no modelo, o sinal se inverte</h2>
+      <p class="rv" style="--d:.15s">A segunda aposta dizia que empresas de países desenvolvidos têm custo menor. Antes de ver, responda: no modelo completo, o termo que marca “país desenvolvido” somou ou tirou custo?</p>
+      <div class="quiz rv" id="wf-quiz" style="--d:.2s" role="group" aria-label="Sua resposta"></div>
+      <div class="fbtn rv" id="wf-btns" style="--d:.22s" role="group" aria-label="Passos"></div>
+      <div class="panel rv" id="wf-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="wf-svg" viewBox="0 0 560 330" role="img" aria-label="Escada de barras em pontos percentuais: a diferença simples, o termo do país desenvolvido, o efeito da qualidade das instituições e do crescimento, e a soma"></svg>
+      <p class="note">Médias das Tabelas 3 e 4; coeficientes do Modelo 5, Tabela 7 (país desenvolvido +0,1245; qualidade das instituições, WGI, −0,1342 por ponto; crescimento do PIB per capita +0,0682). Diferenças entre os grupos: WGI 1,2549 − (−0,3338) = 1,59; crescimento 1,46% − 6,13%. Multiplicações e soma são contas nossas, sem erro-padrão da soma. No Modelo 6 (por pilar), a mesma conta dá cerca de −6,5 p.p.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · NA PRÁTICA -->
+<section class="slide" id="pratica" data-label="Na prática">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">10</span> E daí?</div>
+    <h2 class="rv" style="--d:.1s">O pilar social barateia um pouco o capital; o país pesa muito mais</h2>
+    <p class="lede rv" style="--d:.15s">Para o autor, o achado do pilar social chama atenção para esse tema, e entender que prática pesa no custo do investidor ajuda empresas e governos.</p>
+    <div class="cards3">
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Para empresas e investidores</h3><ul><li>A dimensão social foi a que reduziu o custo do capital próprio; ações socialmente afirmativas têm baixo custo e efeito imediato. <em>(autor)</em></li><li>Nos emergentes, o pilar social pesou mais; nos desenvolvidos, a governança, onde os mecanismos de conformidade são mais antigos e rigorosos. <em>(autor)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--red)"><h3>Para reguladores</h3><ul><li>Saber que tipo de prática sustentável mais pesa no custo de oportunidade dos investidores pode orientar políticas para atrair mais investimento estrangeiro direto. <em>(autor)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#64748b"><h3>Leitura nossa</h3><ul><li>Os efeitos são pequenos: 10 pontos a mais no pilar social baixam o custo em cerca de 0,1 a 0,2 ponto percentual, enquanto o país e o risco da própria empresa movem vários pontos (telas 08 e 09).</li><li>A nota mede o quanto a empresa divulga. A pesquisa mostra o que anda junto com a nota, não que divulgar mais faça o custo cair.</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Limites e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> Limites e créditos</div>
+    <h2 class="rv" style="--d:.1s">O que esta pesquisa não diz</h2>
+    <div class="end">
+      <div class="rv" style="--d:.2s">
+        <ul class="limits">
+          <li><b>Menos dados nos emergentes.</b> Há bem menos notas ESG para as empresas dos países emergentes (15.408 empresas-ano com nota geral, contra 39.968 nos desenvolvidos). <em>· segundo o autor</em></li>
+          <li><b>Nota de divulgação.</b> A nota da Bloomberg mede quanto a empresa divulga, não o desempenho ambiental ou social em si. <em>· observação nossa</em></li>
+          <li><b>Uma régua americana.</b> O custo usa o juro dos EUA e o beta contra o S&amp;P 500 para empresas de todos os países; o risco local entra só pelo risco-país. <em>· observação nossa</em></li>
+          <li><b>Só 10 países.</b> Com tão poucos países, o termo “desenvolvido” e a qualidade das instituições quase se confundem e precisam ser lidos juntos (tela 09). <em>· observação nossa</em></li>
+          <li><b>Anda junto, não causa.</b> Os modelos mostram associação. E os coeficientes vêm com quatro casas (0,0001), o que deixa o tamanho exato de cada efeito aproximado. <em>· observação nossa</em></li>
+        </ul>
+        <p style="margin-top:10px; font-size:.84rem">Próximos passos sugeridos pelo autor: incluir o setor como mais um andar do modelo, testar o custo da dívida e o custo médio de capital, e ampliar a amostra com mais países e anos.</p>
+      </div>
+      <div class="rv" style="--d:.25s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          BALASSIANO, Rafael Salim. <em>O impacto das práticas de sustentabilidade no custo de capital próprio das empresas.</em> Dissertação (Mestrado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2023. Orientadora: Profa. Dra. Michele Nascimento Jucá.
+        </div>
+        <p style="margin-top:10px; font-size:.78rem">Dissertação de 2023, com apoio da CAPES. Dados da Bloomberg, do Capital IQ Pro (S&amp;P) e do Banco Mundial; modelos de regressão multinível. Esta versão simplifica o trabalho para o público em geral.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a dissertação completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable, ramp = M.ramp;
+  var EN = M.lang === 'en';
+  function L(p, e){ return EN ? e : p; }
+  function sg(v, d){ var a = Math.abs(v); return (v < 0 && a >= Math.pow(10, -d) / 2 ? '−' : (v > 0 && a >= Math.pow(10, -d) / 2 ? '+' : '')) + fmt(a, d); }
+  function pp(v, d){ return sg(v, d === undefined ? 1 : d) + L(' p.p.', ' p.p.'); }
+  function nf(n){ return n.toLocaleString(EN ? 'en-US' : 'pt-BR'); }
+  function pc(v, d){ return fmt(v, d === undefined ? 1 : d) + '%'; }
+  function setLab(b, t){ var s = b.querySelector('.face-label'); if (s) s.textContent = t; }
+  function setTop(b, t){ var s = b.querySelector('.top-label'); if (s) s.textContent = t; }
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // Países: empresas (seção 3.1), observações e custo médio do capital próprio (Tabela 3, fração)
+  var CT = [
+    {n:L('Brasil', 'Brazil'), s:L('Brasil', 'Brazil'), g:0, f:77, o:1001, m:.2190},
+    {n:'China', s:'China', g:0, f:1014, o:13173, m:.1352},
+    {n:L('Índia', 'India'), s:L('Índia', 'India'), g:0, f:450, o:5841, m:.2098},
+    {n:L('Indonésia', 'Indonesia'), s:L('Indonésia', 'Indonesia'), g:0, f:60, o:780, m:.2111},
+    {n:L('África do Sul', 'South Africa'), s:L('Á. do Sul', 'S. Africa'), g:0, f:61, o:793, m:.2263},
+    {n:L('França', 'France'), s:L('França', 'France'), g:1, f:126, o:1638, m:.1660},
+    {n:L('Alemanha', 'Germany'), s:L('Alemanha', 'Germany'), g:1, f:121, o:1573, m:.1446},
+    {n:L('Japão', 'Japan'), s:L('Japão', 'Japan'), g:1, f:1777, o:23101, m:.1143},
+    {n:L('Reino Unido', 'United Kingdom'), s:L('R. Unido', 'UK'), g:1, f:328, o:4255, m:.1356},
+    {n:L('Estados Unidos', 'United States'), s:L('EUA', 'US'), g:1, f:1624, o:20718, m:.1393}
+  ];
+  var GR = [ {n:L('Emergentes', 'Emerging'), f:1662, o:21588, m:.1654, c:'var(--emg)'}, {n:L('Desenvolvidos', 'Developed'), f:3976, o:51285, m:.1288, c:'var(--dev)'} ];
+  var TOT = .1396;
+
+  // Notas ESG (Tabela 4): médias e observações com nota, [desenvolvidos, emergentes]
+  var NT = [
+    {k:'ESG', n:L('Nota geral', 'Overall'), m:[33.27, 31.04], o:[39968, 15408], d:L('A nota geral junta os três pilares.', 'The overall score combines the three pillars.')},
+    {k:'E', n:L('Ambiental', 'Environmental'), m:[22.67, 13.22], o:[23336, 10939], d:L('Emissões, resíduos, eficiência energética.', 'Emissions, waste, energy efficiency.')},
+    {k:'S', n:'Social', m:[16.30, 15.44], o:[33944, 12909], d:L('Condições de trabalho, saúde e segurança, cadeia de fornecedores, comunidade.', 'Working conditions, health and safety, supply chain, community.')},
+    {k:'G', n:L('Governança', 'Governance'), m:[72.67, 69.37], o:[37943, 13633], d:L('Conselho, auditoria, transparência, ética.', 'Board, audit, transparency, ethics.')}
+  ];
+
+  // Resultados (Tabelas 7 e 8): coeficiente por ponto de nota (fração) e p
+  var RS = [
+    {k:'m5', b:L('Nota geral', 'Overall score'), N:'47.725', mdl:L('Modelo 5 (Tabela 7)', 'Model 5 (Table 7)'),
+     rows:[
+       {t:L('Nota geral · emergentes', 'Overall · emerging'), c:.0001, p:.004, ref:1},
+       {t:L('a mais nos desenvolvidos', 'extra in developed'), c:-.0001, p:.004, x:1}
+     ]},
+    {k:'m6', b:L('Por pilar', 'By pillar'), N:'30.962', mdl:L('Modelo 6 (Tabela 7)', 'Model 6 (Table 7)'),
+     rows:[
+       {t:L('Ambiental · emergentes', 'Environmental · emerging'), c:-.00001, z:1, p:.370, ref:1},
+       {t:L('a mais nos desenvolvidos', 'extra in developed'), c:.00001, z:1, p:.287, x:1},
+       {t:L('Social · emergentes', 'Social · emerging'), c:-.0001, p:.031, ref:1},
+       {t:L('a mais nos desenvolvidos', 'extra in developed'), c:.00001, z:1, p:.478, x:1},
+       {t:L('Governança · emergentes', 'Governance · emerging'), c:.0004, p:.000, ref:1},
+       {t:L('a mais nos desenvolvidos', 'extra in developed'), c:-.0004, p:.000, x:1}
+     ]},
+    {k:'sub', b:L('Grupos separados', 'Separate groups'), N:'', mdl:L('Modelos 7 a 10 (Tabela 8)', 'Models 7 to 10 (Table 8)'),
+     rows:[
+       {t:L('Nota geral · emergentes', 'Overall · emerging'), c:-.00001, z:1, p:.139, g:0, n:'13.022'},
+       {t:L('Nota geral · desenvolvidos', 'Overall · developed'), c:.00001, z:1, p:.819, g:1, n:'34.703'},
+       {t:L('Social · emergentes', 'Social · emerging'), c:-.0002, p:.000, g:0, n:'9.400'},
+       {t:L('Social · desenvolvidos', 'Social · developed'), c:-.00001, z:1, p:.269, g:1, n:'21.562'},
+       {t:L('Governança · emergentes', 'Governance · emerging'), c:.0003, p:.000, g:0, n:'9.400'},
+       {t:L('Governança · desenvolvidos', 'Governance · developed'), c:-.0001, p:.001, g:1, n:'21.562'}
+     ]}
+  ];
+  if (EN) RS.forEach(function(r){ r.N = r.N.replace('.', ','); r.rows.forEach(function(w){ if (w.n) w.n = w.n.replace('.', ','); }); });
+
+  // Hipóteses (seção 1.3) e veredito pelas tabelas
+  var HY = [
+    {k:'H1', t:L('Quanto maior a nota ESG, menor o custo do capital próprio.', 'The higher the ESG score, the lower the cost of equity.'), v:2,
+     r:L('Em parte. Só o pilar <strong>social</strong> baixou o custo (Modelo 6), como a própria dissertação conclui. A nota geral não baixou: no modelo completo, ela até subiu um pouco o custo nos emergentes, e sem efeito claro quando os grupos foram separados.', 'Partly. Only the <strong>social</strong> pillar lowered the cost (Model 6), as the dissertation itself concludes. The overall score did not: in the full model it even raised the cost slightly in emerging countries, and had no clear effect when the groups were separated.')},
+    {k:'H2', t:L('Empresas de países desenvolvidos têm custo menor que as dos emergentes.', 'Companies in developed countries have a lower cost than those in emerging ones.'), v:0,
+     r:L('Não se confirmou no modelo: o termo “país desenvolvido” somou custo. Na média simples, porém, os desenvolvidos têm custo menor. A tela 09 mostra por quê.', 'Not confirmed in the model: the “developed country” term added cost. In the simple average, however, developed countries do have a lower cost. Screen 09 shows why.')},
+    {k:'H3', t:L('A nota ESG afeta o custo de forma diferente em países desenvolvidos e emergentes.', 'The ESG score affects the cost differently in developed and emerging countries.'), v:1,
+     r:L('Confirmou-se. A nota geral e a governança mudam de efeito entre os grupos: nos emergentes, governança mais alta vem com custo maior; nos desenvolvidos, com custo um pouco menor.', 'Confirmed. The overall score and governance change their effect between groups: in emerging countries, higher governance goes with a higher cost; in developed ones, with a slightly lower cost.')}
+  ];
+  var BETS = {};
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), W = 380, D = 150, K = 11, CW = 92, st = makeStage(sc, W, D, {ay:'70%'});
+    rotatable(sc, st, -24, 8);
+    [[GR[0], 46], [GR[1], 242]].forEach(function(p){
+      var g = p[0], x = p[1], v = g.m * 100, n = Math.floor(v), fr = v - n, last;
+      for (var i = 0; i < n; i++){ last = box({w:CW, d:CW, x:x, y:D / 2 - CW / 2, z:i * K, h:K - 2, c:i % 2 ? ramp(g.c, 1, 4) : g.c}); st.appendChild(last); }
+      last = box({w:CW, d:CW, x:x, y:D / 2 - CW / 2, z:n * K, h:Math.max(2, fr * K - 1), c:ramp(g.c, 2, 4), top:pc(v)});
+      st.appendChild(last);
+      flatLabel(st, g.n, x - 20, D / 2 + CW / 2 + 10, CW + 40);
+    });
+  })();
+
+  /* ================= 02 · A RECEITA ================= */
+  (function(){
+    var RF = 3, PR = 5, K = 13, sc = $('rc-scene'), W = 300, D = 150, st = makeStage(sc, W, D, {ay:'78%'});
+    rotatable(sc, st, -20, 7);
+    var x = W / 2 - 60, y = D / 2 - 60;
+    var a = box({w:120, d:120, x:x, y:y, h:RF * K, c:'var(--rf)', label:L('juro', 'yield')});
+    var b = box({w:120, d:120, x:x, y:y, h:0, c:'var(--navy)', label:'beta'});
+    var c = box({w:120, d:120, x:x, y:y, h:0, c:'var(--red)', label:L('país', 'country'), top:' '});
+    st.appendChild(a); st.appendChild(b); st.appendChild(c);
+    var rb = $('rc-b'), rc = $('rc-c');
+    function draw(){
+      var be = +rb.value, cr = +rc.value, mid = be * PR, tot = RF + mid + cr;
+      b.style.setProperty('--z', RF * K + 'px'); b.style.setProperty('--h', mid * K + 'px');
+      c.style.setProperty('--z', (RF + mid) * K + 'px'); c.style.setProperty('--h', Math.max(1, cr * K) + 'px');
+      setLab(b, mid * K >= 22 ? 'beta' : ''); setLab(c, cr * K >= 22 ? L('país', 'country') : '');
+      setTop(c, pc(tot));
+      $('rc-bv').textContent = fmt(be, 1); $('rc-cv').textContent = fmt(cr, 1);
+      $('rc-panel').innerHTML = '<p>' + L('Custo = ', 'Cost = ') + fmt(RF, 0) + ' + ' + fmt(be, 1) + ' × ' + fmt(PR, 0) + ' + ' + fmt(cr, 1) + ' = <strong>' + pc(tot) + L(' ao ano', ' a year') + '</strong>. ' +
+        (be > 1 ? L('A ação balança mais que o mercado, e o acionista cobra mais por isso.', 'The share swings more than the market, and the shareholder charges more for it.') : (be < 1 ? L('A ação balança menos que o mercado, e o acionista cobra menos.', 'The share swings less than the market, and the shareholder charges less.') : L('A ação balança como o mercado.', 'The share swings like the market.'))) + '</p>' +
+        '<p style="font-size:.82rem; color:var(--muted)">' + L('<strong>Leitura nossa:</strong> num mesmo ano, o juro e o prêmio são iguais para todas as empresas da amostra. O custo de cada uma só muda pelo beta dela e pelo risco do país. Se a nota ESG mexe no custo, é por esses dois caminhos.', '<strong>Our reading:</strong> in a given year, the yield and the premium are the same for every company in the sample. Each company’s cost changes only through its beta and its country’s risk. If the ESG score moves the cost, it is through these two paths.') + '</p>';
+    }
+    rb.addEventListener('input', draw); rc.addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 03 · APOSTAS ================= */
+  (function(){
+    var TH = [
+      {n:L('Stakeholders', 'Stakeholders'), s:1, t:L('Empresas que equilibram os interesses de donos, credores, funcionários, clientes e sociedade tendem a resultados sustentáveis no longo prazo (Freeman, 1984). Em troca, investidores aceitariam retornos mais baixos (Sharfman e Fernando, 2008).', 'Companies that balance the interests of owners, creditors, employees, customers and society tend to achieve sustainable long-term results (Freeman, 1984). In exchange, investors would accept lower returns (Sharfman and Fernando, 2008).')},
+      {n:L('Agência', 'Agency'), s:1, t:L('Gestores sabem mais que os investidores. Divulgar práticas ESG diminui essa diferença de informação e os conflitos entre eles, o que reduz o custo do capital (Ghoul e colegas, 2011).', 'Managers know more than investors. Disclosing ESG practices narrows this information gap and the conflicts between them, which lowers the cost of capital (Ghoul and colleagues, 2011).')},
+      {n:L('Sinalização', 'Signalling'), s:1, t:L('Divulgar o que faz em ESG é um sinal ao mercado: ajuda a ler os riscos da operação e atrai investidores de longo prazo (Spence, 1973; Mulchandani e colegas, 2022).', 'Disclosing what it does on ESG is a signal to the market: it helps read the risks of the operation and attracts long-term investors (Spence, 1973; Mulchandani and colleagues, 2022).')},
+      {n:L('Legitimidade', 'Legitimacy'), s:1, t:L('Agir de acordo com os valores da sociedade evita sanções e crises ambientais, regulatórias e de reputação, e isso baixa o custo de captar recursos (Suchman, 1995; Benlemlih, 2017).', 'Acting in line with society’s values avoids sanctions and environmental, regulatory and reputational crises, and that lowers the cost of raising funds (Suchman, 1995; Benlemlih, 2017).')},
+      {n:L('O outro lado', 'The other side'), s:0, t:L('Para alguns, ESG é um gasto extra que tira dinheiro do acionista (Friedman, 1970), ou um interesse do próprio gestor. Estudos na Índia (Dahiya e Singh, 2020) e na Ásia Oriental (Wang e colegas, 2021) acharam custo <strong>maior</strong> com notas mais altas.', 'For some, ESG is an extra expense that takes money from shareholders (Friedman, 1970), or a manager’s own interest. Studies in India (Dahiya and Singh, 2020) and East Asia (Wang and colleagues, 2021) found a <strong>higher</strong> cost with higher scores.')},
+      {n:L('O país', 'The country'), s:2, t:L('Países desenvolvidos têm mercados de ações mais maduros, mais investidores e instituições mais fortes, o que deveria baixar o custo (H2). E a redução do custo com ESG seria maior onde as regras de sustentabilidade são mais antigas ou rígidas (H3; Breuer e colegas, 2018).', 'Developed countries have more mature stock markets, more investors and stronger institutions, which should lower the cost (H2). And the reduction in cost with ESG would be larger where sustainability rules are older or stricter (H3; Breuer and colleagues, 2018).')}
+    ];
+    var SIDE = [[L('custo maior', 'higher cost'), '#fee2e2', 'var(--red)'], [L('custo menor', 'lower cost'), '#e0e7ff', 'var(--navy)'], [L('o papel do país', 'the role of the country'), '#f1f5f9', 'var(--ink-2)']];
+    var ch = $('th-chips');
+    ch.innerHTML = TH.map(function(x, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="false">' + x.n + '</button>'; }).join('');
+    function th(i){
+      each(ch.children, function(b, j){ b.setAttribute('aria-pressed', i === j); });
+      var x = TH[i], s = SIDE[x.s];
+      $('th-panel').innerHTML = '<div class="tag">' + x.n + '<span class="side" style="background:' + s[1] + '; color:' + s[2] + '">' + s[0] + '</span></div><p>' + x.t + '</p>';
+    }
+    each(ch.children, function(b){ b.addEventListener('click', function(){ th(+b.dataset.i); }); });
+    th(0);
+
+    $('bets').innerHTML = HY.map(function(x, i){ return '<div class="bet" data-i="' + i + '"><span class="hk">' + x.k + '</span><span>' + x.t + '</span><div class="bb"><button data-v="1" aria-pressed="false">' + L('Vai se confirmar', 'Will be confirmed') + '</button><button data-v="0" aria-pressed="false">' + L('Não vai', 'Will not') + '</button></div></div>'; }).join('');
+    function msg(){
+      var n = Object.keys(BETS).length;
+      $('bet-msg').textContent = n < 3 ? L('Faltam ', '') + (3 - n) + L(n === 2 ? ' aposta.' : ' apostas.', (3 - n === 1 ? ' bet' : ' bets') + ' to go.') : L('Apostas feitas. O placar está na tela 07.', 'Bets placed. The scoreboard is on screen 07.');
+    }
+    each($('bets').children, function(card){
+      var i = +card.dataset.i;
+      each(card.querySelectorAll('button'), function(b){ b.addEventListener('click', function(){
+        BETS[i] = +b.dataset.v;
+        each(card.querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed', x === b); });
+        msg(); if (window.__drawScore) window.__drawScore();
+      }); });
+    });
+    msg();
+  })();
+
+  /* ================= 04 · AMOSTRA ================= */
+  (function(){
+    var sc = $('am-scene'), W = 540, D = 120, BW = 40, GAP = 10, st = makeStage(sc, W, D, {ay:'76%', rx:'60deg'});
+    rotatable(sc, st, -12, 6);
+    var x0 = (W - (10 * BW + 9 * GAP + 16)) / 2, bars = [], cur = 1, mode = 2;
+    var MODES = [
+      {b:L('Empresas', 'Companies'), K:210 / 1777, v:function(c){ return c.f; }, l:function(v){ return nf(v); }},
+      {b:L('Empresas-ano', 'Company-years'), K:210 / 23101, v:function(c){ return c.o; }, l:function(v){ return v >= 1000 ? fmt(v / 1000, 0) + L(' mil', 'k') : nf(v); }},
+      {b:L('Custo médio', 'Average cost'), K:210 / .2263, v:function(c){ return c.m; }, l:function(v){ return fmt(v * 100, 1) + '%'; }}
+    ];
+    CT.forEach(function(c, i){
+      var x = x0 + i * (BW + GAP) + (c.g ? 16 : 0);
+      var b = box({w:BW, d:44, x:x, y:D / 2 - 22, h:10, c:c.g ? 'var(--dev)' : 'var(--emg)', label:' '});
+      b.setAttribute('role', 'button'); b.tabIndex = 0; b.setAttribute('aria-label', c.n);
+      b.addEventListener('click', function(){ if (M.wasDrag(sc)) return; pick(i); });
+      b.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); pick(i); } });
+      st.appendChild(b); bars.push(b);
+      flatLabel(st, c.s, x - 12, D / 2 + 30 + (i % 2) * 18, BW + 24);
+    });
+    var seg = $('am-seg');
+    seg.innerHTML = MODES.map(function(m, i){ return '<button data-v="' + i + '" aria-pressed="' + (i === mode) + '">' + m.b + '</button>'; }).join('');
+    each(seg.children, function(b){ b.addEventListener('click', function(){ mode = +b.dataset.v; each(seg.children, function(x){ x.setAttribute('aria-pressed', x === b); }); draw(); }); });
+    var NOTES = [
+      L('Empresas por país, seção 3.1 (3.976 nos desenvolvidos e 1.662 nos emergentes). Japão e EUA somam 60% da amostra (conta nossa).', 'Companies per country, section 3.1 (3,976 in developed and 1,662 in emerging countries). Japan and the US make up 60% of the sample (our calculation).'),
+      L('Empresas-ano (observações) por país, Tabela 3: 51.285 nos desenvolvidos e 21.588 nos emergentes.', 'Company-years (observations) per country, Table 3: 51,285 in developed and 21,588 in emerging countries.'),
+      L('Custo médio do capital próprio por ano, 2010 a 2022, Tabela 3. Dados aparados nos extremos (5% e 95%), como na dissertação.', 'Average cost of equity per year, 2010 to 2022, Table 3. Data trimmed at the extremes (5% and 95%), as in the dissertation.')
+    ];
+    function draw(){
+      var m = MODES[mode];
+      bars.forEach(function(b, i){ var v = m.v(CT[i]); b.style.setProperty('--h', Math.max(3, v * m.K) + 'px'); setLab(b, m.l(v)); });
+      $('am-note').textContent = NOTES[mode];
+      pick(cur);
+    }
+    function pick(i){
+      cur = i; var c = CT[i], g = GR[c.g ? 1 : 0];
+      bars.forEach(function(b, j){ b.classList.toggle('active', j === i); });
+      var extra = '';
+      if (c.n === 'China') extra = L(' A China destoa dos outros emergentes: tem risco-país perto do dos desenvolvidos e os menores betas da amostra, segundo a dissertação.', ' China stands apart from the other emerging countries: it has a country risk close to that of developed countries and the lowest betas in the sample, according to the dissertation.');
+      $('am-panel').innerHTML = '<div class="tag">' + c.n + ' · <span class="nt" style="color:' + g.c + '">' + (c.g ? L('desenvolvido', 'developed') : L('emergente', 'emerging')) + '</span></div>' +
+        '<p><strong>' + nf(c.f) + '</strong> ' + L('empresas', 'companies') + ', <strong>' + nf(c.o) + '</strong> ' + L('empresas-ano', 'company-years') + '. ' + L('Custo médio do capital próprio: ', 'Average cost of equity: ') + '<strong>' + pc(c.m * 100) + L(' ao ano', ' a year') + '</strong> (' + L('média do grupo ', 'group average ') + pc(g.m * 100) + ').' + extra + '</p>';
+    }
+    draw();
+  })();
+
+  /* ================= 05 · TRÊS ANDARES ================= */
+  (function(){
+    var LV = [
+      {n:L('País', 'Country'), v:19.6, c:'var(--red)', d:L('Duas empresas-ano do mesmo país têm custos parecidos: cerca de 20% das diferenças estão entre países. Juro, prêmio e risco-país do mesmo lugar valem para todas as empresas dali.', 'Two company-years from the same country have similar costs: about 20% of the differences lie between countries. The interest rate, premium and country risk of the same place apply to all companies there.')},
+      {n:L('Empresa', 'Company'), v:8.8, c:'var(--navy)', d:L('Na mesma empresa, os custos de anos diferentes se parecem ainda mais (correlação de 0,2834). Tirando a parte do país, sobra cerca de 9% que é da própria empresa: o beta e o jeito dela.', 'Within the same company, the costs of different years are even more alike (correlation of 0.2834). Removing the country part leaves about 9% that belongs to the company itself: its beta and its ways.')},
+      {n:L('Ano a ano', 'Year to year'), v:71.7, c:'#94a3b8', d:L('A maior parte muda de um ano para outro dentro da mesma empresa: o juro, a bolsa e o beta se movem. É nesse andar, e no da empresa, que a nota ESG pode fazer alguma diferença.', 'Most of it changes from one year to the next within the same company: the interest rate, the stock market and the beta move. It is on this level, and the company level, that the ESG score may make some difference.')}
+    ];
+    var sc = $('an-scene'), W = 260, D = 170, K = 3, st = makeStage(sc, W, D, {ay:'80%'});
+    rotatable(sc, st, -22, 7);
+    var z = 0, bars = [], cur = 0;
+    LV.forEach(function(l, i){
+      var b = box({w:150, d:150, x:W / 2 - 75, y:D / 2 - 75, z:z, h:l.v * K - 2, c:l.c, label:pc(l.v)});
+      z += l.v * K;
+      b.setAttribute('role', 'button'); b.tabIndex = 0; b.setAttribute('aria-label', l.n + ', ' + pc(l.v));
+      b.addEventListener('click', function(){ if (M.wasDrag(sc)) return; pick(i); });
+      b.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); pick(i); } });
+      st.appendChild(b); bars.push(b);
+    });
+    var btns = $('an-btns');
+    btns.innerHTML = LV.map(function(l, i){ return '<button data-i="' + i + '" aria-pressed="false">' + l.n + ' · ' + pc(l.v) + '</button>'; }).join('');
+    each(btns.children, function(b){ b.addEventListener('click', function(){ pick(+b.dataset.i); }); });
+    function pick(i){
+      cur = i;
+      bars.forEach(function(b, j){ b.classList.toggle('active', j === i); });
+      each(btns.children, function(b, j){ b.setAttribute('aria-pressed', j === i); });
+      $('an-panel').innerHTML = '<div class="tag">' + LV[i].n + ' · <span class="nt">' + pc(LV[i].v) + L(' das diferenças', ' of the differences') + '</span></div><p>' + LV[i].d + '</p>';
+    }
+    pick(cur);
+  })();
+
+  /* ================= 06 · AS NOTAS ================= */
+  (function(){
+    var sc = $('nt-scene'), W = 520, D = 120, BW = 46, st = makeStage(sc, W, D, {ay:'76%', rx:'60deg'});
+    rotatable(sc, st, -12, 6);
+    var GW = 2 * BW + 6, GG = 30, x0 = (W - (4 * GW + 3 * GG)) / 2, bars = [], mode = 0;
+    NT.forEach(function(r, i){
+      [0, 1].forEach(function(g){
+        var b = box({w:BW, d:46, x:x0 + i * (GW + GG) + g * (BW + 6), y:D / 2 - 23, h:10, c:g ? 'var(--emg)' : 'var(--dev)', label:' '});
+        st.appendChild(b); bars.push(b);
+      });
+      flatLabel(st, r.n, x0 + i * (GW + GG) - 14, D / 2 + 32, GW + 28);
+    });
+    var seg = $('nt-seg');
+    seg.innerHTML = '<button data-v="0" aria-pressed="true">' + L('Nota média (1 a 100)', 'Average score (1 to 100)') + '</button><button data-v="1" aria-pressed="false">' + L('Quantas têm nota', 'How many have a score') + '</button>';
+    each(seg.children, function(b){ b.addEventListener('click', function(){ mode = +b.dataset.v; each(seg.children, function(x){ x.setAttribute('aria-pressed', x === b); }); draw(); }); });
+    function draw(){
+      NT.forEach(function(r, i){
+        [0, 1].forEach(function(g){
+          var b = bars[i * 2 + g], v = mode ? r.o[g] : r.m[g];
+          b.style.setProperty('--h', (mode ? v / 1000 * 5 : v * 2.6) + 'px');
+          setLab(b, mode ? fmt(v / 1000, 1) + L(' mil', 'k') : fmt(v, 1));
+        });
+      });
+      $('nt-panel').innerHTML = mode ?
+        L('<p>Nos desenvolvidos há <strong>2,6 vezes</strong> mais empresas-ano com nota geral (39.968 × 15.408, conta nossa). Nem toda empresa tem nota em todo pilar: o ambiental é o mais raro. Os modelos por pilar usam só as empresas-ano com as três notas, por isso têm menos dados.</p>', '<p>Developed countries have <strong>2.6 times</strong> as many company-years with an overall score (39,968 vs 15,408, our calculation). Not every company has a score on every pillar: environmental is the rarest. The by-pillar models use only company-years with all three scores, so they have less data.</p>') :
+        L('<p>A <strong>governança</strong> tem notas perto de 70, cerca de quatro vezes as dos outros pilares. O <strong>social</strong> fica quase igual nos dois grupos (16,3 × 15,4). A maior distância está no <strong>ambiental</strong>: 22,7 nos desenvolvidos e 13,2 nos emergentes.</p>', '<p><strong>Governance</strong> scores are close to 70, about four times those of the other pillars. The <strong>social</strong> score is almost the same in both groups (16.3 vs 15.4). The biggest gap is in the <strong>environmental</strong> pillar: 22.7 in developed and 13.2 in emerging countries.</p>');
+    }
+    draw();
+  })();
+
+  /* ================= 07 · RESULTADO E PLACAR ================= */
+  (function(){
+    var svg = $('rs-svg'), seg = $('rs-seg'), mode = 1, cur = 4;
+    var LX = 214, CX = 372, SC = 130 / .5;   // 0,5 p.p. = 130 px
+    seg.innerHTML = RS.map(function(r, i){ return '<button data-v="' + i + '" aria-pressed="' + (i === mode) + '">' + r.b + '</button>'; }).join('');
+    each(seg.children, function(b){ b.addEventListener('click', function(){ mode = +b.dataset.v; cur = 0; each(seg.children, function(x){ x.setAttribute('aria-pressed', x === b); }); draw(); }); });
+    function eff(w){ return w.z ? 0 : w.c * 1000; }   // p.p. por 10 pontos
+    function draw(){
+      var nar = svg.getBoundingClientRect().width > 0 && svg.getBoundingClientRect().width < 480;
+      LX = nar ? 0 : 214; CX = nar ? 280 : 372; SC = (nar ? 190 : 130) / .5;
+      var R = RS[mode], rows = R.rows, RH = nar ? 64 : 44, Y0 = 40, BY = nar ? 26 : 6, h = '';
+      h += '<text x="' + (CX - 130) + '" y="20" text-anchor="middle" class="sm" style="font-size:12px; fill:var(--navy); font-weight:700">' + L('← custo cai', '← cost falls') + '</text>';
+      h += '<text x="' + (CX + 130) + '" y="20" text-anchor="middle" class="sm" style="font-size:12px; fill:var(--red); font-weight:700">' + L('custo sobe →', 'cost rises →') + '</text>';
+      [-.5, -.25, 0, .25, .5].forEach(function(t){ var x = CX + t * SC; h += '<line x1="' + x + '" y1="30" x2="' + x + '" y2="' + (Y0 + rows.length * RH) + '" stroke="' + (t === 0 ? '#475569' : '#e2e8f0') + '" stroke-width="' + (t === 0 ? 2 : 1) + '"/><text x="' + x + '" y="' + (Y0 + rows.length * RH + 16) + '" text-anchor="middle" class="sm" style="font-size:11px; fill:var(--muted)">' + (t === 0 ? '0' : sg(t, 2)) + '</text>'; });
+      rows.forEach(function(w, i){
+        var y = Y0 + i * RH, e = eff(w), sig = w.p < .05, col = !sig ? '#cbd5e1' : (e > 0 ? 'var(--red)' : 'var(--navy)');
+        var x1 = CX + Math.min(0, e) * SC, bw = Math.max(e === 0 ? 3 : 2, Math.abs(e) * SC);
+        h += '<g class="row' + (i === cur ? ' on' : '') + '" data-i="' + i + '" role="button" tabindex="0" aria-label="' + w.t + ', ' + (w.z ? L('perto de zero', 'close to zero') : pp(e)) + '">';
+        h += '<rect class="bgr" x="0" y="' + (y - 4) + '" width="560" height="' + (RH - 4) + '" rx="6" fill="transparent"/>';
+        h += '<text x="' + (nar ? 8 : LX - 12) + '" y="' + (y + (nar ? 16 : 22)) + '" text-anchor="' + (nar ? 'start' : 'end') + '" style="font-size:' + (w.x ? 12 : 13) + 'px; font-weight:' + (w.x ? 500 : 700) + '; fill:' + (w.x ? 'var(--muted)' : 'var(--ink)') + '">' + (w.x ? '↳ ' : '') + w.t + '</text>';
+        h += '<rect x="' + (e === 0 ? CX - 1.5 : x1) + '" y="' + (y + BY) + '" width="' + bw + '" height="24" rx="3" style="fill:' + col + '"' + (!sig ? ' stroke="#94a3b8" stroke-dasharray="3 3"' : '') + '/>';
+        var lx = e >= 0 ? CX + Math.abs(e) * SC + 8 : x1 - 8;
+        h += '<text x="' + lx + '" y="' + (y + BY + 17) + '" text-anchor="' + (e >= 0 ? 'start' : 'end') + '" class="sm" style="font-size:12px; font-weight:700; fill:' + (sig ? col : 'var(--muted)') + '">' + (w.z ? '≈ 0' : pp(e)) + (sig ? '' : L(' · s/ efeito', ' · n.s.')) + '</text>';
+        h += '</g>';
+      });
+      svg.setAttribute('viewBox', '0 0 560 ' + (Y0 + rows.length * RH + 26));
+      svg.innerHTML = h;
+      each(svg.querySelectorAll('.row'), function(g){
+        g.addEventListener('click', function(){ cur = +g.dataset.i; draw(); });
+        g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); cur = +g.dataset.i; draw(); } });
+      });
+      panel();
+      $('rs-note').innerHTML = R.mdl + '. ' + (R.N ? L('Empresas-ano no modelo: ', 'Company-years in the model: ') + R.N + '. ' : L('Cada grupo num modelo próprio: 13.022 e 9.400 empresas-ano nos emergentes; 34.703 e 21.562 nos desenvolvidos. ', 'Each group in its own model: 13,022 and 9,400 company-years in emerging countries; 34,703 and 21,562 in developed ones. ')) +
+        L('Barra = coeficiente × 10 pontos, em pontos percentuais (conta nossa). A dissertação imprime os coeficientes com quatro casas; “≈ 0” = impresso como 0,0000. Cinza tracejado: p ≥ 0,05.', 'Bar = coefficient × 10 points, in percentage points (our calculation). The dissertation prints the coefficients with four decimals; “≈ 0” = printed as 0.0000. Dashed grey: p ≥ 0.05.') +
+        (mode < 2 ? L(' A linha “a mais nos desenvolvidos” é o termo de interação: soma-se ao efeito dos emergentes, sem teste da soma na dissertação.', ' The “extra in developed” line is the interaction term: it adds to the effect in emerging countries, with no test of the sum in the dissertation.') : '');
+    }
+    function panel(){
+      var R = RS[mode], w = R.rows[cur], e = eff(w), sig = w.p < .05, txt;
+      var pv = w.p < .001 ? 'p < 0,001' : 'p = ' + fmt(w.p, 3);
+      if (EN) pv = pv.replace(',', '.');
+      if (w.x){
+        var base = R.rows[cur - 1];
+        txt = sig ? L('Este termo mostra quanto o efeito muda nos desenvolvidos. Ele tem o mesmo tamanho do efeito dos emergentes, com sinal oposto: nos desenvolvidos, os dois quase se anulam (leitura nossa).', 'This term shows how much the effect changes in developed countries. It is the same size as the effect in emerging countries, with the opposite sign: in developed countries, the two almost cancel out (our reading).') :
+          L('Sem diferença clara entre os grupos neste pilar.', 'No clear difference between the groups on this pillar.');
+      } else if (!sig){
+        txt = L('Sem efeito claro: o coeficiente é quase zero e pode ser acaso.', 'No clear effect: the coefficient is almost zero and may be chance.');
+      } else {
+        txt = (e > 0 ? L('Com 10 pontos a mais, o custo ', 'With 10 more points, the cost ') + L('<strong class="emg-t">sobe</strong> cerca de ', '<strong class="emg-t">rises</strong> by about ') : L('Com 10 pontos a mais, o custo ', 'With 10 more points, the cost ') + L('<strong class="dev-t">cai</strong> cerca de ', '<strong class="dev-t">falls</strong> by about ')) + fmt(Math.abs(e), 1) + L(' ponto percentual.', ' percentage points.');
+        if (mode === 0) txt += L(' Contra o esperado. Para o autor, investidores podem ver o ESG como uma troca de retorno de curto prazo por longo prazo, o que aumenta o risco.', ' Contrary to expectations. For the author, investors may see ESG as trading short-term for long-term returns, which raises the risk.');
+        if (/Gov/.test(w.t) && e > 0) txt += L(' Para o autor, nos emergentes a propriedade é mais concentrada e o minoritário teme ser prejudicado; a nota de governança alta não o convence.', ' For the author, in emerging countries ownership is more concentrated and minority shareholders fear being harmed; a high governance score does not convince them.');
+      }
+      $('rs-panel').innerHTML = '<div class="tag">' + w.t + ' · <span class="nt">' + L('coeficiente ', 'coefficient ') + (w.z ? (EN ? '0.0000' : '0,0000') : sg(w.c, 4)) + ' · ' + pv + '</span></div><p>' + txt + '</p>';
+    }
+    var g = $('sgrid'), hc = 0;
+    var VD = [[L('não', 'no'), 'n'], [L('sim', 'yes'), 'y'], [L('em parte', 'partly'), 'p']];
+    function score(){
+      g.innerHTML = HY.map(function(x, i){
+        var bet = BETS[i], hit = bet === undefined ? '' : (x.v === 2 ? L('meio acerto', 'half right') : (bet === x.v ? L('acertou', 'right') : L('errou', 'wrong')));
+        return '<button data-i="' + i + '" aria-pressed="' + (i === hc) + '"><b>' + x.k + '</b><span class="' + VD[x.v][1] + '">' + VD[x.v][0] + '</span><br>' + (bet === undefined ? L('sem aposta', 'no bet') : (bet ? L('apostou sim', 'bet yes') : L('apostou não', 'bet no'))) + (hit ? '<br><strong>' + hit + '</strong>' : '') + '</button>';
+      }).join('');
+      each(g.children, function(b){ b.addEventListener('click', function(){ hc = +b.dataset.i; score(); }); });
+      var x = HY[hc];
+      $('sc-panel').innerHTML = '<div class="tag">' + L('Placar · ', 'Scoreboard · ') + x.k + ' · <span class="' + (x.v === 1 ? 'ok-t' : (x.v === 2 ? 'wk-t' : 'ns-t')) + '">' + VD[x.v][0] + '</span></div><p style="font-size:.86rem">' + x.r + '</p>' +
+        (Object.keys(BETS).length ? '' : '<p style="font-size:.8rem; color:var(--muted)">' + L('Você ainda não apostou. As apostas ficam na tela 03.', 'You have not bet yet. The bets are on screen 03.') + '</p>');
+    }
+    window.__drawScore = score;
+    var rw = 0; window.addEventListener('resize', function(){ clearTimeout(rw); rw = setTimeout(draw, 150); });
+    draw(); score();
+  })();
+
+  /* ================= 08 · O TAMANHO ================= */
+  (function(){
+    // Coeficientes dos modelos por grupo (Tabela 8): pilar, beta desalavancado (UB) e custo médio do grupo
+    var OP = [
+      {b:L('Social · emergentes', 'Social · emerging'), c:-.0002, g:0, ub:.1187, m:'8'},
+      {b:L('Governança · emergentes', 'Governance · emerging'), c:.0003, g:0, ub:.1187, m:'8'},
+      {b:L('Governança · desenvolvidos', 'Governance · developed'), c:-.0001, g:1, ub:.1339, m:'10'},
+      {b:L('Social · todos (Modelo 6)', 'Social · all (Model 6)'), c:-.0001, g:0, ub:.1299, m:'6'}
+    ];
+    var SD_UB = .3015, cur = 0, K = 11;
+    var ch = $('tm-chips'), r = $('tm-r');
+    ch.innerHTML = OP.map(function(o, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="' + (i === cur) + '">' + o.b + '</button>'; }).join('');
+    each(ch.children, function(b){ b.addEventListener('click', function(){ cur = +b.dataset.i; each(ch.children, function(x){ x.setAttribute('aria-pressed', x === b); }); draw(); }); });
+    var sc = $('tm-scene'), W = 360, D = 140, st = makeStage(sc, W, D, {ay:'78%'});
+    rotatable(sc, st, -18, 6);
+    var A0 = box({w:100, d:100, x:40, y:D / 2 - 50, h:10, c:'#cbd5e1', label:''});
+    var A1 = box({w:100, d:100, x:40, y:D / 2 - 50, h:0, c:'var(--red)', top:' '});
+    var B0 = box({w:100, d:100, x:220, y:D / 2 - 50, h:10, c:'#cbd5e1', label:''});
+    var B1 = box({w:100, d:100, x:220, y:D / 2 - 50, h:0, c:'var(--navy)', top:' '});
+    [A0, A1, B0, B1].forEach(function(b){ st.appendChild(b); });
+    var la = flatLabel(st, '', 10, D / 2 + 60, 160), lb = flatLabel(st, '', 190, D / 2 + 60, 160);
+    function draw(){
+      var o = OP[cur], pts = +r.value, base = (o.m === '6' ? TOT : GR[o.g ? 1 : 0].m) * 100;
+      var e = o.c * pts * 100, lo = (Math.abs(o.c) - .00005) * pts * 100, hi = (Math.abs(o.c) + .00005) * pts * 100;
+      var ub = o.ub * SD_UB * 100;
+      $('tm-v').textContent = '+' + pts;
+      var lowA = Math.min(base, base + e);
+      A0.style.setProperty('--h', lowA * K + 'px');
+      A1.style.setProperty('--z', lowA * K + 'px'); A1.style.setProperty('--h', Math.max(1, Math.abs(e) * K) + 'px');
+      A1.style.setProperty('--c', e > 0 ? 'var(--red)' : '#dbe3f4'); A1.classList.toggle('neg', e < 0);
+      setTop(A1, pc(base + e, 2));
+      B0.style.setProperty('--h', base * K + 'px');
+      B1.style.setProperty('--z', base * K + 'px'); B1.style.setProperty('--h', ub * K + 'px');
+      setTop(B1, pc(base + ub, 1));
+      la.innerHTML = L('nota +', 'score +') + pts + '<br><span style="font-weight:600; color:var(--muted)">' + pp(e, 2) + '</span>';
+      lb.innerHTML = L('beta +0,30', 'beta +0.30') + '<br><span style="font-weight:600; color:var(--muted)">' + pp(ub, 1) + '</span>';
+      $('tm-a').innerHTML = '<b style="color:' + (e > 0 ? 'var(--red)' : 'var(--navy)') + '">' + pp(e, 2) + '</b>' + L('com ', 'with ') + pts + L(' pontos a mais na nota (entre ', ' more points on the score (between ') + (e < 0 ? '−' : '+') + fmt(lo, 2) + L(' e ', ' and ') + (e < 0 ? '−' : '+') + fmt(hi, 2) + L(', pelo arredondamento)', ', given the rounding)');
+      $('tm-b').innerHTML = '<b style="color:var(--navy)">' + pp(ub, 1) + '</b>' + L('com o beta 0,30 mais alto, sobre um custo médio de ', 'with a beta 0.30 higher, on an average cost of ') + pc(base, 1);
+      $('tm-note').innerHTML = L('Coeficientes do Modelo ', 'Coefficients from Model ') + o.m + (o.m === '6' ? L(' (Tabela 7), sobre o custo médio de toda a amostra (13,96%)', ' (Table 7), on the average cost of the whole sample (13.96%)') : L(' (Tabela 8), sobre o custo médio do grupo (Tabela 3)', ' (Table 8), on the group’s average cost (Table 3)')) + L('. O beta usado é o desalavancado; 0,30 é o desvio-padrão dele na amostra (Tabela 4). Como os coeficientes têm quatro casas, um −0,0002 pode estar entre −0,00015 e −0,00025: daí a faixa. Contas nossas.', '. The beta used is the unlevered beta; 0.30 is its standard deviation in the sample (Table 4). Since the coefficients have four decimals, a −0.0002 may lie between −0.00015 and −0.00025: hence the range. Our calculations.');
+    }
+    r.addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 09 · O INESPERADO ================= */
+  (function(){
+    var RAW = (.1288 - .1654) * 100, DEV = 12.45, WGI = -.1342 * (1.2549 + .3338) * 100, GDP = .0682 * (.0146 - .0613) * 100, SUM = DEV + WGI + GDP;
+    var ST = [
+      {b:L('1 · Média simples', '1 · Simple average'), d:L('Na média de 2010 a 2022, as empresas dos desenvolvidos têm custo de 12,9% ao ano; as dos emergentes, 16,5%. Diferença: <strong class="dev-t">' + pp(RAW) + '</strong>. Até aqui, a segunda aposta parece certa.', 'On average from 2010 to 2022, companies in developed countries have a cost of 12.9% a year; those in emerging ones, 16.5%. Difference: <strong class="dev-t">' + pp(RAW) + '</strong>. So far, the second bet looks right.')},
+      {b:L('2 · Termo “desenvolvido”', '2 · “Developed” term'), d:L('No modelo completo, o termo que marca país desenvolvido vale <strong class="emg-t">' + pp(DEV) + '</strong>: somou custo. Por isso a dissertação rejeita a segunda aposta. Para o autor, pode ser porque as empresas dos desenvolvidos são mais alavancadas e arriscadas (beta desalavancado médio de 0,60 contra 0,48).', 'In the full model, the term marking a developed country is <strong class="emg-t">' + pp(DEV) + '</strong>: it added cost. That is why the dissertation rejects the second bet. For the author, this may be because companies in developed countries are more leveraged and riskier (average unlevered beta of 0.60 against 0.48).')},
+      {b:L('3 · Instituições', '3 · Institutions'), d:L('Mas o mesmo modelo traz a qualidade das instituições do país (WGI, do Banco Mundial), que quase separa os dois grupos sozinha: 1,25 nos desenvolvidos e −0,33 nos emergentes. Cada ponto dela tira 13,4 p.p.; a diferença de 1,59 ponto tira <strong class="dev-t">' + pp(WGI) + '</strong> (conta nossa).', 'But the same model includes the quality of the country’s institutions (WGI, from the World Bank), which almost separates the two groups on its own: 1.25 in developed and −0.33 in emerging countries. Each point of it removes 13.4 p.p.; the 1.59-point gap removes <strong class="dev-t">' + pp(WGI) + '</strong> (our calculation).')},
+      {b:L('4 · Crescimento e soma', '4 · Growth and sum'), d:L('O crescimento menor do PIB per capita nos desenvolvidos tira mais ' + fmt(Math.abs(GDP), 1) + ' p.p. Lidos juntos, os termos do país dão <strong class="dev-t">' + pp(SUM) + '</strong>: o país desenvolvido volta a ter custo menor. Com só 10 países, o termo “desenvolvido” e as instituições andam quase juntos e não dá para ler um sem o outro (leitura nossa).', 'Lower GDP per capita growth in developed countries removes another ' + fmt(Math.abs(GDP), 1) + ' p.p. Read together, the country terms give <strong class="dev-t">' + pp(SUM) + '</strong>: the developed country again has a lower cost. With only 10 countries, the “developed” term and institutions move almost together, and one cannot be read without the other (our reading).')}
+    ];
+    var svg = $('wf-svg'), q = $('wf-quiz'), bt = $('wf-btns'), step = 0, ans = null;
+    q.innerHTML = '<button data-v="1" aria-pressed="false">' + L('Somou custo', 'Added cost') + '</button><button data-v="0" aria-pressed="false">' + L('Tirou custo', 'Removed cost') + '</button>';
+    bt.innerHTML = ST.map(function(s, i){ return '<button data-i="' + i + '" aria-pressed="false">' + s.b + '</button>'; }).join('');
+    each(q.children, function(b){ b.addEventListener('click', function(){ ans = +b.dataset.v; each(q.children, function(x){ x.setAttribute('aria-pressed', x === b); }); if (step < 1) step = 1; draw(); }); });
+    each(bt.children, function(b){ b.addEventListener('click', function(){ step = +b.dataset.i; if (ans === null) ans = -1; draw(); }); });
+    var CX = 300, SC = 9;   // px por p.p.
+    function draw(){
+      var h = '', on = ans !== null;
+      each(bt.children, function(b, j){ b.setAttribute('aria-pressed', on && j === step); });
+      h += '<line x1="' + CX + '" y1="20" x2="' + CX + '" y2="282" stroke="#475569" stroke-width="2"/>';
+      [-30, -20, -10, 10, 20].forEach(function(t){ var x = CX + t * SC; h += '<line x1="' + x + '" y1="20" x2="' + x + '" y2="282" stroke="#e2e8f0"/><text x="' + x + '" y="300" text-anchor="middle" class="sm" style="font-size:11px; fill:var(--muted)">' + sg(t, 0) + '</text>'; });
+      h += '<text x="' + CX + '" y="300" text-anchor="middle" class="sm" style="font-size:11px; fill:var(--ink); font-weight:700">0</text>';
+      h += '<text x="' + CX + '" y="320" text-anchor="middle" class="sm" style="font-size:11px; fill:var(--muted)">' + L('pontos percentuais: desenvolvido menos emergente', 'percentage points: developed minus emerging') + '</text>';
+      var bars = [
+        {t:L('média simples', 'simple average'), a:0, b:RAW, s:0},
+        {t:L('“desenvolvido”', '“developed”'), a:0, b:DEV, s:1},
+        {t:L('instituições', 'institutions'), a:DEV, b:DEV + WGI, s:2},
+        {t:L('crescimento', 'growth'), a:DEV + WGI, b:DEV + WGI + GDP, s:3},
+        {t:L('soma (nossa)', 'sum (ours)'), a:0, b:SUM, s:3, tot:1}
+      ];
+      bars.forEach(function(r, i){
+        var y = 30 + i * 52, vis = on && r.s <= step, lo = Math.min(r.a, r.b), w = Math.max(3, Math.abs(r.b - r.a) * SC), d = r.b - r.a;
+        var col = r.tot ? '#0f172a' : (d > 0 ? 'var(--red)' : 'var(--navy)');
+        h += '<g class="st" style="opacity:' + (vis ? 1 : (on ? .12 : 0)) + '">';
+        h += '<text x="8" y="' + (y + 22) + '" style="font-size:13px; font-weight:700; fill:var(--ink)">' + r.t + '</text>';
+        h += '<rect x="' + (CX + lo * SC) + '" y="' + (y + 6) + '" width="' + w + '" height="26" rx="3" style="fill:' + col + '"/>';
+        if (i > 0 && i < 4) h += '<line x1="' + (CX + r.b * SC) + '" y1="' + (y + 32) + '" x2="' + (CX + r.b * SC) + '" y2="' + (y + 58) + '" stroke="#94a3b8" stroke-dasharray="3 3"/>';
+        var tx = d >= 0 ? CX + Math.max(r.a, r.b) * SC + 6 : CX + lo * SC - 6;
+        h += '<text x="' + tx + '" y="' + (y + 24) + '" text-anchor="' + (d >= 0 ? 'start' : 'end') + '" class="sm" style="font-size:12.5px; font-weight:800; fill:' + col + '">' + pp(d) + '</text>';
+        h += '</g>';
+      });
+      if (!on) h += '<text x="280" y="160" text-anchor="middle" style="font-size:15px; fill:var(--muted)">' + L('Responda ao lado para ver a escada', 'Answer on the left to see the staircase') + '</text>';
+      svg.innerHTML = h;
+      if (!on){ $('wf-panel').innerHTML = '<p style="color:var(--muted)">' + L('Escolha uma resposta.', 'Choose an answer.') + '</p>'; return; }
+      var fb = ans === -1 ? '' : (ans === 1 ? L('<p><strong class="ok-t">Acertou:</strong> o termo somou custo.</p>', '<p><strong class="ok-t">Right:</strong> the term added cost.</p>') : L('<p><strong class="emg-t">Não:</strong> o termo somou custo, ao contrário da média simples.</p>', '<p><strong class="emg-t">No:</strong> the term added cost, unlike the simple average.</p>'));
+      $('wf-panel').innerHTML = (step === 1 ? fb : '') + '<p>' + ST[step].d + '</p>';
+    }
+    draw();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
