@@ -1,0 +1,965 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O risco das ações visto de perto · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Rogerio Batista Adelino (PPGA Mackenzie, 2023) sobre volatilidade em três ensaios, do dia ao milésimo de segundo (futuros de VIX, pequenas × grandes empresas dos EUA e as 89 ações do Ibovespa), explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2023-adelino-volatilidade-mercado/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><path d=%22M4 20 L10 20 L12 12 L15 24 L18 8 L21 20 L28 20%22 stroke=%22white%22 stroke-width=%222.6%22 fill=%22none%22 stroke-linejoin=%22round%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --cont:var(--navy);   /* tremor contínuo (movimento browniano) */
+    --jump:var(--red);    /* saltos */
+    --noise:#64748b;      /* ruído */
+    --drift:#94a3b8;      /* deriva */
+    --off:#cbd5e1;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .ilus{display:inline-block; font-size:.64rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow); margin-top:12px;}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:4px;}
+  .panel p{margin:0 0 6px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:18px; padding:3px; background:var(--card); gap:2px; margin-top:10px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.82rem; cursor:pointer; color:var(--ink-2); font-family:inherit;}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 13px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.08rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.74rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  svg text{font-family:var(--sans);}
+  .svgbox{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .chip{display:inline-block; font-size:.7rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; border-radius:6px; padding:3px 8px; color:#fff; background:var(--cc, var(--ink));}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.76rem; color:var(--muted); margin-top:8px;}
+  .sw{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  input[type=range]{width:100%; accent-color:var(--red);}
+  .slider-row{margin-top:12px; font-size:.84rem; color:var(--ink-2);}
+  .slider-row b{color:var(--ink);}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4vw, 2.7rem);}
+  .meta{display:grid; gap:2px; margin-top:16px; font-size:.86rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .warn{font-size:.76rem; color:var(--muted); margin-top:10px;}
+  .warn b{color:var(--red);}
+  .cap-legend{font-size:.76rem; color:var(--muted); text-align:center; margin-top:4px; max-width:36em; margin-left:auto; margin-right:auto;}
+  #hero-scene{perspective:2200px;}
+  #hero-scene .slab.active{--oz:18px;}
+  #hero-scene .top-label svg{width:100%; height:100%; display:block;}
+
+  /* ---------- 05 · Bloco que derrete ---------- */
+  #melt-scene .floor-label{font-size:14px; color:var(--muted);}
+  #melt-scene .top-label{font-size:22px;}
+  #melt-scene .slab.off > i{box-shadow:inset 0 0 0 1.5px #64748b; --face:rgb(100 116 139 / .06);}
+  .presets{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .presets button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:5px 11px; font-size:.78rem; cursor:pointer; font-family:inherit; color:var(--ink-2);}
+  .presets button[aria-pressed="true"]{border-color:var(--red); color:var(--red); font-weight:600;}
+
+  /* ---------- 07 · Camadas ---------- */
+  .layers{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px;}
+  .layers button{display:flex; align-items:center; gap:8px; text-align:left; border:1px solid var(--border); background:var(--card); border-radius:12px; padding:9px 11px; font-size:.82rem; cursor:pointer; font-family:inherit; color:var(--ink-2); line-height:1.25;}
+  .layers button .sw{flex:none; width:14px; height:14px; border-radius:4px; background:var(--lc); opacity:.25;}
+  .layers button[aria-pressed="true"]{border-color:var(--lc); color:var(--ink); box-shadow:inset 0 0 0 1px var(--lc);}
+  .layers button[aria-pressed="true"] .sw{opacity:1;}
+  .layers button b{display:block; font-size:.86rem;}
+
+  /* ---------- 10 · Subgrupos ---------- */
+  #grp-btns{margin-top:8px;}
+  #grp-btns button{padding:6px 11px; font-size:.8rem;}
+
+  /* ---------- 11 · Cidade ---------- */
+  #city-scene{perspective:2600px;}
+  #city-scene .slab{cursor:pointer;}
+  #city-scene .slab.dim > i{opacity:.18;}
+  #city-scene .slab.active{--oz:12px;}
+  #city-scene .floor-label{font-size:13px; color:var(--muted);}
+  details.alt{margin-top:10px; font-size:.78rem; color:var(--muted);}
+  details.alt summary{cursor:pointer; color:var(--ink-2);}
+  details.alt p{margin:6px 0 0; line-height:1.5;}
+
+  /* ---------- 12 · Final ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.78rem; color:var(--ink-2); line-height:1.42;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+  @media (max-width:600px){
+    .svgbox text{font-size:118%;}
+  }
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2023-adelino-volatilidade-mercado/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2023</div>
+      <h1 class="rv" style="--d:.1s">O risco das ações visto de perto</h1>
+      <p class="sub rv" style="--d:.2s">Volatilidade é o quanto o preço de um ativo balança. Esta tese olha para ela com lentes cada vez mais finas, em três ensaios: por dia (o “índice do medo” VIX), minuto a minuto (pequenas × grandes empresas dos EUA) e em milésimos de segundo (as 89 ações do Ibovespa). Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Rogerio Batista Adelino</span>
+        <span><b>Orientador:</b> Prof. Dr. Leonardo Fernando Cruz Basso</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+        <span><b>Título original:</b> <i>Essays on market volatility</i> (tese escrita em inglês)</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#balanco">Começar →</a>
+        <a class="btn ghost" href="#b3">Ir direto à bolsa brasileira</a>
+      </div>
+      <p class="warn rv" style="--d:.45s"><b>Não é recomendação de investimento.</b> A página explica uma pesquisa acadêmica sobre como medir e entender o risco.</p>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="520x330" role="img" aria-label="Três placas em fila, cada uma com a mesma trajetória de preço vista com uma lente diferente: de longe, por dia, uma curva suave; por minuto, um zigue-zague; em milésimos de segundo, degraus com saltos e tremidas"></div></div>
+      <p class="cap-legend"><span class="ilus">ilustração</span> A mesma trajetória de preço em três lentes. Quanto mais perto, mais o risco se divide em partes: tremor contínuo, saltos (em vermelho) e ruído.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Mostra de onde vem o risco das ações, do dia ao milésimo de segundo, e o custo de se proteger com instrumentos de volatilidade, conhecimento útil para investidores e para um mercado de capitais mais sólido."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · BALANÇO -->
+<section class="slide" id="balanco" data-label="O que é volatilidade">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> A pergunta</div>
+      <h2 class="rv" style="--d:.1s">Sobe 20%, cai 20%: você não volta ao mesmo lugar</h2>
+      <p class="lede rv" style="--d:.15s">Em finanças, volatilidade é a dispersão dos retornos em torno da média. Ela não é só um incômodo: a tese lembra que mais volatilidade reduz o retorno acumulado, entra no preço de opções e guia a montagem de carteiras. A pergunta da pesquisa é como gerir a volatilidade e de que partes ela é feita.</p>
+      <div class="slider-row rv" style="--d:.2s">
+        <label for="amp">Quanto o preço sobe e cai a cada rodada: <b id="amp-v">±20%</b></label>
+        <input type="range" id="amp" min="0" max="40" step="1" value="20">
+      </div>
+      <div class="panel rv" id="amp-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="amp-svg" class="svgbox" viewBox="0 0 560 345" role="img" aria-label="Duas trajetórias de R$ 100 ao longo de 10 rodadas que alternam alta e queda do mesmo tamanho: uma calma, de 2%, e outra com o tamanho escolhido"></svg>
+      <p class="note"><span class="ilus">ilustração</span> Conta nossa: altas e quedas do mesmo tamanho, alternadas, em 10 rodadas. A ideia (mais balanço, menos retorno acumulado) está na introdução da tese.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · TRÊS LENTES -->
+<section class="slide" id="lentes" data-label="Três lentes">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> Como a pesquisa olhou</div>
+      <h2 class="rv" style="--d:.1s">Três ensaios, três lentes: o dia, o minuto e o milésimo de segundo</h2>
+      <p class="lede rv" style="--d:.15s">Um “candle” diário resume milhares de negócios num só desenho. Com computadores e dados de alta frequência, dá para abrir esse resumo e ver o que acontece dentro dele. Cada ensaio usa uma lente.</p>
+      <div class="seg rv" id="lens-seg" style="--d:.2s" role="group" aria-label="Escolha a lente">
+        <button data-k="0" aria-pressed="true">Ensaio 1 · dia</button>
+        <button data-k="1" aria-pressed="false">Ensaio 2 · minuto</button>
+        <button data-k="2" aria-pressed="false">Ensaio 3 · milésimo</button>
+      </div>
+      <div class="panel rv" id="lens-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="lens-svg" class="svgbox" viewBox="0 0 560 320" role="img" aria-label="Desenho da série de preços na lente escolhida"></svg>
+      <p class="note"><span class="ilus">ilustração</span> Séries desenhadas por nós para mostrar a diferença de lente; os números ao lado vêm da tese.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · VIX -->
+<section class="slide" id="vix" data-label="Índice do medo">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Ensaio 1 · 2.501 dias, 2011 a 2021</div>
+      <h2 class="rv" style="--d:.1s">O “índice do medo” não está à venda; o que se compra é uma promessa sobre ele</h2>
+      <p class="lede rv" style="--d:.15s">O VIX mede a volatilidade que o mercado espera para o S&P 500 nos próximos 30 dias e costuma subir quando a bolsa cai: parece um bom seguro. Mas ninguém compra o VIX, só contratos futuros sobre ele ou fundos (ETFs) que os carregam. Sem negociar o índice, ninguém corrige distorções de preço entre ele e o futuro (a arbitragem).</p>
+      <div class="seg rv" id="pair-seg" style="--d:.2s" role="group" aria-label="Escolha o par comparado">
+        <button data-p="0" aria-pressed="true">VIX → futuro curto</button>
+        <button data-p="1" aria-pressed="false">Futuro curto → futuro médio</button>
+      </div>
+      <div class="panel rv" id="pair-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="pair-svg" class="svgbox" viewBox="0 0 560 330" role="img" aria-label="Cadeia que vai das opções do S&P 500 ao VIX, que não se negocia, e dele aos futuros curto e médio e aos ETFs; o par escolhido aparece destacado"></svg>
+      <p class="note">Tabela 2.2: duas regressões com retornos diários de 1/3/2011 a 19/3/2021 (índices de futuros de VIX de curto e médio prazo da S&P Dow Jones), ajustadas pela taxa de juros e com erros robustos. Nos dois pares, só cerca de metade do movimento do futuro vem do VIX ou do futuro mais curto; para o autor, a sensibilidade muda com o prazo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · CUSTO DE CARREGAR -->
+<section class="slide" id="custo" data-label="O custo do seguro">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Ensaio 1 · o resultado</div>
+      <h2 class="rv" style="--d:.1s">Com o VIX parado, o futuro perde em média 0,32% ao dia</h2>
+      <p class="lede rv" style="--d:.15s">O termo fixo de −0,32% ao dia só aparece no par sem arbitragem. Para o autor, é um custo de carregamento negativo: quem segura futuros de volatilidade por meses é penalizado, e esses instrumentos servem melhor para proteção de curto prazo. Arraste e veja o tamanho da conta.</p>
+      <div class="slider-row rv" style="--d:.2s">
+        <label for="days">Dias úteis segurando o futuro: <b id="days-v">21</b></label>
+        <input type="range" id="days" min="1" max="252" step="1" value="21">
+        <div class="presets" id="day-presets" role="group" aria-label="Prazos prontos">
+          <button data-n="5" aria-pressed="false">1 semana</button>
+          <button data-n="21" aria-pressed="true">1 mês</button>
+          <button data-n="63" aria-pressed="false">3 meses</button>
+          <button data-n="252" aria-pressed="false">1 ano</button>
+        </div>
+      </div>
+      <div class="stats rv" style="--d:.25s">
+        <div class="stat"><b id="melt-out">−6,5%</b><span>só pelo termo fixo, se ele se repetisse todo dia (conta nossa)</span></div>
+        <div class="stat"><b>p 0,504</b><span>regra “vender depois de uma alta”: não rende no par 1</span></div>
+        <div class="stat"><b>p 0,056</b><span>a mesma regra no par 2: não chega a 5% de significância</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="melt-scene" data-fit="440x340" role="img" aria-label="Um bloco que encolhe conforme os dias passam, ao lado do contorno do tamanho original"></div></div>
+      <p class="note"><span class="ilus">ilustração</span> Conta nossa: (1 − 0,0032) elevado ao número de dias, só com o termo fixo da Regressão 1 e o VIX parado. É uma média do período 2011–2021, não uma previsão; o retorno real depende também do VIX. A “regra ingênua” é o z-score do movimento dos últimos 30 dias.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · RUSSELL -->
+<section class="slide" id="russell" data-label="Pequenas × grandes">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Ensaio 2 · 54 pregões, minuto a minuto</div>
+      <h2 class="rv" style="--d:.1s">Pequenas empresas balançam mais, e com outro ritmo</h2>
+      <p class="lede rv" style="--d:.15s">Desde Fama e French, o tamanho da empresa é tratado como um fator de risco à parte. O segundo ensaio compara três índices da família Russell, nos EUA, com um registro por minuto (20.826 por índice, de outubro de 2021 a 4 de janeiro de 2022): as 1.000 maiores, as 2.000 menores e as 3.000 juntas.</p>
+      <div class="seg rv" id="rus-seg" style="--d:.2s" role="group" aria-label="Escolha a lente">
+        <button data-m="0" aria-pressed="true">Por dia</button>
+        <button data-m="1" aria-pressed="false">Por minuto</button>
+      </div>
+      <div class="panel rv" id="rus-panel" style="--d:.25s" aria-live="polite"></div>
+      <div class="stats rv" style="--d:.3s">
+        <div class="stat"><b>1,40% × 0,89%</b><span>balanço diário (desvio-padrão): pequenas × grandes</span></div>
+        <div class="stat"><b>0,05% × 5,32%</b><span>retorno no período: pequenas × grandes</span></div>
+        <div class="stat"><b>p 0,0000</b><span>teste de Lawley: as correlações não são iguais entre si</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="rus-svg" class="svgbox" viewBox="0 0 560 410" role="img" aria-label="Três índices ligados por linhas cuja espessura mostra a correlação entre eles, por dia ou por minuto, com a curtose de cada um"></svg>
+      <p class="note">Tabela 3.1. Correlação 1 = andam juntos sempre. Curtose ≈ 3 é o normal de uma curva em sino; acima disso, mais variações extremas (“caudas gordas”).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · CAMADAS -->
+<section class="slide" id="camadas" data-label="As partes do risco">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> O método dos ensaios 2 e 3</div>
+      <h2 class="rv" style="--d:.1s">De perto, o preço é a soma de quatro movimentos</h2>
+      <p class="lede rv" style="--d:.15s">A tese segue Aït-Sahalia e Jacod, que compararam o mercado à luz de uma estrela: separada em faixas, ela revela os elementos que a compõem. Ligue e desligue cada parte e veja o desenho mudar.</p>
+      <div class="layers rv" id="layers" style="--d:.2s" role="group" aria-label="Partes do movimento do preço">
+        <button data-c="d" aria-pressed="true" style="--lc:var(--drift)"><span class="sw"></span><span><b>Deriva</b>a tendência de fundo</span></button>
+        <button data-c="b" aria-pressed="true" style="--lc:var(--cont)"><span class="sw"></span><span><b>Tremor contínuo</b>o “movimento browniano”</span></button>
+        <button data-c="j" aria-pressed="true" style="--lc:var(--jump)"><span class="sw"></span><span><b>Saltos</b>rupturas bruscas na série</span></button>
+        <button data-c="n" aria-pressed="false" style="--lc:var(--noise)"><span class="sw"></span><span><b>Ruído</b>vai e volta miúdo do pregão</span></button>
+      </div>
+      <div class="panel rv" id="layer-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="layer-svg" class="svgbox" viewBox="0 0 560 300" role="img" aria-label="Trajetória de preço montada com as partes ligadas"></svg>
+      <svg id="ruler-svg" class="svgbox" viewBox="0 0 560 88" style="margin-top:10px" role="img" aria-label="Régua do teste de saltos: abaixo de 1 indica ruído, perto de 1 indica saltos, acima de 2 indica movimento contínuo"></svg>
+      <p class="note"><span class="ilus">ilustração</span> Trajetória simulada por nós. A régua é a da tese (seção 4.6): o teste S<sub>J</sub> compara a mesma série em duas frequências; onde os valores se concentram diz qual parte domina.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · SALTOS NAS PEQUENAS -->
+<section class="slide" id="saltos-eua" data-label="Mais balanço, menos saltos">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Ensaio 2 · o inesperado</div>
+      <h2 class="rv" style="--d:.1s">As pequenas balançam mais, mas não por saltar mais</h2>
+      <p class="lede rv" style="--d:.15s">Nos três índices o tremor contínuo está presente (96 medidas por índice). Já os saltos não apareceram com registros de 1 e 2 minutos: os valores do teste ficaram longe de 1. E as pequenas ficaram ainda mais longe. O autor conclui que o balanço extra delas vem do tremor contínuo, não de rupturas, e chama o achado de contraintuitivo e dependente da amostra.</p>
+      <div class="slider-row rv" style="--d:.2s">
+        <label for="pow">Potência da régua (quanto maior, mais ela realça os saltos): <b id="pow-v">4,5</b></label>
+        <input type="range" id="pow" min="3" max="6" step="0.25" value="4.5">
+      </div>
+      <div class="panel rv" id="pow-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="sj-us-svg" class="svgbox" viewBox="0 0 560 360" role="img" aria-label="Três histogramas do teste de saltos, um por índice, todos longe do valor 1; o das pequenas empresas vai mais longe para a direita"></svg>
+      <p class="note">Histogramas redesenhados da Figura 3.3 (52 medidas por índice, valores aproximados, lidos por nós). Diferença no cursor: Tabela 3.2 (regressões das diferenças de S<sub>J</sub> na potência; todos os coeficientes com p ≤ 0,003), calculada por nós para cada potência.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · B3 -->
+<section class="slide" id="b3" data-label="A B3 em milésimos">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Ensaio 3 · 114 pregões, 2022–2023</div>
+      <h2 class="rv" style="--d:.1s">Em milésimos de segundo, a bolsa brasileira salta</h2>
+      <p class="lede rv" style="--d:.15s">O terceiro ensaio usou cada negócio registrado pela B3, ao milésimo de segundo, das 89 ações do Ibovespa, de 6 de setembro de 2022 a 17 de fevereiro de 2023: período com a eleição presidencial e com a crise da Americanas. O pico perto de 1 indica saltos no mercado como um todo, como Aït-Sahalia e Jacod acharam no Dow Jones.</p>
+      <div class="seg rv" id="freq-seg" style="--d:.2s" role="group" aria-label="Escolha a frequência">
+        <button data-f="tot" aria-pressed="true">Todas</button>
+        <button data-f="f1000" aria-pressed="false">1/1000 s</button>
+        <button data-f="f100" aria-pressed="false">1/100 s</button>
+        <button data-f="f10" aria-pressed="false">1/10 s</button>
+        <button data-f="f1" aria-pressed="false">1 s</button>
+      </div>
+      <div class="stats rv" style="--d:.25s">
+        <div class="stat"><b>1,2 bilhão</b><span>de registros no período, 10,9 milhões num dia médio</span></div>
+        <div class="stat"><b>9.256</b><span>valores do teste: 89 ações × 4 frequências × 26 ajustes</span></div>
+        <div class="stat"><b>R$ 12,00 → 2,72</b><span>a ação da Americanas em 12/1/2023, um dos choques da amostra</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="b3-svg" class="svgbox" viewBox="0 0 560 330" role="img" aria-label="Histograma do teste de saltos para as ações do Ibovespa, com pico perto de 1"></svg>
+      <p class="note" id="b3-note"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · ONDE HÁ RUÍDO -->
+<section class="slide" id="ruido" data-label="Onde há ruído">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Ensaio 3 · a descoberta</div>
+      <h2 class="rv" style="--d:.1s">Nos cantos menos eficientes da bolsa, o ruído toma o lugar dos saltos</h2>
+      <p class="lede rv" style="--d:.15s">Os saltos não são iguais em toda parte. Ações preferenciais, de nível de governança mais baixo e com menor peso no índice tendem ao ruído, o vai e volta miúdo que a literatura liga a mercados de pior qualidade. Escolha um recorte.</p>
+      <div class="seg rv" id="dim-seg" style="--d:.2s" role="group" aria-label="Escolha o recorte">
+        <button data-d="0" aria-pressed="true">Tipo de ação</button>
+        <button data-d="1" aria-pressed="false">Governança</button>
+        <button data-d="2" aria-pressed="false">Peso no índice</button>
+        <button data-d="3" aria-pressed="false">Nº de negócios</button>
+      </div>
+      <div class="seg" id="grp-btns" role="group" aria-label="Escolha o grupo"></div>
+      <div class="panel" id="grp-panel" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="grp-svg" class="svgbox" viewBox="0 0 560 330" role="img" aria-label="Histograma do teste de saltos para o grupo escolhido"></svg>
+      <p class="note">Histogramas redesenhados das Figuras 4.7 a 4.10 (valores aproximados, lidos por nós); a leitura de cada grupo (saltos, ruído ou misto) é a da tese, feita olhando os histogramas. Número de ações por grupo: contagem nossa no apêndice (Tabela 4.1).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · CIDADE -->
+<section class="slide" id="acoes" data-label="89 ações">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> Ensaio 3 · ação por ação</div>
+      <h2 class="rv" style="--d:.1s">Ação por ação, nove são ruído e onze só tremem</h2>
+      <p class="lede rv" style="--d:.15s">Cada prédio é uma ação; a altura é o peso no Ibovespa. Olhando uma a uma, a tese destaca nove ações dominadas pelo ruído e onze movidas só pelo tremor contínuo, que mesmo assim tiveram mais variações extremas do que esse modelo prevê. A Americanas, origem do choque de janeiro, aparece com saltos; Magazine Luiza e Via, atingidas por tabela, com ruído.</p>
+      <div class="seg rv" id="city-seg" style="--d:.2s" role="group" aria-label="Destaque um grupo">
+        <button data-g="all" aria-pressed="true">Todas</button>
+        <button data-g="n" aria-pressed="false">Ruído (9)</button>
+        <button data-g="b" aria-pressed="false">Só tremor (11)</button>
+        <button data-g="a" aria-pressed="false">Choque da Americanas</button>
+      </div>
+      <div class="panel rv" id="city-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="city-scene" data-fit="600x440" role="img" aria-label="Cidade de 89 prédios, um por ação do Ibovespa, com altura proporcional ao peso no índice; os de ruído em cinza-escuro, os de tremor contínuo em azul, a Americanas em vermelho"></div></div>
+      <div class="legend"><span><span class="sw" style="background:var(--noise)"></span>ruído</span><span><span class="sw" style="background:var(--cont)"></span>só tremor contínuo</span><span><span class="sw" style="background:var(--jump)"></span>Americanas (saltos)</span><span><span class="sw" style="background:var(--off)"></span>demais, não classificadas uma a uma na tese</span></div>
+      <details class="alt"><summary>Ver as listas em texto</summary><p id="city-alt"></p></details>
+      <p class="note">Toque ou clique num prédio. Pesos, tipo, governança e negócios: Tabela 4.1 (carteira de jan. a abr. 2023); posição em negócios: contagem nossa. Altura mínima de 2 px para as menores aparecerem.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e limites">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Na prática · limites · créditos</div>
+    <h2 class="rv" style="--d:.1s">O que muda para quem investe, gere carteiras ou pesquisa</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Quem se protege com VIX</h3><p>Futuros e ETFs de VIX não entregam o retorno do índice. Com o VIX parado, eles perderam em média 0,32% ao dia de 2011 a 2021; segundo o autor, servem para proteção de curto prazo, não para ficar meses posicionado.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Gestores de carteira</h3><p>Um índice amplo se comporta quase como um de grandes empresas. Pequenas empresas trazem um risco de outra natureza e ajudam a diversificar, mas o retorno extra delas depende do momento, não é garantido.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--noise)"><h3>Investidores na B3</h3><p>Saltos são um traço normal das ações mais negociadas e não marcam, sozinhos, uma ação “de alto risco”. Já preferenciais, governança mais baixa e ações de pouco peso tendem ao ruído, um sinal de preço menos eficiente.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#5b6f96"><h3>Pesquisadores</h3><p>Próximos passos sugeridos pelo autor: medir como a chance de salto muda ao longo do tempo, entender as ações de tremor contínuo com caudas gordas, olhar o tamanho dos saltos e estudar empresas em crise, como a Americanas.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Amostras curtas e agitadas.</b> O ensaio 2 cobre 54 pregões e o ensaio 3, 114, com eleição e a crise da Americanas no meio. O próprio autor diz que o resultado das pequenas empresas pode depender da amostra. <em>· segundo o autor</em></li>
+          <li><b>Leitura pelo desenho.</b> A classificação de cada grupo (saltos, ruído, misto) vem da forma dos histogramas, sem um teste estatístico por grupo; e, por número de negócios, os grupos não seguem uma ordem clara. <em>· observação nossa</em></li>
+          <li><b>Lentes diferentes, mercados diferentes.</b> Os saltos sumiram nos índices dos EUA a 1–2 minutos e apareceram na B3 em milésimos: são escalas e mercados diferentes, então os dois resultados não se comparam diretamente. <em>· observação nossa</em></li>
+          <li><b>Sem custos nem estratégia testada.</b> O ensaio 1 usa índices de futuros, sem taxas de ETFs nem impostos; o −0,32% é uma média de 2011 a 2021, não uma previsão. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          ADELINO, Rogerio Batista. <em>Essays on market volatility.</em> Tese (Doutorado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2023. Orientador: Prof. Dr. Leonardo Fernando Cruz Basso.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Tese escrita em inglês; textos e traduções desta página são nossos. Dados: CBOE e S&P Dow Jones Indices (ensaio 1), índices Russell por minuto (ensaio 2) e Market Data da B3, com apoio de um convênio do Mackenzie com a bolsa (ensaio 3); cálculos no Stata 17. As fórmulas e as figuras completas estão no texto original. <b>Não é recomendação de investimento.</b></p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa (em inglês)</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  function n0(n){ return n.toLocaleString(EN ? 'en-US' : 'pt-BR'); }
+  function sg(v, d){ return (v < 0 ? '−' : '') + fmt(Math.abs(v), d); }
+  function rnd(seed){ return function(){ seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function gauss(r){ var u = 1 - r(), v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+  function seg(id, fn){
+    var g = $(id);
+    each(g.querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){
+        each(g.querySelectorAll('button'), function(o){ o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+        fn(b);
+      });
+    });
+  }
+  function fp(p){ return fmt(p, p % 1 === 0 ? 0 : (p * 2) % 1 === 0 ? 1 : 2); }
+  function ord(n){ if (!EN) return n + 'ª'; var s = ['th','st','nd','rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
+  function pathD(pts){ return pts.map(function(p, i){ return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(''); }
+  var C = {cont:'#1f3b73', jump:'#e80734', noise:'#64748b', drift:'#94a3b8', off:'#cbd5e1', ink:'#0f172a', muted:'#64748b', grid:'#e2e8f0'};
+
+  /* ================= DADOS DA TESE ================= */
+  // Tabela 2.2 (ensaio 1): regressões com erros robustos, 2.501 observações cada
+  var REG = [
+    {slope:0.5231, sp:'< 0,001', z:0.0006, zp:'0,504', c:-0.0032, cp:'< 0,001', r2:0.8109},
+    {slope:0.4113, sp:'0,000', z:0.0006, zp:'0,056', c:0.0000, cp:'0,797', r2:0.8320}
+  ];
+  // Tabela 3.1 (ensaio 2): correlações e curtose, por dia e por minuto
+  var RUS = [
+    {r13:0.9987, r23:0.8777, r12:0.8522, k:[3.2333, 3.2383, 2.9509], s:[-0.2264, -0.2120, -0.1036]},
+    {r13:0.9922, r23:0.7579, r12:0.7228, k:[11.9543, 11.9699, 11.6607], s:[-0.1911, -0.1990, 0.1556]}
+  ];
+  // Tabela 3.2: diferença de S_J = constante + coef × potência
+  var GAP = {d21:[-7.0963, 2.3124], d13:[0.5767, -0.1823], d23:[-6.5197, 2.1301]};
+  // Histogramas de S_J redesenhados das figuras (densidade aproximada, lida por nós). x0 = início; barras iguais até 6.
+  var HS = {
+    tot:{x0:.15, v:[.135,.31,.35,.305,.235,.21,.165,.155,.14,.12,.105,.095,.09,.078,.063]},
+    f1000:{x0:.35, v:[.32,.38,.415,.215,.23,.165,.155,.115,.11,.125,.08,.095,.075,.07,.08]},
+    f100:{x0:.2, v:[.30,.30,.35,.265,.23,.225,.145,.165,.165,.12,.09,.095,.105,.07,.05]},
+    f10:{x0:.1, v:[.155,.315,.345,.31,.24,.18,.185,.145,.155,.095,.105,.095,.085,.08,.06]},
+    f1:{x0:.35, v:[.265,.185,.255,.35,.225,.22,.15,.19,.14,.145,.135,.095,.085,.085,.08]},
+    on:{x0:.15, v:[.14,.29,.34,.29,.24,.21,.17,.155,.135,.12,.11,.095,.09,.075,.065]},
+    pn:{x0:.15, v:[.18,.55,.42,.32,.19,.13,.12,.11,.14,.065,.075,.07,.065,.06,.045]},
+    nm:{x0:.2, v:[.16,.28,.33,.29,.24,.21,.17,.16,.14,.12,.11,.10,.10,.08,.07]},
+    n1:{x0:.45, v:[.02,.33,.45,.25,.19,.22,.15,.16,.22,.09,.12,.10,.08,.08,.07]},
+    n2:{x0:.4, v:[.17,.45,.39,.40,.21,.19,.13,.13,.07,.10,.07,.03,.06,.05,.06]},
+    w1:{x0:.6, v:[.21,.36,.31,.185,.175,.175,.22,.235,.10,.20,.135,.085,.11,.10]},
+    w2:{x0:.1, v:[.075,.28,.365,.25,.245,.225,.165,.14,.14,.15,.105,.11,.135,.07,.105]},
+    w3:{x0:.4, v:[.13,.30,.385,.315,.235,.215,.155,.19,.15,.14,.11,.09,.095,.09,.065]},
+    w4:{x0:.3, v:[.56,.38,.27,.24,.22,.155,.145,.125,.105,.085,.08,.07,.07,.055,.035]},
+    t1:{x0:.15, v:[.09,.355,.40,.335,.17,.18,.13,.13,.18,.15,.13,.095,.05,.075,.07]},
+    t2:{x0:.3, v:[.37,.33,.29,.23,.22,.15,.185,.175,.105,.075,.09,.105,.12,.07,.11]},
+    t3:{x0:.35, v:[.61,.37,.31,.195,.175,.165,.125,.125,.105,.09,.09,.065,.10,.07,.055]},
+    t4:{x0:.65, v:[.205,.385,.315,.28,.23,.195,.18,.215,.135,.105,.075,.13,.13,.095,.09]},
+    t5:{x0:.35, v:[.405,.29,.305,.315,.245,.22,.12,.135,.10,.145,.105,.085,.06,.07,.05]},
+    t6:{x0:.45, v:[.195,.27,.43,.295,.245,.22,.175,.19,.155,.12,.10,.075,.08,.065,.05]}
+  };
+  // Figura 3.3 (ensaio 2): S_J por índice, barras de largura w
+  var HUS = [
+    {k:'r1000', n:L('Russell 1000 · grandes','Russell 1000 · large'), c:C.cont, x0:1.7, w:2.1, v:[.26,.107,.052,.017,.008,.008,.008]},
+    {k:'r3000', n:L('Russell 3000 · mercado','Russell 3000 · market'), c:'#334155', x0:1.7, w:2.3, v:[.243,.096,.04,.016,.007,.007,.007]},
+    {k:'r2000', n:L('Russell 2000 · pequenas','Russell 2000 · small'), c:C.jump, x0:2.2, w:4.1, v:[.131,.05,.031,.009,.004,.004,.004]}
+  ];
+  // Tabela 4.1 (apêndice): [ticker, empresa, tipo, governança, peso %, grupo de peso, negócios, grupo de negócios]
+  var A = [
+    ['VALE3','Vale','ON','NM',15.51,1,9016248,1],['ITUB4','Itaú Unibanco','PN','N1',6.17,1,7326416,1],['PETR4','Petrobras','PN','N2',5.75,1,13004575,1],['PETR3','Petrobras','ON','N2',5.02,1,3857195,1],
+    ['ELET3','Eletrobras','ON','N1',4.05,1,4093145,1],['BBDC4','Bradesco','PN','N1',4.02,1,6704018,1],['B3SA3','B3','ON','NM',3.99,1,6355616,1],['ABEV3','Ambev','ON','',3.28,1,4476100,1],
+    ['WEGE3','WEG','ON','NM',2.61,1,2834726,2],['BBAS3','Banco do Brasil','ON','NM',2.54,2,5452204,1],['ITSA4','Itaúsa','PN','N1',2.29,2,3419376,2],['RENT3','Localiza','ON','NM',2.12,2,3778959,1],
+    ['SUZB3','Suzano','ON','NM',1.80,2,2711983,2],['RDOR3','Rede D’Or','ON','NM',1.75,2,2096635,4],['GGBR4','Gerdau','PN','N1',1.65,2,3387299,2],['PRIO3','PetroRio','ON','NM',1.61,2,3629736,2],
+    ['EQTL3','Equatorial','ON','NM',1.53,2,2452258,3],['BPAC11','BTG Pactual','UNT','N2',1.51,2,3781474,1],['RADL3','Raia Drogasil','ON','NM',1.46,2,2327783,3],['JBSS3','JBS','ON','NM',1.28,2,2462026,3],
+    ['BBSE3','BB Seguridade','ON','NM',1.16,2,2623325,2],['HAPV3','Hapvida','ON','NM',1.16,3,5221322,1],['RAIL3','Rumo','ON','NM',1.16,3,2851838,2],['BBDC3','Bradesco','ON','N1',1.05,3,1471575,5],
+    ['CSAN3','Cosan','ON','NM',1.03,3,2876404,2],['LREN3','Lojas Renner','ON','NM',1.02,3,4506420,1],['SBSP3','Sabesp','ON','NM',1.00,3,2142144,3],['ENEV3','Eneva','ON','NM',0.97,3,2620148,2],
+    ['ASAI3','Assaí','ON','NM',0.94,3,3122644,2],['HYPE3','Hypera','ON','NM',0.93,3,2047096,4],['VBBR3','Vibra','ON','NM',0.89,3,2661779,2],['CMIG4','Cemig','PN','N1',0.83,3,2210295,3],
+    ['VIVT3','Telefônica Brasil','ON','',0.81,3,1390570,5],['TOTS3','Totvs','ON','NM',0.74,3,2516737,3],['KLBN11','Klabin','UNT','N2',0.72,3,2149707,3],['UGPA3','Ultrapar','ON','NM',0.71,3,1987888,4],
+    ['CPLE6','Copel','PNB','N2',0.64,3,2040972,4],['ELET6','Eletrobras','PNB','N1',0.61,3,1464130,5],['ENGI11','Energisa','UNT','N2',0.57,3,1271100,6],['CCRO3','CCR','ON','NM',0.56,3,2040263,4],
+    ['EMBR3','Embraer','ON','NM',0.54,3,1521480,5],['SANB11','Santander Brasil','UNT','',0.52,3,1158716,6],['TIMS3','TIM','ON','NM',0.52,3,1866210,4],['NTCO3','Natura','ON','NM',0.50,3,3429827,2],
+    ['EGIE3','Engie Brasil','ON','NM',0.50,3,961717,6],['BRFS3','BRF','ON','NM',0.46,3,2693021,2],['GOAU4','Gerdau Met.','PN','N1',0.45,3,1802907,5],['CSNA3','CSN','ON','',0.44,3,1835576,4],
+    ['MGLU3','Magazine Luiza','ON','NM',0.41,4,5699096,1],['CRFB3','Carrefour Brasil','ON','NM',0.40,4,1702044,5],['TAEE11','Taesa','UNT','N2',0.39,4,1379175,5],['BRAP4','Bradespar','PN','N1',0.38,4,1279668,5],
+    ['RRRP3','3R Petroleum','ON','NM',0.38,4,2048116,4],['BRML3','BR Malls','ON','NM',0.35,4,1561428,5],['BRKM5','Braskem','PNA','N1',0.32,4,1554400,5],['CPFE3','CPFL Energia','ON','NM',0.32,4,1085299,6],
+    ['AMER3','Americanas','ON','NM',0.30,4,3730604,1],['MULT3','Multiplan','ON','N2',0.30,4,2193027,3],['CIEL3','Cielo','ON','NM',0.30,4,2899782,2],['FLRY3','Fleury','ON','NM',0.28,4,1204629,6],
+    ['ENBR3','EDP Energias do Brasil','ON','NM',0.26,4,1267846,6],['SOMA3','Grupo Soma','ON','NM',0.26,4,2141280,3],['ARZZ3','Arezzo','ON','NM',0.24,4,810558,6],['CMIN3','CSN Mineração','ON','N2',0.23,4,1068401,6],
+    ['SLCE3','SLC Agrícola','ON','NM',0.23,4,836557,6],['RAIZ4','Raízen','PN','N2',0.23,4,2293192,3],['IGTI11','Iguatemi','UNT','N1',0.20,4,1936951,4],['COGN3','Cogna','ON','NM',0.20,4,2539523,3],
+    ['SMTO3','São Martinho','ON','NM',0.20,4,1230422,6],['VIIA3','Via','ON','NM',0.20,4,2871402,2],['USIM5','Usiminas','PNA','N1',0.19,4,1982816,4],['AZUL4','Azul','PN','N2',0.19,4,1923793,4],
+    ['CYRE3','Cyrela','ON','NM',0.18,4,2460603,3],['BEEF3','Minerva','ON','NM',0.17,4,2176297,3],['ALPA4','Alpargatas','PN','N1',0.16,4,1803658,4],['YDUQ3','Yduqs','ON','NM',0.16,4,1931926,4],
+    ['LWSA3','Locaweb','ON','NM',0.15,4,1818299,4],['MRFG3','Marfrig','ON','NM',0.14,4,2138784,3],['PCAR3','GPA (Pão de Açúcar)','ON','NM',0.13,4,1321463,5],['MRVE3','MRV','ON','NM',0.12,4,2488305,3],
+    ['PETZ3','Petz','ON','NM',0.11,4,2028947,4],['BPAN4','Banco Pan','PN','N1',0.11,4,868748,6],['DXCO3','Dexco','ON','NM',0.10,4,1371557,5],['QUAL3','Qualicorp','ON','NM',0.08,4,1195854,6],
+    ['GOLL4','Gol','PN','N2',0.07,4,1344465,5],['ECOR3','EcoRodovias','ON','NM',0.07,4,1264576,6],['EZTC3','Eztec','ON','NM',0.07,4,1096385,6],['CVCB3','CVC','ON','NM',0.06,4,1383665,5],
+    ['CASH3','Méliuz','ON','NM',0.04,4,1367045,5]
+  ];
+  // Seção 4.6 / Figura 4.11: ações destacadas pela tese
+  var NOISE = ['ITSA4','RAIZ4','USIM5','CIEL3','COGN3','ECOR3','CASH3','MGLU3','VIIA3'];
+  var BROWN = ['RENT3','PETR3','RRRP3','SANB11','GGBR4','LREN3','ELET3','BRKM5','WEGE3','MULT3','NTCO3'];
+  var rank = A.slice().sort(function(a, b){ return b[6] - a[6]; }).map(function(a){ return a[0]; });
+
+  /* ---------- histograma genérico com a régua ao fundo ---------- */
+  function hist(svg, spec, o){
+    var X0 = o.X0 || 50, X1 = o.X1 || 540, Y0 = o.Y0 || 290, Y1 = o.Y1 || 40, xmax = o.xmax || 6, ymax = o.ymax || .65;
+    var xs = function(x){ return X0 + x / xmax * (X1 - X0); }, ys = function(y){ return Y0 - y / ymax * (Y0 - Y1); };
+    var s = '';
+    if (o.zones !== false){
+      s += '<rect x="' + xs(0) + '" y="' + Y1 + '" width="' + (xs(1) - xs(0)) + '" height="' + (Y0 - Y1) + '" fill="' + C.noise + '" opacity=".08"/>';
+      s += '<rect x="' + xs(1) + '" y="' + Y1 + '" width="' + (xs(2) - xs(1)) + '" height="' + (Y0 - Y1) + '" fill="' + C.jump + '" opacity=".07"/>';
+      s += '<rect x="' + xs(2) + '" y="' + Y1 + '" width="' + (X1 - xs(2)) + '" height="' + (Y0 - Y1) + '" fill="' + C.cont + '" opacity=".05"/>';
+      s += '<text x="' + (xs(.5)) + '" y="' + (Y1 + 16) + '" text-anchor="middle" font-size="12" font-weight="700" fill="' + C.noise + '">' + L('ruído','noise') + '</text>';
+      s += '<text x="' + (xs(1.5)) + '" y="' + (Y1 + 16) + '" text-anchor="middle" font-size="12" font-weight="700" fill="' + C.jump + '">' + L('saltos','jumps') + '</text>';
+      s += '<text x="' + ((xs(2) + X1) / 2) + '" y="' + (Y1 + 16) + '" text-anchor="middle" font-size="12" font-weight="700" fill="' + C.cont + '">' + L('contínuo','continuous') + '</text>';
+    }
+    var n = spec.v.length, w = spec.w || (6 - spec.x0) / n, peak = 0;
+    spec.v.forEach(function(v, i){ if (v > spec.v[peak]) peak = i; });
+    spec.v.forEach(function(v, i){
+      var a = spec.x0 + i * w;
+      s += '<rect x="' + (xs(a) + .5).toFixed(1) + '" y="' + ys(v).toFixed(1) + '" width="' + Math.max(1, xs(a + w) - xs(a) - 1).toFixed(1) + '" height="' + (Y0 - ys(v)).toFixed(1) + '" fill="' + (o.color || C.ink) + '" opacity="' + (i === peak && o.peak !== false ? .95 : .55) + '" rx="1.5"/>';
+    });
+    s += '<line x1="' + X0 + '" x2="' + X1 + '" y1="' + Y0 + '" y2="' + Y0 + '" stroke="' + C.muted + '"/>';
+    s += '<line x1="' + xs(1) + '" x2="' + xs(1) + '" y1="' + (Y1 + 22) + '" y2="' + Y0 + '" stroke="' + C.ink + '" stroke-dasharray="4 3"/>';
+    var step = o.step || 1;
+    for (var t = 0; t <= xmax; t += step) s += '<text x="' + xs(t) + '" y="' + (Y0 + 18) + '" text-anchor="middle" font-size="12" fill="' + C.muted + '">' + t + '</text>';
+    s += '<text x="' + X1 + '" y="' + (Y0 + 34) + '" text-anchor="end" font-size="11" fill="' + C.muted + '">' + L('valor do teste de saltos (S', 'jump test value (S') + '<tspan font-size="8" dy="2">J</tspan><tspan dy="-2">)</tspan></text>';
+    if (o.title) s += '<text x="' + X0 + '" y="' + (Y1 - 12) + '" font-size="13" font-weight="700" fill="' + C.ink + '">' + o.title + '</text>';
+    return s;
+  }
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), W = 380, D = 130;
+    var st = makeStage(sc, W, D, {ay:'80%', rx:'58deg'});
+    rotatable(sc, st, -16, 8);
+    var r = rnd(7), base = [], i, p = 0;
+    for (i = 0; i <= 600; i++){ p += gauss(r) * .9; if (i === 230) p += 9; if (i === 420) p -= 11; base.push(p); }
+    function plateSvg(k){
+      var pts = [], n, j, y, lo = 1e9, hi = -1e9, vals = [];
+      if (k === 0){ for (j = 0; j <= 600; j += 60){ vals.push(base[j]); } }
+      else if (k === 1){ for (j = 0; j <= 600; j += 6){ vals.push(base[j]); } }
+      else { var rr = rnd(3); for (j = 0; j <= 600; j += 2){ vals.push(base[j] + (rr() < .3 ? (rr() - .5) * 2.4 : 0)); } }
+      vals.forEach(function(v){ lo = Math.min(lo, v); hi = Math.max(hi, v); });
+      n = vals.length;
+      var sx = function(j){ return 14 + j / (n - 1) * 312; }, syf = function(v){ return 96 - (v - lo) / (hi - lo) * 74; };
+      var d = '';
+      if (k === 0){
+        vals.forEach(function(v, j){ d += (j ? 'L' : 'M') + sx(j).toFixed(1) + ' ' + syf(v).toFixed(1); });
+      } else if (k === 1){
+        vals.forEach(function(v, j){ d += (j ? 'L' : 'M') + sx(j).toFixed(1) + ' ' + syf(v).toFixed(1); });
+      } else {
+        vals.forEach(function(v, j){ var x = sx(j).toFixed(1), y2 = syf(v).toFixed(1); d += j ? 'H' + x + 'V' + y2 : 'M' + x + ' ' + y2; });
+      }
+      var tag = [L('1 dia','1 day'), L('1 minuto','1 minute'), L('1/1000 s','1/1000 s')][k];
+      var extra = '';
+      if (k === 2){
+        [230, 420].forEach(function(j0){ var j = j0 / 2, x = sx(j); extra += '<line x1="' + x + '" x2="' + x + '" y1="' + syf(vals[j - 1]) + '" y2="' + syf(vals[j]) + '" stroke="' + C.jump + '" stroke-width="4"/>'; });
+      }
+      return '<svg viewBox="0 0 340 110" preserveAspectRatio="none"><rect width="340" height="110" fill="#fff"/><text x="12" y="17" font-size="12" font-weight="700" fill="' + C.muted + '" font-family="Inter,sans-serif" style="letter-spacing:.04em">' + tag + '</text><path d="' + d + '" fill="none" stroke="' + (k === 2 ? C.ink : C.cont) + '" stroke-width="' + (k === 0 ? 3 : 1.6) + '" stroke-linejoin="round"/>' + extra + '</svg>';
+    }
+    var plates = [0, 1, 2].map(function(k){
+      var b = box({w:340, d:110, h:6, x:20, y:10, z:(2 - k) * 84, c:'#cbd5e1', top:plateSvg(k)});
+      st.appendChild(b); return b;
+    });
+    var last = -1;
+    function show(k){ if (k === last) return; last = k; plates.forEach(function(b, j){ b.classList.toggle('active', j === k); }); }
+    show(2);
+    if (!reduce) M.onTick(function(t){ show(Math.floor(t / 1.6) % 3); });
+  })();
+
+  /* ================= 02 · BALANÇO ================= */
+  (function(){
+    var svg = $('amp-svg'), X0 = 56, X1 = 530, Y0 = 290, Y1 = 30, lo = 40, hi = 150;
+    var xs = function(i){ return X0 + i / 10 * (X1 - X0); }, ys = function(v){ return Y0 - (v - lo) / (hi - lo) * (Y0 - Y1); };
+    function path(a){ var v = 100, pts = [[xs(0), ys(v)]]; for (var i = 1; i <= 10; i++){ v *= (i % 2 ? 1 + a : 1 - a); pts.push([xs(i), ys(v)]); } return {d:pathD(pts), end:v}; }
+    function draw(){
+      var a = +$('amp').value / 100, P = path(a), Q = path(.02), s = '';
+      [50, 75, 100, 125, 150].forEach(function(g){ s += '<line x1="' + X0 + '" x2="' + X1 + '" y1="' + ys(g) + '" y2="' + ys(g) + '" stroke="' + C.grid + '"/><text x="' + (X0 - 8) + '" y="' + (ys(g) + 4) + '" text-anchor="end" font-size="12" fill="' + C.muted + '">' + g + '</text>'; });
+      s += '<line x1="' + X0 + '" x2="' + X1 + '" y1="' + ys(100) + '" y2="' + ys(100) + '" stroke="' + C.muted + '" stroke-dasharray="4 3"/>';
+      for (var i = 0; i <= 10; i += 2) s += '<text x="' + xs(i) + '" y="' + (Y0 + 20) + '" text-anchor="middle" font-size="12" fill="' + C.muted + '">' + i + '</text>';
+      s += '<text x="' + X1 + '" y="' + (Y0 + 36) + '" text-anchor="end" font-size="11" fill="' + C.muted + '">' + L('rodadas (alta, queda, alta…)', 'rounds (up, down, up…)') + '</text>';
+      s += '<path d="' + Q.d + '" fill="none" stroke="' + C.cont + '" stroke-width="3" stroke-linejoin="round"/>';
+      s += '<path d="' + P.d + '" fill="none" stroke="' + C.jump + '" stroke-width="3" stroke-linejoin="round"/>';
+      s += '<text x="' + (X1 - 4) + '" y="' + (ys(Q.end) - 8) + '" text-anchor="end" font-size="13" font-weight="700" fill="' + C.cont + '">±2% → ' + fmt(Q.end, 1) + '</text>';
+      s += '<text x="' + (X1 - 4) + '" y="' + (ys(P.end) + 18) + '" text-anchor="end" font-size="13" font-weight="700" fill="' + C.jump + '">±' + Math.round(a * 100) + '% → ' + fmt(P.end, 1) + '</text>';
+      svg.innerHTML = s;
+      $('amp-v').textContent = '±' + Math.round(a * 100) + '%';
+      var loss = 100 - P.end;
+      $('amp-panel').innerHTML = '<p>' + L('Com altas e quedas de ', 'With rises and falls of ') + '<b>' + Math.round(a * 100) + '%</b>' + L(', R$ 100 viram ', ', $100 becomes ') + '<b>' + L('R$ ', '$') + fmt(P.end, 2) + '</b>' + L(' depois de 10 rodadas, mesmo com tantas altas quanto quedas. ', ' after 10 rounds, even with as many rises as falls. ') +
+        (a === 0 ? L('Sem balanço, nada muda.', 'With no swing, nothing changes.') : L('A perda de ', 'The loss of ') + L('R$ ', '$') + fmt(loss, 2) + L(' vem só do balanço: cada par alta + queda tira a² do valor.', ' comes from the swing alone: each rise + fall pair takes a² off the value.')) + '</p>';
+    }
+    $('amp').addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 03 · TRÊS LENTES ================= */
+  (function(){
+    var svg = $('lens-svg'), X0 = 40, X1 = 530, Y0 = 270, Y1 = 40;
+    var INFO = [
+      {t:L('Ensaio 1 · por dia','Essay 1 · by the day'), h:L('Proteger a carteira com o “índice do medo”','Hedging a portfolio with the “fear index”'),
+        p:L('Retornos diários do VIX e de dois índices de futuros de VIX (curto e médio prazo), de março de 2011 a março de 2021: <b>2.501 dias</b> nas regressões. Lente tradicional, a dos modelos econométricos clássicos.','Daily returns of the VIX and of two VIX futures indices (short and mid term), from March 2011 to March 2021: <b>2,501 days</b> in the regressions. The traditional lens of classic econometric models.')},
+      {t:L('Ensaio 2 · por minuto','Essay 2 · by the minute'), h:L('Pequenas × grandes empresas nos EUA','Small × large companies in the US'),
+        p:L('Três índices Russell com um registro por minuto, das 9h30 às 16h, em <b>54 pregões</b> (outubro de 2021 a janeiro de 2022): <b>20.826 pontos</b> por índice. A alta frequência dos estudos clássicos vai de 5 segundos a 2 minutos.','Three Russell indices with one record per minute, from 9:30 am to 4 pm, over <b>54 trading days</b> (October 2021 to January 2022): <b>20,826 points</b> per index. High frequency in the classic studies ranges from 5 seconds to 2 minutes.')},
+      {t:L('Ensaio 3 · em milésimos','Essay 3 · in milliseconds'), h:L('As 89 ações do Ibovespa, negócio a negócio','The 89 Ibovespa stocks, trade by trade'),
+        p:L('Todos os negócios da B3 ao milésimo de segundo, em <b>114 pregões</b> (setembro de 2022 a fevereiro de 2023): <b>mais de 1,2 bilhão de registros</b>. Nessa escala, os negócios chegam em intervalos irregulares e o preço anda em degraus.','Every B3 trade to the thousandth of a second, over <b>114 trading days</b> (September 2022 to February 2023): <b>more than 1.2 billion records</b>. At this scale, trades arrive at irregular intervals and the price moves in steps.')}
+    ];
+    function draw(k){
+      var r = rnd(11 + k), s = '', i;
+      s += '<text x="' + X0 + '" y="24" font-size="13" font-weight="700" fill="' + C.ink + '">' + [L('22 pregões, um “candle” por dia','22 trading days, one “candle” per day'), L('Um pregão, um ponto por minuto (389)','One trading day, one point per minute (389)'), L('Alguns segundos, negócio a negócio','A few seconds, trade by trade')][k] + '</text>';
+      if (k === 0){
+        var v = 100, cw = (X1 - X0) / 22;
+        var bars = [], lo = 1e9, hi = -1e9;
+        for (i = 0; i < 22; i++){ var o = v, c = v + gauss(r) * 1.6, h = Math.max(o, c) + r() * 1.2, l = Math.min(o, c) - r() * 1.2; bars.push([o, c, h, l]); v = c; lo = Math.min(lo, l); hi = Math.max(hi, h); }
+        var ys = function(y){ return Y0 - (y - lo) / (hi - lo) * (Y0 - Y1 - 10); };
+        bars.forEach(function(b, i){ var x = X0 + i * cw + cw / 2, up = b[1] >= b[0], col = up ? C.cont : C.jump;
+          s += '<line x1="' + x + '" x2="' + x + '" y1="' + ys(b[2]) + '" y2="' + ys(b[3]) + '" stroke="' + col + '" stroke-width="1.6"/>';
+          s += '<rect x="' + (x - cw * .32) + '" y="' + ys(Math.max(b[0], b[1])) + '" width="' + (cw * .64) + '" height="' + Math.max(2, Math.abs(ys(b[0]) - ys(b[1]))) + '" fill="' + col + '" rx="1.5"/>'; });
+      } else if (k === 1){
+        var p = 0, pts = [], lo2 = 1e9, hi2 = -1e9, vals = [];
+        for (i = 0; i < 389; i++){ p += gauss(r) * .3; vals.push(p); lo2 = Math.min(lo2, p); hi2 = Math.max(hi2, p); }
+        vals.forEach(function(v, i){ pts.push([X0 + i / 388 * (X1 - X0), Y0 - (v - lo2) / (hi2 - lo2) * (Y0 - Y1 - 10)]); });
+        s += '<path d="' + pathD(pts) + '" fill="none" stroke="' + C.cont + '" stroke-width="1.5"/>';
+      } else {
+        var t = 0, q = 50, d = '', ev = [], tick = .01;
+        while (t < 1){ t += Math.pow(r(), 2) * .045; var m = r(); if (m < .45) q += (r() < .5 ? -1 : 1) * tick; ev.push([Math.min(1, t), q]); }
+        ev.splice(Math.floor(ev.length * .55), 0, [ev[Math.floor(ev.length * .55)][0], q]);
+        var jumpAt = Math.floor(ev.length * .55); for (i = jumpAt; i < ev.length; i++) ev[i][1] += .08;
+        var lo3 = 1e9, hi3 = -1e9; ev.forEach(function(e){ lo3 = Math.min(lo3, e[1]); hi3 = Math.max(hi3, e[1]); });
+        var yy = function(y){ return Y0 - (y - lo3) / (hi3 - lo3 + 1e-9) * (Y0 - Y1 - 30) - 10; }, xx = function(x){ return X0 + x * (X1 - X0); };
+        ev.forEach(function(e, i){ d += i ? 'H' + xx(e[0]).toFixed(1) + 'V' + yy(e[1]).toFixed(1) : 'M' + xx(0) + ' ' + yy(e[1]).toFixed(1); });
+        s += '<path d="' + d + '" fill="none" stroke="' + C.ink + '" stroke-width="1.6"/>';
+        ev.forEach(function(e){ s += '<circle cx="' + xx(e[0]).toFixed(1) + '" cy="' + (Y0 + 6) + '" r="2" fill="' + C.muted + '"/>'; });
+        var xj = xx(ev[jumpAt][0]);
+        s += '<line x1="' + xj + '" x2="' + xj + '" y1="' + yy(ev[jumpAt - 1][1]) + '" y2="' + yy(ev[jumpAt][1]) + '" stroke="' + C.jump + '" stroke-width="4"/>';
+        s += '<text x="' + (xj + 8) + '" y="' + ((yy(ev[jumpAt - 1][1]) + yy(ev[jumpAt][1])) / 2) + '" font-size="12" font-weight="700" fill="' + C.jump + '">' + L('salto','jump') + '</text>';
+        s += '<text x="' + X1 + '" y="' + (Y0 + 24) + '" text-anchor="end" font-size="11" fill="' + C.muted + '">' + L('cada ponto embaixo é um negócio','each dot below is a trade') + '</text>';
+      }
+      svg.innerHTML = s;
+      $('lens-panel').innerHTML = '<div class="tag">' + INFO[k].t + '</div><h3>' + INFO[k].h + '</h3><p>' + INFO[k].p + '</p>';
+    }
+    seg('lens-seg', function(b){ draw(+b.dataset.k); });
+    draw(0);
+  })();
+
+  /* ================= 04 · VIX ================= */
+  (function(){
+    var svg = $('pair-svg');
+    var N = [
+      {x:20, y:40, w:150, t:L('Opções do S&P 500','S&P 500 options'), s:L('negociáveis','tradable')},
+      {x:232, y:40, w:150, t:'VIX', s:L('🔒 não se negocia','🔒 not tradable'), lock:true},
+      {x:20, y:170, w:150, t:L('Futuro curto','Short-term future'), s:L('1º e 2º meses','1st and 2nd months')},
+      {x:232, y:170, w:150, t:L('Futuro médio','Mid-term future'), s:L('4º ao 7º mês','4th to 7th months')},
+      {x:428, y:170, w:112, t:'ETFs', s:L('para o varejo','for retail')}
+    ];
+    function node(n, hl){
+      return '<g><rect x="' + n.x + '" y="' + n.y + '" width="' + n.w + '" height="62" rx="12" fill="' + (hl ? (n.lock ? '#fde8ec' : '#e8edf7') : '#fff') + '" stroke="' + (hl ? (n.lock ? C.jump : C.cont) : C.off) + '" stroke-width="' + (hl ? 2.5 : 1.5) + '"/>' +
+        '<text x="' + (n.x + n.w / 2) + '" y="' + (n.y + 27) + '" text-anchor="middle" font-size="15" font-weight="700" fill="' + C.ink + '">' + n.t + '</text>' +
+        '<text x="' + (n.x + n.w / 2) + '" y="' + (n.y + 47) + '" text-anchor="middle" font-size="12" fill="' + (n.lock ? C.jump : C.muted) + '">' + n.s + '</text></g>';
+    }
+    function arrow(x1, y1, x2, y2, col, w, lab){
+      return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + col + '" stroke-width="' + w + '" marker-end="url(#ah)"/>' + (lab ? '<text x="' + ((x1 + x2) / 2 + 6) + '" y="' + ((y1 + y2) / 2 - 6) + '" font-size="11" fill="' + C.muted + '">' + lab + '</text>' : '');
+    }
+    function draw(p){
+      var R = REG[p], s = '<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="' + C.muted + '"/></marker></defs>';
+      s += arrow(172, 71, 228, 71, C.muted, 1.5, '');
+      s += '<text x="201" y="60" text-anchor="middle" font-size="11" fill="' + C.muted + '">' + L('cálculo','formula') + '</text>';
+      s += arrow(300, 102, 110, 166, p === 0 ? C.jump : C.off, p === 0 ? 3 : 1.5, '');
+      s += arrow(172, 201, 228, 201, p === 1 ? C.cont : C.off, p === 1 ? 3 : 1.5, '');
+      s += arrow(384, 201, 424, 201, C.off, 1.5, '');
+      N.forEach(function(n, i){ s += node(n, p === 0 ? (i === 1 || i === 2) : (i === 2 || i === 3)); });
+      var lab = p === 0 ? L('Par 1: um lado não se negocia → arbitragem impossível','Pair 1: one side cannot be traded → no arbitrage') : L('Par 2: os dois lados se negociam → arbitragem possível','Pair 2: both sides can be traded → arbitrage possible');
+      s += '<text x="280" y="268" text-anchor="middle" font-size="13" font-weight="700" fill="' + (p === 0 ? C.jump : C.cont) + '">' + lab + '</text>';
+      s += '<text x="280" y="292" text-anchor="middle" font-size="12" fill="' + C.muted + '">' + L('termo fixo: ','fixed term: ') + sg(R.c * 100, 2) + '% ' + L('ao dia','a day') + ' (p ' + (EN ? R.cp.replace(',', '.') : R.cp).replace('<', '&lt;') + ')  ·  R² ' + fmt(R.r2, 2) + '</text>';
+      s += '<text x="280" y="314" text-anchor="middle" font-size="11" fill="' + C.muted + '">' + L('2.501 dias, 2011–2021','2,501 days, 2011–2021') + '</text>';
+      svg.innerHTML = s;
+      var pnum = function(x){ return (EN ? x.replace(',', '.') : x).replace('<', '&lt;'); };
+      $('pair-panel').innerHTML = p === 0 ?
+        '<div class="tag">' + L('Regressão 1','Regression 1') + '</div><p>' + L('Quando o VIX sobe 10%, o futuro curto sobe em média só ', 'When the VIX rises 10%, the short-term future rises on average only ') + '<b>' + fmt(R.slope * 10, 1) + '%</b>' + L(' (inclinação ', ' (slope ') + fmt(R.slope, 4) + L('). E sobra um termo fixo de ', '). And a fixed term of ') + '<b>' + sg(R.c * 100, 2) + '% ' + L('ao dia</b>', 'a day</b> remains') + ' (p ' + pnum(R.cp) + L('), que não deveria existir se a arbitragem funcionasse.', '), which should not exist if arbitrage worked.') + '</p>' :
+        '<div class="tag">' + L('Regressão 2','Regression 2') + '</div><p>' + L('Quando o futuro curto sobe 10%, o médio sobe em média ', 'When the short-term future rises 10%, the mid-term one rises on average ') + '<b>' + fmt(R.slope * 10, 1) + '%</b>' + L(' (inclinação ', ' (slope ') + fmt(R.slope, 4) + L('). O termo fixo é ', '). The fixed term is ') + '<b>' + fmt(0, 2) + '%</b> (p ' + pnum(R.cp) + L('): com arbitragem possível, ele some, como a teoria prevê.', '): with arbitrage possible, it vanishes, as theory predicts.') + '</p>';
+    }
+    seg('pair-seg', function(b){ draw(+b.dataset.p); });
+    draw(0);
+  })();
+
+  /* ================= 05 · CUSTO DE CARREGAR ================= */
+  (function(){
+    var sc = $('melt-scene'), st = makeStage(sc, 300, 170, {ay:'72%', rx:'60deg'});
+    rotatable(sc, st, -24, 9);
+    var H0 = 200, ghost = box({w:120, d:100, x:40, y:35, h:H0, c:C.muted, cls:'off'});
+    st.appendChild(ghost);
+    var blk = box({w:120, d:100, x:40, y:35, h:H0, c:C.cont, top:' '});
+    st.appendChild(blk);
+    flatLabel(st, L('US$ 100 aplicados no futuro; o contorno é o valor inicial','$100 put into the future; the outline is the starting value'), -20, 142, 300);
+    function set(n){
+      var f = Math.pow(1 - 0.0032, n), pct = (f - 1) * 100;
+      blk.style.setProperty('--h', (H0 * f).toFixed(1) + 'px');
+      blk.querySelector('.top-label').textContent = (EN ? '$' : 'US$ ') + fmt(100 * f, 0);
+      $('melt-out').textContent = sg(pct, 1) + '%';
+      $('days-v').textContent = n;
+      each($('day-presets').querySelectorAll('button'), function(b){ b.setAttribute('aria-pressed', +b.dataset.n === n ? 'true' : 'false'); });
+    }
+    $('days').addEventListener('input', function(){ set(+this.value); });
+    each($('day-presets').querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ $('days').value = b.dataset.n; set(+b.dataset.n); }); });
+    set(21);
+  })();
+
+  /* ================= 06 · RUSSELL ================= */
+  (function(){
+    var svg = $('rus-svg');
+    var P = [{x:120, y:132, n:'Russell 1000', s:L('1.000 maiores','1,000 largest'), c:C.cont}, {x:440, y:132, n:'Russell 3000', s:L('mercado amplo','broad market'), c:'#334155'}, {x:280, y:285, n:'Russell 2000', s:L('2.000 menores','2,000 smallest'), c:C.jump}];
+    function edge(a, b, r){
+      var w = Math.max(1, Math.pow((r - .6) / .4, 2) * 22), mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      return '<line x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y + '" stroke="#94a3b8" stroke-width="' + w.toFixed(1) + '" stroke-linecap="round" opacity=".75"/>' +
+        '<rect x="' + (mx - 34) + '" y="' + (my - 14) + '" width="68" height="26" rx="13" fill="#fff" stroke="' + C.off + '"/><text x="' + mx + '" y="' + (my + 5) + '" text-anchor="middle" font-size="14" font-weight="700" fill="' + C.ink + '">' + fmt(r, 4) + '</text>';
+    }
+    function draw(m){
+      var R = RUS[m], s = '';
+      s += edge(P[0], P[1], R.r13) + edge(P[0], P[2], R.r12) + edge(P[1], P[2], R.r23);
+      var kIdx = [1, 0, 2]; // ordem da Tabela 3.1: R3000, R1000, R2000
+      P.forEach(function(p, i){
+        var k = R.k[kIdx[i]], rad = 34;
+        s += '<circle cx="' + p.x + '" cy="' + p.y + '" r="' + rad + '" fill="' + p.c + '"/>';
+        s += '<text x="' + p.x + '" y="' + (p.y + 5) + '" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">' + p.n.replace('Russell ', '') + '</text>';
+        var ty = i === 2 ? p.y + 56 : p.y - 112;
+        s += '<text x="' + p.x + '" y="' + ty + '" text-anchor="middle" font-size="14" font-weight="700" fill="' + p.c + '">' + p.n + '</text>';
+        s += '<text x="' + p.x + '" y="' + (ty + 19) + '" text-anchor="middle" font-size="12" fill="' + C.ink + '">' + p.s + '</text>';
+        s += '<text x="' + p.x + '" y="' + (ty + 38) + '" text-anchor="middle" font-size="12" fill="' + C.muted + '">' + L('curtose ','kurtosis ') + fmt(k, 2) + '</text>';
+        s += '<text x="' + p.x + '" y="' + (ty + 57) + '" text-anchor="middle" font-size="12" fill="' + C.muted + '">' + L('assimetria ','skewness ') + sg(R.s[kIdx[i]], 2) + '</text>';
+      });
+      svg.innerHTML = s;
+      $('rus-panel').innerHTML = m === 0 ?
+        '<p>' + L('Por dia, o índice amplo e o de grandes andam quase colados (<b>0,9987</b>): investir no mercado inteiro é quase o mesmo que investir nas grandes. As pequenas se afastam um pouco (0,85 a 0,88) e balançam mais.', 'By the day, the broad index and the large-cap one move almost in lockstep (<b>0.9987</b>): investing in the whole market is almost the same as investing in large caps. Small caps drift a little apart (0.85 to 0.88) and swing more.') + '</p>' :
+        '<p>' + L('Por minuto, a ligação das pequenas com as outras cai para <b>0,72 a 0,76</b>, e as caudas engordam nos três: curtose perto de 12, contra cerca de 3 por dia. Nas pequenas, a assimetria até troca de sinal. Para o autor, são um conjunto à parte, com potencial de diversificação.', 'By the minute, the link between small caps and the others drops to <b>0.72 to 0.76</b>, and tails get fatter in all three: kurtosis near 12, against about 3 by the day. For small caps, skewness even flips sign. For the author, they are a separate group, with diversification potential.') + '</p>';
+    }
+    seg('rus-seg', function(b){ draw(+b.dataset.m); });
+    draw(0);
+  })();
+
+  /* ================= 07 · CAMADAS ================= */
+  (function(){
+    var svg = $('layer-svg'), N = 360, r = rnd(21), comp = {d:[], b:[], j:[], n:[]}, B = 0, J = 0, i;
+    for (i = 0; i <= N; i++){
+      B += gauss(r) * .32; if (i === 120) J += 4.2; if (i === 255) J -= 5;
+      comp.d.push(i / N * 7); comp.b.push(B); comp.j.push(J); comp.n.push(gauss(r) * .55);
+    }
+    var on = {d:true, b:true, j:true, n:false};
+    var all = []; for (i = 0; i <= N; i++) all.push(comp.d[i] + comp.b[i] + comp.j[i] + comp.n[i]);
+    var lo = Math.min.apply(null, all) - 6, hi = Math.max.apply(null, all) + 6;
+    var X0 = 30, X1 = 540, Y0 = 280, Y1 = 30;
+    var xs = function(i){ return X0 + i / N * (X1 - X0); }, ys = function(v){ return Y0 - (v - lo) / (hi - lo) * (Y0 - Y1); };
+    var TXT = {
+      d:L('<b>Deriva</b>: a direção de fundo. Por dia ela importa; em escalas instantâneas, diz a tese, ela some e sobram ruído, tremor e saltos.','<b>Drift</b>: the underlying direction. By the day it matters; at instant scales, the thesis says, it vanishes and only noise, jitter and jumps remain.'),
+      b:L('<b>Tremor contínuo</b> (movimento browniano): variações pequenas e aleatórias, sem quebrar a linha. É a parte que os modelos clássicos já descrevem.','<b>Continuous jitter</b> (Brownian motion): small random moves that do not break the line. It is the part classic models already describe.'),
+      j:L('<b>Saltos</b>: o preço pula de um nível a outro, sem passar pelo meio. Podem vir de uma notícia nova ou de um aperto momentâneo entre ofertas de compra e venda.','<b>Jumps</b>: the price leaps from one level to another without passing in between. They can come from new information or a momentary squeeze between bid and ask.'),
+      n:L('<b>Ruído</b>: o preço vai e volta em torno do valor “justo”, por diferenças entre compra e venda, arredondamentos e negócios em bloco. Quanto mais ruído, pior a qualidade do mercado, segundo a literatura citada.','<b>Noise</b>: the price bounces around its “fair” value, because of bid-ask gaps, rounding and block trades. The more noise, the poorer the market quality, according to the literature cited.')
+    };
+    function draw(){
+      var pts = [], s = '';
+      for (i = 0; i <= N; i++){ var v = (on.d ? comp.d[i] : 0) + (on.b ? comp.b[i] : 0) + (on.j ? comp.j[i] : 0) + (on.n ? comp.n[i] : 0); pts.push([xs(i), ys(v)]); }
+      s += '<line x1="' + X0 + '" x2="' + X1 + '" y1="' + ys(0) + '" y2="' + ys(0) + '" stroke="' + C.grid + '" stroke-dasharray="4 3"/>';
+      if (on.d) s += '<line x1="' + xs(0) + '" y1="' + ys(comp.d[0]) + '" x2="' + xs(N) + '" y2="' + ys(comp.d[N]) + '" stroke="' + C.drift + '" stroke-width="2" stroke-dasharray="6 4"/>';
+      s += '<path d="' + pathD(pts) + '" fill="none" stroke="' + (on.n ? C.noise : C.cont) + '" stroke-width="1.6" stroke-linejoin="round"/>';
+      if (on.j) [120, 255].forEach(function(k){ s += '<line x1="' + xs(k) + '" x2="' + xs(k) + '" y1="' + pts[k - 1][1] + '" y2="' + pts[k][1] + '" stroke="' + C.jump + '" stroke-width="4"/>'; });
+      s += '<text x="' + X0 + '" y="20" font-size="12" fill="' + C.muted + '">' + L('preço (simulado)','price (simulated)') + '</text>';
+      if (!on.d && !on.b && !on.j && !on.n) s += '<text x="280" y="' + (ys(0) - 12) + '" text-anchor="middle" font-size="13" fill="' + C.muted + '">' + L('sem nenhuma parte, o preço fica parado','with no part, the price stands still') + '</text>';
+      svg.innerHTML = s;
+      var t = ['d', 'b', 'j', 'n'].filter(function(k){ return on[k]; }).map(function(k){ return '<p>' + TXT[k] + '</p>'; }).join('');
+      $('layer-panel').innerHTML = t || '<p>' + L('Ligue uma parte para ver o que ela faz.','Switch a part on to see what it does.') + '</p>';
+    }
+    each($('layers').querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){ var k = b.dataset.c; on[k] = !on[k]; b.setAttribute('aria-pressed', on[k] ? 'true' : 'false'); draw(); });
+    });
+    draw();
+    // Régua
+    var rs = $('ruler-svg'), a = 30, z = 530, xr = function(x){ return a + x / 6 * (z - a); }, s = '';
+    s += '<rect x="' + xr(0) + '" y="27" width="' + (xr(1) - xr(0)) + '" height="30" fill="' + C.noise + '" opacity=".85" rx="6"/>';
+    s += '<rect x="' + xr(1) + '" y="27" width="' + (xr(2) - xr(1)) + '" height="30" fill="' + C.jump + '" opacity=".9"/>';
+    s += '<rect x="' + xr(2) + '" y="27" width="' + (z - xr(2)) + '" height="30" fill="' + C.cont + '" opacity=".9" rx="6"/>';
+    s += '<text x="' + xr(.5) + '" y="47" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">' + L('ruído','noise') + '</text>';
+    s += '<text x="' + xr(1.5) + '" y="47" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">' + L('saltos','jumps') + '</text>';
+    s += '<text x="' + xr(4) + '" y="47" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">' + L('contínuo, sem saltos','continuous, no jumps') + '</text>';
+    for (var t = 0; t <= 6; t++) s += '<text x="' + xr(t) + '" y="75" text-anchor="middle" font-size="12" fill="' + C.muted + '">' + t + '</text>';
+    s += '<text x="' + a + '" y="18" font-size="12" font-weight="700" fill="' + C.ink + '">' + L('Onde o teste S<tspan font-size="9" dy="2">J</tspan><tspan dy="-2"> se concentra:</tspan>','Where the S<tspan font-size="9" dy="2">J</tspan><tspan dy="-2"> test piles up:</tspan>') + '</text>';
+    rs.innerHTML = s;
+  })();
+
+  /* ================= 08 · SALTOS NAS PEQUENAS ================= */
+  (function(){
+    var svg = $('sj-us-svg'), X0 = 150, X1 = 540, xmax = 32;
+    var xs = function(x){ return X0 + x / xmax * (X1 - X0); };
+    function draw(){
+      var s = '', p = +$('pow').value;
+      s += '<rect x="' + xs(0) + '" y="20" width="' + (xs(1) - xs(0)) + '" height="290" fill="' + C.noise + '" opacity=".12"/>';
+      s += '<rect x="' + xs(1) + '" y="20" width="' + (xs(2) - xs(1)) + '" height="290" fill="' + C.jump + '" opacity=".14"/>';
+      s += '<line x1="' + xs(1) + '" x2="' + xs(1) + '" y1="20" y2="310" stroke="' + C.ink + '" stroke-dasharray="4 3"/>';
+      s += '<text x="' + (xs(1) + 4) + '" y="16" font-size="11" font-weight="700" fill="' + C.jump + '">' + L('← saltos estariam aqui (perto de 1)','← jumps would be here (near 1)') + '</text>';
+      HUS.forEach(function(h, k){
+        var base = 108 + k * 98, top = base - 70, ym = .27;
+        s += '<text x="' + (X0 - 10) + '" y="' + (base - 34) + '" text-anchor="end" font-size="12" font-weight="700" fill="' + h.c + '">' + h.n.split(' · ')[0] + '</text>';
+        s += '<text x="' + (X0 - 10) + '" y="' + (base - 18) + '" text-anchor="end" font-size="12" fill="' + C.muted + '">' + h.n.split(' · ')[1] + '</text>';
+        h.v.forEach(function(v, i){ var a = h.x0 + i * h.w, hh = v / ym * 70; s += '<rect x="' + (xs(a) + .5) + '" y="' + (base - hh) + '" width="' + (xs(a + h.w) - xs(a) - 1) + '" height="' + hh + '" fill="' + h.c + '" opacity=".8" rx="1.5"/>'; });
+        s += '<line x1="' + X0 + '" x2="' + X1 + '" y1="' + base + '" y2="' + base + '" stroke="' + C.off + '"/>';
+      });
+      [0, 5, 10, 15, 20, 25, 30].forEach(function(t){ s += '<text x="' + xs(t) + '" y="328" text-anchor="middle" font-size="12" fill="' + C.muted + '">' + t + '</text>'; });
+      s += '<text x="' + X1 + '" y="348" text-anchor="end" font-size="11" fill="' + C.muted + '">' + L('valor do teste de saltos (S','jump test value (S') + '<tspan font-size="8" dy="2">J</tspan><tspan dy="-2">) · ' + L('registros de 1 e 2 minutos','1- and 2-minute records') + '</tspan></text>';
+      svg.innerHTML = s;
+      var g21 = GAP.d21[0] + GAP.d21[1] * p, g13 = GAP.d13[0] + GAP.d13[1] * p;
+      $('pow-v').textContent = fp(p);
+      $('pow-panel').innerHTML = '<p>' + L('Com potência ', 'At power ') + fp(p) + L(', o teste das pequenas fica, em média, ', ', the small-cap test sits, on average, ') + '<b>' + sg(g21, 1) + '</b>' + L(' acima do das grandes; o das grandes fica ', ' above the large-cap one; the large-cap one sits ') + '<b>' + sg(g13, 2) + '</b>' + L(' em relação ao mercado amplo. ', ' relative to the broad market. ') +
+        L('Quanto mais a régua realça os saltos, mais as pequenas se afastam do 1: o risco delas é de outra natureza. Para o autor, ganhar com elas depende do momento, não de um prêmio fixo.', 'The more the ruler highlights jumps, the farther small caps move away from 1: their risk is of a different nature. For the author, profiting from them depends on timing, not on a fixed premium.') + '</p>';
+    }
+    $('pow').addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 09 · B3 ================= */
+  (function(){
+    var NOTE = {
+      tot:L('Figura 4.4: todos os 9.256 valores. ','Figure 4.4: all 9,256 values. '),
+      f1000:L('Figura 4.5, 1/1000 s: pico perto de 1. ','Figure 4.5, 1/1000 s: peak near 1. '),
+      f100:L('Figura 4.5, 1/100 s: picos perto de 1, mas a tese diz que o desenho não é “bem comportado”. ','Figure 4.5, 1/100 s: peaks near 1, but the thesis says the shape is not “well behaved”. '),
+      f10:L('Figura 4.5, 1/10 s: pico perto de 1. ','Figure 4.5, 1/10 s: peak near 1. '),
+      f1:L('Figura 4.5, 1 s: desenho irregular, que a tese também chama de não “bem comportado”. ','Figure 4.5, 1 s: irregular shape, which the thesis also calls not “well behaved”. ')
+    };
+    function draw(f){
+      $('b3-svg').innerHTML = hist($('b3-svg'), HS[f], {ymax:.5, title:L('Ibovespa · 89 ações','Ibovespa · 89 stocks'), color:C.ink});
+      $('b3-note').innerHTML = NOTE[f] + L('Histograma redesenhado da tese (valores aproximados, lidos por nós). A barra mais escura é o pico.','Histogram redrawn from the thesis (approximate values read by us). The darkest bar is the peak.');
+    }
+    seg('freq-seg', function(b){ draw(b.dataset.f); });
+    draw('tot');
+  })();
+
+  /* ================= 10 · ONDE HÁ RUÍDO ================= */
+  (function(){
+    function cnt(fn){ return A.filter(fn).length; }
+    var J = 'j', Nn = 'n', Mx = 'm';
+    var DIM = [
+      [
+        {k:'on', b:L('Ordinárias (ON)','Common (ON)'), v:J, n:cnt(function(a){ return a[2] === 'ON'; }), p:L('Ações com direito a voto. Seguem o mercado: pico perto de 1, saltos.','Voting shares. They follow the market: peak near 1, jumps.')},
+        {k:'pn', b:L('Preferenciais (PN)','Preferred (PN)'), v:Nn, n:cnt(function(a){ return a[2] === 'PN'; }), p:L('Ações com preferência nos dividendos. O pico cai abaixo de 1: ruído. A tese diz que o achado é novo: aqui o preço se corrige em idas e vindas contínuas.','Shares with priority on dividends. The peak falls below 1: noise. The thesis says the finding is new: here the price corrects itself in continuous back-and-forth.')}
+      ],
+      [
+        {k:'nm', b:L('Novo Mercado','Novo Mercado'), v:J, n:cnt(function(a){ return a[3] === 'NM'; }), p:L('O nível mais alto de governança da B3 (só ações ON, mínimo de ações em circulação, conselheiros independentes). Igual ao mercado como um todo: saltos.','B3’s highest governance level (common shares only, minimum free float, independent directors). Same as the market as a whole: jumps.')},
+        {k:'n1', b:L('Nível 1','Level 1'), v:Mx, n:cnt(function(a){ return a[3] === 'N1'; }), p:L('Exigências menores. Situação “híbrida”, nas palavras da tese.','Lighter requirements. A “hybrid” situation, in the thesis’s words.')},
+        {k:'n2', b:L('Nível 2','Level 2'), v:Nn, n:cnt(function(a){ return a[3] === 'N2'; }), p:L('Aqui o ruído predomina. A tese chama o resultado de contraintuitivo à primeira vista: a governança mais baixa aparece com uma série mais contínua, não com mais rupturas.','Here noise prevails. The thesis calls the result counterintuitive at first sight: lower governance shows a more continuous series, not more breaks.')}
+      ],
+      [
+        {k:'w1', b:L('Metade do índice','Top half of index'), v:J, n:9, p:L('As 9 maiores somam 50% do Ibovespa. Saltos.','The 9 largest add up to 50% of the Ibovespa. Jumps.')},
+        {k:'w2', b:L('De 50% a 70%','50% to 70%'), v:J, n:12, p:L('Mais 12 ações, 20% do índice. Saltos.','12 more stocks, 20% of the index. Jumps.')},
+        {k:'w3', b:L('De 70% a 90%','70% to 90%'), v:J, n:27, p:L('Mais 27 ações, outros 20%. Saltos.','27 more stocks, another 20%. Jumps.')},
+        {k:'w4', b:L('Últimos 10%','Last 10%'), v:Nn, n:41, p:L('As 41 menores somam só 10% do índice. Aqui o ruído domina: o peso no índice, que reflete a liquidez de longo prazo, separa bem os grupos.','The 41 smallest add up to just 10% of the index. Here noise dominates: index weight, which reflects long-term liquidity, separates the groups well.')}
+      ],
+      [1, 2, 3, 4, 5, 6].map(function(g){
+        var v = [J, Nn, Nn, J, Nn, J][g - 1];
+        return {k:'t' + g, b:(g === 1 ? L('15 mais negociadas','Top 15 by trades') : ord((g - 1) * 15 + 1) + L(' a ',' to ') + ord(Math.min(89, g * 15))), v:v, n:g === 6 ? 14 : 15,
+          p:(v === J ? L('Saltos. ','Jumps. ') : L('Ruído. ','Noise. ')) + L('Por número de negócios, metade dos grupos tem saltos e metade ruído, sem ordem clara (2º, 3º e 5º grupos com ruído). Para o autor, a contagem de curto prazo oscila com choques passageiros e mede mal a eficiência.','By number of trades, half the groups show jumps and half noise, with no clear order (2nd, 3rd and 5th groups with noise). For the author, the short-term count swings with passing shocks and is a poor gauge of efficiency.')};
+      })
+    ];
+    var VL = {j:[L('saltos','jumps'), C.jump], n:[L('ruído','noise'), C.noise], m:[L('misto','mixed'), '#8a5a9e']};
+    var dim = 0;
+    function pick(g){
+      var G = DIM[dim][g];
+      each($('grp-btns').querySelectorAll('button'), function(b, i){ b.setAttribute('aria-pressed', i === g ? 'true' : 'false'); });
+      $('grp-svg').innerHTML = hist($('grp-svg'), HS[G.k], {ymax:G.k === 'w4' || G.k === 't3' || G.k === 'pn' ? .65 : .5, title:G.b + ' · ' + G.n + L(' ações',' stocks'), color:VL[G.v][1]});
+      $('grp-panel').innerHTML = '<p><span class="chip" style="--cc:' + VL[G.v][1] + '">' + VL[G.v][0] + '</span> <b>' + G.b + '</b> · ' + G.n + L(' ações',' stocks') + '</p><p>' + G.p + '</p>';
+    }
+    function setDim(d){
+      dim = d;
+      $('grp-btns').innerHTML = DIM[d].map(function(G, i){ return '<button data-g="' + i + '" aria-pressed="false">' + G.b + '</button>'; }).join('');
+      each($('grp-btns').querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ pick(+b.dataset.g); }); });
+      pick(d === 2 ? 3 : d === 0 ? 1 : d === 1 ? 2 : 1);
+    }
+    seg('dim-seg', function(b){ setDim(+b.dataset.d); });
+    setDim(0);
+  })();
+
+  /* ================= 11 · CIDADE ================= */
+  (function(){
+    var sc = $('city-scene'), cols = 10, cw = 46, cd = 34, W = cols * cw + 20, D = 9 * cd + 20;
+    var st = makeStage(sc, W, D, {ay:'60%', rx:'58deg'});
+    rotatable(sc, st, -28, 8);
+    var blocks = {}, cur = null;
+    function grp(t){ return NOISE.indexOf(t) >= 0 ? 'n' : BROWN.indexOf(t) >= 0 ? 'b' : t === 'AMER3' ? 'a' : 'o'; }
+    var COL = {n:C.noise, b:C.cont, a:C.jump, o:C.off};
+    A.forEach(function(a, i){
+      var row = Math.floor(i / cols), col = i % cols;
+      var b = box({w:32, d:22, x:10 + col * cw + 7, y:10 + row * cd + 6, h:Math.max(2, a[4] * 12), c:COL[grp(a[0])]});
+      b.dataset.t = a[0];
+      st.appendChild(b); blocks[a[0]] = b;
+      b.addEventListener('click', function(){ if (M.wasDrag(sc)) return; info(a); });
+    });
+    flatLabel(st, L('maior peso','largest weight'), 0, -18, 160);
+    flatLabel(st, L('menor peso','smallest weight'), W - 170, D - 6, 170);
+    var GNAME = {n:L('ruído (uma das nove)','noise (one of the nine)'), b:L('só tremor contínuo (uma das onze)','continuous jitter only (one of the eleven)'), a:L('saltos, origem do choque de janeiro','jumps, source of the January shock'), o:L('não destacada uma a uma na tese','not singled out in the thesis')};
+    function govName(g){ return g === 'NM' ? 'Novo Mercado' : g === 'N1' ? L('Nível 1','Level 1') : g === 'N2' ? L('Nível 2','Level 2') : L('não informado na tabela','not given in the table'); }
+    function info(a){
+      if (cur) cur.classList.remove('active');
+      cur = blocks[a[0]]; cur.classList.add('active');
+      var g = grp(a[0]);
+      $('city-panel').innerHTML = '<div class="tag">' + a[0] + '</div><h3>' + a[1] + '</h3><p><span class="chip" style="--cc:' + (g === 'o' ? C.muted : COL[g]) + '">' + GNAME[g] + '</span></p>' +
+        '<p>' + L('Peso no índice: ','Index weight: ') + '<b>' + fmt(a[4], 2) + '%</b> · ' + L('tipo ','type ') + a[2] + ' · ' + govName(a[3]) + '<br>' + n0(a[6]) + L(' negócios no período, a ',' trades in the period, the ') + ord(rank.indexOf(a[0]) + 1) + L(' mais negociada entre as 89',' most traded of the 89') + '</p>' + (EXTRA[a[0]] ? '<p style="font-size:.82rem">' + EXTRA[a[0]] + '</p>' : '');
+    }
+    var EXTRA = {
+      AMER3:L('Em 12/1/2023, depois de revelar problemas contábeis, a ação fechou em R$ 2,72, contra R$ 12,00 na véspera. Mesmo sendo só 0,30% do índice, foi a 15ª mais negociada.','On 12 Jan 2023, after disclosing accounting problems, the share closed at R$2.72, against R$12.00 the day before. Though just 0.30% of the index, it was the 15th most traded.'),
+      MGLU3:L('Atingida por tabela pela crise da Americanas: 0,41% do índice, mas a 6ª mais negociada.','Hit indirectly by the Americanas crisis: 0.41% of the index, but the 6th most traded.'),
+      VIIA3:L('Também atingida pela crise da Americanas: 0,20% do índice e a 23ª mais negociada.','Also hit by the Americanas crisis: 0.20% of the index and the 23rd most traded.'),
+      ITSA4:L('Holding com participações em Itaú, Dexco, Alpargatas e CCR, que aparecem com saltos. Para o autor, o ruído da Itaúsa vem da atividade dos investidores, não dos fundamentos.','A holding with stakes in Itaú, Dexco, Alpargatas and CCR, which show jumps. For the author, Itaúsa’s noise comes from investor activity, not fundamentals.')
+    };
+    var START = {all:'VALE3', n:'ITSA4', b:'PETR3', a:'AMER3'};
+    var MSG = {
+      all:L('Toque num prédio para ver a ação. A maior, a Vale, pesa 15,51% do índice; a menor, a Méliuz, 0,04%.','Tap a building to see the stock. The largest, Vale, weighs 15.51% of the index; the smallest, Méliuz, 0.04%.'),
+      n:L('Nove ações com ruído. Três não são ordinárias (ITSA4, RAIZ4, USIM5); quatro das seis ordinárias são pouco negociadas e de peso baixo. Segundo a tese, essas características sozinhas não explicam o ruído.','Nine noise stocks. Three are not common shares (ITSA4, RAIZ4, USIM5); four of the six common ones are thinly traded and low-weight. According to the thesis, these traits alone do not explain the noise.'),
+      b:L('Onze ações movidas só pelo tremor contínuo, sem ruído nem saltos, entre elas Petrobras (ON), WEG e Localiza. Surpresa: elas não estão entre as menos voláteis e têm mais variações extremas do que esse modelo prevê (Figura 4.12).','Eleven stocks driven only by continuous jitter, with no noise or jumps, among them Petrobras (common), WEG and Localiza. Surprise: they are not among the least volatile and have more extreme moves than that model predicts (Figure 4.12).'),
+      a:L('A crise da Americanas em janeiro: a própria ação aparece com saltos; Magazine Luiza e Via, atingidas por tabela, aparecem com ruído.','The Americanas crisis in January: the stock itself shows jumps; Magazine Luiza and Via, hit indirectly, show noise.')
+    };
+    function hl(g){
+      A.forEach(function(a){
+        var k = grp(a[0]), keep = g === 'all' || (g === 'a' ? ['AMER3', 'MGLU3', 'VIIA3'].indexOf(a[0]) >= 0 : k === g);
+        blocks[a[0]].classList.toggle('dim', !keep);
+      });
+      info(A.filter(function(a){ return a[0] === START[g]; })[0]);
+      $('city-panel').innerHTML = '<p style="font-size:.84rem;color:var(--ink-2)">' + MSG[g] + '</p>' + $('city-panel').innerHTML;
+    }
+    seg('city-seg', function(b){ hl(b.dataset.g); });
+    hl('all');
+    $('city-alt').innerHTML = '<b>' + L('Ruído (9):','Noise (9):') + '</b> ' + NOISE.join(', ') + '.<br><b>' + L('Só tremor contínuo (11):','Continuous jitter only (11):') + '</b> ' + BROWN.join(', ') + '.<br><b>' + L('Saltos, destacada no texto:','Jumps, singled out in the text:') + '</b> AMER3.<br>' + L('Todas as 89, da maior para a menor peso: ','All 89, from largest to smallest weight: ') + A.map(function(a){ return a[0] + ' ' + fmt(a[4], 2) + '%'; }).join(', ') + '.';
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
