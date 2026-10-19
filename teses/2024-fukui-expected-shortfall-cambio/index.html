@@ -1,0 +1,890 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quando o câmbio dá um tombo · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Marcelo Fukui (PPGA Mackenzie, 2024) sobre o expected shortfall, a medida do tamanho das perdas extremas, aplicada ao câmbio e à proteção com contratos futuros, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2024-fukui-expected-shortfall-cambio/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2215%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>ES</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em ../../assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --var:var(--navy);                                  /* VaR: onde começa o perigo */
+    --es:var(--red);                                    /* ES: o tamanho médio do tombo */
+    --brl:var(--red); --eur:var(--navy); --jpy:#334155; --cny:#94a3b8;
+    --nd:var(--navy);                                   /* régua normal */
+    --pot:#334155;                                      /* valor extremo */
+    --hist:var(--red);                                  /* históricas */
+    --jad:color-mix(in srgb, var(--red) 52%, white);    /* históricas sem os extremos */
+    --mv:#94a3b8;                                       /* média das réguas */
+    --off:#cbd5e1;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4vw, 2.7rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:32em; margin-left:auto; margin-right:auto;}
+  .warn{display:inline-block; font-size:.74rem; font-weight:600; color:var(--ink-2); background:#f1f5f9; border:1px solid var(--border); border-radius:6px; padding:4px 9px; margin-top:12px;}
+  #hero-scene .floor-label{font-size:15px;}
+  @media (max-width:600px){ #hero-scene .floor-label{font-size:19px;} }
+
+  /* ---------- Componentes comuns ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px 22px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.1rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.92rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:18px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  @media (max-width:560px){ .seg button{padding:7px 10px; font-size:.8rem;} }
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.35rem; color:var(--ink); line-height:1.2; font-variant-numeric:tabular-nums;}
+  .stat span{font-size:.76rem; color:var(--muted); line-height:1.35; display:block;}
+  .stat.var b{color:var(--var);} .stat.es b{color:var(--es);}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  svg.chart{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  svg.chart text{font-family:var(--sans);}
+  @media (max-width:600px){ svg.chart text{font-size:15px !important;} }
+  details.tbl{margin-top:12px; font-size:.82rem; color:var(--ink-2);}
+  details.tbl summary{cursor:pointer; color:var(--muted); font-weight:600;}
+  details.tbl .wrap{overflow-x:auto; margin-top:8px;}
+  details.tbl table{border-collapse:collapse; width:100%; font-variant-numeric:tabular-nums;}
+  details.tbl th, details.tbl td{border-bottom:1px solid var(--border); padding:4px 6px; text-align:right; white-space:nowrap;}
+  details.tbl th:first-child, details.tbl td:first-child{text-align:left;}
+
+  /* ---------- 03 · Linha do tempo ---------- */
+  .tl{display:grid; gap:8px; margin-top:6px;}
+  .tl button{display:grid; grid-template-columns:104px 1fr; gap:12px; align-items:center; text-align:left; border:1px solid var(--border); background:var(--card); border-radius:12px; padding:10px 14px; cursor:pointer; font:inherit; color:var(--ink-2); font-size:.86rem; border-left:5px solid var(--tc, var(--neutral)); transition:box-shadow .2s, background .2s;}
+  .tl button b{font-family:var(--serif); font-size:1.05rem; color:var(--ink);}
+  .tl button[aria-pressed="true"]{box-shadow:var(--shadow); background:color-mix(in srgb, var(--tc) 7%, white);}
+  #tl-panel{min-height:170px;}
+  .sub-demo{display:grid; grid-template-columns:1fr auto 1fr auto 1fr; gap:6px; align-items:end; margin-top:12px; text-align:center; font-size:.74rem; color:var(--muted);}
+  .sub-demo i{display:block; margin:0 auto 4px; width:46px; border-radius:6px 6px 0 0; background:var(--sc);}
+  .sub-demo span.op{font-family:var(--serif); font-size:1.3rem; color:var(--ink); padding-bottom:18px;}
+
+  /* ---------- 04 · Literatura ---------- */
+  .funnel{display:grid; gap:6px; margin:6px 0 14px;}
+  .funnel div{display:grid; grid-template-columns:1fr 54px; gap:10px; align-items:center; font-size:.82rem; color:var(--ink-2);}
+  .funnel i{display:block; height:26px; border-radius:6px; background:var(--fc);}
+  .funnel b{font-family:var(--serif); font-size:1.05rem; color:var(--ink); text-align:right; font-variant-numeric:tabular-nums;}
+  .sbars{display:grid; gap:10px; margin-top:6px;}
+  .sbar{display:flex; height:44px; border-radius:10px; overflow:hidden; border:1px solid var(--border);}
+  .sbar span{display:flex; align-items:center; justify-content:center; color:#fff; font-size:.8rem; font-weight:700; transition:flex-grow .6s cubic-bezier(.2,.8,.2,1); min-width:0; overflow:hidden; white-space:nowrap;}
+  .slist{display:grid; gap:4px; margin-top:10px; font-size:.84rem; color:var(--ink-2);}
+  .slist div{display:flex; gap:8px; align-items:center;}
+  .slist b{margin-left:auto; font-variant-numeric:tabular-nums; color:var(--ink);}
+  #lit-panel{min-height:110px; margin-top:14px;}
+
+  /* ---------- 05 · Laboratório ---------- */
+  .fam{display:grid; gap:8px; margin-top:8px;}
+  .fam button{display:grid; grid-template-columns:14px 1fr; gap:10px; align-items:start; text-align:left; border:1px solid var(--border); background:var(--card); border-radius:12px; padding:9px 13px; cursor:pointer; font:inherit; font-size:.82rem; color:var(--ink-2); line-height:1.4;}
+  .fam button i{width:14px; height:14px; border-radius:4px; margin-top:3px; background:var(--fc);}
+  .fam button b{color:var(--ink);}
+  .fam button[aria-pressed="true"]{box-shadow:var(--shadow); border-color:var(--ink);}
+  .fam button small{display:none; color:var(--muted); font-size:.76rem; margin-top:3px;}
+  .fam button[aria-pressed="true"] small{display:block;}
+  .curr{display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; margin-top:12px;}
+  .curr div{background:var(--card); border:1px solid var(--border); border-top:5px solid var(--cc); border-radius:10px; padding:9px 10px; font-size:.74rem; color:var(--muted); line-height:1.35;}
+  .curr b{display:block; font-family:var(--serif); font-size:.95rem; color:var(--ink);}
+  @media (max-width:520px){ .curr{grid-template-columns:1fr 1fr;} }
+
+  /* ---------- 06 · Réguas ---------- */
+  #es-scene .floor-label{font-size:15px;}
+  #es-scene .top-label{font-size:13px; font-weight:800;}
+  #es-scene .slab{cursor:pointer;}
+  @media (max-width:600px){ #es-scene .floor-label{font-size:19px;} #es-scene .top-label{font-size:16px;} }
+  #es-panel{min-height:120px; margin-top:12px;}
+
+  /* ---------- 07 · Rompeu ---------- */
+  #viol-scene .floor-label{font-size:15px; white-space:nowrap;}
+  #viol-scene .floor-label.col{font-weight:800; font-size:16px;}
+  #viol-scene .slab.hide > i{opacity:0;}
+  #viol-scene .slab{cursor:pointer;}
+  @media (max-width:600px){ #viol-scene .floor-label{font-size:19px;} #viol-scene .floor-label.col{font-size:20px;} }
+  .guess{display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; margin:10px 0 4px;}
+  .guess button{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:10px 6px; font-size:.86rem; font-weight:600; cursor:pointer; color:var(--ink); border-bottom:4px solid var(--cc);}
+  .guess button:hover{border-color:var(--ink);}
+  .guess button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  @media (max-width:520px){ .guess{grid-template-columns:1fr 1fr;} }
+  #viol-panel{min-height:120px; margin-top:12px;}
+
+  /* ---------- 08 · Alarmes ---------- */
+  .rng{display:grid; gap:6px; margin:10px 0 4px;}
+  .rng input{width:100%; accent-color:var(--red);}
+  .rng .ticks{display:flex; justify-content:space-between; font-size:.7rem; color:var(--muted);}
+  .rng .ticks span{width:34px; text-align:center;}
+  .rng .ticks span.on{color:var(--ink); font-weight:700;}
+  .days{display:flex; flex-wrap:wrap; gap:4px; margin-top:10px; min-height:20px;}
+  .days span{width:16px; height:16px; border-radius:50%; background:var(--red); transition:transform .3s;}
+  #al-panel{min-height:130px; margin-top:12px;}
+
+  /* ---------- 09 · Hedge ---------- */
+  .hbars{display:grid; gap:10px; margin-top:12px;}
+  .hbar{display:grid; grid-template-columns:150px 1fr; gap:10px; align-items:center; font-size:.82rem; color:var(--ink-2);}
+  .hbar .tr{position:relative; height:28px; background:#f1f5f9; border-radius:6px;}
+  .hbar .tr::after{content:''; position:absolute; left:50%; top:-4px; bottom:-4px; border-left:2px solid var(--ink-2);}
+  .hbar .tr i{position:absolute; top:3px; bottom:3px; border-radius:4px; transition:left .4s, width .4s, background .3s;}
+  .hbar .tr b{position:absolute; top:5px; font-size:.78rem; color:var(--ink); font-variant-numeric:tabular-nums; white-space:nowrap; transition:left .4s;}
+  .hbar.tot{font-weight:700; color:var(--ink);}
+  @media (max-width:520px){ .hbar{grid-template-columns:96px 1fr; font-size:.74rem;} }
+  #h-panel{min-height:90px; margin-top:12px;}
+
+  /* ---------- 10 · Volatilidade ---------- */
+  .ptab{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:10px;}
+  .ptab div{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:9px 11px; font-size:.74rem; color:var(--muted); line-height:1.3;}
+  .ptab b{display:block; font-family:var(--serif); font-size:1.15rem; color:var(--ink); font-variant-numeric:tabular-nums;}
+  .ptab .g b{color:var(--muted);}
+  #vol-panel{min-height:110px; margin-top:12px;}
+
+  /* ---------- 11 · Projeção ---------- */
+  .arima{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .arima div{background:var(--card); border:1px solid var(--border); border-top:5px solid var(--cc); border-radius:12px; padding:12px 14px; font-size:.8rem; color:var(--ink-2); line-height:1.4;}
+  .arima b{display:block; font-family:var(--serif); font-size:1rem; color:var(--ink);}
+  .arima .v{display:inline-block; margin-top:6px; font-size:.72rem; font-weight:700; padding:3px 8px; border-radius:6px; background:#e8eef7; color:var(--navy);}
+  .arima .v.no{background:color-mix(in srgb, var(--red) 12%, white); color:var(--red);}
+  #pj-panel{min-height:110px; margin-top:12px;}
+
+  /* ---------- 12 · Prática, limites e créditos ---------- */
+  .cards3{display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px;}
+  @media (min-width:800px){ .cards3{grid-template-columns:repeat(3, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 15px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:5px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.78rem; line-height:1.45; color:var(--ink-2);}
+  .pcard .src{display:block; margin-top:7px; font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--muted);}
+  .end{display:grid; grid-template-columns:1fr; gap:24px; margin-top:20px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:44px;} }
+  .end h3{font-size:1.1rem; margin-bottom:6px;}
+  .limits{display:grid; gap:7px; margin:8px 0 0; padding:0; list-style:none;}
+  .limits li{padding:8px 13px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.84rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; line-height:1.6; margin-top:8px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2024-fukui-expected-shortfall-cambio/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2024</div>
+      <h1 class="rv" style="--d:.1s">Quando o câmbio dá um tombo</h1>
+      <p class="sub rv" style="--d:.2s">Quem exporta, importa ou investe fora sabe que o dólar às vezes salta num dia só. A tese estuda o <strong>expected shortfall</strong> (ES), a medida que diz <strong>de quanto costuma ser a perda nos piores dias</strong>, e a usa com quatro moedas contra o dólar. Com nove formas de calcular esse limite, só o real passou dele no período de teste. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Marcelo Fukui</span>
+        <span><b>Orientador:</b> Prof. Dr. Leonardo Fernando Cruz Basso</span>
+        <span><b>Coorientadora:</b> Profa. Dra. Benilde Maria do Nascimento Oliveira (Universidade do Minho)</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#regua">Começar →</a>
+        <a class="btn ghost" href="#rompeu">Ir direto ao resultado</a>
+      </div>
+      <span class="warn rv" style="--d:.45s">Pesquisa acadêmica. Não é recomendação de investimento.</span>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="520x300" role="img" aria-label="Ilustração: colunas com a frequência das variações diárias do câmbio; à esquerda, as perdas raras e grandes da cauda aparecem em vermelho, além da linha do VaR."></div></div>
+      <div class="legend" style="justify-content:center"><span><i class="dot" style="background:#cbd5e1"></i>dias comuns</span><span><i class="dot" style="background:var(--var)"></i>linha do VaR</span><span><i class="dot" style="background:var(--es)"></i>a cauda: o que o ES mede</span></div>
+      <p class="cap-legend">Ilustração nossa: quantos dias o câmbio variou quanto. O ES olha só para a cauda vermelha.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-10"><a href="https://brasil.un.org/pt-br/sdgs/10" target="_blank" rel="noopener" title="ODS 10 · Redução das desigualdades: Estuda o expected shortfall, a medida de risco que os acordos de Basileia III adotaram para regular o capital dos bancos, e testa como ela se comporta no câmbio."><b>10</b>Redução das desigualdades</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · A RÉGUA -->
+<section class="slide" id="regua" data-label="VaR e ES">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> Experimente</div>
+      <h2 class="rv" style="--d:.1s">O VaR diz onde começa o perigo; o ES diz quão fundo ele vai</h2>
+      <p class="lede rv" style="--d:.15s">O <strong>Value at Risk</strong> (VaR) responde: "em 99 de cada 100 dias, quanto posso perder no máximo?". Ele não diz nada sobre o 1 dia restante. O <strong>expected shortfall</strong> (ES) responde a essa pergunta: é a <strong>média das perdas que passam do VaR</strong>.</p>
+      <p class="rv" style="--d:.2s">Duas carteiras podem ter o mesmo VaR e caudas bem diferentes. Troque a carteira e o nível de confiança.</p>
+      <div class="stats rv" style="--d:.25s">
+        <div class="stat var"><b id="r-var">–</b><span>VaR: perda a partir da qual começa a cauda</span></div>
+        <div class="stat es"><b id="r-es">–</b><span>ES: perda média dentro da cauda</span></div>
+        <div class="stat"><b id="r-n">–</b><span>dias na cauda, de 1.000</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="r-tail" role="group" aria-label="Carteira">
+        <button data-t="n" aria-pressed="true">Cauda fina</button>
+        <button data-t="g" aria-pressed="false">Cauda gorda</button>
+      </div>
+      <div class="seg" id="r-conf" role="group" aria-label="Nível de confiança" style="margin-left:6px">
+        <button data-c="0.90" aria-pressed="false">90%</button>
+        <button data-c="0.95" aria-pressed="false">95%</button>
+        <button data-c="0.99" aria-pressed="true">99%</button>
+      </div>
+      <svg class="chart" id="r-svg" viewBox="0 0 560 290" role="img" aria-label="Histograma de 1.000 dias inventados de variação, com a linha do VaR e a média da cauda" style="margin-top:10px"></svg>
+      <p class="note"><b>Ilustração nossa</b>, com 1.000 dias inventados. A carteira de cauda gorda foi ajustada para ter o mesmo VaR da de cauda fina; a primeira coluna junta tudo abaixo de −6%. A definição do ES (média das perdas além do VaR) é a da tese, seção 3.4.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · POR QUE O ES -->
+<section class="slide" id="basileia" data-label="Por que o ES">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> O problema</div>
+      <h2 class="rv" style="--d:.1s">Os reguladores trocaram de régua depois da crise de 2008</h2>
+      <p class="lede rv" style="--d:.15s">Por quase duas décadas, o VaR foi a medida-padrão do risco de mercado nos bancos. A crise do subprime mostrou o que ele não via: as perdas além do limite. O terceiro acordo de Basileia passou a usar o ES para o risco de mercado.</p>
+      <div class="tl rv" id="tl" style="--d:.2s" role="group" aria-label="Linha do tempo"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel" id="tl-panel" aria-live="polite"></div>
+      <p class="note">Seções 2.2 e 3.3 da tese, que citam Artzner e colegas (1999), Yamai e Yoshiba (2002, 2004) e Koch-Medina e Munari (2015). Os números do exemplo de diversificação são ilustração nossa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · A LITERATURA -->
+<section class="slide" id="literatura" data-label="O que se sabia">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Artigo 1 · 20 artigos</div>
+      <h2 class="rv" style="--d:.1s">Nos estudos, o ES aparece como complemento do VaR</h2>
+      <p class="lede rv" style="--d:.15s">O primeiro artigo da tese buscou, em três bases acadêmicas, tudo o que se publicou sobre ES e gestão de riscos até abril de 2021, e leu a fundo os 20 artigos que tratavam do tema.</p>
+      <div class="funnel rv" id="funnel" style="--d:.2s"></div>
+      <p class="rv" style="--d:.25s">O mais citado, de Yamai e Yoshiba (2004), com 142 citações, compara VaR e ES. Ele virou o roteiro do segundo artigo da tese.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="chips" id="lit-chips" role="group" aria-label="Tema da classificação"></div>
+      <div class="sbars"><div class="sbar" id="sbar"></div></div>
+      <div class="slist" id="slist"></div>
+      <div class="panel" id="lit-panel" aria-live="polite"></div>
+      <p class="note">Revisão sistemática do artigo 1 (seção 2.4.2). Cada artigo pode ter até três marcações por tema; os percentuais são das marcações, como na tese.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · O LABORATÓRIO -->
+<section class="slide" id="laboratorio" data-label="Como testou">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Artigo 2 · como a pesquisa olhou</div>
+      <h2 class="rv" style="--d:.1s">Quatro moedas, nove formas de calcular o limite</h2>
+      <p class="lede rv" style="--d:.15s">O autor calculou o ES da variação diária de quatro câmbios contra o dólar com os dados de 2000 a 2021. Depois, olhou o que aconteceu de agosto de 2021 a dezembro de 2023: em quantos dias o câmbio passou do limite?</p>
+      <p class="rv" style="--d:.2s">Como o ES fala de dias raros, há muitas formas de estimá-lo. A tese usou nove, em cinco famílias. Toque numa família.</p>
+      <div class="fam rv" id="fam" style="--d:.25s" role="group" aria-label="Famílias de cálculo"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg class="chart" id="lab-svg" viewBox="0 0 560 170" role="img" aria-label="Linha do tempo: de janeiro de 2000 a agosto de 2021 para calcular os limites; de agosto de 2021 a dezembro de 2023 para testar"></svg>
+      <div class="curr" id="curr"></div>
+      <p class="note">Dados do Banco Central do Brasil; cálculos no Excel e no Stata, seguindo Mehlitz e Auer (2020). O real representa um país emergente; euro, iene e iuane, economias de peso no cenário internacional (seção 3.2).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · AS RÉGUAS -->
+<section class="slide" id="reguas" data-label="Nove réguas">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Artigo 2 · Tabela 12</div>
+      <h2 class="rv" style="--d:.1s">Cada conta dá um limite diferente</h2>
+      <p class="lede rv" style="--d:.15s">Cada coluna é o ES de um dia, em % de variação do câmbio: a perda média esperada nos piores dias, segundo cada forma de cálculo. Nas quatro moedas, as contas históricas dão os limites mais baixos.</p>
+      <div class="chips rv" id="es-chips" style="--d:.2s" role="group" aria-label="Moeda"></div>
+      <div class="panel rv" id="es-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="es-zoom" role="group" aria-label="Escala" style="display:none">
+        <button data-z="0" aria-pressed="true">Todas as colunas</button>
+        <button data-z="1" aria-pressed="false">Esconder a normal (21,7%)</button>
+      </div>
+      <div class="fit-wrap" style="margin-top:8px"><div class="scene draggable" id="es-scene" data-fit="600x380" role="group" aria-label="Nove colunas, uma por forma de cálculo do ES, com a altura proporcional ao limite"></div></div>
+      <div class="legend" id="es-legend"></div>
+      <p class="note">Tabela 12 da tese, convertida em %. A régua normal do real (21,7% ao dia) fica muito acima das outras sete réguas de cálculo (2,4% a 3,3%); a tese não comenta esse valor. A média das réguas (MV) é a média simples das outras oito e por isso sobe para 5,1%.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · SÓ O REAL ROMPEU -->
+<section class="slide" id="rompeu" data-label="Só o real rompeu">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> A descoberta · Tabela 13</div>
+      <h2 class="rv" style="--d:.1s">Só o real passou do limite</h2>
+      <p class="lede rv" style="--d:.15s">De agosto de 2021 a dezembro de 2023, em quantos dias a variação do câmbio passou do limite do ES? Antes de ver, dê seu palpite: qual moeda passou mais vezes?</p>
+      <div class="guess rv" id="guess" style="--d:.2s" role="group" aria-label="Seu palpite"></div>
+      <div class="panel rv" id="viol-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="viol-scene" data-fit="600x440" role="group" aria-label="Grade de nove formas de cálculo por quatro moedas: em cada célula, um cubo por dia em que o câmbio passou do limite"></div></div>
+      <div class="legend"><span><i class="dot" style="background:var(--red)"></i>um cubo = um dia acima do limite</span><span><i class="dot" style="background:#fff; box-shadow:inset 0 0 0 1px #94a3b8"></i>nenhum dia</span></div>
+      <p class="note">Tabela 13 da tese. Toque numa pilha para ver o número. Euro, iene e iuane não passaram de nenhum limite.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · ALARMES -->
+<section class="slide" id="alarmes" data-label="Régua e alarmes">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Simulador · o real</div>
+      <h2 class="rv" style="--d:.1s">Limite mais baixo, mais alarmes</h2>
+      <p class="lede rv" style="--d:.15s">No real, as nove réguas foram de 2,4% a 21,7% ao dia. Quanto mais baixo o limite, mais dias o câmbio passou dele. Arraste para trocar de régua.</p>
+      <div class="rng rv" style="--d:.2s">
+        <label for="al-range" style="font-size:.8rem; color:var(--muted)">Régua, da mais baixa para a mais alta</label>
+        <input type="range" id="al-range" min="0" max="8" step="1" value="1">
+        <div class="ticks" id="al-ticks"></div>
+      </div>
+      <div class="panel rv" id="al-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg class="chart" id="al-svg" viewBox="0 0 560 300" role="img" aria-label="Pontos: limite diário do ES do real em %, no eixo horizontal, e dias acima do limite no teste, no eixo vertical"></svg>
+      <div class="days" id="al-days" aria-hidden="true"></div>
+      <p class="note">Tabelas 12 e 13 da tese; a ordenação das réguas é nossa. <b>Leitura nossa:</b> a tese lê mais dias acima do limite como "mais sensibilidade" das contas históricas e conclui que elas são preferíveis. Ela não compara esse número com o que cada régua deveria produzir por acaso, então não dá para dizer qual delas acertou.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · O HEDGE -->
+<section class="slide" id="hedge" data-label="Proteger com futuros">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Artigo 3 · a proteção</div>
+      <h2 class="rv" style="--d:.1s">Proteger-se do câmbio é escolher quanto vender no mercado futuro</h2>
+      <p class="lede rv" style="--d:.15s">Uma empresa que vai receber dólares perde se o dólar cair. Ela pode vender contratos futuros de dólar: se a moeda cair, o contrato ganha. A pergunta é <strong>quanto vender</strong>, a chamada razão de hedge.</p>
+      <p class="rv" style="--d:.2s">O terceiro artigo propõe escolher essa razão para que o ES da posição protegida fique o menor possível, com um modelo que prevê a volatilidade do dia seguinte (o DCC-GJR, de Ubukata, 2018). Experimente a ideia.</p>
+      <div class="panel rv" id="h-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="h-shock" role="group" aria-label="O que acontece com o dólar">
+        <button data-s="-0.05" aria-pressed="true">Dólar cai 5%</button>
+        <button data-s="0.05" aria-pressed="false">Dólar sobe 5%</button>
+        <button data-s="-0.12" aria-pressed="false">Tombo de 12%</button>
+      </div>
+      <div class="rng">
+        <label for="h-range" style="font-size:.8rem; color:var(--muted)">Razão de hedge: quanto dos US$ 100 mil vender no futuro</label>
+        <input type="range" id="h-range" min="0" max="12" step="1" value="5">
+        <div class="ticks"><span>0%</span><span>50%</span><span>100%</span><span>120%</span></div>
+      </div>
+      <div class="hbars" id="hbars"></div>
+      <p class="note"><b>Ilustração nossa</b>: US$ 100 mil a receber, dólar a R$ 5,00 e futuro que anda junto com o à vista. Na vida real os dois não andam exatamente juntos, e por isso a melhor razão pode não ser 100%: é isso que o modelo da tese tenta calcular. A tese descreve o método (seção 4.3), mas não traz as razões encontradas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · VOLATILIDADE -->
+<section class="slide" id="volatilidade" data-label="Notícia ruim">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Artigo 3 · Tabelas 22 a 27</div>
+      <h2 class="rv" style="--d:.1s">Notícia ruim não pesou mais que notícia boa</h2>
+      <p class="lede rv" style="--d:.15s">O modelo GJR pergunta se um dia de queda agita mais o câmbio nos dias seguintes do que um dia de alta do mesmo tamanho. Com dados diários de dezembro de 2017 a abril de 2024 (1.608 dias), a resposta foi não, nas seis séries: libra, euro e iene, à vista e no futuro.</p>
+      <p class="rv" style="--d:.2s">O que funcionou foi a parte de "memória": um susto no câmbio continua agitando os dias seguintes e só se apaga aos poucos. Escolha a série.</p>
+      <div class="chips rv" id="vol-chips" style="--d:.25s" role="group" aria-label="Série"></div>
+      <div class="panel rv" id="vol-panel" style="--d:.3s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg class="chart" id="vol-svg" viewBox="0 0 560 270" role="img" aria-label="Curva: quanto de um susto no câmbio ainda pesa na agitação, dia após dia"></svg>
+      <div class="ptab" id="ptab"></div>
+      <p class="note">Coeficientes das Tabelas 22 a 27 da tese (o "p" mostra se o efeito é claro: abaixo de 0,05). A curva e os dias até cair à metade são <b>conta nossa</b>, aproximada, com a soma de estabilidade que a tese usa (alfa + beta + gama).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · O INESPERADO -->
+<section class="slide" id="projecao" data-label="O inesperado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> O inesperado</div>
+      <h2 class="rv" style="--d:.1s">O modelo sofisticado projetou uma linha reta</h2>
+      <p class="lede rv" style="--d:.15s">Os modelos ficaram estáveis, mas a projeção do DCC-GJR virou uma reta: não acompanhou as idas e vindas do câmbio. O autor trocou de ferramenta e usou um modelo mais simples, o ARIMA, para projetar a razão entre o preço futuro e o preço à vista de cada moeda.</p>
+      <div class="seg rv" id="pj-seg" style="--d:.2s" role="group" aria-label="Parte da história">
+        <button data-v="gjr" aria-pressed="true">A reta</button>
+        <button data-v="arima" aria-pressed="false">O ARIMA</button>
+        <button data-v="ontem" aria-pressed="false">Um cuidado</button>
+      </div>
+      <div class="panel rv" id="pj-panel" style="--d:.25s; margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg class="chart" id="pj-svg" viewBox="0 0 560 280" role="img" aria-label="Gráfico da parte escolhida"></svg>
+      <div class="arima" id="arima" style="display:none"></div>
+      <p class="note" id="pj-note"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Na prática, limites e créditos</div>
+    <h2 class="rv" style="--d:.1s">O que a pesquisa muda e o que ela não diz</h2>
+    <div class="cards3">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)">
+        <h3>Para quem tem receitas ou dívidas em dólar</h3>
+        <p>Olhar além do VaR: saber de quanto costuma ser a perda nos piores dias ajuda a decidir quanto proteger. No período testado, o real foi a única das quatro moedas que passou dos limites.</p>
+        <span class="src">Artigos 2 e 3</span>
+      </div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)">
+        <h3>Para gestores de risco</h3>
+        <p>O ES muda muito conforme a conta. Vale calcular por mais de um método e ver quantas vezes cada limite é ultrapassado, como a tese fez, em vez de confiar num número só.</p>
+        <span class="src">Tabelas 12 e 13; leitura nossa</span>
+      </div>
+      <div class="pcard rv" style="--d:.25s; --pc:#334155">
+        <h3>Para pesquisadores</h3>
+        <p>Testar outros modelos para projetar a cauda do câmbio (o GARCH multivariado não projetou) e medir a efetividade do hedge que o método propõe.</p>
+        <span class="src">Conclusão, seção 5</span>
+      </div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>O hedge não foi simulado.</b> O artigo 3 descreve como achar a razão de hedge e medir sua efetividade, mas não traz razões nem resultados de proteção. <em>· observação nossa</em></li>
+          <li><b>Mais alarmes não quer dizer régua melhor.</b> A tese não compara os dias acima do limite com o que cada régua deveria produzir por acaso. <em>· observação nossa</em></li>
+          <li><b>Valores sem explicação.</b> O ES normal do real (21,7% ao dia) e o erro do iene no ARIMA (0,0416, maior que o do real) não combinam com o resto das tabelas e dos gráficos; a tese não os comenta. <em>· observação nossa</em></li>
+          <li><b>Período curto de teste.</b> Cerca de dois anos e quatro meses, com quatro moedas; outras moedas e outras crises podem dar outro quadro. <em>· observação nossa</em></li>
+          <li><b>Revisão restrita às bases.</b> O artigo 1 depende dos critérios e das bases escolhidas (Scopus, Web of Science e Science Direct). <em>· segundo o autor</em></li>
+          <li><b>Não é recomendação de investimento.</b> A pesquisa mede risco; não indica operações. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          FUKUI, Marcelo. <em>O expected shortfall como mensurador de riscos em uma estratégia de dynamic hedging em casos de exposição cambial.</em> Tese (Doutorado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2024. Orientador: Prof. Dr. Leonardo Fernando Cruz Basso. Coorientadora: Profa. Dra. Benilde Maria do Nascimento Oliveira.
+        </div>
+        <p style="margin-top:12px; font-size:.82rem">Dados do Banco Central do Brasil, da Bloomberg e do Investing.com; análises no Excel, no Stata e no OxMetrics. Esta versão simplifica o trabalho para o público em geral; as fórmulas e as tabelas completas estão no texto original.</p>
+        <div class="ctas" style="margin-top:14px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+
+  /* ================= DADOS DA TESE ================= */
+  var CUR = [
+    {k:'BRL', n:'Real', p:'USD × BRL', c:'var(--brl)', d:'Moeda de país emergente.'},
+    {k:'EUR', n:'Euro', p:'EUR × USD', c:'var(--eur)', d:'Economia de peso no cenário internacional.'},
+    {k:'JPY', n:'Iene', p:'USD × JPY', c:'var(--jpy)', d:'Economia de peso no cenário internacional.'},
+    {k:'CNY', n:'Iuane', p:'USD × CNY', c:'var(--cny)', d:'Economia de peso no cenário internacional.'}
+  ];
+  // Famílias de cálculo do ES (seção 3.6)
+  var FAM = {
+    nd:{n:'Normal', c:'var(--nd)', t:'Supõe que as variações seguem a curva normal, em forma de sino. É a conta mais simples.', s:'1 régua: ND'},
+    pot:{n:'Valor extremo', c:'var(--pot)', t:'Modela só a cauda, a partir de um limiar alto (método "pico sobre o limiar", da Teoria do Valor Extremo).', s:'1 régua: POT'},
+    hist:{n:'Históricas', c:'var(--hist)', t:'Não supõem forma nenhuma: ordenam as perdas que de fato aconteceram e tiram a média das piores. H é a clássica; H1, H2 e H3 corrigem o arredondamento.', s:'4 réguas: H, H1, H2, H3'},
+    jad:{n:'Históricas sem os extremos', c:'var(--jad)', t:'Também históricas, mas descartam parte das maiores perdas, para que um único dia fora da curva não domine a conta (Jadhav e colegas).', s:'2 réguas: J1, J2'},
+    mv:{n:'Média das réguas', c:'var(--mv)', t:'A média simples das outras oito. Estudos mostram que combinar previsões costuma errar menos que cada uma sozinha.', s:'1 régua: MV'}
+  };
+  // Tabela 12: ES diário (fração), por régua e moeda [BRL, EUR, JPY, CNY]
+  var ES = [
+    {k:'ND', f:'nd', v:[0.217419, 0.036566, 0.042638, 0.035828]},
+    {k:'POT', f:'pot', v:[0.032071, 0.033479, 0.032064, 0.033173]},
+    {k:'H', f:'hist', v:[0.023933, 0.029688, 0.034916, 0.028787]},
+    {k:'H1', f:'hist', v:[0.024584, 0.030568, 0.035729, 0.029653]},
+    {k:'H2', f:'hist', v:[0.023746, 0.029569, 0.034431, 0.028689]},
+    {k:'H3', f:'hist', v:[0.025144, 0.030256, 0.034916, 0.028786]},
+    {k:'J1', f:'jad', v:[0.032563, 0.033315, 0.039182, 0.032303]},
+    {k:'J2', f:'jad', v:[0.030265, 0.030963, 0.036416, 0.030023]},
+    {k:'MV', f:'mv', v:[0.051216, 0.0318, 0.036287, 0.030905]}
+  ];
+  // Tabela 13: dias em que a variação passou do limite (05/08/2021 a 01/12/2023)
+  var VIOL = {ND:[0,0,0,0], POT:[1,0,0,0], H:[11,0,0,0], H1:[8,0,0,0], H2:[11,0,0,0], H3:[6,0,0,0], J1:[1,0,0,0], J2:[2,0,0,0], MV:[1,0,0,0]};
+  // Tabelas 22 a 27: GJR(1,1) por série
+  var GJR = [
+    {k:'gs', n:'Libra à vista', a:0.085834, b:0.850302, g:0.021437, pg:0.4457, s:0.9575},
+    {k:'gf', n:'Libra futuro', a:0.093680, b:0.844804, g:-0.002438, pg:0.9445, s:0.936},
+    {k:'es', n:'Euro à vista', a:0.068639, b:0.923943, g:-0.012416, pg:0.5585, s:0.9801},
+    {k:'ef', n:'Euro futuro', a:0.083441, b:0.914917, g:-0.017122, pg:0.4779, s:0.9812},
+    {k:'ys', n:'Iene à vista', a:0.055387, b:0.933339, g:-0.008912, pg:0.6515, s:0.9798},
+    {k:'yf', n:'Iene futuro', a:0.109362, b:0.857685, g:-0.022883, pg:0.5303, s:0.9441}
+  ];
+  // Seção 4.6: ARIMA da razão futuro ÷ à vista (erro quadrático médio)
+  var ARIMA = [
+    {n:'Libra', c:'var(--navy)', e:'0,0000405', ok:true},
+    {n:'Euro', c:'var(--navy)', e:'0,0000363', ok:true},
+    {n:'Iene', c:'var(--jpy)', e:null, ok:true},
+    {n:'Real', c:'var(--red)', e:'0,0181172', ok:false}
+  ];
+
+  function pct(x, d){ return fmt(x * 100, d === undefined ? 1 : d) + '%'; }
+  function rng(seed){ return function(){ seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function gauss(r){ var u = 1 - r(), v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), W = 480, D = 120;
+    var st = makeStage(sc, W, D, {ay:'66%', rx:'62deg'});
+    rotatable(sc, st, -16, 10);
+    // forma de sino com cauda esquerda mais longa (ilustração)
+    var H = [3, 4, 6, 9, 16, 30, 62, 110, 150, 122, 70, 34, 14, 6, 3];
+    var bw = 26, gap = 5, x0 = (W - (H.length * bw + (H.length - 1) * gap)) / 2;
+    H.forEach(function(h, i){
+      var tail = i < 4, cut = i === 4;
+      st.appendChild(box({w:bw, d:44, x:x0 + i * (bw + gap), y:D / 2 - 22, h:h * 1.15, c:tail ? 'var(--es)' : (cut ? 'var(--var)' : '#cbd5e1')}));
+    });
+    flatLabel(st, 'perdas', x0 - 10, D / 2 + 34, 90, 'text-align:left');
+    flatLabel(st, 'ganhos', W - x0 - 80, D / 2 + 34, 90, 'text-align:right');
+  })();
+
+  /* ================= 02 · VaR × ES ================= */
+  (function(){
+    var r = rng(7), N = 1000, thin = [], fat = [];
+    for (var i = 0; i < N; i++){
+      thin.push(gauss(r) * 1.0);
+      var z = gauss(r), c = 0; for (var k = 0; k < 3; k++){ var g = gauss(r); c += g * g; }
+      fat.push(z / Math.sqrt(c / 3) * 0.62);   // t com 3 graus de liberdade
+    }
+    var tail = 'n', conf = 0.99, svg = $('r-svg');
+    function losses(a){ return a.map(function(x){ return -x; }).sort(function(p, q){ return q - p; }); }
+    var LT = losses(thin), LF = losses(fat);
+    function stats(L, c){ var n = Math.round(N * (1 - c)), v = L[n], s = 0; for (var i = 0; i < n; i++) s += L[i]; return {v:v, es:s / n, n:n}; }
+    function draw(){
+      var base = stats(LT, conf), arr = thin, L = LT, scale = 1;
+      if (tail === 'g'){ var f0 = stats(LF, conf); scale = base.v / f0.v; arr = fat.map(function(x){ return x * scale; }); L = LF.map(function(x){ return x * scale; }); }
+      var s = stats(L, conf);
+      $('r-var').textContent = '−' + fmt(s.v, 2) + '%';
+      $('r-es').textContent = '−' + fmt(s.es, 2) + '%';
+      $('r-n').textContent = s.n;
+      var lo = -6, hi = 4, bins = 40, cnt = new Array(bins).fill(0), bw = (hi - lo) / bins;
+      arr.forEach(function(x){ var b = Math.floor((Math.max(lo, Math.min(hi - 1e-9, x)) - lo) / bw); cnt[b]++; });
+      var X0 = 40, X1 = 540, Y0 = 26, Y1 = 236, mx = 90;
+      function X(v){ return X0 + (X1 - X0) * (v - lo) / (hi - lo); }
+      function Y(c){ return Y1 - (Y1 - Y0) * Math.min(c, mx) / mx; }
+      var h = '';
+      for (var t = -6; t <= 4; t += 2) h += '<line x1="' + X(t) + '" x2="' + X(t) + '" y1="' + Y0 + '" y2="' + Y1 + '" stroke="#eef2f7"/><text x="' + X(t) + '" y="' + (Y1 + 18) + '" text-anchor="middle" style="font-size:11px; fill:var(--muted)">' + (t > 0 ? '+' : '') + fmt(t, 0) + '%</text>';
+      cnt.forEach(function(c, b){
+        var x = lo + b * bw, inTail = x + bw <= -s.v + 1e-9;
+        h += '<rect x="' + (X(x) + 1) + '" y="' + Y(c) + '" width="' + (X(x + bw) - X(x) - 2) + '" height="' + (Y1 - Y(c)) + '" rx="2" fill="' + (inTail ? 'var(--es)' : '#cbd5e1') + '"/>';
+      });
+      h += '<line x1="' + X(-s.v) + '" x2="' + X(-s.v) + '" y1="' + (Y0 - 6) + '" y2="' + Y1 + '" stroke="var(--var)" stroke-width="3"/><text x="' + (X(-s.v) + 6) + '" y="' + (Y0 + 6) + '" style="font-size:12px; font-weight:700; fill:var(--var)">VaR −' + fmt(s.v, 2) + '%</text>';
+      var ex = X(Math.max(lo, -s.es));
+      h += '<path d="M' + ex + ' ' + (Y1 - 70) + ' l-7 -12 h14 z" fill="var(--es)"/><text x="' + ex + '" y="' + (Y1 - 88) + '" text-anchor="' + (ex < 90 ? 'start' : 'middle') + '" style="font-size:12px; font-weight:700; fill:var(--es)">ES −' + fmt(s.es, 2) + '%</text>';
+      h += '<text x="' + X0 + '" y="' + (Y1 + 36) + '" style="font-size:11px; fill:var(--muted)">variação num dia · perdas à esquerda</text>';
+      svg.innerHTML = h;
+    }
+    function bind(id, key){ each($(id).children, function(b){ b.addEventListener('click', function(){ if (key === 't') tail = b.dataset.t; else conf = +b.dataset.c; each($(id).children, function(c){ c.setAttribute('aria-pressed', c === b); }); draw(); }); }); }
+    bind('r-tail', 't'); bind('r-conf', 'c');
+    draw();
+  })();
+
+  /* ================= 03 · POR QUE O ES ================= */
+  (function(){
+    var T = [
+      {y:'1994', c:'var(--var)', t:'O VaR vira padrão', p:'Proposto pelo J.P. Morgan em 1994, o VaR resume o risco num número só: a perda máxima num período, com uma certa confiança. Simples de entender, foi adotado por bancos e reguladores.'},
+      {y:'1999', c:'#334155', t:'O VaR falha num teste de coerência', p:'Artzner e colegas listaram propriedades que uma boa medida de risco deve ter. Uma delas: <strong>o risco da carteira inteira não pode ser maior que a soma dos riscos das partes</strong> (a diversificação não pode piorar o risco). O VaR pode falhar nisso; o ES não falha.', demo:true},
+      {y:'2008', c:'var(--es)', t:'A crise do subprime', p:'Na crise, as perdas passaram muito do VaR, e o VaR não dizia de quanto seriam. Para a tese, ele "não foi capaz de informar aos hedgers sobre os perigos" da crise.'},
+      {y:'Basileia III', c:'var(--red)', t:'O ES entra na regra', p:'O terceiro acordo de Basileia, que define quanto capital os bancos precisam guardar, passou a usar o ES para medir o risco de mercado. O ES também tem um custo: com caudas gordas, é mais difícil de estimar com precisão que o VaR.'}
+    ];
+    var w = $('tl');
+    w.innerHTML = T.map(function(t, i){ return '<button style="--tc:' + t.c + '" data-i="' + i + '" aria-pressed="' + (i === 1) + '"><b>' + t.y + '</b><span>' + t.t + '</span></button>'; }).join('');
+    function show(i){
+      var t = T[i];
+      var demo = t.demo ? '<div class="sub-demo"><div><i style="--sc:var(--navy); height:40px"></i>risco da parte A<br><b>4</b></div><span class="op">+</span><div><i style="--sc:var(--navy); height:40px"></i>risco da parte B<br><b>4</b></div><span class="op">&lt;</span><div><i style="--sc:var(--red); height:100px"></i>risco do VaR<br>da carteira junta: <b>10</b></div></div><p style="font-size:.74rem; color:var(--muted); margin-top:6px">Ilustração nossa de como o VaR pode quebrar essa regra.</p>' : '';
+      $('tl-panel').innerHTML = '<div class="tag">' + t.y + '</div><h3>' + t.t + '</h3><p>' + t.p + '</p>' + demo;
+      each(w.children, function(b, j){ b.setAttribute('aria-pressed', i === j); });
+    }
+    each(w.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(1);
+  })();
+
+  /* ================= 04 · LITERATURA ================= */
+  (function(){
+    var F = [['Encontrados nas três bases (51 Scopus, 50 Web of Science, 60 Science Direct)', 161, '#8494ab'], ['Depois de filtros e repetidos', 85, '#475569'], ['Lidos a fundo: tratam de ES e gestão de riscos', 20, 'var(--red)']];
+    $('funnel').innerHTML = F.map(function(f){ return '<div><i style="--fc:' + f[2] + '; width:' + Math.max(14, f[1] / 161 * 100) + '%"></i><b>' + f[1] + '</b></div><div style="margin-top:-4px; font-size:.74rem; color:var(--muted)">' + f[0] + '</div>'; }).join('');
+    var C = [
+      {n:'Teorias', g:[['Probabilidade', 45], ['Valor extremo', 30], ['Carteiras', 20], ['Outras', 5]], t:'A teoria da probabilidade domina', p:'Comparar VaR e ES é, antes de tudo, um problema de probabilidade. A Teoria do Valor Extremo, que modela só os dias raros, vem em seguida.'},
+      {n:'Estatística', g:[['Não paramétrica', 65], ['Paramétrica', 35]], t:'A maioria não supõe uma curva', p:'Dois em cada três usam métodos não paramétricos, que trabalham com as perdas observadas sem impor a forma da curva. A tese seguiu essa pista no artigo 2.'},
+      {n:'Medidas', g:[['Só o ES', 55], ['VaR e ES juntos', 45]], t:'Quase metade usa as duas medidas', p:'Para o autor, o VaR sempre aparece porque o ES complementa o VaR: um diz onde começa a cauda, o outro, o tamanho dela.'},
+      {n:'Dados', g:[['Ricos e emergentes', 65], ['Só países ricos', 30], ['Só emergentes', 5]], t:'Só 5% olham apenas para emergentes', p:'A maior parte mistura países desenvolvidos e emergentes. Estudos só com emergentes são raros, o que dá peso ao real nesta tese.'},
+      {n:'Próximos passos', g:[['Novas medidas com o ES', 45], ['Políticas públicas', 30], ['ES × VaR na prática', 10], ['Outros usos', 10], ['Regressões', 5]], t:'Os autores pedem novas medidas', p:'O que os 20 artigos sugerem estudar depois: novas medidas de risco baseadas no ES e o uso do ES em políticas públicas e na regulação.'}
+    ];
+    var COL = ['var(--red)', 'var(--navy)', '#64748b', '#94a3b8', '#cbd5e1'];
+    var chips = $('lit-chips');
+    chips.innerHTML = C.map(function(c, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="' + (i === 1) + '">' + c.n + '</button>'; }).join('');
+    function show(i){
+      var c = C[i];
+      $('sbar').innerHTML = c.g.map(function(g, j){ return '<span style="flex-grow:' + g[1] + '; background:' + COL[j] + '; color:' + (j > 2 ? 'var(--ink)' : '#fff') + '">' + (g[1] >= 10 ? g[1] + '%' : '') + '</span>'; }).join('');
+      $('slist').innerHTML = c.g.map(function(g, j){ return '<div><i class="dot" style="background:' + COL[j] + '"></i>' + g[0] + '<b>' + g[1] + '%</b></div>'; }).join('');
+      $('lit-panel').innerHTML = '<div class="tag">Os 20 artigos · ' + c.n.toLowerCase() + '</div><h3>' + c.t + '</h3><p>' + c.p + '</p>';
+      each(chips.children, function(b, j){ b.setAttribute('aria-pressed', i === j); });
+    }
+    each(chips.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(1);
+  })();
+
+  /* ================= 05 · LABORATÓRIO ================= */
+  (function(){
+    var w = $('fam'), keys = Object.keys(FAM);
+    w.innerHTML = keys.map(function(k, i){ var f = FAM[k]; return '<button style="--fc:' + f.c + '" data-k="' + k + '" aria-pressed="' + (k === 'hist') + '"><i></i><span><b>' + f.n + '</b> · ' + f.s + '<small>' + f.t + '</small></span></button>'; }).join('');
+    each(w.children, function(b){ b.addEventListener('click', function(){ each(w.children, function(c){ c.setAttribute('aria-pressed', c === b); }); }); });
+    $('curr').innerHTML = CUR.map(function(c){ return '<div style="--cc:' + c.c + '"><b>' + c.n + '</b>' + c.p + '<br>' + c.d + '</div>'; }).join('');
+    var svg = $('lab-svg'), X0 = 30, X1 = 530;
+    function X(y){ return X0 + (X1 - X0) * (y - 2000) / 24; }
+    var a = X(2000.01), b = X(2021.6), c = X(2023.92), h = '';
+    h += '<rect x="' + a + '" y="52" width="' + (b - a) + '" height="40" rx="6" fill="var(--navy)"/><text x="' + ((a + b) / 2) + '" y="77" text-anchor="middle" style="font-size:13px; font-weight:700; fill:#fff">calcular os limites · 2000 a 2021</text>';
+    h += '<rect x="' + (b + 3) + '" y="52" width="' + (c - b - 3) + '" height="40" rx="6" fill="var(--red)"/><text x="' + ((b + c) / 2) + '" y="40" text-anchor="middle" style="font-size:12px; font-weight:700; fill:var(--red)">testar</text>';
+    [2000, 2005, 2010, 2015, 2020].forEach(function(y){ h += '<text x="' + X(y) + '" y="114" text-anchor="middle" style="font-size:11px; fill:var(--muted)">' + y + '</text><line x1="' + X(y) + '" x2="' + X(y) + '" y1="94" y2="100" stroke="#94a3b8"/>'; });
+    h += '<text x="' + X0 + '" y="146" style="font-size:12px; fill:var(--ink-2)">3/jan/2000 → 5/ago/2021 → 1/dez/2023</text>';
+    svg.innerHTML = h;
+  })();
+
+  /* ================= 06 · RÉGUAS (3D) ================= */
+  (function(){
+    var sc = $('es-scene'), W = 540, D = 120, ci = 0, zoom = 0;
+    var st = makeStage(sc, W, D, {ay:'70%', rx:'60deg'});
+    rotatable(sc, st, -12, 9);
+    var bw = 44, gap = 14, x0 = (W - (9 * bw + 8 * gap)) / 2, bars = [];
+    ES.forEach(function(e, i){
+      flatLabel(st, e.k, x0 + i * (bw + gap) - 6, D / 2 + 30, bw + 12);
+    });
+    var chips = $('es-chips');
+    chips.innerHTML = CUR.map(function(c, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="' + (i === 0) + '">' + c.n + '</button>'; }).join('');
+    $('es-legend').innerHTML = Object.keys(FAM).map(function(k){ return '<span><i class="dot" style="background:' + FAM[k].c + '"></i>' + FAM[k].n + '</span>'; }).join('');
+    var sel = -1;
+    function panel(){
+      var c = CUR[ci], vals = ES.map(function(e){ return e.v[ci]; });
+      var h = ES.filter(function(e){ return e.f === 'hist'; }).map(function(e){ return e.v[ci]; });
+      var t = '<div class="tag">' + c.n + ' · ' + c.p + '</div>';
+      if (sel >= 0){
+        var e = ES[sel];
+        t += '<h3>' + e.k + ' · ' + FAM[e.f].n + ': ' + pct(e.v[ci], 2) + ' ao dia</h3><p>' + FAM[e.f].t + '</p>';
+      } else {
+        t += '<h3>As históricas ficam entre ' + pct(Math.min.apply(null, h), 1) + ' e ' + pct(Math.max.apply(null, h), 1) + ' ao dia</h3><p>' + (ci === 0 ? 'No real, a régua normal fica em 21,7% ao dia, quase dez vezes as históricas. Use o botão para esconder essa coluna e ver as outras de perto.' : 'As nove réguas ficam entre ' + pct(Math.min.apply(null, vals), 1) + ' e ' + pct(Math.max.apply(null, vals), 1) + ' ao dia.') + ' Toque numa coluna.</p>';
+      }
+      $('es-panel').innerHTML = t;
+    }
+    function draw(){
+      bars.forEach(function(b){ b.remove(); }); bars = [];
+      var mx = (ci === 0 && !zoom) ? 0.2175 : 0.052;
+      $('es-zoom').style.display = ci === 0 ? '' : 'none';
+      ES.forEach(function(e, i){
+        var v = e.v[ci], hide = ci === 0 && zoom && e.k === 'ND';
+        var b = box({w:bw, d:44, x:x0 + i * (bw + gap), y:D / 2 - 22, h:hide ? 2 : Math.max(3, v / mx * 250), c:FAM[e.f].c, top:hide ? '' : fmt(v * 100, 1), cls:(hide ? 'off' : '') + (sel === i ? ' active' : '')});
+        b.addEventListener('click', function(){ if (M.wasDrag(sc)) return; sel = sel === i ? -1 : i; draw(); });
+        st.appendChild(b); bars.push(b);
+      });
+      panel();
+    }
+    each(chips.children, function(b){ b.addEventListener('click', function(){ ci = +b.dataset.i; sel = -1; each(chips.children, function(c){ c.setAttribute('aria-pressed', c === b); }); draw(); }); });
+    each($('es-zoom').children, function(b){ b.addEventListener('click', function(){ zoom = +b.dataset.z; each($('es-zoom').children, function(c){ c.setAttribute('aria-pressed', c === b); }); draw(); }); });
+    draw();
+  })();
+
+  /* ================= 07 · SÓ O REAL ROMPEU (3D) ================= */
+  (function(){
+    var sc = $('viol-scene'), W = 420, D = 400, shown = false;
+    var st = makeStage(sc, W, D, {ay:'54%', rx:'44deg'});
+    rotatable(sc, st, -10, 7);
+    var cw = 70, rh = 38, x0 = 110, y0 = 30, cubes = [];
+    CUR.forEach(function(c, j){ flatLabel(st, c.n, x0 + j * (cw + 6) - 6, y0 + 9 * (rh + 4) + 6, cw + 12, 'color:' + c.c).className += ' col'; });
+    ES.forEach(function(e, i){
+      flatLabel(st, e.k, 8, y0 + i * (rh + 4) + 10, 92, 'text-align:right');
+      CUR.forEach(function(c, j){
+        var n = VIOL[e.k][j], x = x0 + j * (cw + 6) + 14, y = y0 + i * (rh + 4) + 4;
+        if (!n){ st.appendChild(box({w:42, d:30, x:x, y:y, h:2, c:'#94a3b8', cls:'off'})); return; }
+        for (var k = 0; k < n; k++){
+          var b = box({w:42, d:26, x:x, y:y + 2, z:k * 8, h:6.5, c:'var(--red)', cls:'hide'});
+          (function(e, n){ b.addEventListener('click', function(){ if (!M.wasDrag(sc)) info(e, n); }); })(e, n);
+          st.appendChild(b); cubes.push({el:b, k:k, i:i});
+        }
+      });
+    });
+    function info(e, n){
+      $('viol-panel').innerHTML = '<div class="tag">Real · régua ' + e.k + ' (' + FAM[e.f].n.toLowerCase() + ')</div><h3>' + n + (n === 1 ? ' dia' : ' dias') + ' acima de ' + pct(e.v[0], 2) + '</h3><p>' + FAM[e.f].t + '</p>';
+    }
+    function reveal(){
+      if (shown) return; shown = true;
+      cubes.forEach(function(c){ setTimeout(function(){ c.el.classList.remove('hide'); }, reduce ? 0 : 60 * c.k + 40 * c.i); });
+    }
+    var g = $('guess');
+    g.innerHTML = CUR.map(function(c, i){ return '<button style="--cc:' + c.c + '" data-i="' + i + '" aria-pressed="false">' + c.n + '</button>'; }).join('');
+    function verdict(i){
+      var ok = i === 0;
+      $('viol-panel').innerHTML = '<div class="tag">' + (i < 0 ? 'Resultado' : (ok ? 'Você acertou' : 'Não foi essa')) + '</div><h3>Só o real passou do limite, e só em algumas réguas</h3><p>Com as históricas, o real passou do limite entre 6 e 11 dias. Com o valor extremo, as históricas sem extremos e a média, de 1 a 2 dias; com a normal, nenhum. Euro, iene e iuane ficaram sempre abaixo. Para o autor, o câmbio de países emergentes tende a ser mais volátil.</p>';
+    }
+    each(g.children, function(b){ b.addEventListener('click', function(){ each(g.children, function(c){ c.setAttribute('aria-pressed', c === b); }); reveal(); verdict(+b.dataset.i); }); });
+    $('viol-panel').innerHTML = '<div class="tag">Seu palpite</div><h3>Escolha uma moeda acima</h3><p>As pilhas aparecem depois do palpite. <button class="btn small ghost" id="viol-skip" style="margin-top:6px">Só mostrar</button></p>';
+    $('viol-skip').addEventListener('click', function(){ reveal(); verdict(-1); });
+  })();
+
+  /* ================= 08 · ALARMES ================= */
+  (function(){
+    var S = ES.map(function(e){ return {k:e.k, f:e.f, v:e.v[0] * 100, n:VIOL[e.k][0]}; }).sort(function(a, b){ return a.v - b.v; });
+    var svg = $('al-svg'), rg = $('al-range');
+    $('al-ticks').innerHTML = S.map(function(s){ return '<span>' + s.k + '</span>'; }).join('');
+    function draw(i){
+      var X0 = 52, X1 = 500, Y0 = 40, Y1 = 238, lo = 2, hi = 6;
+      function X(v){ return X0 + (X1 - X0) * (Math.min(v, hi) - lo) / (hi - lo); }
+      function Y(n){ return Y1 - (Y1 - Y0) * n / 12; }
+      var h = '';
+      for (var n = 0; n <= 12; n += 4) h += '<line x1="' + X0 + '" x2="' + (X1 + 30) + '" y1="' + Y(n) + '" y2="' + Y(n) + '" stroke="#eef2f7"/><text x="' + (X0 - 8) + '" y="' + (Y(n) + 4) + '" text-anchor="end" style="font-size:11px; fill:var(--muted)">' + n + '</text>';
+      for (var t = 2; t <= 5; t++) h += '<text x="' + X(t) + '" y="' + (Y1 + 18) + '" text-anchor="middle" style="font-size:11px; fill:var(--muted)">' + fmt(t, 0) + '%</text>';
+      h += '<text x="' + (X1 + 30) + '" y="' + (Y1 + 18) + '" text-anchor="end" style="font-size:11px; fill:var(--muted)">21,7% →</text>';
+      h += '<text x="' + X0 + '" y="' + (Y1 + 38) + '" style="font-size:11px; fill:var(--muted)">limite diário do ES (real)</text><text x="' + (X0 - 40) + '" y="14" style="font-size:11px; fill:var(--muted)">dias acima do limite no teste</text>';
+      var pts = S.map(function(s){ return (s.v > hi ? X1 + 30 : X(s.v)) + ',' + Y(s.n); });
+      h += '<polyline fill="none" stroke="#cbd5e1" stroke-width="2" points="' + pts.join(' ') + '"/>';
+      S.forEach(function(s, j){
+        var x = s.v > hi ? X1 + 30 : X(s.v), on = j === i;
+        h += '<circle cx="' + x + '" cy="' + Y(s.n) + '" r="' + (on ? 9 : 6) + '" fill="' + FAM[s.f].c + '" stroke="' + (on ? 'var(--ink)' : '#fff') + '" stroke-width="' + (on ? 3 : 2) + '"/>';
+      });
+      var s = S[i], sx = s.v > hi ? X1 + 30 : X(s.v);
+      h += '<text x="' + Math.min(sx, 470) + '" y="' + (Y(s.n) - 16) + '" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--ink)">' + s.k + '</text>';
+      svg.innerHTML = h;
+      $('al-days').innerHTML = new Array(s.n + 1).join('<span></span>');
+      each($('al-ticks').children, function(t, j){ t.classList.toggle('on', j === i); });
+      $('al-panel').innerHTML = '<div class="tag">Régua ' + s.k + ' · ' + FAM[s.f].n.toLowerCase() + '</div><h3>Limite de ' + fmt(s.v, 2) + '% ao dia: ' + s.n + (s.n === 1 ? ' dia acima' : ' dias acima') + '</h3><p>' + (s.f === 'hist' ? 'As réguas históricas dão os limites mais baixos e, por isso, os que mais soam.' : (s.k === 'ND' ? 'A régua normal do real ficou tão alta que nenhum dia chegou perto.' : 'Réguas mais altas soam pouco: 1 ou 2 dias em mais de dois anos.')) + '</p>';
+    }
+    rg.addEventListener('input', function(){ draw(+rg.value); });
+    draw(+rg.value);
+  })();
+
+  /* ================= 09 · HEDGE ================= */
+  (function(){
+    var shock = -0.05, x = 0.5, USD = 100000, R = 5;
+    var rows = [['Recebimento em dólar', 'spot'], ['Contrato futuro vendido', 'fut'], ['Resultado protegido', 'tot']];
+    $('hbars').innerHTML = rows.map(function(r){ return '<div class="hbar' + (r[1] === 'tot' ? ' tot' : '') + '"><span>' + r[0] + '</span><div class="tr" id="hb-' + r[1] + '"><i></i><b></b></div></div>'; }).join('');
+    function money(v){ return (v < 0 ? '−' : '+') + 'R$ ' + Math.round(Math.abs(v) / 1000).toLocaleString(EN ? 'en-US' : 'pt-BR') + ' mil'; }
+    function bar(id, v, mx, col){
+      var tr = $('hb-' + id), i = tr.querySelector('i'), b = tr.querySelector('b');
+      var w = Math.abs(v) / mx * 50;
+      i.style.left = (v < 0 ? 50 - w : 50) + '%'; i.style.width = w + '%'; i.style.background = col;
+      b.textContent = money(v);
+      b.style.left = (v < 0 ? Math.max(0, 50 - w - 0) : 50 + w) + '%';
+      b.style.transform = v < 0 ? 'translateX(calc(-100% - 6px))' : 'translateX(6px)';
+      if (v < 0 && 50 - w < 22){ b.style.left = '51%'; b.style.transform = 'translateX(6px)'; }
+      if (v >= 0 && 50 + w > 78){ b.style.left = '49%'; b.style.transform = 'translateX(calc(-100% - 6px))'; }
+    }
+    function draw(){
+      var spot = USD * R * shock, fut = -x * USD * R * shock, tot = spot + fut, mx = USD * R * 0.12 * 1.2;
+      bar('spot', spot, mx, spot < 0 ? 'var(--red)' : 'var(--navy)');
+      bar('fut', fut, mx, fut < 0 ? 'var(--red)' : 'var(--navy)');
+      bar('tot', tot, mx, tot < 0 ? 'var(--red)' : 'var(--navy)');
+      var msg = x === 0 ? 'Sem proteção, a empresa fica exposta a todo o movimento do dólar.' : (x === 1 ? 'Com 100%, o ganho de um lado cancela a perda do outro, na ilustração. Mas a empresa também abre mão do ganho se o dólar subir.' : (x > 1 ? 'Acima de 100%, a empresa passa a apostar contra o dólar: o hedge vira especulação, o que a tese diz querer evitar.' : 'Com proteção parcial, parte do risco continua com a empresa.'));
+      $('h-panel').innerHTML = '<div class="tag">Razão de hedge ' + Math.round(x * 100) + '%</div><p>' + msg + '</p>';
+    }
+    each($('h-shock').children, function(b){ b.addEventListener('click', function(){ shock = +b.dataset.s; each($('h-shock').children, function(c){ c.setAttribute('aria-pressed', c === b); }); draw(); }); });
+    $('h-range').addEventListener('input', function(){ x = +$('h-range').value / 10; draw(); });
+    draw();
+  })();
+
+  /* ================= 10 · VOLATILIDADE ================= */
+  (function(){
+    var chips = $('vol-chips'), cur = 2;
+    chips.innerHTML = GJR.map(function(g, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="' + (i === cur) + '">' + g.n + '</button>'; }).join('');
+    function half(p){ return Math.log(0.5) / Math.log(p); }
+    function draw(){
+      var X0 = 46, X1 = 540, Y0 = 26, Y1 = 220, days = 60, h = '';
+      function X(d){ return X0 + (X1 - X0) * d / days; }
+      function Y(f){ return Y1 - (Y1 - Y0) * f; }
+      [0, 0.5, 1].forEach(function(f){ h += '<line x1="' + X0 + '" x2="' + X1 + '" y1="' + Y(f) + '" y2="' + Y(f) + '" stroke="' + (f === 0.5 ? '#cbd5e1' : '#eef2f7') + '"' + (f === 0.5 ? ' stroke-dasharray="4 4"' : '') + '/><text x="' + (X0 - 8) + '" y="' + (Y(f) + 4) + '" text-anchor="end" style="font-size:11px; fill:var(--muted)">' + Math.round(f * 100) + '%</text>'; });
+      for (var d = 0; d <= days; d += 10) h += '<text x="' + X(d) + '" y="' + (Y1 + 18) + '" text-anchor="middle" style="font-size:11px; fill:var(--muted)">' + d + '</text>';
+      h += '<text x="' + X1 + '" y="' + (Y1 + 36) + '" text-anchor="end" style="font-size:11px; fill:var(--muted)">dias de negociação depois do susto</text>';
+      GJR.forEach(function(g, i){
+        var pts = []; for (var d = 0; d <= days; d++) pts.push(X(d) + ',' + Y(Math.pow(g.s, d)));
+        h += '<polyline fill="none" stroke="' + (i === cur ? 'var(--red)' : '#e2e8f0') + '" stroke-width="' + (i === cur ? 3.5 : 2) + '" points="' + pts.join(' ') + '"/>';
+      });
+      var g = GJR[cur], hl = half(g.s);
+      h += '<circle cx="' + X(hl) + '" cy="' + Y(0.5) + '" r="6" fill="var(--red)"/><text x="' + (X(hl) + 10) + '" y="' + (Y(0.5) - 10) + '" style="font-size:13px; font-weight:700; fill:var(--red)">metade em ~' + Math.round(hl) + ' dias</text>';
+      $('vol-svg').innerHTML = h;
+      $('ptab').innerHTML = '<div><b>' + fmt(g.a, 3) + '</b>alfa: o peso do susto de ontem (p ' + (EN ? '&lt; 0.05' : '&lt; 0,05') + ')</div><div><b>' + fmt(g.b, 3) + '</b>beta: a memória da agitação (p ' + (EN ? '&lt; 0.001' : '&lt; 0,001') + ')</div><div class="g"><b>' + fmt(g.g, 3) + '</b>gama: o peso extra da notícia ruim (p = ' + fmt(g.pg, 2) + ', não claro)</div>';
+      $('vol-panel').innerHTML = '<div class="tag">' + g.n + '</div><h3>Estabilidade ' + fmt(g.s, 3) + ': o susto cai à metade em cerca de ' + Math.round(hl) + ' dias</h3><p>A soma fica abaixo de 1, o que, para a tese, garante um modelo estável. Quanto mais perto de 1, mais devagar a agitação se apaga.</p>';
+      each(chips.children, function(b, j){ b.setAttribute('aria-pressed', j === cur); });
+    }
+    each(chips.children, function(b){ b.addEventListener('click', function(){ cur = +b.dataset.i; draw(); }); });
+    draw();
+  })();
+
+  /* ================= 11 · O INESPERADO ================= */
+  (function(){
+    var svg = $('pj-svg'), r = rng(11), noise = [], ratio = [], v = 1;
+    for (var i = 0; i < 120; i++) noise.push(gauss(r) * 0.55 + (r() < 0.04 ? gauss(r) * 1.4 : 0));
+    for (i = 0; i < 60; i++){ v = 1 + (v - 1) * 0.3 + gauss(r) * 0.0022; ratio.push(v); }
+    var P = {
+      gjr:{h:'A projeção não acompanhou o câmbio', p:'Nas três moedas e nos dois mercados, a parte GARCH funcionou e o modelo ficou estável, mas a projeção dos 321 dias finais "se aproxima de uma reta paralela ao eixo X". Para o autor, o DCC-GJR "pode não ser o melhor modelo para estes dados".', n:'<b>Desenho ilustrativo</b>, no formato da Figura 21 da tese (libra à vista): o retorno diário oscila (vermelho) e a projeção do modelo fica quase reta (azul). Os pontos são inventados.'},
+      arima:{h:'Bom em três moedas, ruim no real', p:'Com 1.590 dias (dezembro de 2017 a abril de 2024) e futuros de 30 dias, o ARIMA aprendeu com 80% dos dados e projetou os 20% finais da razão futuro ÷ à vista. O autor considerou o modelo viável para libra, euro e iene, e "não aconselhável" para o real.', n:'Seção 4.6 da tese. Erro quadrático médio: quanto menor, mais perto da razão real. O erro impresso para o iene (0,0416) é maior que o do real, embora o gráfico do iene oscile só entre 0,99 e 1,005; por isso não o mostramos.'},
+      ontem:{h:'Um dia à frente, tudo parece colado', p:'A razão futuro ÷ à vista fica quase sempre perto de 1 e muda pouco de um dia para outro. Nesse caso, até o palpite "amanhã igual a hoje" desenha uma linha colada à real. A tese não compara o ARIMA com esse palpite, então os gráficos sozinhos não mostram quanto o modelo acrescenta.', n:'<b>Ilustração e leitura nossas</b>, com uma série inventada perto de 1 (cinza) e o palpite "igual a ontem" (vermelho). Compare com as Figuras 27 a 30 da tese.'}
+    };
+    function axes(lo, hi, lab, fmtd){
+      var X0 = 52, X1 = 540, Y0 = 22, Y1 = 230, h = '';
+      for (var k = 0; k <= 2; k++){ var val = lo + (hi - lo) * k / 2, y = Y1 - (Y1 - Y0) * k / 2; h += '<line x1="' + X0 + '" x2="' + X1 + '" y1="' + y + '" y2="' + y + '" stroke="#eef2f7"/><text x="' + (X0 - 8) + '" y="' + (y + 4) + '" text-anchor="end" style="font-size:11px; fill:var(--muted)">' + fmt(val, fmtd) + '</text>'; }
+      h += '<text x="' + X0 + '" y="' + (Y1 + 30) + '" style="font-size:11px; fill:var(--muted)">' + lab + '</text>';
+      return h;
+    }
+    function line(arr, lo, hi, col, w, off){
+      var X0 = 52, X1 = 540, Y0 = 22, Y1 = 230, n = arr.length + (off || 0);
+      return '<polyline fill="none" stroke="' + col + '" stroke-width="' + w + '" stroke-linejoin="round" points="' + arr.map(function(v, i){ return (X0 + (X1 - X0) * (i + (off || 0)) / (n - 1)) + ',' + (Y1 - (Y1 - Y0) * (v - lo) / (hi - lo)); }).join(' ') + '"/>';
+    }
+    function show(k){
+      var p = P[k], h = '';
+      svg.style.display = k === 'arima' ? 'none' : '';
+      $('arima').style.display = k === 'arima' ? '' : 'none';
+      if (k === 'gjr'){
+        h = axes(-2, 2, 'dias do período de validação (ilustração)', 0) + line(noise, -2, 2, 'var(--red)', 1.4) + line(noise.map(function(_, i){ return 0.33 - 0.12 * Math.exp(-i / 6); }), -2, 2, 'var(--navy)', 3);
+        h += '<text x="534" y="' + (230 - 208 * (2.33 / 4) - 8) + '" text-anchor="end" style="font-size:12px; font-weight:700; fill:var(--navy)">projeção</text>';
+      } else if (k === 'ontem'){
+        var lo = 0.992, hi = 1.006;
+        h = axes(lo, hi, 'dias (ilustração)', 3) + line(ratio, lo, hi, '#94a3b8', 3) + line(ratio.slice(0, -1), lo, hi, 'var(--red)', 1.6, 1);
+        h += '<text x="60" y="36" style="font-size:12px; font-weight:700; fill:#64748b">razão real</text><text x="60" y="54" style="font-size:12px; font-weight:700; fill:var(--red)">"igual a ontem"</text>';
+      }
+      svg.innerHTML = h;
+      $('pj-panel').innerHTML = '<h3>' + p.h + '</h3><p>' + p.p + '</p>';
+      $('pj-note').innerHTML = p.n;
+      each($('pj-seg').children, function(b){ b.setAttribute('aria-pressed', b.dataset.v === k); });
+    }
+    $('arima').innerHTML = ARIMA.map(function(a){ return '<div style="--cc:' + a.c + '"><b>' + a.n + '</b>' + (a.e ? 'erro: ' + a.e : 'erro: ver nota') + '<br><span class="v' + (a.ok ? '' : ' no') + '">' + (a.ok ? 'viável, para o autor' : 'não aconselhável') + '</span></div>'; }).join('');
+    each($('pj-seg').children, function(b){ b.addEventListener('click', function(){ show(b.dataset.v); }); });
+    show('gjr');
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
