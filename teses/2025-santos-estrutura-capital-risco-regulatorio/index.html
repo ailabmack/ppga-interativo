@@ -1,0 +1,1112 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A nota do regulador muda a dívida das empresas de energia? · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Guilherme Spiazzi dos Santos (PPGA Mackenzie, 2025) sobre risco regulatório e estrutura de capital de 137 distribuidoras de energia dos Estados Unidos, de 2012 a 2023, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2025-santos-estrutura-capital-risco-regulatorio/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><path d=%22M18 4 L9 18 h6 l-2 10 l10 -15 h-6 z%22 fill=%22white%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  @property --z{syntax:'<length>'; inherits:false; initial-value:0px;}
+  :root{
+    --debt:var(--navy);   /* dívida */
+    --eq:#dbe3ee;         /* patrimônio */
+    --risk:var(--red);    /* nota de risco regulatório (escala de tons) */
+    --g0:#1e293b;         /* estados integrados (não reestruturados) */
+    --g1:#64748b;         /* parcialmente reestruturados */
+    --g2:#b3c0d4;         /* totalmente reestruturados */
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+  .stripe{background-image:repeating-linear-gradient(45deg, rgb(255 255 255 / .5) 0 4px, transparent 4px 8px);}
+  .ilus{display:inline-block; font-size:.64rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel .nt{text-transform:none; letter-spacing:0;}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 13px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.75rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px;}
+  .chips button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-size:.78rem; cursor:pointer; color:var(--ink-2);}
+  .chips button:hover{border-color:var(--ink);}
+  .chips button[aria-pressed="true"]{border-color:var(--ink); background:var(--ink); color:#fff;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 3.7vw, 2.5rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.86rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.77rem; color:var(--muted); text-align:center; margin-top:6px; max-width:36em; margin-left:auto; margin-right:auto;}
+  #hero-line{font-family:var(--serif); text-align:center; font-size:1.02rem; color:var(--ink); margin-bottom:2px; min-height:1.6em;}
+  #hero-line b{color:var(--red); font-size:1.3rem;}
+  #hero-line b.d{color:var(--debt);}
+  #hero-scene{perspective:2200px;}
+  #hero-scene .slab{transition:transform .55s cubic-bezier(.2,.8,.2,1), --h .6s, --z .6s;}
+  #hero-scene .face-label{font-size:12px; letter-spacing:.06em;}
+  #hero-scene .top-label{font-size:16px; font-family:var(--serif);}
+  #hero-scene .floor-label{font-size:13px; color:var(--muted);}
+  #hero-scene .slab.active{--oz:16px;}
+  #hero-scene .slab.lt .top-label{color:var(--ink);}
+
+  /* ---------- 02 · A comissão ---------- */
+  .steps{display:grid; gap:6px; margin-top:6px;}
+  .steps button{display:grid; grid-template-columns:30px 1fr; gap:10px; align-items:center; text-align:left; border:1px solid var(--border); background:var(--card); border-radius:12px; padding:8px 12px; cursor:pointer; font-size:.88rem; color:var(--ink-2);}
+  .steps button b{font-family:var(--serif); width:28px; height:28px; border-radius:50%; background:#e2e8f0; color:var(--ink); display:flex; align-items:center; justify-content:center;}
+  .steps button[aria-pressed="true"]{border-color:var(--ink); color:var(--ink);}
+  .steps button[aria-pressed="true"] b{background:var(--ink); color:#fff;}
+  #rc-panel{min-height:128px; margin-top:12px;}
+  .rcw{display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:center;}
+  @media (max-width:600px){ .rcw{grid-template-columns:1fr;} }
+  #rc-scene{perspective:2000px;}
+  #rc-scene .slab{transition:transform .5s cubic-bezier(.2,.8,.2,1);}
+  #rc-scene .slab.active{--ox:-26px;}
+  .rclist{display:grid; gap:4px;}
+  .rclist button{display:grid; grid-template-columns:14px 1fr auto; gap:8px; align-items:center; text-align:left; border:1px solid var(--border); background:var(--card); border-radius:9px; padding:5px 9px; font-size:.78rem; cursor:pointer; color:var(--ink-2);}
+  .rclist button i{width:12px; height:12px; border-radius:3px;}
+  .rclist button b{font-variant-numeric:tabular-nums; color:var(--ink);}
+  .rclist button[aria-pressed="true"]{border-color:var(--ink); background:#f1f5f9;}
+
+  /* ---------- 03 · Dois lados ---------- */
+  #bal-svg{width:100%; display:block;}
+  #bal-svg text{font-family:var(--sans);}
+  @media (max-width:600px){ #bal-svg text{font-size:21px !important;} }
+  #bal-svg .beam{transition:transform .8s cubic-bezier(.2,.8,.2,1); transform-origin:280px 96px;}
+  .args{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;}
+  .args h4{margin:0 0 2px; font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);}
+  .args .col{display:grid; gap:5px; align-content:start;}
+  .args button{text-align:left; border:1px solid var(--border); background:var(--card); border-radius:9px; padding:6px 9px; font-size:.78rem; line-height:1.3; cursor:pointer; color:var(--muted); border-left:4px solid #e2e8f0;}
+  .args button[aria-pressed="true"]{color:var(--ink); border-left-color:var(--ac);}
+  .args button.sel{box-shadow:0 0 0 2px var(--ink) inset;}
+  #arg-panel{min-height:104px; margin-top:12px;}
+
+  /* ---------- 04/05 · Mapas 3D ---------- */
+  #map-scene, #grp-scene{perspective:2400px;}
+  #map-scene .slab, #grp-scene .slab{transition:transform .5s cubic-bezier(.2,.8,.2,1), --h .6s; cursor:pointer;}
+  #map-scene .top-label, #grp-scene .top-label{font-size:11px; font-weight:700; letter-spacing:.02em;}
+  #map-scene .slab.dk .top-label, #grp-scene .slab.dk .top-label{color:#fff;}
+  #map-scene .slab .top-label, #grp-scene .slab .top-label{color:var(--ink);}
+  #map-scene .slab.active, #grp-scene .slab.active{--oz:14px;}
+  #map-scene .slab.active > i, #grp-scene .slab.active > i{box-shadow:inset 0 0 0 2px var(--ink);}
+  #grp-scene .slab.dim > i{opacity:.1;}
+  #grp-scene .slab.hl > i{box-shadow:inset 0 0 0 1.5px var(--ink);}
+  .scale9{display:grid; grid-template-columns:repeat(9, 1fr); gap:3px; margin-top:12px; max-width:440px;}
+  .scale9 span{height:26px; border-radius:5px; display:flex; align-items:center; justify-content:center; font-size:.8rem; font-weight:700;}
+  .scale9-l{display:grid; grid-template-columns:repeat(3, 1fr); gap:3px; max-width:440px; font-size:.68rem; color:var(--muted); text-align:center; line-height:1.25; margin-top:4px;}
+  .yr{display:flex; align-items:center; gap:10px; margin-top:12px;}
+  .yr input{flex:1; accent-color:var(--red);}
+  .yr b{font-family:var(--serif); font-size:1.15rem; min-width:3em; color:var(--ink);}
+  .yr button{border:1px solid var(--border); background:var(--card); border-radius:8px; padding:5px 10px; font-size:.8rem; cursor:pointer;}
+  #map-panel, #grp-panel{min-height:132px; margin-top:12px;}
+  .spark{display:grid; grid-template-columns:repeat(12, 1fr); gap:3px; align-items:end; height:64px; margin:6px 0 2px;}
+  .spark i{display:block; border-radius:3px 3px 0 0; position:relative;}
+  .spark i.cur{box-shadow:0 0 0 2px var(--ink);}
+  .spark-y{display:grid; grid-template-columns:repeat(12, 1fr); gap:3px; font-size:.6rem; color:var(--muted); text-align:center;}
+  .firms{font-size:.74rem; line-height:1.35; color:var(--ink-2); margin:4px 0 0; padding-left:16px; display:grid; grid-template-columns:1fr 1fr; column-gap:22px; max-height:118px; overflow:auto;}
+  @media (max-width:600px){ .firms{grid-template-columns:1fr;} }
+  #chain-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px; margin-top:12px;}
+  #chain-svg text{font-family:var(--sans);}
+  @media (max-width:600px){ #chain-svg text{font-size:17px !important;} #chain-svg text.sm{font-size:14px !important;} }
+
+  /* ---------- 06 · Amostra ---------- */
+  .fun{display:grid; gap:7px; margin-top:6px;}
+  .fun button{display:block; text-align:left; border:1px solid var(--border); background:var(--card); border-radius:11px; padding:7px 12px; cursor:pointer;}
+  .fun button[aria-pressed="true"]{border-color:var(--ink);}
+  .fun .fl{display:flex; justify-content:space-between; gap:10px; font-size:.8rem; color:var(--ink-2);}
+  .fun .fl b{font-family:var(--serif); font-size:1.05rem; color:var(--ink);}
+  .fun .fb{height:8px; background:#eef2f7; border-radius:4px; margin-top:5px; overflow:hidden;}
+  .fun .fb i{display:block; height:100%; background:var(--ink-2); border-radius:4px; min-width:3px;}
+  .fun button:last-child .fb i{background:var(--red);}
+  .firmdots{display:grid; grid-template-columns:repeat(14, minmax(0, 1fr)); gap:4px; max-width:340px; margin:10px auto 0;}
+  .firmdots i{aspect-ratio:1; border-radius:50%; background:var(--g0); transition:background .4s, transform .4s, box-shadow .4s;}
+  #smp-panel{min-height:96px; margin-top:12px;}
+
+  /* ---------- 07 · Calculadora ---------- */
+  .calc{display:grid; grid-template-columns:150px 1fr; gap:18px; align-items:center;}
+  @media (max-width:520px){ .calc{grid-template-columns:110px 1fr;} }
+  .capbar{position:relative; height:230px; border:2px solid var(--ink-2); border-radius:8px; background:var(--eq); overflow:hidden;}
+  .capbar i{position:absolute; left:0; right:0; bottom:0; background:var(--debt); transition:height .35s;}
+  .capbar span{position:absolute; left:0; right:0; text-align:center; font-size:.74rem; font-weight:700;}
+  .capbar .se{top:8px; color:var(--ink-2);}
+  .capbar .sd{bottom:8px; color:#fff;}
+  .ctl{margin-top:10px;}
+  .ctl label{display:flex; justify-content:space-between; font-size:.86rem; font-weight:600; color:var(--ink);}
+  .ctl label span{font-variant-numeric:tabular-nums; color:var(--red);}
+  .ctl input{width:100%; accent-color:var(--red);}
+  .ctl small{display:block; font-size:.72rem; color:var(--muted);}
+  .big{font-family:var(--serif); font-weight:700; font-size:2.2rem; line-height:1.1; color:var(--debt);}
+  .big small{display:block; font-family:var(--sans); font-size:.76rem; font-weight:400; color:var(--muted);}
+  .rul{position:relative; height:52px; margin:30px 8px 0;}
+  .rul::before{content:""; position:absolute; left:0; right:0; top:14px; height:6px; border-radius:3px; background:#e2e8f0;}
+  .rul .band{position:absolute; top:12px; height:10px; background:color-mix(in srgb, var(--debt) 25%, white); border-radius:3px;}
+  .rul .mk{position:absolute; top:6px; width:2px; height:22px; margin-left:-1px; background:var(--ink);}
+  .rul .mk span{position:absolute; top:24px; left:50%; transform:translateX(-50%); font-size:.62rem; white-space:nowrap; color:var(--ink-2); font-weight:600; text-align:center; line-height:1.2;}
+  .rul .mk.up span{top:-28px;}
+  .rul .mk.l span{left:0; transform:none;} .rul .mk.r span{left:auto; right:0; transform:none;}
+  .rul .you{position:absolute; top:9px; width:16px; height:16px; margin-left:-8px; border-radius:50%; background:#fff; border:3px solid var(--red); transition:left .25s;}
+  .pres{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px;}
+  .pres button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-size:.78rem; cursor:pointer; color:var(--ink-2);}
+  .pres button:hover{border-color:var(--ink);}
+  #lev-msg{font-size:.86rem; color:var(--ink-2); min-height:3em; margin-top:8px;}
+
+  /* ---------- 08 · Hipóteses ---------- */
+  .hyps{display:grid; gap:8px; margin-top:10px;}
+  .hyp{display:grid; grid-template-columns:40px 1fr; gap:8px; align-items:start; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 12px; box-shadow:var(--shadow); border-left:5px solid var(--hc, var(--border));}
+  .hyp .hn{font-family:var(--serif); font-weight:900; font-size:1.15rem; color:var(--ink);}
+  .hyp .q{font-size:.86rem; color:var(--ink); font-weight:600; line-height:1.35;}
+  .hyp .qd{font-size:.76rem; color:var(--muted); line-height:1.4; margin-top:2px;}
+  .hyp .opts{display:flex; gap:6px; margin-top:6px;}
+  .hyp .opts button{border:1px solid var(--border); background:var(--card); border-radius:8px; padding:5px 10px; font-size:.78rem; font-weight:600; cursor:pointer; color:var(--ink);}
+  .hyp .opts button:hover{border-color:var(--ink);}
+  .hyp .res{display:none; font-size:.76rem; color:var(--ink-2); margin-top:4px; line-height:1.42;}
+  .hyp .res b{color:var(--ink);}
+  .hyp.done .opts{display:none;}
+  .hyp.done .res{display:block;}
+  #hyp-score{font-size:.9rem; color:var(--ink-2); margin-top:12px; min-height:1.5em;}
+  .forest{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 16px 10px; box-shadow:var(--shadow);}
+  .forest h3{font-size:.95rem; margin-bottom:2px;}
+  .forest .sub{font-size:.76rem; color:var(--muted); margin-bottom:8px;}
+  .fr{display:grid; grid-template-columns:150px 1fr 120px; gap:10px; align-items:center; padding:7px 0; border-top:1px solid #f1f5f9; font-size:.8rem; color:var(--ink-2); transition:opacity .4s;}
+  .fr.off{opacity:.25;}
+  .fr .tr{position:relative; height:26px;}
+  .fr .tr::before{content:""; position:absolute; left:50%; top:0; bottom:0; width:1px; background:var(--ink-2);}
+  .fr .ci{position:absolute; top:10px; height:6px; border-radius:3px; background:color-mix(in srgb, var(--debt) 35%, white);}
+  .fr .pt{position:absolute; top:6px; width:14px; height:14px; margin-left:-7px; border-radius:50%; background:var(--debt); border:2px solid #fff; box-shadow:0 0 0 1px var(--debt);}
+  .fr .v{font-variant-numeric:tabular-nums; font-size:.74rem; line-height:1.3;}
+  .fr .v b{color:var(--ink); font-size:.82rem;}
+  .fax{display:grid; grid-template-columns:150px 1fr 120px; gap:10px; font-size:.66rem; color:var(--muted);}
+  .fax div{display:flex; justify-content:space-between;}
+  @media (max-width:600px){ .fr, .fax{grid-template-columns:96px 1fr 84px; gap:6px;} .fr{font-size:.72rem;} }
+
+  /* ---------- 09 · Simulador ---------- */
+  #sim-scene{perspective:1800px;}
+  #sim-scene .slab{transition:--h .45s, --z .45s;}
+  #sim-scene .face-label{font-size:12px; letter-spacing:.06em;}
+  .contrib{display:grid; gap:6px; margin-top:12px;}
+  .cb{display:grid; grid-template-columns:150px 1fr 74px; gap:10px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .cb .tr{position:relative; height:18px; background:#f1f5f9; border-radius:4px;}
+  .cb .tr::before{content:""; position:absolute; left:50%; top:-3px; bottom:-3px; width:1px; background:var(--ink-2);}
+  .cb .tr i{position:absolute; top:2px; bottom:2px; border-radius:3px; background:var(--debt); transition:left .35s, width .35s;}
+  .cb .tr i.neg{background-color:var(--debt); background-image:repeating-linear-gradient(45deg, rgb(255 255 255 / .5) 0 4px, transparent 4px 8px);}
+  .cb .tr i.ns{background:#cbd5e1;}
+  .cb .tr .band{position:absolute; top:6px; height:6px; background:rgb(100 116 139 / .25); border-radius:3px;}
+  .cb b{font-variant-numeric:tabular-nums; color:var(--ink); text-align:right;}
+  .cb small{display:block; font-size:.66rem; color:var(--muted);}
+  @media (max-width:600px){ .cb{grid-template-columns:100px 1fr 62px; gap:6px;} }
+  #sim-out{text-align:center; margin-top:4px;}
+
+  /* ---------- 10 · Ajuste ---------- */
+  #adj-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  #adj-svg text{font-family:var(--sans);}
+  #adj-svg rect.b{transition:height .6s cubic-bezier(.2,.8,.2,1), y .6s cubic-bezier(.2,.8,.2,1);}
+  #adj-panel{min-height:120px; margin-top:12px;}
+  @media (max-width:600px){ #adj-svg text{font-size:20px !important;} #adj-svg text.big{font-size:24px !important;} }
+
+  /* ---------- 11 · Inesperado ---------- */
+  .guess{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .guess button{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:8px 12px; font-size:.84rem; font-weight:600; cursor:pointer; color:var(--ink);}
+  .guess button:hover{border-color:var(--ink);}
+  .guess button.right{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .guess button.wrong{opacity:.45;}
+  #guess-msg{font-size:.86rem; color:var(--ink-2); margin-top:8px; min-height:1.4em;}
+  .signs{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+  .sign{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 12px; border-top:5px solid var(--sc);}
+  .sign .k{font-size:.64rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--muted); display:block;}
+  .sign .v{font-family:var(--serif); font-size:1.4rem; font-weight:700; color:var(--ink); display:block; line-height:1.2;}
+  .sign .d{font-size:.74rem; color:var(--ink-2); line-height:1.35; display:block;}
+  .mx-wrap{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px 12px 8px; box-shadow:var(--shadow);}
+  .mx{display:grid; gap:1px; grid-template-columns:28px repeat(49, minmax(0, 1fr));}
+  .mx .yl{font-size:.58rem; color:var(--muted); text-align:right; padding-right:3px; line-height:11px;}
+  .mx i{height:11px; border-radius:1px; transition:background .4s, opacity .4s, box-shadow .4s; cursor:pointer;}
+  .mx i.gap{margin-left:5px;}
+  .mx.only i:not(.ch){opacity:.12;}
+  .mx.only i.ch{box-shadow:0 0 0 1px var(--ink);}
+  .mx i.selc{outline:2px solid var(--ink); outline-offset:0;}
+  .mxg{display:grid; grid-template-columns:28px 32fr 5fr 12fr; gap:5px; font-size:.62rem; color:var(--muted); margin-top:4px; text-align:center;}
+  .mxtools{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:10px;}
+  .mxtools select{font:inherit; font-size:.82rem; border:1px solid var(--border); border-radius:9px; padding:5px 9px; background:var(--card); color:var(--ink); max-width:100%;}
+  #mx-panel{min-height:104px; margin-top:10px;}
+  @media (max-width:600px){ .mx i{height:9px;} .mx .yl{line-height:9px; font-size:.5rem;} .mx{grid-template-columns:20px repeat(49, minmax(0, 1fr));} .mxg{grid-template-columns:20px 32fr 5fr 12fr;} }
+
+  /* ---------- 12 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.77rem; color:var(--ink-2); line-height:1.42;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2025-santos-estrutura-capital-risco-regulatorio/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2025</div>
+      <h1 class="rv" style="--d:.1s">A nota do regulador muda a dívida das empresas de energia?</h1>
+      <p class="sub rv" style="--d:.2s">Nos EUA, uma comissão de cada estado decide quanto a empresa de energia pode cobrar, e uma agência dá nota ao clima dessas comissões, de 1 (risco menor) a 9 (risco maior). A tese acompanhou 137 empresas de 2012 a 2023 para ver se a nota pesa na hora de se endividar. Em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Guilherme Spiazzi dos Santos</span>
+        <span><b>Orientador:</b> Prof. Dr. Wilson Toshiro Nakamura</span>
+        <span><b>Coorientador:</b> Prof. Dr. Manuel José da Rocha Armada (Universidade do Minho)</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#comissao">Começar →</a>
+        <a class="btn ghost" href="#hipoteses">Ir direto ao resultado</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div id="hero-line" aria-live="off"></div>
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="540x350" role="img" aria-label="Nove placas de nota, de 1 a 9, à frente de uma coluna de capital com a dívida embaixo e o patrimônio em cima; a nota acesa muda e a dívida quase não se mexe"></div></div>
+      <p class="cap-legend">Ilustração com o coeficiente da tese (Tabela 16): a nota acesa muda de 1 a 9 e a dívida prevista, partindo da média de 46,9% do capital, muda menos de 0,1 ponto percentual por nota.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-7"><a href="https://brasil.un.org/pt-br/sdgs/7" target="_blank" rel="noopener" title="ODS 7 · Energia limpa e acessível: Estuda como as distribuidoras de energia dos EUA financiam a rede sob comissões que buscam serviço confiável a preço justo, e mostra que a nota de risco regulatório do estado não mudou o endividamento delas."><b>7</b>Energia limpa e acessível</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · A COMISSÃO -->
+<section class="slide" id="comissao" data-label="Quem decide a tarifa">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O problema</div>
+      <h2 class="rv" style="--d:.1s">Quem decide quanto a empresa de energia pode cobrar é uma comissão do estado</h2>
+      <p class="lede rv" style="--d:.15s">As distribuidoras privadas de energia dos EUA são monopólios regulados. Para mudar a tarifa, abre-se um processo na comissão de serviços públicos do estado (o <em>rate case</em>). Siga os três passos.</p>
+      <div class="steps rv" id="rc-steps" style="--d:.2s"></div>
+      <div class="panel rv" id="rc-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="rcw">
+        <div class="fit-wrap"><div class="scene draggable" id="rc-scene" data-fit="260x330" role="img" aria-label="Pilha de seis camadas: para onde foi cada 100 dólares de receita das grandes distribuidoras em 2022"></div></div>
+        <div>
+          <div class="tag" style="font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px">De cada US$ 100 de receita (2022)</div>
+          <div class="rclist" id="rc-list"></div>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>160 milhões</b><span>clientes de energia elétrica nos EUA em 2022</span></div>
+        <div class="stat"><b>US$ 485 bi</b><span>em vendas de energia em 2022, 14,9% a mais que em 2021</span></div>
+        <div class="stat"><b>90%</b><span>dos clientes atendidos por empresas que fornecem e entregam a energia</span></div>
+      </div>
+      <p class="note">Tabelas 1, 2 e 4 da tese (dados da EIA, 2022). A pilha usa a receita das grandes distribuidoras privadas (US$ 381,1 bilhões); a divisão por US$ 100 é conta nossa e soma 99,9 por arredondamento.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · DOIS LADOS -->
+<section class="slide" id="teoria" data-label="O que dizem os estudos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> A pergunta</div>
+      <h2 class="rv" style="--d:.1s">Os estudos anteriores apontam para os dois lados</h2>
+      <p class="lede rv" style="--d:.15s">Pela teoria clássica, quem corre mais risco deve se endividar menos. Com regulação, porém, a dívida também pode virar ferramenta. Ligue e desligue os argumentos e veja para onde pende a balança.</p>
+      <div class="panel rv" id="arg-panel" style="--d:.2s" aria-live="polite"></div>
+      <p class="note rv" style="--d:.25s"><span class="ilus">ilustração</span> A balança só conta argumentos; não mede a força de cada um. Os argumentos resumem as seções 2.3 e 3 da tese. A tese aposta no lado esquerdo: mais risco, menos dívida (hipótese 1).</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="bal-svg" viewBox="0 0 560 270" role="img" aria-label="Balança com o prato menos dívida à esquerda e mais dívida à direita"></svg>
+      <div class="args" id="args"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · A NOTA -->
+<section class="slide" id="nota" data-label="A nota de 1 a 9">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> A medida do risco</div>
+      <h2 class="rv" style="--d:.1s">Uma agência dá a cada estado uma nota de risco regulatório, de 1 a 9</h2>
+      <p class="lede rv" style="--d:.15s">A Regulatory Research Associates (RRA, da S&amp;P Global) avalia mais de 30 indicadores, como os retornos que a comissão costuma autorizar e o resultado dos processos de tarifa. A nota pensa no investidor: 1 é o clima mais favorável; 9, o mais arriscado.</p>
+      <div class="scale9 rv" id="scale9" style="--d:.2s"></div>
+      <div class="scale9-l rv" style="--d:.2s"><span>acima da média<br>(risco menor)</span><span>na média</span><span>abaixo da média<br>(risco maior)</span></div>
+      <div class="panel rv" id="map-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="map-scene" data-fit="560x350" role="img" aria-label="Mapa dos estados em ladrilhos 3D; a altura e a cor são a nota de risco regulatório do ano escolhido"></div></div>
+      <div class="yr"><button id="map-play" type="button">▶ animar</button><input type="range" id="map-year" min="2012" max="2023" step="1" value="2023" aria-label="Ano"><b id="map-yl">2023</b></div>
+      <p class="note">Toque num estado. Apêndice B: nota de fim de ano do estado onde a empresa mais atua. Média 4,72 e desvio-padrão 1,67 (Tabela 14). Nebraska e o Distrito de Columbia não têm empresa na amostra (ladrilhos vazados).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · O MERCADO -->
+<section class="slide" id="mercado" data-label="Três tipos de mercado">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> A reestruturação</div>
+      <h2 class="rv" style="--d:.1s">Em 17 estados e na capital, a venda de energia ganhou concorrência</h2>
+      <p class="lede rv" style="--d:.15s">Desde os anos 1990, parte dos estados separou quem gera a energia de quem a entrega. A tese divide os estados em três grupos.</p>
+      <div class="seg rv" id="grp-seg" style="--d:.2s" role="group" aria-label="Tipo de mercado">
+        <button data-g="0" aria-pressed="true">Integrados</button>
+        <button data-g="1" aria-pressed="false">Parciais</button>
+        <button data-g="2" aria-pressed="false">Totais</button>
+      </div>
+      <svg id="chain-svg" class="rv" style="--d:.22s" viewBox="0 10 560 128" role="img" aria-label="Cadeia da energia: geração, transmissão, distribuição e cliente"></svg>
+      <p class="note rv" style="--d:.25s">Altura = número de empresas da amostra no estado (Apêndice A); toque num estado para ver quais são. Grupos pelas Tabelas 7 e 8. Nota média ponderada pelo número de empresas, 2012 a 2023: conta nossa com o Apêndice B.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="grp-scene" data-fit="560x350" role="img" aria-label="Mapa dos estados em ladrilhos 3D; a altura é o número de empresas da amostra e a cor, o tipo de mercado"></div></div>
+      <div class="legend"><span><i class="dot" style="background:var(--g0)"></i>integrados</span><span><i class="dot" style="background:var(--g1)"></i>parciais</span><span><i class="dot" style="background:var(--g2); box-shadow:inset 0 0 0 1px #94a3b8"></i>totais</span></div>
+      <div class="panel" id="grp-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · A AMOSTRA -->
+<section class="slide" id="amostra" data-label="137 empresas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Quem foi estudado</div>
+      <h2 class="rv" style="--d:.1s">A tese acompanhou 137 empresas por 12 anos</h2>
+      <p class="lede rv" style="--d:.15s">A busca partiu de todas as empresas de energia reguladas da base S&amp;P Capital IQ Pro. Ficaram as distribuidoras privadas de eletricidade que operam de fato, não as controladoras, e que tinham dados. Toque nas etapas.</p>
+      <div class="fun rv" id="fun" style="--d:.2s"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="smp-seg" role="group" aria-label="Recorte">
+        <button data-m="g" aria-pressed="true">Tipo de mercado</button>
+        <button data-m="o" aria-pressed="false">Capital aberto ou fechado</button>
+      </div>
+      <div class="firmdots" id="firmdots" role="img" aria-label="137 pontos, um por empresa"></div>
+      <div class="legend" id="smp-legend"></div>
+      <div class="panel" id="smp-panel" aria-live="polite"></div>
+      <div class="stats">
+        <div class="stat"><b>1.644</b><span>empresa-ano (137 empresas × 12 anos)</span></div>
+        <div class="stat"><b>1.547</b><span>empresa-ano com todos os dados, usadas nos modelos estáticos</span></div>
+        <div class="stat"><b>131</b><span>são subsidiárias de grupos maiores, de capital fechado</span></div>
+      </div>
+      <p class="note">Tabela 9, seção 4.2 e Apêndice A. Os pontos mostram contagens: a tese não diz quais são as seis empresas de capital aberto. As categorias da Tabela 9 somam 3.478, duas a mais que o total impresso.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · A DÍVIDA -->
+<section class="slide" id="divida" data-label="Quanto devem">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> A medida da dívida</div>
+      <h2 class="rv" style="--d:.1s">Em média, a dívida é 47% do capital dessas empresas</h2>
+      <p class="lede rv" style="--d:.15s">A tese mede o endividamento como a fatia da dívida no capital: dívida ÷ (dívida + patrimônio), pelos valores do balanço. Monte uma empresa e compare com a amostra.</p>
+      <div class="ctl rv" style="--d:.2s"><label>Dívida <span id="lv-dl"></span></label><input type="range" id="lv-d" min="0" max="20" step="0.1" value="4.7"><small>em US$ bilhões, empresa inventada</small></div>
+      <div class="ctl rv" style="--d:.22s"><label>Patrimônio <span id="lv-el"></span></label><input type="range" id="lv-e" min="0" max="20" step="0.1" value="5.3"><small>o que é dos acionistas, também em US$ bilhões</small></div>
+      <div class="pres rv" id="lv-pres" style="--d:.25s"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="calc">
+        <div class="capbar" id="capbar"><span class="se">patrimônio</span><i id="capd"></i><span class="sd">dívida</span></div>
+        <div>
+          <div class="big" id="lv-big"></div>
+          <div id="lev-msg" aria-live="polite"></div>
+        </div>
+      </div>
+      <div class="rul" id="lv-rul"></div>
+      <div class="stats">
+        <div class="stat"><b>8,1%</b><span>rentabilidade média (EBITDA ÷ ativo); nos processos de tarifa, o retorno autorizado médio foi 7,59%</span></div>
+        <div class="stat"><b>71,5%</b><span>do ativo é rede, usinas e equipamentos</span></div>
+        <div class="stat"><b>7,3%</b><span>do ativo investido por ano, em média</span></div>
+      </div>
+      <p class="note">Tabela 14, Apêndice C e seção 5: média 46,9%, desvio-padrão 7,8 pontos, mínimo 3,0% e máximo 81,2%. Nos processos de tarifa de 2012 a 2023, o capital próprio autorizado foi 50,95% do total, ou cerca de 49% de dívida (dado citado pela tese).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · HIPÓTESES -->
+<section class="slide" id="hipoteses" data-label="O resultado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> O resultado · faça sua aposta</div>
+      <h2 class="rv" style="--d:.1s">A tese testou três hipóteses sobre o risco regulatório</h2>
+      <p class="lede rv" style="--d:.15s">Os modelos comparam cada empresa com ela mesma ao longo dos anos (efeitos fixos) e levam em conta tamanho, lucro, ativos fixos, investimento e a dívida típica do setor. Antes de ver, aposte: os dados confirmaram cada hipótese?</p>
+      <div class="hyps rv" id="hyps" style="--d:.2s"></div>
+      <div id="hyp-score" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="forest" id="forest">
+        <h3>Quanto muda a dívida a cada ponto a mais na nota</h3>
+        <div class="sub">em pontos percentuais da fatia da dívida no capital; a faixa é o intervalo de 95%</div>
+        <div id="forest-rows"></div>
+        <div class="fax"><span></span><div><span>−1,5</span><span>0</span><span>+1,5</span></div><span></span></div>
+      </div>
+      <p class="note">Tabelas 16, 19, 20 e 22 (coeficientes × 100, conta nossa). Uma faixa que cruza o zero quer dizer que os dados não distinguem o efeito de nenhum efeito. Para comparar: 1 ponto percentual a mais de rentabilidade vem com 0,45 ponto a menos de dívida (tela 9).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · O QUE PESA -->
+<section class="slide" id="pesa" data-label="O que pesa">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> A descoberta</div>
+      <h2 class="rv" style="--d:.1s">O que mexe na dívida é o lucro e o investimento da empresa</h2>
+      <p class="lede rv" style="--d:.15s">No mesmo modelo, dois fatores da própria empresa passaram no teste. Com mais lucro, a dívida cai: a empresa usa primeiro o próprio dinheiro, como prevê a teoria da hierarquia de fontes (<em>pecking order</em>). Com mais investimento, a dívida sobe. Mexa nos controles.</p>
+      <div class="ctl rv" style="--d:.2s"><label>Nota de risco do estado <span id="s-rl"></span></label><input type="range" id="s-r" min="1" max="9" step="1" value="5"></div>
+      <div class="ctl rv" style="--d:.22s"><label>Rentabilidade (EBITDA ÷ ativo) <span id="s-pl"></span></label><input type="range" id="s-p" min="2" max="16" step="0.1" value="8.1"></div>
+      <div class="ctl rv" style="--d:.24s"><label>Investimento no ano (÷ ativo) <span id="s-cl"></span></label><input type="range" id="s-c" min="1" max="16" step="0.1" value="7.3"></div>
+      <div class="pres rv" id="s-pres" style="--d:.26s"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div style="display:grid; grid-template-columns:150px 1fr; gap:12px; align-items:center">
+        <div class="fit-wrap"><div class="scene" id="sim-scene" data-fit="150x300" role="img" aria-label="Coluna de capital com a dívida embaixo e o patrimônio em cima"></div></div>
+        <div id="sim-out" aria-live="polite"></div>
+      </div>
+      <div class="contrib" id="contrib"></div>
+      <p class="note"><span class="ilus">ilustração nossa</span> Com os coeficientes do modelo final (Tabela 16 e Apêndice D), partindo da média da amostra (46,9%): é o efeito dentro da mesma empresa ao longo do tempo. Tamanho, ativos fixos e dívida típica do setor ficam parados (sem efeito claro a 5%; o tamanho foi só uma pista, p = 0,081). Barra listrada: puxa a dívida para baixo; cinza: sem efeito claro, com a faixa de 95% em volta.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · AJUSTE LENTO -->
+<section class="slide" id="ajuste" data-label="Ajuste lento">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> O modelo dinâmico</div>
+      <h2 class="rv" style="--d:.1s">A dívida volta ao alvo devagar, cerca de 16% por ano</h2>
+      <p class="lede rv" style="--d:.15s">Quando uma empresa se afasta da dívida que considera ideal, ela não corrige de uma vez. No modelo dinâmico da tese, 84% da dívida de um ano se repete no seguinte, e a distância até o alvo cai 16,1% a cada ano. Já a mudança da nota de um ano para o outro não explicou esse ajuste (p = 0,72).</p>
+      <div class="seg rv" id="adj-seg" style="--d:.2s" role="group" aria-label="Escolha do modelo">
+        <button data-m="0" aria-pressed="true">Modelo final</button>
+        <button data-m="1" aria-pressed="false">Com 2 e 3 defasagens</button>
+        <button data-m="2" aria-pressed="false">Com todas</button>
+      </div>
+      <div class="panel rv" id="adj-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="adj-svg" viewBox="0 0 560 330" role="img" aria-label="Barras da distância até o alvo, ano a ano, partindo de 10 pontos"></svg>
+      <p class="note"><span class="ilus">ilustração nossa</span> Uma empresa que começa 10 pontos acima do alvo, com o coeficiente da dívida do ano anterior (Tabela 22 e Apêndice F). As três opções são os modelos do Apêndice F, que só mudam os instrumentos (as defasagens usadas para contornar o vaivém entre dívida passada e presente). O autor escolheu o modelo com menos instrumentos (42, abaixo das 132 empresas); nele, o teste de Hansen (p = 0,007) acusa possível problema nos instrumentos, o que o autor reconhece.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · O INESPERADO -->
+<section class="slide" id="inesperado" data-label="O inesperado">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> O inesperado</div>
+      <h2 class="rv" style="--d:.1s">Olhando todas juntas, mais risco anda com um pouco mais de dívida</h2>
+      <div class="signs rv" style="--d:.12s">
+        <div class="sign" style="--sc:var(--red)"><span class="k">Todas juntas</span><span class="v">+0,08</span><span class="d">correlação entre nota e dívida, p = 0,001 (Tabela 15): o contrário da teoria</span></div>
+        <div class="sign" style="--sc:var(--ink-2)"><span class="k">Cada empresa com ela mesma</span><span class="v">≈ 0</span><span class="d">no modelo de efeitos fixos, −0,0007 por ponto, p = 0,81 (Tabela 16)</span></div>
+      </div>
+      <p class="lede rv" style="--d:.15s; margin-top:12px">Por que a ligação some? Primeiro, um palpite: em quantas viradas de ano a nota do estado da empresa mudou?</p>
+      <div class="guess rv" id="guess" style="--d:.2s"></div>
+      <div id="guess-msg" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="mx-wrap">
+        <div class="mx" id="mx" role="img" aria-label="Grade de 49 estados por 12 anos, colorida pela nota de risco"></div>
+        <div class="mxg"><span></span><span>integrados (32 estados)</span><span>parc.</span><span>totais (12)</span></div>
+        <div class="mxtools">
+          <div class="seg" id="mx-seg" role="group" aria-label="O que mostrar">
+            <button data-m="all" aria-pressed="true">Todas as notas</button>
+            <button data-m="ch" aria-pressed="false">Só as mudanças</button>
+          </div>
+          <select id="mx-sel" aria-label="Escolha um estado"></select>
+        </div>
+      </div>
+      <div class="panel" id="mx-panel" aria-live="polite"></div>
+      <p class="note">Uma coluna por estado com empresa na amostra, uma linha por ano (Apêndice B). Contagens de mudanças, pesos por empresa e desvios-padrão: contas nossas com os Apêndices A e B.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e limites">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Na prática · limites · créditos</div>
+    <h2 class="rv" style="--d:.1s">O que muda para quem regula, administra ou investe</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Reguladores</h3><p>A percepção de risco regulatório não mexeu no endividamento das empresas no curto prazo. Para o autor, isso pode vir da rigidez das instituições ou da proteção que a estrutura dos grupos dá às subsidiárias.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Gestores das empresas</h3><p>A estrutura de capital seguiu os fundamentos internos: o lucro (mais lucro, menos dívida) e o investimento (mais investimento, mais dívida), mais do que o clima do estado.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ink-2)"><h3>Investidores</h3><p>Para avaliar a dívida de uma distribuidora, a nota do estado sozinha diz pouco; o desempenho e o plano de investimento da empresa dizem mais.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#5b6f96"><h3>Pesquisadores</h3><p>Próximos passos sugeridos: ler os processos de tarifa com análise de texto, medir fatores políticos (troca de comissários, opinião pública, lobby) e seguir o dinheiro entre as subsidiárias de um mesmo grupo.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Uma nota não conta tudo.</b> A nota da RRA pode não captar todas as nuances do comportamento das comissões, e o estudo cobre um setor e um período. <em>· segundo o autor</em></li>
+          <li><b>A nota quase não muda.</b> Mudou em 18% das viradas de ano, quase sempre de 1 ponto. Comparando cada empresa com ela mesma, sobra pouco movimento para medir. <em>· observação nossa</em></li>
+          <li><b>Sem efeito claro não é efeito zero.</b> Indo da nota 1 à 9, o intervalo de 95% vai de 4,8 pontos a menos a 3,8 a mais de dívida (conta nossa). <em>· observação nossa</em></li>
+          <li><b>O ritmo do ajuste depende do modelo.</b> Com outros instrumentos, cai de 16% para cerca de 6% ao ano, e o modelo escolhido não passa no teste de Hansen. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          SANTOS, Guilherme Spiazzi dos. <em>Capital structure under regulatory risk in the U.S. electric industry.</em> Tese (Doutorado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2025. Orientador: Prof. Dr. Wilson Toshiro Nakamura. Coorientador: Prof. Dr. Manuel José da Rocha Armada.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Pesquisa com apoio da CAPES e estadia de pesquisa na Universidade do Minho (Portugal). Dados da S&amp;P Capital IQ Pro e da EIA; análise no Stata. Esta versão simplifica o trabalho para o público em geral; as fórmulas e as tabelas completas estão no texto original, escrito em inglês.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa (em inglês)</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  function n0(n){ return n.toLocaleString(EN ? 'en-US' : 'pt-BR'); }
+  function sgn(v, d){ var r = fmt(Math.abs(v), d); return (Math.abs(v) < Math.pow(10, -d) / 2 ? '' : v < 0 ? '−' : '+') + r; }
+  function pTxt(p){ return p < 0.001 ? 'p < 0' + (EN ? '.' : ',') + '001' : 'p = ' + fmt(p, p < 0.01 ? 3 : 3); }
+  function scol(s){ return 'color-mix(in srgb, var(--red) ' + (12 + (s - 1) * 11) + '%, white)'; }
+  function pressed(wrap, attr, val){ each(wrap.children, function(b){ b.setAttribute('aria-pressed', String(b.dataset[attr] === String(val))); }); }
+
+  /* ================= DADOS DA TESE ================= */
+  // Apêndice B: nota RRA (1 = risco menor, 9 = maior) por estado, 2012..2023 (lida do texto e conferida: média ponderada 4,722 e DP 1,665, iguais à Tabela 14)
+  var RR = {"AK":[5,5,5,5,6,7,7,7,7,7,7,7],"AL":[2,2,2,2,2,1,1,1,1,1,1,1],"AR":[6,6,6,6,5,4,4,4,4,4,4,4],"AZ":[6,6,6,6,6,6,6,6,6,8,9,9],"CA":[4,4,4,4,4,3,3,5,5,5,4,4],"CO":[4,4,4,4,4,5,5,5,5,4,4,4],"CT":[9,8,8,8,8,8,7,7,6,7,7,8],"DE":[5,5,6,6,6,6,6,6,6,6,6,5],"FL":[4,3,3,3,3,2,2,2,2,2,2,2],"GA":[4,3,3,3,3,2,2,2,2,2,2,2],"HI":[5,4,4,4,5,5,5,5,5,5,5,5],"IA":[3,3,3,3,3,4,4,4,3,3,3,3],"ID":[5,5,5,5,5,5,5,5,5,5,5,5],"IL":[8,8,7,7,7,5,5,5,5,5,5,6],"IN":[3,3,3,3,3,4,4,4,4,4,4,4],"KS":[5,5,5,5,5,7,7,7,7,7,7,7],"KY":[4,4,4,4,4,4,4,4,4,4,5,5],"LA":[4,4,4,4,4,5,5,5,4,5,5,5],"MA":[5,6,6,6,6,6,5,5,5,5,5,5],"MD":[8,8,8,8,8,9,9,8,8,6,6,8],"ME":[5,5,5,5,5,5,5,5,6,6,6,6],"MI":[4,4,4,4,4,3,3,3,3,3,3,3],"MN":[5,5,5,5,5,5,5,5,5,5,5,5],"MO":[5,5,5,5,5,7,6,6,6,6,6,6],"MS":[3,3,3,3,3,3,4,4,4,4,4,4],"MT":[7,7,7,7,7,7,7,7,7,7,7,7],"NC":[3,4,4,4,4,4,4,4,4,3,3,3],"ND":[4,4,4,4,4,4,4,4,4,4,4,4],"NH":[6,6,6,6,6,6,6,6,6,5,5,5],"NJ":[6,6,6,6,6,8,7,7,7,7,7,7],"NM":[7,7,7,7,7,8,8,8,8,8,8,7],"NV":[4,4,4,4,4,4,4,4,4,4,4,5],"NY":[6,5,5,5,5,4,4,4,5,5,5,5],"OH":[5,5,5,5,5,5,5,5,6,6,6,5],"OK":[5,5,5,5,5,6,6,6,6,5,5,6],"OR":[6,6,6,6,6,5,5,5,5,5,5,5],"PA":[6,6,6,5,5,3,3,2,2,2,2,2],"RI":[6,6,6,6,6,5,5,5,5,5,5,5],"SC":[4,4,4,4,4,5,6,6,6,6,6,6],"SD":[6,6,6,6,6,5,5,5,5,5,5,5],"TN":[4,4,4,4,4,3,3,3,3,3,3,3],"TX":[7,7,7,7,7,6,6,5,5,6,6,6],"UT":[5,5,5,5,5,4,4,4,5,5,5,5],"VA":[2,2,2,2,2,2,2,3,4,4,4,5],"VT":[6,6,6,6,6,5,6,6,6,6,6,6],"WA":[6,5,5,6,6,6,6,6,6,6,6,6],"WI":[2,2,2,2,2,2,2,2,2,2,2,3],"WV":[6,7,7,7,7,7,8,8,8,8,8,7],"WY":[5,5,5,5,5,6,6,6,6,5,5,5]};
+  var YEARS = [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023];
+  // Grupos (Tabelas 7 e 8): 0 integrado, 1 parcial, 2 total. Posição no mapa de ladrilhos [coluna, linha].
+  var ST = {
+    AK:['Alasca','Alaska',0,0,0], ME:['Maine','Maine',11,0,2], WI:['Wisconsin','Wisconsin',6,1,0], VT:['Vermont','Vermont',10,1,0], NH:['New Hampshire','New Hampshire',11,1,2],
+    WA:['Washington','Washington',1,2,0], ID:['Idaho','Idaho',2,2,0], MT:['Montana','Montana',3,2,0], ND:['Dakota do Norte','North Dakota',4,2,0], MN:['Minnesota','Minnesota',5,2,0], IL:['Illinois','Illinois',6,2,2], MI:['Michigan','Michigan',7,2,1], NY:['Nova York','New York',9,2,2], MA:['Massachusetts','Massachusetts',10,2,2],
+    OR:['Oregon','Oregon',1,3,1], NV:['Nevada','Nevada',2,3,0], WY:['Wyoming','Wyoming',3,3,0], SD:['Dakota do Sul','South Dakota',4,3,0], IA:['Iowa','Iowa',5,3,0], IN:['Indiana','Indiana',6,3,0], OH:['Ohio','Ohio',7,3,2], PA:['Pensilvânia','Pennsylvania',8,3,2], NJ:['Nova Jersey','New Jersey',9,3,2], CT:['Connecticut','Connecticut',10,3,2], RI:['Rhode Island','Rhode Island',11,3,2],
+    CA:['Califórnia','California',1,4,1], UT:['Utah','Utah',2,4,0], CO:['Colorado','Colorado',3,4,0], NE:['Nebraska','Nebraska',4,4,0], MO:['Missouri','Missouri',5,4,0], KY:['Kentucky','Kentucky',6,4,0], WV:['Virgínia Ocidental','West Virginia',7,4,0], VA:['Virgínia','Virginia',8,4,1], MD:['Maryland','Maryland',9,4,2], DE:['Delaware','Delaware',10,4,2],
+    AZ:['Arizona','Arizona',2,5,0], NM:['Novo México','New Mexico',3,5,0], KS:['Kansas','Kansas',4,5,0], AR:['Arkansas','Arkansas',5,5,0], TN:['Tennessee','Tennessee',6,5,0], NC:['Carolina do Norte','North Carolina',7,5,0], SC:['Carolina do Sul','South Carolina',8,5,0], DC:['Distrito de Columbia','District of Columbia',9,5,2],
+    OK:['Oklahoma','Oklahoma',4,6,0], LA:['Luisiana','Louisiana',5,6,0], MS:['Mississippi','Mississippi',6,6,0], AL:['Alabama','Alabama',7,6,0], GA:['Geórgia','Georgia',8,6,0],
+    HI:['Havaí','Hawaii',0,7,0], TX:['Texas','Texas',4,7,1], FL:['Flórida','Florida',9,7,0]
+  };
+  // Apêndice A: empresas da amostra por estado (137)
+  var FIRMS = {
+    AL:['Alabama Power Company'], AK:['Alaska Electric Light and Power Company'], AZ:['Arizona Public Service Company','Tucson Electric Power Company','UNS Electric, Inc.'], AR:['Entergy Arkansas, LLC'],
+    CO:['Black Hills Colorado Electric, Inc.','Public Service Company of Colorado'], FL:['Duke Energy Florida, LLC','Florida Power & Light Company','Florida Public Utilities Company','Tampa Electric Company'], GA:['Georgia Power Company'],
+    HI:['Hawaii Electric Light Company, Inc.','Hawaiian Electric Company, Inc.','Maui Electric Company, Ltd.'], ID:['Idaho Power Company'],
+    IN:['AES Indiana','Duke Energy Indiana, LLC','Indiana Michigan Power Company','Northern Indiana Public Service Company, LLC','Southern Indiana Gas and Electric Co.'], IA:['Interstate Power and Light Company','MidAmerican Energy Company'],
+    KS:['Evergy Kansas South, Inc.','Westar Energy (KPL)'], KY:['Duke Energy Kentucky, Inc.','Kentucky Power Company','Kentucky Utilities Company','Louisville Gas and Electric Company'],
+    LA:['Cleco Power LLC','Entergy Louisiana, LLC','Entergy New Orleans, LLC','Southwestern Electric Power Company'], MN:['Minnesota Power Enterprises, Inc.','Northern States Power Company MN','Otter Tail Power Company'],
+    MS:['Entergy Mississippi, LLC','Mississippi Power Company'], MO:['Evergy Metro, Inc.','Evergy Missouri West, Inc.','The Empire District Electric Company','Union Electric Company'], MT:['NorthWestern Energy Group, Inc.'],
+    NV:['Nevada Power Company','Sierra Pacific Power Company'], NM:['Public Service Company of New Mexico'], NC:['Duke Energy Carolinas, LLC','Duke Energy Progress, LLC'], ND:['MDU Resources Group, Inc.'],
+    OK:['Oklahoma Gas and Electric Company','Public Service Company of Oklahoma'], SC:['Dominion Energy South Carolina, Inc.','Lockhart Power Company'], SD:['Black Hills Power, Inc.'], TN:['Kingsport Power Company'], UT:['PacifiCorp'], VT:['Green Mountain Power Corporation'],
+    WA:['Avista Corporation','Puget Sound Energy, Inc.'], WV:['Monongahela Power Company','Wheeling Power Company'],
+    WI:['Consolidated Water Power Company','Dahlberg Light & Power Company','Madison Gas and Electric Company','North Central Power Co., Inc.','Northern States Power Company WI','Northwestern Wisconsin Electric Co Inc','Pioneer Power and Light Company','Superior Water, Light and Power Co.','Wisconsin Electric Power Company','Wisconsin Power and Light Company','Wisconsin Public Service Corporation'],
+    WY:['Cheyenne Light, Fuel and Power Company'],
+    CA:['Liberty Utilities (CalPeco Electric) LLC','Pacific Gas and Electric Company','San Diego Gas & Electric Company','Southern California Edison Company'], MI:['Consumers Energy Company','DTE Electric Company','Upper Michigan Energy Resources Corporation','Upper Peninsula Power Company'],
+    OR:['Portland General Electric Company'], TX:['AEP Texas Inc.','Center Point Energy Houston Elec., LLC','El Paso Electric Company','Entergy Texas, Inc.','Oncor Electric Delivery Company LLC','Sharyland Utilities, L.L.C.','Southwestern Public Service Company','Texas-New Mexico Power Company'],
+    VA:['Appalachian Power Company','Virginia Electric and Power Company'],
+    CT:['The Connecticut Light and Power Co.','The United Illuminating Company'], DE:['Delmarva Power & Light Company'], IL:['Ameren Illinois Company','Commonwealth Edison Company','Mt. Carmel Public Utility Co.'],
+    MA:['Fitchburg Gas and Electric Light Co.','Massachusetts Electric Company','Nantucket Electric Company','NSTAR Electric Company'], MD:['Baltimore Gas and Electric Company','Potomac Electric Power Company','The Potomac Edison Company'],
+    ME:['Central Maine Power Company','Versant Power'], NH:['Liberty Utilities (Granite St. Elec.) Corp.','Public Service Company of New Hampshire','Unitil Energy Systems, Inc.'],
+    NJ:['Atlantic City Electric Company','Jersey Central Power & Light Company','Public Service Electric and Gas Co.','Rockland Electric Company'],
+    NY:['Central Hudson Gas & Electric Corp.','Consolidated Edison Company of NY','New York State Electric & Gas Co.','Niagara Mohawk Power Corporation','Orange and Rockland Utilities, Inc.','Rochester Gas and Electric Corporation'],
+    OH:['Duke Energy Ohio, Inc.','Ohio Edison Company','Ohio Power Company','The Cleveland Electric Illuminating Co.','The Dayton Power and Light Company','The Toledo Edison Company'],
+    PA:['Duquesne Light Company','Metropolitan Edison Company','PECO Energy Company','Pennsylvania Electric Company','Pennsylvania Power Company','Pike County Light and Power Company','PPL Electric Utilities Corporation','UGI Utilities, Inc.','West Penn Power Company'],
+    RI:['The Narragansett Electric Company']
+  };
+  var GNAME = [L('Integrados','Integrated'), L('Parciais','Partial'), L('Totais','Full')];
+  var GCOL = ['var(--g0)', 'var(--g1)', 'var(--g2)'];
+  // Tabela 14 / Apêndice C (frações)
+  var LEV = {mean:46.94, sd:7.83, min:2.95, max:81.19, rate:49.05};
+  // Tabela 16 / Apêndice D: modelo final de efeitos fixos (coeficiente, p, IC 95%)
+  var H1 = {rr:[-0.0006593, 0.809, -0.0060442, 0.0047257], prof:[-0.4544649, 0.009, -0.793242, -0.1156878], capex:[0.1558065, 0.008, 0.0408752, 0.2707378], siz:[-0.0268034, 0.081]};
+  var MEANS = {rr:4.722, prof:8.1, capex:7.3};
+  // Tabela 22 e Apêndice F: coeficiente da dívida do ano anterior em cada especificação
+  var GMM = [
+    {rho:0.839073, inst:42, hans:0.007, drr:[-0.0019209, 0.72], t:L('Modelo final · defasagem 2','Final model · lag 2')},
+    {rho:0.9385397, inst:58, hans:0.016, drr:[0.0012447, 0.781], t:L('Defasagens 2 e 3','Lags 2 and 3')},
+    {rho:0.9348218, inst:114, hans:0.379, drr:[-0.0044105, 0.142], t:L('Todas as defasagens','All lags')}
+  ];
+
+  function codes(){ return Object.keys(ST); }
+  function changes(c){ var v = RR[c], n = 0; if (!v) return 0; for (var i = 1; i < 12; i++) if (v[i] !== v[i - 1]) n++; return n; }
+  function cat(s){ return s <= 3 ? L('acima da média (risco menor)','above average (lower risk)') : s <= 6 ? L('na média','average') : L('abaixo da média (risco maior)','below average (higher risk)'); }
+  function spark(c, yi){
+    var v = RR[c];
+    return '<div class="spark">' + v.map(function(s, i){ return '<i class="' + (i === yi ? 'cur' : '') + '" title="' + YEARS[i] + ': ' + s + '" style="height:' + (s / 9 * 100) + '%; background:' + scol(s) + '"></i>'; }).join('') + '</div>' +
+      '<div class="spark-y">' + YEARS.map(function(y, i){ return '<span>' + (i % 2 ? '' : String(y).slice(2)) + '</span>'; }).join('') + '</div>';
+  }
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), W = 470, D = 270;
+    var st = makeStage(sc, W, D, {ay:'70%', rx:'60deg'});
+    rotatable(sc, st, -16, 7);
+    var tiles = [], tw = 40, gap = 7.5, x0 = (W - (9 * tw + 8 * gap)) / 2;
+    for (var s = 1; s <= 9; s++){
+      var t = box({w:tw, d:40, x:x0 + (s - 1) * (tw + gap), y:170, h:8, c:scol(s), top:String(s), cls:s < 6 ? 'lt' : ''});
+      st.appendChild(t); tiles.push(t);
+    }
+    flatLabel(st, L('nota de risco do estado: 1 = menor · 9 = maior', 'state risk score: 1 = lower · 9 = higher'), x0, 252, 9 * tw + 8 * gap);
+    var H = 200, cw = 120, cx = (W - cw) / 2;
+    var debt = box({w:cw, d:100, x:cx, y:30, h:H * 0.4694, c:'var(--debt)', label:L('dívida','debt')});
+    var eq = box({w:cw, d:100, x:cx, y:30, z:H * 0.4694, h:H * 0.5306, c:'var(--eq)', label:'<span style="color:#334155">' + L('patrimônio','equity') + '</span>'});
+    st.appendChild(debt); st.appendChild(eq);
+    var last = 0;
+    function show(s){
+      if (s === last) return; last = s;
+      var lev = LEV.mean + H1.rr[0] * 100 * (s - MEANS.rr);
+      tiles.forEach(function(t, i){ t.classList.toggle('active', i === s - 1); });
+      debt.style.setProperty('--h', (H * lev / 100) + 'px');
+      eq.style.setProperty('--z', (H * lev / 100) + 'px'); eq.style.setProperty('--h', (H * (1 - lev / 100)) + 'px');
+      $('hero-line').innerHTML = L('Nota ', 'Score ') + '<b>' + s + '</b> · ' + L('dívida prevista: ', 'predicted debt: ') + '<b class="d">' + fmt(lev, 1) + '%</b> ' + L('do capital', 'of capital');
+    }
+    if (reduce) show(5);
+    else M.onTick(function(t){ show(1 + Math.floor(t / 1.5) % 9); });
+  })();
+
+  /* ================= 02 · A COMISSÃO ================= */
+  (function(){
+    // Tabela 4 (EIA, 2022), US$ milhões: grandes distribuidoras privadas
+    var T4 = [
+      {n:L('Operação','Operation'), v:196589, c:'#334155', d:L('Inclui comprar energia de terceiros (US$ 80,0 bilhões), combustível (49,5 bilhões), gerar, transmitir, distribuir, atender clientes e administrar.','Includes buying power from others (US$80.0 billion), fuel (49.5 billion), generating, transmitting, distributing, serving customers and administration.')},
+      {n:L('Manutenção','Maintenance'), v:21834, c:'#475569', d:L('Conservar a rede, as usinas e os equipamentos.','Upkeep of the grid, plants and equipment.')},
+      {n:L('Depreciação','Depreciation'), v:42104, c:'#64748b', d:L('O desgaste do que foi investido. Entra na conta da tarifa: é assim que o investimento volta para a empresa.','The wear of what was invested. It goes into the rate calculation: that is how the investment comes back to the utility.')},
+      {n:L('Impostos e outros','Taxes and other'), v:31720, c:'#8b9bb4', d:L('Impostos e outras despesas do serviço de energia.','Taxes and other expenses of the electric service.')},
+      {n:L('Outros serviços','Other utility'), v:23244, c:'#b5c1d3', d:L('Despesas de outros serviços públicos das mesmas empresas, como gás.','Expenses of the same firms’ other utility services, such as gas.')},
+      {n:L('Resultado operacional','Net operating income'), v:65638, c:'var(--debt)', d:L('O que sobra depois das despesas. É daí que sai o retorno que remunera o capital investido (dívida e patrimônio), o ponto mais disputado nos processos de tarifa.','What is left after expenses. This is where the return that pays for invested capital (debt and equity) comes from, the most contested point in rate cases.')}
+    ];
+    var TOT = 381129, sc = $('rc-scene'), H = 270, z = 0, slabs = [];
+    var st = makeStage(sc, 150, 150, {ay:'72%', rx:'58deg'});
+    rotatable(sc, st, -30, 8);
+    T4.forEach(function(r, i){
+      var h = r.v / TOT * H;
+      var b = box({w:120, d:120, x:15, y:15, z:z, h:Math.max(3, h - 2), c:r.c});
+      st.appendChild(b); slabs.push(b); z += h;
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick(i); });
+    });
+    $('rc-list').innerHTML = T4.slice().reverse().map(function(r){
+      var i = T4.indexOf(r);
+      return '<button data-i="' + i + '" aria-pressed="false"><i style="background:' + r.c + '"></i><span>' + r.n + '</span><b>' + fmt(r.v / TOT * 100, 1) + '</b></button>';
+    }).join('');
+    each($('rc-list').children, function(b){ b.addEventListener('click', function(){ pick(+b.dataset.i); }); });
+    var STEPS = [
+      {t:L('A empresa pede','The utility files'), h:L('Alguém diz que a tarifa atual não é justa','Someone argues the current rate is unfair'), p:L('A distribuidora reclama, ou a própria comissão abre o caso. É preciso mostrar que a tarifa atual é injusta e propor uma nova.','The utility files a complaint, or the commission opens the case itself. It must show that the current rate is unjust and propose a new one.'), hi:[]},
+      {t:L('A comissão calcula a receita necessária','The commission computes the revenue requirement'), h:L('Custos, depreciação, impostos e um retorno justo','Costs, depreciation, taxes and a fair return'), p:L('A comissão soma as despesas e um retorno justo sobre o capital investido na rede (a base de remuneração). É o mínimo para pagar as contas e atrair investidores, sem cobrar demais do consumidor.','The commission adds up expenses and a fair return on the capital invested in the grid (the rate base). It is the minimum to pay the bills and attract investors without overcharging consumers.'), hi:[0, 1, 2, 3, 4, 5]},
+      {t:L('A comissão decide','The commission decides'), h:L('O retorno é o ponto mais disputado','The return is the most contested point'), p:L('A briga costuma ser sobre a mistura de dívida e capital próprio e sobre quanto pagar ao acionista. A decisão final é da comissão, e o processo é público. Por isso o clima de cada comissão importa para quem investe.','The fight is usually about the mix of debt and equity and how much to pay shareholders. The final decision is the commission’s, and the case is public. That is why each commission’s climate matters to investors.'), hi:[5]}
+    ];
+    $('rc-steps').innerHTML = STEPS.map(function(s, i){ return '<button data-i="' + i + '" aria-pressed="false"><b>' + (i + 1) + '</b><span>' + s.t + '</span></button>'; }).join('');
+    function step(i){
+      var s = STEPS[i];
+      pressed($('rc-steps'), 'i', i);
+      slabs.forEach(function(b, j){ b.classList.toggle('active', s.hi.length < 6 && s.hi.indexOf(j) >= 0); });
+      each($('rc-list').children, function(b){ b.setAttribute('aria-pressed', String(s.hi.length < 6 && s.hi.indexOf(+b.dataset.i) >= 0)); });
+      $('rc-panel').innerHTML = '<div class="tag">' + L('Passo ', 'Step ') + (i + 1) + '</div><h3>' + s.h + '</h3><p>' + s.p + '</p>';
+    }
+    function pick(i){
+      var r = T4[i];
+      slabs.forEach(function(b, j){ b.classList.toggle('active', j === i); });
+      each($('rc-list').children, function(b){ b.setAttribute('aria-pressed', String(+b.dataset.i === i)); });
+      each($('rc-steps').children, function(b){ b.setAttribute('aria-pressed', 'false'); });
+      $('rc-panel').innerHTML = '<div class="tag">' + L('De cada US$ 100: ', 'Of every US$100: ') + '<span class="nt">' + fmt(r.v / TOT * 100, 1) + '</span></div><h3>' + r.n + ' · US$ ' + fmt(r.v / 1000, 1) + L(' bilhões', ' billion') + '</h3><p>' + r.d + '</p>';
+    }
+    each($('rc-steps').children, function(b){ b.addEventListener('click', function(){ step(+b.dataset.i); }); });
+    step(1);
+  })();
+
+  /* ================= 03 · DOIS LADOS ================= */
+  (function(){
+    var A = [
+      {s:0, t:L('A incerteza afasta a dívida','Uncertainty keeps debt away'), d:L('Se a empresa não sabe se vai recuperar os custos, ou teme interferência política, evita depender de dívida.','If the utility is unsure it will recover its costs, or fears political interference, it avoids relying on debt.'), r:'Taggart (1985); Rao & Moyer (1994)'},
+      {s:0, t:L('O ganho fiscal vai para o consumidor','The tax gain goes to consumers'), d:L('Os juros reduzem o imposto, mas, na empresa regulada, esse ganho é repassado à tarifa. Sobra pouco motivo para dever mais.','Interest lowers taxes, but in a regulated firm that gain is passed on to rates. Little reason is left to owe more.'), r:'Miller & Modigliani (1966); Myers (1984, 2015)'},
+      {s:0, t:L('A comissão não paga pelo risco extra','The commission does not pay for extra risk'), d:L('Ao calcular o retorno autorizado, a comissão não leva em conta o risco financeiro que mais dívida traz.','When it sets the allowed return, the commission does not account for the financial risk that more debt brings.'), r:'Myers (2015)'},
+      {s:0, t:L('A abertura do mercado reduziu a dívida','Market opening reduced debt'), d:L('Depois da reestruturação, empresas emitiram mais ações e reduziram a dívida diante da nova incerteza.','After restructuring, utilities issued more equity and cut debt in the face of new uncertainty.'), r:'Ovtchinnikov (2010); Sanyal & Bulan (2011)'},
+      {s:1, t:L('Receita estável aguenta dívida','Stable revenue can carry debt'), d:L('Com tarifa regulada, a renda é previsível, e quem tem renda constante pode dever mais.','With regulated rates, income is predictable, and steady income can carry more debt.'), r:'Baxter (1967); Taggart (1985)'},
+      {s:1, t:L('A dívida ajuda a pedir mais retorno','Debt helps to ask for more return'), d:L('Gestores usam o risco de quebra que a dívida traz para convencer a comissão a autorizar retornos maiores.','Managers use the distress risk that debt brings to persuade the commission to allow higher returns.'), r:'Besley & Bolten (1990); Spiegel & Spulber (1994, 1997)'},
+      {s:1, t:L('Dívida como proteção','Debt as a shield'), d:L('Em climas regulatórios mais duros, empresas se endividam mais para proteger o dinheiro dos acionistas de uma comissão que favoreça tarifas baixas.','In harsher regulatory climates, utilities borrow more to shield shareholders’ money from a commission that favors low rates.'), r:'Dasgupta & Nanda (1993); Rao & Moyer (1994)'},
+      {s:1, t:L('Reguladas já devem mais','Regulated firms already owe more'), d:L('Historicamente, empresas reguladas têm mais dívida em relação ao patrimônio do que as não reguladas.','Historically, regulated firms carry more debt relative to equity than unregulated ones.'), r:'Bradley et al. (1984); Spiegel & Spulber (1994, 1997)'}
+    ];
+    var on = A.map(function(){ return true; }), svg = $('bal-svg');
+    var cols = [0, 1].map(function(s){ return '<div class="col"><h4>' + (s ? L('mais dívida →','more debt →') : L('← menos dívida','← less debt')) + '</h4>' +
+      A.map(function(a, i){ return a.s === s ? '<button data-i="' + i + '" aria-pressed="true" style="--ac:' + (s ? 'var(--debt)' : '#94a3b8') + '">' + a.t + '</button>' : ''; }).join('') + '</div>'; });
+    $('args').innerHTML = cols.join('');
+    function draw(){
+      var l = 0, r = 0;
+      A.forEach(function(a, i){ if (on[i]) { if (a.s) r++; else l++; } });
+      var ang = Math.max(-16, Math.min(16, (r - l) * 4));
+      var rad = ang * Math.PI / 180, dx = 170 * Math.cos(rad), dy = 170 * Math.sin(rad);
+      var lx = 280 - dx, ly = 96 - dy, rx = 280 + dx, ry = 96 + dy;
+      function pan(x, y, n, col, lab){
+        var h = '<path d="M' + (x - 58) + ' ' + (y + 70) + ' L' + x + ' ' + y + ' L' + (x + 58) + ' ' + (y + 70) + '" fill="none" stroke="#94a3b8" stroke-width="2"/>' +
+          '<path d="M' + (x - 70) + ' ' + (y + 70) + ' h140 a70 24 0 0 1 -140 0 z" style="fill:' + col + '"/>';
+        for (var k = 0; k < n; k++) h += '<rect x="' + (x - 46 + k * 24) + '" y="' + (y + 50) + '" width="20" height="20" rx="4" style="fill:' + col + '" stroke="#fff" stroke-width="2"/>';
+        h += '<text x="' + x + '" y="' + (y + 116) + '" text-anchor="middle" style="font-size:14px; font-weight:700; fill:#334155">' + lab + '</text>';
+        return h;
+      }
+      svg.innerHTML = '<rect x="250" y="226" width="60" height="10" rx="4" fill="#0f172a"/><rect x="275" y="96" width="10" height="132" rx="3" fill="#0f172a"/>' +
+        '<line x1="' + lx + '" y1="' + ly + '" x2="' + rx + '" y2="' + ry + '" stroke="#0f172a" stroke-width="8" stroke-linecap="round"/><circle cx="280" cy="96" r="9" fill="var(--red)"/>' +
+        pan(lx, ly, l, '#94a3b8', L('menos dívida','less debt') + ' (' + l + ')') + pan(rx, ry, r, 'var(--debt)', L('mais dívida','more debt') + ' (' + r + ')');
+      var msg = l === r ? L('Empate: com todos os argumentos ligados, a teoria não decide sozinha. É preciso olhar os dados.','A tie: with every argument on, theory alone does not decide. The data must be checked.')
+        : l > r ? L('A balança pende para menos dívida.','The scale tips toward less debt.') : L('A balança pende para mais dívida.','The scale tips toward more debt.');
+      return msg;
+    }
+    function show(i){
+      var msg = draw();
+      each($('args').querySelectorAll('button'), function(b){ b.classList.toggle('sel', +b.dataset.i === i); });
+      if (i === undefined || i < 0){ $('arg-panel').innerHTML = '<div class="tag">' + L('Balança','Scale') + '</div><h3>' + msg + '</h3><p>' + L('Cada argumento é um estudo citado pela tese. Toque para ligar ou desligar.','Each argument is a study cited by the thesis. Tap to switch it on or off.') + '</p>'; return; }
+      var a = A[i];
+      $('arg-panel').innerHTML = '<div class="tag"><span class="nt">' + a.r + '</span> · ' + (on[i] ? L('ligado','on') : L('desligado','off')) + '</div><h3>' + a.t + '</h3><p>' + a.d + '</p><p><strong>' + msg + '</strong></p>';
+    }
+    each($('args').querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){ var i = +b.dataset.i; on[i] = !on[i]; b.setAttribute('aria-pressed', String(on[i])); show(i); });
+    });
+    show(-1);
+  })();
+
+  /* ================= 04 · A NOTA (mapa 3D) ================= */
+  (function(){
+    $('scale9').innerHTML = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(function(s){ return '<span style="background:' + scol(s) + '; color:' + (s >= 6 ? '#fff' : 'var(--ink)') + '">' + s + '</span>'; }).join('');
+    var sc = $('map-scene'), TW = 42, st = makeStage(sc, 12 * TW, 8 * TW, {ay:'55%', rx:'50deg'});
+    rotatable(sc, st, -6, 5);
+    var T = {}, yi = 11, sel = 'PA';
+    codes().forEach(function(c){
+      var s = ST[c], has = !!RR[c];
+      var b = box({w:TW - 6, d:TW - 6, x:s[2] * TW + 3, y:s[3] * TW + 3, h:has ? 8 : 2, c:has ? scol(5) : '#94a3b8', top:c, cls:has ? '' : 'off'});
+      st.appendChild(b); T[c] = b;
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)) { sel = c; paint(); } });
+    });
+    function paint(){
+      codes().forEach(function(c){
+        var b = T[c]; if (!RR[c]) { b.classList.toggle('active', c === sel); return; }
+        var s = RR[c][yi];
+        b.style.setProperty('--h', (s * 9 + 2) + 'px'); b.style.setProperty('--c', scol(s));
+        b.classList.toggle('dk', s >= 6); b.classList.toggle('active', c === sel);
+      });
+      $('map-yl').textContent = YEARS[yi];
+      var s = ST[sel];
+      if (!RR[sel]){ $('map-panel').innerHTML = '<div class="tag">' + (EN ? s[1] : s[0]) + '</div><h3>' + L('Sem empresa na amostra','No utility in the sample') + '</h3><p>' + (sel === 'NE' ? L('Em Nebraska, a energia vem só de distritos públicos, sistemas municipais e cooperativas, que ficam fora da amostra.','In Nebraska, power comes only from public power districts, municipal systems and cooperatives, which are outside the sample.') : L('O Distrito de Columbia é reestruturado, mas nenhuma empresa da amostra tem ali seu estado principal.','The District of Columbia is restructured, but no sample utility has it as its main state.')) + '</p>'; return; }
+      var v = RR[sel], sc0 = v[yi], n = changes(sel), nf = FIRMS[sel].length;
+      $('map-panel').innerHTML = '<div class="tag">' + (EN ? s[1] : s[0]) + ' · ' + GNAME[s[4]].toLowerCase() + ' · ' + nf + (nf === 1 ? L(' empresa',' utility') : L(' empresas',' utilities')) + '</div>' +
+        '<h3>' + L('Nota ', 'Score ') + sc0 + L(' em ', ' in ') + YEARS[yi] + ': ' + cat(sc0) + '</h3>' + spark(sel, yi) +
+        '<p style="margin-top:6px">' + L('De 2012 a 2023: de ', 'From 2012 to 2023: from ') + v[0] + L(' para ', ' to ') + v[11] + '. ' +
+        (n === 0 ? L('A nota nunca mudou.', 'The score never changed.') : L('A nota mudou em ', 'The score changed in ') + n + L(' das 11 viradas de ano.', ' of the 11 year turns.')) + '</p>';
+    }
+    $('map-year').addEventListener('input', function(){ yi = +this.value - 2012; paint(); });
+    var timer = null;
+    $('map-play').addEventListener('click', function(){
+      if (timer){ clearInterval(timer); timer = null; this.innerHTML = '▶ ' + L('animar','play'); return; }
+      this.innerHTML = '❚❚ ' + L('parar','stop'); yi = 0; paint(); $('map-year').value = 2012;
+      var btn = this;
+      timer = setInterval(function(){ yi++; if (yi > 11){ clearInterval(timer); timer = null; yi = 11; btn.innerHTML = '▶ ' + L('animar','play'); } $('map-year').value = 2012 + yi; paint(); }, 900);
+    });
+    paint();
+  })();
+
+  /* ================= 05 · O MERCADO (mapa 3D por grupo) ================= */
+  (function(){
+    var sc = $('grp-scene'), TW = 42, st = makeStage(sc, 12 * TW, 8 * TW, {ay:'58%', rx:'50deg'});
+    rotatable(sc, st, -6, 5);
+    var T = {}, g = 0, sel = null;
+    codes().forEach(function(c){
+      var s = ST[c], nf = FIRMS[c] ? FIRMS[c].length : 0;
+      var b = box({w:TW - 6, d:TW - 6, x:s[2] * TW + 3, y:s[3] * TW + 3, h:nf ? nf * 9 + 3 : 2, c:GCOL[s[4]], top:c, cls:(nf ? '' : 'off ') + (s[4] < 2 ? 'dk' : '')});
+      st.appendChild(b); T[c] = b;
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)) { sel = c; g = ST[c][4]; paint(); } });
+    });
+    // Contas nossas (Apêndices A e B): estados, empresas, nota média ponderada
+    var G = [
+      {ns:L('33 estados','33 states'), nf:74, m:'4,30', me:'4.30', h:L('A mesma empresa gera, transmite e entrega','One firm generates, transmits and delivers'), p:L('A comissão regula tudo pelo custo do serviço. É o modelo que ficou em boa parte do Meio-Oeste e do Sudeste. O Wisconsin tem 11 empresas, o maior número da amostra.','The commission regulates everything on a cost-of-service basis. It is the model that stayed in much of the Midwest and Southeast. Wisconsin has 11 utilities, the most in the sample.')},
+      {ns:L('5 estados','5 states'), nf:19, m:'4,79', me:'4.79', h:L('Convivem empresas integradas e alguma escolha','Integrated firms coexist with some choice'), p:L('No Michigan, só 10% dos clientes podem trocar de fornecedor. No Texas, quem está na rede do ERCOT escolhe; os demais, não. No Oregon, só clientes não residenciais escolhem. Na Califórnia e na Virgínia, a escolha vale em casos específicos.','In Michigan, only 10% of customers may switch supplier. In Texas, customers on the ERCOT grid choose; the rest do not. In Oregon, only non-residential customers choose. In California and Virginia, choice applies in specific cases.')},
+      {ns:L('12 estados e o Distrito de Columbia','12 states and the District of Columbia'), nf:44, m:'5,41', me:'5.41', h:L('A geração vai ao mercado e o cliente escolhe','Generation goes to the market and customers choose'), p:L('O cliente escolhe de quem compra a energia. A distribuidora cuida dos fios, e essa entrega continua regulada pela comissão. A Pensilvânia, com 9 empresas, foi a última a abrir de vez, em 2011. A tese esperava que, aqui, o risco regulatório pesasse mais na dívida (hipótese 2).','Customers choose whom to buy power from. The utility runs the wires, and that delivery is still regulated by the commission. Pennsylvania, with 9 utilities, was the last to open fully, in 2011. The thesis expected regulatory risk to weigh more on debt here (hypothesis 2).')}
+    ];
+    function chain(g){
+      var X = [70, 210, 350, 490], N = [L('Geração','Generation'), L('Transmissão','Transmission'), L('Distribuição','Distribution'), L('Cliente','Customer')];
+      var h = '';
+      if (g === 0) h += '<rect x="8" y="22" width="410" height="78" rx="14" style="fill:color-mix(in srgb, var(--g0) 10%, white); stroke:var(--g0)" stroke-width="2"/><text x="213" y="124" text-anchor="middle" class="sm" style="font-size:13px; fill:var(--g0); font-weight:700">' + L('uma empresa · tarifa regulada pela comissão','one firm · rate set by the commission') + '</text>';
+      if (g === 2){
+        h += '<rect x="8" y="22" width="124" height="78" rx="14" style="fill:color-mix(in srgb, var(--red) 8%, white); stroke:var(--red)" stroke-width="2" stroke-dasharray="6 5"/><text x="70" y="124" text-anchor="middle" class="sm" style="font-size:13px; fill:var(--red); font-weight:700">' + L('mercado','market') + '</text>';
+        h += '<rect x="288" y="22" width="124" height="78" rx="14" style="fill:color-mix(in srgb, var(--g0) 10%, white); stroke:var(--g0)" stroke-width="2"/><text x="350" y="124" text-anchor="middle" class="sm" style="font-size:13px; fill:var(--g0); font-weight:700">' + L('fios regulados','regulated wires') + '</text>';
+        h += '<text x="490" y="124" text-anchor="middle" class="sm" style="font-size:13px; fill:var(--red); font-weight:700">' + L('escolhe','chooses') + '</text>';
+      }
+      if (g === 1){
+        h += '<rect x="8" y="22" width="410" height="78" rx="14" style="fill:color-mix(in srgb, var(--g1) 14%, white); stroke:var(--g1)" stroke-width="2" stroke-dasharray="8 6"/><text x="213" y="124" text-anchor="middle" class="sm" style="font-size:13px; fill:#475569; font-weight:700">' + L('empresas integradas, com exceções','integrated firms, with exceptions') + '</text>';
+        h += '<text x="490" y="124" text-anchor="middle" class="sm" style="font-size:13px; fill:#475569; font-weight:700">' + L('parte escolhe','some choose') + '</text>';
+      }
+      X.forEach(function(x, i){
+        h += '<rect x="' + (x - 54) + '" y="40" width="108" height="42" rx="10" style="fill:' + (i === 3 ? '#fff' : '#334155') + '; stroke:#334155" stroke-width="1.5"/>' +
+          '<text x="' + x + '" y="66" text-anchor="middle" style="font-size:14px; font-weight:700; fill:' + (i === 3 ? '#334155' : '#fff') + '">' + N[i] + '</text>';
+        if (i < 3) h += '<path d="M' + (x + 56) + ' 61 h26" stroke="#94a3b8" stroke-width="3"/><path d="M' + (x + 80) + ' 55 l8 6 l-8 6 z" fill="#94a3b8"/>';
+      });
+      $('chain-svg').innerHTML = h;
+    }
+    function paint(){
+      pressed($('grp-seg'), 'g', g);
+      codes().forEach(function(c){ T[c].classList.toggle('dim', ST[c][4] !== g); T[c].classList.toggle('hl', ST[c][4] === g); T[c].classList.toggle('active', c === sel); });
+      chain(g);
+      var d = G[g], head = '<div class="tag">' + GNAME[g] + ' · <span class="nt">' + d.ns + ' · ' + d.nf + L(' empresas',' utilities') + ' · ' + L('nota média ','average score ') + (EN ? d.me : d.m) + '</span></div>';
+      if (sel && ST[sel][4] === g){
+        var s = ST[sel], f = FIRMS[sel] || [];
+        $('grp-panel').innerHTML = head + '<h3>' + (EN ? s[1] : s[0]) + ': ' + (f.length ? f.length + (f.length === 1 ? L(' empresa',' utility') : L(' empresas',' utilities')) : L('sem empresa na amostra','no utility in the sample')) + '</h3>' +
+          (f.length ? '<ul class="firms">' + f.map(function(x){ return '<li>' + x + '</li>'; }).join('') + '</ul>' : '<p>' + L('Nebraska e o Distrito de Columbia não têm empresa na amostra.','Nebraska and the District of Columbia have no sample utility.') + '</p>');
+      } else {
+        $('grp-panel').innerHTML = head + '<h3>' + d.h + '</h3><p>' + d.p + '</p>';
+      }
+    }
+    each($('grp-seg').children, function(b){ b.addEventListener('click', function(){ g = +b.dataset.g; sel = null; paint(); }); });
+    paint();
+  })();
+
+  /* ================= 06 · A AMOSTRA ================= */
+  (function(){
+    var F = [
+      {n:3476, t:L('empresas de energia reguladas na base','regulated energy companies in the database'), d:L('Inclui empresas públicas de energia (2.018), cooperativas (872), gasodutos (171), empresas de gás (116) e de transmissão e atacado (90). Sem fins lucrativos ou fora do varejo, elas saem.','Includes public power (2,018), cooperatives (872), gas pipelines (171), gas utilities (116) and wholesale/transmission firms (90). Not-for-profit or outside retail, they are dropped.')},
+      {n:211, t:L('distribuidoras de eletricidade e empresas diversificadas','electric and diversified utilities'), d:L('131 elétricas e 80 diversificadas, todas privadas e com fins lucrativos.','131 electric and 80 diversified utilities, all investor-owned and for-profit.')},
+      {n:157, t:L('empresas que operam (sem as 54 controladoras)','operating utilities (without the 54 parent holdings)'), d:L('Quando a subsidiária e a controladora aparecem juntas, a controladora sai: ela só consolida balanços e pode nem ser regulada.','When a subsidiary and its parent both appear, the parent is dropped: it only consolidates statements and may not even be regulated.')},
+      {n:137, t:L('com dados suficientes (20 saíram)','with enough data (20 dropped)'), d:L('A amostra final: 137 empresas, de 2012 a 2023. Cada uma entra no estado onde mais atua (receita no varejo, sede ou processos na comissão).','The final sample: 137 utilities, from 2012 to 2023. Each is assigned to the state where it mainly operates (retail revenue, headquarters or commission filings).')}
+    ];
+    $('fun').innerHTML = F.map(function(f, i){ return '<button data-i="' + i + '" aria-pressed="' + (i === 3) + '"><div class="fl"><span>' + f.t + '</span><b>' + n0(f.n) + '</b></div><div class="fb"><i style="width:' + (f.n / 3476 * 100) + '%"></i></div></button>'; }).join('');
+    function step(i){ pressed($('fun'), 'i', i); $('smp-panel').innerHTML = '<div class="tag">' + L('Etapa ', 'Step ') + (i + 1) + ' · <span class="nt">' + n0(F[i].n) + '</span></div><p>' + F[i].d + '</p>'; }
+    each($('fun').children, function(b){ b.addEventListener('click', function(){ step(+b.dataset.i); }); });
+    // um ponto por empresa, na ordem dos grupos
+    var dots = [], order = [];
+    [0, 1, 2].forEach(function(gg){ codes().forEach(function(c){ if (ST[c][4] === gg && FIRMS[c]) FIRMS[c].forEach(function(){ order.push(gg); }); }); });
+    $('firmdots').innerHTML = order.map(function(){ return '<i></i>'; }).join('');
+    dots = $('firmdots').children;
+    function mode(m){
+      pressed($('smp-seg'), 'm', m);
+      each(dots, function(d, i){
+        if (m === 'g'){ d.style.background = GCOL[order[i]]; d.style.boxShadow = order[i] === 2 ? 'inset 0 0 0 1px #94a3b8' : 'none'; }
+        else { d.style.background = i < 6 ? 'var(--red)' : '#cbd5e1'; d.style.boxShadow = 'none'; }
+      });
+      $('smp-legend').innerHTML = m === 'g'
+        ? '<span><i class="dot" style="background:var(--g0)"></i>' + L('integrados: 74','integrated: 74') + '</span><span><i class="dot" style="background:var(--g1)"></i>' + L('parciais: 19','partial: 19') + '</span><span><i class="dot" style="background:var(--g2); box-shadow:inset 0 0 0 1px #94a3b8"></i>' + L('totais: 44','full: 44') + '</span>'
+        : '<span><i class="dot" style="background:var(--red)"></i>' + L('capital aberto: 6','listed: 6') + '</span><span><i class="dot" style="background:#cbd5e1"></i>' + L('subsidiárias de capital fechado: 131','privately held subsidiaries: 131') + '</span>';
+    }
+    each($('smp-seg').children, function(b){ b.addEventListener('click', function(){ mode(b.dataset.m); }); });
+    mode('g'); step(3);
+  })();
+
+  /* ================= 07 · A DÍVIDA ================= */
+  (function(){
+    var rul = $('lv-rul');
+    var mk = [[LEV.min, L('mín.<br>3,0%','min.<br>3.0%'), 'l'], [LEV.mean, L('média<br>46,9%','mean<br>46.9%'), ''], [LEV.rate, L('processos<br>de tarifa 49%','rate<br>cases 49%'), 'up'], [LEV.max, L('máx.<br>81,2%','max.<br>81.2%'), 'r']];
+    rul.innerHTML = '<div class="band" style="left:' + (LEV.mean - LEV.sd) + '%; width:' + (2 * LEV.sd) + '%"></div>' +
+      mk.map(function(m){ return '<div class="mk ' + m[2] + '" style="left:' + m[0] + '%"><span>' + m[1] + '</span></div>'; }).join('') + '<div class="you" id="lv-you"></div>';
+    function upd(){
+      var d = +$('lv-d').value, e = +$('lv-e').value, tot = d + e, lev = tot > 0 ? d / tot * 100 : 0;
+      $('lv-dl').textContent = 'US$ ' + fmt(d, 1) + L(' bi',' bn'); $('lv-el').textContent = 'US$ ' + fmt(e, 1) + L(' bi',' bn');
+      $('capd').style.height = lev + '%';
+      $('lv-big').innerHTML = fmt(lev, 1) + '%<small>' + L('da empresa é financiada com dívida','of the utility is financed with debt') + '</small>';
+      $('lv-you').style.left = lev + '%';
+      var inb = Math.abs(lev - LEV.mean) <= LEV.sd;
+      $('lev-msg').innerHTML = tot === 0 ? L('Ponha algum valor.','Enter some value.') :
+        (inb ? L('Dentro da faixa de um desvio-padrão em torno da média (39% a 55%).','Within one standard deviation of the mean (39% to 55%).') :
+          lev > LEV.mean ? L('Mais endividada que a faixa típica da amostra.','More indebted than the sample’s typical range.') : L('Menos endividada que a faixa típica da amostra.','Less indebted than the sample’s typical range.')) +
+        (lev > LEV.max + 0.05 ? L(' Nenhuma empresa da amostra chegou a tanto.',' No sample utility went that far.') : lev < LEV.min - 0.05 && tot > 0 ? L(' Nenhuma empresa da amostra ficou tão baixo.',' No sample utility went that low.') : '');
+    }
+    var P = [[L('Como a média','Like the mean'), 4.7, 5.3], [L('A mais endividada','The most indebted'), 8.1, 1.9], [L('A menos endividada','The least indebted'), 0.3, 9.7], [L('Só patrimônio','Equity only'), 0, 10]];
+    $('lv-pres').innerHTML = P.map(function(p, i){ return '<button data-i="' + i + '">' + p[0] + '</button>'; }).join('');
+    each($('lv-pres').children, function(b){ b.addEventListener('click', function(){ var p = P[+b.dataset.i]; $('lv-d').value = p[1]; $('lv-e').value = p[2]; upd(); }); });
+    $('lv-d').addEventListener('input', upd); $('lv-e').addEventListener('input', upd);
+    upd();
+  })();
+
+  /* ================= 08 · HIPÓTESES ================= */
+  (function(){
+    var H = [
+      {k:'1', q:L('Mais risco regulatório, menos dívida','More regulatory risk, less debt'), qd:L('Com nota pior, a empresa deveria se endividar menos.','With a worse score, the utility should borrow less.'),
+       r:L('<b>Não se confirmou.</b> O sinal foi o esperado (negativo), mas pequeno e incerto: −0,0007 por ponto da nota, p = 0,81. Controlando os anos, também sem efeito.','<b>Not confirmed.</b> The sign was the expected one (negative), but small and uncertain: −0.0007 per score point, p = 0.81. Controlling for years, still no effect.'), rows:[0]},
+      {k:'2', q:L('O efeito é mais forte onde o mercado foi aberto','The effect is stronger where the market was opened'), qd:L('Nos estados reestruturados, a nota deveria pesar mais.','In restructured states, the score should weigh more.'),
+       r:L('<b>Não se confirmou.</b> Nem nos estados parciais (p = 0,79) nem nos totais (p = 0,998) a nota mexeu na dívida, e as diferenças entre os grupos ficaram longe de qualquer efeito (p = 0,97 e 0,79).','<b>Not confirmed.</b> Neither in partial (p = 0.79) nor in full (p = 0.998) states did the score move debt, and the differences between groups were far from any effect (p = 0.97 and 0.79).'), rows:[1, 2, 3]},
+      {k:'3', q:L('Quando a nota muda, a empresa ajusta a dívida','When the score changes, the utility adjusts its debt'), qd:L('Nota piorou, dívida cai; nota melhorou, dívida sobe.','Score worsens, debt falls; score improves, debt rises.'),
+       r:L('<b>Não se confirmou.</b> A dívida se ajusta aos poucos (tela 10), mas a mudança da nota não explica esse ajuste: −0,002, p = 0,72.','<b>Not confirmed.</b> Debt adjusts gradually (screen 10), but the change in the score does not explain it: −0.002, p = 0.72.'), rows:[4]}
+    ];
+    // coeficiente × 100 (p.p. por ponto da nota) e IC 95%
+    var R = [
+      {n:L('H1 · todas as empresas','H1 · all utilities'), v:-0.06593, lo:-0.60442, hi:0.47257, p:0.809},
+      {n:L('H2 · integrados','H2 · integrated'), v:-0.13748, lo:-0.9678, hi:0.69284, p:0.744},
+      {n:L('H2 · parciais','H2 · partial'), v:-0.16752, lo:-1.39621, hi:1.06117, p:0.788},
+      {n:L('H2 · totais','H2 · full'), v:0.000916, lo:-0.70035, hi:0.70218, p:0.998},
+      {n:L('H3 · mudança da nota','H3 · change in score'), v:-0.19209, lo:-1.24145, hi:0.85727, p:0.72}
+    ];
+    var SC = 1.5; function X(v){ return (v + SC) / (2 * SC) * 100; }
+    $('forest-rows').innerHTML = R.map(function(r, i){
+      return '<div class="fr off" data-r="' + i + '"><span>' + r.n + '</span><div class="tr"><div class="ci" style="left:' + X(r.lo) + '%; width:' + (X(r.hi) - X(r.lo)) + '%"></div><div class="pt" style="left:' + X(r.v) + '%"></div></div>' +
+        '<span class="v"><b>' + sgn(r.v, 2) + '</b><br>' + fmt(r.lo, 2).replace('-', '−') + L(' a ',' to ') + (r.hi > 0 ? '+' : '') + fmt(r.hi, 2) + '</span></div>';
+    }).join('');
+    $('hyps').innerHTML = H.map(function(h){
+      return '<div class="hyp" data-k="' + h.k + '"><span class="hn">H' + h.k + '</span><div><div class="q">' + h.q + '</div><div class="qd">' + h.qd + '</div>' +
+        '<div class="opts"><button data-a="1">' + L('Confirmou','Confirmed') + '</button><button data-a="0">' + L('Não confirmou','Not confirmed') + '</button></div><div class="res"></div></div></div>';
+    }).join('');
+    var hits = 0, done = 0;
+    each($('hyps').children, function(el){
+      var h = H.filter(function(x){ return x.k === el.dataset.k; })[0];
+      each(el.querySelectorAll('.opts button'), function(b){
+        b.addEventListener('click', function(){
+          var ok = b.dataset.a === '0'; if (ok) hits++; done++;
+          el.classList.add('done'); el.style.setProperty('--hc', 'var(--ink-2)');
+          el.querySelector('.res').innerHTML = h.r + ' <span style="color:var(--muted)">' + (ok ? L('Você acertou.','You got it right.') : L('Você apostou que sim.','You bet yes.')) + '</span>';
+          h.rows.forEach(function(r){ $('forest-rows').querySelector('[data-r="' + r + '"]').classList.remove('off'); });
+          $('hyp-score').innerHTML = done === 3 ? L('Você acertou ', 'You got ') + hits + L(' de 3. Nenhuma das três hipóteses sobre o risco regulatório se confirmou: todas as faixas cruzam o zero.', ' of 3 right. None of the three hypotheses on regulatory risk was confirmed: every band crosses zero.') : (3 - done === 1 ? L('Falta 1.', '1 to go.') : L('Faltam 2.', '2 to go.'));
+        });
+      });
+    });
+  })();
+
+  /* ================= 09 · O QUE PESA (simulador) ================= */
+  (function(){
+    var sc = $('sim-scene'), st = makeStage(sc, 130, 130, {ay:'84%', rx:'60deg'});
+    rotatable(sc, st, -30, 6);
+    var Hc = 200, debt = box({w:100, d:100, x:15, y:15, h:Hc * 0.47, c:'var(--debt)'}), eq = box({w:100, d:100, x:15, y:15, z:Hc * 0.47, h:Hc * 0.53, c:'var(--eq)'});
+    st.appendChild(debt); st.appendChild(eq);
+    var F = [
+      {k:'rr', n:L('Nota do estado','State score'), u:'', c:H1.rr, sig:false, el:'s-r', lab:function(v){ return String(v); }, base:5},
+      {k:'prof', n:L('Rentabilidade','Profitability'), u:'p.p.', c:H1.prof, sig:true, el:'s-p', lab:function(v){ return fmt(v, 1) + '%'; }, base:MEANS.prof},
+      {k:'capex', n:L('Investimento','Investment'), u:'p.p.', c:H1.capex, sig:true, el:'s-c', lab:function(v){ return fmt(v, 1) + '%'; }, base:MEANS.capex}
+    ];
+    var SCL = 4;
+    $('contrib').innerHTML = F.map(function(f){ return '<div class="cb"><span>' + f.n + '<small>' + (f.sig ? pTxt(f.c[1]) : L('sem efeito claro, ','no clear effect, ') + pTxt(f.c[1])) + '</small></span><div class="tr"><div class="band" id="bd-' + f.k + '"></div><i id="cb-' + f.k + '"></i></div><b id="cv-' + f.k + '"></b></div>'; }).join('');
+    function X(v){ return (v + SCL) / (2 * SCL) * 100; }
+    function clamp(v){ return Math.max(-SCL, Math.min(SCL, v)); }
+    function upd(){
+      var tot = LEV.mean;
+      F.forEach(function(f){
+        var v = +$(f.el).value, dv = v - f.base, ef = (f.k === 'rr' ? f.c[0] * 100 : f.c[0]) * dv;
+        $(f.el + 'l').textContent = f.lab(v);
+        tot += ef;
+        var bar = $('cb-' + f.k), a = X(clamp(Math.min(0, ef))), b = X(clamp(Math.max(0, ef)));
+        bar.style.left = a + '%'; bar.style.width = Math.max(0.6, b - a) + '%';
+        bar.className = !f.sig ? 'ns' : ef < 0 ? 'neg' : '';
+        $('cv-' + f.k).textContent = sgn(ef, 2);
+        var bd = $('bd-' + f.k);
+        if (!f.sig){ var lo = f.c[2] * 100 * dv, hi = f.c[3] * 100 * dv, l2 = Math.min(lo, hi), h2 = Math.max(lo, hi); bd.style.left = X(clamp(l2)) + '%'; bd.style.width = (X(clamp(h2)) - X(clamp(l2))) + '%'; }
+        else bd.style.width = '0';
+      });
+      debt.style.setProperty('--h', (Hc * tot / 100) + 'px'); eq.style.setProperty('--z', (Hc * tot / 100) + 'px'); eq.style.setProperty('--h', (Hc * (1 - tot / 100)) + 'px');
+      $('sim-out').innerHTML = '<div class="big">' + fmt(tot, 1) + '%<small>' + L('de dívida no capital (partida: a média, 46,9%, com nota 5)','debt in capital (start: the mean, 46.9%, with score 5)') + '</small></div>';
+    }
+    var P = [[L('Média da amostra','Sample mean'), 5, 8.1, 7.3], [L('Nota de 1 para 9','Score from 1 to 9'), 9, 8.1, 7.3], [L('Lucro 2 pontos maior','Profit 2 points higher'), 5, 10.1, 7.3], [L('Investimento 4 pontos maior','Investment 4 points higher'), 5, 8.1, 11.3]];
+    $('s-pres').innerHTML = P.map(function(p, i){ return '<button data-i="' + i + '">' + p[0] + '</button>'; }).join('');
+    each($('s-pres').children, function(b){ b.addEventListener('click', function(){ var p = P[+b.dataset.i]; $('s-r').value = p[1]; $('s-p').value = p[2]; $('s-c').value = p[3]; if (+b.dataset.i === 1){ $('s-r').value = 1; upd(); setTimeout(function(){ $('s-r').value = 9; upd(); }, 700); } else upd(); }); });
+    ['s-r', 's-p', 's-c'].forEach(function(id){ $(id).addEventListener('input', upd); });
+    upd();
+  })();
+
+  /* ================= 10 · AJUSTE LENTO ================= */
+  (function(){
+    var svg = $('adj-svg'), X0 = 60, W = 470, base = 280, top = 50, n = 11, bw = W / n - 8;
+    function draw(m){
+      var g = GMM[m], rho = g.rho, h = '';
+      h += '<line x1="' + X0 + '" y1="' + base + '" x2="' + (X0 + W) + '" y2="' + base + '" stroke="#0f172a" stroke-width="2"/>';
+      h += '<text x="' + X0 + '" y="' + (base + 40) + '" style="font-size:13px; fill:var(--muted)">' + L('anos depois do desvio →','years after the drift →') + '</text>';
+      h += '<text x="' + (X0 - 8) + '" y="' + (top + 4) + '" text-anchor="end" style="font-size:12px; fill:var(--muted)">10</text><text x="' + (X0 - 8) + '" y="' + (base + 4) + '" text-anchor="end" style="font-size:12px; fill:var(--muted)">0</text>';
+      h += '<text x="' + (X0 + W) + '" y="' + (base - 8) + '" text-anchor="end" style="font-size:12px; fill:var(--red); font-weight:700">' + L('alvo','target') + '</text>';
+      h += '<line x1="' + X0 + '" y1="' + (base - (base - top) / 2) + '" x2="' + (X0 + W) + '" y2="' + (base - (base - top) / 2) + '" stroke="#cbd5e1" stroke-dasharray="4 5"/><text x="' + (X0 + W) + '" y="' + (base - (base - top) / 2 - 6) + '" text-anchor="end" style="font-size:11px; fill:var(--muted)">' + L('metade do caminho','halfway') + '</text>';
+      for (var t = 0; t < n; t++){
+        var gap = 10 * Math.pow(rho, t), hh = gap / 10 * (base - top), x = X0 + t * (W / n) + 4;
+        h += '<rect class="b" x="' + x + '" y="' + (base - hh) + '" width="' + bw + '" height="' + hh + '" rx="3" style="fill:' + (gap <= 5 ? 'color-mix(in srgb, var(--debt) 45%, white)' : 'var(--debt)') + '"/>';
+        h += '<text x="' + (x + bw / 2) + '" y="' + (base + 18) + '" text-anchor="middle" style="font-size:12px; fill:var(--ink-2)">' + t + '</text>';
+        if (t === 0 || t === 1 || t === 5 || t === 10) h += '<text x="' + (x + bw / 2) + '" y="' + (base - hh - 6) + '" text-anchor="middle" style="font-size:12px; font-weight:700; fill:var(--ink)">' + fmt(gap, 1) + '</text>';
+      }
+      var half = Math.log(0.5) / Math.log(rho);
+      h += '<text x="' + X0 + '" y="26" class="big" style="font-size:16px; font-weight:700; fill:var(--ink); font-family:var(--serif)">' + L('distância até o alvo, em pontos','gap to the target, in points') + '</text>';
+      svg.innerHTML = h;
+      pressed($('adj-seg'), 'm', m);
+      $('adj-panel').innerHTML = '<div class="tag">' + g.t + ' · <span class="nt">' + g.inst + L(' instrumentos',' instruments') + ' · Hansen p = ' + fmt(g.hans, 3) + '</span></div>' +
+        '<h3>' + L('Ajuste de ','Adjustment of ') + fmt((1 - rho) * 100, 1) + L('% da distância por ano','% of the gap per year') + '</h3>' +
+        '<p>' + L('Coeficiente da dívida do ano anterior: ','Coefficient on last year’s debt: ') + fmt(rho, 3) + '. ' + L('Metade do caminho em cerca de ','Halfway in about ') + fmt(half, 0) + L(' anos (conta nossa).',' years (our calculation).') + ' ' +
+        L('Mudança da nota: ','Change in score: ') + sgn(g.drr[0], 4) + ', p = ' + fmt(g.drr[1], 2) + L(', sem efeito.',', no effect.') + '</p>';
+    }
+    each($('adj-seg').children, function(b){ b.addEventListener('click', function(){ draw(+b.dataset.m); }); });
+    draw(0);
+  })();
+
+  /* ================= 11 · O INESPERADO ================= */
+  (function(){
+    var cols = [];
+    [0, 1, 2].forEach(function(g){ codes().filter(function(c){ return ST[c][4] === g && RR[c]; }).sort().forEach(function(c, i){ cols.push({c:c, gap:g > 0 && i === 0}); }); });
+    var h = '';
+    YEARS.forEach(function(y, yi){
+      h += '<span class="yl">' + (yi % 2 ? '' : "’" + String(y).slice(2)) + '</span>';
+      cols.forEach(function(o){
+        var v = RR[o.c][yi], ch = yi > 0 && v !== RR[o.c][yi - 1];
+        h += '<i data-c="' + o.c + '" class="' + (ch ? 'ch' : '') + (o.gap ? ' gap' : '') + '" title="' + o.c + ' ' + y + ': ' + v + '" style="background:' + scol(v) + '"></i>';
+      });
+    });
+    $('mx').innerHTML = h;
+    var sel = $('mx-sel');
+    sel.innerHTML = '<option value="">' + L('Escolha um estado','Pick a state') + '</option>' + cols.map(function(o){ return o.c; }).slice().sort(function(a, b){ return (EN ? ST[a][1] : ST[a][0]).localeCompare(EN ? ST[b][1] : ST[b][0]); }).map(function(c){ return '<option value="' + c + '">' + (EN ? ST[c][1] : ST[c][0]) + '</option>'; }).join('');
+    var revealed = false;
+    function overview(){
+      $('mx-panel').innerHTML = '<div class="tag">' + L('O que a grade mostra','What the grid shows') + '</div>' +
+        '<h3>' + L('A nota muda pouco, e quase sempre de 1 ponto','The score changes little, and almost always by 1 point') + '</h3>' +
+        '<p>' + L('Pesando cada estado pelo número de empresas, a nota mudou em 274 de 1.507 viradas de ano (18%). Nos 49 estados, foram 90 mudanças em 12 anos, 81 delas de 1 ponto, e 4 estados nunca mudaram. A nota varia bem mais entre estados (desvio-padrão de 1,67) do que dentro de uma mesma empresa ao longo do tempo (0,73).','Weighting each state by its number of utilities, the score changed in 274 of 1,507 year turns (18%). Across the 49 states there were 90 changes in 12 years, 81 of them by 1 point, and 4 states never changed. The score varies far more across states (standard deviation of 1.67) than within the same utility over time (0.73).') + '</p>' +
+        '<p><span class="ilus">' + L('leitura nossa','our reading') + '</span> ' + L('O modelo de efeitos fixos só aproveita o que muda dentro de cada empresa. A diferença entre estados, que aparece na correlação simples, fica com a própria empresa. Sobra pouco movimento da nota para explicar a dívida.','The fixed-effects model only uses what changes within each utility. The difference across states, which shows in the simple correlation, is absorbed by the utility itself. Little movement in the score is left to explain debt.') + '</p>';
+    }
+    function pick(c){
+      each($('mx').querySelectorAll('i'), function(i){ i.classList.toggle('selc', i.dataset.c === c); });
+      sel.value = c;
+      var s = ST[c], v = RR[c], n = changes(c), nf = FIRMS[c].length;
+      $('mx-panel').innerHTML = '<div class="tag">' + (EN ? s[1] : s[0]) + ' · ' + GNAME[s[4]].toLowerCase() + ' · ' + nf + (nf === 1 ? L(' empresa',' utility') : L(' empresas',' utilities')) + '</div>' +
+        '<h3>' + (n === 0 ? L('A nota ficou em ','The score stayed at ') + v[0] + L(' nos 12 anos',' for all 12 years') : L('Mudou ', 'Changed ') + n + (n === 1 ? L(' vez',' time') : L(' vezes',' times')) + ': ' + L('de ','from ') + v[0] + L(' para ',' to ') + v[11]) + '</h3>' + spark(c, -1) +
+        '<p style="margin-top:6px"><a href="#" id="mx-back" style="color:var(--red)">' + L('Voltar ao resumo','Back to the summary') + '</a></p>';
+      $('mx-back').addEventListener('click', function(e){ e.preventDefault(); each($('mx').querySelectorAll('i'), function(i){ i.classList.remove('selc'); }); sel.value = ''; overview(); });
+    }
+    $('mx').addEventListener('click', function(e){ var c = e.target.dataset && e.target.dataset.c; if (c) pick(c); });
+    sel.addEventListener('change', function(){ if (this.value) pick(this.value); else overview(); });
+    each($('mx-seg').children, function(b){ b.addEventListener('click', function(){ pressed($('mx-seg'), 'm', b.dataset.m); $('mx').classList.toggle('only', b.dataset.m === 'ch'); }); });
+    var G = [[L('1 em cada 10','1 in 10'), 0], [L('2 em cada 10','2 in 10'), 1], [L('5 em cada 10','5 in 10'), 0], [L('8 em cada 10','8 in 10'), 0]];
+    $('guess').innerHTML = G.map(function(g, i){ return '<button data-i="' + i + '">' + g[0] + '</button>'; }).join('');
+    each($('guess').children, function(b){
+      b.addEventListener('click', function(){
+        if (revealed) return; revealed = true;
+        var ok = G[+b.dataset.i][1] === 1;
+        each($('guess').children, function(x){ x.classList.add(G[+x.dataset.i][1] ? 'right' : 'wrong'); });
+        $('guess-msg').innerHTML = (ok ? L('Isso. ','Right. ') : L('Não: ','No: ')) + L('cerca de 2 em cada 10 (18%). Veja as mudanças na grade.','about 2 in 10 (18%). See the changes in the grid.');
+        pressed($('mx-seg'), 'm', 'ch'); $('mx').classList.add('only');
+      });
+    });
+    overview();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
