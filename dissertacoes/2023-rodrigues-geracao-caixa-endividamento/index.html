@@ -1,0 +1,969 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quem gera mais caixa se endivida mais? · PPGA Interativo</title>
+<meta name="description" content="A dissertação de mestrado de Claudia Lebre Rodrigues (PPGA Mackenzie, 2023) sobre geração de caixa, endividamento e Covid-19 em 757 empresas de capital aberto de seis países da América Latina, de 2017 a 2021, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/dissertacoes/2023-rodrigues-geracao-caixa-endividamento/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><path d=%22M18 4 L9 18 h6 l-2 10 l10 -15 h-6 z%22 fill=%22white%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  @property --z{syntax:'<length>'; inherits:false; initial-value:0px;}
+  :root{
+    --pos:var(--navy);    /* coeficiente positivo: a dívida sobe */
+    --neg:var(--red);     /* coeficiente negativo: a dívida cai */
+    --ns:#cbd5e1;         /* sem efeito claro */
+    --cash:#334155;       /* geração de caixa */
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+  .ilus{display:inline-block; font-size:.64rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 13px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.75rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px;}
+  .chips button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-size:.78rem; cursor:pointer; color:var(--ink-2);}
+  .chips button:hover{border-color:var(--ink);}
+  .chips button[aria-pressed="true"]{border-color:var(--ink); background:var(--ink); color:#fff;}
+  .row-tools{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:12px;}
+  .sv{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .sv text{font-family:var(--sans);}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 3.7vw, 2.55rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.86rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.77rem; color:var(--muted); text-align:center; margin-top:6px; max-width:36em; margin-left:auto; margin-right:auto;}
+  #hero-line{font-family:var(--serif); text-align:center; font-size:1.02rem; color:var(--ink); margin-bottom:2px; min-height:1.6em;}
+  #hero-line b{color:var(--red);}
+  #hero-scene, #mx-scene, #vr-scene, #rg-scene, #am-scene{perspective:2200px;}
+  #hero-scene .slab, #mx-scene .slab, #vr-scene .slab{transition:--h .6s cubic-bezier(.2,.8,.2,1), transform .5s;}
+  #hero-scene .floor-label, #mx-scene .floor-label, #vr-scene .floor-label{font-size:12px; color:var(--muted); font-weight:600;}
+  .lg{display:flex; justify-content:center; gap:6px 14px; flex-wrap:wrap; font-size:.74rem; color:var(--muted); margin-top:4px;}
+
+  /* ---------- 02 · Trade-off ---------- */
+  .ctl{margin-top:10px;}
+  .ctl label{display:flex; justify-content:space-between; font-size:.86rem; font-weight:600; color:var(--ink);}
+  .ctl label span{font-variant-numeric:tabular-nums; color:var(--red);}
+  .ctl input{width:100%; accent-color:var(--red);}
+  .ctl small{display:block; font-size:.72rem; color:var(--muted);}
+  #to-msg{min-height:5.2em; margin-top:12px;}
+  .ln{display:inline-block; width:26px; height:0; border-top:3px dashed; margin-right:6px; vertical-align:3px;}
+  .ln.solid{border-top:4px solid #0f172a;}
+  @media (max-width:600px){ #to-svg text{font-size:20px !important;} }
+
+  /* ---------- 03 · Duas teorias ---------- */
+  .theo{display:grid; gap:8px; margin-top:12px;}
+  .tr3{display:grid; grid-template-columns:1fr 92px; gap:10px; align-items:center; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:9px 14px; box-shadow:var(--shadow);}
+  .tr3 b{display:block; font-size:.92rem; color:var(--ink);}
+  .tr3 span{font-size:.76rem; color:var(--muted); line-height:1.35; display:block;}
+  .arrow{height:52px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:.76rem; font-weight:700; color:#fff; flex-direction:column; line-height:1.1; transition:background .4s;}
+  .arrow i{font-style:normal; font-size:1.5rem; line-height:1; transition:transform .5s cubic-bezier(.2,.8,.2,1);}
+  .tr3 .arrow span{color:#fff; font-size:.7rem; display:block; margin-top:2px;}
+  .arrow.up{background:var(--pos);}
+  .arrow.dn{background:var(--neg);}
+  .arrow.dn i{transform:rotate(180deg);}
+  #th-panel{margin-top:12px; min-height:7em;}
+
+  /* ---------- 04 · Caixa ---------- */
+  #cx-panel{margin-top:12px; min-height:6.4em;}
+  @media (max-width:600px){ #cx-svg text{font-size:21px !important;} }
+
+  /* ---------- 05 · Réguas ---------- */
+  #rg-scene .slab{transition:transform .5s cubic-bezier(.2,.8,.2,1); cursor:pointer;}
+  #rg-scene .slab.active{--oz:18px;}
+  #rg-scene .top-label{font-size:15px; font-weight:700; color:#fff; text-align:center; line-height:1.25; padding:0 6px;}
+  #rg-scene .slab.lt .top-label{color:var(--ink);}
+  #rg-scene .floor-label{font-size:12px; color:var(--muted); font-weight:700; letter-spacing:.06em; text-transform:uppercase;}
+  #rg-panel{margin-top:12px; min-height:9em;}
+  .frac{display:inline-grid; text-align:center; vertical-align:middle; font-size:.8rem; margin:4px 0;}
+  .frac span:first-child{border-bottom:1.5px solid var(--ink-2); padding:0 6px 2px;}
+  .frac span:last-child{padding:2px 6px 0;}
+  .mean2{display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; margin-top:8px;}
+  .mean2 div{background:#f1f5f9; border-radius:9px; padding:6px 10px; font-size:.74rem; color:var(--muted);}
+  .mean2 b{display:block; font-family:var(--serif); font-size:1.1rem; color:var(--ink);}
+
+  /* ---------- 06 · Amostra ---------- */
+  #am-scene .slab{transition:--h .6s cubic-bezier(.2,.8,.2,1), transform .5s; cursor:pointer;}
+  #am-scene .slab.active{--oz:12px;}
+  #am-scene .slab.active > i{box-shadow:inset 0 0 0 2px var(--ink);}
+  #am-scene .top-label{font-size:14px; font-weight:700; color:#fff; font-family:var(--serif);}
+  #am-scene .floor-label{font-size:13px; color:var(--ink-2); font-weight:600;}
+  .fun{display:grid; gap:7px; margin-top:10px;}
+  .fun > div{border:1px solid var(--border); background:var(--card); border-radius:11px; padding:7px 12px;}
+  .fun .fl{display:flex; justify-content:space-between; gap:10px; font-size:.8rem; color:var(--ink-2);}
+  .fun .fl b{font-family:var(--serif); font-size:1.05rem; color:var(--ink);}
+  .fun .fb{height:8px; background:#eef2f7; border-radius:4px; margin-top:5px; overflow:hidden;}
+  .fun .fb i{display:block; height:100%; background:var(--ink-2); border-radius:4px;}
+  .fun > div:last-child .fb i{background:var(--red);}
+  #am-panel{margin-top:10px; min-height:4.6em;}
+
+  /* ---------- 07 · Covid ---------- */
+  @media (max-width:600px){ #gdp-svg text{font-size:19px !important;} }
+  .mtab{width:100%; border-collapse:collapse; font-size:.8rem; margin-top:10px; background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden;}
+  .mtab th, .mtab td{padding:6px 10px; text-align:right; border-bottom:1px solid #f1f5f9; font-variant-numeric:tabular-nums;}
+  .mtab th:first-child, .mtab td:first-child{text-align:left; color:var(--ink-2);}
+  .mtab th{font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); background:#f8fafc;}
+  .mtab td.ch{font-weight:700;}
+  .mtab tr.hl td{background:#fff7f8;}
+
+  /* ---------- 08 · Apostas ---------- */
+  .hyps{display:grid; gap:8px; margin-top:10px;}
+  .hyp{display:grid; grid-template-columns:40px 1fr; gap:8px; align-items:start; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 12px; box-shadow:var(--shadow); border-left:5px solid var(--hc, var(--border));}
+  .hyp .hn{font-family:var(--serif); font-weight:900; font-size:1.15rem; color:var(--ink);}
+  .hyp .q{font-size:.86rem; color:var(--ink); font-weight:600; line-height:1.35;}
+  .hyp .qd{font-size:.76rem; color:var(--muted); line-height:1.4; margin-top:2px;}
+  .hyp .opts{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;}
+  .hyp .opts button{border:1px solid var(--border); background:var(--card); border-radius:8px; padding:5px 10px; font-size:.78rem; font-weight:600; cursor:pointer; color:var(--ink);}
+  .hyp .opts button:hover{border-color:var(--ink);}
+  .hyp .res{display:none; font-size:.76rem; color:var(--ink-2); margin-top:4px; line-height:1.42;}
+  .hyp .res b{color:var(--ink);}
+  .hyp.done .opts{display:none;}
+  .hyp.done .res{display:block;}
+  #hyp-score{font-size:.9rem; color:var(--ink-2); margin-top:12px; min-height:1.5em;}
+  .tally{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 16px 12px; box-shadow:var(--shadow);}
+  .tally h3{font-size:.95rem; margin-bottom:2px;}
+  .tally .sub{font-size:.76rem; color:var(--muted); margin-bottom:8px;}
+  .tl{display:grid; grid-template-columns:118px 1fr; gap:10px; align-items:center; padding:8px 0; border-top:1px solid #f1f5f9; font-size:.8rem; color:var(--ink-2);}
+  .tl small{display:block; font-size:.68rem; color:var(--muted);}
+  .tbar{display:flex; height:26px; border-radius:6px; overflow:hidden; background:#f1f5f9; transition:opacity .4s;}
+  .tbar i{display:flex; align-items:center; justify-content:center; font-style:normal; font-size:.74rem; font-weight:700; color:#fff; transition:flex-grow .6s; min-width:0; overflow:hidden;}
+  .tbar i.p{background:var(--pos);} .tbar i.n{background:var(--neg);} .tbar i.z{background:var(--ns); color:var(--ink-2);}
+  .tbar.off{opacity:.18;}
+  .tbar i.exp{box-shadow:inset 0 0 0 3px #fbbf24;}
+  @media (max-width:600px){ .tl{grid-template-columns:86px 1fr; gap:6px;} }
+
+  /* ---------- 09 · Mosaico ---------- */
+  #mx-scene .slab{cursor:pointer;}
+  #mx-scene .slab.dim > i{opacity:.12;}
+  #mx-scene .slab.sel{--oz:14px;}
+  #mx-scene .slab.sel > i{box-shadow:inset 0 0 0 2px var(--ink);}
+  #mx-panel{margin-top:10px; min-height:7.4em;}
+  .badge{display:inline-block; border-radius:6px; padding:1px 8px; font-size:.74rem; font-weight:700; color:#fff;}
+  .badge.p{background:var(--pos);} .badge.n{background:var(--neg);} .badge.z{background:var(--ns); color:var(--ink-2);}
+
+  /* ---------- 10 · Virada ---------- */
+  .vr-big{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+  .vr-big div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 13px; border-top:5px solid var(--vc);}
+  .vr-big b{display:block; font-family:var(--serif); font-size:1.7rem; color:var(--ink); line-height:1.1; font-variant-numeric:tabular-nums;}
+  .vr-big span{font-size:.76rem; color:var(--ink-2); display:block; line-height:1.35;}
+  #vr-panel{margin-top:10px; min-height:5em;}
+
+  /* ---------- 11 · Inesperado ---------- */
+  .guess{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .guess button{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:8px 12px; font-size:.84rem; font-weight:600; cursor:pointer; color:var(--ink);}
+  .guess button:hover{border-color:var(--ink);}
+  .guess button.right{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .guess button.wrong{opacity:.45;}
+  #guess-msg{font-size:.86rem; color:var(--ink-2); margin-top:8px; min-height:2.8em;}
+  #ie-wrap{transition:opacity .5s;}
+  #ie-wrap.hide{opacity:.15; pointer-events:none;}
+  @media (max-width:600px){ #ie-svg text{font-size:19px !important;} }
+
+  /* ---------- 12 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.77rem; color:var(--ink-2); line-height:1.42;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/dissertacoes/2023-rodrigues-geracao-caixa-endividamento/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Dissertação de mestrado · PPGA Mackenzie · 2023</div>
+      <h1 class="rv" style="--d:.1s">Quem gera mais caixa se endivida mais?</h1>
+      <p class="sub rv" style="--d:.2s">A dissertação seguiu 757 empresas de capital aberto de seis países da América Latina, de 2017 a 2021, para ver se o tamanho, a instabilidade e o crescimento do caixa mudam o quanto elas devem, e se a Covid-19 mexeu nisso. Em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autora:</b> Claudia Lebre Rodrigues</span>
+        <span><b>Orientador:</b> Prof. Dr. Wilson Toshiro Nakamura</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#divida">Começar →</a>
+        <a class="btn ghost" href="#apostas">Ir direto ao resultado</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div id="hero-line" aria-live="off"></div>
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="540x340" role="img" aria-label="Grade 3D de 3 atributos do caixa por 4 medidas de dívida; cada bloco é azul quando a dívida sobe, vermelho quando cai e cinza sem efeito claro, e o período muda sozinho"></div></div>
+      <div class="lg"><span><i class="dot" style="background:var(--pos)"></i>a dívida sobe</span><span><i class="dot" style="background:var(--neg)"></i>a dívida cai</span><span><i class="dot" style="background:var(--ns)"></i>sem efeito claro</span></div>
+      <p class="cap-legend">Resultados do modelo com o retorno sobre o ativo (Tabelas 13 a 15). A altura é a força da evidência; o período troca a cada 2 segundos. O mesmo atributo muda de cor de uma dívida para outra.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Estuda como empresas de seis países da América Latina se financiaram antes e durante a pandemia, quando o PIB da região caiu 6,6% em 2020."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · TRADE-OFF -->
+<section class="slide" id="divida" data-label="Dívida: o bom e o ruim">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O problema</div>
+      <h2 class="rv" style="--d:.1s">Dever tem um lado bom e um lado ruim para a empresa</h2>
+      <p class="lede rv" style="--d:.15s">Os juros da dívida reduzem o imposto a pagar: é o lado bom. Mas, quanto mais a empresa deve, maior o risco de não conseguir pagar: é o lado ruim. Pela teoria do equilíbrio (<em>trade-off</em>), existe uma dose de dívida que deixa a empresa no ponto mais valioso. Arraste e procure esse ponto.</p>
+      <div class="ctl rv" style="--d:.2s"><label>Dívida da empresa <span id="to-dl"></span></label><input type="range" id="to-d" min="0" max="60" step="1" value="8" aria-label="Dívida da empresa, em % do ativo"><small>em % do que a empresa tem (ativo), empresa inventada</small></div>
+      <div class="panel rv" id="to-msg" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="legend" style="margin:0 0 8px"><span><i class="ln" style="border-color:var(--navy)"></i>ganho com imposto</span><span><i class="ln" style="border-color:var(--red)"></i>custo do risco de quebra</span><span><i class="ln solid"></i>valor da empresa</span></div>
+      <svg id="to-svg" class="sv" viewBox="0 30 560 330" role="img" aria-label="Curvas do ganho com imposto, do custo do risco e do valor da empresa conforme a dívida"></svg>
+      <p class="note"><span class="ilus">ilustração nossa</span> Números inventados, só para mostrar a lógica da Figura 2 da dissertação (teoria do trade-off, Myers, 1984). A dissertação não calcula a dívida ideal de nenhuma empresa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · DUAS TEORIAS -->
+<section class="slide" id="teorias" data-label="Duas teorias">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> A pergunta</div>
+      <h2 class="rv" style="--d:.1s">Duas teorias, previsões opostas</h2>
+      <p class="lede rv" style="--d:.15s">Pense numa pessoa com salário alto. O banco confia nela e empresta mais? Ou ela nem precisa de empréstimo, porque paga à vista? Com empresas, as duas respostas têm teoria por trás. Troque a teoria e veja as setas virarem.</p>
+      <div class="seg rv" id="th-seg" style="--d:.2s" role="group" aria-label="Escolha a teoria">
+        <button data-t="0" aria-pressed="true">Equilíbrio (trade-off)</button>
+        <button data-t="1" aria-pressed="false">Hierarquia (pecking order)</button>
+      </div>
+      <div class="panel rv" id="th-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="theo" id="theo"></div>
+      <p class="note">Quadro 4 da dissertação. Os estudos anteriores reunidos no Quadro 5 acharam as duas direções, e o crescimento do caixa quase não tinha sido testado. As hipóteses da dissertação seguem a teoria do equilíbrio.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · O CAIXA -->
+<section class="slide" id="caixa" data-label="Três jeitos de ler o caixa">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> A medida do caixa</div>
+      <h2 class="rv" style="--d:.1s">O caixa de uma empresa pode ser lido de três jeitos</h2>
+      <p class="lede rv" style="--d:.15s">Seguindo Carleton e Silberman (1977), a dissertação olha o tamanho da geração de caixa, o quanto ela oscila e o quanto cresce. Como aproximação do caixa, usa o lucro da operação (antes de juros e impostos) e o valor que a bolsa dá à empresa. Escolha um atributo.</p>
+      <div class="seg rv" id="cx-seg" style="--d:.2s" role="group" aria-label="Atributo do caixa">
+        <button data-a="0" aria-pressed="true">Tamanho</button>
+        <button data-a="1" aria-pressed="false">Instabilidade</button>
+        <button data-a="2" aria-pressed="false">Crescimento</button>
+      </div>
+      <div class="panel rv" id="cx-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="cx-svg" class="sv" viewBox="0 0 560 330" role="img" aria-label="Barras do retorno sobre o ativo de uma empresa inventada em cinco anos, com a média, a faixa de oscilação ou as variações de um ano para o outro"></svg>
+      <div class="stats">
+        <div class="stat"><b id="st-roa"></b><span>retorno médio sobre o ativo (lucro da operação ÷ ativo)</span></div>
+        <div class="stat"><b id="st-roic"></b><span>retorno médio sobre o capital investido</span></div>
+        <div class="stat"><b id="st-mtb"></b><span>valor na bolsa ÷ valor no balanço (MtB), em média</span></div>
+      </div>
+      <p class="note"><span class="ilus">ilustração nossa</span> As barras são de uma empresa inventada. Os três números de baixo são as médias de 2017 a 2021 da amostra (Tabela 2). Cada atributo foi medido de três jeitos, um por indicador (Quadro 7): o nível, o desvio-padrão e a variação percentual de um ano para o outro.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · AS RÉGUAS DA DÍVIDA -->
+<section class="slide" id="reguas" data-label="Quatro réguas da dívida">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> A medida da dívida</div>
+      <h2 class="rv" style="--d:.1s">A dívida foi medida com quatro réguas</h2>
+      <p class="lede rv" style="--d:.15s">Bruta é tudo o que a empresa deve; líquida desconta o dinheiro em caixa, que funciona como uma dívida ao contrário. Total soma o curto e o longo prazo; longo prazo fica só com o que vence depois de um ano. Toque num bloco.</p>
+      <div class="panel rv" id="rg-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="rg-scene" data-fit="520x330" role="img" aria-label="Quatro blocos em grade dois por dois: bruta e líquida, total e de longo prazo"></div></div>
+      <p class="note">Quadro 6 e Tabela 2 (médias de 2017 a 2019 e de 2020 a 2021, em fração do ativo). As médias quase não mudaram com a pandemia. A média líquida de longo prazo é negativa: em média, o caixa passou a dívida de longo prazo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · AMOSTRA -->
+<section class="slide" id="amostra" data-label="757 empresas">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Quem foi estudado</div>
+      <h2 class="rv" style="--d:.1s">757 empresas de seis países, quase 4 em cada 10 do Brasil</h2>
+      <p class="lede rv" style="--d:.15s">Seis países reúnem 92% das empresas listadas em bolsa da América Latina. Bancos e seguradoras ficaram de fora, e também quem tinha patrimônio negativo (devia mais do que tinha). Os balanços vieram da base S&amp;P Capital IQ.</p>
+      <div class="fun rv" id="fun" style="--d:.2s"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="am-seg" role="group" aria-label="O que mostrar">
+        <button data-m="0" aria-pressed="false">Listadas em bolsa</button>
+        <button data-m="1" aria-pressed="true">Na amostra final</button>
+      </div>
+      <div class="fit-wrap"><div class="scene draggable" id="am-scene" data-fit="540x300" role="img" aria-label="Seis barras 3D, uma por país, com o número de empresas"></div></div>
+      <div class="panel" id="am-panel" aria-live="polite"></div>
+      <p class="note">Tabela 1 (listadas) e seção 3.1 (amostra final, sem patrimônio negativo). As seis contagens da amostra somam 757 (conferido); no México e na Colômbia, a amostra final traz mais empresas do que a Tabela 1 lista, o que a dissertação não explica. Toque numa barra.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · COVID -->
+<section class="slide" id="covid" data-label="A pandemia">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> O choque</div>
+      <h2 class="rv" style="--d:.1s">A Covid derrubou o PIB da região, mas a dívida média quase não mudou</h2>
+      <p class="lede rv" style="--d:.15s">Em 2020, a economia da América Latina encolheu 6,6%, o dobro da queda mundial. A dissertação separou 2017 a 2019 (antes) de 2020 e 2021 (pandemia) e comparou. Escolha o período e veja as médias.</p>
+      <div class="seg rv" id="cv-seg" style="--d:.2s" role="group" aria-label="Período">
+        <button data-p="1" aria-pressed="true">Antes · 2017–2019</button>
+        <button data-p="2" aria-pressed="false">Pandemia · 2020–2021</button>
+      </div>
+      <table class="mtab rv" id="cv-tab" style="--d:.25s"></table>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="gdp-svg" class="sv" viewBox="0 0 560 330" role="img" aria-label="Linhas do crescimento do PIB mundial e da América Latina de 2017 a 2021"></svg>
+      <p class="note">Figura 1 (dados do Banco Mundial) e Tabela 2. Na tabela, a coluna da direita é a diferença entre os períodos; em destaque, as linhas que mais mudaram. O PIB e a inflação são médias dos seis países, em %; o retorno e as dívidas, em % do ativo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · APOSTAS -->
+<section class="slide" id="apostas" data-label="As hipóteses">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> O resultado · faça sua aposta</div>
+      <h2 class="rv" style="--d:.1s">A dissertação apostou na teoria do equilíbrio</h2>
+      <p class="lede rv" style="--d:.15s">Cada empresa foi comparada com ela mesma ao longo dos anos (efeitos fixos), levando em conta tamanho, ativos fixos, vendas, PIB, inflação e juros. Foram 36 regressões: 3 indicadores × 4 réguas × 3 períodos. Antes de ver, aposte: as hipóteses se confirmaram?</p>
+      <div class="hyps rv" id="hyps" style="--d:.2s"></div>
+      <div id="hyp-score" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="tally">
+        <h3>O placar das 36 combinações</h3>
+        <div class="sub" id="tally-sub"></div>
+        <div id="tally"></div>
+        <div class="row-tools">
+          <div class="seg" id="rig-seg" role="group" aria-label="Rigor">
+            <button data-r="0.1" aria-pressed="true">Rigor da dissertação (10%)</button>
+            <button data-r="0.05" aria-pressed="false">Mais rigor (5%)</button>
+          </div>
+        </div>
+      </div>
+      <p class="note">Contagem nossa a partir das Tabelas 13 a 21. O contorno amarelo marca a direção que a hipótese previa. "Sem efeito claro": p acima do limite escolhido. A dissertação usa 10%; com 5%, a régua fica mais exigente.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · MOSAICO -->
+<section class="slide" id="mosaico" data-label="O mosaico">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> O resultado em detalhe</div>
+      <h2 class="rv" style="--d:.1s">O sinal muda conforme a régua da dívida</h2>
+      <p class="lede rv" style="--d:.15s">São 108 resultados, um bloco para cada. Repare nas colunas: o tamanho do caixa tende a subir a dívida bruta total e a líquida de longo prazo, e a descer as outras duas. Filtre por atributo e toque num bloco.</p>
+      <div class="chips rv" id="mx-chips" style="--d:.2s" role="group" aria-label="Filtrar atributo"></div>
+      <div class="row-tools rv" style="--d:.22s">
+        <div class="seg" id="mx-rig" role="group" aria-label="Rigor">
+          <button data-r="0.1" aria-pressed="true">10%</button>
+          <button data-r="0.05" aria-pressed="false">5%</button>
+        </div>
+      </div>
+      <div class="panel rv" id="mx-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="mx-scene" data-fit="620x400" role="img" aria-label="Mosaico 3D de 108 blocos: 9 linhas (3 atributos medidos por ROA, ROIC e MtB) por 12 colunas (4 réguas da dívida em 3 períodos)"></div></div>
+      <div class="lg"><span><i class="dot" style="background:var(--pos)"></i>a dívida sobe</span><span><i class="dot" style="background:var(--neg)"></i>a dívida cai</span><span><i class="dot" style="background:var(--ns)"></i>sem efeito claro</span><span>altura: 10%, 5%, 1%</span></div>
+      <p class="note">Tabelas 13 a 21. Em cada régua, três colunas: 2017–2021, antes (2017–2019) e pandemia (2020–2021). Mostramos só a direção e a força da evidência: o tamanho dos coeficientes não é comparável entre indicadores.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · A VIRADA -->
+<section class="slide" id="virada" data-label="O que a Covid mudou">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> A descoberta · hipótese 4</div>
+      <h2 class="rv" style="--d:.1s">Na pandemia, a instabilidade do caixa passou a pesar e os juros deixaram de pesar</h2>
+      <p class="lede rv" style="--d:.15s">A dissertação não achou um efeito único da Covid. Mas duas coisas mudaram de um período para o outro. Troque o período e conte os blocos acesos.</p>
+      <div class="seg rv" id="vr-seg" style="--d:.2s" role="group" aria-label="Período">
+        <button data-p="P" aria-pressed="true">Antes · 2017–2019</button>
+        <button data-p="C" aria-pressed="false">Pandemia · 2020–2021</button>
+      </div>
+      <div class="vr-big rv" style="--d:.22s">
+        <div style="--vc:var(--cash)"><b id="vr-v"></b><span>combinações em que a instabilidade do caixa mexeu na dívida</span></div>
+        <div style="--vc:var(--red)"><b id="vr-j"></b><span>combinações em que a taxa básica de juros mexeu na dívida</span></div>
+      </div>
+      <div class="panel rv" id="vr-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="vr-scene" data-fit="560x330" role="img" aria-label="Duas fileiras de 12 blocos: instabilidade do caixa e taxa de juros; blocos acesos têm efeito claro no período escolhido"></div></div>
+      <div class="lg"><span><i class="dot" style="background:var(--pos)"></i>a dívida sobe</span><span><i class="dot" style="background:var(--neg)"></i>a dívida cai</span><span><i class="dot" style="background:var(--ns)"></i>sem efeito claro (10%)</span></div>
+      <p class="note">Contagem nossa nas Tabelas 14, 15, 17, 18, 20 e 21: 3 indicadores × 4 réguas por período. Com rigor de 5%, as contagens viram 3 → 9 (instabilidade) e 10 → 0 (juros). A direção da instabilidade varia com a régua, então a mudança está no peso, não no sentido.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · O INESPERADO -->
+<section class="slide" id="inesperado" data-label="O inesperado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> O inesperado</div>
+      <h2 class="rv" style="--d:.1s">O mesmo lucro aparece subindo uma dívida e descendo outra</h2>
+      <p class="lede rv" style="--d:.15s">Um palpite: nas empresas que passam a lucrar mais sobre o ativo, de 2017 a 2021, a dívida…</p>
+      <div class="guess rv" id="guess" style="--d:.2s"></div>
+      <div id="guess-msg" aria-live="polite"></div>
+      <div class="seg rv" id="ie-seg" style="--d:.25s; margin-top:10px" role="group" aria-label="Variável">
+        <button data-v="0" aria-pressed="true">Lucro sobre o ativo</button>
+        <button data-v="1" aria-pressed="false">Instabilidade do lucro</button>
+        <button data-v="2" aria-pressed="false">Ativos fixos</button>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div id="ie-wrap" class="hide">
+        <svg id="ie-svg" class="sv" viewBox="0 0 560 340" role="img" aria-label="Barras para cima e para baixo do coeficiente da variável escolhida nas quatro réguas da dívida"></svg>
+        <div class="lg"><span><i class="dot" style="background:var(--pos)"></i>a dívida sobe</span><span><i class="dot" style="background:var(--neg)"></i>a dívida cai</span></div>
+      </div>
+      <p class="note">Tabela 13 (modelo com o retorno sobre o ativo, 2017–2021); todos com p abaixo de 5%. As barras de cada variável estão na própria escala, para comparar o sentido; não compare alturas entre variáveis. A dissertação não explica o espelho entre as réguas; os ativos fixos, uma variável de controle, mostram o mesmo desenho.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e limites">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Na prática · limites · créditos</div>
+    <h2 class="rv" style="--d:.1s">O que muda para quem decide quanto dever</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Diretores financeiros</h3><p>A autora recomenda considerar a geração de caixa e seus três atributos ao decidir o grau de dívida, sobretudo em crises. Os resultados mostram que a resposta depende de qual dívida se olha.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Quem analisa crédito</h3><p>Leitura nossa: dívida bruta e dívida líquida (descontado o caixa) contaram histórias opostas para as mesmas empresas. Uma régua só pode enganar.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ink-2)"><h3>Em tempos de crise</h3><p>Na pandemia, a taxa de juros deixou de explicar a dívida. Para a autora, na crise as empresas tomam recursos para manter o negócio vivo, muitas vezes sem alternativa.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#5b6f96"><h3>Pesquisadores</h3><p>Próximos passos sugeridos: mais anos depois da pandemia e análise por setor, já que cada indústria administra a dívida de um jeito.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Pouco tempo de pandemia.</b> O período depois da Covid tem só dois anos (2020 e 2021), e as empresas não foram separadas por setor. <em>· segundo a autora</em></li>
+          <li><b>Réguas com médias estranhas.</b> Na Tabela 2, a dívida bruta total tem média menor que a de longo prazo e chega a valores negativos, o que as fórmulas do Quadro 6 não permitem. Por isso a página mostra só a direção dos resultados, não o tamanho. <em>· observação nossa</em></li>
+          <li><b>Muitos testes.</b> Com 108 resultados a 10%, cerca de 1 em 10 sairia "significativo" por acaso. Saíram 55 (45 a 5%): bem mais que o acaso, mas cada bloco isolado pede cautela. <em>· contagem nossa</em></li>
+          <li><b>Caixa por aproximação.</b> O caixa foi medido pelo lucro da operação e pelo valor de mercado, não pelo fluxo de caixa em si. Os três indicadores deram resultados diferentes entre si. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          RODRIGUES, Claudia Lebre. <em>Influência de atributos da geração de caixa no endividamento das empresas latino-americanas e os impactos da Covid-19.</em> Dissertação (Mestrado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2023. Orientador: Prof. Dr. Wilson Toshiro Nakamura.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Dados da S&amp;P Capital IQ e do Banco Mundial; análise no Stata. Esta versão simplifica o trabalho para o público em geral; as fórmulas e as tabelas completas estão no texto original.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a dissertação completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  function sgn(v, d){ var r = fmt(Math.abs(v), d); return (v === 0 ? '' : v < 0 ? '−' : '+') + r; }
+  function pTxt(p){ return p < 0.001 ? 'p < 0' + (EN ? '.' : ',') + '001' : 'p = ' + fmt(p, 3); }
+  function pressed(wrap, attr, val){ each(wrap.children, function(b){ b.setAttribute('aria-pressed', String(b.dataset[attr] === String(val))); }); }
+  function stars(p){ return p < 0.01 ? 3 : p < 0.05 ? 2 : p < 0.1 ? 1 : 0; }
+  function kind(c, a){ return c[1] < a ? (c[0] > 0 ? 'p' : 'n') : 'z'; }
+  var COL = {p:'var(--pos)', n:'var(--neg)', z:'var(--ns)'};
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // Tabelas 13 a 21 (lidas nas páginas renderizadas): [coeficiente, p] por régua DIV1..DIV4.
+  // T = 2017–2021, P = antes (2017–2019), C = pandemia (2020–2021). mag = magnitude, vol = volatilidade (desvio-padrão), cres = crescimento (variação %).
+  var R = {
+    roa:{T:{mag:[[.117,.001],[-.189,0],[-.324,0],[.227,0]], vol:[[10.366,0],[-4.565,.013],[-11.492,0],[12.413,0]], cres:[[-.002,.242],[-.002,.274],[.001,.775],[.002,.269]]},
+         P:{mag:[[.243,0],[-.131,.014],[-.362,0],[.300,0]], vol:[[.202,.940],[-6.385,.021],[-4.295,.187],[4.024,.222]], cres:[[-.002,.245],[-.002,.383],[.001,.771],[0,.891]]},
+         C:{mag:[[-.145,.045],[-.148,.023],[.084,.379],[-.067,.510]], vol:[[12.926,0],[-4.518,.038],[-14.286,0],[16.678,0]], cres:[[.001,.503],[-.004,.066],[-.003,.238],[.006,.058]]}},
+    roic:{T:{mag:[[-.027,.258],[-.186,0],[-.158,0],[.180,0]], vol:[[.424,.257],[-.184,.613],[-.494,.334],[.451,.369]], cres:[[-.004,.004],[-.002,.098],[.001,.509],[.002,.285]]},
+          P:{mag:[[.042,.223],[-.184,0],[-.209,0],[.260,0]], vol:[[-.078,.871],[.699,.155],[.211,.720],[-.671,.255]], cres:[[-.005,.008],[-.003,.116],[.001,.660],[.001,.577]]},
+          C:{mag:[[-.192,0],[-.165,0],[.144,.024],[-.022,.751]], vol:[[2.285,0],[-.464,.349],[-2.310,.002],[2.943,0]], cres:[[-.001,.474],[-.004,.014],[-.002,.473],[.005,.088]]}},
+    mtb:{T:{mag:[[.009,0],[.001,.369],[-.007,.001],[.006,.003]], vol:[[-.053,.055],[.062,.024],[.064,.092],[-.056,.133]], cres:[[.001,.637],[.001,.277],[0,.931],[0,.964]]},
+         P:{mag:[[.005,.067],[.010,0],[.004,.191],[-.003,.314]], vol:[[.037,.521],[-.086,.138],[-.181,.010],[.234,.001]], cres:[[0,.925],[-.008,.086],[-.006,.269],[.006,.273]]},
+         C:{mag:[[.017,0],[-.001,.682],[-.013,.003],[.009,.062]], vol:[[-.124,.015],[.076,.104],[.129,.042],[-.131,.056]], cres:[[-.001,.565],[.001,.235],[0,.953],[-.001,.419]]}}
+  };
+  // Taxa básica de juros (jur) nas mesmas regressões, antes e na pandemia (Tabelas 14, 15, 17, 18, 20, 21)
+  var JUR = {P:{roa:[[-.190,.023],[-.366,0],[-.291,.005],[.335,.001]], roic:[[-.168,.049],[-.396,0],[-.313,.003],[.358,.001]], mtb:[[-.117,.168],[-.229,.007],[-.177,.088],[.251,.017]]},
+             C:{roa:[[.001,.979],[-.059,.119],[.035,.528],[-.060,.303]], roic:[[-.013,.760],[-.062,.095],[.049,.374],[-.066,.263]], mtb:[[-.002,.963],[-.051,.227],[.053,.355],[-.066,.280]]}};
+  // Tabela 13: tangibilidade (ativos fixos) no modelo ROA, 2017–2021
+  var TAN = [[-.419,0],[.189,0],[.443,0],[-.466,0]];
+  // Tabela 2: médias (total, antes, pandemia)
+  var T2 = {div1:[.122,.114,.134], div2:[.268,.262,.278], div3:[.158,.164,.148], div4:[-.081,-.088,-.071], roa:[.061,.060,.061], roic:[.085,.085,.085], mtb:[1.594,1.503,1.732], pib:[1.274,1.614,.762], cpi:[7.226,6.719,7.987]};
+  // Figura 1 (Banco Mundial): crescimento do PIB, %
+  var GDP = {y:[2017, 2018, 2019, 2020, 2021], w:[3.38, 3.28, 2.61, -3.27, 5.80], la:[2.00, 1.74, 0.72, -6.58, 6.74]};
+  // Tabela 1 e seção 3.1
+  var CTRY = [
+    {n:'Brasil', e:'Brazil', l:323, s:297}, {n:'Chile', e:'Chile', l:145, s:143}, {n:'México', e:'Mexico', l:110, s:111},
+    {n:'Peru', e:'Peru', l:92, s:91}, {n:'Argentina', e:'Argentina', l:66, s:64}, {n:'Colômbia', e:'Colombia', l:48, s:51}
+  ];
+
+  var PROX = ['roa', 'roic', 'mtb'], ATTR = ['mag', 'vol', 'cres'], PER = ['T', 'P', 'C'];
+  var PNAME = {roa:L('lucro sobre o ativo (ROA)','return on assets (ROA)'), roic:L('lucro sobre o capital investido (ROIC)','return on invested capital (ROIC)'), mtb:L('valor de mercado ÷ contábil (MtB)','market-to-book (MtB)')};
+  var ANAME = {mag:L('Tamanho do caixa','Cash size'), vol:L('Instabilidade do caixa','Cash instability'), cres:L('Crescimento do caixa','Cash growth')};
+  var ASHORT = {mag:L('tamanho','size'), vol:L('instabilidade','instability'), cres:L('crescimento','growth')};
+  var EXPECT = {mag:'p', vol:'n', cres:'p'};
+  var DIVN = [L('Bruta total','Gross total'), L('Bruta de longo prazo','Gross long-term'), L('Líquida total','Net total'), L('Líquida de longo prazo','Net long-term')];
+  var DIVS = [L('bruta total','gross total'), L('bruta LP','gross LT'), L('líquida total','net total'), L('líquida LP','net LT')];
+  var PERN = {T:'2017–2021', P:L('antes, 2017–2019','before, 2017–2019'), C:L('pandemia, 2020–2021','pandemic, 2020–2021')};
+  var TAB = {roa:{T:13, P:14, C:15}, roic:{T:16, P:17, C:18}, mtb:{T:19, P:20, C:21}};
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), W = 470, D = 250;
+    var st = makeStage(sc, W, D, {ay:'68%', rx:'58deg'});
+    rotatable(sc, st, -18, 7);
+    var tiles = [], tw = 74, td = 52, gx = 24, gy = 22, x0 = 82, y0 = 22;
+    ATTR.forEach(function(a, r){
+      flatLabel(st, ANAME[a], 0, y0 + r * (td + gy) + 18, 78, 'text-align:right; font-size:11px');
+      for (var d = 0; d < 4; d++){
+        var b = box({w:tw, d:td, x:x0 + d * (tw + gx), y:y0 + r * (td + gy), h:4, c:'var(--ns)'});
+        st.appendChild(b); tiles.push({el:b, a:a, d:d});
+      }
+    });
+    for (var d = 0; d < 4; d++) flatLabel(st, DIVS[d], x0 + d * (tw + gx) - 6, y0 + 3 * (td + gy) - 6, tw + 12, 'text-align:center; font-size:11px');
+    var last = -1;
+    function show(i){
+      if (i === last) return; last = i;
+      var per = PER[i];
+      tiles.forEach(function(t){
+        var c = R.roa[per][t.a][t.d], k = kind(c, 0.1);
+        t.el.style.setProperty('--c', COL[k]);
+        t.el.style.setProperty('--h', (k === 'z' ? 4 : 10 + stars(c[1]) * 16) + 'px');
+      });
+      $('hero-line').innerHTML = L('Modelo ROA · ', 'ROA model · ') + '<b>' + PERN[per] + '</b>';
+    }
+    if (reduce) show(0);
+    else M.onTick(function(t){ show(Math.floor(t / 2) % 3); });
+  })();
+
+  /* ================= 02 · TRADE-OFF ================= */
+  (function(){
+    var svg = $('to-svg'), x0 = 50, x1 = 530, y0 = 300, k = 6.4, DMAX = 60, OPT = 0.5 / 0.024;
+    // ilustração: ganho fiscal = 0,5·D; custo do risco = 0,012·D²; valor = 20 + ganho − custo (máximo perto de D = 21)
+    function tax(d){ return 0.5 * d; }
+    function cost(d){ return 0.012 * d * d; }
+    function val(d){ return 20 + tax(d) - cost(d); }
+    function X(d){ return x0 + (x1 - x0) * d / DMAX; }
+    function Y(v){ return y0 - v * k; }
+    function path(f){ var s = ''; for (var d = 0; d <= DMAX; d += 1){ var v = f(d); if (v > 40) break; s += (s ? 'L' : 'M') + X(d).toFixed(1) + ' ' + Y(v).toFixed(1); } return s; }
+    var base = '<line x1="' + x0 + '" y1="' + y0 + '" x2="' + x1 + '" y2="' + y0 + '" stroke="#94a3b8"/>' +
+      [0, 20, 40, 60].map(function(d){ return '<text x="' + X(d) + '" y="' + (y0 + 20) + '" text-anchor="middle" style="font-size:12px; fill:#64748b">' + d + '%</text>'; }).join('') +
+      '<text x="' + x1 + '" y="' + (y0 + 40) + '" text-anchor="end" style="font-size:13px; fill:#64748b">' + L('dívida (% do ativo) →','debt (% of assets) →') + '</text>' +
+      '<path d="' + path(tax) + '" fill="none" stroke="var(--navy)" stroke-width="3" stroke-dasharray="7 5"/>' +
+      '<path d="' + path(cost) + '" fill="none" stroke="var(--red)" stroke-width="3" stroke-dasharray="7 5"/>' +
+      '<path d="' + path(val) + '" fill="none" stroke="#0f172a" stroke-width="4"/>';
+    function draw(d){
+      var v = val(d);
+      svg.innerHTML = base + '<line x1="' + X(d) + '" y1="48" x2="' + X(d) + '" y2="' + y0 + '" stroke="#0f172a" stroke-dasharray="3 4"/>' +
+        '<circle cx="' + X(d) + '" cy="' + Y(v) + '" r="9" fill="#fff" stroke="var(--red)" stroke-width="4"/>';
+      $('to-dl').textContent = fmt(d, 0) + '%';
+      var msg;
+      if (Math.abs(d - OPT) <= 3) msg = '<h3>' + L('Perto do ponto ideal','Near the ideal point') + '</h3><p>' + L('Aqui o ganho com imposto de mais um pouco de dívida empata com o custo de risco que ela traz. É a dose que a teoria do equilíbrio chama de ótima.','Here the tax gain from a little more debt equals the risk cost it brings. This is the dose trade-off theory calls optimal.') + '</p>';
+      else if (d < OPT) msg = '<h3>' + L('Pouca dívida','Little debt') + '</h3><p>' + L('A empresa deixa de aproveitar o desconto no imposto. Pela teoria, quem gera mais caixa aguenta mais juros e poderia dever mais.','The company misses out on the tax discount. According to the theory, a firm that generates more cash can carry more interest and could owe more.') + '</p>';
+      else msg = '<h3>' + L('Dívida demais','Too much debt') + '</h3><p>' + L('O risco de não pagar cresce mais rápido que o ganho com imposto. Credores cobram mais caro, e uma crise pode levar à quebra.','The risk of not paying grows faster than the tax gain. Lenders charge more, and a crisis could lead to bankruptcy.') + '</p>';
+      $('to-msg').innerHTML = msg;
+    }
+    $('to-d').addEventListener('input', function(){ draw(+this.value); });
+    draw(8);
+  })();
+
+  /* ================= 03 · DUAS TEORIAS ================= */
+  (function(){
+    var T = [
+      {s:['p','n','p'], h:L('Teoria do equilíbrio (trade-off)','Trade-off theory'), p:L('Quem gera mais caixa corre menos risco de quebrar e consegue crédito melhor: deve mais. Caixa instável aumenta o risco: deve menos. Caixa que cresce dá fôlego: deve mais. É a aposta da dissertação (hipóteses 1, 2 e 3).','Firms that generate more cash run less risk of failing and get better credit: they owe more. Unstable cash raises risk: they owe less. Growing cash gives breathing room: they owe more. This is the dissertation’s bet (hypotheses 1, 2 and 3).')},
+      {s:['n','p','n'], h:L('Teoria da hierarquia (pecking order)','Pecking order theory'), p:L('A empresa prefere usar primeiro o próprio dinheiro; a dívida vem depois, e emitir ações por último. Quem gera mais caixa precisa menos de empréstimo: deve menos. Para a volatilidade e o crescimento, o quadro da dissertação traz os sinais opostos aos do equilíbrio.','The company prefers to use its own money first; debt comes next, and issuing shares last. Firms that generate more cash need fewer loans: they owe less. For volatility and growth, the dissertation’s table gives the signs opposite to trade-off.')}
+    ];
+    var ROWS = [
+      [ANAME.mag, L('quanto caixa a empresa gera','how much cash the company generates')],
+      [ANAME.vol, L('o quanto o caixa sobe e desce','how much cash goes up and down')],
+      [ANAME.cres, L('o quanto o caixa aumenta de um ano para o outro','how much cash grows from one year to the next')]
+    ];
+    $('theo').innerHTML = ROWS.map(function(r, i){ return '<div class="tr3"><div><b>' + r[0] + '</b><span>' + r[1] + '</span></div><div class="arrow" id="ar' + i + '"><i>↑</i><span></span></div></div>'; }).join('');
+    function show(t){
+      pressed($('th-seg'), 't', t);
+      T[t].s.forEach(function(s, i){
+        var a = $('ar' + i); a.className = 'arrow ' + (s === 'p' ? 'up' : 'dn');
+        a.querySelector('span').textContent = s === 'p' ? L('mais dívida','more debt') : L('menos dívida','less debt');
+      });
+      $('th-panel').innerHTML = '<h3>' + T[t].h + '</h3><p>' + T[t].p + '</p>';
+    }
+    each($('th-seg').children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.t); }); });
+    show(0);
+  })();
+
+  /* ================= 04 · CAIXA ================= */
+  (function(){
+    // empresa inventada: lucro da operação ÷ ativo, em %
+    var V = [6, 9, 4, 8, 11], Y = ['A1', 'A2', 'A3', 'A4', 'A5'];
+    var mean = V.reduce(function(a, b){ return a + b; }, 0) / V.length;
+    var sd = Math.sqrt(V.reduce(function(a, b){ return a + (b - mean) * (b - mean); }, 0) / (V.length - 1));
+    var svg = $('cx-svg'), y0 = 280, k = 19, bw = 62;
+    function bx(i){ return 70 + i * 94; }
+    $('st-roa').textContent = fmt(T2.roa[0] * 100, 1) + '%';
+    $('st-roic').textContent = fmt(T2.roic[0] * 100, 1) + '%';
+    $('st-mtb').textContent = fmt(T2.mtb[0], 2);
+    var INFO = [
+      {h:L('Tamanho (magnitude)','Size (magnitude)'), p:L('O nível do retorno: quanto lucro da operação a empresa tira de cada real investido. Esta empresa inventada tem média de ','The level of return: how much operating profit the company gets from each unit invested. This made-up company averages ') + fmt(mean, 1) + '%. ' + L('Na dissertação, três indicadores: ROA, ROIC e MtB.','In the dissertation, three indicators: ROA, ROIC and MtB.')},
+      {h:L('Instabilidade (volatilidade)','Instability (volatility)'), p:L('O quanto o retorno se afasta da média, medido pelo desvio-padrão: aqui, ','How far the return strays from its average, measured by the standard deviation: here, ') + fmt(sd, 1) + L(' pontos. Caixa que oscila muito deixa o credor com medo.',' points. Cash that swings a lot makes lenders nervous.')},
+      {h:L('Crescimento','Growth'), p:L('A variação percentual de um ano para o outro. Um salto de 4% para 8% é crescimento de 100%, mesmo sendo só 4 pontos: por isso essa medida oscila muito.','The percentage change from one year to the next. A jump from 4% to 8% is 100% growth, even though it is only 4 points: that is why this measure swings a lot.')}
+    ];
+    function draw(a){
+      pressed($('cx-seg'), 'a', a);
+      var h = '<line x1="40" y1="' + y0 + '" x2="530" y2="' + y0 + '" stroke="#94a3b8"/>';
+      if (a === 1) h += '<rect x="44" y="' + (y0 - (mean + sd) * k) + '" width="482" height="' + (2 * sd * k) + '" fill="rgb(232 7 52 / .1)"/>' +
+        '<text x="48" y="' + (y0 - (mean + sd) * k - 6) + '" style="font-size:13px; fill:var(--red); font-weight:700">' + L('média ± 1 desvio-padrão','average ± 1 standard deviation') + '</text>';
+      V.forEach(function(v, i){
+        h += '<rect x="' + bx(i) + '" y="' + (y0 - v * k) + '" width="' + bw + '" height="' + (v * k) + '" rx="4" style="fill:var(--cash)" opacity="' + (a === 2 ? .55 : 1) + '"/>' +
+          '<text x="' + (bx(i) + bw / 2) + '" y="' + (y0 - v * k - 8) + '" text-anchor="middle" style="font-size:14px; font-weight:700; fill:#0f172a">' + v + '%</text>' +
+          '<text x="' + (bx(i) + bw / 2) + '" y="' + (y0 + 22) + '" text-anchor="middle" style="font-size:13px; fill:#64748b">' + L('ano ','year ') + (i + 1) + '</text>';
+        if (a === 2 && i > 0){
+          var g = (v - V[i - 1]) / V[i - 1] * 100, up = g >= 0;
+          var xm = bx(i) - 16, ya = y0 - V[i - 1] * k, yb = y0 - v * k;
+          h += '<path d="M' + (bx(i - 1) + bw) + ' ' + ya + ' L' + bx(i) + ' ' + yb + '" stroke="' + (up ? 'var(--navy)' : 'var(--red)') + '" stroke-width="3" fill="none"/>' +
+            '<text x="' + xm + '" y="' + (Math.min(ya, yb) - 26) + '" text-anchor="middle" style="font-size:13px; font-weight:700; fill:' + (up ? 'var(--navy)' : 'var(--red)') + '">' + (up ? '+' : '−') + fmt(Math.abs(g), 0) + '%</text>';
+        }
+      });
+      if (a !== 2) h += '<line x1="44" y1="' + (y0 - mean * k) + '" x2="526" y2="' + (y0 - mean * k) + '" stroke="var(--red)" stroke-width="3" stroke-dasharray="' + (a === 0 ? '0' : '6 5') + '"/>' +
+        '<text x="44" y="' + (y0 - mean * k - 8) + '" style="font-size:13px; fill:var(--red); font-weight:700">' + L('média ','average ') + fmt(mean, 1) + '%</text>';
+      svg.innerHTML = h;
+      $('cx-panel').innerHTML = '<h3>' + INFO[a].h + '</h3><p>' + INFO[a].p + '</p>';
+    }
+    each($('cx-seg').children, function(b){ b.addEventListener('click', function(){ draw(+b.dataset.a); }); });
+    draw(0);
+  })();
+
+  /* ================= 05 · RÉGUAS ================= */
+  (function(){
+    var sc = $('rg-scene');
+    var st = makeStage(sc, 440, 300, {ay:'62%', rx:'54deg'});
+    rotatable(sc, st, -20, 6);
+    var Q = [
+      {k:'div1', x:0, y:0, c:'var(--navy)', num:L('passivo de curto + longo prazo','short + long-term liabilities'), den:L('ativo total','total assets')},
+      {k:'div2', x:1, y:0, c:'#5b6f96', num:L('passivo de longo prazo','long-term liabilities'), den:L('ativo total','total assets')},
+      {k:'div3', x:0, y:1, c:'var(--red)', num:L('dívida total − caixa e aplicações','total debt − cash and investments'), den:L('ativo total − caixa e aplicações','total assets − cash and investments')},
+      {k:'div4', x:1, y:1, c:'#f08aa0', num:L('dívida de longo prazo − caixa e aplicações','long-term debt − cash and investments'), den:L('ativo total − caixa e aplicações','total assets − cash and investments'), lt:1}
+    ];
+    var slabs = [];
+    Q.forEach(function(q, i){
+      var b = box({w:170, d:110, x:60 + q.x * 200, y:40 + q.y * 140, h:26, c:q.c, top:DIVN[i], cls:q.lt ? 'lt' : ''});
+      st.appendChild(b); slabs.push(b);
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick(i); });
+    });
+    flatLabel(st, L('total','total'), 60, 268, 170, 'text-align:center');
+    flatLabel(st, L('longo prazo','long term'), 260, 268, 170, 'text-align:center');
+    flatLabel(st, L('bruta','gross'), -8, 84, 60, 'text-align:right');
+    flatLabel(st, L('líquida','net'), -8, 224, 60, 'text-align:right');
+    function pct(v){ return (v < 0 ? '−' : '') + fmt(Math.abs(v) * 100, 1) + '%'; }
+    function pick(i){
+      var q = Q[i], m = T2[q.k];
+      slabs.forEach(function(b, j){ b.classList.toggle('active', j === i); });
+      $('rg-panel').innerHTML = '<div class="tag">DIV' + (i + 1) + '</div><h3>' + DIVN[i] + '</h3>' +
+        '<div class="frac"><span>' + q.num + '</span><span>' + q.den + '</span></div>' +
+        '<div class="mean2"><div>' + L('média antes (2017–2019)','average before (2017–2019)') + '<b>' + pct(m[1]) + '</b></div><div>' + L('média na pandemia (2020–2021)','pandemic average (2020–2021)') + '<b>' + pct(m[2]) + '</b></div></div>';
+    }
+    pick(0);
+  })();
+
+  /* ================= 06 · AMOSTRA ================= */
+  (function(){
+    var FUN = [
+      [L('Empresas listadas em 15 países da América Latina','Companies listed in 15 Latin American countries'), 852],
+      [L('Nos seis países escolhidos (92%)','In the six chosen countries (92%)'), 784],
+      [L('Sem patrimônio negativo: a amostra final','Without negative equity: the final sample'), 757]
+    ];
+    $('fun').innerHTML = FUN.map(function(f){ return '<div><div class="fl"><span>' + f[0] + '</span><b>' + f[1] + '</b></div><div class="fb"><i style="width:' + (f[1] / 852 * 100) + '%"></i></div></div>'; }).join('') +
+      '<div><div class="fl"><span>' + L('Observações empresa-ano (2017 a 2021)','Company-year observations (2017 to 2021)') + '</span><b>' + (EN ? '3,657' : '3.657') + '</b></div><div class="fb"><i style="width:100%"></i></div></div>';
+    var sc = $('am-scene'), W = 500, D = 160;
+    var st = makeStage(sc, W, D, {ay:'78%', rx:'60deg'});
+    rotatable(sc, st, -14, 6);
+    var bars = [], mode = 1, sel = 0, bw = 58, gap = 22;
+    CTRY.forEach(function(c, i){
+      var b = box({w:bw, d:58, x:20 + i * (bw + gap), y:40, h:10, c:i === 0 ? 'var(--red)' : 'var(--navy)', top:''});
+      st.appendChild(b); bars.push(b);
+      flatLabel(st, L(c.n, c.e), 10 + i * (bw + gap), 112, bw + 20, 'text-align:center');
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)) { sel = i; draw(); } });
+    });
+    function draw(){
+      pressed($('am-seg'), 'm', mode);
+      var tot = mode ? 757 : 784;
+      bars.forEach(function(b, i){
+        var v = mode ? CTRY[i].s : CTRY[i].l;
+        b.style.setProperty('--h', (v * 0.62) + 'px');
+        b.querySelector('.f-top').innerHTML = '<span class="top-label">' + v + '</span>';
+        b.classList.toggle('active', i === sel);
+      });
+      var c = CTRY[sel], v = mode ? c.s : c.l;
+      $('am-panel').innerHTML = '<h3>' + L(c.n, c.e) + ' · ' + v + L(' empresas',' companies') + '</h3><p>' + fmt(v / tot * 100, 1) + '% ' + L(mode ? 'da amostra final de 757.' : 'das 784 listadas nos seis países.', mode ? 'of the final sample of 757.' : 'of the 784 listed in the six countries.') + ' ' + L('Listadas: ','Listed: ') + c.l + ' · ' + L('na amostra: ','in the sample: ') + c.s + '.</p>';
+    }
+    each($('am-seg').children, function(b){ b.addEventListener('click', function(){ mode = +b.dataset.m; draw(); }); });
+    draw();
+  })();
+
+  /* ================= 07 · COVID ================= */
+  (function(){
+    var svg = $('gdp-svg'), x0 = 70, x1 = 520, ym = 165, k = 17;
+    function X(i){ return x0 + (x1 - x0) * i / 4; }
+    function Y(v){ return ym - v * k; }
+    var h = '';
+    [-6, -3, 0, 3, 6].forEach(function(g){ h += '<line x1="' + x0 + '" y1="' + Y(g) + '" x2="' + x1 + '" y2="' + Y(g) + '" stroke="' + (g === 0 ? '#64748b' : '#e2e8f0') + '"/><text x="' + (x0 - 10) + '" y="' + (Y(g) + 4) + '" text-anchor="end" style="font-size:12px; fill:#64748b">' + (g > 0 ? '+' : g < 0 ? '−' : '') + Math.abs(g) + '%</text>'; });
+    h += '<rect x="' + (X(2.5)) + '" y="20" width="' + (X(4) - X(2.5) + 20) + '" height="270" fill="rgb(232 7 52 / .06)"/><text x="' + (X(2.5) + 8) + '" y="58" style="font-size:12px; font-weight:700; fill:var(--red)">' + L('pandemia','pandemic') + '</text>';
+    function line(arr, col, w){ return '<path d="' + arr.map(function(v, i){ return (i ? 'L' : 'M') + X(i) + ' ' + Y(v); }).join('') + '" fill="none" stroke="' + col + '" stroke-width="' + w + '"/>' + arr.map(function(v, i){ return '<circle cx="' + X(i) + '" cy="' + Y(v) + '" r="5" fill="' + col + '"/>'; }).join(''); }
+    h += line(GDP.w, '#94a3b8', 3) + line(GDP.la, 'var(--red)', 4);
+    GDP.y.forEach(function(y, i){ h += '<text x="' + X(i) + '" y="312" text-anchor="middle" style="font-size:13px; fill:#334155">' + y + '</text>'; });
+    function lab(v, i, col, dy){ return '<text x="' + (X(i) + (i === 4 ? -10 : 0)) + '" y="' + (Y(v) + dy) + '" text-anchor="' + (i === 4 ? 'end' : 'middle') + '" style="font-size:12px; font-weight:700; fill:' + col + '">' + (v < 0 ? '−' : '') + fmt(Math.abs(v), 2) + '%</text>'; }
+    GDP.la.forEach(function(v, i){ h += lab(v, i, 'var(--red)', i === 3 ? 22 : (i === 4 ? -10 : 20)); });
+    GDP.w.forEach(function(v, i){ h += lab(v, i, '#64748b', i === 3 ? -12 : (i === 4 ? 18 : -12)); });
+    h += '<text x="' + x0 + '" y="20" style="font-size:13px; font-weight:700; fill:var(--red)">● ' + L('América Latina','Latin America') + '</text><text x="' + (x0 + 210) + '" y="20" style="font-size:13px; font-weight:700; fill:#64748b">● ' + L('mundo','world') + '</text>';
+    svg.innerHTML = h;
+    var ROWS = [
+      ['pib', L('PIB, crescimento médio','GDP, average growth'), 1, 1], ['cpi', L('Inflação média','Average inflation'), 1, 1],
+      ['roa', L('Retorno sobre o ativo','Return on assets'), 100, 0], ['div1', DIVN[0], 100, 0], ['div2', DIVN[1], 100, 0], ['div3', DIVN[2], 100, 0], ['div4', DIVN[3], 100, 0]
+    ];
+    function num(v, d){ return (v < 0 ? '−' : '') + fmt(Math.abs(v), d); }
+    function draw(p){
+      pressed($('cv-seg'), 'p', p);
+      $('cv-tab').innerHTML = '<tr><th></th><th>' + (p === 1 ? L('antes','before') : L('pandemia','pandemic')) + '</th><th>' + L('mudança','change') + '</th></tr>' +
+        ROWS.map(function(r){
+          var a = T2[r[0]][1] * r[2], b = T2[r[0]][2] * r[2], v = p === 1 ? a : b, dlt = b - a;
+          return '<tr class="' + (r[3] ? 'hl' : '') + '"><td>' + r[1] + '</td><td>' + num(v, 1) + '%</td><td class="' + (r[3] ? 'ch' : '') + '">' + (p === 1 ? '' : (dlt > 0 ? '+' : dlt < 0 ? '−' : '') + fmt(Math.abs(dlt), 1) + (r[3] ? ' p.p.' : ' p.p.')) + '</td></tr>';
+        }).join('');
+    }
+    each($('cv-seg').children, function(b){ b.addEventListener('click', function(){ draw(+b.dataset.p); }); });
+    draw(1);
+  })();
+
+  /* ================= 08 · APOSTAS ================= */
+  var RIG = 0.1, tallyDraw;
+  function count(a, alpha){
+    var c = {p:0, n:0, z:0};
+    PROX.forEach(function(m){ PER.forEach(function(t){ R[m][t][a].forEach(function(x){ c[kind(x, alpha)]++; }); }); });
+    return c;
+  }
+  (function(){
+    var H = [
+      {a:'mag', q:L('O tamanho do caixa aumenta a dívida','Cash size increases debt'), qd:L('Quem gera mais caixa deve mais.','Firms that generate more cash owe more.'), ok:2,
+       r:L('<b>Depende da régua.</b> A 10%, a dívida subiu em 13 combinações e caiu em 14. A autora conclui que a hipótese se confirma só em parte: na dívida bruta total e na líquida de longo prazo.','<b>It depends on the yardstick.</b> At 10%, debt went up in 13 combinations and down in 14. The author concludes the hypothesis holds only in part: for gross total debt and net long-term debt.')},
+      {a:'vol', q:L('Caixa instável diminui a dívida','Unstable cash reduces debt'), qd:L('Quem tem caixa que oscila deve menos.','Firms with swinging cash owe less.'), ok:2,
+       r:L('<b>Depende da régua.</b> 10 combinações para baixo, 10 para cima, 16 sem efeito claro. A autora vê o efeito esperado na dívida bruta de longo prazo e na líquida total, sobretudo na pandemia.','<b>It depends on the yardstick.</b> 10 combinations down, 10 up, 16 with no clear effect. The author sees the expected effect on gross long-term debt and net total debt, mostly during the pandemic.')},
+      {a:'cres', q:L('Caixa que cresce aumenta a dívida','Growing cash increases debt'), qd:L('Quem vê o caixa crescer deve mais.','Firms whose cash grows owe more.'), ok:1,
+       r:L('<b>Não.</b> Em 28 das 36 combinações o crescimento do caixa não fez diferença clara, e quando fez foi mais vezes para baixo (6) do que para cima (2).','<b>No.</b> In 28 of the 36 combinations cash growth made no clear difference, and when it did it was more often downward (6) than upward (2).')}
+    ];
+    var OPTS = [L('Sim','Yes'), L('Não','No'), L('Depende','It depends')];
+    var hits = 0, done = 0;
+    $('hyps').innerHTML = H.map(function(h, i){
+      return '<div class="hyp" id="hy' + i + '"><div class="hn">H' + (i + 1) + '</div><div><div class="q">' + h.q + '</div><div class="qd">' + h.qd + '</div>' +
+        '<div class="opts">' + OPTS.map(function(o, j){ return '<button data-j="' + j + '">' + o + '</button>'; }).join('') + '</div><div class="res">' + h.r + '</div></div></div>';
+    }).join('');
+    H.forEach(function(h, i){
+      each($('hy' + i).querySelectorAll('.opts button'), function(b){
+        b.addEventListener('click', function(){
+          var el = $('hy' + i); if (el.classList.contains('done')) return;
+          var ok = +b.dataset.j === h.ok; if (ok) hits++; done++;
+          el.classList.add('done'); el.style.setProperty('--hc', ok ? 'var(--navy)' : 'var(--red)');
+          el.querySelector('.res').insertAdjacentHTML('afterbegin', (ok ? L('Você acertou. ','You got it. ') : L('Não foi bem assim. ','Not quite. ')));
+          var row = $('tl-' + h.a); if (row) row.classList.remove('off');
+          $('hyp-score').textContent = done < 3 ? L('Apostas: ','Bets: ') + done + ' / 3' : L('Você acertou ','You got ') + hits + L(' de 3. Nenhuma das três hipóteses se confirmou por inteiro.',' of 3 right. None of the three hypotheses was fully confirmed.');
+        });
+      });
+    });
+    tallyDraw = function(){
+      pressed($('rig-seg'), 'r', RIG);
+      $('tally-sub').textContent = L('3 indicadores × 4 réguas × 3 períodos = 36 por atributo; limite de ','3 indicators × 4 yardsticks × 3 periods = 36 per attribute; threshold ') + (RIG === 0.1 ? '10%' : '5%');
+      $('tally').innerHTML = ATTR.map(function(a){
+        var c = count(a, RIG), e = EXPECT[a];
+        var open = $('hy' + ATTR.indexOf(a)).classList.contains('done');
+        function seg(k, lab){ return '<i class="' + k + (k === e ? ' exp' : '') + '" style="flex-grow:' + c[k] + '" title="' + lab + ': ' + c[k] + '">' + (c[k] ? c[k] : '') + '</i>'; }
+        return '<div class="tl"><div>' + ANAME[a] + '<small>' + L('previsto: ','predicted: ') + (e === 'p' ? L('sobe','up') : L('cai','down')) + '</small></div>' +
+          '<div class="tbar' + (open ? '' : ' off') + '" id="tl-' + a + '">' + seg('p', L('sobe','up')) + seg('n', L('cai','down')) + seg('z', L('sem efeito claro','no clear effect')) + '</div></div>';
+      }).join('');
+    };
+    each($('rig-seg').children, function(b){ b.addEventListener('click', function(){ RIG = +b.dataset.r; tallyDraw(); }); });
+    tallyDraw();
+  })();
+
+  /* ================= 09 · MOSAICO ================= */
+  (function(){
+    var sc = $('mx-scene'), W = 600, D = 340;
+    var st = makeStage(sc, W, D, {ay:'60%', rx:'48deg'});
+    rotatable(sc, st, -6, 4);
+    var alpha = 0.1, filt = 'all', sel = null, cells = [];
+    var tw = 30, td = 22, cg = 4, dg = 14, rg = 4, ag = 14, x0 = 92, y0 = 28;
+    ATTR.forEach(function(a, ai){
+      PROX.forEach(function(m, mi){
+        var y = y0 + ai * (3 * (td + rg) + ag) + mi * (td + rg);
+        flatLabel(st, (mi === 0 ? ASHORT[a] + ' · ' : '') + m.toUpperCase(), 0, y + 4, x0 - 8, 'text-align:right; font-size:12px');
+        for (var d = 0; d < 4; d++) PER.forEach(function(t, ti){
+          var x = x0 + d * (3 * (tw + cg) + dg) + ti * (tw + cg);
+          var b = box({w:tw, d:td, x:x, y:y, h:3, c:'var(--ns)'});
+          var cell = {el:b, a:a, m:m, d:d, t:t, c:R[m][t][a][d]};
+          b.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick(cell); });
+          st.appendChild(b); cells.push(cell);
+        });
+      });
+    });
+    for (var d = 0; d < 4; d++) flatLabel(st, DIVS[d], x0 + d * (3 * (tw + cg) + dg) - 4, 4, 3 * (tw + cg) + 4, 'text-align:center; font-size:12px');
+    var yb = y0 + 3 * (3 * (td + rg) + ag) - 6;
+    for (var d2 = 0; d2 < 4; d2++) flatLabel(st, L('tot · ant · pan','all · bef · pan'), x0 + d2 * (3 * (tw + cg) + dg) - 4, yb, 3 * (tw + cg) + 4, 'text-align:center; font-size:9px');
+    var CH = [['all', L('Todos','All')]].concat(ATTR.map(function(a){ return [a, ANAME[a]]; }));
+    $('mx-chips').innerHTML = CH.map(function(c){ return '<button data-f="' + c[0] + '" aria-pressed="' + (c[0] === 'all') + '">' + c[1] + '</button>'; }).join('');
+    function draw(){
+      pressed($('mx-chips'), 'f', filt); pressed($('mx-rig'), 'r', alpha);
+      cells.forEach(function(c){
+        var k = kind(c.c, alpha), s = c.c[1] < alpha ? stars(c.c[1]) : 0;
+        c.el.style.setProperty('--c', COL[k]);
+        c.el.style.setProperty('--h', (k === 'z' ? 3 : 6 + s * 8) + 'px');
+        c.el.classList.toggle('dim', filt !== 'all' && c.a !== filt);
+        c.el.classList.toggle('sel', c === sel);
+      });
+      if (sel) pick(sel, true); else summary();
+    }
+    function summary(){
+      var list = filt === 'all' ? ATTR : [filt], tot = {p:0, n:0, z:0};
+      list.forEach(function(a){ var c = count(a, alpha); tot.p += c.p; tot.n += c.n; tot.z += c.z; });
+      $('mx-panel').innerHTML = '<div class="tag">' + (filt === 'all' ? L('Os 108 resultados','All 108 results') : ANAME[filt]) + ' · ' + L('limite ','threshold ') + (alpha === 0.1 ? '10%' : '5%') + '</div>' +
+        '<p><span class="badge p">' + tot.p + '</span> ' + L('a dívida sobe','debt goes up') + ' · <span class="badge n">' + tot.n + '</span> ' + L('a dívida cai','debt goes down') + ' · <span class="badge z">' + tot.z + '</span> ' + L('sem efeito claro','no clear effect') + '</p>' +
+        '<p>' + L('Toque num bloco para ver o coeficiente, o p e a tabela de onde ele vem.','Tap a block to see the coefficient, the p-value and the table it comes from.') + '</p>';
+    }
+    function pick(c, keep){
+      sel = c;
+      if (!keep) cells.forEach(function(x){ x.el.classList.toggle('sel', x === c); });
+      var k = kind(c.c, alpha), e = EXPECT[c.a];
+      var verdict = k === 'z' ? L('Sem efeito claro neste limite.','No clear effect at this threshold.') : (k === e ? L('Na direção que a hipótese previa.','In the direction the hypothesis predicted.') : L('Na direção contrária à hipótese.','Opposite to the direction the hypothesis predicted.'));
+      $('mx-panel').innerHTML = '<div class="tag">' + L('Tabela ','Table ') + TAB[c.m][c.t] + ' · ' + PERN[c.t] + '</div>' +
+        '<h3>' + ANAME[c.a] + ' · ' + c.m.toUpperCase() + ' → ' + L('dívida ','debt: ') + DIVS[c.d] + '</h3>' +
+        '<p><span class="badge ' + k + '">' + sgn(c.c[0], 3) + '</span> &nbsp;' + pTxt(c.c[1]) + '. ' + verdict + '</p>';
+    }
+    each($('mx-chips').children, function(b){ b.addEventListener('click', function(){ filt = b.dataset.f; if (sel && filt !== 'all' && sel.a !== filt) sel = null; draw(); }); });
+    each($('mx-rig').children, function(b){ b.addEventListener('click', function(){ alpha = +b.dataset.r; draw(); }); });
+    draw();
+  })();
+
+  /* ================= 10 · A VIRADA ================= */
+  (function(){
+    var sc = $('vr-scene'), W = 520, D = 230;
+    var st = makeStage(sc, W, D, {ay:'68%', rx:'58deg'});
+    rotatable(sc, st, -14, 6);
+    var rows = [[], []], tw = 30, gap = 4, dg = 12, x0 = 80;
+    function xi(m, d){ return x0 + m * (4 * (tw + gap) + dg) + d * (tw + gap); }
+    [0, 1].forEach(function(r){
+      flatLabel(st, r ? L('juros','interest') : L('instabilidade','instability'), 0, 40 + r * 100 + 8, x0 - 8, 'text-align:right; font-size:13px');
+      PROX.forEach(function(m, mi){ for (var d = 0; d < 4; d++){
+        var b = box({w:tw, d:40, x:xi(mi, d), y:40 + r * 100, h:3, c:'var(--ns)'});
+        st.appendChild(b); rows[r].push({el:b, m:m, d:d});
+      } });
+    });
+    PROX.forEach(function(m, mi){ flatLabel(st, m.toUpperCase(), xi(mi, 0), 6, 4 * (tw + gap), 'text-align:center; font-size:13px'); });
+    flatLabel(st, L('em cada bloco de 4: bruta total · bruta LP · líquida total · líquida LP','in each group of 4: gross total · gross LT · net total · net LT'), x0, 196, 420, 'font-size:10px');
+    function draw(p){
+      pressed($('vr-seg'), 'p', p);
+      var nv = 0, nj = 0;
+      rows[0].forEach(function(c){ var x = R[c.m][p].vol[c.d], k = kind(x, 0.1); if (k !== 'z') nv++; c.el.style.setProperty('--c', COL[k]); c.el.style.setProperty('--h', (k === 'z' ? 3 : 10 + stars(x[1]) * 14) + 'px'); });
+      rows[1].forEach(function(c){ var x = JUR[p][c.m][c.d], k = kind(x, 0.1); if (k !== 'z') nj++; c.el.style.setProperty('--c', COL[k]); c.el.style.setProperty('--h', (k === 'z' ? 3 : 10 + stars(x[1]) * 14) + 'px'); });
+      $('vr-v').textContent = nv + ' / 12'; $('vr-j').textContent = nj + ' / 12';
+      $('vr-panel').innerHTML = p === 'P'
+        ? '<p>' + L('Antes da pandemia, a taxa básica de juros de cada país aparecia em quase todas as regressões, e a instabilidade do caixa quase não contava.','Before the pandemic, each country’s base interest rate showed up in almost every regression, and cash instability hardly counted.') + '</p>'
+        : '<p>' + L('Em 2020 e 2021, o quadro se inverte. Para a autora, na crise a empresa toma recursos para sobreviver, muitas vezes sem poder escolher a taxa; e um caixa que oscila passa a pesar mais na decisão.','In 2020 and 2021, the picture flips. For the author, in a crisis a company borrows to survive, often unable to choose the rate; and swinging cash weighs more in the decision.') + '</p>';
+    }
+    each($('vr-seg').children, function(b){ b.addEventListener('click', function(){ draw(b.dataset.p); }); });
+    draw('P');
+  })();
+
+  /* ================= 11 · O INESPERADO ================= */
+  (function(){
+    var G = [L('sobe','goes up'), L('cai','goes down'), L('depende da dívida que se mede','depends on which debt is measured')];
+    var answered = false, v = 0;
+    $('guess').innerHTML = G.map(function(g, i){ return '<button data-i="' + i + '">' + g + '</button>'; }).join('');
+    each($('guess').children, function(b){
+      b.addEventListener('click', function(){
+        if (answered) return; answered = true;
+        each($('guess').children, function(x){ x.classList.add(+x.dataset.i === 2 ? 'right' : 'wrong'); });
+        $('guess-msg').innerHTML = (+b.dataset.i === 2 ? L('Isso. ','Right. ') : L('Na verdade, depende. ','Actually, it depends. ')) + L('A dívida bruta total e a líquida de longo prazo sobem; a bruta de longo prazo e a líquida total caem. As quatro com p abaixo de 1%.','Gross total debt and net long-term debt go up; gross long-term debt and net total debt go down. All four with p below 1%.');
+        $('ie-wrap').classList.remove('hide');
+      });
+    });
+    var VARS = [
+      {d:R.roa.T.mag, n:L('Lucro sobre o ativo (tamanho do caixa)','Return on assets (cash size)')},
+      {d:R.roa.T.vol, n:L('Instabilidade do lucro sobre o ativo','Instability of return on assets')},
+      {d:TAN, n:L('Ativos fixos ÷ ativo (controle)','Fixed assets ÷ assets (control)')}
+    ];
+    var svg = $('ie-svg'), ym = 175, H = 120;
+    function draw(){
+      pressed($('ie-seg'), 'v', v);
+      var V = VARS[v], mx = Math.max.apply(null, V.d.map(function(x){ return Math.abs(x[0]); }));
+      var h = '<text x="280" y="26" text-anchor="middle" style="font-size:14px; font-weight:700; fill:#0f172a">' + V.n + '</text>' +
+        '<line x1="30" y1="' + ym + '" x2="530" y2="' + ym + '" stroke="#64748b"/>';
+      V.d.forEach(function(x, i){
+        var bh = Math.abs(x[0]) / mx * H, cx = 130 + i * 112, up = x[0] > 0;
+        h += '<rect x="' + (cx - 34) + '" y="' + (up ? ym - bh : ym) + '" width="68" height="' + bh + '" rx="4" style="fill:' + (up ? 'var(--pos)' : 'var(--neg)') + '"/>' +
+          '<text x="' + cx + '" y="' + (up ? ym - bh - 8 : ym + bh + 18) + '" text-anchor="middle" style="font-size:14px; font-weight:700; fill:#0f172a">' + sgn(x[0], 3) + '</text>' +
+          '<text x="' + cx + '" y="' + (up ? ym + 22 : ym - 10) + '" text-anchor="middle" style="font-size:12px; fill:#334155">' + DIVS[i] + '</text>';
+      });
+      svg.innerHTML = h;
+    }
+    each($('ie-seg').children, function(b){ b.addEventListener('click', function(){ v = +b.dataset.v; draw(); }); });
+    draw();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
