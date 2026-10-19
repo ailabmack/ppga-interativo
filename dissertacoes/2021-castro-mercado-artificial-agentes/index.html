@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Uma bolsa de valores dentro do computador · PPGA Interativo</title>
+<meta name="description" content="A dissertação de mestrado de Conceição Jacqueline Xavier Barbosa de Castro (PPGA Mackenzie, 2021) sobre um mercado de ações artificial com 10 mil investidores virtuais (modelagem baseada em agentes) comparado a cinco ações da B3 e ao ARIMA, explicada em 10 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/dissertacoes/2021-castro-mercado-artificial-agentes/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2216%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>$</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  :root{
+    --buy:var(--navy);     /* investidor comprado */
+    --sell:var(--red);     /* investidor vendido */
+    --out:#cbd5e1;         /* fora do mercado */
+    --real:#0f172a;        /* preço real */
+    --abm:var(--red);      /* preço simulado pelos agentes */
+  }
+  .note{font-size:.76rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:12px; line-height:1.45;}
+  .note b{color:var(--ink-2);}
+  .ilus{display:inline-block; font-size:.62rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.82rem; cursor:pointer; color:var(--ink-2); font-family:inherit;}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.74rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  svg text{font-family:var(--sans);}
+  .svgbox{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4vw, 2.6rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .warn{font-size:.76rem; color:var(--muted); margin-top:10px;}
+  .warn b{color:var(--red);}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:36em; margin-left:auto; margin-right:auto;}
+  #hero-scene{perspective:2000px;}
+  #hero-scene .slab{transition:none;}
+
+  /* ---------- 02 · Duas formas ---------- */
+  #two-panel{min-height:120px; margin-top:12px;}
+
+  /* ---------- 03 · Regras ---------- */
+  .rules{display:grid; gap:6px; margin-top:4px;}
+  @media (min-width:920px){ .rules{grid-template-columns:1fr 1fr;} }
+  .rules button{display:flex; gap:10px; align-items:center; text-align:left; border:1px solid var(--border); background:var(--card); border-radius:10px; padding:8px 12px; font-family:inherit; font-size:.86rem; color:var(--ink-2); cursor:pointer;}
+  .rules button b{font-family:var(--serif); color:var(--red); min-width:1.2em;}
+  .rules button[aria-pressed="true"]{border-color:var(--ink); box-shadow:inset 3px 0 0 var(--red); color:var(--ink); font-weight:600;}
+  #rule-panel{margin-top:10px; min-height:118px;}
+  .nbr{display:grid; grid-template-columns:repeat(3, 64px); gap:6px; justify-content:center;}
+  .nbr button{width:64px; height:64px; border-radius:12px; border:0; font-family:inherit; font-size:.72rem; font-weight:700; cursor:pointer; color:#fff; line-height:1.15;}
+  .nbr button.b{background:var(--buy);} .nbr button.s{background:var(--sell);} .nbr button.n{background:var(--out); color:var(--ink-2);}
+  .nbr .me{font-size:.6rem; background:#fff; color:var(--ink); box-shadow:inset 0 0 0 3px var(--ink); cursor:default;}
+  .calc{margin-top:14px;}
+  .calc .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center; margin-bottom:8px; font-size:.8rem; color:var(--muted);}
+  .pbar{display:grid; grid-template-columns:92px 1fr 52px; gap:8px; align-items:center; font-size:.8rem; margin-top:6px;}
+  .pbar .tr{height:16px; background:#eef2f7; border-radius:8px; overflow:hidden;}
+  .pbar .tr i{display:block; height:100%; border-radius:8px; transition:width .3s;}
+  .pbar b{font-variant-numeric:tabular-nums; text-align:right; color:var(--ink);}
+
+  /* ---------- 04 · Simulador ---------- */
+  .simgrid{display:grid; grid-template-columns:1fr; gap:12px;}
+  #agents{width:170px; height:170px; image-rendering:pixelated; border-radius:10px; border:1px solid var(--border); display:block; margin:0 auto;}
+  .ctrl{display:grid; gap:8px; margin-top:4px;}
+  .ctrl .lab{font-size:.74rem; color:var(--muted); display:block; margin-bottom:3px;}
+  .ctrl-row{display:grid; grid-template-columns:1fr 1fr; gap:8px 12px;}
+  @media (max-width:420px){ .ctrl-row{grid-template-columns:1fr;} }
+  .runbar{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
+  .counts{font-size:.76rem; color:var(--muted); text-align:center; margin-top:6px; font-variant-numeric:tabular-nums;}
+
+  /* ---------- 05 · O teste ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 10px;}
+  .chips button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-family:inherit; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .chips button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  #tries{width:100%; max-width:450px; display:block; margin:0 auto; border-radius:10px; border:1px solid var(--border); background:#fff;}
+  .params{display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; margin-top:10px;}
+  @media (max-width:520px){ .params{grid-template-columns:1fr 1fr;} }
+  .params div{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:8px 10px; font-size:.72rem; color:var(--muted); line-height:1.3;}
+  .params b{display:block; font-family:var(--serif); font-size:1.05rem; color:var(--ink);}
+
+  /* ---------- 06 · Resultado ---------- */
+  #res-scene{perspective:2000px;}
+  #res-scene .slab{cursor:pointer;}
+  #res-scene .slab.active{--oz:14px;}
+  #res-panel{min-height:120px; margin-top:12px;}
+
+  /* ---------- 07 · Descola ---------- */
+  #gap-panel{min-height:96px; margin-top:10px;}
+  .range{display:flex; align-items:center; gap:10px; margin-top:10px; font-size:.78rem; color:var(--muted);}
+  .range input{flex:1; accent-color:var(--red);}
+
+  /* ---------- 09 · Acaso ---------- */
+  #luck-panel{margin-top:10px; min-height:70px;}
+  .bests{display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; min-height:22px;}
+  .bests span{font-size:.68rem; background:#eef2f7; border-radius:6px; padding:2px 6px; color:var(--ink-2); font-variant-numeric:tabular-nums;}
+  .odds{display:grid; gap:4px; margin-top:10px;}
+  .odds div{display:grid; grid-template-columns:58px 1fr 64px; gap:8px; align-items:center; font-size:.76rem;}
+  .odds .tr{height:12px; background:#eef2f7; border-radius:6px; overflow:hidden;}
+  .odds .tr i{display:block; height:100%; background:var(--ink-2); border-radius:6px;}
+  .odds b{text-align:right; font-variant-numeric:tabular-nums;}
+
+  /* ---------- 10 · Créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.78rem; color:var(--ink-2); line-height:1.42;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/dissertacoes/2021-castro-mercado-artificial-agentes/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 10</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Dissertação de mestrado · PPGA Mackenzie · 2021</div>
+      <h1 class="rv" style="--d:.1s">Uma bolsa de valores dentro do computador</h1>
+      <p class="sub rv" style="--d:.2s">A pesquisa montou um mercado de ações artificial com 10 mil investidores virtuais, cada um seguindo regras simples, e comparou os preços que nasceram ali com os de cinco ações da B3, a bolsa brasileira. Explicada em 10 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autora:</b> Conceição Jacqueline Xavier Barbosa de Castro</span>
+        <span><b>Orientador:</b> Prof. Dr. Eli Hadad Junior</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#duas">Começar →</a>
+        <a class="btn ghost" href="#simulador">Rodar o mercado</a>
+      </div>
+      <p class="warn rv" style="--d:.45s"><b>Não é recomendação de investimento.</b> A página explica uma pesquisa acadêmica sobre simulação de mercados.</p>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="500x300" role="img" aria-label="Um tabuleiro de blocos, cada um um investidor virtual, que muda de cor conforme compra, vende ou fica de fora"></div></div>
+      <p class="cap-legend"><span class="ilus">ilustração</span> Cada bloco é um investidor: <span class="dot" style="background:var(--buy)"></span>comprado, <span class="dot" style="background:var(--sell)"></span>vendido, <span class="dot" style="background:var(--out)"></span>de fora. Os vizinhos se influenciam, e o preço nasce dessa conversa.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Testa um mercado simulado por agentes para entender e prever preços de ações da B3, uma ferramenta de estudo para o mercado financeiro brasileiro."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · DUAS FORMAS DE PREVER -->
+<section class="slide" id="duas" data-label="Duas formas">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> A pergunta</div>
+      <h2 class="rv" style="--d:.1s">Dá para prever um preço olhando o gráfico ou criando os investidores</h2>
+      <p class="lede rv" style="--d:.15s">O jeito clássico estuda a série de preços e projeta o próximo valor. A modelagem baseada em agentes faz o caminho inverso: programa pessoas virtuais, deixa que negociem entre si e observa o preço que surge. A dissertação compara os dois.</p>
+      <div class="seg rv" id="two-seg" style="--d:.2s" role="group" aria-label="Escolha a forma">
+        <button data-m="0" aria-pressed="true">De cima: a série</button>
+        <button data-m="1" aria-pressed="false">De baixo: os agentes</button>
+      </div>
+      <div class="panel rv" id="two-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="two-svg" class="svgbox" viewBox="0 0 560 300" role="img" aria-label="Ilustração das duas formas de prever um preço"></svg>
+      <div class="stats">
+        <div class="stat"><b>70</b><span>artigos sobre agentes e mercado de ações na Web of Science (1996–2021)</span></div>
+        <div class="stat"><b>2015</b><span>o ano com mais artigos (9)</span></div>
+        <div class="stat"><b>6 de 10</b><span>dos mais citados são de Macal e North</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · AS REGRAS -->
+<section class="slide" id="regras" data-label="As regras">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> O modelo · Silva (2014)</div>
+      <h2 class="rv" style="--d:.1s">Cada investidor virtual segue poucas regras</h2>
+      <p class="lede rv" style="--d:.15s">A pesquisa usou um modelo pronto, criado por Silva (2014) no programa NetLogo: 10 mil investidores num tabuleiro de 100 por 100, cada um podendo comprar ou vender uma ação. Toque em cada regra.</p>
+      <div class="rules rv" id="rules" style="--d:.2s" role="group" aria-label="Regras do modelo"></div>
+      <div class="panel rv" id="rule-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel">
+        <h3>Faça a conta de um investidor fora do mercado</h3>
+        <p style="font-size:.8rem; color:var(--muted)">Toque nos 8 vizinhos para mudar o que cada um fez por último (compra, venda ou nada). O centro é o investidor; a informação própria dele pesa ômega vezes.</p>
+        <div class="nbr" id="nbr"></div>
+        <div class="calc">
+          <div class="row"><span>Informação própria:</span>
+            <div class="seg" id="own-seg" role="group" aria-label="Informação própria"><button data-v="1" aria-pressed="true">compre</button><button data-v="-1" aria-pressed="false">venda</button></div>
+          </div>
+          <div class="row"><span>Peso da informação própria (ômega):</span>
+            <div class="seg" id="om-seg" role="group" aria-label="Ômega"><button data-v="1" aria-pressed="true">1</button><button data-v="10" aria-pressed="false">10</button></div>
+          </div>
+          <div id="pbars" aria-live="polite"></div>
+        </div>
+        <p class="note">Fórmulas 3.4 e 3.5 da dissertação: chance de comprar = (vizinhos que compraram + ômega × informação própria de compra) ÷ (8 + ômega); o mesmo para vender. Ômega foi 1 ou 10 nas melhores simulações.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · SIMULADOR -->
+<section class="slide" id="simulador" data-label="Rode o mercado">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Experimente</div>
+      <h2 class="rv" style="--d:.1s">Rode você um mercado de 10 mil investidores</h2>
+      <p class="lede rv" style="--d:.15s">Escolha os ajustes que a pesquisa variou e deixe os investidores negociarem por 299 pregões. Depois sorteie de novo com os mesmos ajustes: a história muda.</p>
+      <div class="ctrl rv" style="--d:.2s">
+        <div class="ctrl-row">
+          <div><span class="lab">Peso da informação própria (ômega)</span><div class="seg" id="s-om"><button data-v="1" aria-pressed="true">1</button><button data-v="10" aria-pressed="false">10</button></div></div>
+          <div><span class="lab">Meta máxima de ganho</span><div class="seg" id="s-x"><button data-v="0.05" aria-pressed="true">5%</button><button data-v="0.15" aria-pressed="false">15%</button></div></div>
+          <div><span class="lab">Humor do mercado (índice)</span><div class="seg" id="s-idx"><button data-v="0" aria-pressed="true">desligado</button><button data-v="1" aria-pressed="false">ligado</button></div></div>
+          <div><span class="lab">Investidores com ordem stop</span><div class="seg" id="s-stp"><button data-v="0.1" aria-pressed="true">10%</button><button data-v="0" aria-pressed="false">0%</button></div></div>
+        </div>
+      </div>
+      <div class="runbar rv" style="--d:.25s">
+        <button class="btn small" id="run">▶ Rodar 299 pregões</button>
+        <button class="btn small ghost" id="reseed">Outro sorteio</button>
+      </div>
+      <p class="note rv" style="--d:.3s"><span class="ilus">simulação nossa</span> Versão simplificada, feita por nós, das regras descritas na dissertação; não é o código original do NetLogo. Preço inicial 30; a informação própria é sorteada a cada pregão e o desequilíbrio é dividido pelo total de ordens. Os valores da pesquisa estão nas telas 05 a 07.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="simgrid">
+        <div>
+          <canvas id="agents" width="100" height="100" aria-label="Tabuleiro com os 10 mil investidores"></canvas>
+          <div class="counts" id="counts"></div>
+          <div class="legend" style="justify-content:center"><span><i class="dot" style="background:var(--buy)"></i>comprado</span><span><i class="dot" style="background:var(--sell)"></i>vendido</span><span><i class="dot" style="background:var(--out)"></i>de fora</span></div>
+        </div>
+        <svg id="sim-svg" class="svgbox" viewBox="0 0 420 250" role="img" aria-label="Preço gerado pelos investidores ao longo dos pregões"></svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · COMO TESTOU -->
+<section class="slide" id="teste" data-label="O teste">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> O método</div>
+      <h2 class="rv" style="--d:.1s">Cinco ações, 5.400 simulações cada, e só a melhor fica</h2>
+      <p class="lede rv" style="--d:.15s">A autora deu ao modelo o preço de cada ação no dia 05/06/2019 e rodou 5.400 simulações com ajustes diferentes. Depois comparou cada uma com os 299 pregões reais até 17/08/2020 e ficou com a que mais acertou a direção dos preços (sobe ou desce), pelo teste de Pesaran e Timmermann.</p>
+      <div class="stats rv" style="--d:.2s">
+        <div class="stat"><b>5</b><span>ações da B3: Itaú, Embraer, Cemig, Engie e Braskem</span></div>
+        <div class="stat"><b>299</b><span>pregões comparados, um preço de fechamento por dia</span></div>
+        <div class="stat"><b>27.000</b><span>simulações ao todo (5 × 5.400, conta nossa)</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="chips" id="t-chips" role="group" aria-label="Escolha a ação"></div>
+      <canvas id="tries" width="900" height="600" aria-label="5.400 quadradinhos, um por simulação; o vermelho é a escolhida"></canvas>
+      <div class="params" id="params" aria-live="polite"></div>
+      <p class="note">Ajustes da melhor simulação de cada ação na Tabela 1; número da simulação escolhida no capítulo 4. Em todas, 10% dos investidores usavam ordem stop. A posição do quadradinho vermelho segue esse número.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · RESULTADO DO TESTE -->
+<section class="slide" id="resultado" data-label="O resultado">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Tabela 2</div>
+      <h2 class="rv" style="--d:.1s">A melhor simulação de cada ação passou no teste de direção</h2>
+      <p class="lede rv" style="--d:.15s">Nas cinco ações, a simulação escolhida acertou o sobe e desce dos preços mais vezes do que o acaso explicaria, pelo teste usado. A Engie (EGIE3) teve o resultado mais forte; a Embraer (EMBR3), o mais fraco. Toque nas colunas.</p>
+      <div class="panel rv" id="res-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="res-scene" data-fit="540x330" role="img" aria-label="Cinco colunas com a estatística do teste de cada ação, todas acima de uma lâmina que marca o limite de 5%"></div></div>
+      <p class="note">Altura = estatística do teste (Tabela 2). A lâmina vermelha marca 1,645, o valor a partir do qual o resultado é significativo a 5% num teste de um lado só (conta nossa, conferida com os p-valores da tabela).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · DESCOLA -->
+<section class="slide" id="descola" data-label="Real × simulado">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Figuras 2, 4, 6, 8 e 10</div>
+      <h2 class="rv" style="--d:.1s">Começam juntos, mas depois de uns 150 pregões o mercado virtual se descola</h2>
+      <p class="lede rv" style="--d:.15s">Acertar a direção dia a dia não é seguir o preço. Nos gráficos da dissertação, o preço simulado acompanha o real no começo e depois dispara, despenca ou fica parado. Arraste a régua.</p>
+      <div class="chips rv" id="g-chips" style="--d:.2s" role="group" aria-label="Escolha a ação"></div>
+      <div class="panel rv" id="gap-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="gap-svg" class="svgbox" viewBox="0 0 560 320" role="img" aria-label="Preço real e preço simulado da ação escolhida ao longo de 299 pregões"></svg>
+      <div class="range"><span>pregão</span><input type="range" id="g-range" min="2" max="299" value="299" aria-label="Mostrar até o pregão"><b id="g-day">299</b></div>
+      <div class="legend"><span><i class="dot" style="background:var(--real)"></i>preço real</span><span><i class="dot" style="background:var(--abm)"></i>preço simulado (melhor simulação)</span></div>
+      <p class="note">Curvas redesenhadas por nós a partir das figuras da dissertação; os valores são aproximados (lidos na imagem), em reais.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · ARIMA -->
+<section class="slide" id="arima" data-label="O ARIMA">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> A comparação</div>
+      <h2 class="rv" style="--d:.1s">O modelo estatístico ficou mais perto, mas jogava com o preço de ontem na mão</h2>
+      <p class="lede rv" style="--d:.15s">Para comparar, a autora usou um ARIMA (1,1,1), modelo clássico que projeta o preço a partir dos valores anteriores da própria série. A conclusão dela: o mercado de agentes teve resultados iniciais satisfatórios, mas não alcançou a precisão do ARIMA, principalmente depois de 150 observações.</p>
+      <div class="seg rv" id="ar-seg" style="--d:.2s" role="group" aria-label="Escolha o tipo de previsão">
+        <button data-m="0" aria-pressed="true">Um passo por vez</button>
+        <button data-m="1" aria-pressed="false">O caminho inteiro</button>
+      </div>
+      <div class="panel rv" id="ar-panel" style="--d:.25s; margin-top:12px; min-height:100px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="ar-svg" class="svgbox" viewBox="0 0 560 320" role="img" aria-label="Preço real do Itaú (ITUB4) com dois tipos de previsão"></svg>
+      <p class="note"><span class="ilus">leitura nossa</span> As figuras do ARIMA na dissertação são previsões de um passo ("one-step"): cada dia parte do preço real da véspera, e por isso a linha fica colada na real. O mercado de agentes recebeu só o preço do primeiro dia. Aqui, para mostrar a diferença, o "um passo" é o palpite mais simples (o preço de ontem), não o ARIMA da autora. Curva do Itaú aproximada, lida da Figura 10.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · A RÉGUA DO ACASO -->
+<section class="slide" id="acaso" data-label="A régua do acaso">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> <span class="ilus">leitura nossa</span></div>
+      <h2 class="rv" style="--d:.1s">Entre 5.400 tentativas, o acaso também acerta bastante</h2>
+      <p class="lede rv" style="--d:.15s">O teste da tela 06 vale para uma previsão. Escolher a melhor de 5.400 muda a régua: mesmo palpites de cara ou coroa, sem nenhuma relação com o preço, produzem alguns campeões. Sorteie e compare com as cinco ações.</p>
+      <div class="runbar rv" style="--d:.2s">
+        <button class="btn small" id="luck-run">Sortear 5.400 palpites</button>
+        <button class="btn small ghost" id="luck-20">Repetir 20 vezes</button>
+      </div>
+      <div class="panel rv" id="luck-panel" style="--d:.25s" aria-live="polite"></div>
+      <div class="bests" id="bests" aria-label="Melhor estatística de cada sorteio"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="luck-svg" class="svgbox" viewBox="0 0 560 280" role="img" aria-label="Histograma das estatísticas de 5.400 palpites ao acaso, com as cinco ações da dissertação marcadas"></svg>
+      <div class="odds" id="odds"></div>
+      <p class="note">Conta nossa: cada palpite é uma série de 298 "sobe ou desce" de cara ou coroa, comparada a um sobe-e-desce também sorteado, com a mesma estatística de Pesaran e Timmermann. As barras dão a chance de o melhor de 5.400 palpites ao acaso ter p-valor menor que o da ação: 1 − (1 − p)<sup>5.400</sup>, supondo tentativas independentes. A dissertação não faz essa correção.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e limites">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">10</span> Na prática · limites · créditos</div>
+    <h2 class="rv" style="--d:.1s">Mais útil para entender o mercado do que para prever o preço de amanhã</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Professores e estudantes</h3><p>A própria autora conclui que o modelo cumpre bem o papel de ferramenta educacional simples: mostra como regras de pessoas comuns (copiar vizinhos, temer perdas) viram movimentos de preço.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Pesquisadores</h3><p>Os ajustes iniciais pesam muito no resultado. A autora sugere testar outras condições de entrada e mudar o código do modelo em trabalhos futuros.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ink-2)"><h3>Quem compara modelos</h3><p>Previsão de um dia e caminho inteiro não se comparam direto, e escolher o melhor de milhares pede uma régua mais exigente (leitura nossa).</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#5b6f96"><h3>Investidores</h3><p>Nada aqui indica quando comprar ou vender. A pesquisa não simula operações, custos nem ganhos: previsão de direção não é lucro.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Vale para os ajustes testados.</b> Os resultados se limitam aos parâmetros da Tabela 1 e podem mudar com outras condições de entrada. <em>· segundo a autora</em></li>
+          <li><b>Um modelo pronto, sem mudanças.</b> A pesquisa usou o modelo de Silva (2014) como estava; melhorias no código ficaram para trabalhos futuros. <em>· segundo a autora</em></li>
+          <li><b>Poucos números de comparação.</b> A dissertação mostra o teste de direção só das simulações de agentes; o ARIMA aparece em gráficos, sem a mesma medida, e não há medida de erro do preço. <em>· observação nossa</em></li>
+          <li><b>O melhor de 5.400.</b> O p-valor de cada ação não foi corrigido pela escolha entre milhares de simulações (tela 09). <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          CASTRO, Conceição Jacqueline Xavier Barbosa de. <em>Mercado de capitais artificial: uma simulação baseada em agentes.</em> Dissertação (Mestrado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2021. Orientador: Prof. Dr. Eli Hadad Junior.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Simulações no NetLogo com o modelo Collective Behavior in the Stock Market (Silva, 2014); ARIMA no Stata. Esta versão simplifica o trabalho para o público em geral; as fórmulas e os gráficos completos estão no texto original. <b>Não é recomendação de investimento.</b></p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a dissertação completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  function n0(n){ return n.toLocaleString(EN ? 'en-US' : 'pt-BR'); }
+  function rnd(seed){ return function(){ seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, a, txt){ var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); if (txt !== undefined) e.textContent = txt; return e; }
+  function pexp(p){ // p-valor curto: 0,0000261 → "0,000026"
+    return fmt(p, p < 0.0001 ? 6 : p < 0.001 ? 5 : 4);
+  }
+  function seg(id, fn){
+    var g = $(id);
+    each(g.querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){
+        each(g.querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        fn(b.dataset.m !== undefined ? +b.dataset.m : b.dataset.v);
+      });
+    });
+  }
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // Tabela 1 (parâmetros da melhor simulação), número da simulação (cap. 4) e Tabela 2 (teste DA)
+  var STK = [
+    {t:'EGIE3', n:'Engie Brasil', xmax:0.05, om:10, idx:true,  p0:44.31, sim:512,  st:4.0454466, p:0.0000261},
+    {t:'BRKM5', n:'Braskem',      xmax:0.05, om:1,  idx:false, p0:33.17, sim:2751, st:3.5791900, p:0.0001723},
+    {t:'CMIG4', n:'Cemig',        xmax:0.05, om:10, idx:false, p0:17,    sim:3225, st:3.2504482, p:0.0005761},
+    {t:'ITUB4', n:'Itaú',         xmax:0.05, om:1,  idx:false, p0:32.33, sim:2776, st:3.1955812, p:0.0006977},
+    {t:'EMBR3', n:'Embraer',      xmax:0.15, om:1,  idx:true,  p0:18.46, sim:1882, st:2.8065687, p:0.0025036}
+  ];
+  var NSIM = 5400, NOBS = 299;
+  // Figuras 2, 4, 6, 8 e 10: curvas redesenhadas (valores aproximados, lidos da imagem)
+  var SERIES = {"CMIG4":{"real":[17.2,17.4,17.6,17.3,17.3,16.8,16.8,16.6,16.6,16.5,16.4,16.5,16.5,16.4,16.4,17.0,17.2,17.1,16.8,17.0,17.1,17.1,17.4,17.4,17.1,16.9,16.6,16.7,16.6,16.6,16.3,16.1,16.1,15.8,15.7,15.7,15.7,15.9,15.8,15.9,15.9,15.9,16.2,15.7,15.9,16.1,16.1,16.6,16.2,16.2,16.5,16.6,16.9,17.3,16.7,16.2,16.3,16.4,15.7,16.0,16.3,16.5,16.3,16.2,16.1,15.7,15.5,15.4,15.5,15.3,15.0,14.9,15.0,14.9,15.0,14.8,14.6,14.5,14.4,14.7,14.7,14.8,14.8,14.7,14.7,14.6,14.3,14.4,14.3,14.2,14.4,14.2,14.1,14.0,14.1,14.0,14.0,13.8,13.7,13.7,13.5,13.4,13.5,13.7,13.8,13.7,13.7,13.7,13.7,13.7,13.7,13.6,13.6,13.5,13.3,13.1,13.0,13.1,13.1,13.1,13.1,13.3,13.4,13.4,13.4,13.3,13.4,13.5,13.5,13.4,13.7,13.8,13.8,13.9,14.0,14.1,14.2,14.3,14.3,14.4,14.5,14.6,14.7,14.7,14.7,15.0,15.7,15.6,15.6,16.0,16.1,16.2,16.3,16.4,16.4,16.2,16.0,16.0,16.1,16.0,16.0,16.0,15.8,15.7,15.8,16.0,16.4,16.7,16.4,15.9,15.9,16.0,15.7,15.6,15.8,15.9,15.8,15.3,15.4,14.6,14.1,14.0,14.2,14.4,14.9,14.7,13.9,12.5,12.5,11.7,9.8,9.8,9.2,9.4,9.3,8.4,8.2,7.5,7.7,8.3,8.9,9.1,9.1,8.5,8.3,7.9,7.9,8.0,8.4,8.8,8.8,9.3,9.5,9.6,9.6,9.7,9.6,9.6,9.4,8.7,8.5,8.9,9.4,9.3,8.8,8.8,8.4,8.0,8.0,7.9,7.7,7.5,7.9,8.0,8.3,8.3,8.5,8.8,8.8,9.6,9.7,10.6,10.6,10.5,10.5,10.8,11.0,11.0,11.3,11.7,11.8,11.6,11.3,11.1,11.4,11.7,11.5,11.3,11.7,11.6,11.3,11.3,10.8,11.0,11.2,11.2,11.1,11.1,11.3,11.2,11.3,11.2,11.3,11.3,11.2,11.4,11.3,11.4,11.5,11.4,12.0,11.7,11.6,11.9,11.9,11.7,11.7,11.5,11.5,11.4,11.3,11.6,11.4,11.3,11.3,10.9,10.7,10.6,10.3],"abm":[17.0,17.1,17.1,17.0,17.1,16.9,16.9,17.0,17.2,16.9,16.8,16.7,16.7,16.7,16.8,16.8,16.9,16.9,16.7,16.6,16.6,16.6,16.7,16.4,16.4,16.2,16.2,16.1,16.1,16.2,16.2,16.2,16.3,16.3,16.1,16.0,16.1,16.2,16.1,16.0,16.1,16.2,16.1,16.0,16.1,16.2,16.3,16.4,16.4,16.6,16.7,16.7,16.7,16.9,17.1,17.0,16.8,16.8,16.6,16.6,16.6,16.3,16.1,16.0,15.9,15.8,15.9,16.1,15.9,15.9,16.0,15.9,15.9,15.9,15.9,15.9,15.9,15.7,15.5,15.6,15.6,15.6,15.6,15.6,15.7,15.8,15.9,16.0,16.1,16.1,16.1,16.4,16.2,16.1,16.3,16.2,16.3,16.4,16.4,16.4,16.6,16.9,16.2,15.1,18.4,18.1,15.0,14.6,16.9,16.7,16.4,16.4,17.2,15.9,14.0,14.6,14.5,13.7,14.3,14.5,13.7,13.7,13.5,13.5,13.6,13.6,13.6,13.6,13.6,13.5,13.6,13.6,13.7,13.7,13.7,13.7,13.6,13.6,13.7,13.7,13.7,13.6,13.6,13.6,13.6,13.6,13.6,13.7,13.8,13.9,13.8,13.8,13.9,13.9,13.9,13.9,13.9,13.9,13.9,13.8,13.8,13.8,13.9,13.9,13.8,13.8,13.7,13.5,13.5,13.4,13.4,13.2,14.1,14.1,12.7,13.4,14.7,12.8,10.9,11.5,11.7,11.5,11.2,11.1,11.3,11.8,10.5,10.8,12.0,10.4,9.6,9.5,9.6,10.1,8.8,8.7,10.2,9.6,9.3,9.1,9.1,9.6,8.9,9.5,10.6,8.7,8.1,8.3,7.7,8.5,9.1,8.8,9.1,9.2,9.2,9.2,9.2,9.1,9.2,9.2,9.1,9.1,9.2,9.1,9.1,9.1,9.1,9.1,9.1,9.1,9.1,9.1,9.1,9.1,9.0,9.0,9.0,9.0,8.9,9.3,9.3,8.9,8.9,9.0,9.1,9.1,9.1,9.1,9.2,9.2,9.2,9.2,9.2,9.2,9.2,9.2,9.2,9.2,9.2,9.2,9.2,9.2,9.1,9.1,9.1,9.1,9.1,9.0,9.0,9.0,9.0,9.0,9.1,9.1,9.1,9.1,9.1,9.1,9.1,9.2,9.2,9.3,9.3,9.3,9.3,9.3,9.3,9.3,9.3,9.3,9.3,9.4,9.3,9.4,9.4,9.3,9.4,9.3,9.4]},"BRKM5":{"real":[32.8,32.5,32.0,31.9,32.7,33.2,33.4,33.5,33.2,34.5,34.7,34.5,34.9,34.8,34.7,34.4,34.1,34.1,34.2,34.3,35.4,36.0,36.1,36.0,35.7,35.7,35.7,35.1,34.9,35.0,34.8,34.4,34.4,33.8,33.8,33.8,33.3,33.0,32.8,32.6,32.1,31.7,31.6,31.1,30.5,30.2,30.1,30.5,29.9,29.3,28.8,28.1,27.6,27.4,27.2,26.3,25.7,25.5,27.1,27.8,27.4,27.1,26.9,27.9,27.8,27.8,28.6,29.0,29.1,29.1,28.9,28.9,29.7,30.3,30.2,31.1,31.5,31.4,31.4,31.6,31.6,31.4,30.2,29.9,29.6,29.7,29.0,28.2,28.4,28.6,29.1,29.3,29.4,29.3,28.9,28.5,28.5,28.2,28.2,27.6,27.6,27.9,27.8,27.8,27.6,27.9,28.5,29.1,29.4,30.7,31.2,31.0,30.4,30.1,28.8,28.4,28.0,27.7,27.8,27.8,27.7,27.7,27.7,28.1,28.2,28.3,28.9,28.9,29.1,29.1,29.2,29.3,29.2,29.0,28.6,28.6,28.5,28.2,28.9,29.8,30.2,30.1,30.0,30.8,32.1,33.1,33.0,34.4,34.5,34.1,34.0,33.8,33.8,34.1,34.3,34.7,35.7,37.6,37.9,35.9,34.5,33.2,32.3,31.6,32.4,33.3,33.7,33.5,31.9,31.5,31.8,31.9,31.1,30.8,31.1,31.2,31.5,31.7,30.9,29.3,27.8,27.1,27.3,27.9,28.6,27.9,26.3,23.9,23.4,22.1,18.1,18.7,17.8,16.9,14.2,12.7,12.3,11.0,11.0,14.1,17.9,18.2,17.7,17.4,16.6,16.6,16.2,16.2,16.6,16.5,16.3,16.9,20.3,21.5,21.5,21.1,20.9,20.8,20.3,19.6,21.2,22.0,22.0,21.4,21.1,20.8,20.3,20.3,20.8,21.6,20.8,21.4,22.0,23.3,26.0,26.3,26.1,26.2,26.1,26.3,26.5,27.6,28.5,27.8,27.9,28.8,28.3,27.5,27.3,27.3,27.0,26.2,24.9,24.6,25.0,25.3,25.3,25.0,24.9,24.6,23.7,23.2,23.0,23.1,23.2,23.7,23.6,23.5,23.9,24.1,24.8,23.8,23.4,23.3,23.7,24.0,24.3,24.8,24.9,24.4,24.1,24.0,24.1,24.0,23.7,23.9,23.9,23.1,23.0,22.7,23.6,23.9,23.9,25.0,24.7,24.6,24.2,23.8,23.5],"abm":[33.1,33.2,33.3,33.6,33.5,33.5,33.7,33.7,33.8,34.0,34.1,33.8,33.8,33.9,34.0,34.0,33.9,33.7,34.0,34.0,34.1,34.3,34.7,34.7,34.2,33.9,33.9,33.9,33.9,33.9,33.9,34.1,34.1,34.0,34.1,34.0,33.8,33.5,33.1,33.2,33.6,33.6,33.9,33.7,33.7,33.8,33.9,33.9,33.8,33.6,33.7,33.7,33.3,33.0,33.1,33.2,33.3,33.3,33.0,32.6,32.3,32.6,32.7,32.7,32.7,32.7,32.5,32.7,32.7,32.6,32.4,32.4,32.2,32.1,32.2,32.1,31.8,31.8,31.8,31.2,31.0,30.9,30.6,30.4,30.4,30.7,30.6,30.7,30.5,30.5,30.6,30.9,30.8,30.8,30.3,30.1,29.9,29.8,29.9,29.9,29.9,29.8,29.8,29.8,29.8,29.8,29.6,29.5,29.5,29.5,29.4,29.4,29.4,29.4,29.2,29.1,29.2,30.0,30.8,29.3,26.9,30.0,31.6,25.8,24.1,28.3,29.9,25.4,25.8,27.1,26.5,26.3,27.2,26.7,23.0,24.0,25.0,21.9,23.7,25.6,25.6,25.2,25.3,25.4,25.6,25.6,25.6,25.6,25.6,25.4,25.4,25.4,25.4,25.4,25.4,25.4,25.4,25.4,25.3,25.3,25.4,25.4,25.5,25.6,25.6,25.4,25.4,25.4,25.5,25.4,25.4,25.4,25.4,25.4,25.4,25.4,25.5,25.6,25.6,25.6,25.4,25.3,25.3,25.2,25.3,25.3,25.3,25.2,25.3,25.3,25.3,25.3,25.3,25.3,25.4,25.6,25.6,25.6,25.6,25.4,25.4,25.4,25.4,25.6,25.6,25.4,25.5,25.6,25.4,25.4,25.4,25.4,25.4,25.6,25.6,25.6,25.6,25.6,25.7,25.6,25.7,25.6,25.6,25.6,25.7,25.8,25.6,25.5,25.4,25.3,25.3,25.2,25.2,25.2,25.2,25.3,25.2,25.2,25.2,25.2,25.2,25.3,25.2,25.2,25.2,25.2,25.3,25.3,25.3,25.3,25.3,25.4,25.4,25.4,25.6,25.6,25.4,25.6,25.4,25.4,25.4,25.4,25.4,25.4,25.6,25.6,25.6,25.6,25.6,25.6,25.8,25.8,25.7,25.6,25.6,25.6,25.6,25.6,25.6,25.4,25.6,25.4,25.4,25.4,25.6,25.6,25.6,25.6,25.7,25.6,25.6,25.6,25.6,25.4,25.4,25.6,25.6,25.4,25.4]},"EGIE3":{"real":[41.8,41.8,41.2,41.2,41.2,40.7,40.7,40.2,39.7,40.2,40.2,39.7,39.7,39.7,39.7,39.7,40.7,40.7,40.2,40.2,40.2,43.3,43.3,43.3,43.3,43.9,43.3,43.9,44.4,44.4,44.4,44.4,44.4,44.4,44.4,44.4,45.4,45.4,46.0,46.0,46.0,46.0,46.0,46.0,46.0,46.0,46.0,46.0,41.8,41.2,41.2,41.2,40.2,40.2,40.2,40.2,39.7,39.7,40.2,40.2,40.2,40.2,40.2,40.2,40.2,40.2,40.2,40.2,40.2,40.2,40.2,40.2,41.8,43.3,43.3,43.3,43.3,43.2,43.1,43.0,42.9,42.8,42.7,42.6,42.4,42.3,42.2,42.1,42.0,41.9,41.8,41.8,41.8,41.8,41.8,41.8,41.8,41.8,41.8,41.8,41.8,41.8,41.8,42.3,43.3,42.8,42.3,42.8,43.3,43.3,41.8,40.2,40.2,40.2,40.2,40.7,40.2,40.2,40.2,41.8,41.8,41.8,41.8,42.6,43.3,42.8,43.3,43.5,43.6,43.8,43.9,44.1,44.2,44.4,44.4,44.4,49.1,49.1,49.1,49.1,49.1,49.1,49.6,50.1,50.6,49.6,49.6,49.6,50.1,51.2,51.2,52.2,51.2,51.2,51.2,51.2,51.2,51.2,51.2,52.2,51.2,51.2,51.2,51.2,50.1,51.2,51.2,51.2,49.6,48.6,48.6,49.6,49.6,48.6,48.6,48.6,49.6,49.1,48.6,48.0,47.0,45.4,45.4,47.0,47.5,48.6,47.0,46.0,43.3,44.4,43.9,42.8,44.9,43.3,43.9,41.8,39.2,38.1,36.5,36.5,37.6,38.6,38.1,38.1,37.6,36.5,36.5,36.5,36.5,37.1,38.1,38.1,38.1,38.6,38.1,39.2,38.6,39.7,39.7,38.6,37.6,38.1,38.1,38.1,38.1,37.1,38.1,36.5,35.5,36.5,36.5,35.0,35.5,36.5,37.1,38.1,38.1,38.1,38.1,38.1,39.7,39.7,40.7,41.2,40.2,39.7,41.2,41.2,41.2,41.2,42.3,42.3,42.3,41.2,41.2,41.2,42.3,42.3,41.2,41.2,41.2,41.2,40.7,40.2,41.2,41.2,42.3,42.8,42.8,42.3,42.3,41.2,41.2,42.3,42.3,42.3,41.2,41.8,42.3,42.3,42.3,42.3,42.3,42.3,42.3,42.3,42.3,42.8,43.9,43.9,43.9,44.4,43.9,43.9,43.9,42.8,42.3,42.3,42.3],"abm":[43.9,43.9,43.9,43.9,43.9,43.9,43.9,42.8,42.3,42.3,43.3,43.9,43.9,43.9,43.9,43.9,43.9,43.9,42.8,42.3,41.2,41.2,41.2,41.2,41.2,41.2,41.2,41.2,42.3,42.3,42.3,42.3,42.3,42.3,42.3,42.3,42.3,42.3,43.9,43.9,43.9,43.9,43.9,43.9,43.9,43.9,43.9,43.9,43.9,43.9,43.9,43.9,42.3,42.3,42.3,43.9,43.9,42.3,42.3,42.3,42.3,42.3,42.3,42.3,42.3,42.3,42.3,42.3,42.3,42.3,42.3,42.3,41.2,41.2,41.2,41.2,41.2,41.2,41.2,41.2,41.2,41.2,41.2,41.2,41.2,39.7,40.7,39.7,39.7,39.7,39.7,39.7,39.7,39.7,39.7,39.7,39.7,39.7,39.7,39.7,39.7,39.7,39.7,39.7,40.2,36.0,40.2,46.0,40.2,37.6,42.8,42.8,42.3,42.8,43.9,44.9,43.3,42.3,42.3,42.8,43.9,43.9,43.9,43.9,45.4,45.4,45.4,45.4,45.4,45.4,45.4,45.4,47.0,47.0,47.0,47.0,45.4,47.0,48.0,47.0,49.1,52.7,55.9,64.8,65.8,67.9,65.8,64.2,64.8,66.8,68.4,63.2,71.0,78.8,74.7,75.2,77.3,72.6,70.5,69.5,73.1,74.7,69.5,68.9,71.5,71.5,70.0,70.5,71.5,70.5,71.5,71.5,71.5,71.5,71.5,72.6,71.5,72.1,73.1,74.7,74.7,74.7,73.1,73.1,75.2,76.8,76.2,78.3,83.5,94.0,101.8,103.9,106.5,106.5,107.6,106.5,108.1,108.1,108.1,108.1,108.1,109.7,109.7,109.7,109.7,109.7,110.7,109.7,111.8,111.8,109.1,113.3,118.5,131.1,145.7,161.9,170.2,168.2,146.2,153.0,161.9,164.5,165.0,164.5,165.5,166.6,166.1,166.6,166.6,167.6,168.2,168.2,165.5,167.6,170.2,170.2,171.3,173.4,174.4,175.5,173.9,175.5,178.1,179.6,180.2,181.7,185.9,190.1,194.3,205.7,212.5,215.7,223.5,220.4,204.7,209.4,227.2,231.3,238.1,237.1,235.5,247.5,245.9,236.6,243.3,241.2,228.7,231.8,232.4,225.1,227.2,237.1,240.2,244.9,248.0,246.5,242.8,254.3,264.8,273.1,287.7,295.0,298.2,296.1,302.9,306.0,307.1,311.8,313.3,311.8,321.1,309.7,308.6,320.6,332.6,335.2,348.8,327.9,314.4]},"EMBR3":{"real":[18.2,18.2,18.2,18.2,18.2,18.5,18.6,18.7,18.7,18.6,18.5,18.5,19.1,18.9,18.8,18.8,18.9,19.1,19.7,19.5,19.5,19.4,19.4,19.4,19.2,19.2,19.3,19.2,19.3,19.4,19.5,19.5,19.5,19.4,19.4,19.4,19.5,19.5,19.5,19.5,19.5,19.7,19.5,19.4,19.7,19.4,19.4,19.4,18.4,18.2,18.1,18.1,18.0,17.9,17.9,17.8,17.5,17.5,17.8,18.0,18.0,17.9,17.8,17.9,18.0,18.0,18.7,18.8,19.1,19.2,19.4,19.4,19.4,19.4,19.4,19.4,19.2,18.6,18.6,18.7,18.0,17.8,17.6,17.4,18.2,18.0,17.2,16.9,16.9,16.9,17.1,17.1,17.2,17.2,17.6,18.0,18.0,18.1,18.0,18.2,18.2,17.6,17.8,17.5,17.4,17.6,17.6,18.0,18.0,18.0,18.0,17.8,17.4,17.3,17.3,17.3,17.5,17.6,18.0,18.0,17.8,18.0,17.9,18.0,18.2,18.6,18.4,18.4,18.6,18.6,18.4,18.6,18.8,18.9,18.8,18.9,19.1,19.1,19.3,19.4,19.6,19.7,19.9,20.0,20.1,20.1,20.1,20.1,20.1,20.0,20.1,20.2,20.0,19.8,19.4,19.4,19.1,19.1,18.8,18.5,18.1,18.1,18.1,18.1,18.1,18.1,18.4,18.4,18.6,18.4,18.6,18.8,19.2,19.2,18.7,18.8,18.8,19.2,19.5,19.3,17.9,17.3,16.9,17.2,16.9,17.2,16.6,16.0,15.3,15.0,14.2,11.1,11.4,10.2,10.1,9.2,9.5,8.5,7.9,8.8,10.1,9.9,9.1,9.4,9.6,9.4,9.4,8.6,8.8,8.8,9.2,9.6,9.6,9.6,9.4,9.4,9.6,9.2,9.1,9.2,8.4,7.9,8.2,8.8,8.4,7.7,7.5,7.2,7.0,7.3,7.2,6.9,6.3,6.4,6.3,6.5,6.4,6.6,6.6,6.4,6.8,6.6,7.0,7.0,7.2,7.6,8.3,8.5,8.8,9.5,10.3,10.2,9.6,8.9,8.6,9.0,8.8,8.8,8.8,8.5,8.5,8.1,8.2,7.9,8.3,8.2,8.1,8.3,8.3,8.5,8.3,8.3,8.1,8.1,8.3,8.2,8.6,8.3,8.3,8.3,8.5,8.3,8.3,8.1,8.1,8.3,8.3,7.9,7.7,7.7,7.5,7.7,7.5,7.6,7.9,7.9,7.7,7.7,7.7],"abm":[18.4,18.6,18.6,18.6,18.8,19.1,19.2,19.2,19.2,19.2,18.8,19.2,19.4,19.4,19.4,19.4,19.4,19.4,19.4,19.2,18.8,18.8,18.6,18.6,18.6,18.6,18.4,18.6,18.6,18.6,19.2,19.2,18.8,18.8,18.8,18.8,19.1,19.3,19.2,19.2,19.2,19.2,18.8,18.8,18.8,18.8,18.8,18.8,18.8,19.1,19.2,18.8,18.6,18.4,18.4,18.6,18.4,18.6,18.6,18.6,18.6,18.4,18.4,18.4,18.4,18.4,18.1,18.4,18.6,18.6,18.4,18.6,18.5,18.4,18.4,18.4,18.1,18.1,18.1,18.4,18.4,18.4,18.1,18.0,17.8,17.5,17.5,17.5,17.8,17.8,17.5,17.5,17.5,17.5,17.3,17.5,17.5,17.5,17.5,17.8,17.8,18.2,18.7,18.4,18.0,18.0,18.1,18.1,18.4,18.4,18.6,18.6,18.6,18.6,18.6,18.8,18.6,18.6,18.6,18.8,18.8,19.2,19.2,19.2,19.2,19.2,19.4,19.2,19.4,19.4,19.4,19.4,19.4,19.4,19.4,19.4,19.4,19.7,19.7,19.7,19.4,19.7,19.9,20.2,20.5,20.5,20.5,20.2,20.5,20.5,20.7,20.8,20.8,20.8,21.1,21.1,21.3,21.3,21.7,22.1,22.4,23.1,23.6,24.4,25.8,27.0,28.5,29.0,29.6,30.4,29.8,29.7,29.5,29.7,30.4,31.1,30.9,30.9,30.9,31.1,31.1,31.4,31.4,31.1,31.4,31.1,31.1,31.4,31.4,31.7,31.7,32.0,32.0,32.0,32.2,32.2,32.2,32.9,33.3,32.8,32.6,33.4,33.9,33.9,33.9,34.1,34.3,34.3,34.7,34.7,35.0,35.9,36.6,36.8,37.2,37.9,38.7,39.1,39.8,40.7,41.9,42.9,43.8,45.1,45.6,46.4,46.7,46.7,46.7,47.1,48.1,47.8,48.0,48.0,48.7,49.0,48.8,49.1,49.4,49.6,49.6,49.6,49.9,50.1,49.9,50.1,50.6,50.9,51.0,51.0,51.3,51.3,51.3,51.5,51.5,51.9,51.9,52.2,52.6,52.5,52.9,53.2,53.4,53.6,54.2,54.2,54.6,54.6,54.7,55.2,55.8,56.4,57.5,59.0,60.3,62.3,65.8,69.3,72.5,74.2,76.4,76.6,76.6,77.1,77.3,77.3,77.1,77.7,78.5,78.9,79.3,79.7,79.9,79.7,80.3,81.0,80.5,80.2,80.3]},"ITUB4":{"real":[32.7,32.7,32.8,32.7,32.7,32.3,32.3,31.9,31.9,32.7,33.1,33.8,33.8,33.7,34.0,34.1,34.0,33.9,33.8,34.5,34.8,35.0,35.1,35.0,35.0,34.5,34.2,34.2,34.4,34.9,34.5,34.7,35.0,35.0,34.3,34.5,34.7,34.0,33.0,32.8,32.8,32.5,33.4,34.2,34.7,34.5,33.5,33.5,33.1,33.0,33.0,33.0,32.7,32.7,32.5,32.5,32.0,32.2,32.7,32.8,32.5,32.3,31.6,32.2,32.5,33.7,34.4,34.1,33.8,34.1,34.4,33.9,34.0,33.8,33.4,33.4,33.3,33.1,33.6,34.2,34.0,33.5,33.0,32.1,32.1,32.1,31.5,31.5,32.0,32.3,32.8,33.1,33.1,33.5,33.3,33.1,33.4,34.2,35.1,35.2,35.5,35.7,35.3,35.4,35.0,35.0,35.1,35.5,35.4,35.3,35.0,34.9,34.5,34.2,34.3,34.1,33.9,34.1,34.1,33.7,33.3,33.4,33.3,33.6,34.0,34.2,35.1,35.1,35.0,35.0,34.6,34.2,34.4,34.7,34.4,34.8,35.2,35.3,35.4,35.7,36.0,36.0,36.1,36.5,36.2,35.6,34.8,34.1,33.4,33.7,33.8,33.7,33.4,33.6,33.5,32.9,32.4,32.9,33.1,32.6,32.4,32.1,32.0,31.9,31.7,31.8,32.0,32.2,32.4,33.0,33.5,33.7,33.4,32.8,32.5,32.4,32.7,32.9,32.6,31.4,30.9,31.5,31.7,31.5,31.3,31.1,30.1,29.2,27.9,26.6,24.3,25.3,24.4,24.3,23.9,23.1,22.4,21.4,21.3,23.3,23.9,23.2,23.6,23.3,21.7,21.3,20.9,21.0,22.6,23.8,23.6,23.7,24.0,23.6,22.9,23.0,22.7,22.4,21.9,21.1,21.4,22.9,23.4,22.9,21.9,22.1,22.6,21.7,21.7,21.9,21.7,21.5,21.9,21.8,22.1,21.9,21.6,22.6,22.9,23.5,23.1,23.4,23.3,23.1,23.4,24.7,25.6,26.3,27.3,28.1,27.6,26.9,26.0,25.5,25.9,26.3,27.2,27.8,27.1,26.5,25.9,26.0,25.8,26.2,25.6,25.9,26.3,26.5,27.2,26.5,26.8,26.8,27.0,26.8,27.1,27.3,27.1,27.1,27.3,27.5,26.8,26.4,26.8,27.6,27.6,28.0,27.8,27.1,26.7,25.7,25.7,25.8,25.5,25.6,25.4,25.1,24.7,24.5,24.1],"abm":[32.2,32.3,32.5,32.5,32.4,32.7,32.8,32.7,32.4,32.4,32.1,31.8,31.5,31.6,31.5,31.5,31.7,31.8,31.8,32.2,32.1,32.3,32.5,32.5,32.8,32.9,32.8,32.8,32.8,32.9,32.8,33.4,33.5,33.1,32.9,32.8,32.7,32.7,32.2,31.9,31.9,32.2,32.2,32.2,32.4,32.5,32.6,32.7,32.5,32.6,32.6,32.7,32.4,32.1,32.1,31.9,31.8,31.7,31.4,31.2,31.7,31.8,32.1,31.9,31.6,31.9,31.8,31.7,31.8,31.9,32.0,31.8,31.9,31.7,31.7,31.6,31.8,31.6,31.5,31.7,31.5,31.5,31.2,31.3,31.5,31.5,31.8,31.6,31.3,31.1,30.6,30.5,30.8,30.7,30.7,30.8,30.9,30.9,30.8,30.8,31.4,30.6,28.6,33.9,36.1,27.5,24.3,26.0,28.9,25.4,25.6,28.3,27.3,26.6,29.0,29.2,24.0,23.0,24.1,23.4,23.0,24.4,24.9,22.0,21.9,22.7,23.3,20.9,22.3,24.6,24.6,20.8,21.0,21.1,20.1,20.4,22.6,21.1,20.9,22.0,22.0,19.8,19.7,21.2,21.7,21.5,21.4,21.4,21.6,21.6,21.7,21.8,21.8,21.9,21.8,21.9,21.9,21.9,22.0,21.9,21.9,21.9,21.9,21.9,21.9,21.9,21.9,22.0,22.0,21.9,22.0,22.0,22.0,22.0,22.0,22.0,22.0,21.9,22.0,22.0,22.0,22.1,21.7,21.4,21.4,21.6,22.1,22.3,22.1,22.1,22.1,22.1,22.1,22.1,22.1,22.1,22.1,22.1,22.0,22.0,22.0,22.0,22.0,22.0,22.0,22.1,22.1,22.1,22.1,22.0,22.1,22.1,22.1,22.1,22.1,22.1,22.1,22.1,22.3,22.3,22.3,22.1,22.1,22.1,22.3,22.3,22.3,22.2,22.3,22.3,22.1,22.1,22.3,22.3,22.3,22.3,22.2,22.0,22.1,22.0,22.1,22.1,22.1,22.1,22.3,22.1,22.3,22.1,22.3,22.3,22.1,22.3,22.1,22.1,22.1,22.3,22.3,22.1,22.1,22.1,22.3,22.3,22.3,22.3,22.1,22.1,22.1,22.1,22.1,22.1,22.1,22.1,22.3,22.3,22.3,22.3,22.1,22.1,22.1,22.1,22.1,22.1,22.0,22.0,22.0,21.9,21.9,22.0,22.0,22.0,22.0,22.0,22.0,21.9,21.9,21.9,21.9,21.9,21.9]}};
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), n = 7, bw = 30, gap = 8, W = n * (bw + gap) + 20;
+    var st = makeStage(sc, W, W, {ay:'62%', rx:'58deg'});
+    rotatable(sc, st, -30, 8);
+    var r = rnd(7), cells = [], state = [];
+    var col = ['var(--out)', 'var(--buy)', 'var(--sell)'];
+    for (var i = 0; i < n; i++) for (var j = 0; j < n; j++){
+      var s = r() < .4 ? 0 : (r() < .5 ? 1 : 2);
+      var b = box({w:bw, d:bw, x:10 + j * (bw + gap), y:10 + i * (bw + gap), h:s ? 26 : 8, c:col[s]});
+      st.appendChild(b); cells.push(b); state.push(s);
+    }
+    function set(k, s){ state[k] = s; cells[k].style.setProperty('--c', col[s]); cells[k].style.setProperty('--h', (s ? 26 : 8) + 'px'); }
+    function step(){
+      for (var m = 0; m < 5; m++){
+        var k = Math.floor(r() * n * n), i = Math.floor(k / n), j = k % n;
+        var di = Math.floor(r() * 3) - 1, dj = Math.floor(r() * 3) - 1;
+        var ni = Math.min(n - 1, Math.max(0, i + di)), nj = Math.min(n - 1, Math.max(0, j + dj));
+        set(k, r() < .75 ? state[ni * n + nj] : Math.floor(r() * 3));
+      }
+    }
+    var last = -1;
+    if (!reduce) M.onTick(function(t){ var k = Math.floor(t / 0.5); if (k !== last){ last = k; step(); } });
+  })();
+
+  /* ================= 02 · DUAS FORMAS ================= */
+  (function(){
+    var svg = $('two-svg');
+    var TXT = [
+      {h:L('De cima: olhar a série de preços', 'From above: reading the price series'),
+       p:L('Modelos como o ARIMA tratam o preço como uma sequência de números e procuram nela padrões (tendência, memória dos dias anteriores) para projetar o próximo valor. Não perguntam quem comprou nem por quê.', 'Models such as ARIMA treat the price as a sequence of numbers and look in it for patterns (trend, memory of previous days) to project the next value. They do not ask who bought or why.')},
+      {h:L('De baixo: criar os investidores', 'From below: creating the investors'),
+       p:L('Na modelagem baseada em agentes, cada investidor virtual decide sozinho, com regras simples e informação só dos vizinhos. Ninguém controla o todo: o preço "emerge" da soma das decisões, como numa colônia de formigas.', 'In agent-based modelling, each virtual investor decides alone, with simple rules and information only from neighbours. Nobody controls the whole: the price “emerges” from the sum of decisions, as in an ant colony.')}
+    ];
+    var r = rnd(3), path = [], p = 150;
+    for (var i = 0; i < 60; i++){ p += (r() - .5) * 18; path.push(p); }
+    function draw(m){
+      svg.innerHTML = '';
+      $('two-panel').innerHTML = '<h3>' + TXT[m].h + '</h3><p>' + TXT[m].p + '</p>';
+      if (m === 0){
+        var d = '';
+        path.forEach(function(v, i){ d += (i ? 'L' : 'M') + (40 + i * 6) + ' ' + v.toFixed(1); });
+        svg.appendChild(el('path', {d:d, fill:'none', stroke:'var(--real)', 'stroke-width':2.5}));
+        var last = path[path.length - 1], x1 = 40 + 59 * 6;
+        svg.appendChild(el('path', {d:'M' + x1 + ' ' + last + ' L' + (x1 + 120) + ' ' + (last - 10), fill:'none', stroke:'var(--red)', 'stroke-width':2.5, 'stroke-dasharray':'6 5'}));
+        svg.appendChild(el('circle', {cx:x1 + 120, cy:last - 10, r:6, fill:'var(--red)'}));
+        svg.appendChild(el('text', {x:40, y:40, 'font-size':15, fill:'var(--muted)'}, L('preços passados', 'past prices')));
+        svg.appendChild(el('text', {x:x1 - 10, y:last - 34, 'font-size':15, fill:'var(--red)', 'font-weight':700}, L('próximo valor?', 'next value?')));
+        svg.appendChild(el('line', {x1:30, y1:260, x2:530, y2:260, stroke:'var(--border)'}));
+        svg.appendChild(el('text', {x:280, y:285, 'font-size':13, fill:'var(--muted)', 'text-anchor':'middle'}, L('tempo →', 'time →')));
+      } else {
+        var rr = rnd(11);
+        for (var a = 0; a < 6; a++) for (var b = 0; b < 8; b++){
+          var u = rr(), c = u < .35 ? 'var(--buy)' : u < .6 ? 'var(--sell)' : 'var(--out)';
+          svg.appendChild(el('rect', {x:30 + b * 30, y:50 + a * 30, width:24, height:24, rx:5, fill:c}));
+        }
+        svg.appendChild(el('text', {x:30, y:36, 'font-size':15, fill:'var(--muted)'}, L('investidores virtuais', 'virtual investors')));
+        svg.appendChild(el('path', {d:'M280 140 L330 140', stroke:'var(--ink-2)', 'stroke-width':3}));
+        svg.appendChild(el('path', {d:'M322 132 L334 140 L322 148', fill:'none', stroke:'var(--ink-2)', 'stroke-width':3}));
+        var d2 = '', q = 150, r3 = rnd(5);
+        for (var k = 0; k < 30; k++){ q += (r3() - .48) * 16; d2 += (k ? 'L' : 'M') + (350 + k * 6.5) + ' ' + q.toFixed(1); }
+        svg.appendChild(el('path', {d:d2, fill:'none', stroke:'var(--abm)', 'stroke-width':2.5}));
+        svg.appendChild(el('text', {x:350, y:80, 'font-size':15, fill:'var(--red)', 'font-weight':700}, L('o preço surge', 'the price emerges')));
+        svg.appendChild(el('text', {x:30, y:262, 'font-size':13, fill:'var(--muted)'}, L('mais compras que vendas: o preço sobe; mais vendas: cai', 'more buys than sells: the price rises; more sells: it falls')));
+      }
+    }
+    seg('two-seg', draw); draw(0);
+  })();
+
+  /* ================= 03 · AS REGRAS ================= */
+  (function(){
+    var R = [
+      {h:L('Olha os 8 vizinhos', 'Looks at its 8 neighbours'),
+       p:L('Quem está fora do mercado pergunta aos 8 vizinhos o que fizeram por último: comprar, vender ou nada. Soma a isso a própria informação, com um peso chamado ômega. A ideia vem de Couzin (2005), que estudou como grupos de animais seguem os poucos que sabem o caminho.', 'An investor outside the market asks its 8 neighbours what they did last: buy, sell or nothing. It adds its own information, with a weight called omega. The idea comes from Couzin (2005), who studied how animal groups follow the few who know the way.')},
+      {h:L('Tem uma meta de ganho', 'Has a profit target'),
+       p:L('Cada investidor sorteia uma meta de rentabilidade entre zero e um teto (x_max, de 5% ou 15% nas melhores simulações). Quando o ganho da operação passa da meta, ele pode vender e sair.', 'Each investor draws a profit target between zero and a ceiling (x_max, 5% or 15% in the best simulations). When the trade’s gain passes the target, it may sell and leave.')},
+      {h:L('Sofre mais com perdas', 'Suffers more from losses'),
+       p:L('É o efeito disposição, explicado pela Teoria do Prospecto de Kahneman e Tversky: segurar a perda e vender cedo o ganho. No modelo, uma posição perdedora só é fechada quando a queda passa de 2,25 vezes a meta. Com meta de 4%, por exemplo, sai no ganho a +4% e só sai na perda a −9% (conta nossa).', 'This is the disposition effect, explained by Kahneman and Tversky’s Prospect Theory: holding on to losses and selling gains early. In the model, a losing position is only closed when the fall exceeds 2.25 times the target. With a 4% target, for example, it exits a gain at +4% and only exits a loss at −9% (our calculation).')},
+      {h:L('Alguns usam ordem stop', 'Some use stop orders'),
+       p:L('Uma parte dos investidores segue um plano para não deixar a emoção decidir: fica de fora até o retorno passar de um limite e limita as perdas com uma ordem automática. Nas cinco melhores simulações, eram 10% dos investidores.', 'Some investors follow a plan so that emotion does not decide: they stay out until the return passes a threshold and cap losses with an automatic order. In the five best simulations, they were 10% of investors.')},
+      {h:L('Sente o humor do mercado', 'Senses the market mood'),
+       p:L('Opcionalmente, a cada 50 períodos o modelo pergunta a todos se acham que o preço vai subir ou cair (quem comprou acredita na alta). O índice otimista aumenta a chance de compra, e cada investidor dá a ele um peso diferente.', 'Optionally, every 50 periods the model asks everyone whether they think the price will rise or fall (whoever bought believes in a rise). An optimistic index raises the chance of buying, and each investor gives it a different weight.')},
+      {h:L('O preço segue o desequilíbrio', 'The price follows the imbalance'),
+       p:L('Somam-se as ordens de compra e de venda do período. Se há mais compras, o preço sobe; se há mais vendas, cai, numa fórmula (de Plerou e coautores) que amortece os exageros.', 'The period’s buy and sell orders are added up. If there are more buys, the price rises; if more sells, it falls, by a formula (from Plerou and co-authors) that dampens extremes.')}
+    ];
+    var box2 = $('rules');
+    R.forEach(function(x, i){
+      var b = document.createElement('button');
+      b.innerHTML = '<b>' + (i + 1) + '</b>' + x.h; b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+      b.addEventListener('click', function(){ each(box2.children, function(c){ c.setAttribute('aria-pressed', c === b ? 'true' : 'false'); }); show(i); });
+      box2.appendChild(b);
+    });
+    function show(i){ $('rule-panel').innerHTML = '<h3>' + R[i].h + '</h3><p>' + R[i].p + '</p>'; }
+    show(0);
+
+    // Calculadora das fórmulas 3.4 e 3.5
+    var nb = [1, 1, 0, -1, 1, 0, 0, -1], own = 1, om = 1, g = $('nbr');
+    var LAB = {'1':L('compra', 'buy'), '-1':L('venda', 'sell'), '0':L('nada', 'nothing')};
+    function paint(){
+      g.innerHTML = '';
+      for (var k = 0, q = 0; k < 9; k++){
+        var b = document.createElement('button');
+        if (k === 4){ b.className = 'me'; b.textContent = L('investidor', 'investor'); b.disabled = true; g.appendChild(b); continue; }
+        (function(idx){
+          var v = nb[idx];
+          b.className = v === 1 ? 'b' : v === -1 ? 's' : 'n';
+          b.textContent = LAB[v];
+          b.setAttribute('aria-label', L('Vizinho ', 'Neighbour ') + (idx + 1) + ': ' + LAB[v]);
+          b.addEventListener('click', function(){ nb[idx] = nb[idx] === 1 ? -1 : nb[idx] === -1 ? 0 : 1; paint(); });
+        })(q++);
+        g.appendChild(b);
+      }
+      var cb = nb.filter(function(v){ return v === 1; }).length, cs = nb.filter(function(v){ return v === -1; }).length;
+      var pb = (cb + om * (own === 1 ? 1 : 0)) / (8 + om), ps = (cs + om * (own === -1 ? 1 : 0)) / (8 + om), pn = 1 - pb - ps;
+      function bar(lab, v, c){ return '<div class="pbar"><span>' + lab + '</span><span class="tr"><i style="width:' + (v * 100).toFixed(1) + '%; background:' + c + '"></i></span><b>' + fmt(v * 100, 0) + '%</b></div>'; }
+      $('pbars').innerHTML = bar(L('comprar', 'buy'), pb, 'var(--buy)') + bar(L('vender', 'sell'), ps, 'var(--sell)') + bar(L('não fazer nada', 'do nothing'), pn, 'var(--out)');
+    }
+    seg('own-seg', function(v){ own = +v; paint(); });
+    seg('om-seg', function(v){ om = +v; paint(); });
+    paint();
+  })();
+
+  /* ================= 04 · SIMULADOR ================= */
+  (function(){
+    var S = 100, N = S * S, LAM = 2.25, T = NOBS;
+    var cfg = {om:1, x:0.05, idx:0, stp:0.1}, seed = 1, sim = null, runs = [], playing = false;
+    var cv = $('agents'), ctx = cv.getContext('2d'), img = ctx.createImageData(S, S);
+    var COL = {b:[31, 59, 115], s:[232, 7, 52], o:[226, 232, 240]};
+    var DR = [-1, -1, -1, 0, 0, 1, 1, 1], DC = [-1, 0, 1, -1, 1, -1, 0, 1];
+    function init(){
+      var r = rnd(seed * 7919 + 13);
+      var s = {r:r, pos:new Int8Array(N), last:new Int8Array(N), x:new Float32Array(N), th:new Float32Array(N), stp:new Uint8Array(N), w:new Float32Array(N), ent:new Float32Array(N), p:30, P:[30], I:0, rt:0, t:0};
+      for (var i = 0; i < N; i++){ s.x[i] = Math.max(1e-4, r() * cfg.x); s.th[i] = r() * cfg.x; s.stp[i] = r() < cfg.stp ? 1 : 0; s.w[i] = r(); s.last[i] = r() < .5 ? 1 : -1; }
+      return s;
+    }
+    function step(s){
+      var r = s.r, B = 0, Sd = 0, act = new Int8Array(N), p = s.p;
+      for (var i = 0; i < N; i++){
+        var a = 0;
+        if (s.pos[i] !== 0){
+          var X = s.pos[i] * (p / s.ent[i] - 1), lossTh = s.stp[i] ? s.x[i] : LAM * s.x[i];
+          if ((X >= s.x[i] || X <= -lossTh) && r() < .5) a = -s.pos[i];   // zona de probabilidade
+        } else if (s.stp[i]){
+          if (s.rt > s.th[i]) a = 1;                                       // stop: entra quando o retorno passa do limite
+        } else if (r() < .3){
+          var row = (i / S) | 0, col = i % S, cb = 0, cs = 0;
+          for (var k = 0; k < 8; k++){ var j = ((row + DR[k] + S) % S) * S + ((col + DC[k] + S) % S); if (s.last[j] === 1) cb++; else if (s.last[j] === -1) cs++; }
+          var own = r() < .5 ? 1 : 0, pb = (cb + cfg.om * own) / (8 + cfg.om), ps = (cs + cfg.om * (1 - own)) / (8 + cfg.om);
+          if (cfg.idx){ pb = Math.min(1, Math.max(0, pb + s.w[i] * s.I)); ps = Math.min(1, Math.max(0, ps - s.w[i] * s.I)); }
+          var u = r(); if (u < pb) a = 1; else if (u < pb + ps) a = -1;
+        }
+        act[i] = a; if (a === 1) B++; else if (a === -1) Sd++;
+      }
+      for (i = 0; i < N; i++){ a = act[i]; if (a !== 0){ if (s.pos[i] === 0){ s.pos[i] = a; s.ent[i] = p; } else s.pos[i] = 0; s.last[i] = a; } }
+      var D = (B + Sd) > 0 ? (B - Sd) / (B + Sd) : 0, np = p * (1 + Math.tanh(D));
+      s.rt = np / p - 1; s.p = np; s.P.push(np); s.t++;
+      if (s.t % 50 === 0) s.I = (B - Sd) / N;
+    }
+    function drawGrid(s){
+      var d = img.data, nb = 0, ns = 0;
+      for (var i = 0; i < N; i++){ var c = s.pos[i] === 1 ? COL.b : s.pos[i] === -1 ? COL.s : COL.o; if (s.pos[i] === 1) nb++; else if (s.pos[i] === -1) ns++; d[i * 4] = c[0]; d[i * 4 + 1] = c[1]; d[i * 4 + 2] = c[2]; d[i * 4 + 3] = 255; }
+      ctx.putImageData(img, 0, 0);
+      $('counts').textContent = L('pregão ', 'day ') + s.t + ' · ' + n0(nb) + L(' comprados · ', ' bought · ') + n0(ns) + L(' vendidos · ', ' sold · ') + n0(N - nb - ns) + L(' de fora', ' out');
+    }
+    var svg = $('sim-svg'), X0 = 46, X1 = 405, Y0 = 214, Y1 = 22;
+    function drawChart(){
+      svg.innerHTML = '';
+      var all = runs.concat(sim ? [sim.P] : []), mx = 0, mn = Infinity;
+      all.forEach(function(P){ P.forEach(function(v){ if (v > mx) mx = v; if (v < mn) mn = v; }); });
+      mx = Math.max(mx, 40); mn = Math.min(mn, 20);
+      var lo = Math.log(mn * .9), hi = Math.log(mx * 1.1);
+      var ys = function(v){ return Y0 - (Math.log(v) - lo) / (hi - lo) * (Y0 - Y1); }, xs = function(t){ return X0 + t / (T - 1) * (X1 - X0); };
+      [5, 10, 20, 30, 50, 100, 200, 500, 1000, 2000].forEach(function(v){ if (v < mn * .9 || v > mx * 1.1) return; var y = ys(v); svg.appendChild(el('line', {x1:X0, x2:X1, y1:y, y2:y, stroke:'#eef2f7'})); svg.appendChild(el('text', {x:X0 - 6, y:y + 4, 'font-size':11, fill:'var(--muted)', 'text-anchor':'end'}, n0(v))); });
+      svg.appendChild(el('line', {x1:X0, x2:X1, y1:ys(30), y2:ys(30), stroke:'var(--muted)', 'stroke-dasharray':'3 4'}));
+      svg.appendChild(el('text', {x:X0, y:Y0 + 22, 'font-size':11, fill:'var(--muted)'}, '1'));
+      svg.appendChild(el('text', {x:X1, y:Y0 + 22, 'font-size':11, fill:'var(--muted)', 'text-anchor':'end'}, '299'));
+      svg.appendChild(el('text', {x:(X0 + X1) / 2, y:Y0 + 22, 'font-size':11, fill:'var(--muted)', 'text-anchor':'middle'}, L('pregões →', 'trading days →')));
+      svg.appendChild(el('text', {x:X0 + 4, y:14, 'font-size':11, fill:'var(--muted)'}, L('preço (escala log)', 'price (log scale)')));
+      function line(P, op, w){ var d = ''; P.forEach(function(v, t){ d += (t ? 'L' : 'M') + xs(t).toFixed(1) + ' ' + ys(v).toFixed(1); }); svg.appendChild(el('path', {d:d, fill:'none', stroke:'var(--abm)', 'stroke-width':w, opacity:op})); }
+      runs.forEach(function(P){ line(P, .18, 1.5); });
+      if (sim) line(sim.P, 1, 2.2);
+      if (sim && sim.t >= T - 1) svg.appendChild(el('text', {x:X1, y:Math.max(ys(sim.p) - 8, 16), 'font-size':13, 'font-weight':700, fill:'var(--red)', 'text-anchor':'end'}, fmt(sim.p, 1)));
+    }
+    function run(){
+      if (sim && sim.t >= T - 1){ runs.push(sim.P); if (runs.length > 6) runs.shift(); }
+      sim = init(); playing = true; drawGrid(sim);
+    }
+    M.onTick(function(){
+      if (!playing || !sim) return;
+      for (var k = 0; k < (reduce ? 300 : 4) && sim.t < T - 1; k++) step(sim);
+      drawGrid(sim); drawChart();
+      if (sim.t >= T - 1) playing = false;
+    });
+    ['s-om', 's-x', 's-idx', 's-stp'].forEach(function(id, i){ seg(id, function(v){ cfg[['om', 'x', 'idx', 'stp'][i]] = +v; }); });
+    $('run').addEventListener('click', run);
+    $('reseed').addEventListener('click', function(){ seed++; run(); });
+    sim = init(); drawGrid(sim); drawChart();
+    var started = false;
+    new IntersectionObserver(function(es){ es.forEach(function(en){ if (en.isIntersecting && !started){ started = true; run(); } }); }, {threshold:.4}).observe($('agents'));
+  })();
+
+  /* ================= 05 · O TESTE ================= */
+  (function(){
+    var cv = $('tries'), ctx = cv.getContext('2d'), cur = 0, chips = $('t-chips');
+    var ORDER = [3, 4, 2, 0, 1]; // ordem da Tabela 1: ITUB4, EMBR3, CMIG4, EGIE3, BRKM5
+    ORDER.forEach(function(k, i){
+      var b = document.createElement('button'); b.textContent = STK[k].t; b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+      b.addEventListener('click', function(){ each(chips.children, function(c){ c.setAttribute('aria-pressed', c === b ? 'true' : 'false'); }); draw(k); });
+      chips.appendChild(b);
+    });
+    function draw(k){
+      var s = STK[k], cols = 90, cell = 10; // 90 × 60 = 5.400
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      for (var i = 0; i < NSIM; i++){ var x = (i % cols) * cell, y = Math.floor(i / cols) * cell; ctx.fillStyle = i === s.sim - 1 ? '#e80734' : '#cbd5e1'; ctx.fillRect(x + 1, y + 1, cell - 2, cell - 2); }
+      var w = s.sim - 1, wx = (w % cols) * cell, wy = Math.floor(w / cols) * cell;
+      ctx.strokeStyle = '#e80734'; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(wx + cell / 2, wy + cell / 2, 22, 0, Math.PI * 2); ctx.stroke();
+      $('params').innerHTML =
+        '<div><b>' + s.t + '</b>' + s.n + '</div>' +
+        '<div><b>' + L('nº ', 'no. ') + n0(s.sim) + '</b>' + L('simulação escolhida', 'chosen simulation') + '</div>' +
+        '<div><b>' + fmt(s.xmax * 100, 0) + '% · ' + s.om + '</b>' + L('meta máxima · ômega', 'max. target · omega') + '</div>' +
+        '<div><b>' + (s.idx ? L('ligado', 'on') : L('desligado', 'off')) + '</b>' + L('humor do mercado · preço inicial R$ ', 'market mood · starting price R$ ') + fmt(s.p0, 2) + '</div>';
+    }
+    draw(ORDER[0]);
+  })();
+
+  /* ================= 06 · RESULTADO ================= */
+  (function(){
+    var sc = $('res-scene'), bw = 56, gap = 34, W = 5 * (bw + gap) + 30, D = 120, K = 52;
+    var st = makeStage(sc, W, D, {ay:'72%', rx:'60deg'});
+    rotatable(sc, st, -14, 7);
+    var cols = [];
+    STK.forEach(function(s, i){
+      var b = box({w:bw, d:44, x:20 + i * (bw + gap), y:40, h:s.st * K, c:i === 0 ? 'var(--navy)' : M.ramp('#1f3b73', i, 6), top:fmt(s.st, 2)});
+      b.addEventListener('click', function(){ if (M.wasDrag(sc)) return; pick(i); });
+      st.appendChild(b); cols.push(b);
+      flatLabel(st, s.t, 20 + i * (bw + gap) - 10, 92, bw + 20);
+    });
+    var lim = box({w:W - 10, d:D - 30, x:5, y:15, z:1.645 * K, h:2, c:'var(--red)', cls:'lim'});
+    lim.style.pointerEvents = 'none'; each(lim.children, function(f){ f.style.opacity = .35; });
+    st.appendChild(lim);
+    function pick(i){
+      var s = STK[i];
+      cols.forEach(function(c, j){ c.classList.toggle('active', j === i); });
+      $('res-panel').innerHTML = '<h3>' + s.t + ' · ' + s.n + '</h3><p>' + L('Estatística do teste: <b>', 'Test statistic: <b>') + fmt(s.st, 2) + L('</b> · p-valor: <b>', '</b> · p-value: <b>') + pexp(s.p) + '</b>. ' +
+        L('Se a simulação não tivesse relação nenhuma com o preço real, um acerto desses apareceria ', 'If the simulation had no relation at all to the real price, a match like this would appear ') +
+        L('em cerca de ', 'in about ') + oneIn(s.p) + L(' tentativas (mas veja a tela 09).', ' tries (but see screen 09).') + '</p><p style="font-size:.8rem;color:var(--muted)">' + L('Simulação nº ', 'Simulation no. ') + n0(s.sim) + L(' de ', ' of ') + n0(NSIM) + L('. O teste olha só a direção (sobe ou desce), não o tamanho do movimento nem o nível do preço.', '. The test looks only at direction (up or down), not at the size of the move or the price level.') + '</p>';
+    }
+    function oneIn(p){ var v = Math.round(1 / p); v = v > 10000 ? Math.round(v / 1000) * 1000 : v > 1000 ? Math.round(v / 100) * 100 : Math.round(v / 10) * 10; return L('1 em cada ', '1 in every ') + n0(v); }
+    pick(0);
+  })();
+
+  /* ================= 07 · DESCOLA ================= */
+  (function(){
+    var svg = $('gap-svg'), chips = $('g-chips'), cur = 'EGIE3', upto = 299;
+    var X0 = 52, X1 = 540, Y0 = 280, Y1 = 22;
+    var TX = {
+      EGIE3:L('O simulado acompanha o real e, perto do pregão 150, começa a subir em degraus até perto de R$ 350, enquanto a ação real fica entre uns R$ 35 e R$ 52. No fim, o simulado está cerca de 7 vezes acima.', 'The simulated price tracks the real one and, around day 150, starts climbing in steps to nearly R$ 350, while the real stock stays between about R$ 35 and R$ 52. At the end, the simulated price is about 7 times higher.'),
+      BRKM5:L('Os dois andam juntos até perto do pregão 120. Depois o simulado oscila forte e fica parado perto de R$ 25, enquanto o real sobe a quase R$ 38 e despenca a uns R$ 11. No fim os dois terminam perto, mas por caminhos diferentes.', 'Both move together until around day 120. Then the simulated price swings sharply and stalls near R$ 25, while the real one rises to almost R$ 38 and collapses to about R$ 11. At the end the two finish close, but by different paths.'),
+      CMIG4:L('O simulado segue a queda lenta da ação, com um salto isolado perto do pregão 105, e depois fica quase parado em torno de R$ 9, enquanto o real volta a passar de R$ 11.', 'The simulated price follows the stock’s slow decline, with an isolated jump around day 105, and then stays almost still around R$ 9, while the real one climbs back above R$ 11.'),
+      ITUB4:L('O simulado começa colado, mas despenca entre os pregões 100 e 140, antes da ação real, e depois fica parado em uns R$ 22. A queda real vem mais tarde e é seguida de recuperação.', 'The simulated price starts close, but collapses between days 100 and 140, before the real stock does, and then stalls at about R$ 22. The real fall comes later and is followed by a recovery.'),
+      EMBR3:L('Até perto do pregão 150 as duas linhas quase se sobrepõem. Depois o simulado sobe até uns R$ 80, enquanto a ação real cai para menos de R$ 10: no fim, uma diferença de cerca de 10 vezes.', 'Until around day 150 the two lines almost overlap. Then the simulated price climbs to about R$ 80, while the real stock falls below R$ 10: at the end, a gap of about 10 times.')
+    };
+    ['EGIE3', 'EMBR3', 'BRKM5', 'CMIG4', 'ITUB4'].forEach(function(t, i){
+      var b = document.createElement('button'); b.textContent = t; b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+      b.addEventListener('click', function(){ each(chips.children, function(c){ c.setAttribute('aria-pressed', c === b ? 'true' : 'false'); }); cur = t; draw(); });
+      chips.appendChild(b);
+    });
+    function nice(mx){ var steps = [1, 2, 5, 10, 20, 50, 100]; for (var i = 0; i < steps.length; i++) if (mx / steps[i] <= 6) return steps[i]; return 100; }
+    function draw(){
+      var S = SERIES[cur], mx = 0;
+      S.real.concat(S.abm).forEach(function(v){ if (v > mx) mx = v; });
+      var st = nice(mx * 1.05), top = Math.ceil(mx * 1.05 / st) * st;
+      var xs = function(t){ return X0 + t / (NOBS - 1) * (X1 - X0); }, ys = function(v){ return Y0 - v / top * (Y0 - Y1); };
+      svg.innerHTML = '';
+      for (var v = 0; v <= top + 1e-9; v += st){ svg.appendChild(el('line', {x1:X0, x2:X1, y1:ys(v), y2:ys(v), stroke:'#eef2f7'})); svg.appendChild(el('text', {x:X0 - 6, y:ys(v) + 4, 'font-size':11, fill:'var(--muted)', 'text-anchor':'end'}, n0(v))); }
+      svg.appendChild(el('line', {x1:xs(149), x2:xs(149), y1:Y1, y2:Y0, stroke:'var(--muted)', 'stroke-dasharray':'4 4'}));
+      svg.appendChild(el('text', {x:xs(149) + 5, y:Y1 + 12, 'font-size':11, fill:'var(--muted)'}, L('pregão 150', 'day 150')));
+      [1, 100, 200, 299].forEach(function(t){ svg.appendChild(el('text', {x:xs(t - 1), y:Y0 + 18, 'font-size':11, fill:'var(--muted)', 'text-anchor':'middle'}, t)); });
+      svg.appendChild(el('text', {x:X0, y:14, 'font-size':11, fill:'var(--muted)'}, L('R$ por ação · ', 'R$ per share · ') + cur));
+      function line(arr, c, w){ var d = ''; for (var t = 0; t < upto; t++) d += (t ? 'L' : 'M') + xs(t).toFixed(1) + ' ' + ys(arr[t]).toFixed(1); svg.appendChild(el('path', {d:d, fill:'none', stroke:c, 'stroke-width':w, 'stroke-linejoin':'round'})); }
+      line(S.real, 'var(--real)', 2); line(S.abm, 'var(--abm)', 2.2);
+      var t = upto - 1;
+      svg.appendChild(el('circle', {cx:xs(t), cy:ys(S.real[t]), r:4, fill:'var(--real)'}));
+      svg.appendChild(el('circle', {cx:xs(t), cy:ys(S.abm[t]), r:4, fill:'var(--abm)'}));
+      $('g-day').textContent = upto;
+      $('gap-panel').innerHTML = '<h3>' + cur + ' · ' + STK.filter(function(s){ return s.t === cur; })[0].n + '</h3><p>' + TX[cur] + '</p><p style="font-size:.8rem;color:var(--muted)">' + L('No pregão ', 'On day ') + upto + L(': real ≈ R$ ', ': real ≈ R$ ') + fmt(S.real[t], 0) + L(' · simulado ≈ R$ ', ' · simulated ≈ R$ ') + fmt(S.abm[t], 0) + '</p>';
+    }
+    $('g-range').addEventListener('input', function(){ upto = +this.value; draw(); });
+    draw();
+  })();
+
+  /* ================= 08 · ARIMA ================= */
+  (function(){
+    var svg = $('ar-svg'), S = SERIES.ITUB4, X0 = 52, X1 = 540, Y0 = 280, Y1 = 22, top = 40, bot = 15;
+    var xs = function(t){ return X0 + t / (NOBS - 1) * (X1 - X0); }, ys = function(v){ return Y0 - (v - bot) / (top - bot) * (Y0 - Y1); };
+    var TX = [
+      {h:L('Um passo por vez', 'One step at a time'), p:L('Todo dia o modelo recebe o preço real de ontem e arrisca só o de hoje. Errar pouco fica fácil: o palpite nunca se afasta muito. É assim que a linha do ARIMA aparece colada à real nas figuras da dissertação.', 'Every day the model receives yesterday’s real price and guesses only today’s. Missing by little becomes easy: the guess never strays far. That is how the ARIMA line appears glued to the real one in the dissertation’s figures.')},
+      {h:L('O caminho inteiro', 'The whole path'), p:L('O mercado de agentes recebeu só o preço do primeiro dia e caminhou sozinho pelos 299 pregões, sem nunca ver o preço real de novo. Qualquer desvio se acumula, e é por isso que a distância cresce depois de uns 150 pregões.', 'The agent market received only the first day’s price and walked alone through the 299 days, never seeing the real price again. Any deviation accumulates, which is why the gap grows after about 150 days.')}
+    ];
+    function draw(m){
+      svg.innerHTML = '';
+      [15, 20, 25, 30, 35, 40].forEach(function(v){ svg.appendChild(el('line', {x1:X0, x2:X1, y1:ys(v), y2:ys(v), stroke:'#eef2f7'})); svg.appendChild(el('text', {x:X0 - 6, y:ys(v) + 4, 'font-size':11, fill:'var(--muted)', 'text-anchor':'end'}, v)); });
+      [1, 100, 200, 299].forEach(function(t){ svg.appendChild(el('text', {x:xs(t - 1), y:Y0 + 18, 'font-size':11, fill:'var(--muted)', 'text-anchor':'middle'}, t)); });
+      svg.appendChild(el('text', {x:X0, y:14, 'font-size':11, fill:'var(--muted)'}, L('R$ por ação · ITUB4 (Itaú)', 'R$ per share · ITUB4 (Itaú)')));
+      var d = '', g = '';
+      S.real.forEach(function(v, t){ d += (t ? 'L' : 'M') + xs(t).toFixed(1) + ' ' + ys(v).toFixed(1); });
+      if (m === 0){ S.real.forEach(function(v, t){ var q = t ? S.real[t - 1] : v; g += (t ? 'L' : 'M') + xs(t).toFixed(1) + ' ' + ys(q).toFixed(1); }); }
+      else { S.abm.forEach(function(v, t){ g += (t ? 'L' : 'M') + xs(t).toFixed(1) + ' ' + ys(v).toFixed(1); }); }
+      svg.appendChild(el('path', {d:d, fill:'none', stroke:'var(--real)', 'stroke-width':2}));
+      svg.appendChild(el('path', {d:g, fill:'none', stroke:m === 0 ? 'var(--navy)' : 'var(--abm)', 'stroke-width':2, 'stroke-dasharray':m === 0 ? '5 3' : null, opacity:.9}));
+      svg.appendChild(el('text', {x:X1, y:ys(m === 0 ? 31 : 20), 'font-size':13, 'font-weight':700, fill:m === 0 ? 'var(--navy)' : 'var(--red)', 'text-anchor':'end'}, m === 0 ? L('palpite: o preço de ontem', 'guess: yesterday’s price') : L('mercado de agentes', 'agent market')));
+      svg.appendChild(el('text', {x:X1, y:ys(m === 0 ? 33.5 : 29), 'font-size':13, 'font-weight':700, fill:'var(--real)', 'text-anchor':'end'}, L('preço real', 'real price')));
+      $('ar-panel').innerHTML = '<h3>' + TX[m].h + '</h3><p>' + TX[m].p + '</p>';
+    }
+    seg('ar-seg', draw); draw(0);
+  })();
+
+  /* ================= 09 · A RÉGUA DO ACASO ================= */
+  (function(){
+    var svg = $('luck-svg'), n = 298, r = rnd(2021), bests = [];
+    var X0 = 30, X1 = 540, Y0 = 230, lo = -4.5, hi = 5;
+    var xs = function(v){ return X0 + (v - lo) / (hi - lo) * (X1 - X0); };
+    function ptStat(real, guess){
+      var c = 0, py = 0, px = 0;
+      for (var i = 0; i < n; i++){ if (real[i] === guess[i]) c++; py += real[i]; px += guess[i]; }
+      var P = c / n; py /= n; px /= n;
+      var Ps = py * px + (1 - py) * (1 - px);
+      var vP = Ps * (1 - Ps) / n;
+      var vPs = (Math.pow(2 * py - 1, 2) * px * (1 - px) + Math.pow(2 * px - 1, 2) * py * (1 - py)) / n + 4 * py * px * (1 - py) * (1 - px) / (n * n);
+      var v = vP - vPs; return v > 0 ? (P - Ps) / Math.sqrt(v) : 0;
+    }
+    function draw(stats, best){
+      svg.innerHTML = '';
+      var B = 38, bins = new Array(B).fill(0), w = (hi - lo) / B, mx = 1;
+      if (stats) stats.forEach(function(s){ var k = Math.floor((s - lo) / w); if (k >= 0 && k < B) bins[k]++; });
+      bins.forEach(function(c){ if (c > mx) mx = c; });
+      svg.appendChild(el('line', {x1:X0, x2:X1, y1:Y0, y2:Y0, stroke:'var(--border)'}));
+      bins.forEach(function(c, k){ var h = c / mx * 150; if (c) svg.appendChild(el('rect', {x:xs(lo + k * w) + 1, y:Y0 - h, width:(X1 - X0) / B - 2, height:h, fill:'#cbd5e1', rx:2})); });
+      [-4, -2, 0, 2, 4].forEach(function(v){ svg.appendChild(el('text', {x:xs(v), y:Y0 + 16, 'font-size':11, fill:'var(--muted)', 'text-anchor':'middle'}, fmt(v, 0))); });
+      svg.appendChild(el('text', {x:X0, y:Y0 + 34, 'font-size':11, fill:'var(--muted)'}, L('estatística do teste de direção →', 'direction-test statistic →')));
+      STK.forEach(function(s, i){
+        var x = xs(s.st);
+        svg.appendChild(el('line', {x1:x, x2:x, y1:Y0, y2:30 + i * 14, stroke:'var(--navy)', 'stroke-width':1.5}));
+        svg.appendChild(el('text', {x:x + 4, y:34 + i * 14, 'font-size':11, fill:'var(--navy)', 'font-weight':600}, s.t));
+      });
+      if (best !== undefined){
+        var xb = xs(Math.min(best, hi - .05));
+        svg.appendChild(el('line', {x1:xb, x2:xb, y1:Y0, y2:100, stroke:'var(--red)', 'stroke-width':3}));
+        svg.appendChild(el('text', {x:X0 + 4, y:22, 'font-size':13, fill:'var(--red)', 'font-weight':700}, L('▮ melhor palpite ao acaso: ', '▮ best random guess: ') + fmt(best, 2)));
+        svg.appendChild(el('text', {x:X0 + 4, y:40, 'font-size':12, fill:'var(--navy)', 'font-weight':600}, L('│ as cinco ações da dissertação', '│ the dissertation’s five stocks')));
+      }
+      if (!stats) svg.appendChild(el('text', {x:xs(0), y:150, 'font-size':13, fill:'var(--muted)', 'text-anchor':'middle'}, L('sorteie para ver os 5.400 palpites', 'draw to see the 5,400 guesses')));
+    }
+    function once(){
+      var real = new Uint8Array(n), stats = [], best = -9;
+      for (var i = 0; i < n; i++) real[i] = r() < .5 ? 1 : 0;
+      var g = new Uint8Array(n);
+      for (var k = 0; k < NSIM; k++){ for (var j = 0; j < n; j++) g[j] = r() < .5 ? 1 : 0; var s = ptStat(real, g); stats.push(s); if (s > best) best = s; }
+      return {stats:stats, best:best};
+    }
+    function report(res){
+      bests.push(res.best);
+      var beat = STK.filter(function(s){ return res.best > s.st; }).length;
+      $('luck-panel').innerHTML = '<p>' + L('Melhor de 5.400 palpites ao acaso: <b>', 'Best of 5,400 random guesses: <b>') + fmt(res.best, 2) + '</b>. ' +
+        L('Ele passa de ', 'It beats ') + '<b>' + beat + L(' das 5 ações', ' of the 5 stocks') + '</b>' + L(' da dissertação. Nenhum palpite sabia nada do preço.', ' in the dissertation. No guess knew anything about the price.') + '</p>';
+      $('bests').innerHTML = bests.map(function(b){ return '<span>' + fmt(b, 2) + '</span>'; }).join('');
+    }
+    $('luck-run').addEventListener('click', function(){ var res = once(); draw(res.stats, res.best); report(res); });
+    $('luck-20').addEventListener('click', function(){ var res; for (var i = 0; i < 20; i++){ res = once(); if (i < 19) bests.push(res.best); } draw(res.stats, res.best); report(res); });
+    draw();
+    $('luck-panel').innerHTML = '<p>' + L('Cada sorteio cria 5.400 previsões de cara ou coroa e fica com a melhor, como a pesquisa fez com as simulações.', 'Each draw creates 5,400 heads-or-tails forecasts and keeps the best, as the research did with the simulations.') + '</p>';
+    // Chance de o melhor de 5.400 ao acaso ter p-valor menor que o da ação (conta nossa)
+    $('odds').innerHTML = '<div style="font-size:.74rem;color:var(--muted);display:block">' + L('Chance de o acaso, em 5.400 tentativas, chegar a um p-valor menor:', 'Chance that chance alone, in 5,400 tries, reaches a lower p-value:') + '</div>' +
+      STK.map(function(s){ var q = 1 - Math.pow(1 - s.p, NSIM); var lab = q > .9999 ? L('> 99,99%', '> 99.99%') : fmt(q * 100, 0) + '%'; return '<div><span>' + s.t + '</span><span class="tr"><i style="width:' + (q * 100).toFixed(1) + '%"></i></span><b>' + lab + '</b></div>'; }).join('');
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
