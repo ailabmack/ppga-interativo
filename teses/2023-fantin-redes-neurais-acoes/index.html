@@ -1,0 +1,1017 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redes neurais na bolsa · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Cristiane Orquisa Fantin (PPGA Mackenzie, 2023) que comparou duas redes neurais, MLP e LSTM, para prever o preço de ações da B3, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2023-fantin-redes-neurais-acoes/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2214%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>CF</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  :root{
+    --lstm:var(--navy);   /* rede LSTM (com memória) */
+    --mlp:#64748b;        /* rede MLP */
+    --rw:var(--red);      /* o palpite "igual ao último" (random walk) */
+    --off:#cbd5e1;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .lstm-t{color:var(--lstm); font-weight:700;} .mlp-t{color:var(--mlp); font-weight:700;} .rw-t{color:var(--rw); font-weight:700;}
+  svg text{font-family:var(--sans);}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4.2vw, 2.9rem);}
+  html[lang="en"] #capa h1{font-size:clamp(2rem, 3.8vw, 2.6rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .advice{display:inline-block; margin-top:12px; font-size:.78rem; font-weight:600; color:var(--red); border:1px solid color-mix(in srgb, var(--red) 40%, transparent); background:color-mix(in srgb, var(--red) 6%, white); border-radius:8px; padding:5px 10px;}
+  .cap-legend{display:flex; gap:8px 16px; justify-content:center; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:6px;}
+  #hero-cap{text-align:center; font-size:.84rem; color:var(--ink-2); min-height:1.4em; margin-top:2px; font-variant-numeric:tabular-nums;}
+  #hero-cap b{color:var(--red);}
+  #hero-scene .slab.hot{--c:var(--red) !important;}
+
+  /* ---------- Componentes comuns ---------- */
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px 20px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.08rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel .nt{text-transform:none; letter-spacing:0;}
+  .panel p{margin:0 0 8px; font-size:.9rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button.on{background:var(--ink); color:#fff;}
+  .leg{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.76rem; color:var(--muted); margin-top:8px;}
+  .leg i{display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:5px; vertical-align:-2px;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px;}
+  .stat b{display:block; font-family:var(--sans); font-size:1.3rem; color:var(--ink); line-height:1.2; font-variant-numeric:tabular-nums;}
+  .stat span{font-size:.76rem; color:var(--muted); line-height:1.3; display:block;}
+  @media (max-width:600px){ .stats{grid-template-columns:1fr;} }
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:5px 11px; font-size:.78rem; cursor:pointer; color:var(--ink-2); font-variant-numeric:tabular-nums;}
+  .chip.on{background:var(--ink); color:#fff; border-color:var(--ink);}
+  @media (max-width:600px){ #game-svg text, #net-svg text, #fit-svg text, #cfg-svg text{font-size:19px !important;} #funnel-svg text{font-size:18px !important;} #funnel-svg text.fv{font-size:26px !important;} #net-svg text.sm{font-size:15px !important;} #net-svg text.gl{display:none;} }
+
+  /* ---------- 02 · O palpite ---------- */
+  #game-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:12px;}
+  .guess{display:grid; grid-template-columns:repeat(5, 1fr); gap:6px; margin-top:10px;}
+  .guess button{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:8px 4px; font-size:.8rem; cursor:pointer; color:var(--ink-2); line-height:1.2;}
+  .guess button b{display:block; font-size:1.05rem; color:var(--ink);}
+  .guess button:hover:not(:disabled){border-color:var(--ink);}
+  .guess button:disabled{opacity:.45; cursor:default;}
+  .score{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+  .score div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px; border-top:4px solid var(--sc);}
+  .score b{display:block; font-family:var(--sans); font-size:1.5rem; color:var(--ink); line-height:1.1; font-variant-numeric:tabular-nums;}
+  .score span{font-size:.76rem; color:var(--muted); display:block;}
+  #game-msg{font-size:.88rem; color:var(--ink-2); min-height:4.4em; margin-top:10px;}
+  #game-msg b{color:var(--ink);}
+
+  /* ---------- 03 · Duas redes ---------- */
+  #net-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:12px;}
+  #net-svg .hit{cursor:pointer;}
+  #net-panel{min-height:150px; margin-top:12px;}
+  .parts{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px;}
+  .parts button{border:1px solid var(--border); border-left:5px solid var(--pc); background:var(--card); border-radius:8px; padding:6px 11px; font-size:.82rem; font-weight:600; cursor:pointer; color:var(--ink-2);}
+  .parts button.on{background:var(--pc); color:#fff; border-color:var(--pc);}
+
+  /* ---------- 04 · A literatura ---------- */
+  #funnel-svg{width:100%; display:block; max-width:460px;}
+  #funnel-svg .stp{cursor:pointer;}
+  #funnel-svg .stp:hover rect.bar, #funnel-svg .stp.on rect.bar{stroke:var(--ink); stroke-width:2;}
+  #fun-panel{min-height:92px; margin-top:10px;}
+  .minibars{display:grid; gap:5px; margin-top:12px;}
+  .minibar{display:grid; grid-template-columns:96px 1fr 34px; gap:8px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .minibar .tr{height:12px; background:#eef2f7; border-radius:4px; overflow:hidden;}
+  .minibar .tr i{display:block; height:100%; background:var(--lstm); border-radius:4px; transition:width .5s;}
+  .minibar b{text-align:right; font-variant-numeric:tabular-nums;}
+  .minibar.hl span{color:var(--red); font-weight:700;}
+  .minibar.hl .tr i{background:var(--red);}
+  #lit-txt{font-size:.84rem; color:var(--ink-2); margin-top:10px; min-height:3em;}
+
+  /* ---------- 05 · Tudo funciona ---------- */
+  .quiz{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:10px;}
+  .quiz button{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:10px 6px; font-size:.84rem; cursor:pointer; color:var(--ink-2); line-height:1.25;}
+  .quiz button b{display:block; font-size:1.2rem; color:var(--ink); font-family:var(--sans);}
+  .quiz button.chosen{border-color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink);}
+  .quiz button.right{border-color:var(--red); box-shadow:inset 0 0 0 1px var(--red);}
+  .quiz button:disabled{cursor:default;}
+  #quiz-msg{font-size:.88rem; color:var(--ink-2); min-height:2.8em; margin-top:10px;}
+  .stack{margin-top:14px; opacity:.25; transition:opacity .6s;}
+  .stack.show{opacity:1;}
+  .stack h4{font-size:.86rem; margin:0 0 6px; color:var(--ink); font-family:var(--sans);}
+  .sbar{display:flex; height:34px; border-radius:8px; overflow:hidden; gap:2px;}
+  .sbar span{display:flex; align-items:center; justify-content:center; font-size:.76rem; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; transition:width .8s;}
+  .sleg{display:flex; flex-wrap:wrap; gap:4px 14px; font-size:.74rem; color:var(--muted); margin-top:5px;}
+  .sleg i{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px;}
+
+  /* ---------- 06 · Os dados ---------- */
+  .tiles{display:grid; grid-template-columns:repeat(10, minmax(0, 1fr)); gap:4px; margin-top:6px;}
+  .tile{border:0; border-radius:6px; padding:7px 0; font-size:.66rem; font-weight:700; cursor:pointer; color:#fff; background:var(--lstm); font-variant-numeric:tabular-nums; min-width:0; overflow:hidden; transition:opacity .3s, transform .2s;}
+  .tile.ex{background:#e2e8f0; color:#475569;}
+  .tile.dim{opacity:.25;}
+  .tile.on{box-shadow:0 0 0 2px var(--red); transform:translateY(-2px);}
+  @media (max-width:600px){ .tiles{grid-template-columns:repeat(5, minmax(0, 1fr));} .tile{font-size:.7rem; padding:6px 0;} }
+  #data-panel{min-height:96px; margin-top:12px;}
+  .split{display:flex; height:30px; border-radius:8px; overflow:hidden; margin:10px 0 4px;}
+  .split div{display:flex; align-items:center; justify-content:center; font-size:.76rem; font-weight:700; color:#fff; white-space:nowrap;}
+  .split-lb{display:flex; justify-content:space-between; gap:10px; font-size:.74rem; color:var(--muted);}
+
+  /* ---------- 07 · Os 50 modelos ---------- */
+  .pick{display:grid; grid-template-columns:120px repeat(5, 1fr); gap:5px; align-items:center; margin-top:8px; font-size:.8rem; color:var(--ink-2);}
+  .pick button{border:1px solid var(--border); background:var(--card); border-radius:8px; padding:6px 0; font-size:.88rem; font-weight:700; cursor:pointer; color:var(--ink-2);}
+  .pick button.on{background:var(--ink); color:#fff; border-color:var(--ink);}
+  @media (max-width:600px){ .pick{grid-template-columns:96px repeat(5, 1fr); font-size:.74rem;} }
+  #cfg-panel{min-height:120px; margin-top:12px;}
+  .cgrid{display:grid; grid-template-columns:repeat(5, 26px); gap:3px; margin-top:6px;}
+  .cgrid i{display:block; width:26px; height:18px; border-radius:3px; background:#e2e8f0;}
+  .cgrid i.me{background:var(--red);}
+
+  /* ---------- 08 · O teste ---------- */
+  .mcs{display:grid; gap:7px; margin-top:8px;}
+  .mrow{display:grid; grid-template-columns:86px 1fr 52px; gap:8px; align-items:center; font-size:.82rem; transition:opacity .5s;}
+  .mrow .nm{font-weight:700; color:var(--ink);}
+  .mrow .tr{position:relative; height:20px; background:#f1f5f9; border-radius:5px;}
+  .mrow .tr i{position:absolute; left:0; top:0; bottom:0; border-radius:5px; background:var(--lstm); transition:background .4s;}
+  .mrow.mlp .tr i{background:var(--mlp);}
+  .mrow .tr s{position:absolute; top:4px; bottom:4px; border-left:2px solid var(--ink); border-right:2px solid var(--ink); text-decoration:none;}
+  .mrow .tr s::after{content:""; position:absolute; left:0; right:0; top:50%; border-top:2px solid var(--ink);}
+  .mrow b{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink-2);}
+  .mrow.out{opacity:.3;}
+  .mrow.out .tr i{background:var(--off);}
+  .mrow.worst .tr i{background:var(--red);}
+  .mcs-ctrl{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
+  #mcs-log{min-height:150px;}
+  #mcs-log ol{margin:6px 0 0; padding-left:20px; font-size:.84rem; display:grid; gap:4px; color:var(--ink-2);}
+
+  /* ---------- 09 · O resultado diário ---------- */
+  #res-scene .slab{cursor:pointer;}
+  #res-scene .slab.off > i{opacity:.55;}
+  #res-scene .floor-label{font-size:13px; color:var(--muted);}
+  #res-scene .top-label{font-family:var(--sans); font-size:12px; color:#fff !important; text-shadow:none;}
+  .tick-row{display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; max-height:116px; overflow:auto;}
+  #res-panel{min-height:120px; margin-top:10px;}
+  .ties{display:grid; gap:4px; margin-top:8px;}
+  .ties div{display:grid; grid-template-columns:150px 1fr; gap:8px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .ties .cubes{display:flex; gap:3px; flex-wrap:wrap;}
+  .ties .cubes i{display:block; width:12px; height:12px; border-radius:2px; background:var(--lstm);}
+  @media (max-width:600px){ .ties div{grid-template-columns:1fr;} }
+
+  /* ---------- 10 · Minuto a minuto ---------- */
+  .xrows{display:grid; gap:6px; margin-top:10px;}
+  .xrow{display:grid; grid-template-columns:120px 1fr 74px; gap:8px; align-items:center; font-size:.82rem; cursor:pointer; border-radius:8px; padding:2px 4px; border:1px solid transparent; background:none; font:inherit; text-align:left; color:inherit;}
+  .xrow:hover{border-color:var(--border);}
+  .xrow.on{border-color:var(--ink); background:var(--card);}
+  .xrow .nm{font-weight:700; color:var(--ink); font-size:.82rem;}
+  .xrow .tr{position:relative; height:20px; background:#f1f5f9; border-radius:5px;}
+  .xrow .tr .z{position:absolute; top:-3px; bottom:-3px; left:20%; border-left:2px solid var(--rw);}
+  .xrow .tr i{position:absolute; top:3px; bottom:3px; border-radius:4px; transition:all .5s;}
+  .xrow .tr i.better{background:var(--lstm);}
+  .xrow .tr i.worse{background:#94a3b8;}
+  .xrow .tr i.far{background-image:repeating-linear-gradient(45deg, rgb(255 255 255 / .55) 0 3px, transparent 3px 6px);}
+  .xrow b{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink-2); font-size:.8rem;}
+  .xrow.rw .nm{color:var(--rw);}
+  .xaxis{display:grid; grid-template-columns:120px 1fr 74px; gap:8px; font-size:.7rem; color:var(--muted); margin-top:4px;}
+  .xaxis div{position:relative; height:14px;}
+  .xaxis div span{position:absolute; transform:translateX(-50%); white-space:nowrap;}
+  @media (max-width:600px){ .xaxis div span.mid{display:none;} }
+  @media (max-width:600px){ .xrow, .xaxis{grid-template-columns:78px 1fr 62px;} .xrow .nm{font-size:.74rem;} }
+  #min-panel{min-height:130px;}
+  .callout{margin-top:16px; padding:12px 16px; border-left:4px solid var(--red); background:var(--card); border-radius:0 12px 12px 0; box-shadow:var(--shadow); font-size:.86rem; color:var(--ink-2);}
+  .callout b{color:var(--red);}
+
+  /* ---------- 11 · O inesperado ---------- */
+  #fit-svg{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:12px;}
+  #fit-panel{min-height:150px; margin-top:12px;}
+  .reading{margin-top:14px; padding:14px 16px; background:var(--card); border:1px dashed var(--ink-2); border-radius:12px; font-size:.86rem; color:var(--ink-2);}
+  .reading .tag{font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:4px;}
+
+  /* ---------- 12 · Limites e créditos ---------- */
+  .pc3{display:grid; grid-template-columns:1fr; gap:10px; margin-top:10px;}
+  @media (min-width:800px){ .pc3{grid-template-columns:repeat(3, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:24px; margin-top:16px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:44px;} }
+  .end h3{font-size:1.05rem; margin-bottom:6px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:7px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.82rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2023-fantin-redes-neurais-acoes/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2023</div>
+      <h1 class="rv" style="--d:.1s">Uma rede neural consegue prever o preço de uma ação?</h1>
+      <p class="sub rv" style="--d:.2s">A tese pôs <strong>duas redes neurais</strong>, a MLP e a LSTM, para prever o preço de ações da B3: com os fechamentos diários de <strong>31 empresas</strong> e com dados <strong>minuto a minuto</strong>. A LSTM ficou à frente em todas as ações; contra o palpite “igual ao último”, ganhou em duas de três séries. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autora:</b> Cristiane Orquisa Fantin</span>
+        <span><b>Orientador:</b> Prof. Dr. Eli Hadad Junior</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="advice rv" style="--d:.35s">Esta página divulga uma pesquisa. Não é recomendação de investimento.</div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#palpite">Começar →</a>
+        <a class="btn ghost" href="#diario">Ir direto aos resultados</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="540x330" role="img" aria-label="32 pilhas de cubos, uma por ação; cada cubo é uma configuração da rede LSTM que ficou no grupo final dos melhores modelos (Quadro 20 da tese)"></div></div>
+      <div id="hero-cap" aria-live="polite"></div>
+      <div class="cap-legend">
+        <span><i class="dot" style="background:var(--lstm)"></i>Cada cubo: uma rede LSTM no grupo final</span>
+        <span>Quadro 20 da tese</span>
+      </div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximo</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Testa ferramentas de previsão de preços com ações da bolsa brasileira, sem medir ganho com operações."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · O PALPITE -->
+<section class="slide" id="palpite" data-label="Seu palpite">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> Experimente</div>
+      <h2 class="rv" style="--d:.1s">Prever o próximo preço é mais difícil do que parece</h2>
+      <p class="rv" style="--d:.15s">Abaixo, os últimos 30 minutos de uma ação imaginária. Diga onde estará o preço no próximo minuto. Seu palpite disputa com o mais simples de todos: <span class="rw-t">“o próximo preço é igual ao último”</span>, que os economistas chamam de <em>random walk</em> (passeio aleatório).</p>
+      <p class="rv" style="--d:.2s">O placar soma o <strong>erro ao quadrado</strong>, a mesma régua que a tese usa no minuto a minuto: errar por 4 centavos pesa 16; errar por 2 pesa 4. Quem tiver o menor total vence.</p>
+      <p class="note rv" style="--d:.25s"><b>Série sorteada.</b> Os preços são inventados a cada rodada; não são dados da tese.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="game-svg" viewBox="0 0 560 260" role="img" aria-label="Gráfico dos últimos 30 minutos de preço, com o próximo minuto em aberto"></svg>
+      <div class="guess" id="guess" role="group" aria-label="Seu palpite para o próximo minuto">
+        <button data-k="2"><b>↑↑</b>sobe muito</button>
+        <button data-k="1"><b>↑</b>sobe</button>
+        <button data-k="0"><b>=</b>igual</button>
+        <button data-k="-1"><b>↓</b>cai</button>
+        <button data-k="-2"><b>↓↓</b>cai muito</button>
+      </div>
+      <div class="score">
+        <div style="--sc:var(--ink)"><span>Você · erro ao quadrado</span><b id="sc-you">0</b></div>
+        <div style="--sc:var(--rw)"><span>“Igual ao último” · erro ao quadrado</span><b id="sc-rw">0</b></div>
+      </div>
+      <p id="game-msg" aria-live="polite"></p>
+      <button class="btn small ghost" id="game-reset" style="display:none">Jogar de novo</button>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · DUAS REDES -->
+<section class="slide" id="redes" data-label="As duas redes">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> Os candidatos</div>
+      <h2 class="rv" style="--d:.1s">Só uma das duas redes neurais tem memória</h2>
+      <p class="rv" style="--d:.15s">Uma rede neural é um programa que aprende com exemplos: recebe o histórico de preços, compara o que previu com o que aconteceu e ajusta seus “pesos” para errar menos. A tese compara duas.</p>
+      <div class="seg rv" style="--d:.2s" id="net-seg" role="group" aria-label="Escolher a rede"><button class="on" data-k="mlp">MLP</button><button data-k="lstm">LSTM</button></div>
+      <div class="parts rv" style="--d:.25s" id="net-parts" role="group" aria-label="Partes da rede"></div>
+      <p class="note rv" style="--d:.3s">Desenhos simplificados a partir das Figuras 23 e 24 e das descrições das seções 4.2 e 4.3 da tese.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="net-svg" viewBox="0 0 560 270" role="img" aria-label="Desenho da rede escolhida, com suas camadas ou portões"></svg>
+      <div class="panel" id="net-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · A LITERATURA -->
+<section class="slide" id="literatura" data-label="O que já se sabia">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Ensaios 1 e 2 · duas revisões</div>
+      <h2 class="rv" style="--d:.1s">Os estudos com a rede LSTM se multiplicaram depois de 2020</h2>
+      <p class="rv" style="--d:.15s">Antes de testar, a autora vasculhou a Web of Science, uma grande base de artigos científicos, atrás de estudos que preveem preços de ações com cada rede. Troque a rede e toque em cada etapa do funil.</p>
+      <div class="seg rv" style="--d:.2s" id="lit-seg" role="group" aria-label="Escolher a revisão"><button class="on" data-k="lstm">Ensaio 2 · LSTM</button><button data-k="mlp">Ensaio 1 · MLP</button></div>
+      <svg id="funnel-svg" class="rv" style="--d:.25s" viewBox="0 0 520 250" role="img" aria-label="Funil da revisão escolhida"></svg>
+      <div class="panel rv" style="--d:.3s" id="fun-panel" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="minibars" id="lit-bars"></div>
+      <p id="lit-txt" aria-live="polite"></p>
+      <div class="stats" id="lit-stats"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · TUDO FUNCIONA -->
+<section class="slide" id="sucesso" data-label="Todos acertam?">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Ensaios 1 e 2 · o que os artigos concluem</div>
+      <h2 class="rv" style="--d:.1s">Nas duas revisões, quase todos os estudos dizem que o modelo funcionou</h2>
+      <p class="rv" style="--d:.15s">A autora classificou o que cada artigo concluiu. Antes de ver, um palpite: dos 26 artigos sobre a rede MLP, quantos disseram ter alcançado o objetivo principal?</p>
+      <div class="quiz rv" style="--d:.2s" id="quiz" role="group" aria-label="Seu palpite">
+        <button data-k="50"><b>metade</b>13 de 26</button>
+        <button data-k="75"><b>três quartos</b>cerca de 20</button>
+        <button data-k="100"><b>todos</b>26 de 26</button>
+      </div>
+      <p id="quiz-msg" aria-live="polite"></p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="stack" id="stk1">
+        <h4>Ensaio 1 · 26 artigos sobre MLP</h4>
+        <div class="sbar"><span style="width:100%; background:var(--lstm)">100% confirmaram o objetivo</span></div>
+        <div class="sleg"><span>Categoria 9 da revisão. E 100% dizem trazer conclusões novas (categoria 8).</span></div>
+      </div>
+      <div class="stack" id="stk2">
+        <h4>Ensaio 2 · 99 artigos sobre LSTM</h4>
+        <div class="sbar"><span style="width:57%; background:var(--lstm)">57%</span><span style="width:42%; background:#8aa0cc">42%</span><span style="width:1%; background:#e2e8f0"></span></div>
+        <div class="sleg"><span><i style="background:var(--lstm)"></i>superam os modelos com que foram comparados</span><span><i style="background:#8aa0cc"></i>resultados “promissores”</span><span><i style="background:#e2e8f0"></i>restante, 1% (conta nossa)</span></div>
+      </div>
+      <div class="reading stack" id="stk3">
+        <div class="tag">Leitura nossa</div>
+        Quando quase todos dizem que deu certo, o que conta é <b>contra quem</b> cada modelo foi comparado. Na revisão da MLP, só <b>3 dos 26 artigos (12%)</b> citam a hipótese do passeio aleatório, a ideia de que o preço anda ao acaso e por isso o melhor palpite é repetir o último. A tese volta a essa régua no quarto ensaio (tela 10).
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · OS DADOS -->
+<section class="slide" id="dados" data-label="Os dados">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Ensaio 3 · fechamentos diários</div>
+      <h2 class="rv" style="--d:.1s">A tese usou 31 das 50 maiores empresas da B3 e doze anos de fechamentos</h2>
+      <p class="rv" style="--d:.15s">A autora partiu das 50 empresas com mais ativo imobilizado (máquinas, prédios, terrenos) e tirou as <strong>19</strong> cujas ações não eram negociadas todos os dias. Ficaram <strong>31</strong>, com o preço de fechamento de 4 de janeiro de 2010 a 15 de maio de 2022. Toque numa ação.</p>
+      <div class="split rv" style="--d:.2s"><div style="width:75%; background:var(--lstm)">2.295 dias para aprender</div><div style="width:25%; background:var(--rw)">764 teste</div></div>
+      <div class="split-lb rv" style="--d:.2s"><span>75% das 3.059 observações diárias</span><span>25% para testar</span></div>
+      <p class="note rv" style="--d:.25s">Os preços entraram “em nível”, como estavam, sem nenhuma transformação. Quadro 18 e seções 4.2 e 4.3 da tese.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="data-seg" role="group" aria-label="Destacar empresas"><button class="on" data-k="all">Todas (50)</button><button data-k="in">Ficaram (31)</button><button data-k="ex">Saíram (19)</button></div>
+      <div class="tiles" id="tiles" role="group" aria-label="As 50 maiores empresas por ativo imobilizado"></div>
+      <div class="leg"><span><i style="background:var(--lstm)"></i>ficou no estudo</span><span><i style="background:#e2e8f0"></i>saiu (sem negócios todos os dias)</span></div>
+      <div class="panel" id="data-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · OS 50 MODELOS -->
+<section class="slide" id="modelos" data-label="Os 50 modelos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Ensaio 3 · as configurações</div>
+      <h2 class="rv" style="--d:.1s">Cada ação recebeu 50 modelos, 25 formatos de rede para cada tipo</h2>
+      <p class="rv" style="--d:.15s">Todas as redes têm três camadas. A primeira tem um neurônio; a segunda e a terceira, de 1 a 5. São <strong>25 formatos</strong>, testados na MLP e na LSTM: <strong>50 modelos por ação</strong>, ou 1.550 nas 31 ações (conta nossa). Monte um formato.</p>
+      <div class="pick rv" style="--d:.2s" id="pick2" role="group" aria-label="Neurônios na 2ª camada"><span>2ª camada</span></div>
+      <div class="pick rv" style="--d:.22s" id="pick3" role="group" aria-label="Neurônios na 3ª camada"><span>3ª camada</span></div>
+      <p class="note rv" style="--d:.28s">A autora escolheu redes pequenas para evitar o <em>overfitting</em>: o modelo que decora o treino e falha ao prever. Taxa de aprendizado de 0,05 e 300 rodadas de treino (<em>epochs</em>). Quadro 19 da tese.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="cfg-seg" role="group" aria-label="Tipo de rede"><button class="on" data-k="lstm">LSTM</button><button data-k="mlp">MLP</button></div>
+      <svg id="cfg-svg" viewBox="0 0 560 250" role="img" aria-label="Desenho da rede com o formato escolhido" style="width:100%; display:block; margin-top:8px; background:var(--card); border:1px solid var(--border); border-radius:12px"></svg>
+      <div class="panel" id="cfg-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · O TESTE -->
+<section class="slide" id="teste" data-label="Como escolher">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> O critério · Model Confidence Set</div>
+      <h2 class="rv" style="--d:.1s">O teste final guarda só os modelos que não dá para separar dos melhores</h2>
+      <p class="rv" style="--d:.15s">Erros de previsão variam por acaso. Para não premiar quem só teve sorte, a tese usa o <strong>Model Confidence Set</strong> (conjunto de confiança de modelos): um teste pergunta se os modelos que sobraram erram igual; se não, o pior sai; e assim por diante, até sobrar um grupo que não dá para separar.</p>
+      <p class="rv" style="--d:.2s">Rode o teste, uma rodada por vez.</p>
+      <div class="mcs-ctrl rv" style="--d:.25s"><button class="btn small" id="mcs-step">Rodar o teste →</button><button class="btn small ghost" id="mcs-reset">Recomeçar</button></div>
+      <p class="note rv" style="--d:.3s"><b>Ilustração com números inventados.</b> No ensaio 3, a tese não publica o erro de cada modelo; mostra só quem ficou no grupo final de cada ação (próxima tela).</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="mcs" id="mcs" aria-live="polite"></div>
+      <div class="leg"><span><i style="background:var(--lstm)"></i>erro médio, LSTM</span><span><i style="background:var(--mlp)"></i>erro médio, MLP</span><span>⊢⊣ faixa do acaso</span><span><i style="background:var(--red)"></i>o pior da rodada</span></div>
+      <div class="panel" id="mcs-log" style="margin-top:14px" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · O RESULTADO DIÁRIO -->
+<section class="slide" id="diario" data-label="LSTM × MLP">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Ensaio 3 · o resultado · Quadro 20</div>
+      <h2 class="rv" style="--d:.1s">Nos fechamentos diários, só modelos LSTM ficaram no grupo final</h2>
+      <p class="rv" style="--d:.15s">O teste descartou <strong>todos os modelos MLP</strong>, em todas as ações. Sobraram <strong>50 modelos LSTM</strong>: em 21 ações, um só; nas outras, de 2 a 4 formatos empatados, com os mesmos erros. Para a autora, isso mostra a capacidade de aprendizado superior da LSTM.</p>
+      <div class="ties rv" style="--d:.2s" id="ties"></div>
+      <p class="note rv" style="--d:.25s">O quadro traz 32 códigos: a CSNA3 aparece no resultado, embora o Quadro 18 a liste entre as excluídas, e o Santander está como “ANB11” (SANB11). Mostramos como está. A tese não publica o tamanho dos erros nem compara, nesse ensaio, com “igual ao último”.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="res-seg" role="group" aria-label="Visão"><button class="on" data-k="all">Todas as ações</button><button data-k="one">Uma ação</button></div>
+      <div class="fit-wrap"><div class="scene draggable" id="res-scene" data-fit="540x330" role="group" aria-label="Grade 3D de 5 por 5 formatos de rede; a altura mostra em quantas ações cada formato LSTM ficou no grupo final"></div></div>
+      <div class="tick-row" id="res-ticks" role="group" aria-label="Escolher ação"></div>
+      <div class="panel" id="res-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · MINUTO A MINUTO -->
+<section class="slide" id="minuto" data-label="Minuto a minuto">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Ensaio 4 · Quadro 21</div>
+      <h2 class="rv" style="--d:.1s">No minuto a minuto, a melhor rede errou menos que “igual ao último” em duas das três séries</h2>
+      <p class="rv" style="--d:.15s">O quarto ensaio usou só a LSTM, com o preço a cada minuto de abril de 2019 a dezembro de 2021 (273.673 observações) em três séries: <strong>Petrobras ON</strong> (PETR3), o <strong>Ibovespa</strong>, índice da bolsa, e <strong>IRB Brasil</strong> (IRBR3). Aqui, sim, há uma régua: o erro do <span class="rw-t">“igual ao último”</span>.</p>
+      <div class="seg rv" style="--d:.2s" id="min-seg" role="group" aria-label="Escolher série"><button class="on" data-k="0">PETR3</button><button data-k="1">IBOV</button><button data-k="2">IRBR</button></div>
+      <div class="panel rv" style="--d:.25s; margin-top:12px" id="min-panel" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="xrows" id="xrows" role="group" aria-label="Erro de cada modelo comparado ao de igual ao último"></div>
+      <div class="xaxis"><span></span><div id="xaxis"></div><span></span></div>
+      <p class="note">Barra = quantas vezes o erro quadrático médio do modelo é o do “igual ao último” (linha vermelha), em escala logarítmica (cada marca é 10 vezes a anterior). À esquerda, erra menos; à direita, mais. Listrado: fora da escala. Contas nossas a partir do Quadro 21. A tese não descreve o que diferencia os modelos M1 a M7.</p>
+      <div class="callout"><b>Previsão não é lucro.</b> A tese não simulou comprar e vender com essas previsões, nem custos de operação. Nada aqui é recomendação de investimento.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · O INESPERADO -->
+<section class="slide" id="inesperado" data-label="O inesperado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> O inesperado · Gráficos 01 a 03</div>
+      <h2 class="rv" style="--d:.1s">Uma linha colada ao preço não prova que a previsão funciona</h2>
+      <p class="rv" style="--d:.15s">A tese conclui que a rede tem “aderência relevante” porque, nos gráficos, a linha prevista acompanha a real. Veja o que acontece com o palpite mais simples num gráfico assim. Troque a camada.</p>
+      <div class="seg rv" style="--d:.2s" id="fit-seg" role="group" aria-label="Camada do gráfico"><button class="on" data-k="real">Só o preço</button><button data-k="rw">+ “igual ao último”</button><button data-k="like">+ linha como a dos gráficos</button></div>
+      <div class="reading rv" style="--d:.25s">
+        <div class="tag">Leitura nossa</div>
+        Nos três gráficos da tese, as duas linhas sobem e descem <b>no mesmo minuto</b>, separadas por uma distância quase constante, e mostram só os últimos cerca de 73 minutos dos 32 meses. A tese não informa com que dados cada previsão foi feita. Para saber se uma rede prevê, vale a régua da tela anterior, não a aparência do gráfico.
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="fit-svg" viewBox="0 0 560 260" role="img" aria-label="Preço inventado minuto a minuto, com camadas de palpites"></svg>
+      <div class="leg"><span><i style="background:var(--lstm)"></i>preço (inventado)</span><span><i style="background:var(--rw)"></i>“igual ao último”</span><span><i style="background:#94a3b8"></i>linha no mesmo minuto, deslocada</span></div>
+      <div class="panel" id="fit-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Limites e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Na prática, limites e créditos</div>
+    <h2 class="rv" style="--d:.1s">O que esta pesquisa não diz</h2>
+    <div class="pc3">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--rw)"><h3>Para quem investe</h3><p>A tese compara erros de previsão; não testou ganhar dinheiro com eles. <b>Não é recomendação de investimento.</b></p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--lstm)"><h3>Para quem desenvolve modelos</h3><p>Nos fechamentos diários, a LSTM ficou à frente da MLP em todas as ações. A autora sugere testar outras redes de aprendizado profundo e outras ações.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:#334155"><h3>Para pesquisadores</h3><p>Lacunas das revisões: dados da América Latina e da África, preços de abertura, máximos, mínimos e volume, e outros métodos de treino.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <ul class="limits">
+          <li><b>Quem ganhou, mas não por quanto.</b> No ensaio 3, a tese mostra só quem ficou no grupo final, sem os erros e sem a comparação com “igual ao último”. <em>· observação nossa</em></li>
+          <li><b>Previsão não é lucro.</b> Não houve simulação de compra e venda, custos de operação nem teste em período novo. <em>· observação nossa</em></li>
+          <li><b>Como cada previsão foi feita.</b> A tese não descreve os modelos M1 a M7 nem com que informação cada minuto foi previsto. <em>· observação nossa</em></li>
+          <li><b>Poucas séries no minuto a minuto.</b> Duas ações e um índice; numa delas, IRB Brasil, “igual ao último” errou menos. <em>· observação nossa</em></li>
+          <li><b>Revisões numa só base.</b> Os resultados dependem dos critérios de busca e dos artigos da Web of Science. <em>· segundo a autora</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          FANTIN, Cristiane Orquisa. <em>Projeção de preços de ações com redes neurais artificiais multi layer perceptron e long short term memory.</em> Tese (Doutorado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2023. Orientador: Prof. Dr. Eli Hadad Junior.
+        </div>
+        <p style="margin-top:12px; font-size:.82rem">Tese em quatro ensaios: duas revisões bibliométricas e sistemáticas na Web of Science (R, Biblioshiny, VOSviewer) e dois estudos com redes neurais em ações da B3, com a seleção dos modelos pelo Model Confidence Set. Sem financiamento declarado no documento. Esta versão simplifica o trabalho para o público em geral.</p>
+        <div class="ctas" style="margin-top:14px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  var LOC = EN ? 'en-US' : 'pt-BR';
+  function num(n, d){ return n.toLocaleString(LOC, {minimumFractionDigits:d || 0, maximumFractionDigits:d || 0}); }
+  var NSV = 'http://www.w3.org/2000/svg';
+  function el(t, a, txt){ var e = document.createElementNS(NSV, t); for (var k in a) e.setAttribute(k, a[k]); if (txt !== undefined) e.textContent = txt; return e; }
+  var C = {lstm:'#1f3b73', mlp:'#64748b', rw:'#e80734', off:'#cbd5e1', ink:'#0f172a', muted:'#64748b'};
+  var LSTM = 'var(--lstm)', MLP = 'var(--mlp)', RW = 'var(--rw)', OFF = 'var(--off)';
+  function rng(seed){ return function(){ seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function gauss(r){ var u = 0, v = 0; while (!u) u = r(); while (!v) v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+  function segOn(seg, b){ each(seg.children, function(x){ x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', x === b); }); }
+
+  /* ================= DADOS DA TESE ================= */
+  // Quadro 18: as 50 maiores empresas por ativo imobilizado; itens 1 a 31 ficaram, 32 a 50 saíram
+  var FIRMS = [
+    ['ABEV3','Ambev'],['AMER3','Americanas'],['B3SA3','B3'],['BBAS3','Banco do Brasil'],['BBDC4','Bradesco'],['BRKM5','Braskem'],['CCRO3','CCR'],['CMIG4','Cemig'],['CPFE3','CPFL Energia'],['CPLE6','Copel'],
+    ['CSAN3','Cosan'],['EGIE3','Engie Brasil'],['ELET3','Eletrobras'],['EQTL3','Equatorial'],['GGBR4','Gerdau'],['HYPE3','Hypera'],['ITSA4','Itaúsa'],['ITUB4','Itaú Unibanco'],['JBSS3','JBS'],['LREN3','Lojas Renner'],
+    ['NTCO3','Grupo Natura'],['PETR4','Petrobras'],['RADL3','Raia Drogasil'],['RENT3','Localiza'],['SANB11','Santander Brasil'],['SBSP3','Sabesp'],['TIMS3','TIM'],['TRPL4','Tran Paulist'],['VALE3','Vale'],['VIVT3','Telef Brasil'],
+    ['WEGE3','WEG'],['ASAI3','Assaí'],['BBSE3','BB Seguridade'],['BPAC11','BTGP Banco'],['CMIN3','CSN Mineração'],['CRFB3','Carrefour Brasil'],['CSNA3','Sid Nacional'],['CXSE3','Caixa Seguridade'],['ENGI11','Energisa'],['ENMT3','Energisa MT'],
+    ['HAPV3','Hapvida'],['KLBN11','Klabin'],['MGLU3','Magazine Luiza'],['NEOE3','Neoenergia'],['PRIO3','PetroRio'],['RAIL3','Rumo'],['RAIZ4','Raízen'],['RDOR3','Rede D’Or'],['SUZB3','Suzano'],['VBBR3','Vibra']
+  ];
+  var NAME = {}; FIRMS.forEach(function(f){ NAME[f[0]] = f[1]; });
+  // Quadro 20: formatos LSTM no grupo final do MCS, [neurônios na 2ª camada, na 3ª]; "ANB11" do quadro = SANB11
+  var Q20 = {"ABEV3":[[2,2]],"AMER3":[[2,5]],"SANB11":[[3,3],[4,5]],"B3SA3":[[5,2]],"BBAS3":[[5,1]],"BBDC4":[[2,5],[4,3],[5,3]],"BRKM5":[[2,5],[3,3],[4,3]],"CCRO3":[[4,2],[5,4]],"CMIG4":[[3,5]],"CPFE3":[[4,5]],"CPLE6":[[4,5]],"CSAN3":[[2,4],[3,3],[3,4]],"CSNA3":[[5,2]],"EGIE3":[[1,5]],"ELET3":[[1,5],[4,2]],"EQTL3":[[1,5]],"GGBR4":[[1,5]],"HYPE3":[[2,3]],"ITSA4":[[3,4],[4,5],[5,2],[5,5]],"ITUB4":[[1,4]],"JBSS3":[[2,5]],"LREN3":[[5,5]],"NTCO3":[[4,2]],"PETR4":[[2,5]],"RADL3":[[2,5],[4,2]],"RENT3":[[5,2]],"SBSP3":[[4,2]],"TIMS3":[[3,4],[5,5]],"TRPL4":[[5,2]],"VALE3":[[3,1],[3,3],[3,4],[3,5]],"VIVT3":[[1,4]],"WEGE3":[[2,3],[2,5]]};
+  var TK = Object.keys(Q20);
+  // contagem nossa: em quantas ações cada formato ficou no grupo final
+  var CNT = {}; TK.forEach(function(t){ Q20[t].forEach(function(c){ var k = c[0] + '-' + c[1]; CNT[k] = (CNT[k] || 0) + 1; }); });
+  // Quadro 21: erro quadrático médio (os pontos da tabela são separadores de milhar: 7.223.921 = 7.223,921)
+  var Q21 = [
+    {s:'PETR3', n:L('Petrobras ON','Petrobras common'), e:{rw:0.001413, m1:1792.837, m2:2055.936, m3:0.000949, m4:0.000966, m5:0.001066, m6:0.001092, m7:0.000317}},
+    {s:'IBOV', n:L('Ibovespa (índice)','Ibovespa (index)'), e:{rw:7223.921, m1:1.54e8, m2:1.54e8, m3:12922.48, m4:12610.11, m5:16500.13, m6:9649.479, m7:4578.616}},
+    {s:'IRBR', n:'IRB Brasil', e:{rw:0.001376, m1:1956.038, m2:0.897587, m3:0.004177, m4:0.009269, m5:0.003851, m6:0.002457, m7:0.002326}}
+  ];
+
+  /* ================= 01 · CAPA ================= */
+  // 32 pilhas (8 × 4): cada cubo é um formato LSTM no grupo final da ação (Quadro 20). Destaque percorre as ações.
+  (function(){
+    var sc = $('hero-scene'), COLS = 8, GAP = 58, st = makeStage(sc, COLS * GAP, 4 * GAP, {ay:'62%'});
+    var stacks = [];
+    TK.forEach(function(t, i){
+      var cx = (i % COLS) * GAP + 8, cy = Math.floor(i / COLS) * GAP + 8, cubes = [];
+      Q20[t].forEach(function(c, j){
+        var b = box({w:36, d:36, x:cx, y:cy, z:j * 26, h:22, c:LSTM});
+        st.appendChild(b); cubes.push(b);
+      });
+      stacks.push(cubes);
+    });
+    rotatable(sc, st, -16, 8);
+    var cur = -1;
+    function show(i){
+      if (cur > -1) stacks[cur].forEach(function(b){ b.classList.remove('hot'); });
+      cur = i; stacks[i].forEach(function(b){ b.classList.add('hot'); });
+      var t = TK[i], n = Q20[t].length;
+      $('hero-cap').innerHTML = '<b>' + t + '</b> · ' + NAME[t] + ' · ' + n + ' ' + (n > 1 ? L('formatos LSTM empatados','tied LSTM shapes') : L('formato LSTM','LSTM shape'));
+    }
+    show(TK.indexOf('VALE3'));
+    if (reduce) return;
+    var last = 0, k = TK.indexOf('VALE3');
+    M.onTick(function(t){ if (t < 0) return; if (t - last > 2.2){ last = t; k = (k + 1) % TK.length; show(k); } });
+  })();
+
+  /* ================= 02 · O PALPITE ================= */
+  (function(){
+    var svg = $('game-svg'), X0 = 64, X1 = 520, Y0 = 20, Y1 = 220, N = 30, SIG = 3, ROUNDS = 6;
+    var seed = 101, r, ser, round, you, rwv, done;
+    function reset(){
+      r = rng(seed++); ser = []; var p = 2000;
+      for (var i = 0; i < N; i++){ ser.push(p); p += Math.round(gauss(r) * SIG); }
+      round = 0; you = 0; rwv = 0; done = false;
+      $('sc-you').textContent = '0'; $('sc-rw').textContent = '0';
+      $('game-msg').innerHTML = L('<b>Rodada 1 de 6.</b> Onde estará o preço no próximo minuto?', '<b>Round 1 of 6.</b> Where will the price be in the next minute?');
+      $('game-reset').style.display = 'none';
+      each($('guess').children, function(b){ b.disabled = false; });
+      draw(null);
+    }
+    function fmtP(c){ return 'R$ ' + num(c / 100, 2); }
+    function draw(res){
+      svg.innerHTML = '';
+      var vis = ser.slice(-N), all = vis.slice();
+      if (res){ all.push(res.g, res.a); }
+      var mn = Math.min.apply(null, all) - 4, mx = Math.max.apply(null, all) + 4;
+      if (mx - mn < 24){ var c = (mx + mn) / 2; mn = c - 12; mx = c + 12; }
+      function sy(v){ return Y1 - (v - mn) / (mx - mn) * (Y1 - Y0); }
+      function sx(i){ return X0 + i / N * (X1 - X0); }
+      for (var g = 0; g <= 4; g++){
+        var vv = mn + g / 4 * (mx - mn), yy = sy(vv);
+        svg.appendChild(el('line', {x1:X0, y1:yy, x2:X1 + 20, y2:yy, stroke:'#eef2f7'}));
+        svg.appendChild(el('text', {x:X0 - 6, y:yy + 4, 'text-anchor':'end', 'font-size':11, fill:'#94a3b8'}, num(vv / 100, 2)));
+      }
+      svg.appendChild(el('polyline', {points:vis.map(function(v, i){ return sx(i) + ',' + sy(v); }).join(' '), fill:'none', stroke:C.lstm, 'stroke-width':2.4, 'stroke-linejoin':'round'}));
+      var last = vis[N - 1], xl = sx(N - 1), xn = sx(N);
+      svg.appendChild(el('circle', {cx:xl, cy:sy(last), r:4.5, fill:C.lstm}));
+      svg.appendChild(el('rect', {x:xn - 14, y:Y0, width:28, height:Y1 - Y0, fill:'#f8fafc', stroke:'#e2e8f0', 'stroke-dasharray':'4 4'}));
+      svg.appendChild(el('text', {x:xn, y:Y1 + 18, 'text-anchor':'middle', 'font-size':11.5, fill:'#64748b', 'font-weight':700}, L('próximo','next')));
+      svg.appendChild(el('text', {x:X0, y:Y1 + 18, 'font-size':11.5, fill:'#64748b'}, L('há 30 minutos','30 minutes ago')));
+      svg.appendChild(el('line', {x1:xl, y1:sy(last), x2:xn + 14, y2:sy(last), stroke:C.rw, 'stroke-width':1.5, 'stroke-dasharray':'3 3'}));
+      if (res){
+        svg.appendChild(el('line', {x1:xn, y1:sy(res.g), x2:xn, y2:sy(res.a), stroke:'#94a3b8', 'stroke-width':1}));
+        svg.appendChild(el('circle', {cx:xn, cy:sy(res.g), r:6, fill:'#fff', stroke:C.ink, 'stroke-width':2.5}));
+        svg.appendChild(el('rect', {x:xn - 6, y:sy(last) - 6, width:12, height:12, fill:C.rw, transform:'rotate(45 ' + xn + ' ' + sy(last) + ')'}));
+        svg.appendChild(el('circle', {cx:xn, cy:sy(res.a), r:6.5, fill:C.lstm}));
+        svg.appendChild(el('text', {x:xn - 18, y:sy(res.a) + 4, 'text-anchor':'end', 'font-size':12, 'font-weight':700, fill:C.lstm}, L('real','actual')));
+      }
+    }
+    each($('guess').children, function(b){
+      b.addEventListener('click', function(){
+        if (done) return;
+        var last = ser[ser.length - 1], g = last + Number(b.dataset.k) * SIG, a = last + Math.round(gauss(r) * SIG);
+        var ey = (g - a) * (g - a), er = (last - a) * (last - a);
+        you += ey; rwv += er; round++;
+        draw({g:g, a:a});
+        $('sc-you').textContent = num(you); $('sc-rw').textContent = num(rwv);
+        var t = L('Real: ' + fmtP(a) + '. Você errou por ' + Math.abs(g - a) + ' centavos (' + ey + '); “igual ao último”, por ' + Math.abs(last - a) + ' (' + er + ').',
+                  'Actual: ' + fmtP(a) + '. You missed by ' + Math.abs(g - a) + ' cents (' + ey + '); “same as last” by ' + Math.abs(last - a) + ' (' + er + ').');
+        ser.push(a);
+        if (round >= ROUNDS){
+          done = true;
+          each($('guess').children, function(x){ x.disabled = true; });
+          var w = you < rwv ? L('<b>Desta vez você venceu.</b> ', '<b>You won this time.</b> ') : you > rwv ? L('<b>“Igual ao último” venceu.</b> ', '<b>“Same as last” won.</b> ') : L('<b>Empate.</b> ', '<b>A tie.</b> ');
+          $('game-msg').innerHTML = t + ' ' + w + L('Numa série sorteada como esta, nenhuma regra vence “igual ao último” na média. A tese pergunta se as redes neurais captam algum padrão no preço real das ações.', 'In a random series like this one, no rule beats “same as last” on average. The thesis asks whether neural networks pick up some pattern in real stock prices.');
+          $('game-reset').style.display = '';
+        } else {
+          $('game-msg').innerHTML = t + ' <b>' + L('Rodada ', 'Round ') + (round + 1) + L(' de 6.', ' of 6.') + '</b>';
+        }
+      });
+    });
+    $('game-reset').addEventListener('click', reset);
+    reset();
+  })();
+
+  /* ================= 03 · DUAS REDES ================= */
+  (function(){
+    var svg = $('net-svg'), net = 'mlp', part = 'in';
+    var PARTS = {
+      mlp:[
+        {k:'in', n:L('Entrada','Input'), h:L('A camada de entrada recebe o sinal','The input layer receives the signal'), p:L('Aqui entra o histórico de preços. Na tese, a primeira camada tem um neurônio.','The price history comes in here. In the thesis, the first layer has one neuron.')},
+        {k:'hid', n:L('Camadas ocultas','Hidden layers'), h:L('As camadas do meio fazem as contas','The middle layers do the computing'), p:L('Cada neurônio soma o que recebe, com pesos, e passa adiante, sempre para a frente. São o “mecanismo computacional” da MLP. Na tese, de 1 a 5 neurônios em cada uma.','Each neuron adds up what it receives, with weights, and passes it on, always forward. They are the MLP’s “computational mechanism”. In the thesis, 1 to 5 neurons each.')},
+        {k:'out', n:L('Saída','Output'), h:L('A saída dá a previsão','The output gives the forecast'), p:L('O treino compara a previsão com o preço real e ajusta os pesos para diminuir o erro. A MLP não guarda memória do que viu antes: cada entrada é tratada por si.','Training compares the forecast with the actual price and adjusts the weights to reduce the error. The MLP keeps no memory of what it saw before: each input is handled on its own.')}
+      ],
+      lstm:[
+        {k:'cell', n:L('Célula de memória','Memory cell'), h:L('Uma faixa de memória atravessa o tempo','A memory lane runs through time'), p:L('A LSTM é uma rede recorrente: processa a série em sequência e carrega um estado de uma etapa para a outra. Isso ajuda a ligar causas e efeitos distantes no tempo.','LSTM is a recurrent network: it processes the series in sequence and carries a state from one step to the next. This helps link causes and effects that are far apart in time.')},
+        {k:'forget', n:L('Portão de esquecimento','Forget gate'), h:L('O que não serve mais, sai','What is no longer useful goes out'), p:L('O portão de esquecimento apaga da memória as informações que deixaram de ser úteis.','The forget gate erases from memory the information that is no longer useful.')},
+        {k:'input', n:L('Portão de entrada','Input gate'), h:L('O que é útil, entra','What is useful comes in'), p:L('O portão de entrada filtra (com uma função sigmoide) o que vale lembrar e acrescenta à memória.','The input gate filters (with a sigmoid function) what is worth remembering and adds it to memory.')},
+        {k:'output', n:L('Portão de saída','Output gate'), h:L('O que vai para a previsão','What goes into the forecast'), p:L('O portão de saída tira da memória o que vira saída, que também é a entrada da próxima célula.','The output gate takes from memory what becomes the output, which is also the input to the next cell.')}
+      ]
+    };
+    function drawMLP(){
+      var L1 = [{x:70, n:1}, {x:210, n:5}, {x:350, n:5}, {x:490, n:1}], pos = [];
+      L1.forEach(function(l){ var a = []; for (var i = 0; i < l.n; i++) a.push({x:l.x, y:135 + (i - (l.n - 1) / 2) * 42}); pos.push(a); });
+      var hl = {in:[0], hid:[1, 2], out:[3]}[part];
+      for (var j = 0; j < 3; j++) pos[j].forEach(function(a){ pos[j + 1].forEach(function(b){ svg.appendChild(el('line', {x1:a.x, y1:a.y, x2:b.x, y2:b.y, stroke:'#cbd5e1', 'stroke-width':1.2})); }); });
+      pos.forEach(function(ls, j){
+        var on = hl.indexOf(j) > -1;
+        ls.forEach(function(p){ svg.appendChild(el('circle', {cx:p.x, cy:p.y, r:13, fill:on ? C.rw : C.mlp, stroke:'#fff', 'stroke-width':2})); });
+      });
+      [[70, L('entrada','input')], [280, L('camadas ocultas','hidden layers')], [490, L('saída','output')]].forEach(function(t){ svg.appendChild(el('text', {x:t[0], y:252, 'text-anchor':'middle', 'font-size':13, fill:C.muted, 'font-weight':600}, t[1])); });
+      svg.appendChild(el('text', {x:280, y:22, 'text-anchor':'middle', 'font-size':12.5, fill:C.muted}, L('o sinal vai sempre para a frente →','the signal always moves forward →')));
+    }
+    function drawLSTM(){
+      var cells = [92, 280, 468];
+            cells.forEach(function(cx, i){
+        var main = i === 1;
+        var hw = main ? 92 : 62;
+        svg.appendChild(el('rect', {x:cx - hw, y:44, width:2 * hw, height:150, rx:16, fill:main ? '#f1f5f9' : '#f8fafc', stroke:main ? C.lstm : '#cbd5e1', 'stroke-width':main ? 2 : 1}));
+        svg.appendChild(el('text', {x:cx, y:216, 'text-anchor':'middle', 'font-size':12.5, fill:C.muted, 'font-weight':600}, i === 0 ? L('minuto anterior','previous step') : i === 1 ? L('agora','now') : L('próximo','next step')));
+        if (main){
+          [['forget', -58, L('esquecer','forget')], ['input', 0, L('entrar','input')], ['output', 58, L('sair','output')]].forEach(function(g){
+            var on = part === g[0], gx = cx + g[1];
+            svg.appendChild(el('line', {x1:gx, y1:150, x2:gx, y2:76, stroke:on ? C.rw : C.lstm, 'stroke-width':2}));
+            var c = el('circle', {cx:gx, cy:128, r:17, fill:on ? C.rw : C.lstm, 'class':'hit'});
+            c.addEventListener('click', function(){ part = g[0]; draw(); });
+            svg.appendChild(c);
+            svg.appendChild(el('text', {x:gx, y:132, 'text-anchor':'middle', 'font-size':11, 'font-weight':700, fill:'#fff', 'class':'sm', 'pointer-events':'none'}, g[0] === 'forget' ? '×' : g[0] === 'input' ? '+' : '→'));
+            svg.appendChild(el('text', {x:gx, y:176, 'text-anchor':'middle', 'font-size':11.5, fill:C.ink, 'class':'gl'}, g[2]));
+          });
+        } else {
+          svg.appendChild(el('text', {x:cx, y:128, 'text-anchor':'middle', 'font-size':12, fill:'#94a3b8'}, L('célula','cell')));
+        }
+        });
+      svg.appendChild(el('line', {x1:154, y1:170, x2:188, y2:170, stroke:'#94a3b8', 'stroke-width':2}));
+      svg.appendChild(el('line', {x1:372, y1:170, x2:406, y2:170, stroke:'#94a3b8', 'stroke-width':2}));
+      svg.appendChild(el('line', {x1:20, y1:70, x2:545, y2:70, stroke:part === 'cell' ? C.rw : C.lstm, 'stroke-width':5}));
+      svg.appendChild(el('text', {x:280, y:30, 'text-anchor':'middle', 'font-size':12.5, 'font-weight':700, fill:part === 'cell' ? C.rw : C.lstm}, L('linha grossa: a memória da rede','thick line: the network’s memory')));
+      svg.appendChild(el('text', {x:280, y:252, 'text-anchor':'middle', 'font-size':12.5, fill:C.muted}, L('a mesma célula se repete a cada passo da série','the same cell repeats at each step of the series')));
+    }
+    function draw(){
+      svg.innerHTML = '';
+      if (net === 'mlp') drawMLP(); else drawLSTM();
+      var col = net === 'mlp' ? C.mlp : C.lstm;
+      var wrap = $('net-parts'); wrap.innerHTML = '';
+      PARTS[net].forEach(function(p){
+        var b = document.createElement('button'); b.type = 'button'; b.textContent = p.n; b.style.setProperty('--pc', p.k === part ? C.rw : col);
+        b.className = p.k === part ? 'on' : ''; b.setAttribute('aria-pressed', p.k === part);
+        b.addEventListener('click', function(){ part = p.k; draw(); });
+        wrap.appendChild(b);
+      });
+      var p = PARTS[net].filter(function(x){ return x.k === part; })[0];
+      $('net-panel').innerHTML = '<div class="tag" style="color:' + col + '">' + (net === 'mlp' ? 'Multi Layer Perceptron · MLP' : 'Long Short Term Memory · LSTM') + '</div><h3>' + p.h + '</h3><p>' + p.p + '</p>';
+    }
+    each($('net-seg').children, function(b){ b.addEventListener('click', function(){ segOn($('net-seg'), b); net = b.dataset.k; part = PARTS[net][0].k; draw(); }); });
+    draw();
+  })();
+
+  /* ================= 04 · A LITERATURA ================= */
+  (function(){
+    var DATA = {
+      mlp:{
+        f:[[86, L('encontrados','found'), L('Web of Science, de 1945 a março de 2021, buscando combinações de “stock market”, “MLP”, “multi-layer perceptron”, “sentiment” e “backpropagation”.','Web of Science, from 1945 to March 2021, searching for combinations of “stock market”, “MLP”, “multi-layer perceptron”, “sentiment” and “backpropagation”.')],
+           [35, L('depois dos filtros','after the filters'), L('Saíram 44 que não eram artigos, 1 que não estava em inglês e 6 de áreas fora da computação, da economia e da gestão.','Removed: 44 that were not articles, 1 not in English and 6 from areas outside computing, economics and management.')],
+           [26, L('amostra final','final sample'), L('Saíram 9 após a leitura: 7 tratavam de outro assunto (falência de empresas, bitcoin, câmbio, entre outros) e 2 não foram encontrados.','9 removed after reading: 7 were about something else (company bankruptcy, bitcoin, exchange rates, among others) and 2 could not be found.')]],
+        rows:[['2005',1],['2006',1],['2010',1],['2011',1],['2012',1],['2013',1],['2014',1],['2016',3],['2017',4],['2018',2],['2019',3],['2020',5,'hl'],['2021',2]], max:5,
+        t:L('Artigos por ano (Figura 2): nunca mais de 5. Anos sem artigo foram omitidos.','Articles per year (Figure 2): never more than 5. Years with no article are omitted.'),
+        st:[['56',L('autores assinam os 26 artigos','authors signed the 26 articles')],['17',L('deles (30%) em instituições da China','of them (30%) at institutions in China')],['51',L('citações do mais citado, Maia e Carvalho (2011), com dados da B3 e da Nasdaq','citations of the most cited, Maia and Carvalho (2011), with B3 and Nasdaq data')]]
+      },
+      lstm:{
+        f:[[276, L('encontrados','found'), L('Web of Science, de 2000 a março de 2022, buscando combinações de “stock market”, “LSTM”, “long short-term memory”, “forecast” e “backpropagation”.','Web of Science, from 2000 to March 2022, searching for combinations of “stock market”, “LSTM”, “long short-term memory”, “forecast” and “backpropagation”.')],
+           [127, L('depois dos filtros','after the filters'), L('Saíram 106 por tipo de documento e 43 por área de pesquisa.','106 removed by document type and 43 by research area.')],
+           [99, L('amostra final','final sample'), L('Saíram 19 não encontrados e 9 de outros assuntos (criptomoedas, bolhas imobiliárias, comércio eletrônico, entre outros).','19 that could not be found and 9 on other topics (cryptocurrencies, housing bubbles, e-commerce, among others) were removed.')]],
+        rows:[['2018',7],['2019',5],['2020',23],['2021',53,'hl'],[L('2022 (jan.–mar.)','2022 (Jan–Mar)'),8]], max:53,
+        t:L('Artigos por ano (Figura 18). A figura soma 96 dos 99 artigos; mostramos como está.','Articles per year (Figure 18). The figure adds up to 96 of the 99 articles; we show it as printed.'),
+        st:[['333',L('autores escreveram sobre o tema','authors wrote on the topic')],['43',L('dos 99 artigos ligados a instituições chinesas','of the 99 articles linked to Chinese institutions')],['21%',L('usam só bolsas dos EUA; 20%, só da China; 38%, outras bolsas','use only US exchanges; 20%, only China’s; 38%, other exchanges')]]
+      }
+    };
+    var svg = $('funnel-svg'), cur = 'lstm', sel = 2;
+    function draw(){
+      var d = DATA[cur], F = d.f, mx = F[0][0];
+      svg.innerHTML = '';
+      F.forEach(function(s, i){
+        var w = 140 + (s[0] / mx) * 360, x = (520 - w) / 2, y = 12 + i * 78;
+        var g = el('g', {'class':'stp' + (i === sel ? ' on' : ''), tabindex:0, role:'button', 'aria-label':s[0] + ' ' + s[1]});
+        g.appendChild(el('rect', {'class':'bar', x:x, y:y, width:w, height:64, rx:8, fill:i === 2 ? C.rw : (i === 0 ? C.lstm : '#4a64a0')}));
+        g.appendChild(el('text', {'class':'fv', x:260, y:y + 30, 'text-anchor':'middle', 'font-size':22, 'font-weight':700, fill:'#fff'}, num(s[0])));
+        g.appendChild(el('text', {x:260, y:y + 51, 'text-anchor':'middle', 'font-size':13, fill:'#fff'}, s[1]));
+        g.addEventListener('click', function(){ sel = i; draw(); });
+        g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); sel = i; draw(); } });
+        svg.appendChild(g);
+      });
+      $('fun-panel').innerHTML = '<div class="tag"><span class="nt">' + num(F[sel][0]) + '</span> · ' + F[sel][1] + '</div><p>' + F[sel][2] + '</p>';
+      $('lit-bars').innerHTML = d.rows.map(function(r){
+        return '<div class="minibar' + (r[2] ? ' ' + r[2] : '') + '"><span>' + r[0] + '</span><div class="tr"><i style="width:' + (r[1] / d.max * 100) + '%"></i></div><b>' + r[1] + '</b></div>';
+      }).join('');
+      $('lit-txt').textContent = d.t;
+      $('lit-stats').innerHTML = d.st.map(function(s){ return '<div class="stat"><b>' + s[0] + '</b><span>' + s[1] + '</span></div>'; }).join('');
+    }
+    each($('lit-seg').children, function(b){ b.addEventListener('click', function(){ segOn($('lit-seg'), b); cur = b.dataset.k; sel = 2; draw(); }); });
+    draw();
+  })();
+
+  /* ================= 05 · TUDO FUNCIONA ================= */
+  (function(){
+    var done = false;
+    each($('quiz').children, function(b){
+      b.addEventListener('click', function(){
+        if (done) return; done = true;
+        each($('quiz').children, function(x){ x.disabled = true; x.classList.toggle('chosen', x === b); x.classList.toggle('right', x.dataset.k === '100'); });
+        var ok = b.dataset.k === '100';
+        $('quiz-msg').innerHTML = (ok ? L('<b>Isso mesmo: todos os 26.</b> ', '<b>That’s right: all 26.</b> ') : L('<b>Foram todos os 26.</b> ', '<b>It was all 26.</b> ')) + L('Na revisão da LSTM, 57% dos 99 artigos dizem superar os modelos comparados e 42% chamam os resultados de promissores.', 'In the LSTM review, 57% of the 99 articles say they beat the models they compared against, and 42% call their results promising.');
+        ['stk1','stk2','stk3'].forEach(function(id, i){ setTimeout(function(){ $(id).classList.add('show'); }, reduce ? 0 : 250 * i); });
+      });
+    });
+  })();
+
+  /* ================= 06 · OS DADOS ================= */
+  (function(){
+    var wrap = $('tiles'), mode = 'all', sel = 28;
+    FIRMS.forEach(function(f, i){
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'tile' + (i >= 31 ? ' ex' : ''); b.textContent = f[0];
+      b.title = f[1];
+      b.addEventListener('click', function(){ sel = i; apply(); });
+      wrap.appendChild(b);
+    });
+    function apply(){
+      each(wrap.children, function(b, i){
+        var ex = i >= 31;
+        b.classList.toggle('dim', (mode === 'in' && ex) || (mode === 'ex' && !ex));
+        b.classList.toggle('on', i === sel);
+      });
+      var f = FIRMS[sel], ex = sel >= 31, inQ = !!Q20[f[0]];
+      var p = '<div class="tag"><span class="nt">' + f[0] + '</span> · ' + L('item ','item ') + (sel + 1) + L(' do Quadro 18',' of Chart 18') + '</div><h3>' + f[1] + '</h3><p>' +
+        (ex ? L('Saiu do estudo: a ação não era negociada todos os dias no período.', 'Removed from the study: the stock was not traded every day in the period.') : L('Ficou no estudo: 3.059 fechamentos diários e 50 modelos testados.', 'Kept in the study: 3,059 daily closes and 50 models tested.')) + '</p>';
+      if (ex && inQ) p += '<p style="font-size:.84rem; color:var(--muted)">' + L('Mesmo listada como excluída, aparece no resultado da tese (Quadro 20). Mostramos como está.', 'Although listed as excluded, it appears in the thesis’s result (Chart 20). We show it as printed.') + '</p>';
+      $('data-panel').innerHTML = p;
+    }
+    each($('data-seg').children, function(b){ b.addEventListener('click', function(){ segOn($('data-seg'), b); mode = b.dataset.k; apply(); }); });
+    apply();
+  })();
+
+  /* ================= 07 · OS 50 MODELOS ================= */
+  (function(){
+    var a = 2, b = 5, net = 'lstm', svg = $('cfg-svg');
+    function buttons(id, get, set){
+      var w = $(id);
+      for (var i = 1; i <= 5; i++) (function(i){
+        var bt = document.createElement('button'); bt.type = 'button'; bt.textContent = i; bt.dataset.v = i;
+        bt.addEventListener('click', function(){ set(i); draw(); });
+        w.appendChild(bt);
+      })(i);
+    }
+    buttons('pick2', null, function(v){ a = v; });
+    buttons('pick3', null, function(v){ b = v; });
+    function draw(){
+      each($('pick2').querySelectorAll('button'), function(x){ x.classList.toggle('on', +x.dataset.v === a); x.setAttribute('aria-pressed', +x.dataset.v === a); });
+      each($('pick3').querySelectorAll('button'), function(x){ x.classList.toggle('on', +x.dataset.v === b); x.setAttribute('aria-pressed', +x.dataset.v === b); });
+      svg.innerHTML = '';
+      var col = net === 'lstm' ? C.lstm : C.mlp, Ls = [{x:70, n:1}, {x:210, n:a}, {x:350, n:b}, {x:490, n:1}], pos = [];
+      Ls.forEach(function(l){ var arr = []; for (var i = 0; i < l.n; i++) arr.push({x:l.x, y:130 + (i - (l.n - 1) / 2) * 37}); pos.push(arr); });
+      for (var j = 0; j < 3; j++) pos[j].forEach(function(p){ pos[j + 1].forEach(function(q){ svg.appendChild(el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, stroke:'#cbd5e1', 'stroke-width':1.2})); }); });
+      pos.forEach(function(ls, j){
+        ls.forEach(function(p){
+          if (net === 'lstm' && j > 0 && j < 3){
+            svg.appendChild(el('rect', {x:p.x - 14, y:p.y - 14, width:28, height:28, rx:7, fill:col}));
+            svg.appendChild(el('path', {d:'M' + (p.x + 8) + ',' + (p.y - 14) + ' a10,10 0 1,1 0.1,0', fill:'none', stroke:C.rw, 'stroke-width':2}));
+          } else svg.appendChild(el('circle', {cx:p.x, cy:p.y, r:13, fill:j === 3 ? C.ink : col}));
+        });
+      });
+      [[70, L('1ª camada · 1','layer 1 · 1')], [210, L('2ª · ','layer 2 · ') + a], [350, L('3ª · ','layer 3 · ') + b], [490, L('previsão','forecast')]].forEach(function(t){ svg.appendChild(el('text', {x:t[0], y:236, 'text-anchor':'middle', 'font-size':13, fill:C.muted, 'font-weight':600}, t[1])); });
+      if (net === 'lstm') svg.appendChild(el('text', {x:280, y:16, 'text-anchor':'middle', 'font-size':12, fill:C.rw}, L('laço vermelho: memória (ilustração)','red loop: memory (illustration)')));
+      var idx = (b - 1) * 5 + a, k = a + '-' + b, n = CNT[k] || 0;
+      var grid = '<div style="font-size:.72rem; color:var(--muted); margin-top:6px">' + L('Os 25 formatos (colunas: 2ª camada de 1 a 5; linhas: 3ª camada de 1 a 5)', 'The 25 shapes (columns: layer 2 from 1 to 5; rows: layer 3 from 1 to 5)') + '</div><div class="cgrid" aria-hidden="true">';
+      for (var r = 1; r <= 5; r++) for (var c = 1; c <= 5; c++) grid += '<i class="' + (c === a && r === b ? 'me' : '') + '"></i>';
+      grid += '</div>';
+      $('cfg-panel').innerHTML = '<div class="tag">' + (net === 'lstm' ? 'LSTM' : 'MLP') + ' · ' + L('formato ','shape ') + '<span class="nt">1-' + a + '-' + b + '</span> · ' + idx + L(' de 25',' of 25') + '</div>' +
+        '<p>' + (net === 'lstm'
+          ? (n ? L('Este formato LSTM ficou no grupo final de <b>' + n + (n > 1 ? ' ações' : ' ação') + '</b> (contagem nossa, Quadro 20).', 'This LSTM shape stayed in the final group for <b>' + n + (n > 1 ? ' stocks' : ' stock') + '</b> (our count, Chart 20).') : L('Este formato LSTM não ficou no grupo final de nenhuma ação (contagem nossa, Quadro 20).', 'This LSTM shape did not stay in the final group for any stock (our count, Chart 20).'))
+          : L('Nenhum formato MLP ficou no grupo final de nenhuma ação.', 'No MLP shape stayed in the final group for any stock.')) + '</p>' + grid;
+    }
+    each($('cfg-seg').children, function(x){ x.addEventListener('click', function(){ segOn($('cfg-seg'), x); net = x.dataset.k; draw(); }); });
+    draw();
+  })();
+
+  /* ================= 08 · O TESTE (ilustração) ================= */
+  (function(){
+    // Números inventados: erro médio e faixa do acaso de seis modelos genéricos.
+    var MS = [['L-A', 1.00, 'l'], ['L-B', 1.01, 'l'], ['L-C', 1.04, 'l'], ['M-A', 1.16, 'm'], ['M-B', 1.27, 'm'], ['M-C', 1.42, 'm']];
+    var BAND = 0.05, MAX = 1.6, out, log, finished;
+    function reset(){ out = []; log = []; finished = false; draw(); $('mcs-step').disabled = false; }
+    function alive(){ return MS.filter(function(m){ return out.indexOf(m[0]) < 0; }); }
+    function nm(m){ return (m[2] === 'l' ? 'LSTM ' : 'MLP ') + m[0].slice(2); }
+    function draw(){
+      $('mcs').innerHTML = MS.map(function(m){
+        var o = out.indexOf(m[0]) > -1, w = m[1] / MAX * 100;
+        return '<div class="mrow' + (m[2] === 'm' ? ' mlp' : '') + (o ? ' out' : '') + '"><span class="nm">' + nm(m) + '</span><div class="tr"><i style="width:' + w + '%"></i><s style="left:' + ((m[1] - BAND) / MAX * 100) + '%; width:' + (2 * BAND / MAX * 100) + '%"></s></div><b>' + fmt(m[1], 2) + '</b></div>';
+      }).join('');
+      var head = finished ? L('<div class="tag">Conjunto de confiança</div><h3>Sobram ' + alive().length + ' modelos, empatados</h3>', '<div class="tag">Confidence set</div><h3>' + alive().length + ' models remain, statistically tied</h3>')
+                          : L('<div class="tag">Rodadas de eliminação</div><h3>' + alive().length + ' modelos na disputa</h3>', '<div class="tag">Elimination rounds</div><h3>' + alive().length + ' models in the race</h3>');
+      $('mcs-log').innerHTML = head + (log.length ? '<ol>' + log.map(function(t){ return '<li>' + t + '</li>'; }).join('') + '</ol>' : '<p>' + L('A pergunta de cada rodada: os modelos que sobraram erram igual, descontado o acaso?', 'The question of each round: do the remaining models make the same error, allowing for chance?') + '</p>');
+    }
+    $('mcs-step').addEventListener('click', function(){
+      if (finished) return;
+      var a = alive(), best = a[0][1], worst = a[a.length - 1];
+      if (worst[1] - best > 2 * BAND){
+        out.push(worst[0]);
+        log.push(L('Não erram igual: sai ' + nm(worst) + ', o pior.', 'Not all equal: ' + nm(worst) + ' (the worst) is out.'));
+      } else {
+        finished = true;
+        log.push(L('As diferenças cabem no acaso: o teste para. Este grupo é o conjunto de confiança.', 'The differences fit within chance: the test stops. This group is the confidence set.'));
+        $('mcs-step').disabled = true;
+      }
+      draw();
+    });
+    $('mcs-reset').addEventListener('click', reset);
+    reset();
+  })();
+
+  /* ================= 09 · O RESULTADO DIÁRIO (Quadro 20) ================= */
+  (function(){
+    // empates por número de formatos (texto da seção 4.4 e Quadro 20)
+    var groups = {};
+    TK.forEach(function(t){ var n = Q20[t].length; (groups[n] = groups[n] || []).push(t); });
+    $('ties').innerHTML = [1, 2, 3, 4].map(function(n){
+      var c = ''; for (var i = 0; i < n; i++) c += '<i></i>';
+      return '<div><span><span class="cubes" style="display:inline-flex">' + c + '</span> ' + (n === 1 ? L('1 formato','1 shape') : n + L(' empatados',' tied')) + ' · <b>' + groups[n].length + '</b></span><span style="font-size:.74rem; color:var(--muted)">' + (n === 1 ? L('21 ações','21 stocks') : groups[n].join(', ')) + '</span></div>';
+    }).join('');
+    var sc = $('res-scene'), CW = 64, st = makeStage(sc, 5 * CW + 120, 5 * CW + 60, {ay:'66%', rx:'56deg'});
+    var X0 = 110, cells = {}, mode = 'all', selT = 'VALE3';
+    for (var r = 1; r <= 5; r++){
+      for (var c = 1; c <= 5; c++){
+        var b = box({w:44, d:44, x:X0 + (c - 1) * CW, y:(5 - r) * CW + 6, h:2, c:OFF, top:' '});
+        b.dataset.k = c + '-' + r;
+        (function(k){ b.addEventListener('click', function(){ if (!M.wasDrag(sc)) info(k); }); })(b.dataset.k);
+        st.appendChild(b); cells[c + '-' + r] = b;
+      }
+      flatLabel(st, String(r), X0 - 40, (5 - r) * CW + 18, 24, 'font-size:15px; font-weight:700; text-align:right');
+    }
+    for (var c2 = 1; c2 <= 5; c2++) flatLabel(st, String(c2), X0 + (c2 - 1) * CW + 10, 5 * CW + 12, 24, 'font-size:15px; font-weight:700; text-align:center');
+    flatLabel(st, L('neurônios na 2ª camada →','neurons in layer 2 →'), X0, 5 * CW + 34, 5 * CW, 'font-size:13px; text-align:center');
+    flatLabel(st, L('3ª camada ↑','layer 3 ↑'), 0, 2 * CW + 18, X0 - 46, 'font-size:13px; text-align:right');
+    rotatable(sc, st, -14, 6);
+    var tr = $('res-ticks');
+    TK.forEach(function(t){
+      var bt = document.createElement('button'); bt.type = 'button'; bt.className = 'chip'; bt.textContent = t === 'SANB11' ? 'SANB11*' : t; bt.dataset.t = t;
+      bt.addEventListener('click', function(){ selT = t; mode = 'one'; segOn($('res-seg'), $('res-seg').children[1]); apply(); });
+      tr.appendChild(bt);
+    });
+    function apply(){
+      Object.keys(cells).forEach(function(k){
+        var b = cells[k], h, lab = '';
+        if (mode === 'all'){ var n = CNT[k] || 0; h = n ? n * 10 : 2; lab = n ? String(n) : ''; b.style.setProperty('--c', n ? LSTM : OFF); b.classList.toggle('off', !n); }
+        else {
+          var on = Q20[selT].some(function(p){ return p[0] + '-' + p[1] === k; });
+          h = on ? 30 : 2; b.style.setProperty('--c', on ? LSTM : OFF); b.classList.toggle('off', !on);
+        }
+        b.style.setProperty('--h', h + 'px');
+        var tl = b.querySelector('.top-label'); if (tl) tl.textContent = lab;
+      });
+      each(tr.children, function(x){ x.classList.toggle('on', mode === 'one' && x.dataset.t === selT); });
+      if (mode === 'all'){
+        $('res-panel').innerHTML = '<div class="tag">' + L('Todas as 32 ações do quadro','All 32 stocks in the chart') + '</div><h3>' + L('MLP: 0 de 50 lugares. LSTM: 50 de 50.','MLP: 0 of 50 places. LSTM: 50 of 50.') + '</h3><p>' + L('Altura = em quantas ações o formato ficou no grupo final (contagem nossa). O mais frequente, 1-2-5, aparece em 7 ações; 7 dos 25 formatos não aparecem em nenhuma. Toque num bloco ou escolha uma ação.', 'Height = for how many stocks the shape stayed in the final group (our count). The most frequent, 1-2-5, appears for 7 stocks; 7 of the 25 shapes appear for none. Touch a block or choose a stock.') + '</p>';
+      } else {
+        var s = Q20[selT];
+        $('res-panel').innerHTML = '<div class="tag"><span class="nt">' + selT + '</span> · ' + NAME[selT] + '</div><h3>' + (s.length > 1 ? s.length + L(' formatos LSTM empatados',' tied LSTM shapes') : L('Um formato LSTM','One LSTM shape')) + '</h3><p>' + s.map(function(p){ return '1-' + p[0] + '-' + p[1]; }).join(', ') + '. ' + (s.length > 1 ? L('Segundo a tese, os empatados produziram os mesmos erros.', 'According to the thesis, the tied ones produced the same errors.') : '') + (selT === 'SANB11' ? ' ' + L('*No quadro, “ANB11”.', '*In the chart, “ANB11”.') : '') + (selT === 'CSNA3' ? ' ' + L('Listada como excluída no Quadro 18.', 'Listed as excluded in Chart 18.') : '') + '</p>';
+      }
+    }
+    function info(k){
+      var n = CNT[k] || 0, ab = k.split('-');
+      if (mode === 'one'){ apply(); return; }
+      var who = TK.filter(function(t){ return Q20[t].some(function(p){ return p[0] + '-' + p[1] === k; }); });
+      $('res-panel').innerHTML = '<div class="tag">' + L('Formato ','Shape ') + '<span class="nt">1-' + ab[0] + '-' + ab[1] + '</span></div><h3>' + (n ? L('No grupo final de ' + n + (n > 1 ? ' ações' : ' ação'), 'In the final group for ' + n + (n > 1 ? ' stocks' : ' stock')) : L('Em nenhuma ação','For no stock')) + '</h3><p>' + (who.length ? who.join(', ') + '.' : L('Este formato nunca ficou entre os melhores.', 'This shape never made it among the best.')) + '</p>';
+    }
+    each($('res-seg').children, function(b){ b.addEventListener('click', function(){ segOn($('res-seg'), b); mode = b.dataset.k; apply(); }); });
+    apply();
+  })();
+
+  /* ================= 10 · MINUTO A MINUTO (Quadro 21) ================= */
+  (function(){
+    var LO = -1, HI = 4, ZERO = (0 - LO) / (HI - LO) * 100, sel = 0, selM = 'm7';
+    var KEYS = ['rw','m1','m2','m3','m4','m5','m6','m7'];
+    var ax = $('xaxis');
+    ax.innerHTML = [-1, 0, 1, 2, 3, 4].map(function(p){ return '<span class="' + (p > 0 && p < 4 ? 'mid' : '') + '" style="left:' + ((p - LO) / (HI - LO) * 100) + '%">' + (p === 0 ? '1×' : p < 0 ? (EN ? '0.1×' : '0,1×') : num(Math.pow(10, p)) + '×') + '</span>'; }).join('');
+    function eFmt(v){ return v >= 1e6 ? (EN ? v.toExponential(2).replace('e+', ' × 10^') : v.toExponential(2).replace('.', ',').replace('e+', ' × 10^')) : num(v, v < 1 ? 6 : 3); }
+    function draw(){
+      var d = Q21[sel], rw = d.e.rw;
+      var best = KEYS.slice(1).reduce(function(a, k){ return d.e[k] < d.e[a] ? k : a; }, 'm1');
+      $('xrows').innerHTML = KEYS.map(function(k){
+        var v = d.e[k], ratio = v / rw, lg = Math.log10(ratio), far = lg > HI, lgc = Math.max(LO, Math.min(HI, lg));
+        var x0 = Math.min(ZERO, (lgc - LO) / (HI - LO) * 100), w = Math.abs((lgc - LO) / (HI - LO) * 100 - ZERO);
+        var bar = k === 'rw' ? '' : '<i class="' + (ratio < 1 ? 'better' : 'worse') + (far ? ' far' : '') + '" style="left:' + x0 + '%; width:' + Math.max(w, .8) + '%"></i>';
+        var lab = k === 'rw' ? L('régua','yardstick') : ('× ' + (ratio >= 1e6 ? num(ratio / 1e6, 1) + L(' mi',' m') : ratio >= 1e3 ? num(ratio / 1e3, 1) + L(' mil',' k') : ratio >= 100 ? num(ratio) : num(ratio, 2)));
+        return '<button type="button" class="xrow' + (k === 'rw' ? ' rw' : '') + (k === selM ? ' on' : '') + '" data-k="' + k + '"><span class="nm">' + (k === 'rw' ? L('“igual ao último”','“same as last”') : 'M' + k.slice(1) + (k === best ? ' ★' : '')) + '</span><div class="tr"><span class="z"></span>' + bar + '</div><b>' + lab + '</b></button>';
+      }).join('');
+      each($('xrows').children, function(b){ b.addEventListener('click', function(){ selM = b.dataset.k; draw(); }); });
+      var m7 = d.e.m7 / rw, win = m7 < 1;
+      var h = '<div class="tag"><span class="nt">' + d.s + '</span> · ' + d.n + '</div>';
+      if (selM === 'rw'){
+        h += '<h3>' + L('A régua: repetir o preço do minuto anterior','The yardstick: repeat the previous minute’s price') + '</h3><p>' + L('Erro quadrático médio do “igual ao último”: ','Mean squared error of “same as last”: ') + eFmt(rw) + '.</p>';
+      } else {
+        var r2 = d.e[selM] / rw;
+        h += '<h3>M' + selM.slice(1) + ': ' + (r2 < 1 ? L('erra menos que a régua','smaller error than the yardstick') : L('erra mais que a régua','larger error than the yardstick')) + '</h3><p>' + L('Erro quadrático médio: ','Mean squared error: ') + eFmt(d.e[selM]) + L(', contra ',', against ') + eFmt(rw) + L(' do “igual ao último”',' for “same as last”') + ' (' + (r2 < 1 ? L('cerca de ' + num(1 / r2, 1) + ' vezes menor', 'about ' + num(1 / r2, 1) + ' times smaller') : (r2 >= 100 ? L('mais de ' + num(Math.floor(r2 / 100) * 100) + ' vezes maior', 'over ' + num(Math.floor(r2 / 100) * 100) + ' times larger') : L('cerca de ' + num(r2, 1) + ' vezes maior', 'about ' + num(r2, 1) + ' times larger'))) + L(', conta nossa).', ', our calculation).') + '</p>';
+      }
+      h += '<p style="font-size:.84rem; color:var(--muted)">' + (win ? L('Nesta série, o M7, o melhor das sete redes (★), errou menos que “igual ao último”.', 'In this series, M7, the best of the seven networks (★), made smaller errors than “same as last”.') : L('Nesta série, o M7 foi o melhor das sete redes (★), mas “igual ao último” errou menos que todas.', 'In this series, M7 was the best of the seven networks (★), but “same as last” made smaller errors than all of them.')) + '</p>';
+      $('min-panel').innerHTML = h;
+    }
+    each($('min-seg').children, function(b){ b.addEventListener('click', function(){ segOn($('min-seg'), b); sel = +b.dataset.k; draw(); }); });
+    draw();
+  })();
+
+  /* ================= 11 · O INESPERADO (ilustração) ================= */
+  (function(){
+    var svg = $('fit-svg'), X0 = 74, X1 = 540, Y0 = 18, Y1 = 220, N = 73, layer = 'real';
+    var r = rng(41), P = [], p = 3062;
+    for (var i = 0; i < N; i++){ P.push(p); p += Math.round(gauss(r) * 1.6); }
+    var RWs = [P[0]].concat(P.slice(0, N - 1));      // igual ao último: o preço do minuto anterior
+    var LIKE = P.map(function(v){ return v - 1; });   // linha no mesmo minuto, deslocada 1 centavo (como a aparência dos gráficos da tese)
+    var mn = Math.min.apply(null, P) - 3, mx = Math.max.apply(null, P) + 3;
+    function sx(i){ return X0 + i / (N - 1) * (X1 - X0); }
+    function sy(v){ return Y1 - (v - mn) / (mx - mn) * (Y1 - Y0); }
+    function mse(a){ var s = 0; for (var i = 1; i < N; i++) s += Math.pow(a[i] - P[i], 2); return s / (N - 1); }
+    function line(a, col, w, dash){ svg.appendChild(el('polyline', {points:a.map(function(v, i){ return sx(i) + ',' + sy(v); }).join(' '), fill:'none', stroke:col, 'stroke-width':w, 'stroke-linejoin':'round', 'stroke-dasharray':dash || 'none'})); }
+    function draw(){
+      svg.innerHTML = '';
+      for (var g = 0; g <= 4; g++){ var v = mn + g / 4 * (mx - mn), y = sy(v); svg.appendChild(el('line', {x1:X0, y1:y, x2:X1, y2:y, stroke:'#eef2f7'})); svg.appendChild(el('text', {x:X0 - 6, y:y + 4, 'text-anchor':'end', 'font-size':11, fill:'#94a3b8'}, num(v / 100, 2))); }
+      svg.appendChild(el('text', {x:X0, y:Y1 + 20, 'font-size':11.5, fill:'#64748b'}, L('73 minutos (inventados)','73 minutes (made up)')));
+      if (layer === 'like') line(LIKE, '#94a3b8', 2);
+      if (layer === 'rw') line(RWs, C.rw, 2);
+      line(P, C.lstm, 2.2);
+      var t;
+      if (layer === 'real') t = L('<div class="tag">Ilustração</div><h3>Um preço que anda ao acaso</h3><p>Esta série foi sorteada: não tem padrão nenhum a aprender. Acrescente as outras linhas.</p>', '<div class="tag">Illustration</div><h3>A price that moves by chance</h3><p>This series was drawn at random: it has no pattern to learn. Add the other lines.</p>');
+      else if (layer === 'rw') t = L('<div class="tag">Ilustração · erro quadrático médio ' + num(mse(RWs), 1) + '</div><h3>“Igual ao último” também parece colado ao preço</h3><p>É só o preço atrasado um minuto, e não sabe nada do futuro. Num gráfico de 73 minutos, a “aderência” parece ótima mesmo assim.</p>', '<div class="tag">Illustration · mean squared error ' + num(mse(RWs), 1) + '</div><h3>“Same as last” also seems glued to the price</h3><p>It is just the price delayed by one minute, and it knows nothing about the future. In a 73-minute graph, the “adherence” still looks great.</p>');
+      else t = L('<div class="tag">Ilustração · erro quadrático médio ' + num(mse(LIKE), 1) + '</div><h3>Uma linha que se move no mesmo minuto erra ainda menos</h3><p>Esta linha é o próprio preço de cada minuto, 1 centavo abaixo. O erro quase some, mas ela só existe depois que o preço aparece: não é previsão. A aparência dos gráficos da tese lembra esta camada, e a tese não diz com que informação cada previsão foi feita.</p>', '<div class="tag">Illustration · mean squared error ' + num(mse(LIKE), 1) + '</div><h3>A line that moves in the same minute errs even less</h3><p>This line is each minute’s own price, 1 cent lower. The error almost disappears, but it exists only after the price appears: it is not a forecast. The thesis’s graphs look like this layer, and the thesis does not say what information each forecast was made with.</p>');
+      $('fit-panel').innerHTML = t;
+    }
+    each($('fit-seg').children, function(b){ b.addEventListener('click', function(){ segOn($('fit-seg'), b); layer = b.dataset.k; draw(); }); });
+    draw();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
