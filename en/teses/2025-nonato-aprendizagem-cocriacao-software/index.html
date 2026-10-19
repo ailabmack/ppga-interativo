@@ -1,0 +1,903 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning and co-creating in software teams · PPGA Interativo</title>
+<meta name="description" content="José Antônio Afonso Nonato’s doctoral thesis (PPGA Mackenzie, 2025) on how software development teams learn and co-create value with clients when innovating in digital services, explained in 12 interactive screens.">
+<link rel="alternate" hreflang="pt-BR" href="../../../teses/2025-nonato-aprendizagem-cocriacao-software/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2213%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>&lt;/&gt;</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/motor.css">
+<link rel="stylesheet" href="../../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --team:var(--navy);   /* equipe, o que é de dentro */
+    --cli:var(--red);     /* cliente, cocriação */
+    --dk:#334155;
+    --mid:#94a3b8;
+  }
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  @property --z{syntax:'<length>'; inherits:true; initial-value:0px;}
+  .slab{transition:transform .6s cubic-bezier(.2,.8,.2,1), opacity .5s, --h .6s ease, --z .6s ease, left .6s ease, top .6s ease;}
+  .slab.dim > i{opacity:.2;}
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .team-t{color:var(--team); font-weight:700;} .cli-t{color:var(--cli); font-weight:700;}
+  .nt{text-transform:none; letter-spacing:0;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4vw, 2.5rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{display:flex; gap:8px 16px; justify-content:center; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:6px; min-height:2.6em; text-align:center;}
+  #hero-scene .top-label{font-size:15px; font-weight:800; font-family:var(--sans);}
+
+  /* ---------- Componentes comuns ---------- */
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  q.fala{quotes:"“" "”"; font-family:var(--serif); font-style:italic; color:var(--ink);}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:12px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px;}
+  .stat b{display:block; font-family:var(--sans); font-size:1.3rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.76rem; color:var(--muted); line-height:1.35; display:block;}
+  .guess{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 6px;}
+  .guess button{border:1px solid var(--border); background:var(--card); border-radius:12px; padding:8px 14px; font-size:.86rem; cursor:pointer; color:var(--ink-2);}
+  .guess button:hover{border-color:var(--ink);}
+  .guess button[aria-pressed="true"]{border-color:var(--ink); background:var(--ink); color:#fff;}
+  .guess button.ok{border-color:var(--cli); box-shadow:inset 0 0 0 1px var(--cli);}
+  .msg{font-size:.88rem; color:var(--ink-2); min-height:1.5em; margin:4px 0 0;}
+  .quotes{display:grid; gap:7px; margin-top:8px;}
+  .qt{background:var(--card); border:1px solid var(--border); border-left:4px solid var(--cli); border-radius:10px; padding:6px 12px; font-size:.82rem;}
+  .qt.b{border-left-color:var(--team);}
+  .qt q{font-family:var(--serif); font-style:italic; color:var(--ink); quotes:"“" "”";}
+  .qt span{display:block; font-size:.72rem; color:var(--muted); margin-top:2px;}
+  .blist{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .blist button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 13px; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .blist button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .lg{display:flex; flex-wrap:wrap; gap:4px 14px; font-size:.76rem; color:var(--ink-2); margin-top:6px; justify-content:center;}
+  @media (max-width:600px){ .stats{grid-template-columns:1fr 1fr;} }
+
+  /* ---------- 02 · Três ideias ---------- */
+  #id-scene .face-label{font-size:12px; letter-spacing:.04em;}
+  #id-scene .top-label{font-size:24px; font-family:var(--sans); font-weight:800;}
+  #id-panel{min-height:190px;}
+
+  /* ---------- 03 · Pessoas ---------- */
+  #pe-scene .floor-label{font-size:12.5px; line-height:1.15;}
+  #pe-scene .top-label{font-size:14px; font-family:var(--sans); font-weight:800;}
+  #pe-panel{min-height:120px;}
+
+  /* ---------- 04 · Codificação ---------- */
+  #cd-scene .face-label{font-size:15px; font-family:var(--sans); font-weight:700;}
+  #cd-scene .top-label{font-size:15px; font-family:var(--sans); font-weight:700;}
+  .steps{display:grid; grid-template-columns:repeat(6, minmax(0, 1fr)); gap:6px; margin:8px 0;}
+  .steps button{min-width:0; border:1px solid var(--border); background:var(--card); border-radius:10px; padding:7px 3px; font-size:.72rem; cursor:pointer; color:var(--ink-2); line-height:1.2;}
+  .steps button b{display:block; font-family:var(--sans); font-size:1.05rem; color:var(--ink);}
+  .steps button[aria-pressed="true"]{border-color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink);}
+  #cd-panel{min-height:190px;}
+  .trace{margin-top:8px; font-size:.8rem; background:#f1f5f9; border-radius:10px; padding:8px 12px; color:var(--ink-2);}
+  .trace b{color:var(--cli);}
+  @media (max-width:600px){ .steps{grid-template-columns:repeat(3, minmax(0, 1fr));} }
+
+  /* ---------- 05 · Temas ---------- */
+  .bars{display:grid; gap:5px; margin-top:10px;}
+  .bar{display:grid; grid-template-columns:minmax(0, 1.5fr) 2fr 2em; gap:8px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .bar .tr{height:14px; background:#eef2f7; border-radius:99px; overflow:hidden;}
+  .bar .tr i{display:block; height:100%; width:0; background:var(--bc, var(--team)); border-radius:99px; transition:width .7s cubic-bezier(.2,.8,.2,1);}
+  .bar b{font-variant-numeric:tabular-nums; text-align:right; color:var(--ink); font-family:var(--sans);}
+  .bar span{line-height:1.2;}
+
+  /* ---------- 06 · Códigos teóricos ---------- */
+  #tc-scene .top-label{font-size:22px; font-family:var(--sans); font-weight:800;}
+  #tc-panel{min-height:270px;}
+  .cats{display:grid; gap:4px; margin:6px 0 8px; padding:0; list-style:none;}
+  .cats li{font-size:.8rem; color:var(--ink-2); border:1px solid var(--border); border-radius:8px; padding:4px 10px; background:#fff;}
+  .cats li small{color:var(--muted); font-weight:600; margin-right:6px;}
+  .cats li.dup{border-style:dashed;}
+
+  /* ---------- 07 · Aprender ---------- */
+  #fb-svg{width:100%; display:block; max-height:270px;}
+  #fb-svg text{font-family:var(--sans);}
+  #fb-svg circle{transition:opacity .5s, fill .4s;}
+  .rng{margin:8px 0 4px;}
+  .rng input{width:100%; appearance:none; -webkit-appearance:none; height:30px; background:transparent; cursor:pointer;}
+  .rng input::-webkit-slider-runnable-track{height:8px; border-radius:99px; background:linear-gradient(90deg, var(--team), var(--cli));}
+  .rng input::-moz-range-track{height:8px; border-radius:99px; background:linear-gradient(90deg, var(--team), var(--cli));}
+  .rng input::-webkit-slider-thumb{-webkit-appearance:none; width:24px; height:24px; border-radius:50%; background:#fff; border:3px solid var(--ink); margin-top:-8px;}
+  .rng input::-moz-range-thumb{width:20px; height:20px; border-radius:50%; background:#fff; border:3px solid var(--ink);}
+  .rng .ends{display:flex; justify-content:space-between; font-size:.76rem; color:var(--muted);}
+  #ap-panel{min-height:230px;}
+  @media (max-width:600px){ #fb-svg text{font-size:19px !important;} }
+
+  /* ---------- 08 · Vulnerabilidade ---------- */
+  #vu-scene .face-label{font-size:9.5px; letter-spacing:0;}
+  #vu-scene .top-label{font-size:13px; font-family:var(--sans); font-weight:700;}
+  #vu-after{display:none;} #vu-after.on{display:block;}
+  #vu-panel{min-height:150px; margin-top:8px;}
+  .kitchen{margin-top:10px;}
+
+  /* ---------- 09 · Tempo ---------- */
+  .hgrid{display:grid; grid-template-columns:repeat(10, minmax(0, 1fr)); gap:4px; max-width:330px; margin:6px auto 0;}
+  .hgrid i{display:block; aspect-ratio:1; border-radius:4px; background:var(--team); transition:background .35s;}
+  .hgrid i.on{background:var(--cli);}
+  .hlab{display:flex; justify-content:space-between; max-width:330px; margin:6px auto 0; font-size:.8rem; color:var(--ink-2);}
+  .hlab b{font-family:var(--sans); font-size:1.15rem;}
+  #tp-panel{min-height:120px;}
+
+  /* ---------- 10 · Foco ---------- */
+  #fo-scene .face-label{font-size:10.5px; letter-spacing:0;}
+  #fo-scene .top-label{font-size:20px; font-family:var(--sans); font-weight:800;}
+  #fo-panel{min-height:210px;}
+
+  /* ---------- 11 · Modelo ---------- */
+  #md-svg{width:100%; display:block;}
+  #md-svg text{font-family:var(--sans); pointer-events:none;}
+  #md-svg .nd{cursor:pointer;}
+  #md-svg .ed{transition:stroke .3s, stroke-width .3s;}
+  .pbtn{display:grid; grid-template-columns:repeat(10, minmax(0, 1fr)); gap:4px; margin-top:6px;}
+  .pbtn button{min-width:0; border:1px solid var(--border); background:var(--card); border-radius:8px; padding:6px 0; font-size:.8rem; font-weight:700; cursor:pointer; color:var(--ink-2);}
+  .pbtn button[aria-pressed="true"]{background:var(--cli); color:#fff; border-color:var(--cli);}
+  #md-panel{min-height:150px;}
+  @media (max-width:600px){ .pbtn{grid-template-columns:repeat(5, minmax(0, 1fr));} }
+
+  /* ---------- 12 · Créditos ---------- */
+  .cards3{display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px;}
+  @media (min-width:760px){ .cards3{grid-template-columns:repeat(3, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 15px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.95rem; margin-bottom:4px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:2px; font-size:.76rem; line-height:1.38; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.08rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:8px 0 0; padding:0; list-style:none;}
+  .limits li{padding:7px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.82rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; line-height:1.55; margin-top:8px;}
+  .cite b{color:var(--ink);}
+  .end .btn{padding:9px 12px; font-size:.82rem;} .end .ctas{gap:8px;}
+  @media (min-width:920px){ #creditos{padding-top:66px; padding-bottom:24px;} #creditos .end{margin-top:12px;} #creditos .lede{margin-bottom:4px;} }
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-meta="../../../teses/2025-nonato-aprendizagem-cocriacao-software/meta.json">
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../../teses/2025-nonato-aprendizagem-cocriacao-software/" hreflang="pt-BR" lang="pt-BR" title="Ler em português"><img class="lang-flag" src="../../../assets/bandeira-br.svg" width="17" height="12" alt="">PT</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Previous screen">↑</button>
+    <button class="nav-btn" id="next" aria-label="Next screen">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Screen navigation"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Start">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Doctoral thesis · PPGA Mackenzie · 2025</div>
+      <h1 class="rv" style="--d:.1s">Software teams innovate when they learn together with the client</h1>
+      <p class="sub rv" style="--d:.2s">Apps, platforms and subscription systems are <strong>digital services</strong>, and the people who invent and improve them are development teams. The thesis listened to <strong>12 people from 9 software companies</strong> and built, from those conversations, a theory of how these teams learn, earn the client’s trust and create value with them. Explained in 12 screens.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Author:</b> José Antônio Afonso Nonato</span>
+        <span><b>Advisor:</b> Prof. Dr. Gilberto Perez</span>
+        <span><b>Co-advisor:</b> Prof. Dr. Diógenes de Souza Bido</span>
+        <span><b>Program:</b> Graduate Program in Business Administration (PPGA) · Mackenzie Presbyterian University</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#ideias">Start →</a>
+        <a class="btn ghost" href="#vulnerabilidade">Skip to the unexpected</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="460x330" role="img" aria-label="A red block in the middle, the theory’s core category, surrounded by eight blue blocks, the other theoretical codes; each block’s height is the number of categories it groups"></div></div>
+      <div class="cap-legend" id="hero-cap" aria-live="polite"></div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">Closest UN Sustainable Development Goals</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://sdgs.un.org/goals/goal8" target="_blank" rel="noopener" title="SDG 8 · Decent Work and Economic Growth: Shows how software teams innovate in digital services by learning with clients and balancing the new with maintaining what already exists."><b>8</b>Decent Work and Economic Growth</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">scroll<span></span></div>
+</section>
+
+<!-- 02 · TRÊS IDEIAS -->
+<section class="slide" id="ideias" data-label="Three ideas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> The starting point · three concepts</div>
+      <h2 class="rv" style="--d:.1s">The literature usually studies separately what teams live through together</h2>
+      <p class="rv" style="--d:.15s">Innovating in a digital service, learning as an organization and creating value with the client are three subjects with their own research. According to the thesis, field studies that bring all three together are rare, and that is what it set out to do. Tap each idea:</p>
+      <div class="blist rv" id="id-list" style="--d:.2s" role="group" aria-label="Choose the idea"></div>
+      <div class="panel rv" id="id-panel" style="--d:.25s; margin-top:10px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="id-scene" data-fit="460x290" role="img" aria-label="Three separate blocks that come together on a shared base: service innovation, organizational learning and value co-creation"></div></div>
+      <div style="text-align:center; margin-top:4px"><button class="btn small ghost" id="id-join">Bring the three together</button></div>
+      <p class="note">Sections 1, 1.3 and 2 of the thesis. The definitions are the ones the thesis adopts (Helkkula et al., 2018; Witell et al., 2016; Prahalad and Ramaswamy, 2004; Takahashi, 2015), summarized by us.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · QUEM FALOU -->
+<section class="slide" id="pessoas" data-label="Who spoke">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> The method · in-depth interviews</div>
+      <h2 class="rv" style="--d:.1s">The research listened to 12 people from 9 software companies</h2>
+      <p class="rv" style="--d:.15s">Developers, architects, product managers and entrepreneurs described, in open conversations over Teams, how their team invents and improves services with clients. The interviews ran from November 2023 to September 2024. See the group by:</p>
+      <div class="seg rv" id="pe-seg" style="--d:.2s" role="group" aria-label="Breakdown"></div>
+      <div class="panel rv" id="pe-panel" style="--d:.25s; margin-top:12px" aria-live="polite"></div>
+      <div class="stats rv" style="--d:.3s">
+        <div class="stat"><b>about 9 h</b><span>of conversation, 30 to 61 minutes each</span></div>
+        <div class="stat"><b>12</b><span>all men, all from technology companies in Brazil</span></div>
+        <div class="stat"><b>2 weeks</b><span>for the last 6 interviews, with online scheduling</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="pe-scene" data-fit="470x320" role="img" aria-label="Twelve cubes, one per person, stacked in towers according to the chosen breakdown"></div></div>
+      <p class="note">Sections 3.3 and 3.4, Tables 8 and 9 and Appendix D. Totals by breakdown and total conversation time are <b>our counts</b>. The cubes carry no code: we do not link anyone to a role, company or region. One company had 4 people interviewed, within the same team and neighbouring teams.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · CODIFICAÇÃO -->
+<section class="slide" id="codificacao" data-label="From excerpt to theory">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> The analysis · grounded theory</div>
+      <h2 class="rv" style="--d:.1s">The theory was built step by step, upward from what people said</h2>
+      <p class="rv" style="--d:.15s">In <strong>grounded theory</strong>, the research does not start from hypotheses: it reads each statement line by line, names what is happening there (a <strong>code</strong>) and groups those names into ever broader ideas. Follow a real quote up the steps:</p>
+      <div class="steps rv" id="cd-steps" style="--d:.2s" role="group" aria-label="Steps of the analysis"></div>
+      <div class="panel rv" id="cd-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="cd-scene" data-fit="440x380" role="img" aria-label="Six-layer pyramid with area proportional to the count: 708 excerpts, 220 initial codes, 91 focused codes, 25 categories, 9 theoretical codes and 1 core category"></div></div>
+      <p class="note">Sections 3.5 and 4.1 to 4.4, Tables 10 and 17 and Appendix E. The 708 excerpts are the sum of Table 10 (<b>our count</b>, 42 to 78 per person). Layer area is proportional to the count. Coding was done in Atlas.ti, by hand according to the thesis.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · TEMAS -->
+<section class="slide" id="temas" data-label="What came up most">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> The most used codes</div>
+      <h2 class="rv" style="--d:.1s">Understanding the client’s business and giving the team autonomy were the most tagged subjects</h2>
+      <p class="rv" style="--d:.15s">The number next to each code is how many times it was applied to an interview excerpt (the thesis calls it <em>groundedness</em>). Compare the two levels:</p>
+      <div class="seg rv" id="tm-seg" style="--d:.2s" role="group" aria-label="Level"></div>
+      <p class="note rv" style="--d:.25s">The thesis itself warns, following Charmaz, that this count does not measure importance: it shows part of the codes and points to where ideas cluster. The full list of 91 focused codes was not published (it is available on request); here are the most used.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="bars" id="tm-bars"></div>
+      <div class="lg" style="justify-content:flex-start; margin-top:10px"><span><i class="dot" style="background:var(--team)"></i>about the team and the company</span><span><i class="dot" style="background:var(--cli)"></i>about the client and their problem</span></div>
+      <p class="note">Table 11 (initial codes used 10 times or more) and Table 12 (extract of focused codes, the top 12). Names shortened by us; the colour is <b>our grouping</b>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · NOVE CÓDIGOS -->
+<section class="slide" id="codigos" data-label="Nine codes">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> The results · theoretical codes</div>
+      <h2 class="rv" style="--d:.1s">Nine big ideas organize what the teams described</h2>
+      <p class="rv" style="--d:.15s">The 25 categories became 9 <strong>theoretical codes</strong>, the highest step before the theory. Each block’s height is the number of categories it groups. Tap a block:</p>
+      <div class="blist rv" id="tc-list" style="--d:.2s" role="group" aria-label="Choose the theoretical code"></div>
+      <p class="note rv" style="--d:.25s">Table 18 and Figures 4 to 13. The blocks add up to 27 entries, not 25: the thesis uses the numbers of two categories (CT.22 and CT.24) for different names in codes 4 and 6. We show each code with the names from its own section (dashed border).</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="tc-scene" data-fit="440x330" role="img" aria-label="A three-by-three grid of blocks, one per theoretical code; the middle one, in red, gives the theory its name"></div></div>
+      <div class="panel" id="tc-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · APRENDER -->
+<section class="slide" id="aprender" data-label="Learning">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Theoretical code 1 · learning</div>
+      <h2 class="rv" style="--d:.1s">The team learns from within and with the client, and slow feedback hurts both</h2>
+      <p class="rv" style="--d:.15s">The thesis found four sources of learning. Three sit inside the team; the fourth comes from outside. Choose:</p>
+      <div class="seg rv" id="ap-seg" style="--d:.2s" role="group" aria-label="Source of learning"></div>
+      <div class="panel rv" id="ap-panel" style="--d:.25s; margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <p style="font-size:.9rem; margin-bottom:4px">How long does client feedback take to reach the people who did the work? Move the slider:</p>
+      <svg id="fb-svg" viewBox="0 0 560 250" role="img" aria-label="Timeline: the team ships a release and client feedback arrives months or years later; over time, part of the team has already moved on"></svg>
+      <div class="rng"><input type="range" id="fb-range" min="0" max="36" value="3" aria-label="Months until feedback"><div class="ends"><span>right away</span><span>1 year</span><span>2 years</span><span>3 years</span></div></div>
+      <div class="quotes" id="fb-q"></div>
+      <p class="note">Sections 4.4.1 and 4.4.3. The slider is <b>our illustration</b> of one person’s account (P1): the thesis does not measure how long feedback takes or how many people have moved on.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · O INESPERADO: VULNERABILIDADE -->
+<section class="slide" id="vulnerabilidade" data-label="The unexpected">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> The unexpected · theoretical code 2</div>
+      <h2 class="rv" style="--d:.1s">Showing the client what is still imperfect can build trust</h2>
+      <p class="rv" style="--d:.15s">Before you look: the team takes an unfinished, "ugly" prototype to the client and admits what it does not know yet. What do you think happens to the relationship?</p>
+      <div class="guess rv" id="vu-guess" style="--d:.2s" role="group" aria-label="Your guess"></div>
+      <p class="msg" id="vu-msg" aria-live="polite"></p>
+      <div id="vu-after">
+        <div class="seg kitchen" id="vu-seg" role="group" aria-label="The thesis’s metaphor"></div>
+        <div class="panel" id="vu-kit" style="margin-top:8px" aria-live="polite"></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="vu-scene" data-fit="440x300" role="img" aria-label="Three pillars, transparency, vulnerability and commitment, hold up a slab called trust, on which sits the value co-creation block"></div></div>
+      <div class="blist" id="vu-list" role="group" aria-label="Choose the pillar" style="justify-content:center"></div>
+      <div class="panel" id="vu-panel" aria-live="polite"></div>
+      <p class="note">Abstract, sections 4.4.2, 5.1 and 5.2.1 (propositions 3 and 4), Appendix E. The literature the thesis draws on (Neghina, 2015) lists trust among the drivers of co-creation but does not say how to build it; vulnerability is the mechanism the thesis proposes. The thesis says "may": it is a proposition drawn from the interviews, not a measured effect.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · TEMPO -->
+<section class="slide" id="tempo" data-label="Sustain × innovate">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Theoretical codes 6 and 7 · balancing</div>
+      <h2 class="rv" style="--d:.1s">Keeping what already exists eats into the time for inventing the new</h2>
+      <p class="rv" style="--d:.15s">Legacy systems, support tickets and documentation compete for the same hours as innovation. The thesis links this to a classic idea (March, 1991): <strong>exploring</strong> the new and <strong>exploiting</strong> what exists compete for the same resources. Each square is 1% of one interviewee’s time:</p>
+      <div class="seg rv" id="tp-seg" style="--d:.2s" role="group" aria-label="Scenario"></div>
+      <div class="panel rv" id="tp-panel" style="--d:.25s; margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="hgrid" id="tp-grid" aria-hidden="true"></div>
+      <div class="hlab"><span><span class="cli-t">product and new work</span> <b id="tp-a">30%</b></span><span><span class="team-t">issues, legacy, documents</span> <b id="tp-b">70%</b></span></div>
+      <div class="rng" style="max-width:330px; margin:8px auto 0"><input type="range" id="tp-range" min="0" max="100" value="30" aria-label="Share of time on the product"><div class="ends"><span>0%</span><span>time on the product</span><span>100%</span></div></div>
+      <div class="quotes" id="tp-q"></div>
+      <p class="note">Sections 4.3, 4.4.6 and 4.4.7. The 30% and 70% are <b>one person’s</b> estimate (P3) of their own year; the thesis does not measure teams’ time. The slider is <b>our illustration</b>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · FOCO -->
+<section class="slide" id="foco" data-label="The focus">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Theoretical code 8 · where to start</div>
+      <h2 class="rv" style="--d:.1s">Before asking "can we build it?", the team asks whether it should</h2>
+      <p class="rv" style="--d:.15s">Teams innovate through three lenses: the <strong>technology</strong>, the client’s <strong>problem</strong> and the <strong>product</strong>. For the thesis, none is enough on its own, and the problem comes first. Choose a lens:</p>
+      <div class="blist rv" id="fo-list" style="--d:.2s" role="group" aria-label="Choose the lens"></div>
+      <div class="panel rv" id="fo-panel" style="--d:.25s; margin-top:10px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="fo-scene" data-fit="440x290" role="img" aria-label="Three blocks in a triangle, technology, problem and product, around a central point; the problem block is the tallest"></div></div>
+      <div class="quotes"><div class="qt b"><q>in a small company with a small team looking at eight different market pain points, we end up bringing several small things and falling into the analogy of the duck—it flies, swims, and walks, but doesn’t do any of them well.</q><span>P7, on lack of focus (theoretical code 9)</span></div></div>
+      <p class="note">Sections 4.4.8, 4.4.9 and 5.2.1 (proposition 10). The "Can I make it? Should I make it?" line is attributed to Charles Eames and quoted by the thesis. The taller problem block is <b>our illustration</b> of the priority the thesis gives it, not a count.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · MODELO -->
+<section class="slide" id="modelo" data-label="The theory">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> The finding · the substantive theory</div>
+      <h2 class="rv" style="--d:.1s">Everything converges on building digital service innovation</h2>
+      <p class="rv" style="--d:.15s">The theory’s core category is a process: <strong>building digital service innovation</strong>. Learning, trusting, co-creating and withstanding pressure feed that process, in a cycle that repeats. The thesis sums up the links in 10 <strong>propositions</strong>. Tap an arrow or a number:</p>
+      <div class="pbtn rv" id="md-btn" style="--d:.2s" role="group" aria-label="Choose the proposition"></div>
+      <div class="panel rv" id="md-panel" style="--d:.25s; margin-top:10px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="md-svg" viewBox="0 0 640 520" role="img" aria-label="Map of the theory: in the middle, building digital service innovation; around it, learning, resilience, implementation, focus, enablers, value co-creation, communication, relationships, trust and design thinking, linked by arrows numbered P1 to P10"></svg>
+      <div class="lg"><span><i class="dot" style="background:var(--cli)"></i>core category</span><span><i class="dot" style="background:var(--team)"></i>theoretical code</span><span><i class="dot" style="background:#fff; box-shadow:inset 0 0 0 1.5px var(--dk)"></i>linked concept</span><span>dashed: moderates the link</span></div>
+      <p class="note">Figure 14 redrawn and sections 5.2.1 and 5.2.2. The propositions come from the interviews and are left for future studies to test. Code 2 was split in two (relationships and trust). Proposition 9 is about the search for ideas and, in the figure, its arrow leaves from implementation; we draw the arrow as in the figure.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Limits and credits">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Takeaways</div>
+    <h2 class="rv" style="--d:.1s">Innovating in digital services takes learning, trust and protected time</h2>
+    <p class="lede rv" style="--d:.15s">For the author, innovation does not come from technical skill alone: it is a human, repeated process in which the team learns, experiments and creates <strong>with</strong> the client.</p>
+    <div class="cards3">
+      <div class="pcard rv" style="--d:.2s; --pc:var(--cli)"><h3>For technology and product leaders</h3><ul><li>Adopt design thinking: empathy, prototype, test and client feedback, in cycles.</li><li>Set aside moments and rituals for new work; without them, "the routine consumes us".</li><li>Tolerate honest mistakes and explain to the team why each delivery matters.</li></ul></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--team)"><h3>For development teams</h3><ul><li>Show prototypes early, still imperfect, to speed up feedback.</li><li>Validate hypotheses before building, and start from the problem, not the tool.</li><li>Create channels so client feedback reaches the people who did the work quickly.</li></ul></div>
+      <div class="pcard rv" style="--d:.3s; --pc:var(--dk)"><h3>For those who buy software</h3><ul><li>Taking part in defining what has value helps the solution fit daily work. <em>(our reading)</em></li><li>Sharing outcome figures with the supplier, which interviewees say is rare, gives the team the feedback it lacks.</li></ul></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.2s">
+        <h3>What this research does not say</h3>
+        <ul class="limits">
+          <li><b>A closed theory.</b> Data collection stopped at 12 interviews for lack of time, before theoretical saturation: each conversation still brought new ideas. <em>· according to the author</em></li>
+          <li><b>Rules for any company.</b> Startups, software houses and traditional companies innovate differently; each type is worth studying separately. <em>· according to the author</em></li>
+          <li><b>A bias-free reading.</b> What people said reflects their own experience, and the interpretation is one researcher’s; more coders and other sources would help. <em>· according to the author</em></li>
+          <li><b>The client’s side.</b> Only team members were interviewed, all men: trust and co-creation appear from the developers’ point of view. <em>· our observation</em></li>
+          <li><b>Measured effects.</b> The 10 propositions were not tested; they say what may happen, not how much. <em>· our observation</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.25s">
+        <h3>Credits</h3>
+        <div class="cite">
+          <b>How to cite</b><br>
+          NONATO, José Antônio Afonso. <em>Organizational learning and value co-creation in the context of digital service innovation: a study on software development teams.</em> Doctoral thesis (Business Administration) · Mackenzie Presbyterian University, São Paulo, 2025. Advisor: Prof. Dr. Gilberto Perez. Co-advisor: Prof. Dr. Diógenes de Souza Bido.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Research supported by CAPES (Brazil’s federal agency for graduate education). Interviews were recorded with participants’ consent, and they could withdraw at any time. Initial coding was done by hand in Atlas.ti; ChatGPT was used as a "thinking partner" in other stages (summaries, literature search, naming categories, reviewing codes and the text), as the thesis describes in Appendix F. People appear only by the thesis’s codes (P1 to P12), with no role, company or region. This version simplifies the work for a general audience.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Read the full thesis</a>
+          <a class="btn ghost" href="#capa">↑ Back to the start</a>
+          <a class="btn ghost" href="../../">More research</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable, ramp = M.ramp;
+  var EN = M.lang === 'en';
+  function L(p, e){ return EN ? e : p; }
+  var NAVY = '#1f3b73', RED = 'hsl(348 94% 47%)', DK = '#334155', MID = '#94a3b8', NEU = '#cbd5e1', GR = '#64748b';
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent){ var n = document.createElementNS(SVGNS, tag); for (var k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; }
+  function txt(t, attrs, parent){ var n = el('text', attrs, parent); n.textContent = t; return n; }
+  function press(group, btn){ each(group.querySelectorAll('button'), function(b){ b.setAttribute('aria-pressed', b === btn); }); }
+  function mqm(){ return window.matchMedia('(max-width:600px)').matches; }
+  function q(t, who, cls){ return '<div class="qt' + (cls ? ' ' + cls : '') + '"><q>' + t + '</q><span>' + who + '</span></div>'; }
+  function seg(id, names, fn, start){
+    var s = $(id); start = start || 0;
+    s.innerHTML = names.map(function(n, i){ return '<button data-i="' + i + '" aria-pressed="' + (i === start) + '">' + n + '</button>'; }).join('');
+    each(s.children, function(b){ b.addEventListener('click', function(){ press(s, b); fn(+b.dataset.i); }); });
+    fn(start);
+  }
+  function nf(n){ return n.toLocaleString(EN ? 'en-US' : 'pt-BR'); }
+  var NOCODE = L('trecho citado sem código na tese (Tabela 31)', 'excerpt quoted without a code in the thesis (Table 31)');
+
+  /* ================= DADOS DA TESE ================= */
+  // Tabela 18 e Figuras 4 a 13: códigos teóricos e categorias (nomes da seção de cada código).
+  var TCS = [
+    {k:'1', n:L('Aprender na equipe e com o cliente', 'Organizational Learning Across Teams and Client Partnerships'), s:L('Aprender', 'Learning'),
+      cats:[['CT.1', L('Aprender em equipe', 'Team-Based Learning')], ['CT.2', L('Aprender do e com o cliente', 'Learning from and with the Client')]],
+      d:L('O time aprende errando, experimentando e resolvendo problemas, e aprende com o cliente quando entende o negócio dele. Ouvir o cliente não é o mesmo que aprender com ele.', 'The team learns by making mistakes, experimenting and solving problems, and learns with the client by understanding their business. Listening to clients is not the same as learning from them.'),
+      q:[L('Para mim, é o jeito mais fácil e eficaz: expor a pessoa à situação e permitir que ela tenha uma curva de aprendizagem mais rápida para o que a gente precisa.', 'For me, it is the easiest and most effective way to expose the person to the situation and enable them to have a faster learning curve for what we need.'), 'P3']},
+    {k:'2', n:L('Relações colaborativas e confiança para cocriar', 'Building Collaborative Relationships and Trust for Co-creation'), s:L('Confiança', 'Trust'),
+      cats:[['CT.5', L('Usar as relações para cocriar', 'Leveraging Relationships for Effective Co-creation')], ['CT.23', L('Construir confiança nas relações', 'Building Trust in Collaborative Relationships')]],
+      d:L('Manter parcerias, criar novas conexões e abrir mais pontos de contato. A confiança se constrói com transparência, vulnerabilidade e compromisso (tela 8).', 'Keeping partnerships, making new connections and opening more points of contact. Trust is built through transparency, vulnerability and commitment (screen 8).'),
+      q:[L('O trabalho de construir relacionamentos nunca termina, porque, enquanto o produto estiver vivo, sempre vai ter mais a fazer e novas oportunidades a explorar.', 'The work of building relationships never ends, because as long as the product remains alive, there will always be more to do and new opportunities to explore.'), NOCODE]},
+    {k:'3', n:L('Os desafios da cocriação', 'Navigating the Challenges of Value Co-creation'), s:L('Desafios', 'Challenges'),
+      cats:[['CT.3', L('Desafios de dentro da empresa', 'Internal Challenges to Co-creation')], ['CT.4', L('Desafios que vêm do cliente', 'Client-Driven Challenges in Co-creation')]],
+      d:L('Por dentro: retorno que demora, escalar × personalizar, controle e receitas prontas. Do lado do cliente: interesse só no resultado, pouca confiança e pouca troca de informação.', 'Inside: slow feedback, scaling versus customizing, control and ready-made recipes. On the client side: interest only in results, little trust and little sharing of information.'),
+      q:[L('É raro um cliente nos passar métricas de forma objetiva. Por exemplo: "minha taxa de cancelamento caiu de 3,8 para 2,7". Esse tipo de informação eles não compartilham.', 'it is rare for a client to actually provide metrics in an objective way. For example, “My churn rate dropped from 3.8 to 2.7.” They don’t share that kind of information.'), 'P7']},
+    {k:'4', n:L('Entender o cliente, experimentar e cocriar', 'Integrating Client Understanding, Experimentation, and Active Value Co-creation'), s:L('Cocriar', 'Co-creation'),
+      cats:[['CT.6', L('Definir e moldar o valor junto', 'Co-Defining and Shaping Value')], ['CT.9', L('Comunicar e escalar o valor', 'Communicating and Scaling Value')], ['CT.11', L('Ciclos de retorno para melhorar sempre', 'Creating Feedback Loops for Continuous Improvement')], ['CT.22', L('Ter empatia com o cliente', 'Empathizing with Clients to Drive Value Creation'), 1], ['CT.24', L('Criar valor experimentando', 'Driving Value Creation Through Experimentation'), 1]],
+      d:L('A cocriação lembra o design thinking: entender o problema com empatia, prototipar, testar e ouvir de novo. A tese liga cada categoria a uma etapa.', 'Co-creation resembles design thinking: understanding the problem with empathy, prototyping, testing and listening again. The thesis maps each category to a step.'),
+      q:[L('Claro que é importante ter hipóteses, mas validar essas hipóteses é absolutamente fundamental para garantir que, no fim do processo, a gente construa algo realmente relevante.', 'Of course, it is important to have hypotheses, but validating those hypotheses is absolutely fundamental to ensure that, by the end of the process, we build something truly relevant'), 'P8']},
+    {k:'5', n:L('O que habilita a inovação', 'Enabling Innovation: Leadership, Culture, and Empowerment'), s:L('Habilitar', 'Enabling'),
+      cats:[['CT.15', L('Práticas de liderança', 'Leadership Practices for Driving Innovation')], ['CT.18', L('A cultura como catalisador', 'Organizational Culture as a Catalyst for Innovation')], ['CT.19', L('A dinâmica do time', 'Team Dynamics as a Driver of Innovation')], ['CT.20', L('Estruturas: limites e oportunidades', 'Organizational Structures: Balancing Constraints and Opportunities')], ['CT.21', L('Dar autonomia às pessoas', 'Empowering Individuals for Innovation Success')]],
+      d:L('Liderança que dá incentivos, tolera o erro honesto e explica a visão; cultura de valores; times com autonomia e diversidade; estruturas que ligam áreas.', 'Leadership that offers incentives, tolerates honest mistakes and shares the vision; a values-based culture; autonomous, diverse teams; structures that connect departments.'),
+      q:[L('Eu comparo assim: uma empresa grande é como um Titanic, um navio enorme, e uma startup é como um jet ski. A gente faz manobras muito mais rápidas. Mas a empresa grande tem mais dinheiro e mais gente para levar os experimentos adiante.', 'a large company is like a Titanic, a massive cruise ship, whereas a startup is like a jet ski. In other words, we can make much quicker maneuvers […] However, the larger company has more financial resources and people to bring these experiments to fruition.'), 'P12']},
+    {k:'6', n:L('Adaptar-se e superar barreiras', 'Adapting, Resolving, and Overcoming Barriers to Innovation'), s:L('Resiliência', 'Resilience'),
+      cats:[['CT.22', L('Adaptar-se para inovar sempre', 'Adapting for Sustained Innovation'), 1], ['CT.24', L('Superar limites de estrutura e recursos', 'Overcoming Structural and Resource Constraints'), 1], ['CT.25', L('Conflitos resolvidos pela liderança', 'Managing Conflicts Through Leadership')]],
+      d:L('Perder o cliente de vista, resistência à mudança, falta de tempo e de gente. Na teoria, esse código vira a resiliência da organização.', 'Losing sight of the client, resistance to change, lack of time and people. In the theory, this code becomes organizational resilience.'),
+      q:[L('Sempre tentamos fazer o cliente migrar para a versão nova, mas nem sempre é o que ele quer. Na verdade, nunca quer.', 'We always try to get them to migrate to this new version, but it’s not always what they want. In fact, they never want to.'), 'P5']},
+    {k:'7', n:L('Construir a inovação de serviços digitais', 'Building Digital Service Innovation: From Inputs to Tools and Sustainability'), s:L('Construir', 'Building'),
+      cats:[['CT.7', L('De onde vêm as ideias', 'Identifying Innovation Inputs')], ['CT.10', L('Equilibrar inovar e manter', 'Balancing Innovation and Sustainability')], ['CT.17', L('Ferramentas e rituais', 'Tools and Practices for Organizational Innovation')]],
+      d:L('Ideias que nascem de lacunas do mercado, de dores do cliente ou da reflexão do time; o equilíbrio entre o novo e o que já existe; rituais que dão lugar ao novo. É este código que dá nome à teoria.', 'Ideas born from market gaps, client pain points or the team’s reflection; the balance between the new and what already exists; rituals that make room for the new. This code gives the theory its name.'),
+      q:[L('Se não fizermos isso, a rotina nos consome. Se não tivermos esses momentos e rituais para focar em coisas novas, a gente não cresce.', 'If we don’t do this, the routine consumes us. If we don’t have these moments and rituals where we take some time to focus on new things, we don’t grow.'), 'P7']},
+    {k:'8', n:L('O foco: tecnologia, problema e produto', 'Innovation Focus: Technology, Problems, and Product Strategies'), s:L('Foco', 'Focus'),
+      cats:[['CT.12', L('Foco na tecnologia', 'Focusing on the Technology')], ['CT.13', L('Foco no problema', 'Focusing on the Problem')], ['CT.14', L('Foco no produto', 'Focusing on the Product')]],
+      d:L('Três lentes para inovar. A tese defende começar pelo problema e integrar as três (tela 10).', 'Three lenses for innovating. The thesis argues for starting from the problem and integrating all three (screen 10).'),
+      q:[L('O processo de construir produtos precisa estar muito ligado à realidade e às dores do dia a dia, não só ao que a gente acredita ser a dor.', 'the process of building and developing products needs to be closely connected to reality and the daily pains, not just what we believe to be the pain.'), 'P8']},
+    {k:'9', n:L('Pôr a inovação em prática', 'Implementing Service Innovation: Execution and Impact'), s:L('Implementar', 'Implementing'),
+      cats:[['CT.8', L('Executar a inovação', 'Executing Innovation')], ['CT.16', L('Inovar para competir e servir o cliente', 'Defining Innovation for Competitive and Customer-Centric Goals')]],
+      d:L('Foco, escala, sistemas antigos e dinheiro na hora de executar; e o porquê de inovar: vantagem competitiva, eficiência e uma experiência melhor para o cliente.', 'Focus, scale, legacy systems and funding at execution time; and the why of innovating: competitive advantage, efficiency and a better client experience.'),
+      q:[L('A velocidade de uma startup vem de o time estar focado num problema só. Numa software house, a gente tem vários projetos ao mesmo tempo.', 'The speed of a startup’s development comes from the team being focused on just one problem. In a software house, we have multiple projects happening at the same time.'), 'P9']}
+  ];
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 380, 300, {ay:'66%', rx:'58deg'});
+    rotatable(sc, st, -20, 10);
+    var cx = 190, cy = 150, R = 118;
+    var core = box({w:78, d:78, h:120, x:cx - 39, y:cy - 39, c:RED, top:'★'});
+    st.appendChild(core);
+    var ring = TCS.filter(function(t){ return t.k !== '7'; });
+    var bs = ring.map(function(t, i){
+      var a = -Math.PI / 2 + i * 2 * Math.PI / ring.length;
+      var b = box({w:50, d:50, h:t.cats.length * 16, x:cx + R * Math.cos(a) - 25, y:cy + R * Math.sin(a) - 25, c:NAVY, top:t.k});
+      st.appendChild(b); return b;
+    });
+    var cap = $('hero-cap'), last = -1;
+    function show(i){
+      bs.forEach(function(b, j){ b.style.setProperty('--oz', j === i ? '18px' : '0px'); b.style.setProperty('--c', j === i ? DK : NAVY); });
+      cap.innerHTML = '<span><b style="color:var(--ink)">' + ring[i].k + '.</b> ' + ring[i].n + L(' · alimenta a categoria central ', ' · feeds the core category ') + '<b style="color:var(--cli)">★ ' + L('construir a inovação de serviços digitais', 'building digital service innovation') + '</b></span>';
+    }
+    show(0);
+    if (!reduce) M.onTick(function(t){ if (t < 0) return; var i = Math.floor(t / 2.6) % ring.length; if (i !== last){ last = i; show(i); } });
+  })();
+
+  /* ================= 02 · TRÊS IDEIAS ================= */
+  (function(){
+    var I = [
+      {n:L('Inovação em serviços', 'Service innovation'), f:L('Inovar', 'Innovate'), c:NAVY, d:L('Um serviço ou processo novo que a organização põe em prática e que cria valor com ou para alguém (Helkkula e colegas; Witell e colegas). Num serviço digital, o cliente acessa o valor em vez de possuir algo, como numa assinatura.', 'A new service or process that an organization puts into practice and that creates value with or for someone (Helkkula et al.; Witell et al.). In a digital service, the client accesses value rather than owning something, as in a subscription.')},
+      {n:L('Aprendizagem organizacional', 'Organizational learning'), f:L('Aprender', 'Learn'), c:DK, d:L('O movimento contínuo de rever significados e criar uma nova ordem entre mudança e continuidade (Takahashi). Os times de desenvolvimento são vistos como o lugar onde o conhecimento de cada um se junta.', 'The continuous movement of reassessing meaning and establishing a new order from change and continuity (Takahashi). Development teams are seen as the place where individual knowledge comes together.')},
+      {n:L('Cocriação de valor', 'Value co-creation'), f:L('Cocriar', 'Co-create'), c:RED, d:L('Uma empreitada conjunta de fornecedor e cliente, desde a proposta de valor até a entrega (Prahalad e Ramaswamy). No serviço, quem decide o valor é a experiência do cliente.', 'A joint venture between provider and client, from the value proposition to delivery (Prahalad and Ramaswamy). In a service, value is decided by the client’s experience.')}
+    ];
+    var sc = $('id-scene'), st = makeStage(sc, 400, 170, {ay:'66%', rx:'58deg'});
+    rotatable(sc, st, -14, 8);
+    var base = box({w:380, d:110, h:8, x:10, y:30, c:NEU}); st.appendChild(base);
+    var bs = I.map(function(t, i){ var b = box({w:96, d:80, h:70, x:12 + i * 140, y:45, z:8, c:t.c, label:t.f, top:'' + (i + 1)}); b.dataset.i = i; st.appendChild(b); return b; });
+    var joined = false;
+    function layout(){ bs.forEach(function(b, i){ b.style.left = (joined ? 52 + i * 100 : 12 + i * 140) + 'px'; }); base.style.setProperty('--c', joined ? RED : NEU); }
+    $('id-join').addEventListener('click', function(){
+      joined = !joined; layout();
+      this.textContent = joined ? L('Separar de novo', 'Pull apart again') : L('Juntar as três', 'Bring the three together');
+      if (joined) $('id-panel').innerHTML = '<div class="tag">' + L('Juntas', 'Together') + '</div><p>' + L('É aqui que a tese se coloca: estudar como as equipes de software <b>aprendem</b> e <b>cocriam valor</b> enquanto <b>inovam</b> em serviços digitais. A lente é a aprendizagem organizacional. A pergunta: como essas equipes vivem a aprendizagem e a cocriação de valor quando inovam?', 'This is where the thesis stands: studying how software teams <b>learn</b> and <b>co-create value</b> while they <b>innovate</b> in digital services. The lens is organizational learning. The question: how do these teams experience learning and value co-creation when they innovate?') + '</p>';
+    });
+    var list = $('id-list');
+    list.innerHTML = I.map(function(t, i){ return '<button data-i="' + i + '" aria-pressed="false">' + t.n + '</button>'; }).join('');
+    function pick(i){
+      bs.forEach(function(b, j){ b.classList.toggle('active', j === i); b.style.setProperty('--oz', j === i ? '16px' : '0px'); });
+      each(list.children, function(b){ b.setAttribute('aria-pressed', +b.dataset.i === i); });
+      $('id-panel').innerHTML = '<div class="tag">' + L('Ideia ', 'Idea ') + (i + 1) + L(' de 3', ' of 3') + '</div><h3>' + I[i].n + '</h3><p>' + I[i].d + '</p>';
+    }
+    each(list.children, function(b){ b.addEventListener('click', function(){ pick(+b.dataset.i); }); });
+    st.addEventListener('click', function(e){ if (M.wasDrag(sc)) return; var s = e.target.closest('.slab'); if (s && s.dataset.i) pick(+s.dataset.i); });
+    pick(0);
+  })();
+
+  /* ================= 03 · QUEM FALOU ================= */
+  (function(){
+    // Tabelas 8 e 9 (contagens nossas). Cada recorte: grupos [rótulo, nº de pessoas].
+    var R = [
+      {n:L('Tipo de empresa', 'Company type'), g:[[L('tradicional', 'traditional'), 5, NAVY], [L('software house', 'software house'), 3, DK], ['startup', 3, RED], [L('startup e tradicional', 'startup and traditional'), 1, '#8aa0cc']],
+        p:L('<b>Tradicionais</b> (2 empresas, 5 pessoas) fazem produtos para mercados já formados e buscam escala. <b>Software houses</b> (3 empresas, 3 pessoas) fazem sistemas sob encomenda, por projeto. <b>Startups</b> (3 empresas, 3 pessoas) são novas e buscam resolver uma dor do cliente, com risco alto. Uma pessoa trabalha numa empresa que é as duas coisas.', '<b>Traditional companies</b> (2 companies, 5 people) build products for established markets and seek scale. <b>Software houses</b> (3 companies, 3 people) build custom systems, project by project. <b>Startups</b> (3 companies, 3 people) are new and aim to solve a client pain point, at high risk. One person works at a company that is both.')},
+      {n:L('Empresa', 'Company'), g:[['1', 4, NAVY], ['2', 1, DK], ['3', 1, DK], ['4', 1, NAVY], ['5', 1, RED], ['6', 1, DK], ['7', 1, RED], ['8', 1, RED], ['9', 1, '#8aa0cc']],
+        p:L('<b>9 empresas</b>, numeradas como na tese. Na empresa 1 foram ouvidas 4 pessoas, do mesmo time e de times vizinhos; nas outras, uma pessoa por empresa. A cor é o tipo de empresa.', '<b>9 companies</b>, numbered as in the thesis. At company 1, 4 people were interviewed, from the same team and neighbouring teams; at the others, one person per company. The colour is the company type.')},
+      {n:L('Região', 'Region'), g:[[L('Sul', 'South'), 5, NAVY], [L('Norte', 'North'), 4, DK], [L('Sudeste', 'Southeast'), 3, RED]],
+        p:L('Todas as pessoas estão no Brasil: <b>5 no Sul</b>, <b>4 no Norte</b> e <b>3 no Sudeste</b>.', 'Everyone is in Brazil: <b>5 in the South</b>, <b>4 in the North</b> and <b>3 in the Southeast</b>.')},
+      {n:L('Como foi agendada', 'How it was booked'), g:[[L('contato direto', 'direct contact'), 6, DK], [L('agenda on-line', 'online calendar'), 6, RED]],
+        p:L('As <b>6 primeiras</b> entrevistas, marcadas por WhatsApp ou e-mail, levaram meses. Depois, quem já tinha participado passou a indicar colegas, e os convidados escolhiam o horário numa agenda on-line (Calendly): as <b>6 últimas</b> saíram em menos de duas semanas.', 'The <b>first 6</b> interviews, arranged by WhatsApp or email, took months. Then earlier participants began referring colleagues, and invitees picked a slot on an online calendar (Calendly): the <b>last 6</b> happened in under two weeks.')}
+    ];
+    var sc = $('pe-scene'), st = makeStage(sc, 440, 160, {ay:'70%', rx:'58deg'});
+    rotatable(sc, st, -16, 8);
+    var cubes = [];
+    for (var k = 0; k < 12; k++){ var b = box({w:30, d:30, h:26, x:0, y:60, c:NAVY}); st.appendChild(b); cubes.push(b); }
+    var labs = [];
+    function draw(r){
+      labs.forEach(function(l){ l.remove(); }); labs = [];
+      var g = R[r].g, n = g.length, step = 440 / n, k = 0;
+      g.forEach(function(gr, j){
+        var x = j * step + step / 2 - 15;
+        for (var m = 0; m < gr[1]; m++){
+          var c = cubes[k++]; c.style.left = x + 'px'; c.style.top = '60px'; c.style.setProperty('--z', (m * 28) + 'px'); c.style.setProperty('--c', gr[2]);
+        }
+        labs.push(flatLabel(st, gr[0] + (n > 4 ? '' : ' · ' + gr[1]), j * step, 104 + (n > 4 ? 0 : (j % 2) * 18), step));
+      });
+      $('pe-panel').innerHTML = '<div class="tag">' + R[r].n + '</div><p>' + R[r].p + '</p>';
+    }
+    seg('pe-seg', R.map(function(r){ return r.n; }), draw);
+  })();
+
+  /* ================= 04 · CODIFICAÇÃO ================= */
+  (function(){
+    var S = [
+      {v:708, l:L('trechos', 'excerpts'), d:L('<b>Trechos marcados.</b> As 12 entrevistas foram transcritas pelo próprio autor e lidas linha por linha: 708 trechos receberam algum código.', '<b>Tagged excerpts.</b> The 12 interviews were transcribed by the author himself and read line by line: 708 excerpts received a code.'), ex:L('“Se você não topar se mostrar, ser vulnerável e correr um certo risco nessa relação, ela nunca vai ser tão fértil quanto poderia em termos de criação. Se você se fecha para toda a dor e só apresenta ao cliente um mundo perfeito, ele vai ter pouco a contribuir.” <span style="color:var(--muted)">P7</span>', '“If you are not willing to show yourself, be vulnerable, and take a certain risk in this relationship, it will never be as fruitful as it could be in terms of creation. If you close yourself off to all the pain and only present a perfect world to the client, they will have little to contribute.” <span style="color:var(--muted)">P7</span>')},
+      {v:220, l:L('iniciais', 'initial'), d:L('<b>Códigos iniciais.</b> Nomes curtos, perto das palavras de quem falou. Depois das 6 primeiras entrevistas eram 143, enxugados para 99; no fim, 220.', '<b>Initial codes.</b> Short names, close to the speakers’ own words. After the first 6 interviews there were 143, trimmed to 99; in the end, 220.'), ex:L('Código 20 · <b>Transformar vulnerabilidade em confiança</b>', 'Code 20 · <b>Transforming Vulnerability into Trust</b>')},
+      {v:91, l:L('focados', 'focused'), d:L('<b>Códigos focados.</b> Os códigos iniciais mais fortes, juntados por semelhança. Aqui a análise passa da amplitude para os padrões.', '<b>Focused codes.</b> The strongest initial codes, merged by similarity. Here the analysis moves from breadth to patterns.'), ex:L('Código focado 12 · <b>Transformar vulnerabilidade em confiança</b>', 'Focused code 12 · <b>Transforming Vulnerability into Trust</b>')},
+      {v:25, l:L('categorias', 'categories'), d:L('<b>Categorias.</b> Ideias mais abstratas, que explicam grandes partes dos dados. Cada uma reúne de 1 a 8 códigos focados.', '<b>Categories.</b> More abstract ideas that explain large parts of the data. Each groups 1 to 8 focused codes.'), ex:L('Categoria 23 · <b>Construir confiança nas relações colaborativas</b>', 'Category 23 · <b>Building Trust in Collaborative Relationships</b>')},
+      {v:9, l:L('teóricos', 'theoretical'), d:L('<b>Códigos teóricos.</b> As relações entre as categorias, comparadas com a literatura (tela 6).', '<b>Theoretical codes.</b> The relationships between categories, compared with the literature (screen 6).'), ex:L('Código teórico 2 · <b>Relações colaborativas e confiança para cocriar</b>', 'Theoretical code 2 · <b>Building Collaborative Relationships and Trust for Co-creation</b>')},
+      {v:1, l:L('central', 'core'), d:L('<b>Categoria central.</b> O processo que amarra tudo: construir a inovação de serviços digitais (tela 11).', '<b>Core category.</b> The process that ties everything together: building digital service innovation (screen 11).'), ex:L('<b>Construir a inovação de serviços digitais</b>, com a confiança como uma das bases da cocriação', '<b>Building Digital Service Innovation</b>, with trust as one of the bases of co-creation')}
+    ];
+    var sc = $('cd-scene'), st = makeStage(sc, 330, 330, {ay:'62%', rx:'58deg'});
+    rotatable(sc, st, -30, 10);
+    var max = Math.sqrt(708), W = 280;
+    var bs = S.map(function(s, i){
+      var w = Math.max(30, Math.sqrt(s.v) / max * W);
+      var b = box({w:w, d:w, h:22, x:(330 - w) / 2, y:(330 - w) / 2, z:i * 38, c:i === 5 ? RED : ramp(NAVY, i, 6), label:w > 110 ? nf(s.v) : '', top:w <= 110 ? nf(s.v) : ''});
+      st.appendChild(b); return b;
+    });
+    var steps = $('cd-steps');
+    steps.innerHTML = S.map(function(s, i){ return '<button data-i="' + i + '" aria-pressed="' + (i === 0) + '"><b>' + nf(s.v) + '</b>' + s.l + '</button>'; }).join('');
+    function pick(i){
+      bs.forEach(function(b, j){ b.style.setProperty('--oz', j === i ? '12px' : '0px'); b.classList.toggle('active', j === i); b.classList.toggle('dim', j > i); });
+      $('cd-panel').innerHTML = '<div class="tag">' + L('Degrau ', 'Step ') + (i + 1) + L(' de 6', ' of 6') + '</div><p>' + S[i].d + '</p><div class="trace">' + L('A fala de exemplo, neste degrau: ', 'The example quote, at this step: ') + S[i].ex + '</div>';
+    }
+    each(steps.children, function(b){ b.addEventListener('click', function(){ press(steps, b); pick(+b.dataset.i); }); });
+    pick(0);
+  })();
+
+  /* ================= 05 · TEMAS ================= */
+  (function(){
+    // c: 0 equipe/empresa, 1 cliente/problema (agrupamento nosso)
+    var FOC = [[L('Entender o negócio', 'Understanding the Business'), 25, 1], [L('Dar autonomia ao time', 'Empowering the Team'), 23, 0], [L('Integrar times (diversidade e inclusão)', 'Integrating Teams (Diversity and Inclusion)'), 23, 0], [L('Combinar conhecimentos', 'Combining Knowledge'), 22, 0], [L('Agir como terapeuta da empresa', 'Acting as an Organizational Therapist'), 20, 1], [L('Manter o foco na complexidade', 'Maintaining Focus Amid Complexity'), 17, 0], [L('Usar práticas ágeis', 'Adopting Agile Practices'), 17, 0], [L('Equilibrar inovar e manter', 'Balancing Innovation and Sustenance'), 17, 0], [L('Achar o encaixe produto-mercado', 'Finding Product-Market Fit'), 16, 1], [L('Perder o cliente de vista', 'Losing Sight of the Customer'), 16, 1], [L('Ferramentas, não soluções', 'Developing Tools, Not Solutions'), 15, 0], [L('Participar da definição de valor', 'Participating in Value Definition'), 15, 1]];
+    var INI = [[L('Dar autonomia ao time', 'Empowering the team'), 20, 0], [L('Integrar times (diversidade e inclusão)', 'Integrating teams (Diversity and Inclusion)'), 17, 0], [L('Entender problemas reais', 'Understanding real problems'), 16, 1], [L('Entender a visão do negócio', 'Understanding the business vision'), 14, 1], [L('Atender cada um sem escalar', 'Addressing individual needs without scaling'), 13, 1], [L('Equilibrar inovar e manter (ágil)', 'Balancing Innovation and Sustainability (Agile)'), 13, 0], [L('Superar a dívida técnica', 'Overcoming technical debt'), 13, 0], [L('Buscar conhecimento de fora', 'Seeking external knowledge'), 11, 0], [L('Atirar para todo lado (falta de foco)', 'Shooting in all directions (lack of focus)'), 11, 0], [L('Inovar aos poucos', 'Innovating incrementally'), 11, 0], [L('Traduzir a demanda', 'Translating the demand'), 10, 1], [L('Acomodar mudanças', 'Accommodating changes'), 10, 0]];
+    var box2 = $('tm-bars');
+    function draw(i){
+      var D = i ? INI : FOC;
+      box2.innerHTML = D.map(function(r){ return '<div class="bar"><span>' + r[0] + '</span><div class="tr"><i style="--bc:' + (r[2] ? RED : NAVY) + '" data-w="' + (r[1] / 25 * 100) + '"></i></div><b>' + r[1] + '</b></div>'; }).join('');
+      setTimeout(function(){ each(box2.querySelectorAll('i'), function(x){ x.style.width = x.dataset.w + '%'; }); }, 30);
+    }
+    seg('tm-seg', [L('Códigos focados (91)', 'Focused codes (91)'), L('Códigos iniciais (220)', 'Initial codes (220)')], draw);
+  })();
+
+  /* ================= 06 · NOVE CÓDIGOS ================= */
+  (function(){
+    var sc = $('tc-scene'), st = makeStage(sc, 330, 330, {ay:'54%', rx:'52deg'});
+    rotatable(sc, st, -24, 8);
+    var bs = TCS.map(function(t, i){
+      var b = box({w:66, d:66, h:t.cats.length * 15, x:17 + (i % 3) * 112, y:17 + Math.floor(i / 3) * 112, c:t.k === '7' ? RED : NAVY, top:t.k});
+      b.dataset.i = i; st.appendChild(b); return b;
+    });
+    var list = $('tc-list');
+    list.innerHTML = TCS.map(function(t, i){ return '<button data-i="' + i + '" aria-pressed="false">' + t.k + '. ' + t.s + '</button>'; }).join('');
+    function pick(i){
+      var t = TCS[i];
+      bs.forEach(function(b, j){ b.classList.toggle('active', j === i); b.style.setProperty('--oz', j === i ? '16px' : '0px'); });
+      each(list.children, function(b){ b.setAttribute('aria-pressed', +b.dataset.i === i); });
+      $('tc-panel').innerHTML = '<div class="tag">' + L('Código teórico ', 'Theoretical code ') + t.k + ' · ' + t.cats.length + L(' categorias', ' categories') + '</div><h3>' + t.n + '</h3><ul class="cats">' + t.cats.map(function(c){ return '<li' + (c[2] ? ' class="dup"' : '') + '><small>' + c[0] + '</small>' + c[1] + '</li>'; }).join('') + '</ul><p>' + t.d + '</p>' + q(t.q[0], t.q[1], 'b');
+    }
+    each(list.children, function(b){ b.addEventListener('click', function(){ pick(+b.dataset.i); }); });
+    st.addEventListener('click', function(e){ if (M.wasDrag(sc)) return; var s = e.target.closest('.slab'); if (s && s.dataset.i) pick(+s.dataset.i); });
+    pick(0);
+  })();
+
+  /* ================= 07 · APRENDER ================= */
+  (function(){
+    var A = [
+      {n:L('Dentro do time', 'Within the team'), p:L('Três jeitos de aprender aparecem nas falas: <b>com os erros</b>, <b>com experimentos</b> e <b>resolvendo problemas</b>, além de combinar o conhecimento de cada um. Mas há um risco: quem entra aprende atendendo chamados de clientes e passa a ver a solução pelo lado do software, quase nunca pelo do negócio.', 'Three ways of learning come up in the interviews: <b>from mistakes</b>, <b>through experiments</b> and <b>by solving problems</b>, plus combining everyone’s knowledge. But there is a risk: newcomers learn by handling client tickets and come to see the solution from the software side, rarely from the business side.'),
+        qs:[[L('Quando alguém entra, temos material para pelo menos três semanas, para conhecer a empresa, como trabalhamos e nossos rituais. Depois, introduzimos problemas aos poucos, do menos para o mais complexo: é basicamente aprendizagem orientada por problemas.', 'When someone first joins, we have material for at least three weeks to help them get acclimated, understand the company, how we work, and our rituals […] After that, we gradually introduce problems, starting from lower complexity to higher complexity, and this is essentially problem-oriented learning.'), 'P3']]},
+      {n:L('Com o cliente', 'With the client'), p:L('A quarta fonte é o cliente: entender o negócio dele, aprender junto e trazer esse conhecimento para dentro. Para a tese, isso pede <b>capacidade de absorção</b> (Cohen e Levinthal): só aprende com o cliente quem já sabe o bastante para reconhecer o valor do que ouve.', 'The fourth source is the client: understanding their business, learning together and bringing that knowledge inside. For the thesis, this requires <b>absorptive capacity</b> (Cohen and Levinthal): only those who already know enough to recognize the value of what they hear can learn from the client.'),
+        qs:[[L('Acredito que os desenvolvedores trabalham muito melhor quando entendem o valor que o software entrega ao cliente.', 'I believe developers perform much better when they understand the value their software delivers to the client.'), 'P2']]}
+    ];
+    seg('ap-seg', A.map(function(a){ return a.n; }), function(i){
+      $('ap-panel').innerHTML = '<div class="tag">' + A[i].n + '</div><p>' + A[i].p + '</p><div class="quotes">' + A[i].qs.map(function(x){ return q(x[0], x[1], 'b'); }).join('') + '</div>';
+    });
+    var svg = $('fb-svg'), X0 = 40, X1 = 530;
+    function xm(m){ return X0 + m / 36 * (X1 - X0); }
+    el('line', {x1:X0, y1:170, x2:X1, y2:170, stroke:DK, 'stroke-width':2}, svg);
+    [0, 12, 24, 36].forEach(function(m){ el('line', {x1:xm(m), y1:164, x2:xm(m), y2:176, stroke:DK, 'stroke-width':1.5}, svg); });
+    txt(L('entrega', 'release'), {x:X0, y:200, 'text-anchor':'start', 'font-size':15, fill:GR}, svg);
+    // time de 8 pessoas (pontos) acima da entrega
+    var team = [];
+    for (var k = 0; k < 8; k++) team.push(el('circle', {cx:X0 + 12 + (k % 4) * 24, cy:96 + Math.floor(k / 4) * 24, r:9, style:'fill:' + NAVY}, svg));
+    txt(L('o time que fez', 'the team who built it'), {x:X0, y:66, 'font-size':14, fill:GR}, svg);
+    var arrow = el('line', {x1:X0, y1:140, x2:X0, y2:140, stroke:RED, 'stroke-width':3, 'stroke-dasharray':'6 5'}, svg);
+    var cli = el('circle', {cx:X0, cy:140, r:11, style:'fill:' + RED}, svg);
+    var lab = txt('', {x:X0, y:232, 'text-anchor':'middle', 'font-size':15, 'font-weight':700, style:'fill:' + RED}, svg);
+    var order = [6, 2, 7, 0, 4, 1, 5, 3];
+    var Q = [
+      [L('Fizemos uma pesquisa com os clientes para saber que versão usam. Descobrimos que clientes mais novos estão vendo agora um trabalho que foi concluído dois anos atrás.', 'a project we undertook this year to provide insight to the engineering group involved surveying clients and identifying which version they are using. As a result, we discovered that newer clients are currently seeing work that was completed two years ago.'), 'P1'],
+      [L('Quando o retorno chega dois ou três anos depois, as pessoas muitas vezes já mudaram de área ou até de empresa, e o conhecimento se perde.', 'When receiving feedback 2 or 3 years later, people have often already changed departments or even companies, and as a result, the knowledge is lost.'), 'P1'],
+      [L('Ainda não temos ferramentas para medir o nível de serviço e a satisfação que o cliente alcançou ao usar a ferramenta.', 'We still don’t have tools here to measure the level of service and satisfaction that the client achieved during their interaction using the tool.'), 'P12']
+    ];
+    function set(m){
+      var x = xm(m);
+      arrow.setAttribute('x2', x); cli.setAttribute('cx', x);
+      lab.setAttribute('x', Math.min(Math.max(x, 70), 500));
+      lab.textContent = m === 0 ? L('retorno na hora', 'feedback right away') : (m < 12 ? m + L(m === 1 ? ' mês depois' : ' meses depois', m === 1 ? ' month later' : ' months later') : (Math.round(m / 12 * 10) / 10).toLocaleString(EN ? 'en-US' : 'pt-BR') + L(' anos depois', ' years later'));
+      var gone = Math.round(Math.max(0, m - 6) / 30 * 6);
+      team.forEach(function(c, k){ c.style.opacity = order.indexOf(k) < gone ? .15 : 1; });
+      $('fb-q').innerHTML = m >= 18 ? q(Q[0][0], Q[0][1]) + q(Q[1][0], Q[1][1]) : (m <= 2 ? q(L('O retorno rápido é o que a tese recomenda: ciclos curtos, transparentes, que cheguem a quem desenvolve.', 'Fast feedback is what the thesis recommends: short, transparent cycles that reach the developers.'), L('leitura da tese (proposição 5)', 'the thesis’s reading (proposition 5)'), 'b') : q(Q[2][0], Q[2][1]));
+    }
+    var r = $('fb-range'); r.addEventListener('input', function(){ set(+r.value); }); set(+r.value);
+  })();
+
+  /* ================= 08 · VULNERABILIDADE ================= */
+  (function(){
+    var P = [
+      {n:L('Transparência', 'Transparency'), c:NAVY, d:L('Abrir os desafios e os resultados dos testes, mas com equilíbrio: proteger o que é sensível ou estratégico para não criar mal-entendidos.', 'Opening up challenges and test results, but with balance: protecting what is sensitive or strategic to avoid misunderstandings.')},
+      {n:L('Vulnerabilidade', 'Vulnerability'), c:RED, d:L('Admitir limites e incertezas e mostrar o trabalho "do meio do caminho". É o mecanismo que a tese acrescenta: a literatura dizia que a confiança importa, mas não como se constrói.', 'Admitting limits and uncertainties and showing work from the "messy middle". This is the mechanism the thesis adds: the literature said trust matters, but not how it is built.')},
+      {n:L('Compromisso', 'Commitment'), c:DK, d:L('Cumprir o que se combinou e agir sobre o retorno recebido: a vulnerabilidade vem junto com ação. A confiança, dizem os entrevistados, leva tempo e exige vencer a desconfiança inicial.', 'Following through and acting on the feedback received: vulnerability comes paired with action. Trust, interviewees say, takes time and means overcoming initial scepticism.')}
+    ];
+    var sc = $('vu-scene'), st = makeStage(sc, 360, 200, {ay:'70%', rx:'58deg'});
+    rotatable(sc, st, -16, 8);
+    var pil = P.map(function(p, i){ var b = box({w:92, d:70, h:84, x:10 + i * 122, y:60, c:p.c, label:p.n}); b.dataset.i = i; st.appendChild(b); return b; });
+    st.appendChild(box({w:330, d:100, h:14, x:15, y:45, z:84, c:'#8aa0cc', top:L('confiança', 'trust')}));
+    st.appendChild(box({w:150, d:70, h:40, x:105, y:60, z:98, c:RED, top:L('cocriação de valor', 'value co-creation')}));
+    var list = $('vu-list');
+    list.innerHTML = P.map(function(p, i){ return '<button data-i="' + i + '" aria-pressed="false">' + p.n + '</button>'; }).join('');
+    function pick(i){
+      pil.forEach(function(b, j){ b.classList.toggle('active', j === i); });
+      each(list.children, function(b){ b.setAttribute('aria-pressed', +b.dataset.i === i); });
+      $('vu-panel').innerHTML = '<div class="tag">' + L('Pilar da confiança · ', 'Pillar of trust · ') + P[i].n + '</div><p>' + P[i].d + '</p>';
+    }
+    each(list.children, function(b){ b.addEventListener('click', function(){ pick(+b.dataset.i); }); });
+    st.addEventListener('click', function(e){ if (M.wasDrag(sc)) return; var s = e.target.closest('.slab'); if (s && s.dataset.i) pick(+s.dataset.i); });
+    pick(1);
+    var G = [L('Afasta o cliente', 'It pushes the client away'), L('Não muda nada', 'Nothing changes'), L('Aproxima o cliente', 'It brings the client closer')];
+    var gs = $('vu-guess');
+    gs.innerHTML = G.map(function(g, i){ return '<button data-g="' + i + '" aria-pressed="false">' + g + '</button>'; }).join('');
+    each(gs.children, function(b){ b.addEventListener('click', function(){
+      var g = +b.dataset.g; press(gs, b);
+      each(gs.children, function(x){ x.classList.toggle('ok', +x.dataset.g === 2); });
+      $('vu-msg').innerHTML = (g === 2 ? L('<b>É o que a tese encontrou.</b> ', '<b>That is what the thesis found.</b> ') : L('<b>A tese encontrou o contrário do senso comum.</b> ', '<b>The thesis found the opposite of common sense.</b> ')) + L('Nas falas, abrir o "imperfeito" acelerou o retorno e criou um senso de propósito comum. O próprio autor chama isso de achado contraintuitivo.', 'In the interviews, opening up the "imperfect" sped up feedback and built a shared sense of purpose. The author calls it a counterintuitive finding.');
+      $('vu-after').classList.add('on');
+    }); });
+    var K = [
+      {n:L('Só o prato pronto', 'Just the finished dish'), p:L('O fornecedor esconde o processo e só apresenta um "mundo perfeito". O cliente recebe a entrega, mas tem pouco a contribuir.', 'The supplier hides the process and only presents a "perfect world". The client gets the delivery but has little to contribute.'),
+        qq:[L('Se você se fecha para toda a dor e só apresenta ao cliente um mundo perfeito, ele vai ter pouco a contribuir.', 'If you close yourself off to all the pain and only present a perfect world to the client, they will have little to contribute'), 'P7']},
+      {n:L('Na cozinha', 'In the kitchen'), p:L('A metáfora é da tese: é como convidar o cliente para a cozinha, com um lugar à mesa onde as receitas são pensadas, os ingredientes combinados e os sabores novos descobertos.', 'The thesis’s metaphor: inviting customers into the kitchen, with a seat at the table where recipes are conceived and new flavours discovered.'),
+        qq:[L('Se você não topar se mostrar, ser vulnerável e correr um certo risco nessa relação, ela nunca vai ser tão fértil quanto poderia em termos de criação.', 'If you are not willing to show yourself, be vulnerable, and take a certain risk in this relationship, it will never be as fruitful as it could be in terms of creation.'), 'P7']}
+    ];
+    seg('vu-seg', K.map(function(k){ return k.n; }), function(i){
+      $('vu-kit').innerHTML = '<div class="tag">' + L('A metáfora da cozinha · ', 'The kitchen metaphor · ') + K[i].n + '</div><p>' + K[i].p + '</p>' + q(K[i].qq[0], K[i].qq[1], i ? '' : 'b');
+    }, 1);
+  })();
+
+  /* ================= 09 · TEMPO ================= */
+  (function(){
+    var g = $('tp-grid'); g.innerHTML = Array(101).join('<i></i>');
+    var cells = g.children, r = $('tp-range');
+    var S = [
+      {n:L('O relato de hoje', 'The account today'), v:30, p:L('Uma das pessoas ouvidas fez a média do último ano: <b>cerca de 30%</b> do tempo no produto e <b>70%</b> resolvendo problemas de clientes novos e antigos, mais documentação e ajuda ao time.', 'One interviewee averaged out the past year: <b>about 30%</b> of the time on the product and <b>70%</b> solving issues for new and legacy clients, plus documentation and helping the team.'),
+        qs:[[L('Se eu fizer a média do último ano, diria que uns 30% do meu tempo vão para o produto. Uns 70% vão para resolver problemas diversos, com clientes novos ou antigos.', 'If we averaged the past year to assess how much time I could dedicate to the product, I would say about 30% of my time. Around 70% is spent solving various issues, whether with new clients or legacy clients.'), 'P3']]},
+      {n:L('A esperança', 'The hope'), v:51, p:L('A mesma pessoa espera passar de <b>mais de 50%</b> no produto. Para isso, sugere separar quem dá suporte de quem desenvolve o produto. A tese também cita times enxutos, que não têm como fazer essa separação.', 'The same person hopes to reach <b>over 50%</b> on the product. To get there, they suggest separating support from product development. The thesis also cites lean teams that cannot make that split.'),
+        qs:[[L('Espero que este ano a gente transforme esses 30% em mais de 50%.', 'I hope that this year we can turn that 30% into more than 50%.'), 'P3'], [L('Temos um time muito enxuto. Na maior parte do tempo, não dá para ter uma equipe só de manutenção e outra de inovação.', 'We have a very lean team. Most of the time, we can’t have a division between a team dedicated to maintenance and another to innovation'), 'P7']]},
+      {n:L('Os pratos do equilibrista', 'The plate-spinner'), v:30, p:L('A tese usa a ideia de <b>ambidestria</b>: a capacidade de manter o que dá dinheiro hoje e, ao mesmo tempo, investir no novo. Exagerar num lado traz ineficiência; no outro, estagnação.', 'The thesis uses the idea of <b>ambidexterity</b>: the ability to keep what makes money today while investing in the new. Too much of one brings inefficiency; too much of the other, stagnation.'),
+        qs:[[L('A melhor metáfora é a do artista de circo equilibrando pratos. […] Alguém está pagando a conta, gerando receita para investir num novo "bebê" que engatinha, cambaleia e só dá custo.', 'The best metaphor is that of the circus performer balancing plates […] someone is footing the bill — someone is earning revenue and generating money to invest in a new “baby” that is crawling, wobbling, and only incurring costs.'), 'P10'], [L('A certa altura, a gente ficou mais especialista em apagar incêndio do que em prevenir. Prevenir seria ouvir o cliente primeiro.', 'at a certain point in our company, we became more specialized in firefighting than in fire prevention. Preventing the fire would mean listening to the customer first'), 'P10']]}
+    ];
+    function paint(v){
+      for (var k = 0; k < 100; k++) cells[k].classList.toggle('on', k < v);
+      $('tp-a').textContent = v + '%'; $('tp-b').textContent = (100 - v) + '%';
+    }
+    seg('tp-seg', S.map(function(s){ return s.n; }), function(i){
+      r.value = S[i].v; paint(S[i].v);
+      $('tp-panel').innerHTML = '<div class="tag">' + S[i].n + '</div><p>' + S[i].p + '</p>';
+      $('tp-q').innerHTML = S[i].qs.map(function(x){ return q(x[0], x[1], 'b'); }).join('');
+    });
+    r.addEventListener('input', function(){ paint(+r.value); });
+  })();
+
+  /* ================= 10 · FOCO ================= */
+  (function(){
+    var F = [
+      {n:L('Tecnologia', 'Technology'), h:60, c:NAVY, p:L('A tecnologia move soluções e também prende: a <b>dívida técnica</b> (atalhos e sistemas antigos que cobram juros depois) trava o próximo passo. Para a tese, inovar em serviço não se resume a tecnologia nova.', 'Technology drives solutions and also holds them back: <b>technical debt</b> (shortcuts and old systems that charge interest later) blocks the next step. For the thesis, service innovation is not just new technology.'),
+        qq:[L('Temos trabalhado para remover algumas dívidas técnicas, por assim dizer, que nos permitem dar o próximo passo.', 'We have been working on removing some technical debts, so to speak, which enable us to move to the next step'), 'P1']},
+      {n:L('Problema', 'Problem'), h:96, c:RED, p:L('O time age como um <b>"terapeuta da empresa"</b>: conversa até achar a causa real, arruma o processo antes da ferramenta e começa pelo serviço, não pelo produto. A tese põe o problema no centro.', 'The team acts as the <b>"company’s therapist"</b>: it talks until it finds the real cause, fixes the process before the tool and starts from the service, not the product. The thesis puts the problem at the centre.'),
+        qq:[L('É como terapia: você vai ao terapeuta falar de um problema, mas com o tempo vai cavando até achar a questão real. Num time de produto, você tem que agir como o terapeuta da empresa, e só se consegue isso conversando.', 'It’s like therapy: you go to a therapist to talk about a problem, but over time, you dig deeper until you find the real issue. […] In a product team, you have to act like the company’s therapist, and you only achieve this through conversation.'), 'P7']},
+      {n:L('Produto', 'Product'), h:60, c:DK, p:L('Empresas de produto criam ferramentas para muitos clientes, diversificam e passam a priorizar o suporte. O risco é inventar funcionalidades demais ou chegar com um sistema pronto que impõe o processo.', 'Product companies build tools for many clients, diversify and come to prioritize support. The risk is inventing too many features, or arriving with a ready-made system that imposes the process.'),
+        qq:[L('A gente reduziu de propósito o time de desenvolvimento, porque queria focar mais em vendas do que em inventar funcionalidades. A gente se perdeu inventando funcionalidades.', 'we intentionally reduced the development team because we wanted to focus more on sales rather than inventing new features. We got caught up in inventing features.'), 'P11']}
+    ];
+    var sc = $('fo-scene'), st = makeStage(sc, 340, 240, {ay:'68%', rx:'58deg'});
+    rotatable(sc, st, -18, 8);
+    var pos = [[30, 130], [130, 20], [230, 130]];
+    var bs = F.map(function(f, i){ var b = box({w:80, d:80, h:f.h, x:pos[i][0], y:pos[i][1], c:f.c, label:f.n, top:'' + (i + 1)}); b.dataset.i = i; st.appendChild(b); return b; });
+    st.appendChild(box({w:30, d:30, h:10, x:155, y:115, c:'#8aa0cc'}));
+    var list = $('fo-list');
+    list.innerHTML = F.map(function(f, i){ return '<button data-i="' + i + '" aria-pressed="false">' + f.n + '</button>'; }).join('') + '<button data-i="3" aria-pressed="false">' + L('As três juntas', 'All three together') + '</button>';
+    function pick(i){
+      bs.forEach(function(b, j){ b.classList.toggle('active', j === i || i === 3); b.style.setProperty('--oz', (j === i || i === 3) ? '14px' : '0px'); });
+      each(list.children, function(b){ b.setAttribute('aria-pressed', +b.dataset.i === i); });
+      if (i === 3){ $('fo-panel').innerHTML = '<div class="tag">' + L('Proposição 10', 'Proposition 10') + '</div><p>' + L('Focar só na tecnologia, só no problema ou só no produto pode atrapalhar. A inovação de serviços digitais pede <b>integrar as três</b>: o problema garante que a solução sirva ao cliente, a tecnologia dá escala e eficiência, e o produto acompanha o mercado.', 'Focusing only on technology, only on problems or only on the product can hinder innovation. Digital service innovation calls for <b>integrating all three</b>: the problem keeps the solution useful to the client, technology brings scale and efficiency, and the product keeps pace with the market.') + '</p>'; return; }
+      $('fo-panel').innerHTML = '<div class="tag">' + L('Lente ', 'Lens ') + (i + 1) + ' · ' + F[i].n + '</div><p>' + F[i].p + '</p>' + q(F[i].qq[0], F[i].qq[1], 'b');
+    }
+    each(list.children, function(b){ b.addEventListener('click', function(){ pick(+b.dataset.i); }); });
+    st.addEventListener('click', function(e){ if (M.wasDrag(sc)) return; var s = e.target.closest('.slab'); if (s && s.dataset.i) pick(+s.dataset.i); });
+    pick(1);
+  })();
+
+  /* ================= 11 · MODELO ================= */
+  (function(){
+    // Figura 14 redesenhada. t: 0 central, 1 código teórico, 2 conceito.
+    var N = {
+      core:{x:330, y:240, r:58, t:0, l:L(['Construir a', 'inovação de', 'serviços digitais'], ['Building digital', 'service', 'innovation'])},
+      tc1:{x:96, y:240, r:50, t:1, l:L(['Aprender', 'para inovar'], ['Learning for', 'innovation']), s:'1'},
+      tc6:{x:170, y:80, r:46, t:1, l:L(['Resiliência'], ['Resilience']), s:'6'},
+      tc9:{x:330, y:62, r:46, t:1, l:L(['Implementar'], ['Implementing']), s:'9'},
+      tc8:{x:490, y:90, r:46, t:1, l:L(['Foco'], ['Focus']), s:'8'},
+      tc5:{x:560, y:240, r:50, t:1, l:L(['Habilitar a', 'inovação'], ['Enabling', 'innovation']), s:'5'},
+      dt:{x:175, y:345, r:44, t:2, l:L(['Design', 'thinking'], ['Design', 'thinking'])},
+      tc4:{x:340, y:370, r:50, t:1, l:L(['Cocriação', 'de valor'], ['Value', 'co-creation']), s:'4'},
+      tc3:{x:555, y:370, r:46, t:1, l:L(['Comunicação'], ['Communication']), s:'3'},
+      tc2a:{x:160, y:465, r:36, t:1, l:L(['Relações'], ['Relationships']), s:'2a'},
+      tc2b:{x:480, y:470, r:34, t:1, l:L(['Confiança'], ['Trust']), s:'2b'}
+    };
+    // arestas: de, para, proposição, tracejada (modera), alvo é aresta?
+    var E = [
+      {a:'tc1', b:'core', p:1}, {a:'tc2a', b:'tc4', p:2}, {a:'tc2b', b:'tc4', p:3}, {a:'tc3', b:'tc4', p:5},
+      {a:'dt', b:'tc4', p:6}, {a:'tc6', b:'core', p:8}, {a:'tc9', b:'core', p:9}, {a:'tc8', b:'core', p:10},
+      {a:'tc4', b:'core', p:0}, {a:'tc5', b:'core', p:0}
+    ];
+    var MOD = [{a:'dt', e:0, p:7, tf:.45}, {a:'tc2b', e:1, p:4, tf:.72}];
+    var PR = {
+      1:L('A inovação de serviços digitais nasce de processos de <b>aprendizagem organizacional</b>: compartilhar conhecimento, resolver problemas juntos e experimentar.', 'Digital service innovation emerges from <b>organizational learning</b> processes: sharing knowledge, solving problems together and experimenting.'),
+      2:L('Manter e fortalecer relações, criar novas conexões e abrir mais pontos de contato ajudam a <b>cocriar valor</b>.', 'Maintaining and strengthening relationships, fostering new connections and diversifying points of contact help <b>co-create value</b>.'),
+      3:L('Construir <b>confiança pela vulnerabilidade</b> aprofunda as relações e favorece a cocriação e a inovação.', 'Building <b>trust through vulnerability</b> deepens relationships and fosters co-creation and innovative outcomes.'),
+      4:L('A <b>confiança modera</b> a ligação entre as relações e a cocriação: a mesma relação rende mais quando há confiança.', '<b>Trust moderates</b> the link between relationships and co-creation: the same relationship yields more when there is trust.'),
+      5:L('<b>Práticas de comunicação</b> (retorno rápido, transparência) são críticas para vencer os desafios da cocriação.', '<b>Communication practices</b> (fast feedback, transparency) are critical to overcoming co-creation challenges.'),
+      6:L('O <b>design thinking</b> facilita a cocriação, juntando empatia, ciclos de retorno e experimentação.', '<b>Design thinking</b> facilitates co-creation by combining empathy, feedback loops and experimentation.'),
+      7:L('O <b>design thinking modera</b> o efeito da aprendizagem sobre a inovação: transforma o que se aprende em protótipos e soluções validadas.', '<b>Design thinking moderates</b> the effect of learning on innovation: it turns what is learned into prototypes and validated solutions.'),
+      8:L('A <b>resiliência</b> da organização (adaptar-se, usar bem os recursos, lidar com conflitos) sustenta a inovação sob pressão.', 'Organizational <b>resilience</b> (adapting, using resources well, managing conflict) sustains innovation under pressure.'),
+      9:L('A <b>busca de ideias</b> (lacunas do mercado, dores do cliente, reflexão do time) é a base da inovação. Na figura da tese, esta seta sai de "implementar".', 'The <b>search for innovation inputs</b> (market gaps, client pain points, team reflection) lays the foundation for innovation. In the thesis’s figure, this arrow leaves from "implementing".'),
+      10:L('Focar <b>só</b> em tecnologia, problema ou produto atrapalha; a inovação pede integrar os três (tela 10).', 'Focusing <b>only</b> on technology, problems or product hinders innovation; it calls for integrating all three (screen 10).')
+    };
+    var svg = $('md-svg'), edgeEls = {}, cur = 0;
+    function k(){ return mqm() ? 1.25 : 1; }
+    function edgePts(e){ var f = k() > 1 ? 1.2 : 1, A = N[e.a], B = N[e.b], dx = B.x - A.x, dy = B.y - A.y, d = Math.sqrt(dx * dx + dy * dy); return [A.x + dx / d * A.r * f, A.y + dy / d * A.r * f, B.x - dx / d * (B.r * f + 6), B.y - dy / d * (B.r * f + 6)]; }
+    function render(){
+      svg.innerHTML = ''; edgeEls = {};
+      var K = k(), defs = el('defs', {}, svg);
+      [['mk', DK], ['mkr', RED]].forEach(function(m){ var mk = el('marker', {id:m[0], viewBox:'0 0 10 10', refX:8, refY:5, markerWidth:9, markerHeight:9, markerUnits:'userSpaceOnUse', orient:'auto'}, defs); el('path', {d:'M0,0 L10,5 L0,10 z', style:'fill:' + m[1]}, mk); });
+      E.forEach(function(e, i){
+        var p = edgePts(e);
+        var ln = el('line', {x1:p[0], y1:p[1], x2:p[2], y2:p[3], stroke:DK, 'stroke-width':2.2, 'marker-end':'url(#mk)', class:'ed'}, svg);
+        e.mid = [(p[0] + p[2]) / 2, (p[1] + p[3]) / 2]; e.pts = p;
+        if (e.p) edgeEls[e.p] = ln;
+      });
+      MOD.forEach(function(m){
+        var A = N[m.a], hp = E[m.e].pts, tf = m.tf || .5;
+        var t = [hp[0] + (hp[2] - hp[0]) * tf, hp[1] + (hp[3] - hp[1]) * tf];
+        var dx = t[0] - A.x, dy = t[1] - A.y, d = Math.sqrt(dx * dx + dy * dy);
+        var s0 = [A.x + dx / d * A.r * (k() > 1 ? 1.2 : 1), A.y + dy / d * A.r * (k() > 1 ? 1.2 : 1)], e0 = [t[0] - dx / d * 8, t[1] - dy / d * 8];
+        var ln = el('line', {x1:s0[0], y1:s0[1], x2:e0[0], y2:e0[1], stroke:DK, 'stroke-width':2, 'stroke-dasharray':'5 5', 'marker-end':'url(#mk)', class:'ed'}, svg);
+        m.mid = [(s0[0] + e0[0]) / 2, (s0[1] + e0[1]) / 2];
+        edgeEls[m.p] = ln;
+      });
+      Object.keys(N).forEach(function(id){
+        var n = N[id], g = el('g', {class:'nd', 'data-id':id}, svg), r = n.r * (K > 1 ? 1.2 : 1);
+        el('circle', {cx:n.x, cy:n.y, r:r, style:'fill:' + (n.t === 0 ? RED : (n.t === 1 ? NAVY : '#fff')) + '; stroke:' + (n.t === 2 ? DK : 'none') + '; stroke-width:2'}, g);
+        var fs = (n.t === 0 ? 13 : 12) * K, lines = n.l, y0 = n.y - (lines.length - 1) * fs * .55 + (n.s ? -fs * .25 : fs * .35);
+        lines.forEach(function(s, j){ txt(s, {x:n.x, y:y0 + j * fs * 1.1, 'text-anchor':'middle', 'font-size':fs, 'font-weight':700, style:'fill:' + (n.t === 2 ? DK : '#fff')}, g); });
+        if (n.s) txt(L('código ', 'code ') + n.s, {x:n.x, y:y0 + lines.length * fs * 1.1, 'text-anchor':'middle', 'font-size':10 * K, style:'fill:#cbd5e1'}, g);
+      });
+      // pílulas das proposições
+      E.concat(MOD).forEach(function(e){
+        if (!e.p) return;
+        var c = e.mid, g = el('g', {class:'nd', 'data-p':e.p}, svg), w = 30 * K, h = 20 * K;
+        el('rect', {x:c[0] - w / 2, y:c[1] - h / 2, width:w, height:h, rx:h / 2, style:'fill:#fff; stroke:' + (cur === e.p ? RED : DK) + '; stroke-width:' + (cur === e.p ? 2.5 : 1.5)}, g);
+        txt('P' + e.p, {x:c[0], y:c[1] + 4.5 * K, 'text-anchor':'middle', 'font-size':12 * K, 'font-weight':800, style:'fill:' + (cur === e.p ? RED : DK)}, g);
+      });
+      Object.keys(edgeEls).forEach(function(p){ var on = +p === cur; edgeEls[p].setAttribute('stroke', on ? RED : DK); edgeEls[p].setAttribute('stroke-width', on ? 3.5 : 2.2); edgeEls[p].setAttribute('marker-end', on ? 'url(#mkr)' : 'url(#mk)'); });
+    }
+    var btn = $('md-btn');
+    btn.innerHTML = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(function(p){ return '<button data-p="' + p + '" aria-pressed="false">P' + p + '</button>'; }).join('');
+    function pick(p){
+      cur = p; render();
+      each(btn.children, function(b){ b.setAttribute('aria-pressed', +b.dataset.p === p); });
+      $('md-panel').innerHTML = '<div class="tag">' + L('Proposição ', 'Proposition ') + p + L(' de 10', ' of 10') + '</div><p>' + PR[p] + '</p>';
+    }
+    each(btn.children, function(b){ b.addEventListener('click', function(){ pick(+b.dataset.p); }); });
+    svg.addEventListener('click', function(e){
+      var g = e.target.closest('[data-p]'); if (g){ pick(+g.getAttribute('data-p')); return; }
+      var nd = e.target.closest('[data-id]'); if (!nd) return;
+      var id = nd.getAttribute('data-id');
+      if (id === 'core'){ $('md-panel').innerHTML = '<div class="tag">' + L('Categoria central', 'Core category') + '</div><p>' + L('<b>Construir a inovação de serviços digitais</b> é o processo central: transformar aprendizagem, confiança e o que se sabe do cliente em soluções que funcionam, equilibrando explorar o novo e aproveitar o que existe. Os ciclos de retorno alimentam a próxima rodada de aprendizagem.', '<b>Building digital service innovation</b> is the core process: turning learning, trust and client insight into solutions that work, balancing exploring the new with exploiting what exists. Feedback loops feed the next round of learning.') + '</p>'; return; }
+      if (id === 'tc5'){ $('md-panel').innerHTML = '<div class="tag">' + L('Habilitadores (código 5)', 'Enablers (code 5)') + '</div><p>' + L('Burocracia, cultura, práticas de liderança, dinâmica do time, estrutura e autonomia das pessoas. A tese os lista como habilitadores, sem proposição numerada.', 'Bureaucracy, culture, leadership practices, team dynamics, structure and individual empowerment. The thesis lists them as enablers, without a numbered proposition.') + '</p>'; return; }
+      var hit = E.concat(MOD).filter(function(x){ return (x.a === id || x.b === id) && x.p; })[0];
+      if (hit) pick(hit.p);
+    });
+    var wasM = mqm();
+    window.addEventListener('resize', function(){ if (mqm() !== wasM){ wasM = mqm(); render(); } });
+    pick(3);
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
