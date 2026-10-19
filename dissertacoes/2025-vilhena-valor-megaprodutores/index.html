@@ -1,0 +1,863 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O valor de um banco para megaprodutores rurais · PPGA Interativo</title>
+<meta name="description" content="A dissertação de mestrado de Maiara Fossato Vilhena (PPGA Mackenzie, 2025) sobre o que dá valor aos serviços financeiros para os megaprodutores rurais, explicada em 11 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/dissertacoes/2025-vilhena-valor-megaprodutores/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2214%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>MV</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  :root{
+    --rel:var(--navy);   /* relacionamento e confiança */
+    --exp:var(--red);    /* experiência ruim, atrito */
+    --mid:#94a3b8;
+    --dk:#334155;
+  }
+  .slab{transition:transform .6s cubic-bezier(.2,.8,.2,1), opacity .5s;}
+  .slab.dim > i{opacity:.25;}
+  .slab.gone > i{opacity:0;}
+  .scene .top-label{font-family:var(--sans); font-weight:700; font-size:19px;}
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .rel-t{color:var(--rel); font-weight:700;} .exp-t{color:var(--exp); font-weight:700;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4vw, 2.6rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{display:flex; gap:8px 16px; justify-content:center; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:6px;}
+
+  /* ---------- Componentes comuns ---------- */
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  q, .fala{quotes:"“" "”"; font-family:var(--serif); font-style:italic; color:var(--ink);}
+  .who-q{display:block; font-size:.74rem; color:var(--muted); margin-top:3px; font-style:normal; font-family:var(--sans);}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.3rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.78rem; color:var(--muted);}
+  .leg{display:flex; flex-wrap:wrap; gap:4px 14px; font-size:.76rem; color:var(--ink-2); margin-top:6px; justify-content:center;}
+  .leg i{display:inline-block; width:12px; height:10px; border-radius:2px; margin-right:4px; vertical-align:0;}
+  .names{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-top:8px;}
+  .names button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .names button[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); font-weight:700; box-shadow:inset 0 -3px 0 var(--bc, var(--ink));}
+
+  /* ---------- 02 · Megaprodutor ---------- */
+  .rng{margin:12px 0 6px;}
+  .rng input{width:100%; accent-color:hsl(348 94% 47%);}
+  .rng .val{display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap;}
+  .rng .val b{font-family:var(--sans); font-size:1.35rem; color:var(--ink);}
+  .rng .val span{font-size:.86rem; font-weight:700; padding:3px 10px; border-radius:999px; color:#fff; background:var(--rel);}
+  .rng .ticks{display:flex; justify-content:space-between; font-size:.7rem; color:var(--muted);}
+  #mg-panel{min-height:92px; margin-top:10px;}
+  #mg-scene .face-label{color:#0f172a; font-weight:700;}
+  #mg-scene .slab.mega .face-label{color:#fff;}
+
+  /* ---------- 03 · Modelo ---------- */
+  .model{display:grid; gap:8px;}
+  .mrow{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:10px 14px; box-shadow:var(--shadow);}
+  .mrow h3{font-size:.98rem; margin:0 0 6px; color:var(--ink);}
+  .mrow h3 small{font-family:var(--sans); font-weight:500; font-size:.74rem; color:var(--muted); margin-left:6px;}
+  .dims{display:flex; flex-wrap:wrap; gap:6px;}
+  .dims button{border:1px solid var(--border); background:#f8fafc; border-radius:999px; padding:6px 12px; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .dims button[aria-pressed="true"]{background:var(--rel); border-color:var(--rel); color:#fff;}
+  .marrow{text-align:center; color:var(--muted); font-size:1.1rem; line-height:1;}
+  .outs{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .out{border-radius:14px; padding:10px 14px; border:1px solid var(--border); background:var(--card); transition:opacity .3s, box-shadow .3s; box-shadow:var(--shadow);}
+  .out h3{font-size:.95rem; margin:0 0 4px;}
+  .out ul{margin:0; padding-left:16px; font-size:.78rem; color:var(--ink-2); line-height:1.4;}
+  .out.cria{border-top:5px solid var(--rel);} .out.destroi{border-top:5px solid var(--exp);}
+  .out.off{opacity:.35;}
+  #md-panel{min-height:96px;}
+
+  /* ---------- 04 · Quem ---------- */
+  #qm-panel{margin-top:8px; min-height:72px;}
+  #qm-scene .face-label{font-size:12px; color:#0f172a; font-weight:700;}
+
+  /* ---------- 05 · Expectativas ---------- */
+  .bet{display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 10px;}
+  .bet button{border:1px dashed var(--ink-2); background:var(--card); border-radius:10px; padding:8px 14px; font-size:.84rem; cursor:pointer; color:var(--ink);}
+  .bet button.chosen{border-style:solid; background:var(--ink); color:#fff;}
+  #ex-fb{min-height:44px; font-size:.86rem; color:var(--ink-2);}
+  #ex-panel{min-height:110px; margin-top:8px;}
+  #ex-scene .slab.empty > i{background:transparent !important; border:1px dashed #94a3b8;}
+
+  /* ---------- 06 · Décadas ---------- */
+  #dc-panel{min-height:150px; margin-top:8px;}
+
+  /* ---------- 07 · Experiência ---------- */
+  .pgrid{display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:8px; margin-top:10px;}
+  .pc{display:flex; flex-direction:column; justify-content:flex-start; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 10px; min-height:96px; transition:opacity .3s, border-color .3s, box-shadow .3s; cursor:pointer; text-align:left;}
+  .pc .hd{display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:.86rem; color:var(--ink);}
+  .pc .hd i{width:10px; height:10px; border-radius:50%; display:inline-block;}
+  .pc ul{list-style:none; margin:6px 0 0; padding:0; display:grid; gap:4px;}
+  .pc li{font-size:.72rem; line-height:1.3; padding:3px 7px; border-radius:7px; background:#f1f5f9; color:var(--ink-2);}
+  .pc li.neg{background:#fde8ec; color:#9f1239;}
+  .pc li.pos{background:#e6ecf6; color:#1f3b73;}
+  .pc.off{opacity:.32;}
+  .pc.hit{border-color:var(--exp); box-shadow:0 0 0 2px color-mix(in srgb, hsl(348 94% 47%) 25%, transparent);}
+  .pc.hitp{border-color:var(--rel); box-shadow:0 0 0 2px color-mix(in srgb, #1f3b73 25%, transparent);}
+  @media (max-width:600px){ .pgrid{grid-template-columns:repeat(2, minmax(0, 1fr));} }
+  #xp-panel{min-height:120px; margin-top:10px;}
+
+  /* ---------- 08 · Private × varejo ---------- */
+  .vs{display:grid; gap:8px; margin-top:10px;}
+  .vrow{display:grid; grid-template-columns:110px 1fr; gap:10px; align-items:center; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:9px 12px; border-left:5px solid var(--exp); transition:border-color .4s;}
+  .vrow.pv{border-left-color:var(--rel);}
+  .vrow b{font-size:.8rem; color:var(--ink); text-transform:uppercase; letter-spacing:.06em;}
+  .vrow span{font-size:.84rem; color:var(--ink-2);}
+  .vrow q{font-size:.8rem;}
+  @media (max-width:600px){ .vrow{grid-template-columns:1fr; gap:2px;} }
+
+  /* ---------- 09 · Compartilhada ---------- */
+  #cp-svg{width:100%; display:block; aspect-ratio:460/330;}
+  #cp-svg text{font-family:var(--sans);}
+  #cp-svg g.nd{cursor:pointer;}
+  #cp-panel{min-height:120px; margin-top:8px;}
+  @media (max-width:600px){ #cp-svg text{font-size:17px !important;} }
+
+  /* ---------- 10 · Descoberta ---------- */
+  .ctrl{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:8px 0;}
+  .ctrl .btn{padding:9px 14px; font-size:.84rem;}
+  #ds-panel{min-height:96px; margin-top:8px;}
+  .flag{display:inline-block; font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:#fff; background:var(--dk); border-radius:6px; padding:2px 8px; margin-bottom:6px;}
+  .ev{display:grid; gap:8px; margin-top:12px;}
+  .ev div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:9px 13px; font-size:.82rem; color:var(--ink-2); border-left:4px solid var(--rel);}
+
+  /* ---------- 11 · Créditos ---------- */
+  .cards3{display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px;}
+  @media (min-width:760px){ .cards3{grid-template-columns:repeat(3, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 15px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.95rem; margin-bottom:4px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:2px; font-size:.76rem; line-height:1.38; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.08rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:8px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.82rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; line-height:1.55; margin-top:8px;}
+  .cite b{color:var(--ink);}
+  .end .btn{padding:9px 12px; font-size:.82rem;} .end .ctas{gap:8px;}
+  #creditos h2{font-size:clamp(1.6rem, 2.6vw, 2.05rem);}
+  #creditos .end{margin-top:12px;}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/dissertacoes/2025-vilhena-valor-megaprodutores/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 11</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Dissertação de mestrado · PPGA Mackenzie · 2025</div>
+      <h1 class="rv" style="--d:.1s">O que um banco vale para quem produz em larga escala</h1>
+      <p class="sub rv" style="--d:.2s">Produtores rurais que faturam R$ 10 milhões ou mais por ano são atendidos por um grande banco como clientes de alta renda. A pesquisa ouviu <strong>8 desses megaprodutores</strong>. O achado: numa relação de décadas, com confiança, <strong>uma experiência ruim tira negócios do banco, mas não apaga o valor</strong>. Em 11 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autora:</b> Maiara Fossato Vilhena</span>
+        <span><b>Orientadora:</b> Profa. Dra. Dimária Silva e Meirelles</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#mega">Começar →</a>
+        <a class="btn ghost" href="#esperam">Ir direto aos resultados</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="480x380" role="img" aria-label="Oito colunas azuis, uma por megaprodutor, com altura proporcional aos anos de relação com o banco (de 6 a 42); de tempos em tempos um cubo vermelho, uma experiência ruim, cai sobre uma coluna, que balança e continua de pé"></div></div>
+      <div class="cap-legend">
+        <span><i class="dot" style="background:var(--rel)"></i>altura = anos de banco (26 em média)</span>
+        <span><i class="dot" style="background:var(--exp)"></i>uma experiência ruim</span>
+      </div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Mostra o que grandes produtores rurais esperam de um banco (proximidade, agilidade, conhecimento do agro e confiança), para as instituições financeiras atenderem melhor quem financia a produção agrícola."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · MEGAPRODUTOR -->
+<section class="slide" id="mega" data-label="O megaprodutor">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O contexto · quem é o megaprodutor</div>
+      <h2 class="rv" style="--d:.1s">Para a lei, quem fatura R$ 2 milhões e quem fatura R$ 200 milhões é o mesmo “grande produtor”</h2>
+      <p class="rv" style="--d:.15s">O agronegócio respondeu por <strong>23,8% do PIB</strong> do Brasil em 2023, segundo o Cepea. As regras do crédito rural dividem os produtores pela receita bruta agropecuária anual, e tudo acima de R$ 1,6 milhão é “grande”. Em 2011, um dos principais bancos do país criou uma categoria a mais, o <strong>megaprodutor</strong>, para quem fatura a partir de <strong>R$ 10 milhões</strong> por ano, e passou a atendê-lo na sua estrutura de <em>private banking</em>, a de clientes de alta renda. Arraste a receita:</p>
+      <div class="rng rv" style="--d:.2s">
+        <div class="val"><b id="mg-v">R$ 1 milhão</b><span id="mg-c"></span></div>
+        <input type="range" id="mg-r" min="0" max="300" value="100" aria-label="Receita bruta agropecuária anual">
+        <div class="ticks"><span>R$ 100 mil</span><span>R$ 1 mi</span><span>R$ 10 mi</span><span>R$ 100 mi</span></div>
+      </div>
+      <div class="panel rv" id="mg-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="mg-scene" data-fit="480x360" role="img" aria-label="Quatro degraus, do pequeno produtor ao megaprodutor; um cubo vermelho sobe no degrau da receita escolhida"></div></div>
+      <p class="note">Faixas da seção 3.2 da dissertação (Conselho Monetário Nacional e Banco Central) e categoria criada pelo banco estudado (Lopes, 2018, citado na dissertação). Degraus em ordem, fora de escala; a régua da receita é logarítmica (cada marca vale 10 vezes a anterior). A categoria não existe na lei.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · MODELO -->
+<section class="slide" id="modelo" data-label="O que é valor">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> A ideia · valor na experiência</div>
+      <h2 class="rv" style="--d:.1s">O valor não está no produto: ele se decide no uso</h2>
+      <p class="rv" style="--d:.15s">Na visão que a autora segue, o cliente não compra um empréstimo pelo preço, mas pelo que ele faz pela sua vida. Por isso, o valor de um serviço financeiro depende de duas coisas: o que o cliente <strong>espera</strong> e o que ele <strong>vive</strong> ao usar o serviço. Uma experiência boa cria valor; uma ruim pode destruí-lo. Toque nas dimensões e escolha o tipo de experiência:</p>
+      <div class="seg rv" id="md-seg" style="--d:.2s" role="group" aria-label="Tipo de experiência"></div>
+      <div class="panel rv" id="md-panel" style="--d:.25s; margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="model" id="md-model">
+        <div class="mrow"><h3>Expectativas de valor<small>o que o cliente espera</small></h3><div class="dims" id="md-d1"></div></div>
+        <div class="marrow">↓</div>
+        <div class="mrow"><h3>Experiência<small>o que o cliente vive</small></h3><div class="dims" id="md-d2"></div></div>
+        <div class="marrow">↙ ↘</div>
+        <div class="outs">
+          <div class="out cria" id="md-cria"><h3 class="rel-t">Cria valor</h3><ul><li>experiência positiva</li><li>benefícios duradouros</li><li>expectativas superadas</li><li>necessidades atendidas</li><li>economia de tempo</li></ul></div>
+          <div class="out destroi" id="md-dest"><h3 class="exp-t">Destrói valor</h3><ul><li>experiência negativa</li><li>custos adicionais</li><li>informações incompletas</li><li>serviço complicado de usar</li></ul></div>
+        </div>
+      </div>
+      <p class="note">Modelo conceitual da autora (Figura 3), montado a partir de Haksever et al. (2004) para as expectativas e de Helkkula et al. (2012) para a experiência. Redesenhado por nós.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · QUEM -->
+<section class="slide" id="quem" data-label="Quem foi ouvido">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> O método · 8 entrevistas</div>
+      <h2 class="rv" style="--d:.1s">Oito megaprodutores contaram, cada um, sua história com o banco</h2>
+      <p class="rv" style="--d:.15s">O banco estudado, chamado na dissertação de <strong>Banco X</strong>, abriu sua carteira de megaprodutores para a pesquisa. Para cobrir as culturas que mais pesam na receita desses clientes, a autora ouviu ao menos dois produtores de cada uma. As conversas, por vídeo, seguiram um roteiro em dois blocos: o que esperam de um banco e o que já viveram com ele. Depois, as respostas foram agrupadas por temas. Mude o recorte:</p>
+      <div class="seg rv" id="qm-seg" style="--d:.2s" role="group" aria-label="Recorte dos entrevistados"></div>
+      <div class="panel rv" id="qm-panel" style="--d:.25s" aria-live="polite"></div>
+      <div class="stats rv" style="--d:.3s">
+        <div class="stat"><b>374 minutos</b><span>de conversa, de 38 a 61 minutos cada (soma nossa), entre 10 de outubro e 18 de novembro de 2024</span></div>
+        <div class="stat"><b>6 e 2</b><span>homens e mulheres, de 48 a 67 anos, todos responsáveis pelas decisões de negócio</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="qm-scene" data-fit="480x330" role="img" aria-label="Cubos, um por entrevista, agrupados sobre placas conforme o recorte escolhido"></div></div>
+      <p class="note">Quadro 8 e seção 3.2. Um cubo por pessoa; mostramos só totais, sem ligar idade, estado ou cultura a cada participante. A dissertação chama os bancos concorrentes de BM1 a BM6 e não revela o nome do Banco X.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · O QUE ESPERAM -->
+<section class="slide" id="esperam" data-label="O que esperam">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Bloco 1 · expectativas de valor</div>
+      <h2 class="rv" style="--d:.1s">O que oito megaprodutores esperam de um banco, e o que os faz escolher</h2>
+      <p class="rv" style="--d:.15s">Quem planta e colhe depende do calendário agrícola, que não espera. Todos os oito pedem <strong>agilidade</strong>, segurança e gente que entenda de agro. Mas, entre dois bancos com condições parecidas, o que faz cada um escolher? Aposte antes de ver:</p>
+      <div class="bet rv" id="ex-bet" style="--d:.2s" role="group" aria-label="Sua aposta"></div>
+      <div id="ex-fb" class="rv" style="--d:.2s" aria-live="polite"></div>
+      <div class="seg rv" id="ex-seg" style="--d:.25s" role="group" aria-label="O que mostrar"></div>
+      <div class="panel rv" id="ex-panel" style="--d:.3s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="ex-scene" data-fit="480x340" role="img" aria-label="Seis colunas, uma por expectativa; a altura é o número de megaprodutores (de 8) que a citam como expectativa ou como critério de decisão"></div></div>
+      <div class="names" id="ex-names" role="group" aria-label="Expectativas"></div>
+      <p class="note">Contagens nossas a partir do Quadro 9 (linhas de expectativa e a linha “decisão de negócios”) e do texto da seção 4.1, que diz que agilidade, segurança e especialização no agro foram citadas por todos. “Relacionamento” não é uma linha de expectativa no quadro; ele aparece como critério de decisão.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · DÉCADAS -->
+<section class="slide" id="decadas" data-label="Décadas de relação">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Bloco 1 · relacionamento</div>
+      <h2 class="rv" style="--d:.1s">Cinco decidem pela relação; os outros três, pela taxa e pela agilidade</h2>
+      <p class="rv" style="--d:.15s">Em média, os oito são clientes do Banco X há <strong>26 anos</strong>; só um tem menos de 20, porque assumiu os negócios da família há 6. Quatro mostram estima pela relação, lembrando momentos em que o banco ajudou o negócio a crescer ou a atravessar uma safra ruim. Troque a cor e toque numa coluna:</p>
+      <div class="seg rv" id="dc-seg" style="--d:.2s" role="group" aria-label="Cor das colunas"></div>
+      <div class="panel rv" id="dc-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="dc-scene" data-fit="480x360" role="img" aria-label="Oito colunas, uma por participante, com altura igual aos anos de relação com o banco, de 6 a 42, coloridas pelo sentimento ou pelo critério de decisão"></div></div>
+      <div class="names" id="dc-names" role="group" aria-label="Participantes"></div>
+      <div class="leg" id="dc-leg"></div>
+      <p class="note">Quadro 9 (anos de relação, sentimento e decisão de negócios) e falas da seção 4.1. A soma dos anos dá 208, e a média, 26, como na dissertação.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · EXPERIÊNCIA -->
+<section class="slide" id="vivido" data-label="O que viveram">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">07</span> Bloco 2 · experiência vivida</div>
+    <h2 class="rv" style="--d:.1s">Até quem tem estima pelo banco reclama da burocracia e do aplicativo</h2>
+    <p class="lede rv" style="--d:.15s">Na hora de contar como é fazer negócio com o banco, os grupos se misturam: clientes fiéis e clientes indiferentes relatam coisas boas e ruins parecidas. Metade cita algum atrito; dois deles têm estima pela relação. Escolha o que destacar e toque num participante:</p>
+    <div class="seg rv" id="xp-seg" style="--d:.2s" role="group" aria-label="O que destacar"></div>
+    <div class="pgrid rv" id="xp-grid" style="--d:.25s"></div>
+    <div class="panel rv" id="xp-panel" style="--d:.3s" aria-live="polite"></div>
+    <p class="note rv" style="--d:.3s">Quadro 10 (linha “experiência nos negócios”) e falas das seções 4.2.1 e 4.2.3; contagens nossas. A bolinha ao lado do código mostra o sentimento pela relação (Quadro 9).</p>
+  </div>
+</section>
+
+<!-- 08 · PRIVATE × VAREJO -->
+<section class="slide" id="private" data-label="Do varejo ao Private">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Bloco 2 · a mudança de atendimento</div>
+      <h2 class="rv" style="--d:.1s">Sair da agência comum foi, para sete dos oito, uma mudança de patamar</h2>
+      <p class="rv" style="--d:.15s">Antes de virarem “megaprodutores”, eles eram atendidos no <strong>varejo</strong>, como qualquer correntista. Todos os que viveram as duas fases dizem que a relação melhorou com a passagem para o <strong>Private</strong>. Compare:</p>
+      <div class="seg rv" id="pv-seg" style="--d:.2s" role="group" aria-label="Fase do atendimento"></div>
+      <div class="vs rv" id="pv-rows" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="pv-scene" data-fit="480x330" role="img" aria-label="Oito cubos, um por participante; no Private, sete sobem para um degrau mais alto e um fica cinza, porque já começou no Private"></div></div>
+      <p class="panel" style="margin-top:10px; font-size:.86rem"><q>Um momento que marcou uma mudança, assim, de patamar, de relacionamento, realmente, quando houve a migração para o Private, né?</q><span class="who-q">P6</span></p>
+      <p class="note">Quadro 10 (linha “migração Private × varejo”) e seção 4.2.4, que lista os motivos da melhora. P5 já entrou no Private quando assumiu os negócios. As frases do Private vêm das falas dos participantes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · COMPARTILHADA -->
+<section class="slide" id="indicam" data-label="Quem indica">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Bloco 2 · experiência compartilhada</div>
+      <h2 class="rv" style="--d:.1s">A experiência não fica na fazenda: ela passa de produtor para produtor</h2>
+      <p class="rv" style="--d:.15s">Seis dos oito já indicaram o banco a alguém: a fornecedores e compradores da sua cadeia, a amigos, à família. Um deles recebeu o agradecimento de um amigo que passou a ser atendido no Private. E vários valorizam encontros com outros produtores, para trocar ideias e conhecimento técnico. Toque nos círculos:</p>
+      <div class="panel rv" id="cp-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="cp-svg" viewBox="0 0 460 330" role="img" aria-label="Rede com os oito megaprodutores no centro e quatro círculos em volta: cadeia de negócios (4), amigos (4), família (1) e eventos com outros produtores (4)"></svg>
+      <p class="note">Quadro 10 (linhas “experiência compartilhada” e “experiência no relacionamento”) e seção 4.2.2; contagens nossas. Uma pessoa pode estar em mais de um círculo. Em “eventos”, três valorizam eventos de networking e um elogia as reuniões informais da sua agência.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · DESCOBERTA -->
+<section class="slide" id="descoberta" data-label="A descoberta">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> A descoberta</div>
+      <h2 class="rv" style="--d:.1s">Uma experiência ruim tira negócios, mas não destrói o valor de uma relação antiga</h2>
+      <p class="rv" style="--d:.15s">A literatura dizia que experiências ruins destroem o valor criado. Não foi o que a autora encontrou. Quem se irrita com a burocracia leva parte dos negócios para outro banco, mas continua cliente, e até quem concentra os negócios na concorrência consulta o Banco X antes de fechar negócio, por causa da história construída. Experimente:</p>
+      <div class="seg rv" id="ds-seg" style="--d:.2s" role="group" aria-label="Tipo de relação"></div>
+      <div class="ctrl rv" style="--d:.22s">
+        <button class="btn" id="ds-hit">Viver uma experiência ruim</button>
+        <button class="btn ghost" id="ds-reset">Recomeçar</button>
+      </div>
+      <div class="panel rv" id="ds-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="ds-scene" data-fit="480x340" role="img" aria-label="Ilustração: uma pilha de blocos, os negócios do cliente com o banco, sobre uma base azul, a relação de confiança. Cada experiência ruim tira um bloco; sem a base, a pilha cai"></div></div>
+      <div class="ev">
+        <div><q>tenho uma história com o Banco X, se não fosse ele, eu não tinha crescido o que eu cresci [...] Nunca vou deixar de ser cliente do Banco X</q><span class="who-q">P4, que hoje concentra os negócios em outro banco, mais ágil</span></div>
+      </div>
+      <p class="note">Ilustração nossa das conclusões (seções 5 e 6). A dissertação não mede quantos negócios cada cliente tirou do banco; o número de blocos é ilustrativo. O cenário “sem relação” mostra o que a literatura previa (Abid et al., 2022), não um caso entrevistado.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> Para levar</div>
+    <h2 class="rv" style="--d:.1s">Para o megaprodutor, a relação vale mais que qualquer outro atributo</h2>
+    <p class="lede rv" style="--d:.15s">Taxa, agilidade e bons aplicativos pesam na decisão, mas nenhum desses atributos pareceu maior, para os participantes, do que a solidez da relação. A autora sugere que os gestores que atendem esse público partam dessa premissa.</p>
+    <div class="cards3">
+      <div class="pcard rv" style="--d:.2s; --pc:var(--rel)"><h3>Para bancos que atendem o agro</h3><ul><li>Começar pelo diálogo: entender o negócio de cada produtor antes de oferecer produtos.</li><li>Estar perto: gerente que conhece a fazenda, agrônomo que visita a produção, equipe que entende de agro.</li><li>Responder no tempo do calendário agrícola.</li></ul></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--exp)"><h3>O que pode custar negócios</h3><ul><li>Burocracia na contratação e pedidos repetidos de documentos.</li><li>Aplicativos e ferramentas on-line difíceis, quando a concorrência é mais simples.</li><li>Clientes esquecidos nos convites para eventos com outros produtores.</li></ul></div>
+      <div class="pcard rv" style="--d:.3s; --pc:var(--dk)"><h3>Para a pesquisa</h3><ul><li>A experiência ruim não apaga o valor quando há confiança: um acréscimo às teorias de valor na experiência.</li><li>Ouvir clientes com menos tempo de banco e medir, num estudo quantitativo, o peso da relação nas decisões.</li></ul></div>
+    </div>
+    <p class="note rv" style="--d:.3s; margin-top:8px">Os três cartões são leitura nossa a partir dos achados; a implicação prática da autora é o parágrafo acima.</p>
+    <div class="end">
+      <div class="rv" style="--d:.2s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Quantos megaprodutores pensam assim.</b> São 8 clientes de um banco; o estudo qualitativo busca entender experiências, não medir proporções. As contagens desta página só resumem os quadros. <em>· segundo a autora e observação nossa</em></li>
+          <li><b>Se vale para clientes novos.</b> A relação média era de 26 anos, e só um participante tinha menos de 20; a autora sugere ouvir quem chegou há pouco. <em>· segundo a autora</em></li>
+          <li><b>Uma pesquisadora de dentro.</b> A autora trabalha com esse segmento no banco estudado, o que pode trazer um viés na interpretação; e os entrevistados falavam com alguém do próprio banco. <em>· segundo a autora e observação nossa</em></li>
+          <li><b>Memória.</b> As experiências foram contadas depois, o que pode reduzir a precisão dos relatos. <em>· segundo a autora</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.25s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          VILHENA, Maiara Fossato. <em>O valor na experiência de serviços financeiros: uma análise sob a perspectiva de megaprodutores.</em> Dissertação (Mestrado em Administração de Empresas) · Universidade Presbiteriana Mackenzie, São Paulo, 2025. Orientadora: Profa. Dra. Dimária Silva e Meirelles.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Entrevistas gravadas com consentimento. Para manter o sigilo combinado com o banco que cedeu sua base de clientes, a dissertação o chama de Banco X e os concorrentes de BM1 a BM6. Apoio da CAPES. Esta versão simplifica o trabalho para o público em geral.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a dissertação completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each;
+  var box = M.box, makeStage = M.makeStage, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(p, e){ return EN ? e : p; }
+  var NAVY = '#1f3b73', RED = 'hsl(348 94% 47%)', DK = '#334155', MID = '#94a3b8', NEU = '#cbd5e1';
+  var NAVY2 = '#6f86b8';
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent){ var n = document.createElementNS(SVGNS, tag); for (var k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; }
+  function press(group, btn){ each(group.querySelectorAll('button'), function(b){ b.setAttribute('aria-pressed', b === btn); }); }
+  function segs(id, items, cb, init){
+    var g = $(id);
+    g.innerHTML = items.map(function(t, i){ return '<button data-i="' + i + '" aria-pressed="' + (i === init) + '">' + t + '</button>'; }).join('');
+    each(g.children, function(b){ b.addEventListener('click', function(){ press(g, b); cb(+b.dataset.i); }); });
+    return g;
+  }
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // Quadro 9: anos de relação com o Banco X, sentimento e critério de decisão; falas da seção 4.1.
+  // s: est = estima pelo relacionamento, pref = preferência de negócio, ind = indiferença, des = desapontamento.
+  var P = [
+    {c:'P1', y:42, s:'est', rel:true,  d:L('relacionamento e proximidade', 'relationship and closeness'),
+     q:L('o meu negócio gira e gira rápido, então você tem que tratar as pessoas diferente na medida de suas desigualdades [...] O banco tem lá [...] na sua planilha, que só tem que abater boi de 3 anos. Não é a minha realidade.', 'my business turns over, and turns over fast, so you have to treat people differently according to their differences [...] The bank has it [...] in its spreadsheet that you can only slaughter 3-year-old cattle. That’s not my reality.')},
+    {c:'P2', y:30, s:'est', rel:true,  d:L('relacionamento e confiança', 'relationship and trust'),
+     q:L('Na época quebrou 20%, 25%, né? [...] ele interveio junto ao gerente geral, junto ao superintendente [...] e não reduziram o limite porque vieram aqui ver e entender', 'Back then the harvest fell 20%, 25%, right? [...] he stepped in with the branch head, with the regional superintendent [...] and they didn’t cut the credit limit because they came here to see and understand')},
+    {c:'P3', y:20, s:'ind', rel:false, d:L('taxa de juros', 'interest rate'),
+     q:L('hoje o que importa pra gente é taxa, eu vou ir na menor taxa, se tiver parecido, vai ser a taxa que vai dizer', 'today what matters to us is the rate, I’ll go for the lowest rate, if they’re similar, the rate is what will decide')},
+    {c:'P4', y:34, s:'des', rel:false, d:L('agilidade e taxa de juros', 'speed and interest rate'),
+     q:L('é que tá desencontrando do que eu preciso e da forma como o Banco consegue me atender', 'it’s just that what I need and the way the Bank is able to serve me don’t match up')},
+    {c:'P5', y:6,  s:'ind', rel:false, d:L('agilidade e taxa de juros', 'speed and interest rate'),
+     q:L('Banco é commodity, sabe, o que tem num banco, tem no outro, de um jeito ou de outro. [...] vou na facilidade, na agilidade, no custo mais baixo.', 'A bank is a commodity, you know, what one bank has, the other has too, one way or another. [...] I go for ease, for speed, for the lowest cost.')},
+    {c:'P6', y:24, s:'est', rel:true,  d:L('relacionamento', 'relationship'),
+     q:L('esse papel do gerente, ele é fundamental, um diferencial, considerando nossa experiência com outros bancos, ele tá junto da gente e do nosso negócio', 'the manager’s role is fundamental, a differentiator, considering our experience with other banks, he’s right there with us and our business')},
+    {c:'P7', y:20, s:'pref', rel:true, d:L('relacionamento e solidez do banco', 'relationship and the bank’s soundness'),
+     q:L('deu uma quebra na soja e o Banco X foi ótimo, não executou como outros bancos fizeram, sabe?', 'the soy harvest failed and Bank X was great, it didn’t foreclose like other banks did, you know?')},
+    {c:'P8', y:32, s:'est', rel:true,  d:L('relacionamento e confiança', 'relationship and trust'),
+     q:L('Às vezes a taxa mais barata, a outra por um pouco a mais vai me dar menos dor de cabeça, então tem peso da taxa na decisão? Tem, mas depende do histórico.', 'Sometimes there’s the cheaper rate, and the other one, for a bit more, will give me fewer headaches, so does the rate weigh on the decision? It does, but it depends on the history.')}
+  ];
+  var SENT = {
+    est:{c:NAVY,  n:L('estima pela relação', 'esteem for the relationship')},
+    pref:{c:NAVY2, n:L('preferência de negócio', 'business preference')},
+    ind:{c:MID,   n:L('indiferença', 'indifference')},
+    des:{c:RED,   n:L('desapontamento', 'disappointment')}
+  };
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 420, 200, {ay:'62%', rx:'60deg'});
+    st.appendChild(box({w:420, d:120, h:10, x:0, y:40, c:'#e2e8f0'}));
+    var cols = P.map(function(p, i){
+      var b = box({w:36, d:36, h:p.y * 4.4, x:12 + i * 51, y:82, z:10, c:NAVY, top:String(p.y)});
+      st.appendChild(b); return b;
+    });
+    var cube = box({w:22, d:22, h:22, x:0, y:89, z:400, c:RED});
+    cube.style.transition = 'none'; st.appendChild(cube);
+    rotatable(sc, st, -16, 9);
+    if (reduce){ cube.style.display = 'none'; return; }
+    var last = -1;
+    M.onTick(function(t){
+      if (t < 0) return;
+      var per = 2.8, k = Math.floor(t / per), ph = (t % per) / per;
+      var i = [3, 0, 7, 4, 1, 6, 2, 5][k % 8], p = P[i], top = 10 + p.y * 4.4;
+      if (k !== last){ last = k; cube.style.left = (12 + i * 51 + 7) + 'px'; }
+      var z = top, sq = 0, op = 1;
+      if (ph < 0.4){ var f = ph / 0.4; z = top + 320 * (1 - f * f); }
+      else if (ph < 0.7){ sq = Math.sin((ph - 0.4) / 0.3 * Math.PI); z = top - 10 * sq; }
+      else { op = Math.max(0, 1 - (ph - 0.7) / 0.25); z = top; }
+      cube.style.setProperty('--z', z + 'px');
+      cube.style.opacity = String(op);
+      cols.forEach(function(b, j){
+        b.style.setProperty('--h', (P[j].y * 4.4 - (j === i ? 10 * sq : 0)).toFixed(1) + 'px');
+      });
+    });
+  })();
+
+  /* ================= 02 · MEGAPRODUTOR ================= */
+  (function(){
+    var sc = $('mg-scene'), st = makeStage(sc, 420, 160, {ay:'66%', rx:'58deg'});
+    var CL = [
+      {n:L('Pequeno', 'Small'), max:360e3, h:30, t:L('até R$ 360 mil por ano', 'up to R$ 360 thousand a year')},
+      {n:L('Médio', 'Medium'), max:1.6e6, h:70, t:L('de R$ 360 mil a R$ 1,6 milhão', 'R$ 360 thousand to R$ 1.6 million')},
+      {n:L('Grande', 'Large'), max:10e6, h:110, t:L('acima de R$ 1,6 milhão', 'above R$ 1.6 million')},
+      {n:L('Mega', 'Mega'), max:Infinity, h:170, t:L('R$ 10 milhões ou mais (categoria do banco)', 'R$ 10 million or more (the bank’s category)')}
+    ];
+    var steps = CL.map(function(c, i){
+      var b = box({w:100, d:100, h:c.h, x:4 + i * 104, y:30, c:i === 3 ? RED : ramp(i), label:c.n, cls:i === 3 ? 'mega' : ''});
+      st.appendChild(b); return b;
+    });
+    function ramp(i){ return ['#dbe3f1', '#b7c6e2', '#8aa0cc'][i]; }
+    var mk = box({w:30, d:30, h:30, x:0, y:65, z:0, c:DK}); st.appendChild(mk);
+    rotatable(sc, st, -14, 8);
+    function money(v){
+      if (v >= 1e6){ var m = v / 1e6, d = m < 10 && Math.abs(m - Math.round(m)) > 1e-9 ? 1 : 0; return 'R$ ' + M.fmt(m, d) + ' ' + L(m >= 2 ? 'milhões' : 'milhão', 'million'); }
+      return 'R$ ' + Math.round(v / 1e3) + ' ' + L('mil', 'thousand');
+    }
+    function nice(v){ var e = Math.pow(10, Math.floor(Math.log10(v)) - 1); return Math.round(v / e) * e; }
+    function show(){
+      var r = +$('mg-r').value, v = nice(Math.pow(10, 5 + r / 100));
+      var k = v <= 360e3 ? 0 : v <= 1.6e6 ? 1 : v < 10e6 ? 2 : 3;
+      $('mg-v').textContent = money(v);
+      var c = $('mg-c'); c.textContent = [L('Pequeno produtor', 'Small producer'), L('Médio produtor', 'Medium producer'), L('Grande produtor', 'Large producer'), L('Megaprodutor', 'Megaproducer')][k];
+      c.style.background = k === 3 ? RED : NAVY;
+      mk.style.left = (4 + k * 104 + 35) + 'px'; mk.style.setProperty('--z', CL[k].h + 'px');
+      steps.forEach(function(b, i){ b.classList.toggle('dim', i > k); });
+      var txt = [
+        L('<div class="tag">Pequeno produtor</div><p>Até R$ 360 mil de receita bruta por ano, segundo as regras do crédito rural.</p>', '<div class="tag">Small producer</div><p>Up to R$ 360 thousand in gross revenue a year, under Brazil’s rural credit rules.</p>'),
+        L('<div class="tag">Médio produtor</div><p>De R$ 360 mil a R$ 1,6 milhão por ano.</p>', '<div class="tag">Medium producer</div><p>From R$ 360 thousand to R$ 1.6 million a year.</p>'),
+        L('<div class="tag">Grande produtor</div><p>Para a lei, tudo acima de R$ 1,6 milhão é igual. Um estudo citado pela autora mostrou que quem passa de R$ 10 milhões tem demandas diferentes.</p>', '<div class="tag">Large producer</div><p>For the law, everything above R$ 1.6 million is the same. A study cited by the author showed that those above R$ 10 million have different needs.</p>'),
+        L('<div class="tag">Megaprodutor</div><p>A partir de R$ 10 milhões. O banco passou a atendê-los no <em>private banking</em>, feito para quem tem grande patrimônio e quer cuidar de investimentos. Mas o megaprodutor precisa, antes de tudo, de <strong>crédito</strong> para financiar a produção, e a oferta do banco para eles ainda é parecida com a do cliente private comum.</p>', '<div class="tag">Megaproducer</div><p>From R$ 10 million. The bank began serving them in <em>private banking</em>, designed for wealthy clients who want their investments managed. But a megaproducer needs, above all, <strong>credit</strong> to finance production, and the bank’s offer to them is still similar to that for an ordinary private client.</p>')
+      ];
+      $('mg-panel').innerHTML = txt[k];
+    }
+    $('mg-r').addEventListener('input', show);
+    show();
+  })();
+
+  /* ================= 03 · MODELO ================= */
+  (function(){
+    var D1 = [
+      {n:L('Financeira', 'Financial'), t:L('Ter um serviço de qualidade que resolve a necessidade sem obrigar o cliente a comprar extras.', 'Getting a quality service that meets the need without forcing the client to buy extras.')},
+      {n:L('Não financeira', 'Non-financial'), t:L('Os benefícios que vêm junto, como um seguro rural com atendimento direto para tirar dúvidas e acionar a cobertura.', 'The benefits that come with it, such as crop insurance with a direct line to ask questions and file claims.')},
+      {n:L('Temporal', 'Time'), t:L('Economizar tempo, ter benefícios que duram e contar com o serviço na hora em que precisa.', 'Saving time, getting lasting benefits and having the service available when it is needed.')}
+    ];
+    var D2 = [
+      {n:L('Intra e intersubjetiva', 'Intra- and intersubjective'), t:L('O valor vem também dos outros: dos grupos de que o cliente participa e do que outros clientes vivem.', 'Value also comes from others: from the groups the client belongs to and from what other clients go through.')},
+      {n:L('Vivida ou imaginária', 'Lived or imagined'), t:L('A percepção vem do que o cliente viveu e também do que ouviu: avaliações, propaganda, recomendações.', 'Perception comes from what the client lived through and also from what they heard: reviews, advertising, recommendations.')},
+      {n:L('Temporal', 'Temporal'), t:L('O valor de hoje depende das experiências passadas e do que o cliente espera para o futuro.', 'Today’s value depends on past experiences and on what the client expects in the future.')},
+      {n:L('Contextual', 'Contextual'), t:L('Cada cliente vive o serviço no seu próprio contexto, mesmo quando a empresa propõe o mesmo para todos.', 'Each client lives the service in their own context, even when the company offers the same to everyone.')}
+    ];
+    function mk(id, arr, tag){
+      var g = $(id);
+      g.innerHTML = arr.map(function(d, i){ return '<button data-i="' + i + '" aria-pressed="false">' + d.n + '</button>'; }).join('');
+      each(g.children, function(b){ b.addEventListener('click', function(){
+        each(document.querySelectorAll('#md-model .dims button'), function(x){ x.setAttribute('aria-pressed', x === b); });
+        var d = arr[+b.dataset.i];
+        $('md-panel').innerHTML = '<div class="tag">' + tag + ' · ' + d.n + '</div><p>' + d.t + '</p>';
+      }); });
+    }
+    mk('md-d1', D1, L('Expectativa', 'Expectation'));
+    mk('md-d2', D2, L('Experiência', 'Experience'));
+    segs('md-seg', [L('Experiência positiva', 'Positive experience'), L('Experiência negativa', 'Negative experience')], function(i){
+      $('md-cria').classList.toggle('off', i === 1); $('md-dest').classList.toggle('off', i === 0);
+      $('md-panel').innerHTML = i === 0
+        ? L('<div class="tag">Experiência positiva</div><p>Pelo modelo, o cliente teve as necessidades atendidas, ganhou tempo ou foi além do que esperava: o valor é <strong class="rel-t">criado</strong>.</p>', '<div class="tag">Positive experience</div><p>In the model, the client’s needs were met, time was saved or expectations were exceeded: value is <strong class="rel-t">created</strong>.</p>')
+        : L('<div class="tag">Experiência negativa</div><p>Pelo modelo, custos extras, informação incompleta ou um serviço complicado <strong class="exp-t">destroem</strong> o valor. A pesquisa vai pôr essa previsão à prova (tela 10).</p>', '<div class="tag">Negative experience</div><p>In the model, extra costs, incomplete information or a complicated service <strong class="exp-t">destroy</strong> value. The research puts this prediction to the test (screen 10).</p>');
+    }, 0);
+    $('md-dest').classList.add('off');
+    $('md-panel').innerHTML = L('<div class="tag">Experiência positiva</div><p>Pelo modelo, o cliente teve as necessidades atendidas, ganhou tempo ou foi além do que esperava: o valor é <strong class="rel-t">criado</strong>. Toque nas dimensões para ver o que cada uma quer dizer.</p>', '<div class="tag">Positive experience</div><p>In the model, the client’s needs were met, time was saved or expectations were exceeded: value is <strong class="rel-t">created</strong>. Tap the dimensions to see what each one means.</p>');
+  })();
+
+  /* ================= 04 · QUEM ================= */
+  (function(){
+    var sc = $('qm-scene'), st = makeStage(sc, 440, 220, {ay:'60%', rx:'56deg'});
+    rotatable(sc, st, -12, 8);
+    var R = [
+      {n:L('Entrevistas', 'Interviews'), g:[{n:L('analisadas', 'analyzed'), k:8, c:NAVY}, {n:L('descartadas', 'discarded'), k:2, c:NEU}],
+       t:L('<div class="tag">10 entrevistas, 8 analisadas</div><p>Duas conversas saíram da análise: ali ficou claro que a pessoa participava do negócio, mas não tomava as decisões finais.</p>', '<div class="tag">10 interviews, 8 analyzed</div><p>Two conversations were left out: it became clear that the person was involved in the business but did not make the final decisions.</p>')},
+      {n:L('Estado', 'State'), g:[{n:'SP', k:3, c:NAVY}, {n:'MG', k:2, c:NAVY}, {n:'MS', k:1, c:NAVY}, {n:'MT', k:1, c:NAVY}, {n:'BA', k:1, c:NAVY}],
+       t:L('<div class="tag">Cinco estados</div><p>São Paulo (3), Minas Gerais (2), Mato Grosso do Sul, Mato Grosso e Bahia (1 cada).</p>', '<div class="tag">Five states</div><p>São Paulo (3), Minas Gerais (2), Mato Grosso do Sul, Mato Grosso and Bahia (1 each).</p>')},
+      {n:L('Cultura principal', 'Main crop'), g:[{n:L('Café', 'Coffee'), k:3, c:NAVY}, {n:L('Pecuária', 'Cattle'), k:2, c:NAVY}, {n:L('Soja', 'Soy'), k:2, c:NAVY}, {n:L('Algodão', 'Cotton'), k:1, c:NAVY}],
+       t:L('<div class="tag">As culturas que mais pesam no banco</div><p>Soja e milho contam como uma cultura só, porque quem planta soja costuma plantar milho na rotação. Quase todos têm outras culturas além da principal.</p>', '<div class="tag">The crops that weigh most at the bank</div><p>Soy and corn count as a single crop, since soy growers usually rotate with corn. Almost all have other crops besides the main one.</p>')},
+      {n:L('Tempo de banco', 'Years with the bank'), g:[{n:L('6 anos', '6 years'), k:1, c:NAVY}, {n:L('20 a 29', '20 to 29'), k:3, c:NAVY}, {n:L('30 a 42', '30 to 42'), k:4, c:NAVY}],
+       t:L('<div class="tag">26 anos em média</div><p>Sete dos oito são clientes há 20 anos ou mais. A exceção assumiu os negócios da família há 6 anos.</p>', '<div class="tag">26 years on average</div><p>Seven of the eight have been clients for 20 years or more. The exception took over the family business 6 years ago.</p>')}
+    ];
+    function show(k){
+      st.innerHTML = ''; var fl = document.createElement('div'); fl.className = 'floor'; st.appendChild(fl);
+      var gs = R[k].g, n = gs.length, gap = 10, pw = (440 - gap * (n - 1)) / n;
+      gs.forEach(function(g, i){
+        var x = i * (pw + gap);
+        st.appendChild(box({w:pw, d:150, h:16, x:x, y:40, c:'#e2e8f0', label:g.n + ' · ' + g.k}));
+        for (var j = 0; j < g.k; j++){
+          var cols = Math.max(1, Math.floor((pw - 8) / 34)), cx = j % cols, cy = Math.floor(j / cols);
+          st.appendChild(box({w:26, d:26, h:26, x:x + 6 + cx * 34, y:60 + cy * 34, z:16, c:g.c}));
+        }
+      });
+      $('qm-panel').innerHTML = R[k].t;
+    }
+    segs('qm-seg', R.map(function(r){ return r.n; }), show, 0);
+    show(0);
+  })();
+
+  /* ================= 05 · O QUE ESPERAM ================= */
+  (function(){
+    // Contagens nossas, Quadro 9. esp: citam como expectativa (null = não é linha de expectativa); dec: citam na linha "decisão de negócios".
+    var E = [
+      {n:L('Agilidade', 'Speed'), esp:8, dec:2, q:L('quem trabalha com agricultura, você tem um calendário agrícola que é inflexível, né? Então você tem que ter as demandas atendidas no prazo correto', 'when you work in farming, you have a farming calendar that is inflexible, right? So you need your requests handled on time'), w:'P6',
+       t:L('Todos esperam rapidez para ser atendidos e para fechar negócios. Para um deles, a agilidade de um concorrente foi o motivo de levar os negócios para lá.', 'Everyone expects speed in service and in closing deals. For one of them, a competitor’s speed was the reason to move business there.')},
+      {n:L('Segurança', 'Security'), esp:8, dec:3, q:L('Eu preciso de credibilidade, saber que não é um banco pé de chinelo, que eu vou enfiar meu dinheiro e vou ter risco.', 'I need credibility, to know it’s not some fly-by-night bank where I’ll put my money and take a risk.'), w:'P5',
+       t:L('Credibilidade, solidez e a imagem do banco no agro foram citadas por todos. Três incluem a confiança ou a solidez do banco no que decide a escolha.', 'Credibility, soundness and the bank’s image in agribusiness were cited by all. Three include trust in the bank or its soundness among what decides the choice.')},
+      {n:L('Saber de agro', 'Agro know-how'), esp:8, dec:0, q:L('Pessoas qualificadas que você consegue realmente endereçar os problemas, que são normais do negócio e que vai resolver essas questões, né?', 'Qualified people you can really take your problems to, the normal problems of the business, and who will sort them out, right?'), w:'P6',
+       t:L('Todos valorizam funcionários que entendem do agronegócio e confiam nas orientações do gerente, inclusive quem concentra os negócios em outro banco. Ninguém a cita como critério de desempate.', 'All value staff who understand agribusiness and trust the manager’s advice, including those who do most business at another bank. No one cites it as a tiebreaker.')},
+      {n:L('Proximidade', 'Closeness'), esp:7, dec:1, q:L('o importante mesmo é essa proximidade, estar junto, saber que podemos contar caso o clima não ajude e nem sempre o clima ajuda', 'what really matters is that closeness, being there, knowing we can count on them if the weather doesn’t help, and the weather doesn’t always help'), w:'P7',
+       t:L('Um banco perto do negócio conhece a fazenda e oferece o que faz sentido. Sete falam disso; com a proximidade vem a personalização, como adaptar o crédito a uma safra que quebrou.', 'A bank close to the business knows the farm and offers what makes sense. Seven talk about it; with closeness comes personalization, such as adjusting credit to a failed harvest.')},
+      {n:L('Taxa de juros', 'Interest rate'), esp:5, dec:3, q:L('O custo é importante, né? [...] Se me dá taxa, mas não me dá retorno, não me acompanha também fica difícil, né?', 'Cost is important, right? [...] If they give me a rate but don’t get back to me, don’t follow along, that’s hard too, right?'), w:'P8',
+       t:L('Taxas menores atraem, mas não são a expectativa principal. Só os três que não têm preferência pelo Banco X ou concentram os negócios em outro banco põem a taxa no que decide.', 'Lower rates are attractive, but not the main expectation. Only the three who have no preference for Bank X or do most business elsewhere put the rate among what decides.')},
+      {n:L('Relacionamento', 'Relationship'), esp:null, dec:5, q:L('a gente considera o histórico todo, né? Quem teve do lado, quem quer tá do lado, de que forma, qual taxa, mas aí entra tudo que a gente já passou com cada um pra poder decidir.', 'we consider the whole history, right? Who stood by us, who wants to stand by us, how, what rate, but then everything we’ve been through with each one comes in to decide.'), w:'P8',
+       t:L('Cinco dos oito decidem pela relação: a história, quem esteve do lado nas horas difíceis, a confiança. É o critério mais citado na hora de escolher.', 'Five of the eight decide by the relationship: the history, who stood by them in hard times, trust. It is the most cited factor when choosing.')}
+    ];
+    var sc = $('ex-scene'), st = makeStage(sc, 420, 120, {ay:'72%', rx:'60deg'}), mode = 0, cur = 0, bet = -1;
+    var bx = E.map(function(e, i){ var b = box({w:52, d:52, h:2, x:6 + i * 70, y:34, c:NAVY, top:' '}); st.appendChild(b); return b; });
+    rotatable(sc, st, -12, 7);
+    var names = $('ex-names');
+    names.innerHTML = E.map(function(e, i){ return '<button data-i="' + i + '" aria-pressed="false">' + e.n + '</button>'; }).join('');
+    function pick(i){
+      var e = E[i]; if (!e) return; cur = i;
+      each(names.children, function(b, j){ b.setAttribute('aria-pressed', j === i); });
+      bx.forEach(function(b, j){ b.style.setProperty('--oz', j === i ? '10px' : '0px'); });
+      var cnt = mode === 0 ? (e.esp === null ? L('não é uma linha de expectativa no quadro', 'not an expectation row in the table') : e.esp + L(' de 8 esperam', ' of 8 expect it')) : e.dec + L(' de 8 decidem por isso', ' of 8 decide by it');
+      $('ex-panel').innerHTML = '<div class="tag">' + e.n + ' · ' + cnt + '</div><p>' + e.t + '</p><p><q>' + e.q + '</q><span class="who-q">' + e.w + '</span></p>';
+    }
+    function draw(){
+      E.forEach(function(e, i){
+        var v = mode === 0 ? e.esp : e.dec, b = bx[i];
+        b.classList.toggle('empty', v === null);
+        b.style.setProperty('--h', (v === null ? 2 : Math.max(2, v * 22)) + 'px');
+        b.style.setProperty('--c', mode === 1 && i === 5 ? RED : (mode === 1 && i === 4 ? '#b4506a' : NAVY));
+        b.querySelector('.top-label').textContent = v === null ? '—' : String(v);
+        names.children[i].textContent = e.n + ' · ' + (v === null ? '—' : v);
+      });
+      pick(cur);
+    }
+    each(names.children, function(b){ b.addEventListener('click', function(){ pick(+b.dataset.i); }); });
+    var sg = segs('ex-seg', [L('O que esperam', 'What they expect'), L('O que decide a escolha', 'What decides the choice')], function(i){ mode = i; draw(); }, 0);
+    var BETS = [L('A taxa de juros', 'The interest rate'), L('A agilidade', 'Speed'), L('O relacionamento', 'The relationship')];
+    var bg = $('ex-bet');
+    bg.innerHTML = BETS.map(function(t, i){ return '<button data-i="' + i + '">' + t + '</button>'; }).join('');
+    each(bg.children, function(b){ b.addEventListener('click', function(){
+      bet = +b.dataset.i; each(bg.children, function(x){ x.classList.toggle('chosen', x === b); });
+      mode = 1; press(sg, sg.children[1]); cur = [4, 0, 5][bet]; draw();
+      $('ex-fb').innerHTML = (bet === 2 ? L('<strong class="rel-t">Acertou.</strong> ', '<strong class="rel-t">Right.</strong> ') : L('<strong class="exp-t">Não foi o mais citado.</strong> ', '<strong class="exp-t">Not the most cited.</strong> ')) +
+        L('Na linha “decisão de negócios” do quadro, o relacionamento aparece para 5 dos 8; a taxa de juros, para 3; a agilidade, para 2.', 'In the table’s “business decision” row, the relationship appears for 5 of the 8; the interest rate for 3; speed for 2.');
+    }); });
+    $('ex-fb').innerHTML = L('Toque numa resposta para ver o que os oito disseram.', 'Tap an answer to see what the eight said.');
+    draw();
+  })();
+
+  /* ================= 06 · DÉCADAS ================= */
+  (function(){
+    var sc = $('dc-scene'), st = makeStage(sc, 420, 120, {ay:'80%', rx:'60deg'}), mode = 0, cur = 1;
+    var bx = P.map(function(p, i){ var b = box({w:38, d:38, h:p.y * 4.6, x:8 + i * 51, y:40, c:NAVY, top:String(p.y)}); st.appendChild(b); return b; });
+    rotatable(sc, st, -12, 7);
+    var names = $('dc-names');
+    names.innerHTML = P.map(function(p, i){ return '<button data-i="' + i + '" aria-pressed="false">' + p.c + ' · ' + p.y + '</button>'; }).join('');
+    function col(p){ return mode === 0 ? SENT[p.s].c : (p.rel ? NAVY : RED); }
+    function pick(i){
+      var p = P[i]; if (!p) return; cur = i;
+      each(names.children, function(b, j){ b.setAttribute('aria-pressed', j === i); b.style.setProperty('--bc', col(P[j])); });
+      bx.forEach(function(b, j){ b.style.setProperty('--oz', j === i ? '12px' : '0px'); });
+      $('dc-panel').innerHTML = '<div class="tag">' + p.c + ' · ' + p.y + L(' anos de banco', ' years with the bank') + '</div><p><b>' + L('Sentimento: ', 'Feeling: ') + '</b>' + SENT[p.s].n + ' · <b>' + L('Decide por: ', 'Decides by: ') + '</b>' + p.d + '</p><p><q>' + p.q + '</q></p>';
+    }
+    function draw(){
+      P.forEach(function(p, i){ bx[i].style.setProperty('--c', col(p)); });
+      $('dc-leg').innerHTML = mode === 0
+        ? Object.keys(SENT).map(function(k){ return '<span><i style="background:' + SENT[k].c + '"></i>' + SENT[k].n + '</span>'; }).join('')
+        : '<span><i style="background:' + NAVY + '"></i>' + L('decide pela relação (5)', 'decides by the relationship (5)') + '</span><span><i style="background:' + RED + '"></i>' + L('decide por taxa e agilidade (3)', 'decides by rate and speed (3)') + '</span>';
+      pick(cur);
+    }
+    bx.forEach(function(b, i){ b.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick(i); }); });
+    each(names.children, function(b){ b.addEventListener('click', function(){ pick(+b.dataset.i); }); });
+    segs('dc-seg', [L('Como se sentem', 'How they feel'), L('O que decide', 'What decides')], function(i){ mode = i; draw(); }, 0);
+    draw();
+  })();
+
+  /* ================= 07 · EXPERIÊNCIA ================= */
+  (function(){
+    // Quadro 10, linha "experiência nos negócios".
+    var X = {
+      P1:{neg:[L('burocracia para fechar negócios', 'red tape to close deals')], pos:[L('gerente competente', 'competent manager'), L('pontualidade', 'punctuality'), L('prontidão', 'readiness')]},
+      P2:{neg:[], pos:[L('taxas atrativas por estar no Private', 'attractive rates for being in private banking')]},
+      P3:{neg:[], pos:[L('proximidade e personalização', 'closeness and personalization')]},
+      P4:{neg:[L('contratação lenta e burocrática', 'slow, bureaucratic contracting'), L('derivativos difíceis de contratar', 'derivatives hard to contract')], pos:[]},
+      P5:{neg:[L('ferramentas on-line pouco funcionais', 'online tools that barely work')], pos:[L('ofertas sob medida', 'tailored offers')]},
+      P6:{neg:[], pos:[L('concentra os negócios no banco', 'does most business at the bank')]},
+      P7:{neg:[], pos:[L('agilidade', 'speed'), L('ofertas sob medida', 'tailored offers')]},
+      P8:{neg:[L('ferramentas on-line pouco funcionais', 'online tools that barely work')], pos:[]}
+    };
+    var Q = {
+      P1:L('de uns tempos para cá, o Banco X está extremamente burocrático. Preciso dar um monte de explicações que é chover no molhado.', 'for a while now, Bank X has been extremely bureaucratic. I have to give a pile of explanations that just state the obvious.'),
+      P4:L('O Banco X é muito amarrado, nos outros os processos são mais rápido, mais ágil. Quando você fala de mesa, do mercado de derivativo, precisa dessa agilidade', 'Bank X is very tied up, at the others the processes are faster, more agile. When you talk about the trading desk, the derivatives market, you need that speed'),
+      P5:L('é muito ruim ter que aprovar pagamento com vocês [...] com os outros bancos, nossa, tudo tão fácil, tenho um aplicativo para simular derivativos', 'it’s really bad having to approve payments with you [...] with the other banks, wow, everything is so easy, I have an app to simulate derivatives'),
+      P7:L('ele vê o negócio, sabe que o clima vai dar problema e tem uma solução para ajudar, isso assim, em comparação com os outros bancos é ótimo', 'they see the business, know the weather will cause trouble and have a solution to help, and that, compared with other banks, is great'),
+      P6:L('A gente sente que hoje é atendido, assim, por uma equipe muito, muito completa aqui, que acompanha bem de perto as nossas demandas', 'We feel that today we’re served, like, by a very, very complete team here, which follows our needs very closely')
+    };
+    var grid = $('xp-grid'), mode = 0, cur = 'P1';
+    grid.innerHTML = P.map(function(p){
+      var x = X[p.c];
+      return '<button class="pc" data-c="' + p.c + '"><div class="hd">' + p.c + '<i style="background:' + SENT[p.s].c + '" title="' + SENT[p.s].n + '"></i></div><ul>' +
+        x.neg.map(function(t){ return '<li class="neg">' + t + '</li>'; }).join('') + x.pos.map(function(t){ return '<li class="pos">' + t + '</li>'; }).join('') + '</ul></button>';
+    }).join('');
+    function sum(){
+      return mode === 0
+        ? L('<div class="tag">4 de 8 citam algum atrito</div><p>Burocracia e lentidão para contratar (P1 e P4) e ferramentas on-line ruins, comparadas às de outros bancos (P5 e P8). P1 e P8 têm estima pela relação com o banco.</p>', '<div class="tag">4 of 8 mention some friction</div><p>Red tape and slowness in contracting (P1 and P4) and poor online tools compared with other banks’ (P5 and P8). P1 and P8 hold the relationship with the bank in esteem.</p>')
+        : L('<div class="tag">6 de 8 citam algo bom</div><p>Ofertas que cabem no negócio, proximidade, agilidade, taxas melhores por estar no Private e um gerente competente e pontual. Os elogios vêm de clientes fiéis e de clientes sem preferência.</p>', '<div class="tag">6 of 8 mention something good</div><p>Offers that fit the business, closeness, speed, better rates for being in private banking and a competent, punctual manager. The praise comes from both loyal clients and those with no preference.</p>');
+    }
+    function pick(c){
+      cur = c; var x = X[c], q = Q[c];
+      $('xp-panel').innerHTML = sum() + (q ? '<p><q>' + q + '</q><span class="who-q">' + c + '</span></p>' : '<p style="font-size:.8rem; color:var(--muted)">' + L('Sem fala citada sobre isso na dissertação.', 'No quote on this in the dissertation.') + '</p>');
+    }
+    function draw(){
+      each(grid.children, function(b){
+        var x = X[b.dataset.c], on = mode === 0 ? x.neg.length > 0 : x.pos.length > 0;
+        b.classList.toggle('off', !on); b.classList.toggle('hit', on && mode === 0); b.classList.toggle('hitp', on && mode === 1);
+      });
+      pick(mode === 0 ? (X[cur].neg.length ? cur : 'P1') : (X[cur].pos.length ? cur : 'P7'));
+    }
+    each(grid.children, function(b){ b.addEventListener('click', function(){ pick(b.dataset.c); }); });
+    segs('xp-seg', [L('O que incomodou', 'What bothered them'), L('O que agradou', 'What pleased them')], function(i){ mode = i; draw(); }, 0);
+    draw();
+  })();
+
+  /* ================= 08 · PRIVATE × VAREJO ================= */
+  (function(){
+    var ROWS = [
+      {k:L('Gerente', 'Manager'), v:L('longe do negócio, e trocado com frequência', 'far from the business, and frequently replaced'), p:L('<q>um cara que tá próximo, envolvido, sabe do negócio, quer viabilizar novos negócios sabendo do nosso histórico</q> (P6)', '<q>a guy who’s close, involved, knows the business, wants to make new deals happen knowing our history</q> (P6)')},
+      {k:L('Onde', 'Where'), v:L('na agência, presencialmente, junto com clientes de outros perfis', 'at the branch, in person, alongside all kinds of clients'), p:L('<q>junto da gente, na fazenda, no escritório. A gente conversa no whatsapp e já agiliza tanta coisa</q> (P8)', '<q>right there with us, on the farm, at the office. We talk on WhatsApp and so much gets done faster</q> (P8)')},
+      {k:L('Equipe', 'Team'), v:L('sem especialização no agro', 'not specialized in agribusiness'), p:L('<q>uma equipe bem, bem completa nas diferentes áreas</q> (P6)', '<q>a really, really complete team in the different areas</q> (P6)')},
+      {k:L('Tempo', 'Time'), v:L('demorava para comunicar uma demanda e fechar o negócio', 'it took long to get a request across and close the deal'), p:L('<q>Você não precisa ficar indo nas agências [...] todas as necessidades são atendidas bem rápidas</q> (P2)', '<q>You don’t have to keep going to branches [...] all needs are met really fast</q> (P2)')}
+    ];
+    var sc = $('pv-scene'), st = makeStage(sc, 420, 140, {ay:'66%', rx:'58deg'});
+    st.appendChild(box({w:420, d:110, h:12, x:0, y:16, c:'#e2e8f0', label:L('varejo', 'retail')}));
+    var hi = box({w:420, d:110, h:12, x:0, y:16, z:12, c:'#c7d2e8', label:'Private'}); st.appendChild(hi);
+    var cubes = P.map(function(p, i){ var b = box({w:34, d:34, h:34, x:10 + i * 51, y:54, z:12, c:i === 4 ? MID : RED, top:p.c}); st.appendChild(b); return b; });
+    rotatable(sc, st, -12, 7);
+    function show(k){
+      hi.style.setProperty('--h', k ? '70px' : '0px'); hi.classList.toggle('gone', !k);
+      cubes.forEach(function(b, i){
+        b.style.setProperty('--oz', (k ? 70 : 0) + 'px'); b.classList.toggle('gone', !k && i === 4);
+        b.style.setProperty('--c', i === 4 ? MID : (k ? NAVY : RED));
+      });
+      $('pv-rows').innerHTML = ROWS.map(function(r){ return '<div class="vrow' + (k ? ' pv' : '') + '"><b>' + r.k + '</b><span>' + (k ? r.p : r.v) + '</span></div>'; }).join('') +
+        '<p style="font-size:.8rem; color:var(--muted); margin:2px 0 0">' + (k ? L('Sete de oito relatam mudança positiva. P5 (cinza) já começou no Private.', 'Seven of eight report a positive change. P5 (gray) started in private banking.') : L('Os motivos de queixa do varejo, segundo os participantes (seção 4.2.4). P5 não aparece: já começou no Private.', 'What participants disliked about retail (section 4.2.4). P5 is missing: they started in private banking.')) + '</p>';
+    }
+    segs('pv-seg', [L('No varejo (antes)', 'In retail (before)'), L('No Private (depois)', 'In private banking (after)')], show, 1);
+    show(1);
+  })();
+
+  /* ================= 09 · COMPARTILHADA ================= */
+  (function(){
+    var svg = $('cp-svg');
+    var N = [
+      {n:L('Cadeia de negócios', 'Business chain'), w:'P1 · P2 · P3 · P8', k:4, x:100, y:70,
+       t:L('Indicaram o banco a fornecedores e compradores com quem fazem negócio. P4, que concentra os negócios em outro banco, também indicou o Private a produtores atendidos no varejo, porque <q>sabia que podiam ser mais bem atendidos</q>.', 'They recommended the bank to suppliers and buyers they do business with. P4, who does most business at another bank, also recommended private banking to producers served in retail, because they <q>knew they could be better served</q>.')},
+      {n:L('Amigos', 'Friends'), w:'P2 · P3 · P4 · P7', k:4, x:360, y:70,
+       t:L('<q>um amigo me ligou todo achando que, nossa, que para ele, acho que foi uma certa Mega Sena ir para Private</q> <span class="who-q">P2 (Mega Sena é a maior loteria do Brasil)</span>', '<q>a friend called me all excited, wow, for him I think going to Private was like winning the Mega Sena</q> <span class="who-q">P2 (Mega Sena is Brazil’s biggest lottery)</span>')},
+      {n:L('Família', 'Family'), w:'P2', k:1, x:100, y:260,
+       t:L('Só P2 cita ter indicado o banco também a familiares.', 'Only P2 mentions having recommended the bank to relatives too.')},
+      {n:L('Eventos', 'Events'), w:'P1 · P4 · P5 · P6', k:4, x:360, y:260,
+       t:L('<q>quando tem (eventos), tem outros produtores, a gente conversa, fala de negócios, traz uma visão técnica que é importante</q> <span class="who-q">P6</span> P1 pede mais reuniões informais como as da sua agência. P5 gosta desses encontros, mas nunca recebeu convite do Banco X.', '<q>when there are (events), there are other producers, we talk, talk business, it brings a technical view that matters</q> <span class="who-q">P6</span> P1 asks for more informal gatherings like the ones at their branch. P5 likes these meetings but has never been invited by Bank X.')}
+    ];
+    var lines = [], nodes = [];
+    N.forEach(function(n){ lines.push(el('line', {x1:230, y1:165, x2:n.x, y2:n.y, stroke:NEU, 'stroke-width':2 + n.k * 2.2}, svg)); });
+    var c0 = el('g', {}, svg);
+    var cc = el('circle', {cx:230, cy:165, r:54}, c0); cc.style.fill = NAVY;
+    var t0 = el('text', {x:230, y:160, 'text-anchor':'middle', 'font-size':15, 'font-weight':700}, c0); t0.style.fill = '#fff'; t0.textContent = L('6 de 8', '6 of 8');
+    var t1 = el('text', {x:230, y:180, 'text-anchor':'middle', 'font-size':12}, c0); t1.style.fill = '#fff'; t1.textContent = L('já indicaram', 'have referred');
+    N.forEach(function(n, i){
+      var g = el('g', {'class':'nd', tabindex:0, role:'button', 'aria-label':n.n}, svg);
+      var r = 40 + n.k * 5.5;
+      var c = el('circle', {cx:n.x, cy:n.y, r:r}, g); c.style.fill = '#fff'; c.style.stroke = NAVY; c.style.strokeWidth = '2.5';
+      var parts = i === 0 ? [L('Cadeia de', 'Business'), L('negócios', 'chain')] : [n.n];
+      parts.forEach(function(tx, j){ var a = el('text', {x:n.x, y:n.y - 2 - (parts.length - 1 - j) * 18, 'text-anchor':'middle', 'font-size':14, 'font-weight':700}, g); a.style.fill = NAVY; a.textContent = tx; });
+      var b = el('text', {x:n.x, y:n.y + 18, 'text-anchor':'middle', 'font-size':12}, g); b.style.fill = DK; b.textContent = n.k + (n.k === 1 ? L(' pessoa', ' person') : L(' pessoas', ' people'));
+      nodes.push(c);
+      function go(){ pick(i); }
+      g.addEventListener('click', go); g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); } });
+    });
+    function pick(i){
+      var n = N[i]; if (!n) return;
+      nodes.forEach(function(c, j){ c.style.fill = j === i ? '#e6ecf6' : '#fff'; c.style.stroke = j === i ? RED : NAVY; });
+      lines.forEach(function(l, j){ l.style.stroke = j === i ? RED : NEU; });
+      $('cp-panel').innerHTML = '<div class="tag">' + n.n + ' · ' + n.w + '</div><p>' + n.t + '</p>';
+    }
+    pick(1);
+  })();
+
+  /* ================= 10 · DESCOBERTA ================= */
+  (function(){
+    var sc = $('ds-scene'), st = makeStage(sc, 300, 200, {ay:'72%', rx:'58deg'}), rel = 0, hits = 0, NB = 5;
+    var base = box({w:220, d:150, h:30, x:40, y:25, c:NAVY, label:L('relação de confiança', 'relationship of trust')}); st.appendChild(base);
+    var blocks = [];
+    for (var i = 0; i < NB; i++){ var b = box({w:120, d:90, h:26, x:90, y:55, z:30 + i * 28, c:NAVY2, label:i === 0 ? L('negócios com o banco', 'business with the bank') : ''}); st.appendChild(b); blocks.push(b); }
+    var drop = box({w:40, d:40, h:40, x:130, y:80, z:420, c:RED}); st.appendChild(drop);
+    rotatable(sc, st, -18, 8);
+    function panel(){
+      var t;
+      if (rel === 0){
+        t = hits === 0 ? L('<span class="flag">Ilustração</span><p>Relação de décadas, com confiança. Os blocos são os negócios que o cliente faz com o banco. Toque em <b>Viver uma experiência ruim</b>.</p>', '<span class="flag">Illustration</span><p>A relationship of decades, built on trust. The blocks are the business the client does with the bank. Tap <b>Go through a bad experience</b>.</p>')
+          : hits < 3 ? L('<span class="flag">Ilustração</span><p>A burocracia ou o aplicativo ruim levaram parte dos negócios para outro banco. A base continua: o cliente segue no banco e o consulta antes de fechar negócio.</p>', '<span class="flag">Illustration</span><p>Red tape or a poor app sent part of the business to another bank. The base holds: the client stays with the bank and consults it before closing deals.</p>')
+          : L('<span class="flag">Ilustração</span><p>Sobrou pouco, como no caso de quem concentra os negócios na concorrência. Mesmo assim, a relação está de pé, e com ela a chance de o banco <strong>corrigir a experiência</strong> e recuperar negócios, diz a autora.</p>', '<span class="flag">Illustration</span><p>Little is left, as with those who do most of their business with a competitor. Even so, the relationship still stands, and with it the bank’s chance to <strong>fix the experience</strong> and win back business, the author says.</p>');
+      } else {
+        t = hits === 0 ? L('<span class="flag">O que a literatura previa</span><p>Sem uma relação construída ao longo dos anos, o valor depende só da última experiência. Toque em <b>Viver uma experiência ruim</b>.</p>', '<span class="flag">What the literature predicted</span><p>Without a relationship built over the years, value depends only on the latest experience. Tap <b>Go through a bad experience</b>.</p>')
+          : L('<span class="flag">O que a literatura previa</span><p>Uma experiência ruim <strong class="exp-t">destrói o valor</strong>: o cliente vai embora. É o que o modelo inicial da autora também supunha, e o que as entrevistas não confirmaram para quem tinha uma relação longa.</p>', '<span class="flag">What the literature predicted</span><p>A bad experience <strong class="exp-t">destroys value</strong>: the client leaves. The author’s initial model assumed the same, and the interviews did not confirm it for those with a long relationship.</p>');
+      }
+      $('ds-panel').innerHTML = t;
+    }
+    function draw(){
+      base.classList.toggle('gone', rel === 1);
+      blocks.forEach(function(b, i){
+        var lost = rel === 0 ? i >= NB - Math.min(hits, NB - 1) : hits > 0;
+        b.classList.toggle('gone', lost && rel === 0); b.classList.toggle('dim', lost && rel === 1);
+        b.style.setProperty('--oz', lost ? (rel === 1 ? (-30 - i * 28) + 'px' : '60px') : '0px');
+        b.style.setProperty('--ox', lost && rel === 1 ? ((i % 2 ? 1 : -1) * (40 + i * 18)) + 'px' : '0px');
+      });
+      panel();
+    }
+    function hit(){
+      if (reduce){ hits++; draw(); return; }
+      drop.style.transition = 'none'; drop.style.setProperty('--z', '420px'); drop.classList.remove('gone');
+      var topZ = rel === 1 && hits === 0 ? 30 + NB * 28 : (rel === 1 ? 0 : 30 + (NB - Math.min(hits, NB - 1)) * 28);
+      void drop.offsetWidth;
+      setTimeout(function(){
+        drop.style.transition = 'transform .45s cubic-bezier(.5,0,1,1), opacity .4s';
+        drop.style.setProperty('--z', topZ + 'px');
+        setTimeout(function(){ hits++; draw(); drop.classList.add('gone'); }, 460);
+      }, 30);
+    }
+    drop.classList.add('gone');
+    $('ds-hit').addEventListener('click', hit);
+    $('ds-reset').addEventListener('click', function(){ hits = 0; draw(); });
+    segs('ds-seg', [L('Relação de décadas, com confiança', 'Decades-long relationship, with trust'), L('Sem relação (o previsto)', 'No relationship (as predicted)')], function(i){ rel = i; hits = 0; draw(); }, 0);
+    draw();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
