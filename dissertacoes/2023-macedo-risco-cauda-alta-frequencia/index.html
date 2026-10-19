@@ -1,0 +1,876 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quanto dá para perder num tombo da bolsa? · PPGA Interativo</title>
+<meta name="description" content="A dissertação de mestrado de Richard Willians Macedo Junior (PPGA Mackenzie, 2023) sobre como medir perdas extremas de ações da B3 com dados a cada 30 segundos (VaR, Expected Shortfall e rede LSTM), explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/dissertacoes/2023-macedo-risco-cauda-alta-frequencia/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2216%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>$</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  :root{
+    --var:var(--navy);    /* VaR: a linha */
+    --es:var(--red);      /* Expected Shortfall: o tombo médio além da linha */
+    --ret:#94a3b8;        /* variações comuns */
+    --off:#cbd5e1;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .ilus{display:inline-block; font-size:.64rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 20px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.05rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.9rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2); font-family:inherit;}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.3rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.76rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  svg text{font-family:var(--sans);}
+  .svgbox{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4vw, 2.7rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .warn{font-size:.76rem; color:var(--muted); margin-top:10px;}
+  .warn b{color:var(--red);}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:36em; margin-left:auto; margin-right:auto;}
+  #hero-scene{perspective:2200px;}
+  #hero-scene .floor-label{font-size:15px; color:var(--muted);}
+  #hero-scene .slab.active{--oz:16px;}
+
+  /* ---------- 02 · Cauda gorda ---------- */
+  #tail-panel{min-height:132px; margin-top:12px;}
+  @media (max-width:600px){ #tail-svg text{font-size:20px !important;} }
+
+  /* ---------- 03 · VaR × ES ---------- */
+  #ves-out{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+  #ves-out .stat{border-top:5px solid var(--sc);}
+  #ves-panel{margin-top:12px; min-height:92px;}
+  @media (max-width:600px){ #ves-svg text{font-size:21px !important;} }
+
+  /* ---------- 04 · Alta frequência ---------- */
+  #hf-panel{min-height:140px; margin-top:12px;}
+  @media (max-width:600px){ #hf-svg text{font-size:21px !important;} }
+
+  /* ---------- 05 · Revisão ---------- */
+  .funnel{display:grid; gap:6px; margin-top:6px;}
+  .fun{display:grid; grid-template-columns:1fr; justify-items:center;}
+  .fun i{display:flex; align-items:center; justify-content:center; height:34px; border-radius:8px; background:var(--ink-2); color:#fff; font-style:normal; font-weight:700; font-size:.9rem; transition:width .6s;}
+  .fun small{font-size:.72rem; color:var(--muted);}
+  .cats{display:flex; flex-wrap:wrap; gap:6px; margin-top:14px;}
+  .cats button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-size:.8rem; cursor:pointer; color:var(--ink-2); font-family:inherit;}
+  .cats button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .bar100{display:flex; height:46px; border-radius:10px; overflow:hidden; margin-top:12px; border:1px solid var(--border);}
+  .bar100 span{display:flex; align-items:center; justify-content:center; color:#fff; font-size:.72rem; font-weight:700; overflow:hidden; white-space:nowrap; transition:flex-basis .6s;}
+  .rlist{display:grid; gap:4px; margin-top:10px;}
+  .rlist div{display:grid; grid-template-columns:14px 1fr auto; gap:8px; align-items:center; font-size:.82rem; color:var(--ink-2);}
+  .rlist i{width:12px; height:12px; border-radius:3px;}
+  .rlist b{font-variant-numeric:tabular-nums; color:var(--ink);}
+  .rlist .gap{color:var(--red); font-weight:600;}
+  #rev-panel{margin-top:12px; min-height:84px;}
+
+  /* ---------- 06 · Sete ações ---------- */
+  #res-scene{perspective:2600px;}
+  #res-scene .slab{transition:transform .55s cubic-bezier(.2,.8,.2,1), --h .6s;}
+  #res-scene .top-label{font-size:13px; color:#fff; font-weight:700;}
+  #res-scene .floor-label{font-size:15px;}
+  #res-scene .slab.fix > i{background-image:repeating-linear-gradient(45deg, rgb(255 255 255 / .38) 0 6px, transparent 6px 12px);}
+  .assets{display:flex; flex-wrap:wrap; gap:6px; margin-top:12px;}
+  .assets button{border:1px solid var(--border); background:var(--card); border-radius:9px; padding:6px 10px; font-size:.8rem; font-weight:600; cursor:pointer; color:var(--ink); font-family:inherit;}
+  .assets button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  #res-panel{min-height:150px; margin-top:12px;}
+  @media (max-width:600px){ #res-scene .floor-label{font-size:21px;} #res-scene .top-label{font-size:17px;} }
+
+  /* ---------- 07 · Cauda gorda por ação + simulador ---------- */
+  .ratio{display:grid; gap:6px; margin-top:8px;}
+  .rrow{display:grid; grid-template-columns:62px 1fr 44px; gap:10px; align-items:center; font-size:.82rem; color:var(--ink-2);}
+  .rrow b{font-variant-numeric:tabular-nums; color:var(--ink); text-align:right;}
+  .rrow .tr{position:relative; height:22px; background:#f1f5f9; border-radius:4px; overflow:hidden;}
+  .rrow .tr .v{position:absolute; left:0; top:0; bottom:0; background:var(--var);}
+  .rrow .tr .e{position:absolute; left:0; top:6px; bottom:6px; background:var(--es); opacity:.9; transition:width .6s;}
+  .rrow.sel{font-weight:700;}
+  .sim{margin-top:6px;}
+  .sim label{display:flex; justify-content:space-between; font-size:.86rem; font-weight:600; color:var(--ink);}
+  .sim label span{font-variant-numeric:tabular-nums; color:var(--red);}
+  .sim input[type=range]{width:100%; accent-color:var(--red);}
+  .sim select{font:inherit; font-size:.86rem; border:1px solid var(--border); border-radius:9px; padding:6px 10px; background:var(--card); color:var(--ink);}
+  .simout{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+  .simout .stat{border-top:5px solid var(--sc);}
+
+  /* ---------- 08 · Raros ---------- */
+  .grid1000{display:grid; grid-template-columns:repeat(50, minmax(0,1fr)); gap:2px; max-width:440px; margin:10px auto 0;}
+  .grid1000 i{aspect-ratio:1; border-radius:50%; background:var(--off); transition:background .35s, transform .35s;}
+  .grid1000 i.x{background:var(--es); transform:scale(1.15);}
+  #rare-panel{min-height:140px; margin-top:12px;}
+  .cnt{display:grid; gap:3px; margin-top:8px;}
+  .cnt div{display:grid; grid-template-columns:56px 1fr 118px; gap:8px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .cnt .tr{height:14px; background:#f1f5f9; border-radius:3px; overflow:hidden;}
+  .cnt .tr i{display:block; height:100%; background:var(--es);}
+  .cnt b{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink);}
+
+  /* ---------- 09 · LSTM ---------- */
+  .gates{display:flex; flex-wrap:wrap; gap:6px; margin-top:12px;}
+  .gates button{border:1px solid var(--border); background:var(--card); border-radius:9px; padding:7px 12px; font-size:.82rem; font-weight:600; cursor:pointer; color:var(--ink); font-family:inherit;}
+  .gates button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  #lstm-panel{min-height:110px; margin-top:12px;}
+  #lstm-svg .g{transition:opacity .4s;}
+  @media (max-width:600px){ #lstm-svg text{font-size:19px !important;} #mse-svg text{font-size:20px !important;} }
+
+  /* ---------- 10 · O inesperado ---------- */
+  #pred-panel{min-height:120px; margin-top:12px;}
+  @media (max-width:600px){ #pred-svg text{font-size:21px !important;} }
+
+  /* ---------- 11 · Hipóteses ---------- */
+  .bets{display:grid; grid-template-columns:1fr; gap:14px; margin-top:8px;}
+  @media (min-width:800px){ .bets{grid-template-columns:1fr 1fr;} }
+  .bet{perspective:1000px;}
+  .bet .in{position:relative; min-height:250px; transform-style:preserve-3d; transition:transform .7s cubic-bezier(.2,.8,.2,1);}
+  .bet.done .in{transform:rotateY(180deg);}
+  .bet .fc, .bet .bc{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:14px; padding:16px 18px; background:var(--card); border:1px solid var(--border); border-top:5px solid var(--ink-2); box-shadow:var(--shadow); display:flex; flex-direction:column;}
+  .bet .bc{transform:rotateY(180deg); background:color-mix(in srgb, var(--vc) 7%, white); border-top-color:var(--vc);}
+  .bet .k{font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--muted);}
+  .bet h3{font-size:1rem; margin:4px 0 8px; line-height:1.35;}
+  .bet p{font-size:.82rem; color:var(--ink-2); margin:0 0 6px; line-height:1.5;}
+  .bet .opts{display:flex; gap:6px; margin-top:auto;}
+  .bet .opts button{flex:1; border:1px solid var(--border); background:var(--card); border-radius:9px; padding:9px 4px; font-size:.82rem; font-weight:600; cursor:pointer; color:var(--ink); font-family:inherit;}
+  .bet .opts button:hover{border-color:var(--ink);}
+  .bet .verdict{display:inline-block; align-self:flex-start; font-size:.76rem; font-weight:700; padding:3px 10px; border-radius:6px; color:#fff; background:var(--vc); margin-bottom:8px;}
+  .bet .you{font-size:.76rem; color:var(--muted); margin-top:auto;}
+  #bet-score{font-size:.92rem; color:var(--ink-2); margin-top:14px; min-height:1.6em;}
+  .vs{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px;}
+  @media (max-width:600px){ .bet .in{min-height:290px;} }
+
+  /* ---------- 12 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.78rem; color:var(--ink-2); line-height:1.42;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/dissertacoes/2023-macedo-risco-cauda-alta-frequencia/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Dissertação de mestrado · PPGA Mackenzie · 2023</div>
+      <h1 class="rv" style="--d:.1s">Quanto dá para perder num tombo da bolsa?</h1>
+      <p class="sub rv" style="--d:.2s">Os grandes tombos são raros, mas é neles que uma carteira mais sofre. A pesquisa usou preços de ações da B3 a cada 30 segundos para medir essas perdas extremas com duas réguas clássicas e testou se uma rede neural conseguiria prevê-las. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Richard Willians Macedo Junior</span>
+        <span><b>Orientador:</b> Prof. Dr. Eli Hadad Junior</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#cauda">Começar →</a>
+        <a class="btn ghost" href="#acoes">Ir direto ao resultado</a>
+      </div>
+      <p class="warn rv" style="--d:.45s"><b>Não é recomendação de investimento.</b> A página explica uma pesquisa acadêmica sobre como medir risco.</p>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="520x320" role="img" aria-label="Colunas que mostram quantas vezes cada tamanho de variação de preço acontece; as da esquerda, em vermelho, são os tombos raros, separados por uma lâmina azul"></div></div>
+      <p class="cap-legend"><span class="ilus">ilustração</span> Cada coluna é um tamanho de variação de preço; a altura, quantas vezes ele acontece. A lâmina azul é a linha do VaR; à esquerda dela, em vermelho, os piores 5%: a "cauda" da distribuição.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Mede as perdas extremas de sete ações da B3 com dados a cada 30 segundos, uma ferramenta de gestão de risco para investidores e instituições do mercado brasileiro."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · CAUDA GORDA -->
+<section class="slide" id="cauda" data-label="Cauda gorda">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O problema</div>
+      <h2 class="rv" style="--d:.1s">Na bolsa, os tombos grandes acontecem mais do que a curva comum promete</h2>
+      <p class="lede rv" style="--d:.15s">A quebra de 1987, as crises cambiais dos anos 1990, a bolha das empresas de internet em 2000, a crise de 2008 e a pandemia em 2020 lembraram os investidores de que perdas extremas existem. Esse é o "risco de cauda": as perdas na ponta esquerda da distribuição dos retornos, causadas por eventos raros ou catastróficos.</p>
+      <div class="seg rv" id="tail-seg" style="--d:.2s" role="group" aria-label="Escolha a curva">
+        <button data-m="0" aria-pressed="true">Curva normal</button>
+        <button data-m="1" aria-pressed="false">Cauda gorda</button>
+        <button data-m="2" aria-pressed="false">As duas</button>
+      </div>
+      <div class="panel rv" id="tail-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="tail-svg" class="svgbox" viewBox="0 0 560 330" role="img" aria-label="Duas curvas de distribuição de retornos: a normal e uma de cauda gorda, com a ponta esquerda destacada"></svg>
+      <p class="note"><span class="ilus">ilustração</span> Curvas desenhadas por nós, com a mesma média e a mesma variação típica; a de cauda gorda é uma t de Student com 3 graus de liberdade. "Cauda gorda" é uma das palavras-chave da dissertação; as crises vêm da introdução.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · VaR × ES -->
+<section class="slide" id="reguas" data-label="VaR e ES">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> As duas réguas</div>
+      <h2 class="rv" style="--d:.1s">Uma régua marca a linha; a outra mede o tombo depois dela</h2>
+      <p class="lede rv" style="--d:.15s">O <b>VaR</b> (Value-at-Risk, valor em risco) responde: "em 95% das vezes, a perda não passa de quanto?". O <b>ES</b> (Expected Shortfall, perda esperada além do VaR) pergunta o que o VaR esquece: "e quando passa, quanto se perde em média?". São as duas medidas de perda mais usadas.</p>
+      <div class="seg rv" id="ves-seg" style="--d:.2s" role="group" aria-label="Escolha o nível de confiança">
+        <button data-c="0.90" aria-pressed="false">90%</button>
+        <button data-c="0.95" aria-pressed="true">95%</button>
+        <button data-c="0.975" aria-pressed="false">97,5%</button>
+        <button data-c="0.99" aria-pressed="false">99%</button>
+      </div>
+      <div id="ves-out" class="rv" style="--d:.25s">
+        <div class="stat" style="--sc:var(--var)"><b id="ves-v">–</b><span>VaR: a linha</span></div>
+        <div class="stat" style="--sc:var(--es)"><b id="ves-e">–</b><span>ES: média dos dias além da linha</span></div>
+      </div>
+      <div class="panel rv" id="ves-panel" style="--d:.3s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="ves-svg" class="svgbox" viewBox="0 0 560 320" role="img" aria-label="Histograma de 500 dias inventados de variação de preço, com a linha do VaR e a média além dela (ES)"></svg>
+      <p class="note"><span class="ilus">ilustração</span> 500 dias de variação inventados por nós (com cauda gorda) só para mostrar as duas réguas. Os números reais da dissertação estão nas telas 06 a 08.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · ALTA FREQUÊNCIA -->
+<section class="slide" id="frequencia" data-label="Alta frequência">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Os dados</div>
+      <h2 class="rv" style="--d:.1s">Em vez de um preço por dia, um preço a cada 30 segundos</h2>
+      <p class="lede rv" style="--d:.15s">Dados de alta frequência dão muito mais observações e mostram como o preço se mexe dentro do pregão. A pesquisa partiu dos registros da B3 em milissegundos e os resumiu a cada 30 segundos, o tempo que o Ibovespa leva para ser atualizado.</p>
+      <div class="seg rv" id="hf-seg" style="--d:.2s" role="group" aria-label="Escolha a régua de tempo">
+        <button data-m="0" aria-pressed="false">1 por dia</button>
+        <button data-m="1" aria-pressed="false">5 minutos</button>
+        <button data-m="2" aria-pressed="true">30 segundos</button>
+        <button data-m="3" aria-pressed="false">Buraco nos dados</button>
+      </div>
+      <div class="panel rv" id="hf-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="hf-svg" class="svgbox" viewBox="0 0 560 300" role="img" aria-label="O mesmo pregão desenhado com mais ou menos pontos"></svg>
+      <div class="stats">
+        <div class="stat"><b>7</b><span>ações da B3 em 2022, para o VaR e o ES</span></div>
+        <div class="stat"><b>2019–2021</b><span>PETR3 e Ibovespa, para a rede neural</span></div>
+        <div class="stat"><b>30 s</b><span>um registro a cada 30 segundos</span></div>
+      </div>
+      <p class="note"><span class="ilus">ilustração</span> Pregão inventado por nós. As ações (seção 3.3): B3SA3 (B3), BBAS3 (Banco do Brasil), BBDC4 (Bradesco), ITUB3 e ITUB4 (Itaú Unibanco), PETR3 e PETR4 (Petrobras); final 3 = ordinária, 4 = preferencial.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · REVISÃO -->
+<section class="slide" id="revisao" data-label="O que já se estudou">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> A literatura · 29 artigos</div>
+      <h2 class="rv" style="--d:.1s">Quase ninguém tinha olhado o risco de cauda com dados brasileiros</h2>
+      <p class="lede rv" style="--d:.15s">Antes dos modelos, o autor vasculhou a Web of Science atrás de artigos que juntassem "risco de cauda" e "dados de alta frequência", e classificou cada um em 11 perguntas.</p>
+      <div class="funnel rv" style="--d:.2s" id="funnel"></div>
+      <p class="note">Artigos de 2005 a 2022, até 4 por ano (Tabela 01 e Figura 01). Saíram da amostra intermediária, por exemplo, estudos sobre bancos (8), câmbio (5) e preços futuros (4).</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="cats" id="rev-cats" role="group" aria-label="Escolha a pergunta"></div>
+      <div class="bar100" id="rev-bar" role="img" aria-label="Divisão dos 29 artigos na pergunta escolhida"></div>
+      <div class="rlist" id="rev-list"></div>
+      <div class="panel" id="rev-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · SETE AÇÕES -->
+<section class="slide" id="acoes" data-label="Sete ações">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Resultado · VaR e ES a 95% · 2022</div>
+      <h2 class="rv" style="--d:.1s">Nas sete ações, o tombo médio além da linha foi pelo menos o dobro da própria linha</h2>
+      <p class="lede rv" style="--d:.15s">Com o método dos momentos (GMM), o autor estimou o VaR e o ES de cada ação ao longo de 2022, a 95%. Os valores são variações de preço numa janela curta: −0,48% quer dizer uma queda de 0,48%.</p>
+      <div class="seg rv" id="res-seg" style="--d:.2s" role="group" aria-label="Escolha a medida">
+        <button data-m="v" aria-pressed="false">Só o VaR</button>
+        <button data-m="e" aria-pressed="false">Só o ES</button>
+        <button data-m="b" aria-pressed="true">Os dois</button>
+      </div>
+      <div class="assets rv" id="res-assets" style="--d:.22s" role="group" aria-label="Escolha a ação"></div>
+      <div class="panel rv" id="res-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="res-scene" data-fit="560x360" role="img" aria-label="Pares de colunas por ação: azul para o VaR e vermelho para o ES; as vermelhas têm de duas a quase três vezes e meia a altura das azuis"></div></div>
+      <div class="legend"><span><i class="dot" style="background:var(--var)"></i>VaR (a linha)</span><span><i class="dot" style="background:var(--es)"></i>ES (o tombo médio além dela)</span></div>
+      <p class="note">Tabela 11, perdas em módulo. <b>Listradas:</b> o ES de ITUB3 e PETR3 aparece na tabela com um zero a mais (−0,001172 e −0,001301), menor que o próprio VaR, o que a definição não permite; os pontos da Figura 15 ficam perto de −0,01, então usamos −1,17% e −1,30% (correção nossa).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · CAUDA POR AÇÃO + SIMULADOR -->
+<section class="slide" id="petrobras" data-label="Em reais">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Quanto a cauda pesa</div>
+      <h2 class="rv" style="--d:.1s">As ações da Petrobras tiveram a cauda mais pesada</h2>
+      <p class="lede rv" style="--d:.15s">Dividindo o ES pelo VaR, dá para ver o quanto o tombo médio passa da linha. Na PETR3 e na PETR4, ele foi mais de três vezes maior; nas outras, entre duas e três vezes.</p>
+      <div class="ratio rv" id="ratio" style="--d:.2s"></div>
+      <p class="note">Barra azul: o VaR; barra vermelha: o ES, na mesma escala. O número à direita (ES ÷ VaR) é conta nossa com a Tabela 11 (ITUB3 e PETR3 com a correção da tela 06).</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel sim">
+        <div class="tag">Simulador · conta nossa</div>
+        <h3>Traduza em reais</h3>
+        <p style="font-size:.84rem">Escolha uma ação e um valor aplicado nela. A conta multiplica o valor pelo VaR e pelo ES da Tabela 11.</p>
+        <p><select id="sim-asset" aria-label="Ação"></select></p>
+        <label for="sim-amt">Valor aplicado <span id="sim-amt-v">R$ 10.000</span></label>
+        <input type="range" id="sim-amt" min="1000" max="100000" step="1000" value="10000">
+        <div class="simout">
+          <div class="stat" style="--sc:var(--var)"><b id="sim-v">–</b><span>em 95% das janelas, a queda não passou disto</span></div>
+          <div class="stat" style="--sc:var(--es)"><b id="sim-e">–</b><span>quando passou, a queda média foi esta</span></div>
+        </div>
+        <p class="note" style="margin-bottom:0"><b>Não é recomendação de investimento.</b> Os valores valem para a janela curta e o ano de 2022 da pesquisa; não preveem o futuro nem somam ao longo de um dia.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · RAROS -->
+<section class="slide" id="raros" data-label="Além da linha">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Os pontos além da linha</div>
+      <h2 class="rv" style="--d:.1s">Na contagem da dissertação, os tombos além da linha foram raríssimos</h2>
+      <p class="lede rv" style="--d:.15s">O ES vem dos pontos que ficaram abaixo do VaR. Na B3SA3, foram 136 entre quase 3 milhões de registros de 2022: uma chance de 0,0045%. Para o autor, isso mostra que VaR e ES detectam o risco de cauda em dados de alta frequência.</p>
+      <div class="cnt rv" id="cnt" style="--d:.2s"></div>
+      <p class="note">Tabela 11 (colunas "Obs.") e seção 4.1; "a cada 100 mil" é conta nossa. Na Figura 15, os piores pontos chegam perto de −18% na PETR3 e de −19% na PETR4 (leitura nossa do gráfico).</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="rare-seg" role="group" aria-label="Escolha a contagem">
+        <button data-m="d" aria-pressed="true">Contagem da dissertação</button>
+        <button data-m="t" aria-pressed="false">O que a definição espera</button>
+      </div>
+      <div class="grid1000" id="g1000" role="img" aria-label="Mil registros como pontos"></div>
+      <div class="panel" id="rare-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · LSTM -->
+<section class="slide" id="rede" data-label="A rede neural">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> O segundo modelo · PETR3 + Ibovespa</div>
+      <h2 class="rv" style="--d:.1s">Uma rede neural com memória tentou prever as perdas da PETR3</h2>
+      <p class="lede rv" style="--d:.15s">A LSTM (Long Short-Term Memory) é uma rede neural feita para sequências: ela guarda o que importa do passado e descarta o resto. Recebeu as variações da PETR3 e do Ibovespa a cada 30 segundos, de abril de 2019 a dezembro de 2021, e aprendeu com 80% da série para tentar prever os 20% finais.</p>
+      <div class="gates rv" id="gates" style="--d:.2s" role="group" aria-label="Escolha a parte da célula"></div>
+      <div class="panel rv" id="lstm-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="lstm-svg" class="svgbox" viewBox="0 0 560 250" role="img" aria-label="Esquema de uma célula LSTM com a linha da memória e três portões"></svg>
+      <svg id="mse-svg" class="svgbox" viewBox="0 0 560 170" style="margin-top:10px" role="img" aria-label="Erro de treino da rede caindo ao longo de 10 rodadas"></svg>
+      <p class="note">Duas camadas LSTM e 221.132 parâmetros ajustáveis (Tabela 12). O erro de treino caiu de ~0,0008 para ~0,00014 e parou de cair a partir da 3ª rodada (Figura 16, valores lidos do gráfico). Esquema da célula: ilustração nossa a partir da descrição da introdução.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · O INESPERADO -->
+<section class="slide" id="previsao" data-label="O inesperado">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> O inesperado</div>
+      <h2 class="rv" style="--d:.1s">A rede aprendeu o treino, mas não previu as perdas</h2>
+      <p class="lede rv" style="--d:.15s">No período de teste, as variações reais da PETR3 ficaram perto de zero, com alguns saltos. A previsão da rede oscilou em torno de −7,6, uma escala muito distante. Para o autor, os valores previstos não são significativos, e a hipótese de que a LSTM melhora a gestão do risco de cauda não se confirmou.</p>
+      <div class="seg rv" id="pred-seg" style="--d:.2s" role="group" aria-label="Escolha o gráfico">
+        <button data-m="r" aria-pressed="true">Real</button>
+        <button data-m="p" aria-pressed="false">Previsto</button>
+        <button data-m="b" aria-pressed="false">Na mesma régua</button>
+      </div>
+      <div class="panel rv" id="pred-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="pred-svg" class="svgbox" viewBox="0 0 560 320" role="img" aria-label="Variação real da PETR3 perto de zero e previsão da rede perto de menos 7,6"></svg>
+      <p class="note"><span class="ilus">redesenho</span> Linhas redesenhadas por nós a partir das Figuras 18 e 19, com as faixas lidas dos gráficos (real: de ~−0,03 a ~0,10; previsto: de ~−7,75 a ~−7,37). A forma de cada linha é aproximada.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · HIPÓTESES -->
+<section class="slide" id="hipoteses" data-label="As hipóteses">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> As duas hipóteses · faça sua aposta</div>
+    <h2 class="rv" style="--d:.1s">Uma hipótese se confirmou e a outra não</h2>
+    <p class="lede rv" style="--d:.15s">Depois de tudo o que viu, aposte: cada hipótese se confirmou?</p>
+    <div class="bets rv" id="bets" style="--d:.2s"></div>
+    <div id="bet-score" aria-live="polite"></div>
+    <div class="vs rv" style="--d:.3s">
+      <div class="stat"><b>100%</b><span>dos 29 artigos da revisão confirmaram o próprio objetivo (Figura 13)</span></div>
+      <div class="stat"><b>1 de 2</b><span>hipóteses desta dissertação se confirmaram; ela relata também o que não funcionou</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e limites">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Na prática · limites · créditos</div>
+    <h2 class="rv" style="--d:.1s">O que muda para quem investe, gere risco ou pesquisa</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Gestores de risco</h3><p>Olhar só o VaR esconde o tamanho do tombo: aqui, a perda média além da linha foi pelo menos o dobro dela. O ES completa a régua, como sugeriu o Comitê de Basileia, citado na dissertação.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Investidores</h3><p>Ações diferentes têm caudas diferentes: em 2022, as da Petrobras tiveram os tombos mais pesados em relação à linha. É uma leitura do passado, não uma previsão.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ink-2)"><h3>Quem usa IA em finanças</h3><p>Um erro de treino baixo não garante boa previsão. Antes de confiar numa rede, vale comparar a previsão com a série real, na mesma escala.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#5b6f96"><h3>Pesquisadores</h3><p>Próximos passos sugeridos pelo autor: redes com arquiteturas mais complexas, outros tipos de dados e um olhar mais atento aos valores extremos que atrapalharam a rede.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Ações escolhidas pelos dados disponíveis.</b> Dados de alta frequência são difíceis de obter; as sete ações e o período vieram do que havia. <em>· segundo o autor</em></li>
+          <li><b>Medir não é proteger.</b> Apesar do título, a dissertação mede as perdas; não monta nem testa uma estratégia de proteção com derivativos, nem seus custos. <em>· observação nossa</em></li>
+          <li><b>Contagens sem explicação.</b> Num VaR de 95%, cerca de 5% dos registros deveriam passar da linha; a dissertação conta menos de 0,03% e não explica a diferença. Também há milhões de registros por ação, mais do que os intervalos de 30 segundos de um ano de pregão. <em>· observação nossa</em></li>
+          <li><b>Uma rede básica, uma ação.</b> A LSTM foi testada só na PETR3, num período com os saltos da pandemia, e a previsão não foi comparada a outro modelo. <em>· segundo o autor e observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          MACEDO JUNIOR, Richard Willians. <em>Tail risk hedging: gestão de risco em dados de alta frequência.</em> Dissertação (Mestrado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2023. Orientador: Prof. Dr. Eli Hadad Junior.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Dados do Market Data da B3. VaR e ES no Stata/SE 17; rede LSTM em Python no Google Colab. Esta versão simplifica o trabalho para o público em geral; as fórmulas e as tabelas completas estão no texto original. <b>Não é recomendação de investimento.</b></p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a dissertação completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  function n0(n){ return n.toLocaleString(EN ? 'en-US' : 'pt-BR'); }
+  function sg(v, d){ return (v < 0 ? '−' : '') + fmt(Math.abs(v), d); }
+  function pct(v, d){ return (v < 0 ? '−' : '') + fmt(Math.abs(v) * 100, d === undefined ? 2 : d) + '%'; }
+  function rnd(seed){ return function(){ seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function gauss(r){ var u = 1 - r(), v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // Tabela 11 (VaR e ES a 95%, 2022): [ativo, nome PT, nome EN, obs., VaR, obs. além do VaR, ES, ES impresso se corrigido]
+  var T11 = [
+    ['B3SA3', 'B3', 'B3', 2996560, -0.0048, 136, -0.01129],
+    ['BBAS3', 'Banco do Brasil', 'Banco do Brasil', 2110084, -0.0028, 178, -0.00655],
+    ['BBDC4', 'Bradesco (preferencial)', 'Bradesco (preferred)', 2718729, -0.0036, 114, -0.00971],
+    ['ITUB3', 'Itaú Unibanco (ordinária)', 'Itaú Unibanco (common)', 217241, -0.0058, 46, -0.01172, -0.001172],
+    ['ITUB4', 'Itaú Unibanco (preferencial)', 'Itaú Unibanco (preferred)', 2867562, -0.0031, 143, -0.00737],
+    ['PETR3', 'Petrobras (ordinária)', 'Petrobras (common)', 1824490, -0.0038, 119, -0.01301, -0.001301],
+    ['PETR4', 'Petrobras (preferencial)', 'Petrobras (preferred)', 3690625, -0.0032, 168, -0.01060]
+  ];
+  // Seção 4.1: probabilidade de o ponto ficar além do VaR, como o texto imprime (%)
+  var PROB = ['0,0045', '0,0084', '0,0042', '0,0212', '0,005', '0,0065', '0,0046'];
+  // Revisão sistemática (Figuras 4, 5, 6, 8, 10): % dos 29 artigos
+  var REV = [
+    {k:L('Origem dos dados','Where the data came from'), f:L('Figura 10','Figure 10'), it:[
+      [L('Estados Unidos','United States'), 51.7, '#1f3b73'], [L('Ásia e Oceania','Asia and Oceania'), 17.2, '#5b6f96'], [L('Europa','Europe'), 6.9, '#94a3b8'], [L('Mais de uma região','More than one region'), 24.1, '#cbd5e1'], [L('Só América Latina','Latin America only'), 0, 'var(--red)', 1]],
+      p:L('Mais da metade dos artigos usa dados dos EUA. Nenhum usa só dados da América Latina: é a lacuna que a dissertação ocupa com ações da B3.','More than half of the articles use US data. None uses Latin American data only: that is the gap the dissertation fills with B3 stocks.')},
+    {k:L('Frequência dos dados','Data frequency'), f:L('Figura 5','Figure 5'), it:[
+      [L('5 minutos','5 minutes'), 51.7, '#1f3b73'], [L('1 minuto','1 minute'), 13.8, '#5b6f96'], [L('Outras','Other'), 10.3, '#94a3b8'], [L('Mais de uma','More than one'), 24.1, '#cbd5e1']],
+      p:L('O mais comum é um registro a cada 5 minutos, que segundo os autores evita distorções da microestrutura do mercado. Esta pesquisa usou 30 segundos.','The most common is one record every 5 minutes, which according to the authors avoids market-microstructure distortions. This research used 30 seconds.')},
+    {k:L('Método','Method'), f:L('Figura 6','Figure 6'), it:[
+      [L('Outros métodos','Other methods'), 55.2, '#1f3b73'], [L('Família ARCH','ARCH family'), 13.8, '#5b6f96'], [L('Mais de um','More than one'), 27.6, '#cbd5e1'], ['GMM', 3.4, 'var(--red)', 1], [L('Família ARMA','ARMA family'), 0, '#94a3b8']],
+      p:L('Só um artigo (3,4%) usou o método dos momentos (GMM), a técnica que a dissertação escolheu porque lida com séries que não seguem a curva normal e com variações que mudam ao longo do tempo.','Only one article (3.4%) used the method of moments (GMM), the technique the dissertation chose because it handles series that do not follow the normal curve and spreads that change over time.')},
+    {k:L('Teoria','Theory'), f:L('Figura 8','Figure 8'), it:[
+      [L('Nenhuma','None'), 69, '#94a3b8'], [L('Teoria dos valores extremos','Extreme value theory'), 31, '#1f3b73']],
+      p:L('Sete em cada dez artigos não se apoiam em nenhuma teoria; os outros usam a teoria dos valores extremos, que estima a chance de eventos raros.','Seven in ten articles rely on no theory; the others use extreme value theory, which estimates the chance of rare events.')},
+    {k:L('Foco','Focus'), f:L('Figura 4','Figure 4'), it:[
+      [L('Monitorar o risco de cauda','Monitoring tail risk'), 82.8, '#1f3b73'], [L('Monitorar e prever preços','Monitoring and forecasting prices'), 10.3, '#5b6f96'], [L('Proteção (hedging)','Protection (hedging)'), 6.9, 'var(--red)', 1]],
+      p:L('Quase todos os artigos tentam acompanhar o risco de cauda; só dois (6,9%) tratam de se proteger dele com algum instrumento.','Almost all articles try to keep track of tail risk; only two (6.9%) deal with protecting against it with some instrument.')}
+  ];
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), n = 19, bw = 17, gap = 4, W = n * (bw + gap) + 40, D = 70;
+    var st = makeStage(sc, W, D, {ay:'70%', rx:'66deg'});
+    rotatable(sc, st, -8, 7);
+    var x0 = 20, cols = [], tail = [];
+    for (var i = 0; i < n; i++){
+      var z = (i - 9) / 2.8, dens = Math.pow(1 + z * z / 3, -2); // forma de t com 3 g.l. (ilustração)
+      var h = 8 + 200 * dens, isT = i < 4;
+      var b = box({w:bw, d:34, x:x0 + i * (bw + gap), y:18, h:h, c:isT ? 'var(--es)' : 'var(--ret)'});
+      st.appendChild(b); cols.push(b); if (isT) tail.push(b);
+    }
+    st.appendChild(box({w:3, d:60, x:x0 + 4 * (bw + gap) - 3.5, y:5, h:150, c:'var(--var)'}));
+    flatLabel(st, L('perdas', 'losses'), x0 - 6, 58, 90);
+    flatLabel(st, L('ganhos', 'gains'), x0 + 15 * (bw + gap), 58, 90);
+    var last = -1;
+    function show(k){ if (k === last) return; last = k; tail.forEach(function(b, j){ b.classList.toggle('active', j === k); }); }
+    if (!reduce) M.onTick(function(t){ show(Math.floor(t / 0.9) % 5); });
+  })();
+
+  /* ================= 02 · CAUDA GORDA ================= */
+  (function(){
+    var svg = $('tail-svg'), X0 = 40, X1 = 530, Y0 = 270, xs = function(z){ return X0 + (z + 5) / 10 * (X1 - X0); };
+    function pn(z){ return Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI); }
+    function pt(z){ var s = Math.sqrt(3), x = z * s; return 2 / (Math.PI * Math.sqrt(3)) * Math.pow(1 + x * x / 3, -2) * s; } // t3 com variância 1
+    var K = 205 / pt(0);
+    function path(f, a, b, close){
+      var d = '', i, z;
+      for (i = 0; i <= 120; i++){ z = a + (b - a) * i / 120; d += (i ? 'L' : 'M') + xs(z).toFixed(1) + ' ' + (Y0 - f(z) * K).toFixed(1); }
+      return close ? d + 'L' + xs(b).toFixed(1) + ' ' + Y0 + 'L' + xs(a).toFixed(1) + ' ' + Y0 + 'Z' : d;
+    }
+    // chance de cair mais de 3 desvios: normal 0,13%; t3 padronizada ~0,69% (contas nossas)
+    var S = [
+      {h:L('A curva normal acha quase impossível um tombo enorme','The normal curve finds a huge crash almost impossible'), p:L('Pela curva normal, uma queda de mais de três "desvios típicos" acontece em cerca de 0,13% dos dias. Muitos modelos de risco partem dessa curva.','By the normal curve, a drop of more than three "typical deviations" happens on about 0.13% of days. Many risk models start from this curve.')},
+      {h:L('Com cauda gorda, os extremos são bem mais frequentes','With a fat tail, extremes are much more frequent'), p:L('Numa curva de cauda gorda com a mesma variação típica, a mesma queda acontece em cerca de 0,69% dos dias: umas cinco vezes mais. Por isso a dissertação escolheu um método que não depende da curva normal.','On a fat-tailed curve with the same typical spread, the same drop happens on about 0.69% of days: roughly five times as often. That is why the dissertation chose a method that does not depend on the normal curve.')},
+      {h:L('A diferença está nas pontas','The difference is at the ends'), p:L('No meio, as duas curvas são parecidas. É na ponta esquerda, onde estão os tombos, que a cauda gorda pesa mais. Gerir o risco de cauda é cuidar dessa ponta.','In the middle, the two curves look alike. It is at the left end, where the crashes are, that the fat tail weighs more. Managing tail risk means looking after that end.')}
+    ];
+    function draw(m){
+      var h = '<line x1="' + X0 + '" y1="' + Y0 + '" x2="' + X1 + '" y2="' + Y0 + '" stroke="#94a3b8"/>';
+      h += '<line x1="' + xs(-3) + '" y1="40" x2="' + xs(-3) + '" y2="' + Y0 + '" stroke="var(--var)" stroke-dasharray="4 5"/>';
+      h += '<text x="' + (xs(-3) + 6) + '" y="54" style="font-size:12px; fill:var(--var); font-weight:700">' + L('3 desvios abaixo', '3 deviations below') + '</text>';
+      if (m !== 1) h += '<path d="' + path(pn, -5, -3, true) + '" fill="#94a3b8" opacity=".5"/><path d="' + path(pn, -5, 5) + '" fill="none" stroke="#475569" stroke-width="2.5"/>';
+      if (m !== 0) h += '<path d="' + path(pt, -5, -3, true) + '" fill="var(--es)" opacity=".35"/><path d="' + path(pt, -5, 5) + '" fill="none" stroke="var(--es)" stroke-width="3"/>';
+      h += '<text x="' + X0 + '" y="' + (Y0 + 26) + '" style="font-size:13px; fill:var(--muted)">' + L('← perdas', '← losses') + '</text>';
+      h += '<text x="' + X1 + '" y="' + (Y0 + 26) + '" text-anchor="end" style="font-size:13px; fill:var(--muted)">' + L('ganhos →', 'gains →') + '</text>';
+      if (m !== 0){ h += '<circle cx="' + (xs(-4) + 2) + '" cy="' + (Y0 - 38) + '" r="0"/><text x="' + xs(-4.6) + '" y="' + (Y0 - 30) + '" style="font-size:13px; fill:var(--es); font-weight:700">' + L('cauda', 'tail') + '</text>'; }
+      svg.innerHTML = h;
+      $('tail-panel').innerHTML = '<div class="tag">' + L('Conta nossa', 'Our calculation') + '</div><h3>' + S[m].h + '</h3><p>' + S[m].p + '</p>';
+      each($('tail-seg').children, function(b){ b.setAttribute('aria-pressed', +b.dataset.m === m); });
+    }
+    each($('tail-seg').children, function(b){ b.addEventListener('click', function(){ draw(+b.dataset.m); }); });
+    draw(0);
+  })();
+
+  /* ================= 03 · VaR × ES ================= */
+  (function(){
+    var r = rnd(7), R = [], i;
+    for (i = 0; i < 500; i++){ var z = gauss(r), w = gauss(r) * gauss(r) + 1.6 * gauss(r) * gauss(r) * gauss(r) * gauss(r); R.push(+(0.9 * z * 0.75 + 0.25 * w).toFixed(2)); }
+    var srt = R.slice().sort(function(a, b){ return a - b; });
+    var svg = $('ves-svg'), X0 = 30, X1 = 540, Y0 = 268, lo = -6, hi = 6, bw = 0.25;
+    function xs(v){ return X0 + (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo) * (X1 - X0); }
+    var bins = {}, mx = 0;
+    R.forEach(function(v){ var k = Math.floor(Math.max(lo, Math.min(hi - 0.01, v)) / bw); bins[k] = (bins[k] || 0) + 1; mx = Math.max(mx, bins[k]); });
+    function draw(c){
+      var nT = Math.round(500 * (1 - c)), cut = srt[nT - 1], es = 0;
+      for (i = 0; i < nT; i++) es += srt[i];
+      es /= nT;
+      var h = '';
+      Object.keys(bins).forEach(function(k){
+        var a = k * bw, x = xs(a), y = Y0 - bins[k] / mx * 200;
+        h += '<rect x="' + (x + 0.5) + '" y="' + y + '" width="' + ((X1 - X0) * bw / (hi - lo) - 1) + '" height="' + (Y0 - y) + '" fill="' + (a < cut ? 'var(--es)' : 'var(--ret)') + '"/>';
+      });
+      h += '<line x1="' + X0 + '" y1="' + Y0 + '" x2="' + X1 + '" y2="' + Y0 + '" stroke="#64748b"/>';
+      h += '<line x1="' + xs(cut) + '" y1="44" x2="' + xs(cut) + '" y2="' + Y0 + '" stroke="var(--var)" stroke-width="3"/>';
+      h += '<text x="' + (xs(cut) + 6) + '" y="58" style="font-size:13px; font-weight:700; fill:var(--var)">VaR ' + sg(cut, 2) + '%</text>';
+      h += '<line x1="' + xs(es) + '" y1="94" x2="' + xs(es) + '" y2="' + Y0 + '" stroke="var(--es)" stroke-width="3" stroke-dasharray="6 4"/>';
+      h += '<text x="' + (xs(es) - 6) + '" y="108" text-anchor="end" style="font-size:13px; font-weight:700; fill:var(--es)">ES ' + sg(es, 2) + '%</text>';
+      [-6, -4, -2, 0, 2, 4, 6].forEach(function(v){ h += '<text x="' + xs(v) + '" y="' + (Y0 + 20) + '" text-anchor="middle" style="font-size:12px; fill:var(--muted)">' + (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v) + '%</text>'; });
+      h += '<text x="' + X0 + '" y="24" style="font-size:12.5px; fill:var(--muted)">' + L('variação do dia (dias inventados)', 'daily change (invented days)') + '</text>';
+      svg.innerHTML = h;
+      $('ves-v').textContent = sg(cut, 2) + '%';
+      $('ves-e').textContent = sg(es, 2) + '%';
+      var cTxt = fmt(c * 100, c === 0.975 ? 1 : 0) + '%';
+      $('ves-panel').innerHTML = '<p>' + L('Com ' + cTxt + ' de confiança, os ' + nT + ' piores dias (em vermelho) ficam além da linha. O VaR diz onde a linha está; o ES é a média desses ' + nT + ' dias, sempre mais funda que a linha.', 'At ' + cTxt + ' confidence, the ' + nT + ' worst days (in red) lie beyond the line. VaR says where the line is; ES is the average of those ' + nT + ' days, always deeper than the line.') + '</p>' +
+        (c === 0.975 ? '<p><b>' + L('Basileia:', 'Basel:') + '</b> ' + L('depois da crise de 2008, o Comitê de Basileia sugeriu trocar o VaR a 99% pelo ES a 97,5% para os bancos (seção 2.1).', 'after the 2008 crisis, the Basel Committee suggested replacing the 99% VaR with the 97.5% ES for banks (section 2.1).') + '</p>' : '');
+      each($('ves-seg').children, function(b){ b.setAttribute('aria-pressed', +b.dataset.c === c); });
+    }
+    each($('ves-seg').children, function(b){ b.addEventListener('click', function(){ draw(+b.dataset.c); }); });
+    draw(0.95);
+  })();
+
+  /* ================= 04 · ALTA FREQUÊNCIA ================= */
+  (function(){
+    var r = rnd(21), P = [], p = 100, i;
+    for (i = 0; i < 840; i++){ p += gauss(r) * 0.06 + (i > 420 && i < 470 ? -0.05 : 0); P.push(p); }
+    var svg = $('hf-svg'), X0 = 40, X1 = 530, Yt = 40, Yb = 240;
+    var mn = Math.min.apply(null, P), mx = Math.max.apply(null, P);
+    function xs(i){ return X0 + i / (P.length - 1) * (X1 - X0); }
+    function ys(v){ return Yb - (v - mn) / (mx - mn) * (Yb - Yt); }
+    var S = [
+      {step:0, h:L('Um preço por dia','One price a day'), p:L('Com o fechamento diário, o pregão inteiro vira um ponto só. A queda que aconteceu no meio da tarde some do retrato.','With the daily close, the whole trading day becomes a single point. The drop that happened mid-afternoon disappears from the picture.')},
+      {step:10, h:L('A cada 5 minutos: o mais comum nos artigos','Every 5 minutes: the most common in the articles'), p:L('Metade dos artigos revisados (51,7%) usa 5 minutos. Já dá para ver a queda dentro do dia.','Half of the reviewed articles (51.7%) use 5 minutes. The intraday drop is already visible.')},
+      {step:1, h:L('A cada 30 segundos: a escolha da pesquisa','Every 30 seconds: the research’s choice'), p:L('Com 30 segundos, cada ação vira uma série com muitos milhares de pontos por ano. Para o autor, mais observações dão resultados estatísticos mais firmes e mostram o comportamento fino do preço.','At 30 seconds, each stock becomes a series with many thousands of points a year. For the author, more observations give firmer statistical results and show the fine behaviour of the price.')},
+      {step:1, gap:true, h:L('Quando falta um registro, repete-se o último preço','When a record is missing, the last price is repeated'), p:L('Em dados tão finos, às vezes não há negócio num intervalo. A pesquisa preenche o buraco com o último preço conhecido ("último tick"), o tratamento mais comum na literatura.','In such fine data, sometimes there is no trade in an interval. The research fills the gap with the last known price ("last tick"), the most common treatment in the literature.')}
+    ];
+    function draw(m){
+      var s = S[m], h = '<line x1="' + X0 + '" y1="' + Yb + '" x2="' + X1 + '" y2="' + Yb + '" stroke="#cbd5e1"/>';
+      h += '<text x="' + X0 + '" y="' + (Yb + 22) + '" style="font-size:12.5px; fill:var(--muted)">' + L('abertura', 'open') + '</text><text x="' + X1 + '" y="' + (Yb + 22) + '" text-anchor="end" style="font-size:12.5px; fill:var(--muted)">' + L('fechamento', 'close') + '</text>';
+      if (s.step === 0){
+        h += '<line x1="' + X0 + '" y1="' + ys(P[0]) + '" x2="' + X1 + '" y2="' + ys(P[P.length - 1]) + '" stroke="var(--ret)" stroke-width="2" stroke-dasharray="5 5"/>';
+        h += '<circle cx="' + X0 + '" cy="' + ys(P[0]) + '" r="6" fill="var(--navy)"/><circle cx="' + X1 + '" cy="' + ys(P[P.length - 1]) + '" r="7" fill="var(--navy)"/>';
+      } else {
+        var d = '', g0 = 520, g1 = 600;
+        for (i = 0; i < P.length; i += s.step){
+          var v = P[i];
+          if (s.gap && i > g0 && i < g1) v = P[g0];
+          d += (d ? 'L' : 'M') + xs(i).toFixed(1) + ' ' + ys(v).toFixed(1);
+        }
+        h += '<path d="' + d + '" fill="none" stroke="var(--navy)" stroke-width="' + (s.step === 1 ? 1.4 : 2.2) + '"/>';
+        if (s.step === 10) for (i = 0; i < P.length; i += 10) h += '<circle cx="' + xs(i) + '" cy="' + ys(P[i]) + '" r="2.4" fill="var(--navy)"/>';
+        if (s.gap) h += '<rect x="' + xs(g0) + '" y="' + Yt + '" width="' + (xs(g1) - xs(g0)) + '" height="' + (Yb - Yt) + '" fill="var(--es)" opacity=".1"/><text x="' + ((xs(g0) + xs(g1)) / 2) + '" y="' + (Yt + 14) + '" text-anchor="middle" style="font-size:12.5px; font-weight:700; fill:var(--es)">' + L('sem negócios', 'no trades') + '</text>';
+      }
+      svg.innerHTML = h;
+      $('hf-panel').innerHTML = '<h3>' + s.h + '</h3><p>' + s.p + '</p>';
+      each($('hf-seg').children, function(b){ b.setAttribute('aria-pressed', +b.dataset.m === m); });
+    }
+    each($('hf-seg').children, function(b){ b.addEventListener('click', function(){ draw(+b.dataset.m); }); });
+    draw(2);
+  })();
+
+  /* ================= 05 · REVISÃO ================= */
+  (function(){
+    var F = [[119, L('artigos encontrados com "tail risk" e "high-frequency data"', 'articles found with "tail risk" and "high-frequency data"')], [63, L('depois dos filtros da base (idioma, tipo, área)', 'after the database filters (language, type, field)')], [29, L('depois da leitura: o tema era mesmo prever o risco de cauda', 'after reading: the topic really was forecasting tail risk')]];
+    $('funnel').innerHTML = F.map(function(f){ return '<div class="fun"><i style="width:' + (25 + 75 * f[0] / 119) + '%">' + f[0] + '</i><small>' + f[1] + '</small></div>'; }).join('');
+    function draw(k){
+      var c = REV[k];
+      $('rev-bar').innerHTML = c.it.filter(function(x){ return x[1] > 0; }).map(function(x){ return '<span style="flex-basis:' + x[1] + '%; background:' + x[2] + '; color:' + (x[2] === '#cbd5e1' ? 'var(--ink)' : '#fff') + '">' + (x[1] >= 10 ? fmt(x[1], 1) + '%' : '') + '</span>'; }).join('');
+      $('rev-list').innerHTML = c.it.map(function(x){ return '<div><i style="background:' + x[2] + '"></i><span' + (x[3] ? ' class="gap"' : '') + '>' + x[0] + '</span><b' + (x[3] ? ' class="gap"' : '') + '>' + fmt(x[1], x[1] % 1 ? 1 : 0) + '%</b></div>'; }).join('');
+      $('rev-panel').innerHTML = '<div class="tag">' + c.f + '</div><p>' + c.p + '</p>';
+      each($('rev-cats').children, function(b, j){ b.setAttribute('aria-pressed', j === k); });
+    }
+    $('rev-cats').innerHTML = REV.map(function(c, j){ return '<button data-k="' + j + '">' + c.k + '</button>'; }).join('');
+    each($('rev-cats').children, function(b){ b.addEventListener('click', function(){ draw(+b.dataset.k); }); });
+    draw(0);
+  })();
+
+  /* ================= 06 · SETE AÇÕES ================= */
+  var selAsset = 5;
+  var resApi = (function(){
+    var sc = $('res-scene'), bw = 28, pg = 4, cg = 22, W = 7 * (2 * bw + pg) + 6 * cg + 40, D = 70, K = 15500;
+    var st = makeStage(sc, W, D, {ay:'68%', rx:'58deg'});
+    rotatable(sc, st, -16, 6);
+    var x0 = 20, pairs = [], mode = 'b';
+    T11.forEach(function(a, i){
+      var x = x0 + i * (2 * bw + pg + cg);
+      var v = box({w:bw, d:36, x:x, y:16, h:-a[4] * K, c:'var(--var)', top:fmt(-a[4] * 100, 2)});
+      var e = box({w:bw, d:36, x:x + bw + pg, y:16, h:-a[6] * K, c:'var(--es)', top:fmt(-a[6] * 100, 2), cls:a[7] ? 'fix' : ''});
+      st.appendChild(v); st.appendChild(e); pairs.push([v, e]);
+      flatLabel(st, a[0], x - 8, 58, 2 * bw + pg + 16);
+      [v, e].forEach(function(b){ b.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick(i); }); });
+    });
+    function paint(){
+      pairs.forEach(function(p, i){
+        p[0].classList.toggle('off', mode === 'e'); p[1].classList.toggle('off', mode === 'v');
+        p[0].classList.toggle('active', i === selAsset); p[1].classList.toggle('active', i === selAsset);
+      });
+    }
+    function pick(i){
+      selAsset = i; var a = T11[i], ratio = a[6] / a[4];
+      $('res-panel').innerHTML = '<div class="tag">' + a[0] + ' · ' + L(a[1], a[2]) + '</div>' +
+        '<h3>' + L('VaR ', 'VaR ') + pct(a[4]) + ' · ES ' + pct(a[6]) + '</h3>' +
+        '<p>' + L('Em 95% das janelas, a queda não passou de ' + fmt(-a[4] * 100, 2) + '%. Quando passou, caiu em média ' + fmt(-a[6] * 100, 2) + '%, ou ' + fmt(ratio, 1) + ' vezes a linha. Base: ' + n0(a[3]) + ' registros de 2022.', 'In 95% of windows, the drop was no bigger than ' + fmt(-a[4] * 100, 2) + '%. When it was bigger, it fell ' + fmt(-a[6] * 100, 2) + '% on average, or ' + fmt(ratio, 1) + ' times the line. Base: ' + n0(a[3]) + ' records from 2022.') + '</p>' +
+        (a[7] ? '<p style="font-size:.78rem; color:var(--muted)">' + L('ES corrigido por nós; a Tabela 11 imprime ' + sg(a[7], 6) + '.', 'ES corrected by us; Table 11 prints ' + sg(a[7], 6) + '.') + '</p>' : '');
+      each($('res-assets').children, function(b, j){ b.setAttribute('aria-pressed', j === i); });
+      paint(); if (window.simApi) window.simApi.set(i);
+    }
+    $('res-assets').innerHTML = T11.map(function(a, i){ return '<button data-i="' + i + '">' + a[0] + '</button>'; }).join('');
+    each($('res-assets').children, function(b){ b.addEventListener('click', function(){ pick(+b.dataset.i); }); });
+    each($('res-seg').children, function(b){ b.addEventListener('click', function(){ mode = b.dataset.m; each($('res-seg').children, function(c){ c.setAttribute('aria-pressed', c === b); }); paint(); }); });
+    pick(selAsset);
+    return {pick:pick};
+  })();
+
+  /* ================= 07 · CAUDA POR AÇÃO + SIMULADOR ================= */
+  (function(){
+    var order = T11.map(function(a, i){ return i; }).sort(function(a, b){ return T11[b][6] / T11[b][4] - T11[a][6] / T11[a][4]; });
+    var mx = 0.014;
+    $('ratio').innerHTML = order.map(function(i){
+      var a = T11[i];
+      return '<div class="rrow" data-i="' + i + '"><span>' + a[0] + '</span><div class="tr"><i class="v" style="width:' + (-a[4] / mx * 100) + '%"></i><i class="e" style="width:' + (-a[6] / mx * 100) + '%"></i></div><b>' + fmt(a[6] / a[4], 1) + '×</b></div>';
+    }).join('');
+    var sel = $('sim-asset');
+    sel.innerHTML = T11.map(function(a, i){ return '<option value="' + i + '">' + a[0] + ' · ' + L(a[1], a[2]) + '</option>'; }).join('');
+    function money(v){ return 'R$ ' + Math.round(v).toLocaleString(EN ? 'en-US' : 'pt-BR'); }
+    function upd(){
+      var i = +sel.value, a = T11[i], amt = +$('sim-amt').value;
+      $('sim-amt-v').textContent = money(amt);
+      $('sim-v').textContent = '− ' + money(-a[4] * amt);
+      $('sim-e').textContent = '− ' + money(-a[6] * amt);
+      each($('ratio').children, function(r){ r.classList.toggle('sel', +r.dataset.i === i); });
+    }
+    sel.addEventListener('change', upd);
+    $('sim-amt').addEventListener('input', upd);
+    window.simApi = {set:function(i){ sel.value = i; upd(); }};
+    sel.value = selAsset; upd();
+  })();
+
+  /* ================= 08 · RAROS ================= */
+  (function(){
+    var mx = 25;
+    $('cnt').innerHTML = T11.map(function(a, i){
+      var per = a[5] / a[3] * 1e5;
+      return '<div><span>' + a[0] + '</span><div class="tr"><i style="width:' + (per / mx * 100) + '%"></i></div><b>' + fmt(per, 1) + L(' em 100 mil', ' per 100k') + '</b></div>';
+    }).join('');
+    var g = $('g1000'), html = '';
+    for (var i = 0; i < 1000; i++) html += '<i></i>';
+    g.innerHTML = html;
+    var dots = g.children, r = rnd(5), pick = [];
+    while (pick.length < 50){ var k = Math.floor(r() * 1000); if (pick.indexOf(k) < 0) pick.push(k); }
+    function draw(m){
+      each(dots, function(d){ d.classList.remove('x'); });
+      if (m === 't') pick.forEach(function(k){ dots[k].classList.add('x'); });
+      $('rare-panel').innerHTML = m === 'd'
+        ? '<div class="tag">' + L('Contagem da dissertação', 'The dissertation’s count') + '</div><h3>' + L('Nenhum ponto vermelho em mil', 'No red dot in a thousand') + '</h3><p>' + L('Com as chances da seção 4.1 (de ' + PROB[2] + '% a ' + PROB[3] + '%), seria preciso olhar de 5 mil a 24 mil registros para ver um único ponto além da linha (conta nossa).', 'With the chances in section 4.1 (from 0.0042% to 0.0212%), you would need to look at 5,000 to 24,000 records to see a single point beyond the line (our calculation).') + '</p>'
+        : '<div class="tag">' + L('O que a definição espera · leitura nossa', 'What the definition expects · our reading') + '</div><h3>' + L('50 pontos vermelhos em mil', '50 red dots in a thousand') + '</h3><p>' + L('Por definição, num VaR de 95%, cerca de 5 em cada 100 registros ficam além da linha. A dissertação não explica por que a sua contagem é tão menor; talvez ela conte outra coisa, como janelas de 30 registros. Por isso a página usa essas contagens com cautela.', 'By definition, with a 95% VaR, about 5 in every 100 records lie beyond the line. The dissertation does not explain why its count is so much smaller; perhaps it counts something else, such as 30-record windows. That is why this page uses these counts with caution.') + '</p>';
+      each($('rare-seg').children, function(b){ b.setAttribute('aria-pressed', b.dataset.m === m); });
+    }
+    each($('rare-seg').children, function(b){ b.addEventListener('click', function(){ draw(b.dataset.m); }); });
+    draw('d');
+  })();
+
+  /* ================= 09 · LSTM ================= */
+  (function(){
+    var G = [
+      {k:'mem', n:L('Linha da memória','Memory line'), p:L('A memória atravessa a célula de um instante para o outro. É o que permite à rede ligar o que acontece agora com o que aconteceu bem antes na série.','Memory runs through the cell from one moment to the next. It lets the network link what happens now with what happened much earlier in the series.')},
+      {k:'f', n:L('Portão do esquecimento','Forget gate'), p:L('Decide o que da memória já não importa e pode ser apagado.','Decides what in the memory no longer matters and can be erased.')},
+      {k:'i', n:L('Portão de entrada','Input gate'), p:L('Decide o que da informação nova (as variações da PETR3 e do Ibovespa naquele instante) entra na memória.','Decides what part of the new information (the PETR3 and Ibovespa changes at that moment) goes into the memory.')},
+      {k:'o', n:L('Portão de saída','Output gate'), p:L('Decide o que da memória sai como resposta: aqui, a previsão da perda da PETR3.','Decides what from the memory goes out as the answer: here, the forecast of PETR3’s loss.')}
+    ];
+    var svg = $('lstm-svg');
+    function draw(k){
+      function on(x){ return k === x ? 1 : 0.28; }
+      var h = '<rect x="110" y="40" width="340" height="170" rx="18" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>';
+      h += '<g class="g" opacity="' + on('mem') + '"><line x1="20" y1="70" x2="540" y2="70" stroke="var(--es)" stroke-width="6"/><text x="24" y="58" style="font-size:12.5px; font-weight:700; fill:var(--es)">' + L('memória', 'memory') + '</text></g>';
+      h += '<g class="g" opacity="' + on('f') + '"><circle cx="190" cy="70" r="20" fill="var(--ink)"/><text x="190" y="77" text-anchor="middle" style="font-size:20px; font-weight:700; fill:#fff">×</text><line x1="190" y1="90" x2="190" y2="176" stroke="var(--ink)" stroke-width="3"/><text x="190" y="232" text-anchor="middle" style="font-size:12.5px; fill:var(--ink)">' + L('esquecer', 'forget') + '</text></g>';
+      h += '<g class="g" opacity="' + on('i') + '"><circle cx="280" cy="70" r="20" fill="var(--navy)"/><text x="280" y="77" text-anchor="middle" style="font-size:20px; font-weight:700; fill:#fff">+</text><line x1="280" y1="90" x2="280" y2="176" stroke="var(--navy)" stroke-width="3"/><text x="280" y="232" text-anchor="middle" style="font-size:12.5px; fill:var(--navy)">' + L('entrar', 'input') + '</text></g>';
+      h += '<g class="g" opacity="' + on('o') + '"><circle cx="380" cy="150" r="20" fill="#5b6f96"/><text x="380" y="157" text-anchor="middle" style="font-size:18px; font-weight:700; fill:#fff">→</text><line x1="380" y1="70" x2="380" y2="130" stroke="#5b6f96" stroke-width="3"/><line x1="400" y1="150" x2="540" y2="150" stroke="#5b6f96" stroke-width="3"/><text x="470" y="140" text-anchor="middle" style="font-size:12.5px; fill:#5b6f96">' + L('previsão', 'forecast') + '</text></g>';
+      h += '<line x1="20" y1="190" x2="300" y2="190" stroke="#94a3b8" stroke-width="3"/><text x="24" y="182" style="font-size:12.5px; fill:var(--muted)">' + L('PETR3 + Ibovespa a cada 30 s', 'PETR3 + Ibovespa every 30 s') + '</text>';
+      svg.innerHTML = h;
+      var g = G.filter(function(x){ return x.k === k; })[0];
+      $('lstm-panel').innerHTML = '<h3>' + g.n + '</h3><p>' + g.p + '</p>';
+      each($('gates').children, function(b){ b.setAttribute('aria-pressed', b.dataset.k === k); });
+    }
+    $('gates').innerHTML = G.map(function(g){ return '<button data-k="' + g.k + '">' + g.n + '</button>'; }).join('');
+    each($('gates').children, function(b){ b.addEventListener('click', function(){ draw(b.dataset.k); }); });
+    draw('mem');
+    // Figura 16: erro de treino por rodada (valores lidos do gráfico, ~)
+    var E = [0.00078, 0.0002, 0.000142, 0.000139, 0.000139, 0.000139, 0.000139, 0.000139, 0.000139, 0.000139];
+    var s2 = $('mse-svg'), X0 = 60, X1 = 530, Yt = 26, Yb = 132, h = '';
+    function xs(i){ return X0 + i / 9 * (X1 - X0); } function ys(v){ return Yb - v / 0.0008 * (Yb - Yt); }
+    h += '<line x1="' + X0 + '" y1="' + Yb + '" x2="' + X1 + '" y2="' + Yb + '" stroke="#94a3b8"/>';
+    h += '<path d="' + E.map(function(v, i){ return (i ? 'L' : 'M') + xs(i) + ' ' + ys(v); }).join('') + '" fill="none" stroke="var(--navy)" stroke-width="3"/>';
+    E.forEach(function(v, i){ h += '<circle cx="' + xs(i) + '" cy="' + ys(v) + '" r="3.5" fill="var(--navy)"/>'; if (i % 3 === 0 || i === 9) h += '<text x="' + xs(i) + '" y="' + (Yb + 20) + '" text-anchor="middle" style="font-size:12px; fill:var(--muted)">' + (i + 1) + '</text>'; });
+    h += '<text x="' + X0 + '" y="16" style="font-size:12.5px; fill:var(--muted)">' + L('erro de treino (~) por rodada', 'training error (~) per round') + '</text>';
+    h += '<text x="' + (xs(0) + 8) + '" y="' + (ys(E[0]) + 4) + '" style="font-size:12px; fill:var(--ink-2)">~' + fmt(0.0008, 4) + '</text>';
+    h += '<text x="' + xs(9) + '" y="' + (ys(E[9]) - 10) + '" text-anchor="end" style="font-size:12px; fill:var(--ink-2)">~' + fmt(0.00014, 5) + '</text>';
+    s2.innerHTML = h;
+  })();
+
+  /* ================= 10 · O INESPERADO ================= */
+  (function(){
+    var r = rnd(33), N = 220, RE = [], PR = [], i;
+    for (i = 0; i < N; i++){
+      var v = gauss(r) * 0.0018;
+      if (i === 32) v = 0.10; if (i === 5) v = -0.027; if (i === 147) v = 0.027; if (i === 137) v = 0.015; if (i === 128) v = -0.021; if (i === 174) v = -0.012; if (i === 25) v = -0.01;
+      RE.push(v);
+      var p = -7.6 + gauss(r) * 0.012;
+      if (i === 6) p = -7.39; if (i === 34) p = -7.385; if (i === 62) p = -7.37; if (i === 24) p = -7.455; if (i === 128) p = -7.47; if (i === 35) p = -7.745; if (i === 148) p = -7.73; if (i === 138) p = -7.68;
+      PR.push(p);
+    }
+    var svg = $('pred-svg'), X0 = 70, X1 = 535, Yt = 30, Yb = 270;
+    function draw(m){
+      var lo, hi, h = '', ticks;
+      if (m === 'r'){ lo = -0.04; hi = 0.11; ticks = [-0.02, 0, 0.02, 0.04, 0.06, 0.08, 0.1]; }
+      else if (m === 'p'){ lo = -7.8; hi = -7.3; ticks = [-7.75, -7.65, -7.55, -7.45, -7.35]; }
+      else { lo = -8.2; hi = 0.6; ticks = [-8, -6, -4, -2, 0]; }
+      function ys(v){ return Yb - (v - lo) / (hi - lo) * (Yb - Yt); }
+      function xs(i){ return X0 + i / (N - 1) * (X1 - X0); }
+      ticks.forEach(function(t){ h += '<line x1="' + X0 + '" y1="' + ys(t) + '" x2="' + X1 + '" y2="' + ys(t) + '" stroke="#e2e8f0"/><text x="' + (X0 - 8) + '" y="' + (ys(t) + 4) + '" text-anchor="end" style="font-size:12px; fill:var(--muted)">' + sg(t, m === 'b' ? 0 : 2) + '</text>'; });
+      function line(A, col, w){ return '<path d="' + A.map(function(v, i){ return (i ? 'L' : 'M') + xs(i).toFixed(1) + ' ' + ys(v).toFixed(1); }).join('') + '" fill="none" stroke="' + col + '" stroke-width="' + w + '"/>'; }
+      if (m !== 'p') h += line(RE, 'var(--es)', m === 'b' ? 2.5 : 1.4);
+      if (m !== 'r') h += line(PR, 'var(--navy)', m === 'b' ? 2.5 : 1.4);
+      if (m === 'b'){
+        h += '<text x="' + (X1 - 4) + '" y="' + (ys(0) - 10) + '" text-anchor="end" style="font-size:13px; font-weight:700; fill:var(--es)">' + L('real (perto de 0)', 'real (near 0)') + '</text>';
+        h += '<text x="' + (X1 - 4) + '" y="' + (ys(-7.6) - 12) + '" text-anchor="end" style="font-size:13px; font-weight:700; fill:var(--navy)">' + L('previsto (perto de −7,6)', 'forecast (near −7.6)') + '</text>';
+      }
+      h += '<text x="' + X0 + '" y="' + (Yb + 26) + '" style="font-size:12.5px; fill:var(--muted)">' + L('período de teste, ~22 mil registros de 30 s →', 'test period, ~22,000 records of 30 s →') + '</text>';
+      svg.innerHTML = h;
+      var P = {
+        r:[L('A variação real da PETR3','PETR3’s real change'), L('No teste, a variação de um registro para o outro ficou quase sempre perto de zero, com alguns saltos isolados (o maior, perto de +0,10). Pela divisão 80/20, os saltos da pandemia, entre fevereiro e agosto de 2020 (Figura 17), ficaram na parte de treino (conta nossa).','In the test, the change from one record to the next was almost always near zero, with a few isolated jumps (the largest near +0.10). Given the 80/20 split, the pandemic’s jumps, between February and August 2020 (Figure 17), fell in the training part (our calculation).')],
+        p:[L('O que a rede previu','What the network forecast'), L('A previsão oscila em torno de −7,6, numa faixa estreita. Vista sozinha, parece um sinal com picos, como a série real; mas os números estão em outro patamar.','The forecast hovers around −7.6, in a narrow band. Seen on its own, it looks like a signal with spikes, like the real series; but the numbers sit at another level.')],
+        b:[L('Lado a lado, na mesma régua','Side by side, on the same scale'), L('Na mesma escala, a série real é uma linha reta no zero e a previsão fica lá embaixo. O autor conclui que as previsões não são confiáveis e atribui o problema aos valores extremos da série. A distância de escala é leitura nossa dos gráficos.','On the same scale, the real series is a flat line at zero and the forecast sits far below. The author concludes the forecasts are not reliable and attributes the problem to the series’ extreme values. The gap in scale is our reading of the charts.')]
+      }[m];
+      $('pred-panel').innerHTML = '<h3>' + P[0] + '</h3><p>' + P[1] + '</p>';
+      each($('pred-seg').children, function(b){ b.setAttribute('aria-pressed', b.dataset.m === m); });
+    }
+    each($('pred-seg').children, function(b){ b.addEventListener('click', function(){ draw(b.dataset.m); }); });
+    draw('r');
+  })();
+
+  /* ================= 11 · HIPÓTESES ================= */
+  (function(){
+    var H = [
+      {k:'H1', q:L('O uso da LSTM melhora o gerenciamento do risco de cauda em dados de alta frequência','Using the LSTM improves tail-risk management in high-frequency data'), ok:false,
+        r:L('A previsão da rede para a PETR3 não foi significativa (tela 10). O autor acha que os valores extremos da série atrapalharam e deixa arquiteturas mais complexas para trabalhos futuros.','The network’s forecast for PETR3 was not significant (screen 10). The author believes the series’ extreme values got in the way and leaves more complex architectures for future work.')},
+      {k:'H2', q:L('Gerenciar o risco de cauda com VaR e ES é viável em dados de alta frequência','Managing tail risk with VaR and ES is feasible in high-frequency data'), ok:true,
+        r:L('Para o autor, sim: o GMM estimou VaR e ES para as sete ações em 2022 e apontou os pontos além da linha (telas 06 a 08). As contagens pedem cautela (tela 08).','For the author, yes: GMM estimated VaR and ES for the seven stocks in 2022 and flagged the points beyond the line (screens 06 to 08). The counts call for caution (screen 08).')}
+    ];
+    var got = 0, done = 0;
+    $('bets').innerHTML = H.map(function(h, i){
+      return '<div class="bet" id="bet' + i + '" style="--vc:' + (h.ok ? 'var(--navy)' : 'var(--red)') + '"><div class="in">' +
+        '<div class="fc"><span class="k">' + h.k + '</span><h3>' + h.q + '</h3><div class="opts"><button data-a="1">' + L('Confirmou', 'Held') + '</button><button data-a="0">' + L('Não confirmou', 'Did not hold') + '</button></div></div>' +
+        '<div class="bc"><span class="verdict">' + h.k + ' · ' + (h.ok ? L('confirmada', 'held') : L('não confirmada', 'did not hold')) + '</span><p>' + h.r + '</p><span class="you"></span></div>' +
+        '</div></div>';
+    }).join('');
+    H.forEach(function(h, i){
+      var el = $('bet' + i);
+      each(el.querySelectorAll('.opts button'), function(b){
+        b.addEventListener('click', function(){
+          if (el.classList.contains('done')) return;
+          var right = (b.dataset.a === '1') === h.ok;
+          got += right ? 1 : 0; done++;
+          el.querySelector('.you').textContent = right ? L('Você acertou.', 'You got it right.') : L('Você apostou diferente.', 'You bet differently.');
+          el.classList.add('done');
+          if (done === H.length) $('bet-score').textContent = L('Você acertou ' + got + ' de 2.', 'You got ' + got + ' of 2 right.');
+        });
+      });
+    });
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
