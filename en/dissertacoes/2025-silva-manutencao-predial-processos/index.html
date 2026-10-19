@@ -1,0 +1,940 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Building maintenance · PPGA Interativo</title>
+<meta name="description" content="Eliezer Mendes Silva’s professional master’s dissertation (Mackenzie, 2025) on innovating how a large school’s building maintenance requests are managed, explained in 12 interactive screens.">
+<link rel="alternate" hreflang="pt-BR" href="../../../dissertacoes/2025-silva-manutencao-predial-processos/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2214%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>OS</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/motor.css">
+<link rel="stylesheet" href="../../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  :root{
+    --cli:var(--red);    /* o cliente, o problema */
+    --team:var(--navy);  /* a equipe, o novo processo */
+    --dk:#334155;
+    --mid:#94a3b8;
+  }
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  .slab{transition:transform .6s cubic-bezier(.2,.8,.2,1), opacity .5s, --h .6s ease;}
+  .slab.dim > i{opacity:.22;}
+  .slab.active{--oz:14px;}
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .dot.sq{border-radius:3px;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(1.8rem, 3.6vw, 2.3rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{display:flex; gap:8px 16px; justify-content:center; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:6px;}
+  #hero-scene .top-label{font-size:11.5px; font-weight:700; letter-spacing:.02em;}
+  #hero-scene .floor-label{font-size:12.5px;}
+  #hero-state{font-size:.8rem; text-align:center; color:var(--ink-2); font-weight:600; min-height:1.4em; margin-top:2px;}
+
+  /* ---------- Componentes comuns ---------- */
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .panel ul{margin:4px 0 0; padding-left:18px; font-size:.84rem; color:var(--ink-2); display:grid; gap:3px;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .seg.sm button{padding:5px 11px; font-size:.78rem;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:12px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.3rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.76rem; color:var(--muted); line-height:1.35; display:block;}
+  .guess{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 6px;}
+  .guess button{border:1px solid var(--border); background:var(--card); border-radius:12px; padding:8px 14px; font-size:.86rem; cursor:pointer; color:var(--ink-2);}
+  .guess button:hover{border-color:var(--ink);}
+  .guess button[aria-pressed="true"]{border-color:var(--ink); background:var(--ink); color:#fff;}
+  .guess button.ok{border-color:var(--red); box-shadow:inset 0 0 0 1px var(--red);}
+  .msg{font-size:.88rem; color:var(--ink-2); min-height:1.5em; margin:4px 0 0;}
+  .lg{display:flex; flex-wrap:wrap; gap:4px 14px; font-size:.76rem; color:var(--ink-2); margin-top:6px; justify-content:center;}
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .chips button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .chips button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  @media (max-width:600px){ .stats{grid-template-columns:1fr 1fr;} }
+
+  /* ---------- 02 · Lugar ---------- */
+  .tiles{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:10px;}
+  .tiles div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:9px 12px;}
+  .tiles b{display:block; font-family:var(--serif); font-size:1.15rem; color:var(--ink); line-height:1.2;}
+  .tiles span{font-size:.74rem; color:var(--muted); line-height:1.3; display:block;}
+  @media (max-width:600px){ .tiles{grid-template-columns:1fr 1fr;} }
+  #lg-scene .top-label{font-size:10.5px; font-weight:700; line-height:1.1; text-align:center; padding:0 2px;}
+  #lg-panel{margin-top:10px; min-height:96px;}
+
+  /* ---------- 03 · Método ---------- */
+  #mt-scene .top-label{font-size:16px; font-family:var(--serif);}
+  #mt-scene .floor-label{font-size:11px; line-height:1.1;}
+  #mt-panel{min-height:200px; margin-top:12px;}
+  .steps{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .steps button{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:6px 10px; font-size:.78rem; cursor:pointer; color:var(--ink-2);}
+  .steps button b{font-family:var(--serif); color:var(--red); margin-right:4px;}
+  .steps button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .steps button[aria-pressed="true"] b{color:#fff;}
+
+  /* ---------- 04 · Duas realidades ---------- */
+  #rl-scene .top-label{font-size:13px; font-weight:700; line-height:1.1; text-align:center;}
+  #rl-scene .floor-label{font-size:12px; line-height:1.15;}
+  #rl-after{display:none;} #rl-after.on{display:block;}
+  .cause{display:grid; gap:6px; margin-top:10px;}
+  .cause div{background:var(--card); border:1px solid var(--border); border-left:4px solid var(--mid); border-radius:10px; padding:7px 12px; font-size:.82rem; color:var(--ink-2);}
+  .cause b{color:var(--ink);}
+
+  /* ---------- 05 · Números ---------- */
+  #nm-scene .top-label{font-size:12px; font-weight:700;}
+  #nm-scene .floor-label{font-size:11.5px; line-height:1.1;}
+  #nm-after{display:none;} #nm-after.on{display:block;}
+  #nm-panel{min-height:150px; margin-top:10px;}
+  #nm-sub{margin-top:8px; display:none;} #nm-sub.on{display:inline-flex;}
+
+  /* ---------- 06 · Entrevistas ---------- */
+  #en-scene .floor-label{font-size:11px; line-height:1.1;}
+  #en-panel{min-height:200px; margin-top:12px;}
+  .ans{display:grid; gap:4px; margin-top:6px;}
+  .ans div{display:grid; grid-template-columns:4.2em 1fr; gap:8px; font-size:.8rem; color:var(--ink-2); align-items:baseline;}
+  .ans div b{font-size:.72rem; color:var(--muted); letter-spacing:.06em;}
+  .ans i{font-style:normal; display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:6px; vertical-align:0;}
+
+  /* ---------- 07 · Raiz ---------- */
+  #rz-scene .top-label{font-size:13px; font-weight:800;}
+  #rz-scene .floor-label{font-size:12px;}
+  #rz-panel{min-height:150px; margin-top:12px;}
+  .nums{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .nums button{width:38px; height:34px; border-radius:9px; border:2px solid var(--nc); background:#fff; color:var(--nc); font-weight:700; cursor:pointer; font-size:.9rem;}
+  .nums button[aria-pressed="true"]{background:var(--nc); color:#fff;}
+
+  /* ---------- 08 · Escolha ---------- */
+  #es-scene .top-label{font-size:13px; font-weight:800;}
+  #es-scene .floor-label{font-size:16px; font-weight:700;}
+  .crit{display:grid; grid-template-columns:minmax(0, 1fr) 44px 44px; gap:3px 6px; margin-top:8px; font-size:.76rem; color:var(--ink-2); align-items:center;}
+  @media (min-width:920px){ .crit{grid-template-columns:minmax(0, 1fr) 30px 30px minmax(0, 1fr) 30px 30px; gap:3px 8px; font-size:.74rem;} .crit .h2{display:block !important;} }
+  .crit .h2{display:none;}
+  .crit .h{font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; font-weight:700; color:var(--muted); text-align:center;}
+  .crit .h.l{text-align:left;}
+  .crit button{all:unset; cursor:pointer; padding:1px 0; line-height:1.25;}
+  .crit button:hover, .crit button.on{color:var(--ink); font-weight:600;}
+  .crit span.c{height:14px; border-radius:4px; background:var(--cc);}
+  .crit span.c.reg{background:repeating-linear-gradient(45deg, var(--mid) 0 4px, #e2e8f0 4px 8px);}
+  #es-obs{font-size:.8rem; color:var(--ink-2); background:#eef2f7; border-radius:10px; padding:7px 12px; margin-top:8px; min-height:2.6em;}
+
+  /* ---------- 09 · Caminho ---------- */
+  #cm-scene .top-label{font-size:11px; font-weight:700; line-height:1.1; text-align:center; padding:0 3px;}
+  #cm-scene .floor-label{font-size:12px;}
+  #cm-panel{min-height:170px; margin-top:10px;}
+  .stepper{display:flex; gap:8px; align-items:center; margin-top:10px; flex-wrap:wrap;}
+  .bubble{display:inline-block; font-size:.78rem; font-weight:600; border-radius:999px; padding:3px 10px; margin-top:6px;}
+  .bubble.yes{background:color-mix(in srgb, var(--red) 12%, white); color:var(--red);}
+  .bubble.no{background:#eef2f7; color:var(--muted);}
+
+  /* ---------- 10 · Implantação ---------- */
+  #im-scene .floor-label{font-size:12px; line-height:1.05; text-align:right;}
+  #im-scene .top-label{font-size:10px; font-weight:700;}
+  #im-panel{min-height:150px; margin-top:10px;}
+  .range{width:100%; accent-color:var(--red); margin-top:10px;}
+  .rlab{display:flex; justify-content:space-between; font-size:.72rem; color:var(--muted);}
+  .fix{display:grid; gap:4px; margin-top:6px; font-size:.8rem; color:var(--ink-2); padding-left:18px;}
+
+  /* ---------- 11 · Resultado ---------- */
+  #rs-scene .top-label{font-size:12px; font-weight:800;}
+  #rs-scene .floor-label{font-size:11px; line-height:1.1;}
+  #rs-panel{min-height:170px; margin-top:10px;}
+  .money{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;}
+  .money div{background:#eef2f7; border-radius:10px; padding:8px 12px;}
+  .money b{display:block; font-family:var(--serif); font-size:1.1rem; color:var(--ink);}
+  .money span{font-size:.74rem; color:var(--muted); line-height:1.3; display:block;}
+
+  /* ---------- 12 · Créditos ---------- */
+  .cards3{display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px;}
+  @media (min-width:760px){ .cards3{grid-template-columns:repeat(3, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 15px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.95rem; margin-bottom:4px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:2px; font-size:.76rem; line-height:1.38; color:var(--ink-2);}
+  .pcard em{font-style:normal; color:var(--muted);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.08rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:8px 0 0; padding:0; list-style:none;}
+  .limits li{padding:7px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.82rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; line-height:1.55; margin-top:8px;}
+  .cite b{color:var(--ink);}
+  .end .btn{padding:9px 12px; font-size:.82rem;} .end .ctas{gap:8px;}
+  @media (min-width:920px){ #creditos{padding-top:80px; padding-bottom:44px;} }
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-meta="../../../dissertacoes/2025-silva-manutencao-predial-processos/meta.json">
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../../dissertacoes/2025-silva-manutencao-predial-processos/" hreflang="pt-BR" lang="pt-BR" title="Ler em português"><img class="lang-flag" src="../../../assets/bandeira-br.svg" width="17" height="12" alt="">PT</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Previous screen">↑</button>
+    <button class="nav-btn" id="next" aria-label="Next screen">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Screen navigation"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Start">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Professional master’s dissertation · Mackenzie · 2025</div>
+      <h1 class="rv" style="--d:.1s">A large school’s repair requests now come in through a single channel</h1>
+      <p class="sub rv" style="--d:.2s">At a school with about <strong>50 buildings</strong> and <strong>40,000 people a day</strong>, requests came in six different ways, and the system once showed more late work orders than orders issued. The author, who works in that maintenance department, moved everything to a <strong>single channel</strong> where the customer follows every step. Explained in 12 screens.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Author:</b> Eliezer Mendes Silva</span>
+        <span><b>Advisor:</b> Prof. Dr. Gilberto Perez</span>
+        <span><b>Program:</b> Professional Master’s in Business Development Administration · Mackenzie Presbyterian University</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#lugar">Start →</a>
+        <a class="btn ghost" href="#numeros">Skip to the surprise</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="500x330" role="img" aria-label="Six red blocks, one per request channel (phone, WhatsApp, e-mail, Teams, front desk and the SMI system), that merge into a single blue block, the Service Portal, with the customer on top"></div></div>
+      <div id="hero-state" aria-live="polite"></div>
+      <div class="cap-legend">
+        <span><i class="dot sq" style="background:var(--cli)"></i>Old channels and the customer</span>
+        <span><i class="dot sq" style="background:var(--team)"></i>Service Portal (single channel)</span>
+      </div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">Closest UN Sustainable Development Goals</span>
+        <ul class="ods">
+          <li class="ods-4"><a href="https://sdgs.un.org/goals/goal4" target="_blank" rel="noopener" title="SDG 4 · Quality Education: Shows how to organize the maintenance of a school’s buildings, classrooms, laboratories and equipment so they are ready when students and teachers need them."><b>4</b>Quality Education</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">scroll<span></span></div>
+</section>
+
+<!-- 02 · LUGAR -->
+<section class="slide" id="lugar" data-label="The place">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> The case · a school in São Paulo</div>
+      <h2 class="rv" style="--d:.1s">Maintenance looks after a small city that cannot stop</h2>
+      <p class="rv" style="--d:.15s">The institution, a traditional one more than a century old, runs from early childhood education to doctoral programs. The dissertation calls it <strong>Alfa</strong>. More people pass through it each day than live in some Brazilian towns.</p>
+      <div class="tiles rv" style="--d:.2s">
+        <div><b>~50</b><span>buildings, from modern towers to listed heritage buildings</span></div>
+        <div><b>~110 thousand m²</b><span>of floor area on a 60,000 m² site</span></div>
+        <div><b>40 thousand</b><span>people a day, mostly students</span></div>
+      </div>
+      <div class="seg rv" id="lg-seg" style="--d:.25s; margin-top:12px" role="group" aria-label="What to show"></div>
+      <div class="panel rv" id="lg-panel" style="--d:.3s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="lg-scene" data-fit="470x330" role="img" aria-label="In the campus view, 50 blocks, one per building, with illustrative heights. In the team view, the maintenance org chart on three levels: coordinator; civil engineer and contracts engineer; supervisors, storeroom, service desk, technicians and maintenance contracts; workshops and outsourcing"></div></div>
+      <p class="note">Sections 2.2 and 2.3.1 and Figure 3. On the campus, one block per building; positions and heights are <b>our illustration</b> (the dissertation gives no site plan). Elevators, air conditioning and water quality are handled by long-term contractors.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · MÉTODO -->
+<section class="slide" id="metodo" data-label="The method">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> The method · problem solving (Marcondes and colleagues, 2017)</div>
+      <h2 class="rv" style="--d:.1s">The research followed seven steps, from understanding to reporting</h2>
+      <p class="rv" style="--d:.15s">This professional master’s dissertation starts from a real problem in the organization, proposes a solution and puts it in place. To do so it uses the <strong>Problem Solving and Opportunity Exploration Method</strong>. Click a step:</p>
+      <div class="steps rv" id="mt-steps" style="--d:.2s" role="group" aria-label="Method steps"></div>
+      <div class="panel rv" id="mt-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="mt-scene" data-fit="480x320" role="img" aria-label="A seven-step staircase: understanding the situation, diagnosis, solution proposal, action plan, intervention, evaluation and final report; the chosen step rises and turns red"></div></div>
+      <p class="note">Section 2.1 and Figure 1. The diagnosis was <b>mixed</b>: figures from the maintenance system plus interviews with the people who handle requests.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · DUAS REALIDADES -->
+<section class="slide" id="realidades" data-label="Two versions">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> The problem · Dec 2023 to Jan 2024</div>
+      <h2 class="rv" style="--d:.1s">Customers and staff told opposite stories about the same service</h2>
+      <p class="rv" style="--d:.15s">For management and for the people asking for repairs, maintenance was failing: everything was late and nobody gave updates. For the team, requests were handled within a reasonable time. <strong>Whom do you believe?</strong></p>
+      <div class="guess rv" id="rl-guess" style="--d:.2s" role="group" aria-label="Your guess"></div>
+      <p class="msg" id="rl-msg" aria-live="polite"></p>
+      <div id="rl-after">
+        <div class="cause">
+          <div><b>Work with no record.</b> Some jobs were done without opening a work order (WO).</div>
+          <div><b>Late closing.</b> The WO was closed days later, or never: work done on time showed up as late or pending.</div>
+          <div><b>Dates set by people who do not plan.</b> Deadlines were set by the service desk, not by the technical staff.</div>
+          <div><b>Customer left in the dark.</b> Getting back to the customer was not standard practice.</div>
+        </div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="rl-scene" data-fit="460x320" role="img" aria-label="Two towers, the customer’s in red and the team’s in blue, with a low grey block between them, the system record, which breaks into pieces when the answer appears"></div></div>
+      <p class="note">Sections 2.3, 2.3.2 and 2.3.4. In the author’s words, the indicators proved the customer right, while the work actually done pointed the other way: “both realities are true”.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · NÚMEROS -->
+<section class="slide" id="numeros" data-label="The surprise">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> The surprise · the system’s own figures</div>
+      <h2 class="rv" style="--d:.1s">The system once showed more late work orders than orders issued</h2>
+      <p class="rv" style="--d:.15s">The SMI, the program that recorded work orders, had a summary screen with the totals for the period. <strong>Can there be more late WOs than WOs issued?</strong></p>
+      <div class="guess rv" id="nm-guess" style="--d:.2s" role="group" aria-label="Your guess"></div>
+      <p class="msg" id="nm-msg" aria-live="polite"></p>
+      <div id="nm-after">
+        <div class="seg" id="nm-seg" role="group" aria-label="Which figure"></div>
+        <div class="seg sm" id="nm-sub" role="group" aria-label="How to add up"></div>
+        <div class="panel" id="nm-panel" aria-live="polite"></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="nm-scene" data-fit="490x330" role="img" aria-label="3D columns. SMI panel: 2,442 WOs issued and 2,814 WOs late. How they were carried out: postponed 63.68%, early 33.19%, unplanned 3.12%, on the day 0.01%. Month by month in 2023: pairs of columns for WOs opened and carried out, which match in March and November and flip in May"></div></div>
+      <div class="lg" id="nm-lg"></div>
+      <p class="note" id="nm-note"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · ENTREVISTAS -->
+<section class="slide" id="entrevistas" data-label="Seven interviews">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> The diagnosis · 7 interviews (Dec 2023)</div>
+      <h2 class="rv" style="--d:.1s">Seven people described seven different ways of doing the same job</h2>
+      <p class="rv" style="--d:.15s">Since the figures could not be trusted, the author interviewed, one by one and in person, <strong>2 supervisors, 3 technicians and 2 service-desk staff</strong>. Pick a topic and see what each person said:</p>
+      <div class="chips rv" id="en-chips" style="--d:.2s" role="group" aria-label="Topic"></div>
+      <div class="panel rv" id="en-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="en-scene" data-fit="480x330" role="img" aria-label="A grid of cubes: seven columns, one per interviewee (ENT.1 to ENT.7), and seven rows, one per topic; the chosen topic rises. Red means a problem reported, grey in between, blue that it works, and hollow no involvement with the topic"></div></div>
+      <div class="lg"><span><i class="dot sq" style="background:var(--red)"></i>problem reported</span><span><i class="dot sq" style="background:var(--mid)"></i>in between</span><span><i class="dot sq" style="background:var(--navy)"></i>works</span><span><i class="dot sq" style="border:1.5px solid var(--mid)"></i>not involved</span></div>
+      <p class="note">Section 2.3.3, Figure 8 and Appendix A. The interviews were not recorded: the table holds summaries noted by the author. Colors and counts are <b>our reading</b> of the table. The dissertation does not link each code to a job.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · RAIZ -->
+<section class="slide" id="raiz" data-label="Ten problems">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> The diagnosis · Figure 9</div>
+      <h2 class="rv" style="--d:.1s">The ten problems grew from two trunks: a misused system and customers left without news</h2>
+      <p class="rv" style="--d:.15s">The author compares the problems to a tree: you have to find the trunk, because treating the trunk fixes the branches. Click a number:</p>
+      <div class="nums rv" id="rz-nums" style="--d:.2s" role="group" aria-label="Problem"></div>
+      <div class="panel rv" id="rz-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="rz-scene" data-fit="470x320" role="img" aria-label="Two trunks: the blue one, system and records, with seven branches (problems 1, 2, 3, 4, 5, 8 and 9); the red one, customer service, with three (problems 6, 7 and 10)"></div></div>
+      <div class="lg"><span><i class="dot sq" style="background:var(--navy)"></i>system and records (7)</span><span><i class="dot sq" style="background:var(--red)"></i>customer service (3)</span></div>
+      <p class="note">Section 3 and Figure 9. The two areas are the author’s; placing problem 10 (the many channels) on the customer-service trunk is <b>our grouping</b>. Left for future projects: team, material and contract costs, individual performance, preventive routines and inventory.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · ESCOLHA -->
+<section class="slide" id="escolha" data-label="The choice">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> The proposal · adjusted SMI × Service Portal</div>
+      <h2 class="rv" style="--d:.1s">Between adjusting the old system and using the in-house portal, the portal met more criteria</h2>
+      <p class="rv" style="--d:.15s">The SMI was built for the steel industry, and adapting it required many paid customizations. The other option was the <strong>Service Portal</strong>, built by the institution’s IT team and already used by other departments. Hover over or tap a criterion:</p>
+      <div class="crit rv" id="es-crit" style="--d:.2s"></div>
+      <div id="es-obs" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="es-scene" data-fit="440x330" role="img" aria-label="Two stacks of 19 plates, one per criterion. SMI: 8 meets well, 3 partly, 8 does not meet. Portal: 16 meets well, 1 partly, 2 does not meet"></div></div>
+      <div class="lg"><span><i class="dot sq" style="background:var(--navy)"></i>meets well</span><span><i class="dot sq" style="background:repeating-linear-gradient(45deg, var(--mid) 0 3px, #e2e8f0 3px 6px)"></i>partly</span><span><i class="dot sq" style="background:var(--red)"></i>does not meet</span></div>
+      <p class="note">Section 3.1, Figures 13 and 14. Counts are <b>ours</b>, from the author’s table. A SWOT matrix confirmed the choice; one of the threats was that few people might answer the satisfaction survey, which is optional. Before deciding, the portal was tested with the department that requests the most work.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · CAMINHO -->
+<section class="slide" id="caminho" data-label="The new path">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> The solution · Figures 4 and 12</div>
+      <h2 class="rv" style="--d:.1s">In the new process, the customer sits at the center and gets a status update at every step</h2>
+      <p class="rv" style="--d:.15s">Follow one request from start to finish, the old way and the new way. Notice when the customer learns what is happening.</p>
+      <div class="seg rv" id="cm-seg" style="--d:.2s" role="group" aria-label="Process"></div>
+      <div class="stepper rv" style="--d:.22s">
+        <button class="btn small ghost" id="cm-prev">← previous step</button>
+        <button class="btn small" id="cm-next">next step →</button>
+      </div>
+      <div class="panel rv" id="cm-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="cm-scene" data-fit="470x340" role="img" aria-label="Request steps as blocks. In the old process, a line of steps with the customer off to the side, contacted only once. In the new one, six steps around the customer (request, review, work order, execution, completion and opinion survey), and the customer rises at every step because they receive the status"></div></div>
+      <p class="note">Sections 2.3.1, 2.3.4, 3 and 3.3. On the portal, opening a request takes <b>12 steps, 2 minutes on average</b>: building, floor, room and description are required, and buildings come pre-registered under their official names (some had changed name or number over time).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · IMPLANTAÇÃO -->
+<section class="slide" id="implantacao" data-label="Rollout">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> The intervention · from Jul 2024</div>
+      <h2 class="rv" style="--d:.1s">The switch happened with everything running, starting with the biggest customer</h2>
+      <p class="rv" style="--d:.15s">Drag through the 18-month schedule. Up to December 2024 is what the dissertation reports; after that, it is the plan.</p>
+      <input type="range" class="range rv" id="im-range" min="0" max="17" value="0" style="--d:.2s" aria-label="Schedule month">
+      <div class="rlab"><span>Jul 2024</span><span>Dec 2024</span><span>Dec 2025</span></div>
+      <div class="panel rv" id="im-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene" id="im-scene" data-fit="520x360" role="img" aria-label="3D rollout schedule: ten activities in rows and 18 months in columns, from July 2024 to December 2025; the bars for the chosen month rise"></div></div>
+      <p class="note">Sections 3.2, 3.3 and 5 and Figure 15. The plan foresees 18 months, accepting up to 24. Section 3.1 mentions a two-month test; the schedule shows the pilot from July to September 2024.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · RESULTADO -->
+<section class="slide" id="resultado" data-label="The result">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> The evaluation · first ratings on the portal</div>
+      <h2 class="rv" style="--d:.1s">Customers’ first ratings came close to the top score</h2>
+      <p class="rv" style="--d:.15s">When each request is closed, the portal invites the customer to give a rating of up to 5 stars. The first ones averaged <strong>4.90</strong>, and the lowest workshop score was <strong>4.75</strong>.</p>
+      <div class="seg rv" id="rs-seg" style="--d:.2s" role="group" aria-label="What to show"></div>
+      <div class="panel rv" id="rs-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="rs-scene" data-fit="490x330" role="img" aria-label="Eight columns, one per workshop, on a 0 to 5 star scale, with a plate at 4, the minimum desired: electrical about 4.9; plumbing, civil, painting, metalwork and electronics 5; carpentry about 4.8; air conditioning about 4.75"></div></div>
+      <div class="lg"><span><i class="dot sq" style="background:var(--red)"></i>score obtained (0 to 5 scale)</span><span><i class="dot sq" style="background:var(--mid)"></i>minimum desired: 4</span></div>
+      <p class="note">Section 7 and Figure 20. Workshop scores read from the chart (<b>~</b>). The 4.90 average and the 4.75 minimum are in the text. The dissertation does not say how many ratings there were or over what period.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Limits and credits">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Takeaways</div>
+    <h2 class="rv" style="--d:.1s">Before switching systems, check whether the figures tell what really happens</h2>
+    <p class="lede rv" style="--d:.15s">For the author, the path mattered as much as the solution: without the method, there would be no way to tell real delays from delays that existed only in the records. The author sees the same recipe serving other maintenance and facilities teams, in-house or outsourced.</p>
+    <div class="cards3">
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>For maintenance and facilities managers</h3><ul><li>A single request channel avoids duplicates and lost information.</li><li>Clear rules for opening and closing WOs make indicators reliable.</li><li>The people who know the work should set priority and deadline.</li></ul></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--red)"><h3>For teams serving internal customers</h3><ul><li>Even with no payment involved, there is a customer and service-provider relationship.</li><li>Status updates at every step were the main change for the customer.</li></ul></div>
+      <div class="pcard rv" style="--d:.3s; --pc:var(--dk)"><h3>For people leading change</h3><ul><li>Listening to the team from the diagnosis on reduced resistance, according to the author.</li><li>A pilot with the biggest customer quickly showed what to fix. <em>(11 adjustments before opening to everyone)</em></li></ul></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.2s">
+        <h3>What this research does not say</h3>
+        <ul class="limits">
+          <li><b>How much delays fell.</b> The dissertation gives no WO figures after the change to compare with 2023. <em>· our note</em></li>
+          <li><b>How many people rated.</b> The number of ratings is not given, and answering is optional; the author calls the scores preliminary. <em>· per the author and our note</em></li>
+          <li><b>An outside evaluation.</b> The author works in managing the maintenance department studied and ran the diagnosis, rollout and evaluation. <em>· our note</em></li>
+          <li><b>What is not yet measured.</b> Response time, individual performance, cost, inventory and reasons for delays were still being built into the portal. <em>· per the author</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.25s">
+        <h3>Credits</h3>
+        <div class="cite">
+          <b>How to cite</b><br>
+          SILVA, Eliezer Mendes. <em>Inovação na gestão de processos aplicada a serviços de manutenção predial.</em> Master’s dissertation (Professional Master’s in Business Development Administration) · Universidade Presbiteriana Mackenzie, São Paulo, 2025. Advisor: Prof. Dr. Gilberto Perez.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Supported by a tuition waiver from Instituto Presbiteriano Mackenzie. The institution studied appears as Alfa, the name used in the dissertation’s text, and interviewees only by the codes ENT.1 to ENT.7. Month-by-month values and workshop scores were read from the charts. This version simplifies the work for a general audience.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Read the full dissertation (in Portuguese)</a>
+          <a class="btn ghost" href="#capa">↑ Back to the start</a>
+          <a class="btn ghost" href="../../">More research</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(p, e){ return EN ? e : p; }
+  function N(n){ return EN ? n.toLocaleString('en-US') : n.toLocaleString('pt-BR'); }
+  var NAVY = '#1f3b73', RED = 'hsl(348 94% 47%)', DK = '#334155', MID = '#94a3b8', NEU = '#cbd5e1';
+  function press(group, btn){ each(group.querySelectorAll('button'), function(b){ b.setAttribute('aria-pressed', b === btn); }); }
+  function seg(id, names, fn, start){
+    var s = $(id); start = start || 0;
+    s.innerHTML = names.map(function(n, i){ return '<button data-i="' + i + '" aria-pressed="' + (i === start) + '">' + n + '</button>'; }).join('');
+    each(s.children, function(b){ b.addEventListener('click', function(){ press(s, b); fn(+b.dataset.i); }); });
+    fn(start);
+  }
+  function grow(list){ setTimeout(function(){ list.forEach(function(c){ c[0].style.setProperty('--h', c[1] + 'px'); }); }, 60); }
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // Figura 7 (tela-resumo do SMI)
+  var PANEL = {emit:2442, late:2814};
+  // Figura 6 (distribuição das OS executadas, %); o texto diz "0,1%" no dia, a figura 0,01%
+  var EXEC = [[L('Postergadas', 'Postponed'), 63.68, RED], [L('Antecipadas', 'Early'), 33.19, MID], [L('Não planejadas', 'Unplanned'), 3.12, DK], [L('No dia', 'On the day'), 0.01, NAVY]];
+  // Figura 5 (OS abertas × executadas, 2023), valores lidos do gráfico (~)
+  var MONTHS = EN ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] : ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  var OPEN = [790, 1140, 1300, 890, 2080, 890, 730, 1260, 1060, 1000, 1020, 480];
+  var DONE = [670, 1010, 1300, 830, 2250, 840, 690, 1140, 990, 870, 990, 450];
+  // Figura 20 (nota por oficina, lida do gráfico)
+  var SHOPS = [[L('Elétrica', 'Electrical'), 4.93], [L('Hidráulica', 'Plumbing'), 5], ['Civil', 5], [L('Pintura', 'Painting'), 5], [L('Marcenaria', 'Carpentry'), 4.8], [L('Serralheria', 'Metalwork'), 5], [L('Climatização', 'Air cond.'), 4.75], [L('Eletrônica', 'Electronics'), 5]];
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 460, 210, {ay:'64%', rx:'58deg'});
+    rotatable(sc, st, -22, 9);
+    var CH = [L('Telefone', 'Phone'), 'WhatsApp', 'E-mail', 'Teams', L('Balcão', 'Front desk'), 'SMI'];
+    var HS = [44, 30, 52, 24, 36, 18];
+    var ch = CH.map(function(c, i){
+      var b = box({w:96, d:26, h:4, x:0, y:i * 34, c:RED, top:c}); st.appendChild(b); return b;
+    });
+    var portal = box({w:110, d:110, h:4, x:320, y:50, c:NAVY, top:L('Portal', 'Portal')}); st.appendChild(portal);
+    var cli = box({w:40, d:40, h:4, x:355, y:85, z:4, c:RED}); st.appendChild(cli);
+    flatLabel(st, L('6 canais', '6 channels'), 0, 210, 96);
+    flatLabel(st, L('1 canal', '1 channel'), 320, 172, 110);
+    var on = false;
+    function set(s){
+      on = s;
+      ch.forEach(function(b, i){
+        b.style.setProperty('--ox', (s ? 327 : 0) + 'px');
+        b.style.setProperty('--oy', (s ? 92 - i * 34 : 0) + 'px');
+        b.style.setProperty('--h', (s ? 2 : HS[i]) + 'px');
+        b.classList.toggle('off', s);
+      });
+      portal.style.setProperty('--h', (s ? 60 : 8) + 'px');
+      portal.classList.toggle('off', !s);
+      cli.style.setProperty('--z', (s ? 60 : 8) + 'px');
+      cli.style.setProperty('--h', (s ? 40 : 4) + 'px');
+      $('hero-state').textContent = s ? L('Depois: um canal só, e o cliente acompanha o pedido', 'After: one channel, and the customer follows the request') : L('Antes: o pedido entrava por seis caminhos', 'Before: requests came in six different ways');
+    }
+    setTimeout(function(){ set(false); }, 300);
+    var timer = setInterval(function(){ set(!on); }, 3200);
+    if (M.reduce){ clearInterval(timer); setTimeout(function(){ set(true); }, 400); }
+  })();
+
+  /* ================= 02 · LUGAR ================= */
+  (function(){
+    var sc = $('lg-scene'), st = makeStage(sc, 430, 240, {ay:'64%', rx:'58deg'});
+    rotatable(sc, st, -18, 8);
+    var campus = [], org = [];
+    // 50 prédios: grade 10 × 5, alturas ilustrativas (sequência fixa)
+    var HH = [34,18,58,22,40,26,70,20,30,46, 24,52,16,36,28,62,22,44,18,30, 40,20,34,74,26,18,48,30,56,22, 18,44,28,20,38,24,32,66,20,40, 26,36,22,50,18,42,24,28,34,20];
+    for (var k = 0; k < 50; k++){
+      var b = box({w:30, d:30, h:4, x:(k % 10) * 42 + 4, y:Math.floor(k / 10) * 46 + 6, c:k % 7 === 3 ? DK : NAVY});
+      st.appendChild(b); campus.push([b, HH[k]]);
+    }
+    // Figura 3: organograma em três níveis + base
+    var ORG = [
+      [L('Coordenador', 'Coordinator'), 165, 0, 3],
+      [L('Eng. civil', 'Civil eng.'), 60, 60, 2], [L('Eng. de contratos', 'Contracts eng.'), 270, 60, 2],
+      [L('Encarregados', 'Supervisors'), 0, 120, 1], [L('Almoxarifado', 'Storeroom'), 84, 120, 1], [L('Atendimento', 'Service desk'), 168, 120, 1], [L('Técnicos', 'Technicians'), 252, 120, 1], [L('Contratos', 'Contracts'), 336, 120, 1],
+      [L('Oficinas', 'Workshops'), 0, 180, 0], [L('Terceiros', 'Outsourcing'), 84, 180, 0]
+    ];
+    ORG.forEach(function(o){
+      var b = box({w:78, d:44, h:4, x:o[1], y:o[2], c:o[3] === 0 ? RED : (o[3] === 1 ? DK : NAVY), top:o[0]});
+      st.appendChild(b); org.push([b, 14 + o[3] * 18]);
+    });
+    var P = [
+      {t:L('O campus', 'The campus'), h:L('Construções centenárias e prédios modernos', 'Century-old buildings and modern towers'), d:L('Salas, laboratórios, auditórios, capela, quadras, praças, estacionamentos, bancos e serviço médico. Tudo precisa funcionar nos picos de uso, sem parar as aulas, e parte dos prédios é tombada pelo patrimônio histórico.', 'Classrooms, labs, auditoriums, a chapel, sports courts, plazas, parking, banks and a medical service. Everything must work at peak times without stopping classes, and some buildings are listed as historical heritage.')},
+      {t:L('A equipe', 'The team'), h:L('Escritório, oficinas e terceiros', 'Office, workshops and contractors'), d:L('A área administrativa reúne engenheiros, técnicos, encarregados e atendentes. As oficinas fazem elétrica, hidráulica, civil, pintura, marcenaria e serralheria. Há <strong>manutenção corretiva</strong> (quando algo quebra) e <strong>preventiva</strong> (antes de quebrar), além de apoio a eventos e pequenas reformas.', 'The office side brings together engineers, technicians, supervisors and service-desk staff. Workshops handle electrical, plumbing, civil works, painting, carpentry and metalwork. There is <strong>corrective maintenance</strong> (when something breaks) and <strong>preventive maintenance</strong> (before it breaks), plus support for events and small refurbishments.')}
+    ];
+    seg('lg-seg', [P[0].t, P[1].t], function(i){
+      campus.forEach(function(c){ c[0].style.setProperty('--h', (i === 0 ? c[1] : 0) + 'px'); c[0].style.opacity = i === 0 ? 1 : 0; });
+      org.forEach(function(c){ c[0].style.setProperty('--h', (i === 1 ? c[1] : 0) + 'px'); c[0].style.opacity = i === 1 ? 1 : 0; });
+      $('lg-panel').innerHTML = '<div class="tag">' + P[i].t + '</div><h3>' + P[i].h + '</h3><p>' + P[i].d + '</p>';
+    });
+  })();
+
+  /* ================= 03 · MÉTODO ================= */
+  (function(){
+    var S = [
+      {t:L('Entender a situação', 'Understand the situation'), d:L('Primeiro, decidir se é um problema ou uma oportunidade. Aqui era um problema: direção e clientes insatisfeitos, indicadores com muito atraso e pendências, e um clima de "caos" que dificultava pensar em saídas.', 'First, decide whether it is a problem or an opportunity. Here it was a problem: unhappy management and customers, indicators full of delays and backlog, and a sense of “chaos” that made it hard to think of solutions.')},
+      {t:L('Diagnóstico', 'Diagnosis'), d:L('Entre dezembro de 2023 e janeiro de 2024: leitura dos indicadores do SMI (telas 5 e 7) e <strong>7 entrevistas</strong> com quem atende os pedidos (tela 6).', 'Between December 2023 and January 2024: a review of SMI indicators (screens 5 and 7) and <strong>7 interviews</strong> with the people who handle requests (screen 6).')},
+      {t:L('Proposta de solução', 'Solution proposal'), d:L('Um canal único para os pedidos, com o cliente informado de cada etapa, critérios claros para registrar as OS e uma pesquisa de satisfação ao final. Duas ferramentas foram comparadas (tela 8).', 'A single channel for requests, with the customer told about every step, clear rules for recording WOs and a satisfaction survey at the end. Two tools were compared (screen 8).')},
+      {t:L('Plano de ação', 'Action plan'), d:L('Piloto com o setor que mais pede serviços, depois implantação geral em fases, num cronograma de 18 meses (tela 10).', 'A pilot with the department that requests the most work, then a phased general rollout, on an 18-month schedule (screen 10).')},
+      {t:L('Intervenção', 'Intervention'), d:L('Envolver direção e equipe desde o diagnóstico, treinar primeiro o atendimento e, depois do piloto, reunir toda a equipe num evento para anunciar as mudanças e mostrar os primeiros resultados.', 'Involve management and staff from the diagnosis on, train the service desk first and, after the pilot, gather the whole team at an event to announce the changes and show the first results.')},
+      {t:L('Avaliação', 'Evaluation'), d:L('Acompanhar cada etapa durante o processo, não só no fim. As primeiras notas dos clientes no portal entram aqui (tela 11).', 'Track each step during the process, not only at the end. Customers’ first ratings on the portal come in here (screen 11).')},
+      {t:L('Relatório final', 'Final report'), d:L('A própria dissertação. O método recomeça: o que o novo sistema ainda não faz vira o próximo ciclo de melhoria.', 'The dissertation itself. The method starts over: what the new system cannot do yet becomes the next improvement cycle.')}
+    ];
+    var sc = $('mt-scene'), st = makeStage(sc, 440, 120, {ay:'70%', rx:'60deg'});
+    rotatable(sc, st, -20, 8);
+    var blocks = S.map(function(s, i){
+      var b = box({w:54, d:70, h:4, x:i * 63, y:20, c:NAVY, top:String(i + 1)}); st.appendChild(b);
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick(i); });
+      return b;
+    });
+    var bs = $('mt-steps');
+    bs.innerHTML = S.map(function(s, i){ return '<button data-i="' + i + '" aria-pressed="false"><b>' + (i + 1) + '</b>' + s.t + '</button>'; }).join('');
+    each(bs.children, function(b){ b.addEventListener('click', function(){ pick(+b.dataset.i); }); });
+    function pick(i){
+      press(bs, bs.children[i]);
+      blocks.forEach(function(b, k){ b.style.setProperty('--h', (14 + k * 11) + 'px'); b.style.setProperty('--c', k === i ? RED : (k < i ? NAVY : 'color-mix(in srgb, ' + NAVY + ' 55%, white)')); b.classList.toggle('active', k === i); });
+      $('mt-panel').innerHTML = '<div class="tag">' + L('Passo', 'Step') + ' ' + (i + 1) + L(' de 7', ' of 7') + '</div><h3>' + S[i].t + '</h3><p>' + S[i].d + '</p>';
+    }
+    pick(1);
+  })();
+
+  /* ================= 04 · DUAS REALIDADES ================= */
+  (function(){
+    var sc = $('rl-scene'), st = makeStage(sc, 400, 160, {ay:'66%', rx:'58deg'});
+    rotatable(sc, st, -18, 9);
+    var c = box({w:90, d:90, h:4, x:0, y:30, c:RED, top:L('Cliente', 'Customer')}); st.appendChild(c);
+    var t = box({w:90, d:90, h:4, x:310, y:30, c:NAVY, top:L('Equipe', 'Team')}); st.appendChild(t);
+    var mid = [];
+    for (var k = 0; k < 4; k++){ var m = box({w:44, d:40, h:4, x:132 + (k % 2) * 92, y:32 + Math.floor(k / 2) * 50, c:MID}); st.appendChild(m); mid.push(m); }
+    flatLabel(st, L('"nada é atendido"', '"nothing gets done"'), -10, 128, 110);
+    flatLabel(st, L('"atendemos no prazo"', '"we deliver on time"'), 300, 128, 110);
+    var lab = flatLabel(st, L('registro no SMI', 'SMI record'), 140, 136, 120);
+    grow([[c, 100], [t, 100]].concat(mid.map(function(m){ return [m, 22]; })));
+    var G = [L('No cliente', 'The customer'), L('Na equipe', 'The team'), L('Nos dois', 'Both')];
+    var g = $('rl-guess');
+    g.innerHTML = G.map(function(x, i){ return '<button data-i="' + i + '" aria-pressed="false">' + x + '</button>'; }).join('');
+    each(g.children, function(b){ b.addEventListener('click', function(){
+      press(g, b); var i = +b.dataset.i; g.children[2].classList.add('ok');
+      $('rl-msg').innerHTML = (i === 2 ? L('É a leitura do autor. ', 'That is the author’s reading. ') : L('O autor responde de outro jeito. ', 'The author answers differently. ')) + L('Os dois lados tinham razão: o que falhava era <b>o registro</b> no meio do caminho, e o cliente nunca era avisado.', 'Both sides were right: what failed was <b>the record</b> in between, and the customer was never told.');
+      mid.forEach(function(m, k){ m.style.setProperty('--ox', ((k % 2 ? 1 : -1) * 14) + 'px'); m.style.setProperty('--oy', ((k < 2 ? -1 : 1) * 12) + 'px'); m.style.setProperty('--h', (6 + k * 5) + 'px'); m.style.setProperty('--c', RED); });
+      lab.textContent = L('registro falho', 'faulty record');
+      $('rl-after').classList.add('on'); M.fit();
+    }); });
+  })();
+
+  /* ================= 05 · NÚMEROS ================= */
+  (function(){
+    var sc = $('nm-scene'), st = makeStage(sc, 450, 150, {ay:'72%', rx:'60deg'});
+    rotatable(sc, st, -18, 8);
+    var objs = [], view = 0, cum = false;
+    function clear(){ objs.forEach(function(o){ o.remove(); }); objs = []; }
+    function draw(){
+      clear(); var list = [];
+      if (view === 0){
+        [[L('Emitidas', 'Issued'), PANEL.emit, NAVY], [L('Atrasadas', 'Late'), PANEL.late, RED]].forEach(function(d, i){
+          var b = box({w:100, d:70, h:4, x:90 + i * 160, y:30, c:d[2], top:N(d[1])}); st.appendChild(b); objs.push(b); list.push([b, d[1] / PANEL.late * 170]);
+          objs.push(flatLabel(st, d[0], 80 + i * 160, 112, 120));
+        });
+        $('nm-lg').innerHTML = '';
+        $('nm-note').innerHTML = L('Seção 2.3.2 e Figura 7 (tela do SMI, 2024). As OS emitidas deveriam ser o universo, com as concluídas, atrasadas, pendentes e canceladas dentro dele.', 'Section 2.3.2 and Figure 7 (SMI screen, 2024). Issued WOs should be the whole universe, with completed, late, pending and cancelled ones inside it.');
+        $('nm-panel').innerHTML = '<div class="tag">' + L('Problema 5', 'Problem 5') + '</div><h3>' + L('Não dá para atrasar mais serviço do que foi pedido', 'You cannot be late on more work than was requested') + '</h3><p>' + L('A tela trazia <strong>2.814 OS atrasadas</strong> para <strong>2.442 emitidas</strong>. Cada pessoa lançava os dados de um jeito, e as baixas eram dadas de uma vez, quando o acúmulo aparecia. Na prática, os serviços em aberto eram muito menos do que o sistema mostrava.', 'The screen showed <strong>2,814 late WOs</strong> against <strong>2,442 issued</strong>. Each person entered data their own way, and closings were done in bulk when a backlog showed up. In practice, open jobs were far fewer than the system showed.') + '</p>';
+      } else if (view === 1){
+        EXEC.forEach(function(d, i){
+          var b = box({w:72, d:60, h:4, x:20 + i * 106, y:36, c:d[2], top:M.fmt(d[1], 2) + '%'}); st.appendChild(b); objs.push(b); list.push([b, Math.max(2, d[1] / 63.68 * 170)]);
+          objs.push(flatLabel(st, d[0], 6 + i * 106, 108, 100));
+        });
+        $('nm-lg').innerHTML = '';
+        $('nm-note').innerHTML = L('Seção 2.3.2 e Figura 6 (SMI, 2024). Usamos os números da figura; o texto arredonda "no dia" para 0,1%.', 'Section 2.3.2 and Figure 6 (SMI, 2024). We use the figure’s numbers; the text rounds “on the day” to 0.1%.');
+        $('nm-panel').innerHTML = '<div class="tag">' + L('Problema 4', 'Problem 4') + '</div><h3>' + L('Quase nada feito "no dia" e o dobro de atrasos sobre antecipações', 'Almost nothing done “on the day”, and twice as many delays as early jobs') + '</h3><p>' + L('Para o autor, a conta não faz sentido no dia a dia: as "postergadas" também incluíam OS lançadas em duplicidade, baixadas depois só para reduzir a diferença entre abertas e executadas. E quem marcava as datas era o atendente, sem saber a complexidade do serviço.', 'For the author, these numbers make no sense in daily practice: “postponed” also included duplicated WOs, closed later just to shrink the gap between opened and completed. And dates were set by the service desk, without knowing how complex each job was.') + '</p>';
+      } else {
+        var acc1 = 0, acc2 = 0, A = [], D = [];
+        OPEN.forEach(function(v, i){ acc1 += v; acc2 += DONE[i]; A.push(cum ? acc1 : v); D.push(cum ? acc2 : DONE[i]); });
+        var max = cum ? acc1 : 2250, odd = [2, 4, 10];
+        MONTHS.forEach(function(m, i){
+          var x = i * 37.5;
+          var a = box({w:15, d:30, h:4, x:x + 2, y:44, c:NAVY}); var e = box({w:15, d:30, h:4, x:x + 18, y:44, c:RED});
+          st.appendChild(a); st.appendChild(e); objs.push(a, e);
+          list.push([a, A[i] / max * 170], [e, D[i] / max * 170]);
+          objs.push(flatLabel(st, m, x - 2, 82, 38, odd.indexOf(i) >= 0 && !cum ? 'color:' + RED + ';' : ''));
+        });
+        $('nm-lg').innerHTML = '<span><i class="dot sq" style="background:' + NAVY + '"></i>' + L('OS abertas', 'WOs opened') + '</span><span><i class="dot sq" style="background:' + RED + '"></i>' + L('OS executadas', 'WOs carried out') + '</span>';
+        $('nm-note').innerHTML = L('Seção 2.3.2 e Figura 5 (SMI, 2024; meses de 2023). Valores <b>lidos do gráfico</b>, aproximados; a soma acumulada é <b>conta nossa</b>, no formato que o próprio autor recomenda.', 'Section 2.3.2 and Figure 5 (SMI, 2024; months of 2023). Values <b>read from the chart</b>, approximate; the running total is <b>our calculation</b>, in the format the author recommends.');
+        $('nm-panel').innerHTML = cum
+          ? '<div class="tag">' + L('Problema 3', 'Problem 3') + '</div><h3>' + L('Somando mês a mês, a fila aparece', 'Adding month by month, the backlog shows') + '</h3><p>' + L('O autor sugere olhar o acumulado do ano: cada mês carrega o que sobrou do anterior, e quanto menor a distância entre as duas linhas, mais eficiente o atendimento. Com os valores lidos do gráfico, o ano fecharia com cerca de <strong>12.640 abertas</strong> e <strong>12.030 executadas</strong>.', 'The author suggests looking at the year’s running total: each month carries what was left from the one before, and the smaller the gap between the two lines, the more efficient the service. With the values read from the chart, the year would close at about <strong>12,640 opened</strong> and <strong>12,030 carried out</strong>.') + '</p>'
+          : '<div class="tag">' + L('Problemas 1 e 2', 'Problems 1 and 2') + '</div><h3>' + L('Meses em que tudo foi "resolvido" de uma vez', 'Months when everything was “solved” at once') + '</h3><p>' + L('Em <strong>março</strong> e <strong>novembro</strong>, abertas e executadas se igualam: como se tudo o que foi pedido tivesse sido feito no mês, o que a rotina de manutenção não permite. Em <strong>maio</strong>, as executadas passam das abertas. Para o autor, são sinais de baixas em lote.', 'In <strong>March</strong> and <strong>November</strong>, opened and carried out match: as if everything requested had been done that month, which maintenance routines do not allow. In <strong>May</strong>, completed orders exceed opened ones. For the author, these are signs of bulk closing.') + '</p>';
+      }
+      grow(list);
+    }
+    var G = [L('Sim, pode', 'Yes, it can'), L('Não, é impossível', 'No, it is impossible')];
+    var g = $('nm-guess'), shown = false;
+    g.innerHTML = G.map(function(x, i){ return '<button data-i="' + i + '" aria-pressed="false">' + x + '</button>'; }).join('');
+    each(g.children, function(b){ b.addEventListener('click', function(){
+      press(g, b); var i = +b.dataset.i; g.children[1].classList.add('ok');
+      $('nm-msg').innerHTML = (i === 1 ? L('Certo: não deveria. ', 'Right: it should not. ') : L('Não deveria. ', 'It should not. ')) + L('Mas a tela do SMI mostrava exatamente isso. E não era o único número estranho:', 'Yet the SMI screen showed exactly that. And it was not the only odd number:');
+      if (!shown){
+        shown = true; $('nm-after').classList.add('on');
+        seg('nm-sub', [L('Mês a mês', 'Monthly'), L('Acumulado', 'Running total')], function(k){ cum = k === 1; draw(); });
+        seg('nm-seg', [L('Painel do SMI', 'SMI panel'), L('Como foram feitas', 'How jobs were done'), L('Mês a mês', 'Month by month')], function(k){ view = k; $('nm-sub').classList.toggle('on', k === 2); draw(); });
+        M.fit();
+      }
+    }); });
+    // antes da aposta: só o painel, sem números
+    var a = box({w:100, d:70, h:4, x:90, y:30, c:NEU, top:'?'}); var e = box({w:100, d:70, h:4, x:250, y:30, c:NEU, top:'?'});
+    st.appendChild(a); st.appendChild(e); objs.push(a, e);
+    objs.push(flatLabel(st, L('Emitidas', 'Issued'), 80, 112, 120), flatLabel(st, L('Atrasadas', 'Late'), 240, 112, 120));
+    grow([[a, 40], [e, 40]]);
+    $('nm-note').innerHTML = L('Figuras 5, 6 e 7 da dissertação, todas tiradas do SMI antes da mudança.', 'Figures 5, 6 and 7 of the dissertation, all taken from the SMI before the change.');
+  })();
+
+  /* ================= 06 · ENTREVISTAS ================= */
+  (function(){
+    // r = problema relatado, m = meio-termo, a = atende, o = sem envolvimento (leitura nossa da Figura 8)
+    var T = [
+      {t:L('Tamanho da equipe', 'Team size'), c:'romromo', a:[L('Equipe reduzida', 'Short-staffed'), L('Equipe reduzida', 'Short-staffed'), '–', L('Equipe reduzida', 'Short-staffed'), '–', L('Equipe reduzida', 'Short-staffed'), '–'], s:L('<strong>4 de 7</strong> dizem que a equipe está reduzida. Há consenso de que vagas abertas ao longo dos anos não foram repostas.', '<strong>4 of 7</strong> say the team is short-staffed. There is consensus that vacancies over the years were not refilled.')},
+      {t:L('Capacitação', 'Training'), c:'mrmmmrm', a:[L('Boa, mas pode melhorar', 'Good, could improve'), L('Deficiente', 'Poor'), L('Boa, mas pode melhorar', 'Good, could improve'), L('Boa, mas pode melhorar', 'Good, could improve'), L('Boa, mas pode melhorar', 'Good, could improve'), L('Deficiente', 'Poor'), L('Boa, mas pode melhorar', 'Good, could improve')], s:L('<strong>2 de 7</strong> acham a capacitação deficiente; os outros 5, boa, mas com o que melhorar.', '<strong>2 of 7</strong> find training poor; the other 5, good but with room to improve.')},
+      {t:L('Abertura da OS', 'Opening a WO'), c:'rrmomra', a:[L('Difícil obter as informações', 'Hard to get the information'), L('Faltam informações', 'Information missing'), L('Melhorar a descrição', 'Better description needed'), '–', L('Melhorar a descrição', 'Better description needed'), L('Faltam informações', 'Information missing'), L('Atende a necessidade', 'Meets the need')], s:L('Só <strong>1 de 6</strong> envolvidos acha que a abertura atende. Pedidos chegavam sem todos os dados e com o local mal identificado.', 'Only <strong>1 of 6</strong> involved thinks opening works. Requests arrived without all the data and with the location poorly identified.')},
+      {t:L('Baixa no SMI', 'Closing in the SMI'), c:'rrarara', a:[L('Difícil manter atualizada', 'Hard to keep up to date'), L('Difícil manter atualizada', 'Hard to keep up to date'), L('Mantém atualizada', 'Keeps it up to date'), L('Difícil manter atualizada', 'Hard to keep up to date'), L('Mantém atualizada', 'Keeps it up to date'), L('Difícil manter atualizada', 'Hard to keep up to date'), L('Mantém atualizada', 'Keeps it up to date')], s:L('<strong>4 de 7</strong> têm dificuldade de manter a baixa em dia. Os critérios para chamar uma OS de "postergada" ou "atrasada" não eram claros.', '<strong>4 of 7</strong> struggle to keep closings up to date. The rules for calling a WO “postponed” or “late” were unclear.')},
+      {t:L('Conhecimento do SMI', 'Knowledge of the SMI'), c:'rmaarma', a:[L('Pouco', 'Little'), L('Superficial', 'Superficial'), L('Bom', 'Good'), L('Bom', 'Good'), L('Pouco', 'Little'), L('Superficial', 'Superficial'), L('Bom', 'Good')], s:L('Só <strong>3 de 7</strong> conhecem bem o sistema. Para a maioria, o SMI era "apenas um registrador de OS".', 'Only <strong>3 of 7</strong> know the system well. For most, the SMI was “just a WO logger”.')},
+      {t:L('Prazos', 'Deadlines'), c:'rmarmaa', a:[L('Urgência sem ser urgente', 'Urgent when it is not'), L('Curtos em alguns casos', 'Short in some cases'), L('Suficientes', 'Enough'), L('Urgência sem ser urgente', 'Urgent when it is not'), L('Curtos em alguns casos', 'Short in some cases'), L('Suficientes', 'Enough'), L('Suficientes', 'Enough')], s:L('<strong>3 de 7</strong> acham os prazos suficientes; 2 reclamam de pedidos marcados como urgentes sem ser.', '<strong>3 of 7</strong> find deadlines enough; 2 complain about requests flagged urgent when they are not.')},
+      {t:L('Como cada um trabalha', 'How each one works'), c:'rrrrrrr', a:[L('Poucos pontos em comum', 'Little in common'), L('Poucos pontos em comum', 'Little in common'), L('Poucos pontos em comum', 'Little in common'), L('Poucos pontos em comum', 'Little in common'), L('Poucos pontos em comum', 'Little in common'), L('Poucos pontos em comum', 'Little in common'), L('Poucos pontos em comum', 'Little in common')], s:L('Pedidas para descrever o passo a passo, as <strong>7 pessoas</strong> deram descrições com poucos pontos em comum e muitas diferenças: cada um decidia a melhor solução. Não havia um padrão.', 'Asked to describe their step-by-step, all <strong>7 people</strong> gave accounts with little in common and many differences: each decided the best solution alone. There was no standard.')}
+    ];
+    var COL = {r:RED, m:MID, a:NAVY, o:MID};
+    var sc = $('en-scene'), st = makeStage(sc, 400, 280, {ay:'62%', rx:'56deg'});
+    rotatable(sc, st, -16, 8);
+    var grid = T.map(function(row, r){
+      return row.c.split('').map(function(k, c){
+        var b = box({w:36, d:28, h:4, x:c * 54 + 26, y:r * 38, c:COL[k], cls:k === 'o' ? 'off' : ''}); st.appendChild(b); return b;
+      });
+    });
+    for (var c = 0; c < 7; c++) flatLabel(st, 'ENT.' + (c + 1), c * 54 + 18, 270, 52);
+    var ch = $('en-chips');
+    ch.innerHTML = T.map(function(t, i){ return '<button data-i="' + i + '" aria-pressed="false">' + t.t + '</button>'; }).join('');
+    each(ch.children, function(b){ b.addEventListener('click', function(){ pick(+b.dataset.i); }); });
+    function pick(i){
+      press(ch, ch.children[i]);
+      grid.forEach(function(row, r){ row.forEach(function(b){ b.style.setProperty('--h', (r === i ? 34 : 8) + 'px'); b.classList.toggle('dim', r !== i); b.classList.toggle('active', r === i); }); });
+      var t = T[i];
+      $('en-panel').innerHTML = '<div class="tag">' + L('Tema', 'Topic') + ' · ' + t.t + '</div><p>' + t.s + '</p><div class="ans">' + t.a.map(function(a, k){ var key = t.c[k]; return '<div><b>ENT.' + (k + 1) + '</b><span><i style="' + (key === 'o' ? 'border:1.5px solid ' + MID : 'background:' + COL[key]) + '"></i>' + a + '</span></div>'; }).join('') + '</div>';
+    }
+    pick(6);
+  })();
+
+  /* ================= 07 · RAIZ ================= */
+  (function(){
+    var P = [
+      [1, 0, L('Criar procedimentos para abrir e concluir as OS', 'Create procedures for opening and closing WOs'), L('Indicadores do SMI', 'SMI indicators')],
+      [2, 0, L('OS não executadas devem continuar como serviço em aberto', 'Unfinished WOs must stay listed as open work'), L('Indicadores do SMI', 'SMI indicators')],
+      [3, 0, L('Definir indicadores e gráficos para análise estratégica', 'Define indicators and charts for strategic analysis'), L('Tomada de decisão', 'Decision-making')],
+      [4, 0, L('Criar critérios de prioridade e um cronograma de atendimento', 'Set priority rules and a service schedule'), L('Programação e controle das atividades', 'Scheduling and control of activities')],
+      [5, 0, L('Toda atividade precisa ter uma OS aberta no sistema', 'Every activity needs a WO opened in the system'), L('Indicadores do SMI', 'SMI indicators')],
+      [6, 1, L('O cliente não recebe comunicação nem informação sobre o status do pedido', 'The customer gets no communication or information on the request’s status'), L('Criação de valor', 'Value creation')],
+      [7, 1, L('O atendimento não tem treinamento e desconhece práticas e rotinas básicas', 'The service desk has no training and does not know basic practices and routines'), L('Criação de valor', 'Value creation')],
+      [8, 0, L('Mau uso do SMI: dados lançados errado ou não lançados', 'Misuse of the SMI: data entered wrongly or not at all'), L('Indicadores pouco confiáveis, que impedem a análise estratégica', 'Unreliable indicators that rule out strategic analysis')],
+      [9, 0, L('Falta de treinamento da equipe para usar o SMI', 'Staff lack training to use the SMI'), L('Indicadores, controle das atividades e rastreio das OS', 'Indicators, activity control and WO tracking')],
+      [10, 1, L('Pedidos chegam por vários canais (WhatsApp, telefone, e-mail, Teams…)', 'Requests arrive through many channels (WhatsApp, phone, e-mail, Teams…)'), L('Descentralização, perda de informação e de rastreabilidade', 'Fragmentation, lost information and traceability')]
+    ];
+    var sc = $('rz-scene'), st = makeStage(sc, 420, 220, {ay:'64%', rx:'58deg'});
+    rotatable(sc, st, -18, 8);
+    var tr0 = box({w:70, d:70, h:4, x:70, y:75, c:NAVY, top:L('Sistema', 'System')}); st.appendChild(tr0);
+    var tr1 = box({w:70, d:70, h:4, x:300, y:75, c:RED, top:L('Cliente', 'Customer')}); st.appendChild(tr1);
+    var pos0 = [[0, 0], [70, -10], [140, 0], [-20, 80], [160, 80], [10, 165], [130, 165]];
+    var pos1 = [[255, 5], [345, 5], [300, 175]];
+    var k0 = 0, k1 = 0, br = {};
+    P.forEach(function(p){
+      var xy = p[1] === 0 ? pos0[k0++] : pos1[k1++];
+      var b = box({w:40, d:40, h:4, x:xy[0] + 15, y:xy[1] + 5, c:p[1] === 0 ? NAVY : RED, top:String(p[0])}); st.appendChild(b); br[p[0]] = b;
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick(p[0]); });
+    });
+    flatLabel(st, L('sistema e registro', 'system and records'), 40, 238, 130);
+    flatLabel(st, L('atendimento', 'customer service'), 270, 238, 130);
+    grow([[tr0, 80], [tr1, 80]]);
+    var nb = $('rz-nums');
+    nb.innerHTML = P.map(function(p){ return '<button data-n="' + p[0] + '" aria-pressed="false" style="--nc:' + (p[1] === 0 ? NAVY : RED) + '">' + p[0] + '</button>'; }).join('');
+    each(nb.children, function(b){ b.addEventListener('click', function(){ pick(+b.dataset.n); }); });
+    function pick(n){
+      var p = P[n - 1];
+      press(nb, nb.children[n - 1]);
+      Object.keys(br).forEach(function(k){ br[k].style.setProperty('--h', (+k === n ? 50 : 22) + 'px'); br[k].classList.toggle('active', +k === n); br[k].classList.toggle('dim', +k !== n); });
+      $('rz-panel').innerHTML = '<div class="tag">' + L('Problema', 'Problem') + ' ' + n + ' · ' + (p[1] === 0 ? L('tronco do sistema', 'system trunk') : L('tronco do atendimento', 'customer-service trunk')) + '</div><h3>' + p[2] + '</h3><p><strong>' + L('O que afeta:', 'What it affects:') + '</strong> ' + p[3] + '</p>';
+    }
+    setTimeout(function(){ pick(6); }, 100);
+  })();
+
+  /* ================= 08 · ESCOLHA ================= */
+  (function(){
+    // Figura 13: [critério, SMI, Portal, observação]; b = atende bem, r = regular, n = não atende
+    var C = [
+      [L('Facilidade para o usuário pedir', 'Ease for users to request'), 'n', 'b', L('Ambiente de acesso fácil e mais amigável.', 'Easy-to-reach, friendlier environment.')],
+      [L('Facilidade para o atendimento', 'Ease for the service desk'), 'n', 'b', L('Telas mais amigáveis e informação mais bem agrupada.', 'Friendlier screens and better-grouped information.')],
+      [L('Identificar o local do pedido', 'Identifying the request’s location'), 'r', 'b', L('Folha de rosto personalizada para os colaboradores.', 'Cover sheet customized for staff.')],
+      [L('Cliente acompanhar o status', 'Customer tracking the status'), 'n', 'b', L('O cliente vê o andamento on-line.', 'The customer sees progress online.')],
+      [L('Atendimento controlar o status', 'Service desk controlling the status'), 'b', 'b', L('Os dois atendem; o SMI é um pouco mais ágil.', 'Both work; the SMI is a little faster.')],
+      [L('Conversa com quem pediu', 'Talking with the requester'), 'n', 'b', L('Ações acompanhadas on-line; define-se o que pode ser informado.', 'Actions followed online; you decide what can be shared.')],
+      [L('Indicadores básicos', 'Basic indicators'), 'b', 'b', L('Os dois atendem; o SMI é um pouco mais ágil.', 'Both work; the SMI is a little faster.')],
+      [L('Prioridade com prazos definidos', 'Priority with set deadlines'), 'n', 'b', L('Ao gerar a OS, já se define prioridade e prazo.', 'Priority and deadline are set when the WO is created.')],
+      [L('Facilidade de dar baixa', 'Ease of closing WOs'), 'b', 'b', ''],
+      [L('Custo de licenças', 'License costs'), 'n', 'b', L('No SMI, as licenças têm custo de compra e mensalidade.', 'In the SMI, licenses have a purchase cost and a monthly fee.')],
+      [L('Desempenho de cada pessoa', 'Individual performance'), 'b', 'n', L('O SMI tem a função; no portal, ela ainda precisa ser criada.', 'The SMI has it; in the portal it still has to be built.')],
+      [L('Desempenho das oficinas', 'Workshop performance'), 'b', 'b', ''],
+      [L('Gráficos (painéis)', 'Charts (dashboards)'), 'r', 'b', L('Gráficos com melhor visualização no portal.', 'Clearer charts on the portal.')],
+      [L('Rastreabilidade', 'Traceability'), 'b', 'b', ''],
+      [L('Registro das ações', 'Recording actions'), 'r', 'r', L('As formas de registrar são limitadas nos dois.', 'Ways of recording are limited in both.')],
+      [L('Registro das preventivas', 'Recording preventive work'), 'b', 'b', L('Assim está no quadro. Depois do piloto, porém, o autor conta que o portal ainda não registrava a periodicidade das preventivas, que passaram a ser lembradas por e-mails automáticos (seção 3.3).', 'That is how the table has it. After the pilot, though, the author reports that the portal could not yet record preventive cycles, which were then handled by automatic e-mails (section 3.3).')],
+      [L('Estoque do almoxarifado', 'Storeroom inventory'), 'b', 'n', L('O SMI tem o módulo; no portal, ele ainda precisa ser criado.', 'The SMI has the module; in the portal it still has to be built.')],
+      [L('Custo do serviço', 'Service cost'), 'n', 'b', L('O custo do portal é assumido pela instituição (pela TI).', 'The portal’s cost is borne by the institution (by IT).')],
+      [L('Pesquisa de opinião', 'Opinion survey'), 'n', 'b', L('Ao concluir o pedido, a pesquisa sai automaticamente.', 'When a request is closed, the survey goes out automatically.')]
+    ];
+    var COL = {b:NAVY, r:MID, n:RED};
+    var sc = $('es-scene'), st = makeStage(sc, 360, 120, {ay:'84%', rx:'64deg'});
+    rotatable(sc, st, -10, 7);
+    var stacks = [[], []];
+    [1, 2].forEach(function(side, s){
+      var order = ['b', 'r', 'n'], z = 0;
+      order.forEach(function(k){
+        C.forEach(function(c, i){
+          if (c[side] !== k) return;
+          var b = box({w:110, d:80, h:8, x:20 + s * 200, y:20, z:z, c:COL[k]}); st.appendChild(b); stacks[s][i] = b; z += 10;
+        });
+      });
+      flatLabel(st, (s === 0 ? 'SMI' : L('Portal', 'Portal')), 20 + s * 200, 108, 110);
+    });
+    var cnt = function(side, k){ return C.filter(function(c){ return c[side] === k; }).length; };
+    flatLabel(st, cnt(1, 'b') + ' · ' + cnt(1, 'r') + ' · ' + cnt(1, 'n'), 20, 128, 110, 'font-weight:600;color:var(--muted)');
+    flatLabel(st, cnt(2, 'b') + ' · ' + cnt(2, 'r') + ' · ' + cnt(2, 'n'), 220, 128, 110, 'font-weight:600;color:var(--muted)');
+    var el = $('es-crit');
+    var hd = function(c2){ return '<span class="h l' + c2 + '">' + L('Critério', 'Criterion') + '</span><span class="h' + c2 + '">SMI</span><span class="h' + c2 + '">' + L('Portal', 'Portal') + '</span>'; };
+    el.innerHTML = hd('') + hd(' h2') + C.map(function(c, i){
+      function cell(k){ return '<span class="c' + (k === 'r' ? ' reg' : '') + '" style="--cc:' + COL[k] + '" title="' + (k === 'b' ? L('atende bem', 'meets well') : k === 'r' ? L('regular', 'partly') : L('não atende', 'does not meet')) + '"></span>'; }
+      return '<button data-i="' + i + '">' + c[0] + '</button>' + cell(c[1]) + cell(c[2]);
+    }).join('');
+    var btns = el.querySelectorAll('button');
+    function show(i){
+      each(btns, function(b, k){ b.classList.toggle('on', k === i); });
+      stacks.forEach(function(sk){ sk.forEach(function(b, k){ b.style.setProperty('--ox', (k === i ? 24 : 0) + 'px'); b.classList.toggle('active', k === i); }); });
+      var c = C[i];
+      $('es-obs').innerHTML = '<b>' + c[0] + '.</b> ' + (c[3] || L('Os dois atendem bem.', 'Both meet it well.'));
+    }
+    each(btns, function(b){ var i = +b.dataset.i; M.hover(b, function(){ show(i); }); b.addEventListener('click', function(){ show(i); }); });
+    show(3);
+  })();
+
+  /* ================= 09 · CAMINHO ================= */
+  (function(){
+    var OLD = [
+      [L('Pedido', 'Request'), L('Chega pelo SMI, e-mail, telefone, WhatsApp, Teams ou de viva voz no balcão; o atendente anota e lança no SMI. O lançamento pelo atendente é o caminho mais usado.', 'Arrives through the SMI, e-mail, phone, WhatsApp, Teams or in person at the desk; the service desk writes it down and enters it in the SMI. Entry by the desk is the most common path.'), false],
+      [L('Triagem', 'Triage'), L('Emergência, corretiva ou evento viram OS; mudança de layout vai para a superintendência, com escopo e contratação.', 'Emergency, corrective or event requests become WOs; layout changes go to senior management, with scoping and hiring.'), false],
+      [L('Ordem de serviço', 'Work order'), L('A OS é aberta. Às vezes não era: parte do trabalho ficava sem registro.', 'The WO is opened. Sometimes it was not: part of the work went unrecorded.'), false],
+      [L('Planejamento', 'Planning'), L('Há material e equipe? Se não, compra ou contratação. A data era marcada pelo atendente.', 'Are materials and staff available? If not, purchase or hiring. The date was set by the service desk.'), false],
+      [L('Comunicação', 'Communication'), L('No fluxograma há uma etapa de comunicação com o cliente. Na prática, segundo o autor, retornar ao cliente não era prática do setor.', 'The flowchart has a step for communicating with the customer. In practice, according to the author, getting back to the customer was not standard.'), 'meh'],
+      [L('Execução', 'Execution'), L('O serviço é feito, em geral dentro de um prazo razoável.', 'The work is done, usually within a reasonable time.'), false],
+      [L('Finalizar OS', 'Close WO'), L('A baixa era dada dias depois, em lote, ou ficava pendente. Para o sistema, o serviço feito no prazo virava atraso.', 'Closing happened days later, in bulk, or stayed pending. For the system, work done on time turned into a delay.'), false]
+    ];
+    var NEW = [
+      [L('Solicitação', 'Request'), L('O cliente abre o pedido no portal: oficina, prédio (da lista), andar, sala, descrição e, se quiser, uma foto. Ele fica identificado do início ao fim.', 'The customer opens the request on the portal: workshop, building (from the list), floor, room, description and, optionally, a photo. They are identified from start to finish.')],
+      [L('Análise', 'Review'), L('O atendimento faz a triagem e, com o encarregado da oficina, valida a prioridade e o prazo; só então o prazo vai para o cliente.', 'The service desk triages the request and, with the workshop supervisor, confirms priority and deadline; only then is the deadline sent to the customer.')],
+      [L('Abertura da OS', 'Work order'), L('A OS sai num modelo novo e vai para o encarregado, que escala quem vai atender. Pedidos de várias oficinas são escalonados no mesmo chamado.', 'The WO comes out in a new template and goes to the supervisor, who assigns the worker. Jobs needing several workshops are escalated within the same ticket.')],
+      [L('Execução', 'Execution'), L('A equipe vai ao local. O cliente vê que o pedido está em andamento.', 'The team goes to the site. The customer sees the request is in progress.')],
+      [L('Conclusão', 'Completion'), L('O operacional fecha o pedido no portal, com ajuda do atendimento num computador separado para isso.', 'The worker closes the request on the portal, with help from the service desk at a computer set aside for this.')],
+      [L('Pesquisa de opinião', 'Opinion survey'), L('Ao concluir, o portal envia a pesquisa de satisfação automaticamente (tela 11).', 'On completion, the portal sends the satisfaction survey automatically (screen 11).')]
+    ];
+    var sc = $('cm-scene'), st = makeStage(sc, 420, 240, {ay:'62%', rx:'58deg'});
+    rotatable(sc, st, -18, 8);
+    var mode = 1, step = 0, objs = [], blocks = [], cli;
+    function build(){
+      objs.forEach(function(o){ o.remove(); }); objs = []; blocks = [];
+      var list = [];
+      if (mode === 0){
+        OLD.forEach(function(s, i){
+          var b = box({w:52, d:46, h:4, x:i * 60, y:40, c:NAVY, top:s[0]}); st.appendChild(b); objs.push(b); blocks.push(b); list.push([b, 22]);
+        });
+        cli = box({w:60, d:60, h:4, x:180, y:160, c:RED, top:L('Cliente', 'Customer')}); st.appendChild(cli); objs.push(cli); list.push([cli, 10]);
+      } else {
+        var R = [[0, 0], [150, 0], [300, 40], [300, 160], [150, 200], [0, 200]];
+        NEW.forEach(function(s, i){
+          var b = box({w:100, d:44, h:4, x:R[i][0] + 10, y:R[i][1], c:NAVY, top:s[0]}); st.appendChild(b); objs.push(b); blocks.push(b); list.push([b, 22]);
+        });
+        cli = box({w:90, d:90, h:4, x:140, y:78, c:RED, top:L('Cliente', 'Customer')}); st.appendChild(cli); objs.push(cli); list.push([cli, 20]);
+      }
+      grow(list);
+    }
+    function render(){
+      var S = mode === 0 ? OLD : NEW, s = S[step];
+      blocks.forEach(function(b, k){ b.classList.toggle('active', k === step); b.style.setProperty('--h', (k === step ? 46 : 22) + 'px'); b.style.setProperty('--c', k === step ? RED : (k < step ? NAVY : 'color-mix(in srgb, ' + NAVY + ' 50%, white)')); });
+      var informed = mode === 1 ? true : s[2];
+      setTimeout(function(){ cli.style.setProperty('--h', (mode === 1 ? 30 + step * 12 : (informed === 'meh' ? 22 : 10)) + 'px'); }, 80);
+      var bub = mode === 1
+        ? '<span class="bubble yes">' + L('Cliente informado: status atualizado', 'Customer informed: status updated') + '</span>'
+        : (informed === 'meh' ? '<span class="bubble no">' + L('Previsto no papel, raro na prática', 'On paper, rare in practice') + '</span>' : '<span class="bubble no">' + L('Cliente sem notícia', 'Customer not informed') + '</span>');
+      $('cm-panel').innerHTML = '<div class="tag">' + (mode === 0 ? L('Antes · Figura 4', 'Before · Figure 4') : L('Depois · Figura 12', 'After · Figure 12')) + ' · ' + L('etapa', 'step') + ' ' + (step + 1) + L(' de ', ' of ') + S.length + '</div><h3>' + s[0] + '</h3><p>' + s[1] + '</p>' + bub;
+      $('cm-prev').disabled = step === 0; $('cm-next').disabled = step === S.length - 1;
+    }
+    $('cm-prev').addEventListener('click', function(){ if (step > 0){ step--; render(); } });
+    $('cm-next').addEventListener('click', function(){ var n = (mode === 0 ? OLD : NEW).length; if (step < n - 1){ step++; render(); } });
+    seg('cm-seg', [L('Antes', 'Before'), L('Depois', 'After')], function(m){ mode = m; step = 0; build(); setTimeout(render, 90); }, 0);
+  })();
+
+  /* ================= 10 · IMPLANTAÇÃO ================= */
+  (function(){
+    var MO = EN ? ['Jul 2024','Aug 2024','Sep 2024','Oct 2024','Nov 2024','Dec 2024','Jan 2025','Feb 2025','Mar 2025','Apr 2025','May 2025','Jun 2025','Jul 2025','Aug 2025','Sep 2025','Oct 2025','Nov 2025','Dec 2025'] : ['jul/2024','ago/2024','set/2024','out/2024','nov/2024','dez/2024','jan/2025','fev/2025','mar/2025','abr/2025','mai/2025','jun/2025','jul/2025','ago/2025','set/2025','out/2025','nov/2025','dez/2025'];
+    // Figura 15: meses ativos (0 = jul/2024)
+    function rg(a, b){ var r = []; for (var i = a; i <= b; i++) r.push(i); return r; }
+    var ROWS = [
+      [L('Piloto', 'Pilot'), rg(0, 2)], [L('Geral · fase 1', 'General · phase 1'), rg(3, 5)], [L('Geral · fase 2', 'General · phase 2'), rg(6, 8)],
+      [L('Treinamento', 'Training'), rg(1, 7)], [L('Avaliação do uso', 'Usage review'), rg(2, 11)], [L('Análise dos KPIs', 'KPI analysis'), [6, 12]],
+      [L('Pesquisa de satisfação', 'Satisfaction survey'), rg(3, 5)], [L('Monitoramento', 'Monitoring'), rg(3, 17)], [L('Análise crítica', 'Critical review'), [6, 9, 12, 15]],
+      [L('Otimização', 'Optimization'), [6, 7, 9, 10, 12, 13, 15, 16]]
+    ];
+    var sc = $('im-scene'), st = makeStage(sc, 480, 300, {ay:'52%', rx:'40deg'});
+    st.style.setProperty('--rz', '0deg');
+    var cells = [];
+    ROWS.forEach(function(r, i){
+      flatLabel(st, r[0], 0, i * 30 + 3, 112);
+      r[1].forEach(function(m){
+        var b = box({w:16, d:22, h:6, x:122 + m * 20, y:i * 30, c:m <= 5 ? NAVY : 'color-mix(in srgb, ' + NAVY + ' 45%, white)'}); st.appendChild(b); cells.push([b, m, i]);
+      });
+    });
+    flatLabel(st, '2024', 122, 302, 120, 'text-align:left;color:var(--muted)');
+    flatLabel(st, '2025', 242, 302, 240, 'text-align:left;color:var(--muted)');
+    var EV = {
+      0:L('<strong>Piloto com o maior cliente.</strong> Só o setor que mais pede serviços usa o portal; os outros seguem no SMI. Tudo o que entra no portal é lançado também no SMI, e a carga do atendimento dobra.', '<strong>Pilot with the biggest customer.</strong> Only the department that requests the most work uses the portal; the others stay on the SMI. Everything entered in the portal is also entered in the SMI, and the service desk’s workload doubles.'),
+      1:L('<strong>Ajustes anotados.</strong> O piloto gera uma lista de melhorias para o portal, levada à TI em reunião.', '<strong>Fixes noted.</strong> The pilot produces a list of improvements for the portal, taken to IT in a meeting.'),
+      2:L('<strong>11 ajustes antes de abrir para todos</strong>, entre eles: prazo só depois da triagem; e-mail do pedido só para o atendimento (antes ia para todas as oficinas); "Climatização" vira "Ar-condicionado / Climatização"; nova oficina de Equipamentos; novo modelo de OS; pedidos com várias oficinas e vários operacionais. Em 26/09, toda a instituição recebe o comunicado.', '<strong>11 fixes before opening to everyone</strong>, including: deadline only after triage; request e-mail only to the service desk (it used to go to every workshop); “Climatização” renamed “Air conditioning / Climatização”; a new Equipment workshop; a new WO template; requests involving several workshops and several workers. On Sept 26, the whole institution receives the announcement.'),
+      3:L('<strong>01/10/2024: só pelo portal.</strong> Pedidos de manutenção passam a ser aceitos apenas no portal. O comunicado é reenviado a cada 3 dias nos primeiros 15 dias e toda semana nos 15 seguintes, e o e-mail da manutenção responde com as orientações.', '<strong>Oct 1, 2024: portal only.</strong> Maintenance requests are accepted only through the portal. The announcement is resent every 3 days for the first 15 days and weekly for the next 15, and the maintenance e-mail auto-replies with instructions.'),
+      4:L('<strong>Pesquisa de satisfação no ar</strong> e monitoramento do desempenho. Eventos também entram pelo portal; os detalhes seguem por e-mail.', '<strong>Satisfaction survey goes live</strong> along with performance monitoring. Events are also requested through the portal; details continue by e-mail.'),
+      5:L('<strong>Dissertação aprovada (19/12/2024).</strong> Toda a equipe já tinha se reunido num evento para conhecer as mudanças e os primeiros resultados.', '<strong>Dissertation approved (Dec 19, 2024).</strong> The whole team had already gathered at an event to hear about the changes and the first results.')
+    };
+    function at(m){
+      cells.forEach(function(c){ var on = c[1] === m; c[0].style.setProperty('--h', (on ? 30 : 6) + 'px'); c[0].style.setProperty('--c', on ? RED : (c[1] <= 5 ? NAVY : 'color-mix(in srgb, ' + NAVY + ' 45%, white)')); });
+      var act = ROWS.filter(function(r){ return r[1].indexOf(m) >= 0; }).map(function(r){ return r[0]; });
+      var txt = EV[m] || L('<strong>Plano.</strong> Fases seguintes da implantação, análises críticas a cada três meses e ciclos de otimização. Previsto para depois: desempenho por pessoa, estoque, agenda de preventivas e acesso pelo celular para os operacionais.', '<strong>Plan.</strong> Further rollout phases, critical reviews every three months and optimization cycles. Planned for later: individual performance, inventory, preventive scheduling and mobile access for field workers.');
+      $('im-panel').innerHTML = '<div class="tag">' + MO[m] + ' · ' + (m <= 5 ? L('relatado', 'reported') : L('planejado', 'planned')) + '</div><p>' + txt + '</p><p style="font-size:.78rem">' + L('No cronograma neste mês: ', 'On the schedule this month: ') + act.join(' · ') + '</p>';
+    }
+    var r = $('im-range');
+    r.addEventListener('input', function(){ at(+r.value); });
+    at(0);
+  })();
+
+  /* ================= 11 · RESULTADO ================= */
+  (function(){
+    var sc = $('rs-scene'), st = makeStage(sc, 440, 120, {ay:'76%', rx:'60deg'});
+    rotatable(sc, st, -18, 8);
+    var S = 34, list = [], bars = [];
+    SHOPS.forEach(function(s, i){
+      var b = box({w:36, d:40, h:4, x:i * 54 + 6, y:30, c:RED, top:(s[1] === 5 ? '5' : '~' + M.fmt(s[1], 2))}); st.appendChild(b); bars.push([b, s[1] * S]);
+      flatLabel(st, s[0], i * 54 - 6, i % 2 ? 98 : 80, 60);
+    });
+    var lam = box({w:440, d:70, h:1, x:0, y:15, z:4 * S, c:MID, cls:'off'}); st.appendChild(lam);
+    var objs = [];
+    seg('rs-seg', [L('Notas por oficina', 'Scores by workshop'), L('Quanto custou', 'What it cost'), L('O que já mede', 'What it measures')], function(i){
+      bars.forEach(function(b){ b[0].style.setProperty('--h', (i === 0 ? b[1] : 6) + 'px'); b[0].classList.toggle('dim', i !== 0); });
+      if (i === 0){
+        $('rs-panel').innerHTML = '<div class="tag">' + L('Figura 20 · avaliações dos clientes', 'Figure 20 · customer ratings') + '</div><p>' + L('Todas as oito oficinas ficaram acima da <strong>mínima desejável (4)</strong>; cinco tiveram nota 5. A escala começa no zero, e por isso as colunas quase não se distinguem.', 'All eight workshops scored above the <strong>minimum desired (4)</strong>; five got a 5. The scale starts at zero, which is why the columns barely differ.') + '</p><p>' + L('O autor também relata registros mais completos, a equipe engajada e o reconhecimento dos gestores. A média simples das oito colunas dá cerca de 4,93 (<b>conta nossa</b>); a dissertação diz 4,90, talvez porque pese o número de avaliações de cada oficina.', 'The author also reports more complete records, an engaged team and recognition from managers. A simple average of the eight columns gives about 4.93 (<b>our calculation</b>); the dissertation says 4.90, perhaps because it weighs each workshop’s number of ratings.') + '</p>';
+      } else if (i === 1){
+        $('rs-panel').innerHTML = '<div class="tag">' + L('Seção 3.4 · investimento', 'Section 3.4 · investment') + '</div><p>' + L('Para a manutenção, custo zero: o portal é um serviço da TI, que absorve a despesa. Para a instituição, segundo a TI, a ordem de grandeza foi:', 'For maintenance, zero cost: the portal is an IT service, and IT absorbs the expense. For the institution, according to IT, the order of magnitude was:') + '</p><div class="money"><div><b>R$ 75 ' + L('mil', 'thousand') + '</b><span>' + L('desenvolvimento e processo', 'development and setup') + '</span></div><div><b>R$ 21 ' + L('mil/mês', 'thousand/month') + '</b><span>' + L('para manter os módulos', 'to run the modules') + '</span></div><div><b>~R$ ' + L('6.800', '6,800') + '</b><span>' + L('por setor, se o desenvolvimento fosse dividido igualmente pelos 11 setores que usavam o portal em 2024', 'per department, if development were split evenly across the 11 departments using the portal in 2024') + '</span></div><div><b>~R$ ' + L('1.900/mês', '1,900/month') + '</b><span>' + L('por setor, na mesma divisão', 'per department, on the same split') + '</span></div></div>';
+      } else {
+        $('rs-panel').innerHTML = '<div class="tag">' + L('Considerações finais · indicadores', 'Final remarks · indicators') + '</div><p><strong>' + L('Já fornece:', 'Already provides:') + '</strong> ' + L('nota, número de avaliações e média por oficina e geral; OS abertas e concluídas, por oficina e no total.', 'score, number of ratings and average by workshop and overall; WOs opened and completed, by workshop and in total.') + '</p><p><strong>' + L('Em desenvolvimento:', 'In development:') + '</strong> ' + L('tempo de atendimento por pedido; desempenho por colaborador; pedidos por tipo (corretiva, preventiva, emergência, eventos, reformas, equipamentos); agenda automática das preventivas, estoque e custo de cada atendimento; motivo dos atrasos; grau de complexidade.', 'response time per request; performance per worker; requests by type (corrective, preventive, emergency, events, refurbishments, equipment); automatic preventive scheduling, inventory and cost of each job; reasons for delays; level of complexity.') + '</p>';
+      }
+    });
+    grow(bars);
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
