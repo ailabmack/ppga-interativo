@@ -1,0 +1,931 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O desempenho de uma cooperativa de crédito tem memória · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Rina Xavier Pereira (PPGA Mackenzie, 2021) sobre um modelo de várias dimensões para avaliar o desempenho de cooperativas de crédito, aplicado a 20 anos de balanços de 660 cooperativas singulares e 26 centrais, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2021-pereira-desempenho-cooperativas-credito/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2216%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>%25</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --acc:var(--navy);     /* medidas contábeis, retorno */
+    --op:#5b6f96;          /* medidas operacionais */
+    --sob:var(--red);      /* sobrevivência, memória */
+    --ns:#cbd5e1;          /* sem efeito claro */
+  }
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  .note{font-size:.76rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:12px; line-height:1.45;}
+  .note b{color:var(--ink-2);}
+  .ilus{display:inline-block; font-size:.62rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.82rem; cursor:pointer; color:var(--ink-2); font-family:inherit;}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 10px;}
+  .chips button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-family:inherit; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .chips button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .stats{display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.74rem; color:var(--muted); line-height:1.35; display:block;}
+  svg text{font-family:var(--sans);}
+  .svgbox{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .slab.glass > i{--face:color-mix(in srgb, #94a3b8 14%, transparent) !important; box-shadow:inset 0 0 0 1.5px rgb(100 116 139 / .55);}
+  .slab.glass .face-label{color:#64748b !important;}
+  .slab .top-label{font-family:var(--sans);}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4vw, 2.6rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:36em; margin-left:auto; margin-right:auto;}
+  #hero-scene{perspective:2000px;}
+  #hero-scene .face-label{font-size:15px; font-weight:700; letter-spacing:.02em;}
+
+  /* ---------- 02 · Alcance ---------- */
+  .reg{display:grid; gap:8px; margin-top:6px;}
+  .reg button{display:grid; grid-template-columns:110px 1fr 44px; gap:10px; align-items:center; border:1px solid transparent; border-radius:9px; background:transparent; padding:4px 6px; font-family:inherit; font-size:.82rem; color:var(--ink-2); cursor:pointer; text-align:left;}
+  .reg button[aria-pressed="true"]{border-color:var(--ink); background:var(--card); box-shadow:var(--shadow);}
+  .reg .tr{height:18px; background:#eef2f7; border-radius:5px; position:relative; overflow:hidden;}
+  .reg .tr i{position:absolute; left:0; top:0; bottom:0; background:var(--navy); border-radius:5px; transition:width .5s;}
+  .reg .br .tr i{background:var(--red);}
+  .reg b{font-family:var(--serif); color:var(--ink); text-align:right; font-variant-numeric:tabular-nums;}
+  #reg-panel{min-height:76px; margin-top:12px;}
+
+  /* ---------- 03 · Um lado só ---------- */
+  .duo{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .co{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px 14px; box-shadow:var(--shadow); transition:box-shadow .3s, border-color .3s;}
+  .co.win{border-color:var(--red); box-shadow:0 0 0 2px var(--red), var(--shadow);}
+  .co h3{font-size:.95rem; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; gap:6px;}
+  .co h3 small{font-family:var(--sans); font-size:.66rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:#fff; background:var(--red); border-radius:5px; padding:2px 7px; visibility:hidden;}
+  .co.win h3 small{visibility:visible;}
+  .dm{display:grid; grid-template-columns:96px 1fr 22px; gap:8px; align-items:center; font-size:.74rem; color:var(--ink-2); margin:5px 0; transition:opacity .3s;}
+  .dm .tr{height:14px; background:#eef2f7; border-radius:4px; overflow:hidden;}
+  .dm .tr i{display:block; height:100%; border-radius:4px; background:var(--c);}
+  .dm b{text-align:right; color:var(--ink); font-variant-numeric:tabular-nums;}
+  .dm.off{opacity:.22;}
+  .co .tot{margin-top:8px; font-size:.8rem; color:var(--muted); border-top:1px solid var(--border); padding-top:6px;}
+  .co .tot b{font-family:var(--serif); font-size:1.15rem; color:var(--ink);}
+  #lado-panel{min-height:70px; margin-top:12px;}
+
+  /* ---------- 04 · Réguas ---------- */
+  .tools{display:grid; gap:8px;}
+  .tools button{display:grid; grid-template-columns:86px 1fr; gap:10px; align-items:center; text-align:left; border:1px solid var(--border); background:var(--card); border-radius:12px; padding:10px 12px; font-family:inherit; font-size:.8rem; color:var(--ink-2); cursor:pointer;}
+  .tools button b{font-family:var(--serif); font-size:1rem; color:var(--ink);}
+  .tools button[aria-pressed="true"]{border-color:var(--ink); box-shadow:inset 4px 0 0 var(--red), var(--shadow); color:var(--ink);}
+  #tool-panel{min-height:96px; margin-top:10px;}
+  .kw{display:grid; gap:4px; margin-top:6px;}
+  .kw div{display:grid; grid-template-columns:128px 1fr 34px; gap:8px; align-items:center; font-size:.74rem; color:var(--ink-2);}
+  .kw .tr{height:12px; background:#eef2f7; border-radius:4px; overflow:hidden;}
+  .kw .tr i{display:block; height:100%; background:var(--navy); border-radius:4px;}
+  .kw .hi .tr i{background:var(--red);}
+  .kw b{text-align:right; color:var(--ink); font-variant-numeric:tabular-nums;}
+
+  /* ---------- 05 · Modelo ---------- */
+  #model-svg .dim{cursor:pointer;}
+  #model-svg .dim rect{transition:stroke-width .2s;}
+  #model-panel{min-height:120px; margin-top:12px;}
+  .meas{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .meas span{font-size:.74rem; border-radius:999px; padding:3px 10px; background:#eef2f7; color:var(--ink-2);}
+  .meas span.dep{background:var(--navy); color:#fff;}
+
+  /* ---------- 06 · Dados ---------- */
+  #coop-grid{display:grid; grid-template-columns:repeat(49, minmax(0, 1fr)); gap:2px; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:10px;}
+  #coop-grid i{display:block; aspect-ratio:1; border-radius:2px; background:var(--navy); transition:opacity .3s;}
+  #coop-grid i.c{background:var(--red);}
+  #coop-grid.only-c i:not(.c), #coop-grid.only-s i.c{opacity:.12;}
+  .mm{display:grid; gap:10px; margin-top:6px;}
+  .mmr{font-size:.78rem; color:var(--ink-2);}
+  .mmr .ax{position:relative; height:30px; background:#eef2f7; border-radius:6px; margin-top:4px;}
+  .mmr .ax i{position:absolute; top:3px; bottom:3px; width:4px; margin-left:-2px; border-radius:2px; transition:left .6s;}
+  .mmr .ax i.md{background:var(--navy);}
+  .mmr .ax i.mn{background:var(--red);}
+  .mmr .ax span{position:absolute; top:7px; font-size:.68rem; font-weight:700; white-space:nowrap; transition:left .6s;}
+  #dados-panel{min-height:70px; margin-top:10px;}
+
+  /* ---------- 07 · Memória ---------- */
+  #mem-scene{perspective:2000px;}
+  #mem-scene .slab{transition:--h .9s cubic-bezier(.2,.8,.2,1);}
+  #mem-scene .top-label{font-size:17px; font-weight:700;}
+  #mem-panel{min-height:116px; margin-top:10px;}
+  .rho{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;}
+  .rho div{flex:1; min-width:84px; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:6px 10px; font-size:.72rem; color:var(--muted);}
+  .rho div b{display:block; font-family:var(--serif); font-size:1.1rem; color:var(--ink);}
+  .rho div.on{border-color:var(--red); box-shadow:inset 0 -3px 0 var(--red);}
+
+  /* ---------- 08 · Alavancas ---------- */
+  .lv{display:grid; gap:6px; margin-top:6px;}
+  .lvr{display:grid; grid-template-columns:150px 1fr 88px; gap:10px; align-items:center; border:1px solid transparent; border-radius:9px; background:transparent; padding:5px 6px; font-family:inherit; font-size:.8rem; color:var(--ink-2); cursor:pointer; text-align:left;}
+  .lvr[aria-pressed="true"]{border-color:var(--ink); background:var(--card); box-shadow:var(--shadow);}
+  .lvr .nm{font-weight:600; color:var(--ink); line-height:1.2;}
+  .lvr .nm small{display:block; font-weight:400; color:var(--muted); font-size:.68rem;}
+  .lvr .tr{position:relative; height:22px; background:#eef2f7; border-radius:5px;}
+  .lvr .tr::after{content:''; position:absolute; left:50%; top:-3px; bottom:-3px; width:2px; background:#64748b; margin-left:-1px;}
+  .lvr .tr i{position:absolute; top:3px; bottom:3px; border-radius:4px; transition:left .45s, width .45s;}
+  .lvr .tr i.pos{background:var(--navy);} .lvr .tr i.neg{background:var(--red);}
+  .lvr .tr i.ns{background:repeating-linear-gradient(135deg, #cbd5e1 0 5px, #e2e8f0 5px 10px) !important;}
+  .lvr .v{font-size:.74rem; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums; text-align:right; line-height:1.2;}
+  .lvr .v small{display:block; font-weight:500; color:var(--muted); font-size:.66rem;}
+  .lv-axis{display:grid; grid-template-columns:150px 1fr 88px; gap:10px; font-size:.68rem; color:var(--muted); padding:0 6px;}
+  .lv-axis span{display:flex; justify-content:space-between;}
+  #lv-panel{min-height:110px; margin-top:10px;}
+
+  /* ---------- 09 · Centrais ---------- */
+  .mx{display:grid; grid-template-columns:150px repeat(3, 1fr); gap:6px; align-items:stretch; font-size:.78rem;}
+  .mx .h{font-size:.7rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); text-align:center; align-self:end;}
+  .mx .rl{font-weight:600; color:var(--ink); display:flex; align-items:center; line-height:1.2;}
+  .mx .cell{border:1px solid var(--border); background:var(--card); border-radius:10px; min-height:46px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; cursor:pointer; font-family:inherit; color:var(--ink-2); padding:4px;}
+  .mx .cell .sg{font-family:var(--serif); font-size:1.1rem; font-weight:700; line-height:1;}
+  .mx .cell small{font-size:.64rem; color:var(--muted);}
+  .mx .cell.pos{background:var(--navy); border-color:var(--navy); color:#fff;}
+  .mx .cell.neg{background:var(--red); border-color:var(--red); color:#fff;}
+  .mx .cell.pos small, .mx .cell.neg small{color:#fff; opacity:.85;}
+  .mx .cell.ns{background:repeating-linear-gradient(135deg, #f1f5f9 0 6px, #fff 6px 12px);}
+  .mx .cell[aria-pressed="true"]{outline:3px solid var(--ink); outline-offset:1px;}
+  #mx-panel{min-height:84px; margin-top:12px;}
+
+  /* ---------- 10 · Inesperado ---------- */
+  .quiz{display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;}
+  .quiz button{border:1px solid var(--border); background:#fff; border-radius:10px; padding:9px 14px; font-family:inherit; font-size:.84rem; cursor:pointer; color:var(--ink-2); text-align:left;}
+  .quiz button.chosen{border-color:var(--ink); background:var(--ink); color:#fff;}
+  #q-msg{font-size:.84rem; color:var(--muted); margin-top:10px; min-height:1.3em;}
+  .flip{display:grid; gap:12px;}
+  .flip .fr{display:grid; grid-template-columns:120px 1fr; gap:10px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .flip .fr .nm{font-weight:600; color:var(--ink); line-height:1.2;}
+  .flip .bars{display:grid; gap:4px;}
+  .flip .bb{display:grid; grid-template-columns:1fr 92px; gap:8px; align-items:center;}
+  .flip .tr{position:relative; height:20px; background:#eef2f7; border-radius:5px;}
+  .flip .tr::after{content:''; position:absolute; left:50%; top:-3px; bottom:-3px; width:2px; background:#64748b; margin-left:-1px;}
+  .flip .tr i{position:absolute; top:3px; bottom:3px; border-radius:4px; transition:left .5s, width .5s, opacity .3s;}
+  .flip .tr i.pos{background:var(--navy);} .flip .tr i.neg{background:var(--red);}
+  .flip .tr i.weak{opacity:.45;}
+  .flip .bb span{font-size:.7rem; color:var(--muted); line-height:1.2;}
+  .flip .bb span b{color:var(--ink); font-size:.74rem;}
+  .flip.hide .tr i{width:0 !important;}
+  #flip-panel{min-height:90px; margin-top:12px;}
+
+  /* ---------- 11 · Placar ---------- */
+  .score{display:grid; gap:10px;}
+  @media (min-width:900px){ .score{grid-template-columns:1fr 1fr;} }
+  .sc{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px 16px; box-shadow:var(--shadow); border-left:6px solid var(--sc, var(--navy));}
+  .sc h3{font-size:.95rem; margin-bottom:4px; color:var(--ink);}
+  .sc .verd{display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase; border-radius:5px; padding:2px 8px; margin-bottom:6px; color:#fff; background:var(--sc, var(--navy));}
+  .sc p{margin:0; font-size:.82rem; line-height:1.45; color:var(--ink-2);}
+  .sc .ticks{display:flex; flex-wrap:wrap; gap:5px; margin-top:8px;}
+  .sc .ticks span{font-size:.7rem; border-radius:999px; padding:2px 9px; background:#eef2f7; color:var(--muted);}
+  .sc .ticks span.y{background:var(--navy); color:#fff;}
+
+  /* ---------- 12 · Créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.78rem; color:var(--ink-2); line-height:1.42;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+  .also{font-size:.8rem; margin-top:10px; color:var(--muted);}
+  .also a{color:var(--red); font-weight:600;}
+
+  @media (max-width:600px){
+    .reg button{grid-template-columns:84px 1fr 40px; font-size:.76rem;}
+    .duo{grid-template-columns:1fr;}
+    .lvr, .lv-axis{grid-template-columns:96px 1fr 70px; gap:6px;}
+    .lvr .nm{font-size:.72rem;}
+    .mx{grid-template-columns:96px repeat(3, 1fr); gap:4px;}
+    .mx .rl{font-size:.7rem;}
+    .flip .fr{grid-template-columns:1fr;}
+    .kw div{grid-template-columns:110px 1fr 30px;}
+    #coop-grid{grid-template-columns:repeat(30, minmax(0, 1fr));}
+  }
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2021-pereira-desempenho-cooperativas-credito/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2021</div>
+      <h1 class="rv" style="--d:.1s">O desempenho de uma cooperativa de crédito tem memória</h1>
+      <p class="sub rv" style="--d:.2s">Com 20 anos de balanços de 660 cooperativas de crédito, a tese montou um modelo que olha vários lados ao mesmo tempo. O retorno de um ano carrega boa parte do retorno do ano anterior, e capital, caixa, crédito e despesas também pesam. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autora:</b> Rina Xavier Pereira</span>
+        <span><b>Orientador:</b> Prof. Dr. Leonardo Fernando Cruz Basso</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#alcance">Começar →</a>
+        <a class="btn ghost" href="#memoria">Ver a memória</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="460x360" role="img" aria-label="Uma torre 3D de cinco camadas, as dimensões do desempenho: três cheias, as que a tese mediu, e duas de vidro, mercado e criação de valor, que ficaram sem dados"></div></div>
+      <p class="cap-legend">As cinco dimensões do desempenho no modelo de Carton e Hofer, que a tese adaptou. As três cheias foram medidas com os balanços; as duas de vidro ficaram sem dados (tela 05).</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Propõe uma forma de acompanhar a saúde financeira das cooperativas de crédito, que levam serviços financeiros a quase metade dos municípios do país."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · ALCANCE -->
+<section class="slide" id="alcance" data-label="Onde chegam">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O tema · Tabelas 1 e 2 (dados do Banco Central)</div>
+      <h2 class="rv" style="--d:.1s">As cooperativas chegam a quase metade das cidades, mas fazem pouco do crédito do país</h2>
+      <p class="lede rv" style="--d:.15s">Numa cooperativa de crédito, quem guarda e quem pega emprestado são os donos. O resultado positivo, chamado de sobra, volta para eles. Muitas vezes ela é o único acesso de uma comunidade ao sistema financeiro. Escolha o ano e toque numa região.</p>
+      <div class="seg rv" id="yr-seg" style="--d:.2s" role="group" aria-label="Ano">
+        <button data-m="0" aria-pressed="false">2013</button><button data-m="1" aria-pressed="false">2014</button><button data-m="2" aria-pressed="false">2015</button><button data-m="3" aria-pressed="false">2016</button><button data-m="4" aria-pressed="true">2017</button>
+      </div>
+      <div class="reg rv" id="reg" style="--d:.25s" role="group" aria-label="Regiões"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel" id="reg-panel" aria-live="polite"></div>
+      <div class="stats">
+        <div class="stat"><b>46%</b><span>dos municípios com sede ou posto de cooperativa em 2017 (eram 42% em 2013)</span></div>
+        <div class="stat"><b>3,72%</b><span>do crédito a pessoas físicas no Brasil em 2017; 2,42% do crédito a empresas</span></div>
+        <div class="stat"><b>2,25%</b><span>dos ativos do sistema financeiro nacional (Bacen, 2013)</span></div>
+        <div class="stat"><b>+150%</b><span>de cooperados entre 2008 e 2018, pouco mais que isso (quem é sócio de duas conta duas vezes)</span></div>
+      </div>
+      <p class="note">Tabela 1 da tese (Bacen, 2019): percentual de municípios com unidade própria de cooperativa, por região. Tabela 2 (Bacen, 2019): participação no crédito. Os números de ativos e de cooperados são citados no texto (seção 2.2).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · UM LADO SÓ -->
+<section class="slide" id="um-lado" data-label="Um lado só">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> O problema · Carton e Hofer (2006)</div>
+      <h2 class="rv" style="--d:.1s">Olhar um lado só pode inverter quem vai melhor</h2>
+      <p class="lede rv" style="--d:.15s">O desempenho tem várias dimensões, e ir bem numa pode custar caro em outra. Uma cooperativa nova pode crescer e juntar recursos à custa do retorno; uma madura pode render mais com o que já tem. Escolha por onde olhar as duas cooperativas inventadas abaixo.</p>
+      <div class="chips rv" id="lens" style="--d:.2s" role="group" aria-label="Por onde olhar"></div>
+      <div class="panel rv" id="lado-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="duo" id="duo"></div>
+      <p class="note"><span class="ilus">ilustração nossa</span> Cooperativas e notas inventadas, de 0 a 10, para mostrar o argumento da tese (seção 1.2), que parte do modelo de Carton e Hofer: quem examina cada dimensão separada chega a conclusões diferentes de quem examina todas ao mesmo tempo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · RÉGUAS -->
+<section class="slide" id="reguas" data-label="As réguas de hoje">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> O que já se fazia · seções 2.5 e 2.8</div>
+      <h2 class="rv" style="--d:.1s">As réguas mais usadas medem uma ou duas partes da cooperativa</h2>
+      <p class="lede rv" style="--d:.15s">A autora levantou os estudos sobre desempenho de cooperativas de crédito e encontrou três ferramentas mais comuns, cada uma com seu foco. Toque em cada régua.</p>
+      <div class="tools rv" id="tools" style="--d:.2s" role="group" aria-label="Ferramentas"></div>
+      <div class="panel rv" id="tool-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="venn" class="svgbox" viewBox="0 0 480 190" role="img" aria-label="Dois círculos sobrepostos: 393 artigos na Scopus, 296 na Web of Science, 178 nas duas, 511 no total"></svg>
+      <p style="font-size:.84rem; margin:12px 0 2px; color:var(--ink-2)"><b>Palavras-chave mais frequentes nos artigos</b></p>
+      <div class="kw" id="kw"></div>
+      <p class="note">Figura 4, Tabela 5 e seção 2.8.2.3. O Brasil é o 4º país em citações sobre o tema nas duas bases (Tabela 3).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · MODELO -->
+<section class="slide" id="modelo" data-label="O modelo">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> A proposta · Quadro 5 e Figura 3</div>
+      <h2 class="rv" style="--d:.1s">A tese adaptou um modelo de cinco dimensões e conseguiu medir três</h2>
+      <p class="lede rv" style="--d:.15s">No alto está o que importa para o cooperado: a criação de valor. Ela se vê pelo desempenho, que se mede por dimensões, e cada dimensão por contas do balanço. O retorno (contábil) é o que se quer explicar; as outras medidas explicam. Toque numa dimensão.</p>
+      <div class="panel rv" id="model-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="model-svg" class="svgbox" viewBox="0 0 520 330" role="img" aria-label="Esquema: criação de valor para o cooperado no alto, avaliação do desempenho no meio e cinco dimensões embaixo, três medidas e duas sem dados"></svg>
+      <div class="legend"><span><i class="dot" style="background:var(--navy)"></i>retorno, o que se explica</span><span><i class="dot" style="background:var(--op)"></i>medidas que explicam</span><span><i class="dot" style="background:#e2e8f0; border:1px dashed #64748b"></i>sem dados</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · DADOS -->
+<section class="slide" id="dados" data-label="Os dados">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Banco Central · 2000 a 2019 · Tabelas 7 e 7.11</div>
+      <h2 class="rv" style="--d:.1s">Vinte anos de balanços, com números muito desiguais</h2>
+      <p class="lede rv" style="--d:.15s">A autora usou só as cooperativas com dados em todos os anos: 660 singulares, que atendem o associado direto, e 26 centrais, que reúnem singulares. Cada quadradinho é uma cooperativa. Algumas têm números tão fora da curva que a média engana; por isso os retornos entraram no modelo em logaritmo, que encolhe os extremos.</p>
+      <div class="seg rv" id="cls-seg" style="--d:.2s" role="group" aria-label="Classe">
+        <button data-m="0" aria-pressed="true">Todas</button><button data-m="1" aria-pressed="false">660 singulares</button><button data-m="2" aria-pressed="false">26 centrais</button>
+      </div>
+      <div class="panel rv" id="dados-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div id="coop-grid" role="img" aria-label="Grade com 686 quadradinhos: 660 azuis, as singulares, e 26 vermelhos, as centrais"></div>
+      <div class="mm" id="mm"></div>
+      <p class="note">Singulares: 13.200 observações (660 × 20 anos); centrais: 520 (26 × 20). Média e mediana das singulares na Tabela 7.11; a régua de cada medida vai de zero a um pouco além do percentil 75 e a seta mostra quando a média passa do fim. Medidas da tese: ROA = sobras ÷ ativo total; ROE = sobras ÷ patrimônio; ROS = sobras ÷ vendas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · MEMÓRIA -->
+<section class="slide" id="memoria" data-label="A memória">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> A descoberta · Tabelas 7.8 a 7.10 e 7.19 a 7.21</div>
+      <h2 class="rv" style="--d:.1s">O retorno sobre o ativo carrega 70% do embalo do ano anterior</h2>
+      <p class="lede rv" style="--d:.15s">A autora usou um modelo que deixa o ano anterior entrar na conta. Nas singulares, quando o ROA de um ano é 10% maior, o do ano seguinte tende a ser 7% maior, mesmo com o resto igual. A autora chama isso de memória. Imagine um ano bom e veja quanto dele sobra depois.</p>
+      <div class="chips rv" id="mem-ind" style="--d:.2s" role="group" aria-label="Medida"></div>
+      <div class="seg rv" id="mem-cls" style="--d:.22s" role="group" aria-label="Classe">
+        <button data-m="0" aria-pressed="true">Singulares</button><button data-m="1" aria-pressed="false">Centrais</button>
+      </div>
+      <div class="panel rv" id="mem-panel" style="--d:.25s; margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="mem-scene" data-fit="560x330" role="img" aria-label="Seis blocos 3D, do ano bom aos cinco anos seguintes, que diminuem na proporção da memória da medida escolhida"></div></div>
+      <div class="rho" id="rho"></div>
+      <p class="note"><span class="ilus">conta nossa</span> Cada bloco é o efeito que sobra de um ano 10% acima, multiplicado pelo coeficiente do ano anterior a cada ano (Tabelas 7.8 a 7.10 nas centrais; 7.19 a 7.21 nas singulares), com o resto igual. Modelo dinâmico em diferenças (GMM de Arellano e Bond), com as medidas em logaritmo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · ALAVANCAS -->
+<section class="slide" id="alavancas" data-label="O que pesa">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> 660 singulares · Tabelas 7.19 a 7.21</div>
+      <h2 class="rv" style="--d:.1s">Capital, caixa, crédito e despesas pesam juntos no retorno</h2>
+      <p class="lede rv" style="--d:.15s">Descontada a memória, as quatro medidas das outras dimensões aparecem no retorno sobre o ativo (ROA) e sobre o patrimônio (ROE). Azul: anda junto com retorno maior; vermelho: com retorno menor; listrado: sem efeito claro. Troque a medida de retorno e toque numa linha.</p>
+      <div class="chips rv" id="lv-ind" style="--d:.2s" role="group" aria-label="Medida de retorno"></div>
+      <div class="panel rv" id="lv-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="lv-axis"><span></span><span><i>retorno menor</i><i>retorno maior</i></span><span></span></div>
+      <div class="lv" id="lv" role="group" aria-label="Medidas que explicam o retorno"></div>
+      <p class="note">Barras: quanto o retorno muda, em %, quando a medida sobe 1% (as duas em logaritmo). As despesas sobre vendas entraram sem logaritmo; para elas a página mostra só o sentido. Efeito claro = p abaixo de 0,05 (abaixo de 0,10 marcado como fraco).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · CENTRAIS -->
+<section class="slide" id="centrais" data-label="As centrais">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> 26 centrais × 660 singulares · Tabelas 7.8 a 7.10</div>
+      <h2 class="rv" style="--d:.1s">Nas 26 centrais, só o caixa e as despesas apareceram no retorno</h2>
+      <p class="lede rv" style="--d:.15s">As centrais não atendem o associado: organizam o serviço das singulares em escala maior. Com bem menos dados, o modelo delas achou menos relações. Por isso a autora considera as singulares a base mais sólida da tese. Compare e toque numa célula.</p>
+      <div class="seg rv" id="mx-seg" style="--d:.2s" role="group" aria-label="Classe">
+        <button data-m="1" aria-pressed="true">26 centrais</button><button data-m="0" aria-pressed="false">660 singulares</button>
+      </div>
+      <div class="panel rv" id="mx-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="mx" id="mx" role="group" aria-label="Quadro de efeitos por medida de retorno"></div>
+      <div class="legend"><span><i class="dot" style="background:var(--navy)"></i>retorno maior</span><span><i class="dot" style="background:var(--red)"></i>retorno menor</span><span><i class="dot" style="background:#e2e8f0"></i>sem efeito claro (listrado)</span></div>
+      <p class="note">Modelo dinâmico em diferenças, com erros robustos. Efeito claro = p abaixo de 0,05.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · O INESPERADO -->
+<section class="slide" id="inesperado" data-label="O inesperado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> O inesperado · Tabelas 7.16, 7.17, 7.19 e 7.20</div>
+      <h2 class="rv" style="--d:.1s">Quando a memória entra na conta, mais crédito passa a andar com retorno menor</h2>
+      <p class="lede rv" style="--d:.15s">Antes do modelo com memória, a autora rodou um mais simples, que compara cada cooperativa com ela mesma ao longo dos anos. Dê seu palpite: numa cooperativa singular que empresta mais, o retorno sobre o ativo…</p>
+      <div class="quiz rv" id="quiz" style="--d:.2s" role="group" aria-label="Palpite">
+        <button data-q="0">sobe</button><button data-q="1">cai</button><button data-q="2">depende do modelo</button>
+      </div>
+      <p id="q-msg" class="rv" style="--d:.22s" aria-live="polite"></p>
+      <div class="seg rv" id="flip-seg" style="--d:.25s; margin-top:6px" role="group" aria-label="Modelo">
+        <button data-m="0" aria-pressed="false">Modelo simples</button><button data-m="1" aria-pressed="true">Com memória</button>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="flip hide" id="flip"></div>
+      <div class="panel" id="flip-panel" aria-live="polite"></div>
+      <p class="note">Modelo simples: efeitos fixos com erros robustos (Tabelas 7.16 e 7.17). Com memória: GMM em diferenças (Tabelas 7.19 e 7.20). Barras em % de mudança do retorno quando a medida sobe 1%. A tese não comenta a troca de sinal; a leitura é nossa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · PLACAR -->
+<section class="slide" id="placar" data-label="As respostas">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> As hipóteses · 660 singulares, modelo com memória</div>
+    <h2 class="rv" style="--d:.1s">O ROA e o ROE são as melhores medidas para acompanhar uma cooperativa</h2>
+    <p class="lede rv" style="--d:.15s">A tese testou se as quatro medidas das outras dimensões têm relação com cada medida de retorno. O placar abaixo segue as tabelas.</p>
+    <div class="score rv" id="score" style="--d:.2s"></div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e limites">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Na prática · limites · créditos</div>
+    <h2 class="rv" style="--d:.1s">Acompanhar o retorno junto com o histórico dele</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Gestores de cooperativas</h3><p>A autora recomenda explicar o ROA e o ROE considerando o histórico passado deles, além das outras medidas: um ano ruim ou bom pesa nos seguintes.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Associados</h3><p>Para a autora, entender o desempenho ajuda a ver por que é difícil distribuir melhor as sobras e ser mais justo com os menores cooperados.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ink-2)"><h3>Reguladores e sistemas</h3><p>Muitas cooperativas não enviam todos os dados, e o Banco Central não confere os balanços que elas publicam, aponta a tese. Dados completos permitiriam medir as duas dimensões que faltaram.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#5b6f96"><h3>Pesquisadores</h3><p>A autora sugere incluir o fluxo de caixa e os ativos intangíveis e criar um índice com mais singulares. Medir mercado e criação de valor completaria o modelo.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Três de cinco dimensões.</b> Mercado e criação de valor econômico ficaram fora por falta de dados (tela 05).</li>
+          <li><b>Relação não é causa.</b> Os modelos mostram o que anda junto com o retorno; o sinal do crédito mudou de um modelo para o outro (tela 10). <em>· observação nossa</em></li>
+          <li><b>Testes do modelo com alertas.</b> No ROA e no ROE, o teste de autocorrelação de 2ª ordem acusou problema (p 0,000 e 0,001), e o teste de Hansen rejeitou os instrumentos nos três modelos. Leia os números como pistas fortes, não como medida exata. <em>· observação nossa</em></li>
+          <li><b>Pouco explicado no modelo simples.</b> No modelo sem memória, as quatro medidas explicam de 1% a 7% da variação do retorno de cada cooperativa ao longo dos anos (R² dentro). <em>· observação nossa</em></li>
+          <li><b>Só quem durou 20 anos.</b> Ficaram fora as cooperativas que fecharam, se fundiram ou deixaram de informar algum ano. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          PEREIRA, Rina Xavier. <em>Avaliação do desempenho econômico financeiro de cooperativas de crédito: um modelo multidimensional.</em> Tese (Doutorado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2021. Orientador: Prof. Dr. Leonardo Fernando Cruz Basso.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Balanços anuais das cooperativas de crédito no Banco Central (2000–2019); dados em painel no Stata 14 (efeitos fixos e GMM de Arellano e Bond). Esta versão simplifica a tese para o público em geral; as tabelas completas estão no texto original.</p>
+        <p class="also">Leia também: <a href="../../dissertacoes/2021-cavalcante-eficiencia-cooperativas-credito/">Quanto as cooperativas de crédito tiram do que gastam</a> (Cavalcante, 2021), com a mesma base do Banco Central.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  function n0(n){ return n.toLocaleString(EN ? 'en-US' : 'pt-BR'); }
+  function f2(v){ return fmt(v, 2); }
+  function f3(v){ return fmt(v, 3); }
+  function pv(p){ return p < 0.001 ? (EN ? 'p < 0.001' : 'p < 0,001') : 'p ' + fmt(p, 3); }
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, a, txt){ var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); if (txt !== undefined) e.textContent = txt; return e; }
+  function seg(id, fn){
+    var g = $(id);
+    each(g.querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){
+        each(g.querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        fn(+b.dataset.m);
+      });
+    });
+  }
+  function chips(id, items, fn, start){
+    var g = $(id); g.innerHTML = '';
+    items.forEach(function(it, i){
+      var b = document.createElement('button');
+      b.textContent = it; b.setAttribute('aria-pressed', i === start ? 'true' : 'false');
+      b.addEventListener('click', function(){ each(g.children, function(c){ c.setAttribute('aria-pressed', c === b ? 'true' : 'false'); }); fn(i); });
+      g.appendChild(b);
+    });
+  }
+
+  /* ================= DADOS DA TESE ================= */
+  // Medidas de retorno (dependentes) e medidas que explicam (independentes), Quadro 5
+  var IND = [
+    {k:'roa', n:'ROA', d:L('retorno sobre o ativo: sobras ÷ ativo total', 'return on assets: surplus ÷ total assets')},
+    {k:'roe', n:'ROE', d:L('retorno sobre o patrimônio: sobras ÷ patrimônio líquido', 'return on equity: surplus ÷ equity')},
+    {k:'ros', n:'ROS', d:L('retorno sobre as vendas: sobras ÷ receitas', 'return on sales: surplus ÷ revenue')}
+  ];
+  var VAR = [
+    {k:'rcd', n:L('Capital × depósitos', 'Capital vs deposits'), s:L('relação capital depositante (RCD)', 'capital-to-depositor ratio (RCD)'), dim:L('sobrevivência', 'survival'), log:true,
+      d:L('Quanto capital próprio a cooperativa tem frente ao dinheiro depositado pelos associados: a folga para aguentar perdas.', 'How much own capital the credit union has compared with the money members have deposited: the cushion to absorb losses.')},
+    {k:'cx', n:L('Geração de caixa', 'Cash generation'), s:L('disponível ÷ depósitos à vista', 'cash on hand ÷ demand deposits'), dim:L('sobrevivência', 'survival'), log:true,
+      d:L('Quanto dinheiro disponível a cooperativa tem para cobrir saques imediatos dos depósitos à vista.', 'How much cash the credit union has available to cover immediate withdrawals from demand deposits.')},
+    {k:'vc', n:L('Volume de crédito', 'Lending volume'), s:L('carteira de empréstimos', 'loan portfolio'), dim:L('operacional', 'operational'), log:true,
+      d:L('O tamanho da carteira de empréstimos, para a tese o recurso mais importante e lucrativo de uma cooperativa de crédito.', 'The size of the loan portfolio, for the thesis a credit union’s most important and profitable resource.')},
+    {k:'dv', n:L('Despesas ÷ vendas', 'Expenses ÷ sales'), s:L('despesas operacionais sobre o faturamento', 'operating expenses over revenue'), dim:L('operacional', 'operational'), log:false,
+      d:L('Quanto das receitas vai embora em despesas de operação.', 'How much of revenue goes into operating expenses.')}
+  ];
+  // GMM em diferenças, erros robustos: [coef, p]; L1 = ano anterior
+  var GMM = {
+    s:{ // singulares, Tabelas 7.19 a 7.21
+      roa:{L1:[0.6975092, 0], rcd:[0.0605355, 0.012], cx:[-0.0309769, 0.019], vc:[-0.0417247, 0], dv:[-0.0001254, 0.001], obs:10284, g:653, t:'7.19'},
+      roe:{L1:[0.4225343, 0], rcd:[0.0534738, 0.047], cx:[-0.0378188, 0.002], vc:[-0.0486936, 0], dv:[0.0000735, 0.015], obs:10291, g:654, t:'7.20'},
+      ros:{L1:[0.0651538, 0.001], rcd:[0.0641199, 0.129], cx:[-0.0224047, 0.290], vc:[0.1295878, 0], dv:[-0.0008764, 0], obs:10222, g:653, t:'7.21'}
+    },
+    c:{ // centrais, Tabelas 7.8 a 7.10
+      roa:{L1:[0.4769854, 0], rcd:[0.1925169, 0.151], cx:[-0.2593512, 0.005], vc:[-0.0551415, 0.827], dv:[-7.37e-10, 0.002], obs:379, g:26, t:'7.8'},
+      roe:{L1:[0.438479, 0], rcd:[0.1163636, 0.382], cx:[-0.2268945, 0.022], vc:[-0.074134, 0.753], dv:[-1.09e-9, 0.024], obs:380, g:26, t:'7.9'},
+      ros:{L1:[0.0794548, 0.217], rcd:[-0.0222992, 0.882], cx:[-0.1063647, 0.362], vc:[0.2442205, 0.434], dv:[-2.30e-9, 0.013], obs:377, g:26, t:'7.10'}
+    }
+  };
+  // Efeitos fixos robustos, singulares (Tabelas 7.16 e 7.17)
+  var FE = {
+    roa:{rcd:[0.0667412, 0.004], cx:[-0.0270159, 0], vc:[0.0268506, 0.094], dv:[-0.0000385, 0.009]},
+    roe:{rcd:[-0.0588271, 0.002], cx:[0.0063741, 0.320], vc:[0.0473581, 0], dv:[-7.74e-6, 0.237]}
+  };
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene');
+    var st = makeStage(sc, 260, 260, {ay:'78%', rx:'60deg'});
+    rotatable(sc, st, -32, 10);
+    var D = [
+      {t:L('Contábeis', 'Accounting'), c:'var(--navy)'},
+      {t:L('Operacionais', 'Operational'), c:'#5b6f96'},
+      {t:L('Sobrevivência', 'Survival'), c:'var(--red)'},
+      {t:L('Mercado', 'Market'), c:'#94a3b8', g:1},
+      {t:L('Criação de valor', 'Value creation'), c:'#94a3b8', g:1}
+    ];
+    var H = 46, slabs = [];
+    D.forEach(function(d, i){
+      var s = box({w:170, d:170, x:45, y:45, z:i * (H + 4), h:H, c:d.c, label:d.t, cls:d.g ? 'glass' : ''});
+      st.appendChild(s); slabs.push(s);
+      if (!reduce){ s.style.transition = 'transform .9s cubic-bezier(.2,.8,.2,1)'; s.style.setProperty('--z', (i * (H + 4) + 140) + 'px'); }
+    });
+    function go(){ slabs.forEach(function(s, i){ setTimeout(function(){ s.style.setProperty('--z', (i * (H + 4)) + 'px'); }, i * 180); }); }
+    if (!reduce){
+      new IntersectionObserver(function(es){ if (es[0].isIntersecting) setTimeout(go, 250); }).observe(sc);
+      setTimeout(go, 2500);
+    }
+  })();
+
+  /* ================= 02 · ALCANCE ================= */
+  (function(){
+    // Tabela 1: % de municípios atendidos, 2013–2017
+    var R = [
+      {n:L('Sul', 'South'), v:[88, 90, 90, 91, 91], hi:L('SC 98%, RS 92% e PR 84% em 2017', 'SC 98%, RS 92% and PR 84% in 2017')},
+      {n:L('Sudeste', 'Southeast'), v:[51, 53, 54, 54, 56], hi:L('do Espírito Santo (92%) ao Rio de Janeiro (40%) em 2017', 'from Espírito Santo (92%) to Rio de Janeiro (40%) in 2017')},
+      {n:L('Centro-Oeste', 'Center-West'), v:[47, 49, 50, 52, 53], hi:L('do Distrito Federal (100%) a Goiás (36%) em 2017', 'from the Federal District (100%) to Goiás (36%) in 2017')},
+      {n:L('Norte', 'North'), v:[15, 17, 19, 22, 23], hi:L('Rondônia saltou de 75% para 98%; no Amapá, 6%', 'Rondônia jumped from 75% to 98%; in Amapá, 6%')},
+      {n:L('Nordeste', 'Northeast'), v:[8, 8, 9, 9, 10], hi:L('da Bahia (22%) ao Piauí e Rio Grande do Norte (2%) em 2017', 'from Bahia (22%) to Piauí and Rio Grande do Norte (2%) in 2017')},
+      {n:L('Brasil', 'Brazil'), v:[42, 43, 44, 45, 46], hi:L('todas as regiões aumentaram a presença de 2013 a 2017', 'every region increased its presence from 2013 to 2017'), br:1}
+    ];
+    var Y = [2013, 2014, 2015, 2016, 2017], yi = 4, ri = 5, g = $('reg'), rows = [];
+    R.forEach(function(r, i){
+      var b = document.createElement('button'); if (r.br) b.className = 'br';
+      b.innerHTML = '<span>' + r.n + '</span><span class="tr"><i></i></span><b></b>';
+      b.setAttribute('aria-pressed', i === ri ? 'true' : 'false');
+      b.addEventListener('click', function(){ ri = i; draw(); });
+      g.appendChild(b); rows.push(b);
+    });
+    function draw(){
+      rows.forEach(function(b, i){
+        var v = R[i].v[yi];
+        b.querySelector('i').style.width = v + '%'; b.querySelector('b').textContent = v + '%';
+        b.setAttribute('aria-pressed', i === ri ? 'true' : 'false');
+      });
+      var r = R[ri];
+      $('reg-panel').innerHTML = '<h3>' + r.n + ' · ' + Y[yi] + ': ' + r.v[yi] + '%</h3><p>' + L('Municípios com sede ou posto próprio de cooperativa. De 2013 a 2017: ', 'Municipalities with a credit union’s own head office or branch. From 2013 to 2017: ') + r.v[0] + '% → ' + r.v[4] + '%. ' + r.hi.charAt(0).toUpperCase() + r.hi.slice(1) + '.</p>';
+    }
+    seg('yr-seg', function(m){ yi = m; draw(); });
+    draw();
+  })();
+
+  /* ================= 03 · UM LADO SÓ (ilustração) ================= */
+  (function(){
+    var DM = [
+      {n:L('Retorno', 'Return'), c:'var(--navy)'},
+      {n:L('Crescimento', 'Growth'), c:'#5b6f96'},
+      {n:L('Folga de caixa', 'Cash cushion'), c:'var(--red)'}
+    ];
+    var C = [
+      {n:L('Cooperativa A', 'Credit union A'), d:L('madura', 'mature'), v:[8, 3, 4]},
+      {n:L('Cooperativa B', 'Credit union B'), d:L('nova, em expansão', 'new, expanding'), v:[4, 7, 8]}
+    ];
+    var LENS = [L('Só o retorno', 'Return only'), L('Só o crescimento', 'Growth only'), L('Só o caixa', 'Cash only'), L('As três juntas', 'All three together')];
+    var MSG = [
+      L('Pelo retorno, A vence com folga. Mas isso não diz se ela está crescendo nem se aguenta uma corrida de saques.', 'On return, A wins easily. But that says nothing about whether it is growing or could withstand a run on withdrawals.'),
+      L('Pelo crescimento, B vence: está juntando associados e recursos, ainda à custa do retorno.', 'On growth, B wins: it is building members and resources, still at the expense of return.'),
+      L('Pela folga de caixa, B também vence. Quem olhasse só o retorno chegaria à conclusão oposta.', 'On cash cushion, B also wins. Someone looking only at return would reach the opposite conclusion.'),
+      L('Com as três juntas, B fica à frente (19 × 15), mas cada uma vai bem num lado. A tese propõe olhar as dimensões ao mesmo tempo, e não somar notas: a soma aqui é só para comparar.', 'With all three together, B is ahead (19 vs 15), but each does well on one side. The thesis proposes looking at the dimensions at once, not adding up scores: the sum here is just for comparison.')
+    ];
+    var g = $('duo'), cards = [];
+    C.forEach(function(c){
+      var d = document.createElement('div'); d.className = 'co';
+      d.innerHTML = '<h3>' + c.n + ' <small>' + L('à frente', 'ahead') + '</small></h3><p style="margin:0 0 6px; font-size:.74rem; color:var(--muted)">' + c.d + '</p>' +
+        DM.map(function(m, j){ return '<div class="dm" style="--c:' + m.c + '"><span>' + m.n + '</span><span class="tr"><i style="width:' + c.v[j] * 10 + '%"></i></span><b>' + c.v[j] + '</b></div>'; }).join('') +
+        '<div class="tot">' + L('Nota pela lente escolhida: ', 'Score through the chosen lens: ') + '<b></b></div>';
+      g.appendChild(d); cards.push(d);
+    });
+    function show(i){
+      var sc = C.map(function(c){ return i < 3 ? c.v[i] : c.v[0] + c.v[1] + c.v[2]; });
+      cards.forEach(function(d, k){
+        d.classList.toggle('win', sc[k] > sc[1 - k]);
+        each(d.querySelectorAll('.dm'), function(r, j){ r.classList.toggle('off', i < 3 && j !== i); });
+        d.querySelector('.tot b').textContent = sc[k] + (i < 3 ? ' / 10' : ' / 30');
+      });
+      $('lado-panel').innerHTML = '<p>' + MSG[i] + '</p>';
+    }
+    chips('lens', LENS, show, 0);
+    show(0);
+  })();
+
+  /* ================= 04 · RÉGUAS ================= */
+  (function(){
+    var T = [
+      {n:'DEA', s:L('análise envoltória de dados', 'data envelopment analysis'), p:L('Mede eficiência: o máximo de resultado com os recursos usados, comparando cada cooperativa com as melhores. Foi o método mais usado nos estudos sobre desempenho de cooperativas de crédito, sozinho ou combinado.', 'Measures efficiency: the most output from the resources used, comparing each credit union with the best ones. It was the most used method in studies of credit union performance, alone or combined.')},
+      {n:'CAMELS', s:L('nota de supervisão bancária dos EUA', 'US bank supervision rating'), p:L('Criado em 1979 nos EUA para classificar bancos. Avalia capital, qualidade dos ativos, administração, lucros, liquidez e sensibilidade ao risco de mercado.', 'Created in 1979 in the US to rate banks. Assesses capital, asset quality, management, earnings, liquidity and sensitivity to market risk.')},
+      {n:'PEARLS', s:L('adaptação do Conselho Mundial das Cooperativas de Crédito', 'adaptation by the World Council of Credit Unions'), p:L('Um conjunto de índices padronizados para cooperativas de crédito: proteção, estrutura financeira, qualidade dos ativos, taxas de retorno e custos, liquidez e sinais de crescimento. Funciona como alerta antecipado.', 'A set of standardized ratios for credit unions: protection, financial structure, asset quality, rates of return and costs, liquidity and signs of growth. It works as an early warning.')}
+    ];
+    var g = $('tools'), cur = 0;
+    T.forEach(function(t, i){
+      var b = document.createElement('button');
+      b.innerHTML = '<b>' + t.n + '</b><span>' + t.s + '</span>';
+      b.setAttribute('aria-pressed', i === cur ? 'true' : 'false');
+      b.addEventListener('click', function(){ cur = i; each(g.children, function(c, j){ c.setAttribute('aria-pressed', j === i ? 'true' : 'false'); }); show(); });
+      g.appendChild(b);
+    });
+    function show(){ var t = T[cur]; $('tool-panel').innerHTML = '<h3>' + t.n + '</h3><p>' + t.p + '</p><p style="font-size:.78rem; color:var(--muted)">' + L('Para a autora, estudos com uma ou duas dimensões limitam as análises e as generalizações; a proposta é juntar várias num só modelo.', 'For the author, studies with one or two dimensions limit analysis and generalization; the proposal is to bring several into a single model.') + '</p>'; }
+    show();
+    // Venn (Figura 4): 393 Scopus, 296 WoS, 178 nas duas, 511 no total
+    var v = $('venn');
+    v.appendChild(el('circle', {cx:185, cy:95, r:78, fill:'var(--navy)', 'fill-opacity':.85}));
+    v.appendChild(el('circle', {cx:290, cy:95, r:68, fill:'var(--red)', 'fill-opacity':.7}));
+    v.appendChild(el('text', {x:140, y:92, 'text-anchor':'middle', fill:'#fff', 'font-size':22, 'font-weight':700}, '393'));
+    v.appendChild(el('text', {x:140, y:112, 'text-anchor':'middle', fill:'#fff', 'font-size':12}, 'Scopus'));
+    v.appendChild(el('text', {x:330, y:92, 'text-anchor':'middle', fill:'#fff', 'font-size':22, 'font-weight':700}, '296'));
+    v.appendChild(el('text', {x:330, y:112, 'text-anchor':'middle', fill:'#fff', 'font-size':12}, 'Web of Science'));
+    v.appendChild(el('text', {x:240, y:92, 'text-anchor':'middle', fill:'#fff', 'font-size':18, 'font-weight':700}, '178'));
+    v.appendChild(el('text', {x:240, y:110, 'text-anchor':'middle', fill:'#fff', 'font-size':11}, L('nas duas', 'in both')));
+    v.appendChild(el('text', {x:430, y:84, 'text-anchor':'middle', fill:'var(--ink)', 'font-size':26, 'font-weight':700, 'font-family':'Merriweather, serif'}, '511'));
+    v.appendChild(el('text', {x:430, y:104, 'text-anchor':'middle', fill:'var(--muted)', 'font-size':11}, L('artigos no total', 'articles in total')));
+    // Tabela 5
+    var K = [[L('cooperativa de crédito', 'credit union'), 169], [L('eficiência', 'efficiency'), 51, 1], [L('desempenho', 'performance'), 41, 1], [L('serviço financeiro', 'financial service'), 36], [L('banco', 'bank'), 34], [L('concessão de crédito', 'credit provision'), 33], [L('risco', 'risk'), 21], [L('governança corporativa', 'corporate governance'), 16], [L('microfinanças', 'microfinance'), 15], [L('fusão', 'merger'), 11]];
+    $('kw').innerHTML = K.map(function(k){ return '<div' + (k[2] ? ' class="hi"' : '') + '><span>' + k[0] + '</span><span class="tr"><i style="width:' + (k[1] / 169 * 100) + '%"></i></span><b>' + k[1] + '</b></div>'; }).join('');
+  })();
+
+  /* ================= 05 · MODELO ================= */
+  (function(){
+    var s = $('model-svg');
+    var D = [
+      {t:L('Contábeis', 'Accounting'), c:'var(--navy)', ms:['ROA', 'ROE', 'ROS'], dep:1,
+        p:L('O retorno, medido de três jeitos: sobre o ativo (ROA), sobre o patrimônio (ROE) e sobre as vendas (ROS). São o que o modelo quer explicar. Numa cooperativa o resultado se chama sobra, e não lucro.', 'Return, measured three ways: on assets (ROA), on equity (ROE) and on sales (ROS). They are what the model seeks to explain. In a credit union the result is called a surplus, not a profit.')},
+      {t:L('Operacionais', 'Operational'), c:'#5b6f96', ms:[L('volume de crédito', 'lending volume'), L('despesas ÷ vendas', 'expenses ÷ sales')],
+        p:L('Como a cooperativa opera: o tamanho da carteira de empréstimos e quanto das receitas vai para despesas de operação.', 'How the credit union operates: the size of the loan portfolio and how much revenue goes to operating expenses.')},
+      {t:L('Sobrevivência', 'Survival'), c:'var(--red)', ms:[L('capital × depósitos', 'capital vs deposits'), L('geração de caixa', 'cash generation')],
+        p:L('A capacidade de continuar de pé: capital próprio frente aos depósitos e dinheiro disponível para cobrir saques imediatos (solvência e liquidez).', 'The ability to stay standing: own capital compared with deposits and cash available to cover immediate withdrawals (solvency and liquidity).')},
+      {t:L('Mercado', 'Market'), c:'#e2e8f0', ms:[], na:1,
+        p:L('O valor de mercado da organização. Ficou sem medida: faltam dados, e as cooperativas não têm ações negociadas.', 'The organization’s market value. It was left unmeasured: data are missing, and credit unions have no traded shares.')},
+      {t:L('Criação de valor', 'Value creation'), c:'#e2e8f0', ms:[], na:1,
+        p:L('Medidas contábeis ajustadas pelo custo do capital. Ficou sem medida por falta de dados, sobretudo das centrais e confederações.', 'Accounting measures adjusted for the cost of capital. It was left unmeasured for lack of data, especially from central unions and confederations.')}
+    ];
+    s.appendChild(el('rect', {x:100, y:14, width:320, height:44, rx:10, fill:'var(--ink)'}));
+    s.appendChild(el('text', {x:260, y:41, 'text-anchor':'middle', fill:'#fff', 'font-size':14, 'font-weight':700}, L('Criação de valor para o cooperado', 'Value creation for members')));
+    s.appendChild(el('path', {d:'M260 58 V92', stroke:'#64748b', 'stroke-width':2}));
+    s.appendChild(el('rect', {x:150, y:92, width:220, height:42, rx:10, fill:'#fff', stroke:'var(--ink)', 'stroke-width':2}));
+    s.appendChild(el('text', {x:260, y:118, 'text-anchor':'middle', fill:'var(--ink)', 'font-size':14, 'font-weight':700}, L('Avaliação do desempenho', 'Performance assessment')));
+    var W = 92, GAP = 8, x0 = (520 - (5 * W + 4 * GAP)) / 2, gs = [], cur = 0;
+    D.forEach(function(d, i){
+      var x = x0 + i * (W + GAP), cx = x + W / 2;
+      s.appendChild(el('path', {d:'M260 134 C260 160 ' + cx + ' 150 ' + cx + ' 178', stroke:'#94a3b8', 'stroke-width':1.6, fill:'none', 'stroke-dasharray':d.na ? '4 4' : ''}));
+      var g = el('g', {'class':'dim', tabindex:0, role:'button'});
+      g.appendChild(el('rect', {x:x, y:178, width:W, height:58, rx:10, fill:d.c, stroke:d.na ? '#64748b' : 'var(--ink)', 'stroke-width':0, 'stroke-dasharray':d.na ? '5 4' : ''}));
+      var words = d.t.split(' ');
+      var ty = words.length > 1 ? 202 : 211;
+      words.forEach(function(w, j){ g.appendChild(el('text', {x:cx, y:ty + j * 16, 'text-anchor':'middle', fill:d.na ? '#475569' : '#fff', 'font-size':13, 'font-weight':700}, w)); });
+      d.ms.forEach(function(m, j){
+        var my = 252 + j * 22;
+        g.appendChild(el('rect', {x:x + 2, y:my, width:W - 4, height:18, rx:9, fill:d.dep ? 'var(--navy)' : '#eef2f7'}));
+        g.appendChild(el('text', {x:cx, y:my + 13, 'text-anchor':'middle', fill:d.dep ? '#fff' : 'var(--ink-2)', 'font-size':10.5}, m));
+      });
+      if (d.na) g.appendChild(el('text', {x:cx, y:265, 'text-anchor':'middle', fill:'#64748b', 'font-size':11}, L('sem dados', 'no data')));
+      g.addEventListener('click', function(){ cur = i; show(); });
+      g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); cur = i; show(); } });
+      s.appendChild(g); gs.push(g);
+    });
+    function show(){
+      gs.forEach(function(g, j){ g.querySelector('rect').setAttribute('stroke-width', j === cur ? 4 : 0); g.setAttribute('aria-pressed', j === cur ? 'true' : 'false'); });
+      var d = D[cur];
+      $('model-panel').innerHTML = '<h3>' + d.t + (d.na ? ' · ' + L('sem dados', 'no data') : '') + '</h3><p>' + d.p + '</p>' + (d.ms.length ? '<div class="meas">' + d.ms.map(function(m){ return '<span' + (d.dep ? ' class="dep"' : '') + '>' + m + '</span>'; }).join('') + '</div>' : '');
+    }
+    show();
+  })();
+
+  /* ================= 06 · DADOS ================= */
+  (function(){
+    var g = $('coop-grid'), h = '';
+    for (var i = 0; i < 686; i++) h += i >= 660 ? '<i class="c"></i>' : '<i></i>';
+    g.innerHTML = h;
+    // Tabela 7.11 (singulares): média, mediana e percentil 75
+    var MM = [
+      {n:'ROA', mean:4.159591, med:0.6277702, p75:1.428177},
+      {n:'ROE', mean:0.0604385, med:0.0566242, p75:0.0895928},
+      {n:'ROS', mean:14701.91, med:0.171954, p75:0.3499401}
+    ];
+    $('mm').innerHTML = MM.map(function(m){
+      var top = m.p75 * 1.25, pm = Math.min(m.mean / top, 1) * 100, pd = m.med / top * 100, over = m.mean > top;
+      return '<div class="mmr"><b>' + m.n + '</b> · ' + L('mediana ', 'median ') + fmt(m.med, m.med < 0.1 ? 3 : 2) + ' · ' + L('média ', 'mean ') + (m.mean > 1000 ? n0(Math.round(m.mean)) : fmt(m.mean, m.mean < 0.1 ? 3 : 2)) +
+        '<div class="ax"><i class="md" style="left:' + pd + '%"></i><i class="mn" style="left:' + (over ? 99 : pm) + '%"></i>' +
+        (over ? '<span style="right:12px; color:var(--red)">' + L('média muito além →', 'mean far beyond →') + '</span>' : '') + '</div></div>';
+    }).join('') + '<div class="legend" style="margin-top:0"><span><i class="dot" style="background:var(--navy)"></i>' + L('mediana: metade das cooperativas fica abaixo', 'median: half of the credit unions are below it') + '</span><span><i class="dot" style="background:var(--red)"></i>' + L('média', 'mean') + '</span></div>';
+    var P = [
+      L('686 cooperativas com balanços nos 20 anos, de 2000 a 2019. As análises foram feitas separadas para cada classe.', '686 credit unions with balance sheets in all 20 years, 2000 to 2019. The analyses were run separately for each class.'),
+      L('660 singulares × 20 anos = 13.200 observações. No ROA, a média (4,16) é 6,6 vezes a mediana (0,63): poucas cooperativas com números enormes puxam a média para cima.', '660 local unions × 20 years = 13,200 observations. For ROA, the mean (4.16) is 6.6 times the median (0.63): a few credit unions with huge numbers pull the average up.'),
+      L('26 centrais × 20 anos = 520 observações. Com tão poucas, os resultados delas são menos firmes (tela 09).', '26 central unions × 20 years = 520 observations. With so few, their results are less firm (screen 09).')
+    ];
+    function show(m){ g.classList.toggle('only-s', m === 1); g.classList.toggle('only-c', m === 2); $('dados-panel').innerHTML = '<p>' + P[m] + '</p>'; }
+    seg('cls-seg', show); show(0);
+  })();
+
+  /* ================= 07 · MEMÓRIA ================= */
+  (function(){
+    var sc = $('mem-scene'), N = 6, W = 58, GAP = 22, H = 240;
+    var st = makeStage(sc, N * (W + GAP), 120, {ay:'72%', rx:'60deg'});
+    rotatable(sc, st, -18, 6);
+    var bx = [];
+    for (var i = 0; i < N; i++){
+      var x = 10 + i * (W + GAP);
+      var b = box({w:W, d:W, x:x, y:30, h:2, c:i === 0 ? 'var(--navy)' : 'var(--red)', top:' '});
+      st.appendChild(b); bx.push(b);
+      flatLabel(st, i === 0 ? L('ano bom', 'good year') : '+' + i, x - 14, 30 + W + 8, W + 28, 'font-size:13px');
+    }
+    var ind = 0, cls = 0, shown = false;
+    function rhoOf(c, k){ return GMM[c ? 'c' : 's'][IND[k].k].L1; }
+    function draw(){
+      var r = rhoOf(cls, ind), rho = r[0], sig = r[1] < 0.05;
+      bx.forEach(function(b, i){
+        var v = 10 * Math.pow(sig ? rho : 0, i), hh = shown ? Math.max(2, v / 10 * H) : 2;
+        b.style.setProperty('--h', hh + 'px');
+        b.querySelector('.top-label').textContent = v >= 0.05 ? fmt(v, 1) + '%' : (i ? '~0' : '');
+      });
+      var after = 10 * Math.pow(rho, 1), sum = 0;
+      for (var k = 1; k < N; k++) sum += 10 * Math.pow(rho, k);
+      var cn = cls ? L('centrais', 'central unions') : L('singulares', 'local unions'), m = IND[ind].n;
+      $('mem-panel').innerHTML = '<h3>' + m + ' · ' + cn + ': ' + L('memória de ', 'memory of ') + f2(rho) + '</h3>' + (sig
+        ? '<p>' + L('Um ', 'A ') + m + L(' 10% acima num ano tende a deixar ', ' 10% higher in one year tends to leave ') + fmt(after, 1) + L('% no ano seguinte e ', '% the next year and ') + fmt(10 * rho * rho, 1) + L('% dois anos depois. ', '% two years later. ') + (rho > 0.5 ? L('O embalo dura vários anos: um ano ruim também.', 'The momentum lasts several years: so does a bad year.') : L('O efeito some depressa.', 'The effect fades quickly.')) + '</p>'
+        : '<p>' + L('O coeficiente do ano anterior (', 'The previous-year coefficient (') + f2(rho) + ', ' + pv(r[1]) + L(') não foi significativo: nas centrais, o ROS não mostrou memória clara.', ') was not significant: in central unions, ROS showed no clear memory.') + '</p>') +
+        '<p style="font-size:.78rem; color:var(--muted)">' + L('Tabela ', 'Table ') + GMM[cls ? 'c' : 's'][IND[ind].k].t + ' · ' + n0(GMM[cls ? 'c' : 's'][IND[ind].k].obs) + L(' observações de ', ' observations from ') + GMM[cls ? 'c' : 's'][IND[ind].k].g + L(' cooperativas.', ' credit unions.') + (ind === 2 && !cls ? ' ' + L('No ROS a memória é pequena (0,07), mas significativa.', 'In ROS the memory is small (0.07) but significant.') : '') + '</p>';
+      $('rho').innerHTML = IND.map(function(x, k){ var rr = rhoOf(cls, k); return '<div' + (k === ind ? ' class="on"' : '') + '>' + x.n + '<b>' + f2(rr[0]) + (rr[1] < 0.05 ? '' : '*') + '</b>' + (rr[1] < 0.05 ? L('significativo', 'significant') : L('*sem efeito claro', '*no clear effect')) + '</div>'; }).join('');
+    }
+    chips('mem-ind', IND.map(function(x){ return x.n; }), function(i){ ind = i; draw(); }, 0);
+    seg('mem-cls', function(m){ cls = m; draw(); });
+    draw();
+    function go(){ shown = true; draw(); }
+    new IntersectionObserver(function(es){ if (es[0].isIntersecting) setTimeout(go, 300); }).observe(sc);
+    setTimeout(go, 3000);
+  })();
+
+  /* ================= 08 · ALAVANCAS ================= */
+  (function(){
+    var ind = 0, cur = 2, g = $('lv'), rows = [];
+    var MAXB = 0.14;
+    VAR.forEach(function(v, i){
+      var b = document.createElement('button'); b.className = 'lvr';
+      b.innerHTML = '<span class="nm">' + v.n + '<small>' + v.dim + '</small></span><span class="tr"><i></i></span><span class="v"></span>';
+      b.addEventListener('click', function(){ cur = i; draw(); });
+      g.appendChild(b); rows.push(b);
+    });
+    function draw(){
+      var t = GMM.s[IND[ind].k];
+      rows.forEach(function(b, i){
+        var v = VAR[i], c = t[v.k], sig = c[1] < 0.05, bar = b.querySelector('i');
+        var w = v.log ? Math.min(Math.abs(c[0]) / MAXB, 1) * 50 : 18;
+        bar.className = (c[0] > 0 ? 'pos' : 'neg') + (sig ? '' : ' ns');
+        bar.style.width = w + '%'; bar.style.left = (c[0] > 0 ? 50 : 50 - w) + '%';
+        b.querySelector('.v').innerHTML = (v.log ? (c[0] > 0 ? '+' : '−') + fmt(Math.abs(c[0]), 3) + '%' : (c[0] > 0 ? L('sobe', 'up') : L('cai', 'down'))) + '<small>' + pv(c[1]) + '</small>';
+        b.setAttribute('aria-pressed', i === cur ? 'true' : 'false');
+      });
+      var v = VAR[cur], c = t[v.k], sig = c[1] < 0.05, m = IND[ind].n, up = c[0] > 0;
+      var txt = v.log
+        ? L('Se ', 'If ') + v.n.toLowerCase() + L(' sobe 10%, o ', ' rises 10%, ') + m + L(' tende a ', ' tends to ') + (up ? L('subir ', 'rise ') : L('cair ', 'fall ')) + fmt(Math.abs(c[0]) * 10, 2) + L('%, com o resto igual. É uma mudança relativa: ', '%, all else equal. It is a relative change: ') + (ind === 0 ? L('um ROA de 1,00% iria para cerca de ', 'an ROA of 1.00% would go to about ') + fmt(1 + c[0] * 0.1, 3) + '%.' : L('um retorno de 10% iria para cerca de ', 'a return of 10% would go to about ') + fmt(10 * (1 + c[0] * 0.1), 2) + '%.')
+        : L('Como entrou sem logaritmo, o tamanho do efeito por ponto é difícil de ler; a página mostra o sentido: com mais despesas sobre as vendas, o ', 'Since it entered without a logarithm, the effect size per point is hard to read; the page shows the direction: with more expenses over sales, ') + m + (up ? L(' tende a subir.', ' tends to rise.') : L(' tende a cair.', ' tends to fall.'));
+      $('lv-panel').innerHTML = '<h3>' + v.n + ' → ' + m + (sig ? '' : L(' · sem efeito claro', ' · no clear effect')) + '</h3><p>' + v.d + '</p><p>' + (sig ? txt : L('Neste retorno, a relação não passou no teste (', 'For this return, the relationship did not pass the test (') + pv(c[1]) + ').') + '</p>' + (v.k === 'dv' && ind === 1 ? '<p style="font-size:.78rem; color:var(--muted)">' + L('No ROE o sinal sai positivo e no ROA negativo; a tese não comenta a diferença.', 'In ROE the sign is positive and in ROA negative; the thesis does not comment on the difference.') + '</p>' : '');
+    }
+    chips('lv-ind', IND.map(function(x){ return x.n; }), function(i){ ind = i; draw(); }, 0);
+    draw();
+  })();
+
+  /* ================= 09 · CENTRAIS × SINGULARES ================= */
+  (function(){
+    var cls = 1, sel = [0, 2], g = $('mx');
+    var ROWS = [{k:'L1', n:L('Ano anterior (memória)', 'Previous year (memory)'), log:true}].concat(VAR);
+    function draw(){
+      var C = GMM[cls ? 'c' : 's'], h = '<span></span>' + IND.map(function(x){ return '<span class="h">' + x.n + '</span>'; }).join('');
+      ROWS.forEach(function(r, i){
+        h += '<span class="rl">' + r.n + '</span>';
+        IND.forEach(function(x, j){
+          var c = C[x.k][r.k], sig = c[1] < 0.05, cl = sig ? (c[0] > 0 ? 'pos' : 'neg') : 'ns';
+          h += '<button class="cell ' + cl + '" data-i="' + i + '" data-j="' + j + '" aria-pressed="' + (sel[0] === i && sel[1] === j ? 'true' : 'false') + '"><span class="sg">' + (sig ? (c[0] > 0 ? '+' : '−') : '·') + '</span><small>' + pv(c[1]) + '</small></button>';
+        });
+      });
+      g.innerHTML = h;
+      each(g.querySelectorAll('.cell'), function(b){ b.addEventListener('click', function(){ sel = [+b.dataset.i, +b.dataset.j]; draw(); }); });
+      var r = ROWS[sel[0]], x = IND[sel[1]], c = C[x.k][r.k], sig = c[1] < 0.05;
+      var cnt = 0; ROWS.forEach(function(rr){ IND.forEach(function(xx){ if (C[xx.k][rr.k][1] < 0.05) cnt++; }); });
+      $('mx-panel').innerHTML = '<h3>' + (cls ? L('26 centrais', '26 central unions') : L('660 singulares', '660 local unions')) + ': ' + cnt + L(' de 15 relações claras', ' of 15 clear relationships') + '</h3><p>' + r.n + ' → ' + x.n + ': ' + (sig ? (c[0] > 0 ? L('anda junto com retorno maior', 'goes with higher return') : L('anda junto com retorno menor', 'goes with lower return')) + (r.log ? ' (' + (c[0] > 0 ? '+' : '−') + f3(Math.abs(c[0])) + ')' : '') : L('sem efeito claro', 'no clear effect')) + ' · ' + pv(c[1]) + '. ' + (cls ? L('Nas centrais, mais caixa disponível andou com ROA e ROE menores, com efeito bem maior que nas singulares (−0,26 × −0,03 no ROA).', 'In central unions, more cash on hand went with lower ROA and ROE, with a much larger effect than in local ones (−0.26 vs −0.03 in ROA).') : L('Nas singulares, quase tudo aparece: só o ROS deixou capital e caixa sem efeito claro.', 'In local unions, almost everything shows up: only ROS left capital and cash without a clear effect.')) + '</p>';
+    }
+    seg('mx-seg', function(m){ cls = m; draw(); });
+    draw();
+  })();
+
+  /* ================= 10 · O INESPERADO ================= */
+  (function(){
+    var mod = 1, answered = false, MAXB = 0.07;
+    var ROWS = [{v:'vc', i:'roa'}, {v:'vc', i:'roe'}, {v:'rcd', i:'roe'}];
+    var f = $('flip');
+    f.innerHTML = ROWS.map(function(r){
+      var v = VAR.filter(function(x){ return x.k === r.v; })[0];
+      return '<div class="fr"><span class="nm">' + v.n + ' → ' + r.i.toUpperCase() + '</span><div class="bars">' +
+        '<div class="bb"><span class="tr"><i data-m="0"></i></span><span><b>' + L('simples', 'simple') + '</b> <em data-t="0"></em></span></div>' +
+        '<div class="bb"><span class="tr"><i data-m="1"></i></span><span><b>' + L('com memória', 'with memory') + '</b> <em data-t="1"></em></span></div></div></div>';
+    }).join('');
+    function draw(){
+      each(f.querySelectorAll('.fr'), function(row, k){
+        var r = ROWS[k];
+        [FE[r.i][r.v], GMM.s[r.i][r.v]].forEach(function(c, m){
+          var i = row.querySelector('i[data-m="' + m + '"]'), w = Math.min(Math.abs(c[0]) / MAXB, 1) * 50;
+          i.className = (c[0] > 0 ? 'pos' : 'neg') + (c[1] < 0.05 ? '' : ' weak');
+          i.style.width = w + '%'; i.style.left = (c[0] > 0 ? 50 : 50 - w) + '%';
+          i.style.opacity = m === mod ? '' : '.35';
+          row.querySelector('em[data-t="' + m + '"]').textContent = (c[0] > 0 ? '+' : '−') + f3(Math.abs(c[0])) + ' · ' + pv(c[1]);
+        });
+      });
+      $('flip-panel').innerHTML = mod === 0
+        ? '<h3>' + L('Modelo simples: mais crédito, retorno maior', 'Simple model: more lending, higher return') + '</h3><p>' + L('Comparando cada cooperativa com ela mesma, os anos de carteira maior vêm com ROE maior (claro) e ROA maior (fraco, p 0,094).', 'Comparing each credit union with itself, years with a larger portfolio come with higher ROE (clear) and higher ROA (weak, p 0.094).') + '</p>'
+        : '<h3>' + L('Com memória: o sinal vira', 'With memory: the sign flips') + '</h3><p>' + L('Quando o retorno do ano anterior entra na conta, mais crédito passa a andar com ROA e ROE menores. O capital frente aos depósitos também troca de sinal no ROE. Leitura nossa: parte do que parecia efeito do crédito era o embalo dos anos anteriores; a direção depende do modelo, e a relação não prova causa.', 'When the previous year’s return enters the calculation, more lending goes with lower ROA and ROE. Capital vs deposits also changes sign in ROE. Our reading: part of what looked like a lending effect was the momentum of earlier years; the direction depends on the model, and the relationship does not prove cause.') + '</p>';
+    }
+    seg('flip-seg', function(m){ mod = m; draw(); });
+    var q = $('quiz');
+    each(q.querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){
+        each(q.children, function(c){ c.classList.toggle('chosen', c === b); });
+        f.classList.remove('hide'); answered = true;
+        var a = +b.dataset.q;
+        $('q-msg').innerHTML = a === 2 ? L('<b>Isso mesmo.</b> No modelo simples ele sobe; com memória, cai.', '<b>Right.</b> In the simple model it rises; with memory, it falls.')
+          : a === 0 ? L('<b>Só no modelo simples.</b> Com memória, o ROA cai.', '<b>Only in the simple model.</b> With memory, ROA falls.')
+          : L('<b>Só no modelo com memória.</b> No simples, o ROA sobe (efeito fraco).', '<b>Only in the model with memory.</b> In the simple one, ROA rises (weak effect).');
+        draw();
+      });
+    });
+    draw();
+    setTimeout(function(){ if (!answered) f.classList.remove('hide'); }, 12000);
+  })();
+
+  /* ================= 11 · PLACAR ================= */
+  (function(){
+    var S = [
+      {h:L('H3 · ROA, retorno sobre o ativo', 'H3 · ROA, return on assets'), i:'roa', v:L('aceita para as quatro', 'accepted for all four'), c:'var(--navy)',
+        p:L('Capital × depósitos (+), geração de caixa (−), volume de crédito (−) e despesas sobre vendas (−) têm relação clara com o ROA. A memória é a maior das três medidas (0,70).', 'Capital vs deposits (+), cash generation (−), lending volume (−) and expenses over sales (−) are clearly related to ROA. Its memory is the largest of the three measures (0.70).')},
+      {h:L('H2 · ROE, retorno sobre o patrimônio', 'H2 · ROE, return on equity'), i:'roe', v:L('aceita para as quatro', 'accepted for all four'), c:'var(--navy)',
+        p:L('As quatro medidas têm relação clara com o ROE, e a memória é de 0,42.', 'All four measures are clearly related to ROE, and its memory is 0.42.')},
+      {h:L('H1 · ROS, retorno sobre as vendas', 'H1 · ROS, return on sales'), i:'ros', v:L('aceita para duas de quatro', 'accepted for two of four'), c:'#5b6f96',
+        p:L('Volume de crédito (+) e despesas sobre vendas (−) aparecem; capital e caixa não. A memória é pequena (0,07).', 'Lending volume (+) and expenses over sales (−) show up; capital and cash do not. Its memory is small (0.07).')},
+      {h:L('H5 · Qual medida acompanhar', 'H5 · Which measure to monitor'), v:L('ROA e ROE', 'ROA and ROE'), c:'var(--red)',
+        p:L('Para a autora, ROA e ROE são as medidas mais adequadas: têm relações mais claras com as outras dimensões e explicam melhor. Observação nossa: o teste de autocorrelação de 2ª ordem acusou problema justamente nesses dois modelos, e não no ROS.', 'For the author, ROA and ROE are the most suitable measures: they have clearer relationships with the other dimensions and explain more. Our observation: the second-order autocorrelation test flagged a problem precisely in these two models, not in ROS.')}
+    ];
+    $('score').innerHTML = S.map(function(s){
+      var t = s.i ? '<div class="ticks">' + VAR.map(function(v){ var c = GMM.s[s.i][v.k]; return '<span' + (c[1] < 0.05 ? ' class="y"' : '') + '>' + (c[1] < 0.05 ? '✓ ' : '✗ ') + v.n + '</span>'; }).join('') + '</div>' : '';
+      return '<div class="sc" style="--sc:' + s.c + '"><span class="verd">' + s.v + '</span><h3>' + s.h + '</h3><p>' + s.p + '</p>' + t + '</div>';
+    }).join('');
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
