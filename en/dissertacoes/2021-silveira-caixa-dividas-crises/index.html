@@ -1,0 +1,870 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cash, crises and debt in Latin America · PPGA Interativo</title>
+<meta name="description" content="The master’s dissertation of Arthur Garcia Silveira (PPGA Mackenzie) on the size, swings and growth of cash and the debt of companies in six Latin American countries, explained in 12 interactive screens.">
+<link rel="alternate" hreflang="pt-BR" href="../../../dissertacoes/2021-silveira-caixa-dividas-crises/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2216%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>$</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/motor.css">
+<link rel="stylesheet" href="../../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  :root{
+    --cri:var(--red);    /* painel marcado como período de crise */
+    --nor:var(--navy);   /* painel em período normal */
+    --no:#cbd5e1;        /* não passou no teste */
+    --weak:#b45309;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .cri-t{color:var(--cri); font-weight:700;} .nor-t{color:var(--nor); font-weight:700;} .no-t{color:var(--muted); font-weight:700;}
+  .ill{display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--weak); border:1px solid color-mix(in srgb, var(--weak) 45%, white); border-radius:999px; padding:2px 9px; margin-bottom:6px;}
+  .sw{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  @property --z{syntax:'<length>'; inherits:true; initial-value:0px;}
+  .slab.dim > i{opacity:.22;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4.1vw, 2.7rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{display:flex; gap:8px 16px; justify-content:center; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:6px; text-align:center;}
+  #hero-scene .top-label{font-size:19px; font-weight:800;}
+  #hero-scene .no-box .top-label{color:var(--ink-2);}
+  #hero-scene .face-label{font-size:11px; letter-spacing:.02em; white-space:nowrap;}
+  #hero-scene .no-box .face-label{color:var(--ink-2);}
+  #hero-scene .floor-label{font-size:14px;}
+
+  /* ---------- Componentes comuns ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.05rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.9rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .bigs{display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:8px; margin-top:14px;}
+  @media (max-width:600px){ .bigs{grid-template-columns:repeat(2, minmax(0, 1fr));} }
+  .bigs div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 10px; font-size:.74rem; color:var(--ink-2); line-height:1.3;}
+  .bigs b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink);}
+  .legend{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.78rem; color:var(--ink-2); margin-top:8px;}
+
+  /* ---------- 02 · Apostas ---------- */
+  .firms{display:grid; gap:8px;}
+  .firm{border:1px solid var(--border); background:var(--card); border-radius:12px; padding:6px 12px; display:grid; grid-template-columns:120px 1fr; gap:4px 12px; align-items:center;}
+  .firm svg{width:120px; height:46px; display:block;}
+  .firm .ft{font-size:.84rem; color:var(--ink-2); line-height:1.35;}
+  .firm .ft b{color:var(--ink); font-family:var(--serif);}
+  .firm .bb{grid-column:1 / -1; display:flex; flex-wrap:wrap; gap:5px;}
+  .firm .bb button{border:1px solid var(--border); background:var(--bg-soft); border-radius:7px; padding:4px 10px; font-size:.76rem; cursor:pointer; color:var(--ink-2); font-weight:600;}
+  .firm .bb button[aria-pressed="true"]{background:var(--ink); border-color:var(--ink); color:#fff;}
+  #bet-msg{font-size:.84rem; color:var(--ink-2); min-height:2.6em; margin-top:8px;}
+  #th-panel{min-height:150px;}
+
+  /* ---------- 03 · Nove sinais ---------- */
+  .g9{display:grid; grid-template-columns:auto repeat(3, minmax(0, 1fr)); gap:6px; font-size:.78rem; align-items:stretch;}
+  .g9 .hd{font-weight:700; color:var(--ink-2); text-align:center; align-self:end; line-height:1.2; font-size:.74rem;}
+  .g9 .rh{font-weight:700; color:var(--ink); align-self:center; font-family:var(--serif); font-size:.86rem; padding-right:4px;}
+  .g9 button{border:1px solid var(--border); background:var(--card); border-radius:9px; padding:8px 6px; font-size:.74rem; cursor:pointer; color:var(--ink-2); line-height:1.25; min-width:0;}
+  .g9 button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  #sn-svg{width:100%; display:block; margin-top:4px;}
+  #sn-svg text{font-family:var(--sans);}
+  @media (max-width:600px){ #sn-svg text{font-size:17px !important;} }
+  #sn-panel{min-height:120px; margin-top:12px;}
+
+  /* ---------- 04 · Seis réguas ---------- */
+  .rtab{width:100%; border-collapse:separate; border-spacing:0 4px; font-size:.78rem;}
+  .rtab th{font-weight:600; color:var(--muted); font-size:.68rem; line-height:1.2; padding:0 3px 4px; text-align:center; vertical-align:bottom;}
+  .rtab th:first-child{text-align:left;}
+  .rtab td{background:var(--card); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:7px 3px; text-align:center;}
+  .rtab td:first-child{border-left:1px solid var(--border); border-radius:9px 0 0 9px; text-align:left; padding-left:10px; color:var(--ink); font-weight:600;}
+  .rtab td:last-child{border-right:1px solid var(--border); border-radius:0 9px 9px 0;}
+  .rtab tr.row{cursor:pointer;}
+  .rtab tr.row:hover td{border-color:var(--ink-2);}
+  .rtab tr.on td{background:#eef2f8; border-color:var(--navy);}
+  .rtab .k{display:inline-block; width:14px; height:14px; border-radius:4px; background:var(--navy);}
+  .rtab .m{display:inline-block; font-weight:800; color:var(--red); font-size:.95rem;}
+  .rtab .z{color:#cbd5e1;}
+  @media (max-width:600px){ .rtab{font-size:.72rem;} .rtab th{font-size:.6rem;} }
+  #rg-panel{min-height:110px; margin-top:10px;}
+
+  /* ---------- 05 · Países ---------- */
+  #pa-scene .slab{cursor:pointer; transition:--h .7s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1);}
+  #pa-scene .slab.active{--oz:14px;}
+  #pa-scene .face-label{font-size:11px; letter-spacing:0; font-weight:700;}
+  #pa-scene .out .face-label{color:var(--ink-2);}
+  #pa-scene .floor-label{font-size:12px;}
+  #pa-panel{min-height:96px; margin-top:12px;}
+
+  /* ---------- 06 · Crises ---------- */
+  .cal{display:grid; grid-template-columns:78px repeat(40, minmax(0, 1fr)); gap:2px; align-items:center; font-size:.72rem;}
+  .cal .cn{font-weight:700; color:var(--ink-2); cursor:pointer; padding-right:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .cal .cn.on{color:var(--red);}
+  .cal .q{height:30px; border-radius:3px; background:#eef2f6; transition:opacity .4s, background .4s;}
+  .cal .q.r{background:var(--red);}
+  .cal .q.fut{opacity:.35;}
+  .cal.cut .q.fut{opacity:.08;}
+  .cal .q.na{background:repeating-linear-gradient(45deg, #eef2f6 0 3px, #fff 3px 6px);}
+  .cal .yr{font-size:.62rem; color:var(--muted); text-align:left; grid-column:span 4; border-left:1px solid var(--border); padding-left:2px;}
+  .cal .row-on .q{outline:1px solid var(--ink-2);}
+  @media (max-width:600px){ .cal{grid-template-columns:62px repeat(40, minmax(0, 1fr)); gap:1px;} .cal .q{height:18px;} .cal .yr{font-size:.55rem;} }
+  #cr-panel{min-height:110px; margin-top:12px;}
+
+  /* ---------- 07 · Tabuleiro ---------- */
+  .quiz{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0;}
+  .quiz button{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:8px 14px; font-size:.86rem; cursor:pointer; color:var(--ink-2); font-weight:600;}
+  .quiz button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  #tb-scene .slab{cursor:pointer; transition:--h .6s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1);}
+  #tb-scene .slab.active{--oz:12px;}
+  #tb-scene .floor-label{font-size:12.5px;}
+  #tb-scene .rl{font-size:13px; font-weight:600; text-align:right; color:var(--ink-2);}
+  #tb-panel{min-height:120px; margin-top:12px;}
+  .tbcount{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:6px; margin-top:10px;}
+  .tbcount button{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:7px 6px; font-size:.72rem; color:var(--ink-2); cursor:pointer; line-height:1.3; min-width:0;}
+  .tbcount button b{display:block; font-family:var(--serif); font-size:1.1rem; color:var(--ink);}
+  .tbcount button[aria-pressed="true"]{outline:2px solid var(--ink); outline-offset:1px;}
+
+  /* ---------- 08 · Controles e crise ---------- */
+  #pi-scene .slab{transition:transform .7s cubic-bezier(.2,.8,.2,1), --z .7s cubic-bezier(.2,.8,.2,1);}
+  #pi-scene .floor-label{font-size:14px;}
+  .big2{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px;}
+  .big2 div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-size:.78rem; color:var(--ink-2); line-height:1.35;}
+  .big2 b{display:block; font-family:var(--serif); font-size:1.5rem; color:var(--ink);}
+  #pi-panel{min-height:96px; margin-top:12px;}
+
+  /* ---------- 09 · Qual dívida ---------- */
+  #qd-svg{width:100%; display:block;}
+  #qd-svg text{font-family:var(--sans);}
+  #qd-svg .bar{cursor:pointer;}
+  #qd-svg .bar.on .bg{fill:#f1f5f9;}
+  @media (max-width:600px){ #qd-svg text{font-size:19px !important;} }
+  #qd-panel{min-height:110px; margin-top:10px;}
+
+  /* ---------- 10 · Leitura do autor ---------- */
+  .reads{display:grid; gap:10px;}
+  .read{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; border-left:5px solid var(--rc, var(--ink)); font-size:.86rem; color:var(--ink-2); line-height:1.45;}
+  .read h3{font-size:.98rem; margin-bottom:4px; color:var(--ink);}
+  .read q{font-style:italic; quotes:"“" "”";}
+  #au-svg{width:100%; display:block;}
+  #au-svg text{font-family:var(--sans);}
+  @media (max-width:600px){ #au-svg text{font-size:17px !important;} }
+
+  /* ---------- 11 · Na prática ---------- */
+  .cards3{display:grid; grid-template-columns:1fr; gap:12px; margin-top:12px;}
+  @media (min-width:760px){ .cards3{grid-template-columns:repeat(3, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:14px 16px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:1rem; margin-bottom:6px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:5px; font-size:.84rem; line-height:1.45; color:var(--ink-2);}
+  .pcard em{font-style:normal; font-size:.74rem; color:var(--muted);}
+
+  /* ---------- 12 · Limites e créditos ---------- */
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:12px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.08rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:8px 0 0; padding:0; list-style:none;}
+  .limits li{padding:7px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.72rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.5; margin-top:8px;}
+  .cite b{color:var(--ink);}
+  .also{font-size:.8rem; margin-top:10px; color:var(--ink-2);}
+  .also a{color:var(--red); font-weight:600;}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-meta="../../../dissertacoes/2021-silveira-caixa-dividas-crises/meta.json">
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../../dissertacoes/2021-silveira-caixa-dividas-crises/" hreflang="pt-BR" lang="pt-BR" title="Ler em português"><img class="lang-flag" src="../../../assets/bandeira-br.svg" width="17" height="12" alt="">PT</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Previous screen">↑</button>
+    <button class="nav-btn" id="next" aria-label="Next screen">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Screen navigation"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Start">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Master’s dissertation · PPGA Mackenzie · 2021</div>
+      <h1 class="rv" style="--d:.1s">On its own, no feature of cash explained companies’ debt</h1>
+      <p class="sub rv" style="--d:.2s">A company that generates more cash, with fewer ups and downs and on the rise, should be able to owe more. The dissertation tested this idea in listed companies from <strong>six Latin American countries</strong>, from 2011 to 2019. Each feature on its own passed no test; only some combinations did, many of them in <strong>periods of crisis</strong>. Explained in 12 screens.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Author:</b> Arthur Garcia Silveira</span>
+        <span><b>Advisor:</b> Prof. Dr. Wilson Toshiro Nakamura</span>
+        <span><b>Program:</b> Graduate Program in Business Administration (PPGA) · Mackenzie Presbyterian University</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#apostas">Start →</a>
+        <a class="btn ghost" href="#tabuleiro">Go straight to the result</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="460x340" role="img" aria-label="Three low grey blocks, size, swings and growth of cash, each with 0 of 6 tests passed; behind them, a red tower of the three multiplied together, with 8 of 24"></div></div>
+      <div class="cap-legend">
+        <span>Tests passed: each feature alone and the features multiplied together (Table 9, our count)</span>
+      </div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">Closest UN Sustainable Development Goals</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://sdgs.un.org/goals/goal8" target="_blank" rel="noopener" title="SDG 8 · Decent Work and Economic Growth: Studies how much companies in six Latin American countries can owe given the cash they generate, in a region with frequent crises."><b>8</b>Decent Work and Economic Growth</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">scroll<span></span></div>
+</section>
+
+<!-- 02 · APOSTAS -->
+<section class="slide" id="apostas" data-label="The bet">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> The question</div>
+      <h2 class="rv" style="--d:.1s">The dissertation bet that plentiful, steady and rising cash makes room to owe more</h2>
+      <p class="rv" style="--d:.15s">Think of three made-up companies. For each one, say whether you think it owes more, less, or that it makes no difference. The real result appears on screen 07.</p>
+      <div class="firms rv" id="firms" style="--d:.2s"></div>
+      <p id="bet-msg" aria-live="polite"></p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <p style="font-size:.88rem; margin-bottom:4px">Where does the bet come from? Tap an idea:</p>
+      <div class="chips" id="th-chips" role="group" aria-label="Ideas from the review"></div>
+      <div class="panel" id="th-panel" aria-live="polite"></div>
+      <p class="note">Our summary of sections 3 and 4.1 of the dissertation. The three companies are an illustration: the dissertation does not discuss individual companies.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · NOVE SINAIS -->
+<section class="slide" id="sinais" data-label="Nine cash signals">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> What is measured</div>
+      <h2 class="rv" style="--d:.1s">Three features of cash, each read through three indicators</h2>
+      <p class="rv" style="--d:.15s">Cash does not come ready-made in the balance sheet. The dissertation used three indicators of how much the company generates: two from the balance sheet (operating profit over what it has) and one from the market (how much the stock exchange pays above book value). Three features come out of each. Tap a cell:</p>
+      <div class="g9 rv" id="g9" style="--d:.2s" role="group" aria-label="Feature and indicator"></div>
+      <p class="note rv" style="--d:.25s">Table 6. All models with controls also include company <b>size</b> (sales, in logarithm) and <b>tangibility</b> (physical assets over total assets, which serve as collateral).</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <span class="ill">illustration with made-up numbers</span>
+      <svg id="sn-svg" viewBox="0 0 560 300" role="img" aria-label="A made-up nine-year series of the chosen indicator, with the feature highlighted"></svg>
+      <div class="panel" id="sn-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · SEIS RÉGUAS -->
+<section class="slide" id="reguas" data-label="Six debt yardsticks">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> What is measured</div>
+      <h2 class="rv" style="--d:.1s">Debt was measured with six yardsticks, from the narrowest to the broadest</h2>
+      <p class="rv" style="--d:.15s">All of them divide something by the company’s assets. What changes is what goes on top: only loans, which charge interest, or also bills that do not, such as suppliers and wages. Net debt subtracts the cash on hand; the dissertation notes that its logic, net debt over cash generation, is the most widely used today in Brazil and abroad.</p>
+      <div class="panel rv" id="rg-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <table class="rtab" id="rg-tab">
+        <thead><tr><th>Yardstick</th><th>Short-term loans</th><th>Long-term loans</th><th>Suppliers</th><th>Other short bills</th><th>Other long bills</th><th>Minus cash</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <p class="note">Table 5 (equations 3 to 8). Yardsticks 4 and 8 appear with the same formula in the table. “Other bills” are obligations without interest, such as wages, which the dissertation separates from interest-bearing debt (section 4.1.1).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · PAÍSES -->
+<section class="slide" id="paises" data-label="Six countries">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> How the research looked</div>
+      <h2 class="rv" style="--d:.1s">Six countries that add up to 84% of Latin America’s economy</h2>
+      <p class="rv" style="--d:.15s">The author ranked countries by GDP and chose six of the largest. Venezuela, third on the list, did not enter; in the limitations, he cites the lack of Venezuelan company balance sheets since 2014. Listed companies were included, excluding banks and insurers, companies under court-supervised reorganisation and those with missing data. Tap a country:</p>
+      <div class="panel rv" id="pa-panel" style="--d:.2s" aria-live="polite"></div>
+      <div class="bigs rv" style="--d:.25s">
+        <div><b>6</b>countries</div>
+        <div><b>84%</b>of the region’s GDP</div>
+        <div><b>2011–2019</b>annual balance sheets</div>
+        <div><b>Capital IQ</b>S&amp;P database</div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="pa-scene" data-fit="540x330" role="img" aria-label="Columns with the GDP of the seven largest countries on the list; Brazil is the tallest and Venezuela, in grey, was left out"></div></div>
+      <p class="note">GDP in US$ from Table 7 (World Bank, accessed June 2020; Venezuela with 2014 data). The dissertation does not report how many companies entered the sample.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · CRISES -->
+<section class="slide" id="crises" data-label="The crises">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> The setting</div>
+      <h2 class="rv" style="--d:.1s">In the period studied, Argentina spent 14 quarters in recession, and Chile none</h2>
+      <p class="rv" style="--d:.15s">To separate normal times from times of crisis, the author marked two consecutive quarters of falling GDP as a recession. This mark entered the models as an on-off switch. Tap a country:</p>
+      <div class="seg rv" id="cr-seg" style="--d:.2s" role="group" aria-label="Period shown"></div>
+      <div class="panel rv" id="cr-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="cal" id="cal" role="img" aria-label="Calendar of quarters from 2011 to 2020 by country, with recession quarters in red"></div>
+      <div class="legend"><span><i class="sw" style="background:var(--red)"></i>recession</span><span><i class="sw" style="background:#eef2f6"></i>no recession</span><span><i class="sw" style="background:repeating-linear-gradient(45deg,#eef2f6 0 3px,#fff 3px 6px)"></i>not in the table</span></div>
+      <p class="note">Table 8 and Chart 2, with central bank data. Peru is in the sample but not in the crisis table. 2020 appears in the table, but the balance sheets studied end in 2019. Quarter counts are ours; Argentina’s in 2018–2019 follow the table as printed.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · TABULEIRO -->
+<section class="slide" id="tabuleiro" data-label="The result">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> What it found</div>
+      <h2 class="rv" style="--d:.1s">No feature passed on its own; only combinations did, in 11 of 60 cells</h2>
+      <p class="rv" style="--d:.15s" id="tb-q">Before you look: of the 18 tests with a single feature (3 features × 3 indicators, with and without controls), how many do you think passed?</p>
+      <div class="quiz rv" id="tb-quiz" style="--d:.2s" role="group" aria-label="Your bet"></div>
+      <div class="tbcount rv" id="tb-count" style="--d:.25s" role="group" aria-label="Groups of tests"></div>
+      <div class="panel rv" id="tb-panel" style="--d:.3s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="tb-scene" data-fit="560x440" role="img" aria-label="Board of 10 test rows by 6 columns (three indicators, with and without controls); the 11 cells that passed rise, in red when marked as crisis and in blue in normal periods"></div></div>
+      <div class="legend"><span><i class="sw" style="background:var(--cri)"></i>passed, marked as crisis</span><span><i class="sw" style="background:var(--nor)"></i>passed, normal period</span><span><i class="sw" style="background:var(--no)"></i>did not pass (p ≥ 0.05)</span></div>
+      <p class="note">Table 9: “Yes” when the test had p below 0.05 in at least one debt yardstick; in bold, results with the crisis mark. W = with controls (size and tangibility), N = without. Counts are ours.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · CONTROLES E CRISE -->
+<section class="slide" id="pilhas" data-label="Controls and crisis">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> A closer look</div>
+      <h2 class="rv" style="--d:.1s">When company size and collateral enter, almost everything disappears</h2>
+      <p class="rv" style="--d:.15s">The 11 “yes” cells on the board add up to 13 results, because two cells passed in two yardsticks. Each block on the side is one of them. Switch how they are grouped:</p>
+      <div class="seg rv" id="pi-seg" style="--d:.2s" role="group" aria-label="Group by"></div>
+      <div class="panel rv" id="pi-panel" style="--d:.25s" aria-live="polite"></div>
+      <div class="big2 rv" style="--d:.3s">
+        <div><b>2 of 30</b>cells passed with the controls in the model</div>
+        <div><b>9 of 30</b>cells passed without the controls</div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="pi-scene" data-fit="440x360" role="img" aria-label="Two piles with the 13 results that passed; the blocks change pile according to the chosen grouping"></div></div>
+      <div class="legend" style="justify-content:center"><span><i class="sw" style="background:var(--cri)"></i>marked as crisis</span><span><i class="sw" style="background:var(--nor)"></i>normal period</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · QUAL DÍVIDA -->
+<section class="slide" id="divida" data-label="Which debt">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> The unexpected</div>
+      <h2 class="rv" style="--d:.1s">Net debt, the market’s favourite yardstick, did not show up in any result</h2>
+      <p class="rv" style="--d:.15s">Of the 13 results, 10 came from the two broadest yardsticks, which add up everything the company owes, including bills without interest. Only one came from the yardstick that counts loans alone. Tap a bar:</p>
+      <div class="panel rv" id="qd-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="qd-svg" viewBox="0 0 560 330" role="img" aria-label="Bars with how many of the 13 results came from each yardstick: net debt 0, loans plus suppliers 0, loans 1, long-term liabilities 6, total liabilities 4, loans plus suppliers (yardstick 8) 2"></svg>
+      <p class="note">Equations in brackets in Table 9; our count. In the conclusion, the author sums up: of the six debt models, five were significant.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · LEITURA DO AUTOR -->
+<section class="slide" id="autor" data-label="The author’s reading">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> The twist</div>
+      <h2 class="rv" style="--d:.1s">For the author, in crises companies owe more because cash runs short, not because it is plentiful</h2>
+      <p class="rv" style="--d:.15s">The bet was that plentiful cash makes room for debt. Reading the tests that passed, the author concludes that much of the debt came the other way round: in a crisis, cash shrinks and the company borrows to get through the squeeze. Choose an indicator:</p>
+      <div class="chips rv" id="au-chips" style="--d:.2s" role="group" aria-label="Indicator"></div>
+      <div class="reads rv" id="au-reads" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <span class="ill">illustration of the two stories</span>
+      <svg id="au-svg" viewBox="0 0 560 300" role="img" aria-label="Two stories side by side: in the bet, cash rises and debt rises with it; in the author’s reading for crises, cash falls and debt rises"></svg>
+      <p class="note">The direction of each result comes from the author’s text (sections 5.1.1 to 5.1.3). The 13 statistical-software outputs printed in the dissertation repeat the same table of numbers; that is why this page does not show the size of any effect.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · NA PRÁTICA -->
+<section class="slide" id="pratica" data-label="In practice">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> So what?</div>
+    <h2 class="rv" style="--d:.1s">Forecasting cash, and crises, weighs on deciding how much to owe</h2>
+    <p class="lede rv" style="--d:.15s">For the author, the growth and the size of cash are key pieces in the decision to take on debt, and the region’s instability changes the reason for owing.</p>
+    <div class="cards3">
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>For finance managers</h3><ul><li>The less cash swings, the more predictability managers have to take on debt in the market. <em>(author)</em></li><li>The ability to anticipate economic movements weighs on capital structure decisions. <em>(author)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--red)"><h3>For lenders and analysts</h3><ul><li>In crises, companies tend to increase debt out of a need for cash at that moment, not because of beneficial effects of their activity. <em>(author)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#64748b"><h3>Our reading</h3><ul><li>No feature of cash, on its own, explained debt, and with size and collateral in the model almost nothing passed (screens 07 and 08).</li><li>The result depends on the yardstick: net debt and the one that counts only loans barely show up (screen 09).</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Limits and credits">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Limits and credits</div>
+    <h2 class="rv" style="--d:.1s">What this research does not say</h2>
+    <div class="end">
+      <div class="rv" style="--d:.2s">
+        <ul class="limits">
+          <li><b>Very different countries.</b> Although neighbours, the countries are in different economic situations, and Venezuela had no data. <em>· according to the author</em></li>
+          <li><b>The past to measure the future.</b> The growth that matters is future growth, but the model uses past data; and the indicators may not be the most precise. <em>· according to the author</em></li>
+          <li><b>No effect size.</b> The printed outputs repeat the same table, and the number of companies is not reported: the page shows only which tests passed. <em>· our observation</em></li>
+          <li><b>Many tests.</b> There were 60 test cells; with so many tests, some pass by chance, and the 13 results are scattered with no single pattern. <em>· our observation</em></li>
+          <li><b>Goes together, not cause.</b> The models show an association between cash and debt, not that one causes the other. <em>· our observation</em></li>
+        </ul>
+        <p style="margin-top:10px; font-size:.84rem">Next steps suggested by the author: broaden the data (more years and more countries) and look for new indicators that measure the size, swings and growth of cash more precisely.</p>
+      </div>
+      <div class="rv" style="--d:.25s">
+        <h3>Credits</h3>
+        <div class="cite">
+          <b>How to cite</b><br>
+          SILVEIRA, Arthur Garcia. <em>Influência da magnitude, volatilidade e crescimento da geração de caixa no endividamento das empresas na América Latina.</em> Master’s dissertation in Business Administration, Universidade Presbiteriana Mackenzie, São Paulo, 2021. Advisor: Prof. Dr. Wilson Toshiro Nakamura.
+        </div>
+        <p style="margin-top:10px; font-size:.78rem">Dissertation from 2021. Balance sheets from the Capital IQ (S&amp;P) database, GDP from the World Bank and central banks; panel-data regressions in Stata. This version simplifies the work for a general audience.</p>
+        <p class="also">Read also, from the same advisor: <a href="../../dissertacoes/2023-rodrigues-geracao-caixa-endividamento/">Rodrigues (2023)</a>, the same three cash features before and during Covid; <a href="../../teses/2021-passos-geracao-caixa-endividamento-g20/">Passos (2021)</a>, in the G20 and Brazil; and <a href="../../teses/2022-mendes-volatilidade-caixa-dividas/">Mendes (2022)</a>, cash swings and debt maturity.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Read the full dissertation (in Portuguese)</a>
+          <a class="btn ghost" href="#capa">↑ Back to start</a>
+          <a class="btn ghost" href="../../">More research</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable, ramp = M.ramp;
+  var EN = M.lang === 'en';
+  function L(p, e){ return EN ? e : p; }
+  function setTop(b, t){ var s = b.querySelector('.top-label'); if (s) s.textContent = t; }
+  function setLab(b, t){ var s = b.querySelector('.face-label'); if (s) s.textContent = t; }
+  function segInit(el, items, cur, fn){
+    el.innerHTML = items.map(function(t, i){ return '<button data-v="' + i + '" aria-pressed="' + (i === cur) + '">' + t + '</button>'; }).join('');
+    each(el.children, function(b){ b.addEventListener('click', function(){ each(el.children, function(x){ x.setAttribute('aria-pressed', x === b); }); fn(+b.dataset.v); }); });
+  }
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // Indicadores (Quadro 6)
+  var LENS = [
+    {k:'roa', s:'ROA', n:L('Lucro sobre o ativo (ROA)', 'Return on assets (ROA)'), d:L('Lucro da operação (antes de juros e impostos) dividido por tudo o que a empresa tem.', 'Operating profit (before interest and taxes) divided by everything the company owns.'), u:'%'},
+    {k:'roic', s:'ROIC', n:L('Lucro sobre o capital investido (ROIC)', 'Return on invested capital (ROIC)'), d:L('O mesmo lucro da operação dividido pelo dinheiro posto na empresa por sócios e credores.', 'The same operating profit divided by the money put into the company by shareholders and lenders.'), u:'%'},
+    {k:'mbk', s:L('Mercado/contábil', 'Market/book'), n:L('Valor de mercado sobre valor contábil', 'Market-to-book value'), d:L('Quanto a bolsa paga pelas ações dividido pelo valor delas no balanço. Acima de 1, o mercado espera caixa no futuro.', 'What the stock exchange pays for the shares divided by their balance-sheet value. Above 1, the market expects future cash.'), u:'×'}
+  ];
+  var TRAIT = [
+    {k:'mag', n:L('Tamanho', 'Size'), t:L('magnitude', 'magnitude'), d:L('O próprio valor do indicador: quanto caixa a empresa gera.', 'The indicator’s own value: how much cash the company generates.'), h:'H1'},
+    {k:'vol', n:L('Oscilação', 'Swings'), t:L('volatilidade', 'volatility'), d:L('O desvio-padrão do indicador: quanto ele sobe e desce em torno da média. Menos oscilação = caixa mais previsível.', 'The indicator’s standard deviation: how much it moves up and down around the average. Fewer swings = more predictable cash.'), h:'H2'},
+    {k:'cre', n:L('Crescimento', 'Growth'), t:L('crescimento', 'growth'), d:L('A variação percentual do indicador de um ano para o outro.', 'The indicator’s percentage change from one year to the next.'), h:'H3'}
+  ];
+  // Réguas da dívida (Quadro 5): componentes [emp CP, emp LP, fornecedores, outras CP, outras LP, menos caixa]
+  var RG = [
+    {e:3, n:L('Dívida líquida', 'Net debt'), c:[1,1,0,0,0,1], d:L('Empréstimos de curto e longo prazo menos o caixa e as aplicações, sobre o ativo sem o caixa. É a régua que olha a dívida que sobra depois de usar o dinheiro guardado.', 'Short- and long-term loans minus cash and investments, over assets without cash. This yardstick looks at the debt left after using the money on hand.')},
+    {e:4, n:L('Empréstimos + fornecedores', 'Loans + suppliers'), c:[1,1,1,0,0,0], d:L('Empréstimos de curto e longo prazo mais o que se deve a fornecedores, sobre o ativo total.', 'Short- and long-term loans plus what is owed to suppliers, over total assets.')},
+    {e:5, n:L('Empréstimos', 'Loans'), c:[1,1,0,0,0,0], d:L('Só a dívida que cobra juros (empréstimos, financiamentos, debêntures), de curto e longo prazo, sobre o ativo total. É a dívida bruta.', 'Only interest-bearing debt (loans, financing, bonds), short and long term, over total assets. This is gross debt.')},
+    {e:6, n:L('Passivo de longo prazo', 'Long-term liabilities'), c:[0,1,0,0,1,0], d:L('Tudo o que vence depois de um ano (o passivo não circulante), com e sem juros, sobre o ativo total.', 'Everything due after one year (non-current liabilities), with and without interest, over total assets.')},
+    {e:7, n:L('Passivo total', 'Total liabilities'), c:[1,1,1,1,1,0], d:L('Tudo o que a empresa deve a terceiros, de curto e longo prazo, com e sem juros, sobre o ativo total. É a régua mais larga.', 'Everything the company owes to third parties, short and long term, with and without interest, over total assets. This is the broadest yardstick.')},
+    {e:8, n:L('Empréstimos + fornecedores', 'Loans + suppliers'), c:[1,1,1,0,0,0], d:L('No Quadro 5, a mesma fórmula da régua 4: empréstimos de curto e longo prazo mais fornecedores, sobre o ativo total.', 'In Table 5, the same formula as yardstick 4: short- and long-term loans plus suppliers, over total assets.')}
+  ];
+  // PIB em US$ milhões (Quadro 7)
+  var PIB = [
+    {n:'Brasil', en:'Brazil', v:1839758.04},
+    {n:'México', en:'Mexico', v:1258286.72},
+    {n:'Venezuela', en:'Venezuela', v:482359.32, out:1},
+    {n:'Argentina', en:'Argentina', v:449663.45},
+    {n:'Colômbia', en:'Colombia', v:323802.81},
+    {n:'Chile', en:'Chile', v:282318.16},
+    {n:'Peru', en:'Peru', v:226848.05}
+  ];
+  // Recessões (Quadro 8): [ano, trimestre]
+  var CR = [
+    {n:L('Argentina', 'Argentina'), q:[[2012,2],[2012,3],[2014,1],[2014,2],[2014,3],[2014,4],[2015,4],[2016,1],[2016,2],[2016,3],[2018,2],[2019,1],[2019,3],[2019,4],[2020,1],[2020,2],[2020,3]],
+      t:L('Q2–Q3 de 2012; o ano de 2014 inteiro; Q4 de 2015 a Q3 de 2016; Q2 de 2018 e Q1, Q3 e Q4 de 2019; Q1 a Q3 de 2020.', 'Q2–Q3 2012; all of 2014; Q4 2015 to Q3 2016; Q2 2018 and Q1, Q3 and Q4 2019; Q1 to Q3 2020.')},
+    {n:L('Brasil', 'Brazil'), q:[[2014,3],[2014,4],[2015,2],[2015,3],[2015,4],[2016,1],[2016,2],[2016,4],[2017,1],[2020,2],[2020,3]],
+      t:L('Q3–Q4 de 2014; Q2 de 2015 a Q2 de 2016; Q4 de 2016 a Q1 de 2017; Q2–Q3 de 2020.', 'Q3–Q4 2014; Q2 2015 to Q2 2016; Q4 2016 to Q1 2017; Q2–Q3 2020.')},
+    {n:'Chile', q:[], t:L('Não teve dois trimestres seguidos de queda no período.', 'It had no two consecutive quarters of decline in the period.')},
+    {n:L('Colômbia', 'Colombia'), q:[[2020,2],[2020,3]], t:L('Só Q2–Q3 de 2020, já fora dos balanços estudados.', 'Only Q2–Q3 2020, already outside the balance sheets studied.')},
+    {n:L('México', 'Mexico'), q:[[2019,4],[2020,1],[2020,2],[2020,3]], t:L('Q4 de 2019 a Q3 de 2020.', 'Q4 2019 to Q3 2020.')},
+    {n:'Peru', na:1, q:[], t:L('Está na amostra, mas não no quadro nem no gráfico de crises da dissertação.', 'It is in the sample, but not in the dissertation’s crisis table or chart.')}
+  ];
+  // Linhas do Quadro 9 (g: 0 = um traço, 1 = juntos, 2 = multiplicados)
+  var ROWS = [
+    {k:'H1', g:0, n:L('Tamanho sozinho', 'Size alone')},
+    {k:'H2', g:0, n:L('Oscilação sozinha', 'Swings alone')},
+    {k:'H3', g:0, n:L('Crescimento sozinho', 'Growth alone')},
+    {k:'M1', g:1, n:L('Tamanho + oscilação', 'Size + swings')},
+    {k:'M2', g:1, n:L('Tamanho + crescimento', 'Size + growth')},
+    {k:'M3', g:1, n:L('Os três juntos', 'All three together')},
+    {k:'I1', g:2, n:L('Tamanho × oscilação', 'Size × swings')},
+    {k:'I2', g:2, n:L('Tamanho × crescimento', 'Size × growth')},
+    {k:'I3', g:2, n:L('Oscilação × crescimento', 'Swings × growth')},
+    {k:'I4', g:2, n:L('Os três multiplicados', 'All three multiplied')}
+  ];
+  // "Sim" do Quadro 9: [linha, indicador, controles (1 = com, 0 = sem), equações, crise (negrito)]
+  var SIM = [
+    ['M1','roa',0,[7],1], ['I2','roa',1,[6],1], ['I2','roa',0,[6],1], ['I4','roa',0,[6],0],
+    ['M1','roic',0,[7],1], ['M3','roic',0,[7],0], ['I1','roic',1,[6],0], ['I4','roic',0,[5,6],0],
+    ['I1','mbk',0,[6,7],1], ['I2','mbk',0,[8],1], ['I4','mbk',0,[8],1]
+  ];
+  function simAt(r, l, c){ return SIM.filter(function(s){ return s[0] === r && s[1] === l && s[2] === c; })[0]; }
+  // Os 13 resultados (um por régua)
+  var RES = [];
+  SIM.forEach(function(s){ s[3].forEach(function(e){ RES.push({r:s[0], l:s[1], c:s[2], e:e, cr:s[4]}); }); });
+  function rowName(k){ return ROWS.filter(function(r){ return r.k === k; })[0].n; }
+  function lensS(k){ return LENS.filter(function(l){ return l.k === k; })[0].s; }
+  function rgName(e){ return RG.filter(function(r){ return r.e === e; })[0].n; }
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), W = 380, D = 220, st = makeStage(sc, W, D, {ay:'68%'});
+    rotatable(sc, st, -26, 8);
+    // torre: três traços multiplicados
+    var tx = W / 2 - 50, ty = 8;
+    st.appendChild(box({w:100, d:80, x:tx, y:ty, z:0, h:52, c:'var(--red)', label:L('tamanho', 'size')}));
+    st.appendChild(box({w:100, d:80, x:tx, y:ty, z:54, h:52, c:ramp('var(--red)', 1, 4), label:L('× oscilação', '× swings')}));
+    st.appendChild(box({w:100, d:80, x:tx, y:ty, z:108, h:52, c:ramp('var(--red)', 2, 4), label:L('× crescimento', '× growth'), top:L('8 de 24', '8 of 24')}));
+    // três blocos sozinhos
+    [L('tamanho', 'size'), L('oscilação', 'swings'), L('crescimento', 'growth')].forEach(function(t, i){
+      var x = 10 + i * 124;
+      st.appendChild(box({w:100, d:70, x:x, y:130, h:14, c:'#cbd5e1', cls:'no-box', top:L('0 de 6', '0 of 6')}));
+      flatLabel(st, t, x - 6, 212, 112);
+    });
+  })();
+
+  /* ================= 02 · APOSTAS ================= */
+  (function(){
+    var F = [
+      {t:L('<b>A · Caixa farto.</b> Gera muito caixa em relação ao que tem.', '<b>A · Plentiful cash.</b> Generates a lot of cash relative to what it owns.'), s:[60,62,58,63,61,64,60,62,63], h:'H1'},
+      {t:L('<b>B · Caixa firme.</b> Gera sempre perto do mesmo valor, sem sustos.', '<b>B · Steady cash.</b> Always generates about the same amount, without scares.'), s:[34,35,34,36,35,35,34,36,35], h:'H2'},
+      {t:L('<b>C · Caixa em alta.</b> Gera um pouco mais a cada ano.', '<b>C · Rising cash.</b> Generates a little more each year.'), s:[14,19,23,28,33,37,42,47,52], h:'H3'}
+    ];
+    var OPT = [L('Deve mais', 'Owes more'), L('Tanto faz', 'No difference'), L('Deve menos', 'Owes less')];
+    var bets = {};
+    $('firms').innerHTML = F.map(function(f, i){
+      var pts = f.s.map(function(v, j){ return (6 + j * 13.5) + ',' + (50 - v * .62); }).join(' ');
+      return '<div class="firm"><svg viewBox="0 0 120 54" aria-hidden="true"><line x1="4" y1="50" x2="116" y2="50" stroke="#cbd5e1"/><polyline points="' + pts + '" fill="none" stroke="var(--navy)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></svg>' +
+        '<div class="ft">' + f.t + '</div><div class="bb" data-i="' + i + '">' + OPT.map(function(o, k){ return '<button data-k="' + k + '" aria-pressed="false">' + o + '</button>'; }).join('') + '</div></div>';
+    }).join('');
+    each(document.querySelectorAll('#firms .bb button'), function(b){
+      b.addEventListener('click', function(){
+        var g = b.parentNode; bets[g.dataset.i] = +b.dataset.k;
+        each(g.children, function(x){ x.setAttribute('aria-pressed', x === b); });
+        var n = Object.keys(bets).length, more = Object.keys(bets).filter(function(k){ return bets[k] === 0; }).length;
+        $('bet-msg').innerHTML = n < 3 ? L('Faltam ' + (3 - n) + '.', (3 - n) + ' to go.') :
+          L('Você apostou “deve mais” em ' + more + ' de 3. A dissertação apostou nas três (hipóteses H1, H2 e H3). Veja na tela 07 o que os testes disseram.', 'You bet “owes more” on ' + more + ' of 3. The dissertation bet on all three (hypotheses H1, H2 and H3). See on screen 07 what the tests said.');
+      });
+    });
+    var TH = [
+      {b:L('Hierarquia (pecking order)', 'Pecking order'), d:L('A empresa prefere pagar com o próprio caixa e só depois toma empréstimo. Previsão: quem lucra mais deve <strong>menos</strong>.', 'The company prefers to pay with its own cash and only then borrows. Prediction: whoever earns more owes <strong>less</strong>.')},
+      {b:L('Equilíbrio (trade-off)', 'Trade-off'), d:L('Dívida reduz o imposto, porque os juros são despesa, mas aumenta o risco de quebrar. Existe um ponto ótimo. Previsão: quem lucra mais pode dever <strong>mais</strong>.', 'Debt lowers taxes, because interest is an expense, but raises the risk of going bust. There is an optimal point. Prediction: whoever earns more can owe <strong>more</strong>.')},
+      {b:L('Equilíbrio modificado', 'Modified trade-off'), d:L('A proposta da dissertação: o espaço para dever depende do caixa que a empresa gera, e de três traços dele. Caixa <strong>grande</strong>, <strong>estável</strong> e <strong>crescente</strong> permitiria pagar os juros e, portanto, dever mais.', 'The dissertation’s proposal: the room to owe depends on the cash the company generates, and on three features of it. <strong>Large</strong>, <strong>stable</strong> and <strong>growing</strong> cash would allow paying interest and therefore owing more.')}
+    ];
+    var ch = $('th-chips');
+    ch.innerHTML = TH.map(function(t, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="' + (i === 2) + '">' + t.b + '</button>'; }).join('');
+    function show(i){ each(ch.children, function(x){ x.setAttribute('aria-pressed', +x.dataset.i === i); }); $('th-panel').innerHTML = '<h3>' + TH[i].b + '</h3><p>' + TH[i].d + '</p>'; }
+    each(ch.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(2);
+  })();
+
+  /* ================= 03 · NOVE SINAIS ================= */
+  (function(){
+    var g = $('g9'), cur = [0, 0];
+    var h = '<span></span>' + LENS.map(function(l){ return '<span class="hd">' + l.s + '</span>'; }).join('');
+    TRAIT.forEach(function(t, i){
+      h += '<span class="rh">' + t.n + '</span>';
+      LENS.forEach(function(l, j){ h += '<button data-t="' + i + '" data-l="' + j + '" aria-pressed="false" aria-label="' + t.n + ' · ' + l.s + '">' + l.s + '</button>'; });
+    });
+    g.innerHTML = h;
+    each(g.querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ cur = [+b.dataset.t, +b.dataset.l]; draw(); }); });
+    var BASE = [9, 11, 7.5, 12, 8, 13, 10, 14, 13];
+    function draw(){
+      var t = cur[0], l = cur[1], T = TRAIT[t], Lz = LENS[l];
+      each(g.querySelectorAll('button'), function(b){ b.setAttribute('aria-pressed', +b.dataset.t === t && +b.dataset.l === l); });
+      var mul = l === 2 ? .12 : (l === 1 ? 1.3 : 1), s = BASE.map(function(v){ return v * mul; });
+      var mx = Math.max.apply(null, s) * 1.25, X0 = 60, X1 = 540, Y0 = 250, Y1 = 30;
+      function x(i){ return X0 + i * (X1 - X0) / 8; }
+      function y(v){ return Y0 - v / mx * (Y0 - Y1); }
+      var mean = s.reduce(function(a, b){ return a + b; }, 0) / s.length;
+      var sd = Math.sqrt(s.reduce(function(a, b){ return a + (b - mean) * (b - mean); }, 0) / (s.length - 1));
+      var o = '<line x1="' + X0 + '" y1="' + Y0 + '" x2="' + X1 + '" y2="' + Y0 + '" stroke="#cbd5e1"/>';
+      s.forEach(function(v, i){ o += '<text x="' + x(i) + '" y="' + (Y0 + 22) + '" text-anchor="middle" style="font-size:13px; fill:var(--muted)">' + L('ano ', 'yr ') + (i + 1) + '</text>'; });
+      if (t === 1) o += '<rect x="' + X0 + '" y="' + y(mean + sd) + '" width="' + (X1 - X0) + '" height="' + (y(mean - sd) - y(mean + sd)) + '" fill="color-mix(in srgb, var(--red) 14%, white)"/>';
+      if (t <= 1) o += '<line x1="' + X0 + '" y1="' + y(mean) + '" x2="' + X1 + '" y2="' + y(mean) + '" stroke="' + (t === 0 ? 'var(--red)' : 'var(--ink-2)') + '" stroke-width="' + (t === 0 ? 3 : 1.5) + '" stroke-dasharray="' + (t === 0 ? '0' : '6 5') + '"/>';
+      var pts = s.map(function(v, i){ return x(i) + ',' + y(v); }).join(' ');
+      o += '<polyline points="' + pts + '" fill="none" stroke="var(--navy)" stroke-width="3" stroke-linejoin="round"/>';
+      s.forEach(function(v, i){ o += '<circle cx="' + x(i) + '" cy="' + y(v) + '" r="5" fill="var(--navy)"/>'; });
+      if (t === 2) s.forEach(function(v, i){ if (!i) return; var c = (v / s[i - 1] - 1) * 100, up = c >= 0;
+        o += '<text x="' + ((x(i) + x(i - 1)) / 2) + '" y="' + (Math.min(y(v), y(s[i - 1])) - 12) + '" text-anchor="middle" style="font-size:12.5px; font-weight:700; fill:' + (up ? 'var(--navy)' : 'var(--red)') + '">' + (up ? '+' : '−') + fmt(Math.abs(c), 0) + '%</text>'; });
+      var lab = t === 0 ? L('média = tamanho', 'average = size') : (t === 1 ? L('faixa = oscilação (± 1 desvio-padrão)', 'band = swings (± 1 standard deviation)') : L('variação de um ano para o outro', 'change from one year to the next'));
+      o += '<text x="' + X0 + '" y="20" style="font-size:14px; font-weight:700; fill:var(--ink-2)">' + Lz.s + ' (' + Lz.u + ') · ' + lab + '</text>';
+      $('sn-svg').innerHTML = o;
+      $('sn-panel').innerHTML = '<div class="tag">' + T.n + ' · ' + Lz.s + ' · ' + T.h + '</div><p><strong>' + Lz.n + ':</strong> ' + Lz.d + '</p><p><strong>' + T.n + ':</strong> ' + T.d + '</p>';
+    }
+    draw();
+  })();
+
+  /* ================= 04 · SEIS RÉGUAS ================= */
+  (function(){
+    var tb = document.querySelector('#rg-tab tbody'), cur = 0;
+    tb.innerHTML = RG.map(function(r, i){
+      return '<tr class="row" data-i="' + i + '" tabindex="0" role="button"><td>' + r.e + ' · ' + r.n + '</td>' + r.c.map(function(v, j){ return '<td>' + (v ? (j === 5 ? '<span class="m">−</span>' : '<span class="k"></span>') : '<span class="z">·</span>') + '</td>'; }).join('') + '</tr>';
+    }).join('');
+    function pick(i){
+      cur = i; each(tb.children, function(tr){ tr.classList.toggle('on', +tr.dataset.i === i); });
+      var r = RG[i];
+      $('rg-panel').innerHTML = '<div class="tag">' + L('Régua ', 'Yardstick ') + r.e + '</div><h3>' + r.n + '</h3><p>' + r.d + '</p>';
+    }
+    each(tb.children, function(tr){
+      tr.addEventListener('click', function(){ pick(+tr.dataset.i); });
+      tr.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); pick(+tr.dataset.i); } });
+    });
+    pick(0);
+  })();
+
+  /* ================= 05 · PAÍSES ================= */
+  (function(){
+    var sc = $('pa-scene'), W = 500, D = 110, BW = 50, GAP = 18, st = makeStage(sc, W, D, {ay:'78%', rx:'62deg'});
+    rotatable(sc, st, -4, 4);
+    var x0 = (W - (7 * BW + 6 * GAP)) / 2, bars = [], K = 220 / 1839758.04, tot6 = 0;
+    PIB.forEach(function(p){ if (!p.out) tot6 += p.v; });
+    function bi(v){ return EN ? '$' + fmt(v / 1e6, 2) + ' tn' : 'US$ ' + fmt(v / 1e6, 2) + ' tri'; }
+    PIB.forEach(function(p, i){
+      var x = x0 + i * (BW + GAP);
+      var b = box({w:BW, d:40, x:x, y:D / 2 - 20, h:Math.max(6, p.v * K), c:p.out ? '#cbd5e1' : (i === 0 ? 'var(--red)' : 'var(--navy)'), cls:p.out ? 'out' : '', label:fmt(p.v / 1e6, 2)});
+      b.setAttribute('role', 'button'); b.tabIndex = 0; b.setAttribute('aria-label', EN ? p.en : p.n);
+      b.addEventListener('click', function(){ if (M.wasDrag(sc)) return; pick(i); });
+      b.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); pick(i); } });
+      st.appendChild(b); bars.push(b);
+      flatLabel(st, EN ? p.en : p.n, x - 14, D / 2 + 28, BW + 28);
+    });
+    function pick(i){
+      var p = PIB[i];
+      bars.forEach(function(b, j){ b.classList.toggle('active', j === i); });
+      $('pa-panel').innerHTML = '<div class="tag">' + (EN ? p.en : p.n) + ' · ' + L((i + 1) + 'º PIB da lista', 'No. ' + (i + 1) + ' GDP on the list') + '</div><p><strong>' + bi(p.v) + '</strong> ' + L('de PIB', 'of GDP') + '. ' +
+        (p.out ? L('Ficou fora da amostra: não há balanços das empresas venezuelanas desde 2014 (dado de PIB também de 2014).', 'Left out of the sample: there are no Venezuelan company balance sheets since 2014 (GDP data also from 2014).') :
+        L('Na amostra. Sozinho, é ' + fmt(p.v / tot6 * 100, 0) + '% do PIB somado dos seis (conta nossa).', 'In the sample. On its own, it is ' + fmt(p.v / tot6 * 100, 0) + '% of the six countries’ combined GDP (our calculation).')) + '</p>';
+    }
+    pick(0);
+  })();
+
+  /* ================= 06 · CRISES ================= */
+  (function(){
+    var cal = $('cal'), cur = 0, cut = 0;
+    var h = '<span></span>';
+    for (var y = 2011; y <= 2020; y++) h += '<span class="yr">' + (EN ? y : y) + '</span>';
+    CR.forEach(function(c, i){
+      h += '<span class="cn" data-i="' + i + '" role="button" tabindex="0">' + c.n + '</span>';
+      for (var yy = 2011; yy <= 2020; yy++) for (var q = 1; q <= 4; q++){
+        var r = c.q.some(function(p){ return p[0] === yy && p[1] === q; });
+        h += '<span class="q' + (c.na ? ' na' : (r ? ' r' : '')) + (yy === 2020 ? ' fut' : '') + '" data-c="' + i + '" title="' + c.n + ' · Q' + q + '/' + yy + '"></span>';
+      }
+    });
+    cal.innerHTML = h;
+    function count(c){ return c.q.filter(function(p){ return p[0] <= 2019; }).length; }
+    function pick(i){
+      cur = i;
+      each(cal.querySelectorAll('.cn'), function(x){ x.classList.toggle('on', +x.dataset.i === i); });
+      var c = CR[i], n = count(c), all = c.q.length;
+      $('cr-panel').innerHTML = '<div class="tag">' + c.n + '</div>' + (c.na ? '<p>' + c.t + '</p>' :
+        '<p><strong>' + n + '</strong> ' + (n === 1 ? L('trimestre em recessão de 2011 a 2019', 'quarter in recession from 2011 to 2019') : L('trimestres em recessão de 2011 a 2019', 'quarters in recession from 2011 to 2019')) + (all > n ? L(' (mais ' + (all - n) + ' em 2020)', ' (plus ' + (all - n) + ' in 2020)') : '') + '. ' + c.t + '</p>');
+    }
+    each(cal.querySelectorAll('.cn'), function(x){
+      x.addEventListener('click', function(){ pick(+x.dataset.i); });
+      x.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); pick(+x.dataset.i); } });
+    });
+    each(cal.querySelectorAll('.q'), function(x){ x.addEventListener('click', function(){ pick(+x.dataset.c); }); });
+    segInit($('cr-seg'), [L('Quadro inteiro (até 2020)', 'Whole table (to 2020)'), L('Só o período estudado', 'Only the period studied')], 0, function(v){ cal.classList.toggle('cut', v === 1); });
+    pick(0);
+  })();
+
+  /* ================= 07 · TABULEIRO ================= */
+  (function(){
+    var sc = $('tb-scene'), CW = 46, CD = 24, GX = 6, GL = 20, GY = 8, W = 6 * CW + 3 * GX + 2 * GL, D = 10 * CD + 9 * GY + 2 * 10;
+    var st = makeStage(sc, W, D, {ay:'52%', rx:'34deg'});
+    rotatable(sc, st, -4, 4);
+    var tiles = [], answered = false, grp = 3, cur = null;
+    function cx(li, c){ return li * (2 * CW + GX + GL) + c * (CW + GX); }
+    function cy(ri){ return ri * (CD + GY) + (ROWS[ri].g * 10); }
+    ROWS.forEach(function(r, ri){
+      LENS.forEach(function(l, li){
+        [1, 0].forEach(function(c, ci){
+          var s = simAt(r.k, l.k, c);
+          var b = box({w:CW, d:CD, x:cx(li, ci), y:cy(ri), h:3, c:'var(--no)'});
+          b.setAttribute('role', 'button'); b.tabIndex = 0;
+          b.setAttribute('aria-label', r.n + ' · ' + l.s + ' · ' + (c ? L('com controles', 'with controls') : L('sem controles', 'without controls')) + ' · ' + (s ? L('passou', 'passed') : L('não passou', 'did not pass')));
+          var t = {b:b, r:r, ri:ri, l:l, c:c, s:s};
+          b.addEventListener('click', function(){ if (M.wasDrag(sc)) return; info(t); });
+          b.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); info(t); } });
+          st.appendChild(b); tiles.push(t);
+        });
+        if (ri === 0) flatLabel(st, l.s, cx(li, 0) - 6, -38, 2 * CW + GX + 12);
+        if (ri === 0) [L('C', 'W'), L('S', 'N')].forEach(function(t, ci){ flatLabel(st, t, cx(li, ci), -18, CW, 'font-size:11px; color:var(--muted)'); });
+      });
+      flatLabel(st, r.n, -172, cy(ri) + 4, 164).classList.add('rl');
+    });
+    var OPTS = [L('Quase todos', 'Almost all'), L('Uns 9', 'About 9'), L('Nenhum', 'None')];
+    var qz = $('tb-quiz');
+    qz.innerHTML = OPTS.map(function(o, i){ return '<button data-i="' + i + '" aria-pressed="false">' + o + '</button>'; }).join('');
+    each(qz.children, function(b){ b.addEventListener('click', function(){
+      each(qz.children, function(x){ x.setAttribute('aria-pressed', x === b); });
+      answered = +b.dataset.i; reveal();
+    }); });
+    var GR = [
+      {n:L('Um traço sozinho', 'One feature alone'), g:0},
+      {n:L('Dois ou três juntos', 'Two or three together'), g:1},
+      {n:L('Multiplicados', 'Multiplied'), g:2}
+    ];
+    function cnt(g){ var t = tiles.filter(function(x){ return x.r.g === g; }); return [t.filter(function(x){ return x.s; }).length, t.length]; }
+    var cb = $('tb-count');
+    cb.innerHTML = GR.map(function(gr, i){ var c = cnt(gr.g); return '<button data-g="' + i + '" aria-pressed="false"><b>' + c[0] + ' ' + L('de', 'of') + ' ' + c[1] + '</b>' + gr.n + '</button>'; }).join('');
+    each(cb.children, function(b){ b.addEventListener('click', function(){
+      var g = +b.dataset.g; grp = grp === g ? 3 : g;
+      each(cb.children, function(x){ x.setAttribute('aria-pressed', +x.dataset.g === grp); });
+      if (answered === false) answered = -1;
+      reveal();
+    }); });
+    function reveal(){
+      tiles.forEach(function(t){
+        var on = answered !== false && t.s;
+        t.b.style.setProperty('--h', (on ? 16 : 2) + 'px');
+        t.b.style.setProperty('--c', on ? (t.s[4] ? 'var(--cri)' : 'var(--nor)') : 'var(--no)');
+        t.b.classList.toggle('dim', grp !== 3 && t.r.g !== grp);
+      });
+      var fb = '';
+      if (answered === 2) fb = L('<p><strong>Acertou:</strong> nenhum dos 18 passou.</p>', '<p><strong>Right:</strong> none of the 18 passed.</p>');
+      else if (answered === 0 || answered === 1) fb = L('<p><strong>Não:</strong> nenhum dos 18 passou.</p>', '<p><strong>No:</strong> none of the 18 passed.</p>');
+      var g = grp === 3 ? '' : GR[grp].n.toLowerCase();
+      $('tb-panel').innerHTML = fb + '<p>' + (grp === 3 ?
+        L('As hipóteses H1, H2 e H3 testavam cada traço sozinho, e nenhuma passou com nenhum indicador. Os “sim” só aparecem quando os traços entram juntos ou multiplicados: <strong>11 das 60 casas</strong>. Toque num grupo ou numa casa.', 'Hypotheses H1, H2 and H3 tested each feature on its own, and none passed with any indicator. The “yes” cells only appear when the features enter together or multiplied: <strong>11 of the 60 cells</strong>. Tap a group or a cell.') :
+        L('Grupo “' + g + '”: ', 'Group “' + g + '”: ') + cnt(GR[grp].g)[0] + L(' de ', ' of ') + cnt(GR[grp].g)[1] + L(' casas passaram.', ' cells passed.') + (grp === 2 ? L(' Oscilação × crescimento não passou em nenhuma.', ' Swings × growth passed in none.') : '')) + '</p>';
+    }
+    function info(t){
+      cur = t;
+      tiles.forEach(function(x){ x.b.classList.toggle('active', x === t); });
+      if (answered === false){ answered = -1; reveal(); return; }
+      var s = t.s, h = '<div class="tag">' + t.r.n + ' · ' + t.l.s + ' · ' + (t.c ? L('com controles', 'with controls') : L('sem controles', 'without controls')) + '</div>';
+      if (!s) h += '<p><span class="no-t">' + L('Não passou', 'Did not pass') + '</span> ' + L('em nenhuma das seis réguas da dívida.', 'in any of the six debt yardsticks.') + '</p>';
+      else h += '<p><span class="' + (s[4] ? 'cri-t' : 'nor-t') + '">' + L('Passou', 'Passed') + '</span> ' + L('na régua ', 'in yardstick ') + s[3].map(function(e){ return e + ' (' + rgName(e).toLowerCase() + ')'; }).join(L(' e na ', ' and in ')) + ', ' +
+        (s[4] ? L('com a marca de crise.', 'with the crisis mark.') : L('em período normal.', 'in a normal period.')) + '</p>';
+      $('tb-panel').innerHTML = h;
+    }
+    reveal();
+  })();
+
+  /* ================= 08 · CONTROLES E CRISE ================= */
+  (function(){
+    var sc = $('pi-scene'), W = 340, D = 140, BW = 96, BH = 18, st = makeStage(sc, W, D, {ay:'78%'});
+    rotatable(sc, st, -10, 6);
+    var X = [30, 214], blocks = [], mode = 0;
+    RES.slice().sort(function(a, b){ return b.cr - a.cr; }).forEach(function(r){
+      var b = box({w:BW, d:BW, x:X[0], y:D / 2 - BW / 2, z:0, h:BH - 2, c:r.cr ? 'var(--cri)' : 'var(--nor)'});
+      st.appendChild(b); blocks.push({b:b, r:r});
+    });
+    var labs = [flatLabel(st, '', X[0] - 20, D / 2 + BW / 2 + 16, BW + 40), flatLabel(st, '', X[1] - 20, D / 2 + BW / 2 + 16, BW + 40)];
+    var MODES = [
+      {b:L('Com × sem controles', 'With × without controls'), k:function(r){ return r.c ? 0 : 1; }, l:[L('com controles', 'with controls'), L('sem controles', 'without controls')],
+       p:L('Só <strong>2 dos 13</strong> resultados vieram de modelos com o tamanho e a tangibilidade da empresa; os outros 11 só apareceram sem esses controles. No indicador de mercado, nada passou com controles, como o autor anota.', 'Only <strong>2 of the 13</strong> results came from models with company size and tangibility; the other 11 only appeared without these controls. In the market indicator, nothing passed with controls, as the author notes.')},
+      {b:L('Crise × normal', 'Crisis × normal'), k:function(r){ return r.cr ? 0 : 1; }, l:[L('marca de crise', 'crisis mark'), L('período normal', 'normal period')],
+       p:L('<strong>8 dos 13</strong> resultados vêm com a marca de crise (em negrito no Quadro 9), incluindo os 4 do indicador de mercado; 5 são de período normal.', '<strong>8 of the 13</strong> results carry the crisis mark (in bold in Table 9), including all 4 of the market indicator; 5 are from normal periods.')},
+    ];
+    function draw(){
+      var m = MODES[mode], n = [0, 0];
+      blocks.forEach(function(o){ var k = m.k(o.r), z = n[k]++ * BH; o.b.style.left = X[k] + 'px'; o.b.style.setProperty('--z', z + 'px'); });
+      labs.forEach(function(l, i){ l.textContent = m.l[i] + ' · ' + n[i]; });
+      $('pi-panel').innerHTML = '<p>' + m.p + '</p>';
+    }
+    segInit($('pi-seg'), MODES.map(function(m){ return m.b; }), 0, function(v){ mode = v; draw(); });
+    draw();
+  })();
+
+  /* ================= 09 · QUAL DÍVIDA ================= */
+  (function(){
+    var svg = $('qd-svg'), cur = 3;
+    var cnt = RG.map(function(r){ return RES.filter(function(x){ return x.e === r.e; }); });
+    function draw(){
+      var o = '', X0 = 262, X1 = 520, RH = 50, mx = 6;
+      RG.forEach(function(r, i){
+        var y = 10 + i * RH, n = cnt[i].length, w = n / mx * (X1 - X0);
+        o += '<g class="bar' + (i === cur ? ' on' : '') + '" data-i="' + i + '" role="button" tabindex="0"><rect class="bg" x="0" y="' + y + '" width="560" height="' + (RH - 4) + '" rx="8" fill="transparent"/>' +
+          '<text x="' + (X0 - 12) + '" y="' + (y + 28) + '" text-anchor="end" style="font-size:14px; font-weight:600; fill:var(--ink)">' + r.e + ' · ' + r.n + '</text>' +
+          '<rect x="' + X0 + '" y="' + (y + 10) + '" width="' + Math.max(n ? w : 0, 0) + '" height="26" rx="4" fill="' + (r.e === 3 ? 'var(--red)' : 'var(--navy)') + '"/>' +
+          (n ? '' : '<line x1="' + X0 + '" y1="' + (y + 10) + '" x2="' + X0 + '" y2="' + (y + 36) + '" stroke="' + (r.e === 3 ? 'var(--red)' : '#94a3b8') + '" stroke-width="3"/>') +
+          '<text x="' + (X0 + w + 10) + '" y="' + (y + 29) + '" style="font-size:16px; font-weight:800; fill:var(--ink)">' + n + '</text></g>';
+      });
+      svg.innerHTML = o;
+      each(svg.querySelectorAll('.bar'), function(g){
+        g.addEventListener('click', function(){ cur = +g.dataset.i; draw(); });
+        g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); cur = +g.dataset.i; draw(); } });
+      });
+      var r = RG[cur], list = cnt[cur];
+      $('qd-panel').innerHTML = '<div class="tag">' + L('Régua ', 'Yardstick ') + r.e + ' · ' + r.n + '</div>' +
+        (list.length ? '<p>' + list.length + L(' resultado' + (list.length > 1 ? 's' : '') + ': ', ' result' + (list.length > 1 ? 's' : '') + ': ') + list.map(function(x){ return '<span class="' + (x.cr ? 'cri-t' : 'nor-t') + '">' + rowName(x.r).toLowerCase() + '</span> (' + lensS(x.l) + ', ' + (x.c ? L('com', 'with') : L('sem', 'without')) + L(' controles)', ' controls)'); }).join('; ') + '.</p>' :
+        '<p>' + L('Nenhum resultado com esta régua.', 'No result with this yardstick.') + (r.e === 3 ? L(' É a régua que a dissertação destaca como a mais usada pelo mercado.', ' It is the yardstick the dissertation highlights as the one most used by the market.') : '') + '</p>');
+    }
+    draw();
+  })();
+
+  /* ================= 10 · LEITURA DO AUTOR ================= */
+  (function(){
+    var R = [
+      {s:'ROA', c:'var(--cri)', h:L('Lucro sobre o ativo: sentido contrário ao esperado', 'Return on assets: opposite to the expected direction'),
+       t:L('O sinal saiu negativo; com a marca de crise, o autor lê que as empresas se endividaram mais quando o caixa diminuiu.', 'The sign came out negative; with the crisis mark, the author reads that companies took on more debt when cash fell.')},
+      {s:'ROIC', c:'var(--nor)', h:L('Lucro sobre o capital: mais caixa, mais dívida', 'Return on capital: more cash, more debt'),
+       t:L('Aqui o tamanho foi o fator mais importante, e com sinal positivo: a dívida sobe com o crescimento e o tamanho do caixa, mas também quando o caixa oscila. As empresas maiores não deveram mais, ao contrário do esperado.', 'Here size was the most important factor, with a positive sign: debt rises with the growth and size of cash, but also when cash swings. Larger companies did not owe more, contrary to expectations.')},
+      {s:L('Mercado/contábil', 'Market/book'), c:'var(--cri)', h:L('Valor de mercado: caixa firme, mais dívida', 'Market value: steady cash, more debt'),
+       t:L('Sinais negativos para a oscilação: a empresa pode dever mais quando o caixa oscila menos. Nos resultados com marca de crise, a dívida cresce por necessidade de caixa naquele momento.', 'Negative signs for swings: the company can owe more when cash swings less. In the results with the crisis mark, debt grows out of a need for cash at that moment.')}
+    ];
+    var ch = $('au-chips');
+    ch.innerHTML = R.map(function(r, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="' + (i === 0) + '">' + r.s + '</button>'; }).join('');
+    function show(i){
+      each(ch.children, function(x){ x.setAttribute('aria-pressed', +x.dataset.i === i); });
+      var r = R[i];
+      $('au-reads').innerHTML = '<div class="read" style="--rc:' + r.c + '"><h3>' + r.h + '</h3>' + r.t + ' <em style="font-style:normal; font-size:.74rem; color:var(--muted)">' + L('(autor)', '(author)') + '</em></div>' +
+        '<div class="read" style="--rc:#64748b">' + L('<strong>Na conclusão:</strong> a dívida é mais bem explicada pelo tamanho e pelo crescimento do caixa; a oscilação não traz resultados concretos, mas reforça que as empresas precisam de dívida quando a operação não gera caixa.', '<strong>In the conclusion:</strong> debt is best explained by the size and growth of cash; swings bring no concrete results, but reinforce that companies need debt when operations do not generate cash.') + ' <em style="font-style:normal; font-size:.74rem; color:var(--muted)">' + L('(autor)', '(author)') + '</em></div>';
+    }
+    each(ch.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(0);
+    // Ilustração: aposta × crise
+    var o = '';
+    [[0, L('A aposta', 'The bet'), [40, 55, 70, 85], [30, 42, 54, 66]], [1, L('Na crise (autor)', 'In a crisis (author)'), [85, 70, 52, 40], [30, 46, 62, 78]]].forEach(function(p){
+      var ox = p[0] * 285 + 10, w = 255, base = 250;
+      o += '<text x="' + (ox + w / 2) + '" y="24" text-anchor="middle" style="font-size:16px; font-weight:800; fill:' + (p[0] ? 'var(--red)' : 'var(--navy)') + '">' + p[1] + '</text>';
+      o += '<line x1="' + ox + '" y1="' + base + '" x2="' + (ox + w) + '" y2="' + base + '" stroke="#cbd5e1"/>';
+      p[2].forEach(function(v, i){ var x = ox + 18 + i * 58;
+        o += '<rect x="' + x + '" y="' + (base - v * 2) + '" width="20" height="' + (v * 2) + '" rx="3" fill="#64748b"/>';
+        o += '<rect x="' + (x + 23) + '" y="' + (base - p[3][i] * 2) + '" width="20" height="' + (p[3][i] * 2) + '" rx="3" fill="' + (p[0] ? 'var(--red)' : 'var(--navy)') + '"/>';
+      });
+      o += '<text x="' + (ox + 18) + '" y="' + (base + 24) + '" style="font-size:13px; fill:var(--ink-2)"><tspan fill="#64748b" font-weight="700">■</tspan> ' + L('caixa', 'cash') + '  <tspan fill="' + (p[0] ? 'var(--red)' : 'var(--navy)') + '" font-weight="700">■</tspan> ' + L('dívida', 'debt') + '</text>';
+      o += '<text x="' + (ox + w / 2) + '" y="' + (base + 46) + '" text-anchor="middle" style="font-size:13px; fill:var(--muted)">' + L('ano a ano →', 'year by year →') + '</text>';
+    });
+    $('au-svg').innerHTML = o;
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
