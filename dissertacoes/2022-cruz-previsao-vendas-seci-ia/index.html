@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O feeling do vendedor e a IA · PPGA Interativo</title>
+<meta name="description" content="A dissertação de mestrado de Milton Prudencio da Cruz Junior (Mackenzie, 2022): como o conhecimento que os vendedores trocam entre si poderia, pelo modelo SECI, virar dado para a inteligência artificial prever vendas complexas entre empresas, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/dissertacoes/2022-cruz-previsao-vendas-seci-ia/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2214%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>FC</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  :root{
+    --tac:var(--navy);   /* conhecimento tácito, as pessoas */
+    --exp:var(--red);    /* conhecimento explícito, dados, IA */
+    --mid:#334155;       /* forecast, gestor */
+    --off:#cbd5e1;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .flag{display:inline-block; font-size:.74rem; font-weight:600; color:var(--red); background:color-mix(in srgb, var(--red) 10%, transparent); padding:3px 9px; border-radius:6px;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 3.8vw, 2.55rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{display:flex; gap:8px 16px; justify-content:center; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:6px;}
+  #hero-scene .top-label{font-family:var(--serif); font-size:38px;}
+  #hero-scene .face-label{font-size:11px; letter-spacing:.08em;}
+  #hero-scene .slab.cube{transition:none;}
+
+  /* ---------- Componentes comuns ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 12px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font:inherit; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 20px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.04rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel .tag .nt{text-transform:none; letter-spacing:0;}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .q{font-family:var(--serif); font-size:.88rem; line-height:1.45; color:var(--ink); border-left:3px solid var(--exp); padding:2px 0 2px 12px; margin:8px 0;}
+  .q cite{display:block; font-family:var(--sans); font-style:normal; font-size:.72rem; color:var(--muted); margin-top:3px;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font:inherit; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button.on{background:var(--ink); color:#fff;}
+  .vlist{display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 4px;}
+  .vlist button{border:1px solid var(--border); background:var(--card); border-radius:8px; padding:5px 10px; cursor:pointer; color:var(--ink-2); display:flex; align-items:center; gap:6px; font:inherit; font-size:.8rem;}
+  .vlist button i{width:10px; height:10px; border-radius:3px; display:block;}
+  .vlist button.on{border-color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink); color:var(--ink);}
+  .answers{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 6px;}
+  .answers button{border:1px solid var(--border); background:var(--card); border-radius:9px; padding:8px 14px; font:inherit; font-size:.86rem; font-weight:600; cursor:pointer; color:var(--ink-2);}
+  .answers button:hover{border-color:var(--ink);}
+  .answers button.pick{background:var(--red); color:#fff; border-color:var(--red);}
+  .answers button.right{background:var(--tac); color:#fff; border-color:var(--tac);}
+  .facts{display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; margin-top:12px;}
+  .fact{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:9px 12px;}
+  .fact b{display:block; font-family:var(--serif); font-size:1.15rem; color:var(--ink); line-height:1.2;}
+  .fact span{font-size:.74rem; color:var(--muted); line-height:1.3; display:block;}
+  .legend{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.8rem; color:var(--ink-2); margin-top:8px; min-height:2.6em; justify-content:center;}
+  .legend i{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:5px; vertical-align:-1px;}
+
+  /* ---------- 02 · Venda ---------- */
+  #sale-scene .top-label{font-size:12px; font-weight:800; letter-spacing:.01em; text-align:center; line-height:1.1; padding:3px; color:#0f172a;}
+  #sale-scene .face-label{font-size:10px; letter-spacing:.1em;}
+  #sale-panel{min-height:210px;}
+  .fc-card{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px;}
+  .fc-card div{border:1px dashed var(--mid); border-radius:10px; padding:8px 12px; font-size:.8rem; color:var(--ink-2); background:var(--card);}
+  .fc-card div b{display:block; font-family:var(--serif); font-size:1.05rem; color:var(--ink);}
+
+  /* ---------- 03 · SECI ---------- */
+  #seci-scene .slab{cursor:pointer;}
+  #seci-scene .slab.active{--oz:14px;}
+  #seci-scene .top-label{font-family:var(--serif); font-size:40px;}
+  #seci-scene .face-label{font-size:10.5px; letter-spacing:.06em;}
+  #seci-panel{min-height:260px;}
+  .conv{display:inline-flex; align-items:center; gap:6px; font-size:.78rem; font-weight:700; margin-bottom:6px;}
+  .conv span{padding:2px 8px; border-radius:6px; color:#fff;}
+
+  /* ---------- 04 · Modelo ---------- */
+  .flow{display:grid; grid-template-columns:1.15fr 22px 1fr 22px 1fr 22px 1fr 22px .9fr; align-items:center; gap:4px; margin-top:10px;}
+  .node{border:2px solid var(--nc, var(--ink)); background:var(--card); border-radius:12px; padding:10px 8px; font:inherit; font-size:.8rem; font-weight:600; color:var(--ink); cursor:pointer; text-align:center; min-height:70px; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:all .3s; line-height:1.25;}
+  .node small{display:block; font-weight:500; font-size:.68rem; color:var(--muted); margin-top:3px;}
+  .node.on{background:color-mix(in srgb, var(--nc) 12%, white); box-shadow:0 0 0 3px color-mix(in srgb, var(--nc) 30%, transparent);}
+  .node.ghost{border-style:dashed; color:var(--muted); --nc:var(--neutral) !important;}
+  .arr{height:3px; background:var(--exp); position:relative; transition:background .3s;}
+  .arr::after{content:""; position:absolute; right:-2px; top:-5px; border:6.5px solid transparent; border-left:9px solid var(--exp); border-right:0; transition:border-color .3s;}
+  .arr.ghost{background:repeating-linear-gradient(90deg, var(--neutral) 0 5px, transparent 5px 9px);}
+  .arr.ghost::after{border-left-color:var(--neutral);}
+  .mgr{display:grid; grid-template-columns:1.15fr 22px auto; gap:4px; align-items:center; margin-top:10px; max-width:52%;}
+  @media (max-width:760px){ .mgr{max-width:none;} }
+  .mgr .arr{background:var(--mid);} .mgr .arr::after{border-left-color:var(--mid);}
+  #model-panel{min-height:96px; margin-top:12px;}
+  #modelo h2{font-size:clamp(1.5rem, 3vw, 2.2rem);}
+  .gap3{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:10px;}
+  .gap3 div{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:8px 10px; font-size:.74rem; color:var(--muted); line-height:1.35;}
+  .gap3 div b{display:block; font-family:var(--serif); font-size:1rem; color:var(--ink);}
+  @media (max-width:760px){
+    .flow{grid-template-columns:1fr; gap:2px;}
+    .flow .arr{width:3px; height:16px; margin:0 auto;}
+    .flow .arr::after{right:-5px; top:auto; bottom:-4px; border:6.5px solid transparent; border-top:9px solid var(--exp); border-bottom:0;}
+    .flow .arr.ghost{background:repeating-linear-gradient(180deg, var(--neutral) 0 5px, transparent 5px 9px);}
+    .flow .arr.ghost::after{border-top-color:var(--neutral); border-left-color:transparent;}
+    .node{min-height:44px; padding:7px;}
+    .gap3{grid-template-columns:1fr;}
+  }
+
+  /* ---------- 05 · Executivos ---------- */
+  #exec-scene .slab{transition:transform .55s cubic-bezier(.2,.8,.2,1);}
+  #exec-msg{font-size:.88rem; color:var(--ink-2); min-height:3em; margin-top:6px;}
+
+  /* ---------- 06 · Grupos ---------- */
+  .orgs{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+  .org{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; border-top:5px solid var(--oc);}
+  .org h3{font-size:.95rem; margin-bottom:4px;}
+  .org p{font-size:.76rem; margin:0 0 6px; line-height:1.4;}
+  .ppl{display:flex; gap:5px; margin-top:4px;}
+  .ppl span{width:22px; height:22px; border-radius:50%; background:var(--oc); display:block;}
+  .hbars{display:grid; gap:8px; margin-top:8px;}
+  .hbar{display:grid; grid-template-columns:118px 1fr 28px; gap:8px; align-items:center; font-size:.82rem; color:var(--ink-2);}
+  .hbar .tr{height:22px; background:#eef2f7; border-radius:5px; overflow:hidden; display:flex; gap:2px;}
+  .hbar .tr i{display:block; width:calc((100% - 16px) / 9); height:100%; background:var(--tac); border-radius:3px; transform-origin:left; transition:transform .5s;}
+  .hbar b{text-align:right; color:var(--ink); font-variant-numeric:tabular-nums;}
+  #grp-note{font-size:.78rem; color:var(--muted); margin-top:8px; min-height:2.4em;}
+  @media (max-width:600px){ .orgs{grid-template-columns:1fr;} .hbar{grid-template-columns:96px 1fr 24px; font-size:.76rem;} }
+
+  /* ---------- 07 · Análise ---------- */
+  #cat-scene .slab{cursor:pointer;}
+  #cat-scene .slab.dim > i{opacity:.25;}
+  #cat-scene .floor-label{font-size:13px;}
+  #cat-panel{min-height:220px;}
+  .themes{display:grid; gap:4px; margin-top:6px;}
+  .themes div{display:grid; grid-template-columns:1fr 34px; gap:8px; font-size:.8rem; color:var(--ink-2); background:#f1f5f9; border-radius:8px; padding:5px 9px; line-height:1.35;}
+  .themes div b{text-align:right; color:var(--ink);}
+  .steps4{display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; margin-top:10px;}
+  .steps4 div{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:7px 9px; text-align:center;}
+  .steps4 b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink);}
+  .steps4 span{font-size:.7rem; color:var(--muted); line-height:1.25; display:block;}
+
+  /* ---------- 08 · Matriz ---------- */
+  #mx-scene .slab.dim > i{opacity:.18;}
+  #mx-scene .top-label{font-size:13px; font-weight:800;}
+  #mx-scene .floor-label{font-size:13px;}
+  #mx-panel{min-height:250px;}
+
+  /* ---------- 09 · Inesperado ---------- */
+  #ai-msg{font-size:.88rem; color:var(--ink-2); min-height:3.2em;}
+  .qbars{display:grid; gap:10px; margin-top:10px;}
+  .qbar{display:grid; grid-template-columns:46px 1fr; gap:10px; align-items:center; font-size:.84rem; color:var(--ink-2);}
+  .qbar > b{font-family:var(--serif); color:var(--ink);}
+  .qbar .tr{height:30px; background:#eef2f7; border-radius:6px; position:relative; overflow:hidden;}
+  .qbar .tr .all{position:absolute; left:0; top:0; bottom:0; background:var(--neutral); border-radius:6px; transition:width .8s;}
+  .qbar .tr .ai{position:absolute; left:0; top:0; bottom:0; background:var(--exp); border-radius:6px; transition:width .9s cubic-bezier(.2,.8,.2,1); width:0;}
+  .qbar .tr em{position:absolute; right:8px; top:0; bottom:0; display:flex; align-items:center; font-style:normal; font-weight:700; font-size:.78rem; color:var(--ink);}
+  .qbar small{grid-column:2; font-size:.72rem; color:var(--muted); margin-top:-6px;}
+
+  /* ---------- 10 · Sinais ---------- */
+  .sigs{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px;}
+  .sig{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--neutral); transition:border-color .4s;}
+  .sig.tac{border-top-color:var(--tac);} .sig.exp{border-top-color:var(--exp);} .sig.both{border-top-color:var(--mid);}
+  .sig h3{font-size:.9rem; margin-bottom:4px;}
+  .sig .q{font-size:.76rem; margin:4px 0;}
+  .sig .pick{display:flex; gap:4px; flex-wrap:wrap; margin-top:6px;}
+  .sig .pick button{border:1px solid var(--border); background:var(--card); border-radius:7px; padding:4px 9px; font:inherit; font-size:.74rem; font-weight:600; cursor:pointer; color:var(--ink-2);}
+  .sig .pick button.mine{outline:2px solid var(--ink); outline-offset:1px;}
+  .sig .pick button.right{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .sig .ans{font-size:.74rem; color:var(--ink-2); margin-top:6px; min-height:1em;}
+  @media (max-width:760px){ .sigs{grid-template-columns:1fr;} }
+
+  /* ---------- 11 · Proposta ---------- */
+  .twocol{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:8px;}
+  @media (max-width:760px){ .twocol{grid-template-columns:1fr;} }
+  .chk{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .chk li{display:grid; grid-template-columns:24px 1fr; gap:8px; align-items:start; padding:7px 11px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2); line-height:1.4;}
+  .chk li::before{content:""; width:20px; height:20px; border-radius:50%; display:block; margin-top:1px;}
+  .chk.yes li::before{background:var(--tac); -webkit-mask:none;}
+  .chk.no li{border-style:dashed; background:repeating-linear-gradient(135deg, #fff 0 8px, #f8fafc 8px 16px);}
+  .chk.no li::before{border:2px dashed var(--exp);}
+  .twocol h3{font-size:.98rem; margin-bottom:2px;}
+  .twocol .src{font-size:.72rem; color:var(--muted);}
+  .uses{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:16px;}
+  @media (max-width:860px){ .uses{grid-template-columns:1fr;} }
+  .use{background:var(--card); border-radius:12px; padding:11px 13px; box-shadow:var(--shadow); border-top:5px solid var(--uc);}
+  .use h3{font-size:.88rem; margin-bottom:4px;}
+  .use p{font-size:.76rem; margin:0; line-height:1.45; color:var(--ink-2);}
+  .use em{font-style:normal; font-size:.68rem; color:var(--muted);}
+
+  /* ---------- 12 · Limites e créditos ---------- */
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:6px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.08rem; margin-bottom:6px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:8px 13px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.82rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; line-height:1.6; margin-top:8px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/dissertacoes/2022-cruz-previsao-vendas-seci-ia/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Dissertação de mestrado · Mackenzie · 2022</div>
+      <h1 class="rv" style="--d:.1s">O “feeling” do vendedor pode virar dado para a IA?</h1>
+      <p class="sub rv" style="--d:.2s">Nas vendas grandes entre empresas, quem prevê quanto vai vender, e quando, é a equipe de vendas, numa conversa semanal. Boa parte do que ela sabe nunca é escrita. A dissertação ouviu <strong>nove vendedores de duas empresas</strong> e propõe um caminho, o modelo SECI, para levar um pouco desse saber até a inteligência artificial. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Milton Prudencio da Cruz Junior</span>
+        <span><b>Orientador:</b> Prof. Dr. Silvio Popadiuk</span>
+        <span><b>Programa:</b> Mestrado em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#venda">Começar →</a>
+        <a class="btn ghost" href="#inesperado">Ir direto ao inesperado</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="500x330" role="img" aria-label="Quatro blocos, S, E, C e I, formam uma roda; um cubo percorre a roda e, ao passar por E e C, deixa um bloco vermelho de dados numa pilha ao lado"></div></div>
+      <div class="cap-legend">
+        <span><i class="dot" style="background:var(--tac)"></i>Saber tácito (na cabeça)</span>
+        <span><i class="dot" style="background:var(--exp)"></i>Saber explícito (registrado)</span>
+      </div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Discute como juntar a experiência dos vendedores e a inteligência artificial para planejar melhor as vendas, um caminho de produtividade pela tecnologia e pela inovação."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · VENDA COMPLEXA -->
+<section class="slide" id="venda" data-label="Venda complexa">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O problema</div>
+      <h2 class="rv" style="--d:.1s">Prever uma venda grande é prever duas coisas: quanto e quando</h2>
+      <p class="rv" style="--d:.15s">Numa loja on-line, o comprador escolhe e paga sozinho. Na <strong>venda complexa entre empresas</strong> (B2B, do inglês <em>business to business</em>), muita gente dos dois lados participa, o negócio é caro e leva meses. Mesmo assim, toda semana o vendedor precisa dizer à empresa quanto vai fechar e em que data: é o <strong><em>forecast</em></strong>. Compare os dois tipos de venda.</p>
+      <div class="seg rv" id="sale-seg" style="--d:.2s" role="group" aria-label="Tipo de venda">
+        <button class="" data-m="0">Venda simples</button>
+        <button class="on" data-m="1">Venda complexa B2B</button>
+      </div>
+      <div class="fc-card rv" style="--d:.25s">
+        <div><b>Quanto?</b>o valor que o cliente vai pagar</div>
+        <div><b>Quando?</b>a data em que o negócio fecha</div>
+      </div>
+      <p class="note rv" style="--d:.3s">Seções 1 e 2.1. Na definição usada pelo autor (Quadro 7), o <em>forecast</em> é "o compromisso que um vendedor assume perante a organização"; quanto mais perto do que de fato se vendeu, melhor.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="sale-scene" data-fit="520x300" role="img" aria-label="Duas plataformas, a empresa que vende e a que compra, com blocos para cada pessoa envolvida"></div></div>
+      <div class="panel" id="sale-panel" aria-live="polite"></div>
+      <p class="note">Ilustração nossa: os papéis vêm das seções 1 e 2.1 (vendedores, time técnico, parceiros, área de compras, áreas usuárias, quem decide e consultorias independentes); o número de blocos é só um exemplo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · SECI -->
+<section class="slide" id="seci" data-label="O modelo SECI">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> O conceito</div>
+      <h2 class="rv" style="--d:.1s">O modelo SECI liga o saber da cabeça ao saber escrito</h2>
+      <p class="rv" style="--d:.15s">Há o conhecimento <strong>explícito</strong>, o que dá para escrever num manual ou num sistema, e o <strong>tácito</strong>, a experiência que a pessoa tem mas não consegue explicar direito. O modelo SECI, de Nonaka e colegas, descreve quatro passagens entre os dois. Toque em cada letra: cada uma traz uma fala dos vendedores que o autor ligou àquela passagem.</p>
+      <div class="panel rv" id="seci-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="seci-scene" data-fit="520x360" role="img" aria-label="Quatro blocos em quadrado: Socialização, Externalização, Combinação e Internalização; E e C têm um cubo vermelho de dados em cima"></div></div>
+      <div class="vlist" id="seci-list" role="group" aria-label="As quatro passagens"></div>
+      <p class="note">Seção 2.2 e Figura 3 (adaptada de Nonaka, Toyama e Konno, 2000). O cubo vermelho marca onde, segundo a proposta do autor, o saber já está escrito e pode virar dado (Figura 5). O lugar onde as trocas acontecem, uma sala ou uma videochamada, o modelo chama de <em>Ba</em>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · MODELO PROPOSTO -->
+<section class="slide" id="modelo" data-label="A proposta">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">04</span> A ideia da dissertação</div>
+    <h2 class="rv" style="--d:.1s">A proposta: levar parte do saber da equipe até a IA pelo SECI</h2>
+    <p class="rv" style="--d:.12s; max-width:56em">Hoje, a IA que ajuda a prever vendas aprende com o que está registrado (sistema de clientes, e-mails, histórico). O que o vendedor sabe por experiência fica de fora. O autor propõe que, nas passagens de <b>Externalização</b> e <b>Combinação</b>, esse saber seja registrado e entre no conjunto de dados da IA. Troque a vista e toque nas caixas.</p>
+    <div class="seg rv" id="model-seg" style="--d:.15s" role="group" aria-label="Vista">
+      <button data-m="0">Como é hoje</button>
+      <button class="on" data-m="1">Como o autor propõe</button>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="flow" id="flow"></div>
+      <div class="mgr" id="mgr"></div>
+      <div class="panel" id="model-panel" aria-live="polite"></div>
+    </div>
+    <div class="gap3 rv" style="--d:.25s">
+      <div><b>7-Eleven</b>A inspiração: no Japão, a rede usou o SECI para levar o que os atendentes sabiam até a previsão do estoque de cada loja (caso citado pela dissertação).</div>
+      <div><b>0 artigos</b>Na Web of Science, em 2021, nenhum artigo juntava os três temas: previsão de vendas complexas, SECI e IA.</div>
+      <div><b>36 artigos lidos</b>Por isso o autor buscou cada tema à parte: 10 sobre SECI (de 211), 10 sobre IA (de 674) e 16 sobre vendas complexas (de 181).</div>
+    </div>
+    <p class="note rv" style="--d:.3s">Capítulo 3 e Figura 5 (a Figura 10, "viabilidade do modelo proposto", repete o mesmo desenho); Figura 2 para a busca na literatura. A vista "como é hoje" é a nossa leitura da seção 3 e da Figura 5. <b>O sistema não foi construído nem testado na dissertação:</b> é uma proposta.</p>
+  </div>
+</section>
+
+<!-- 05 · EXECUTIVOS -->
+<section class="slide" id="executivos" data-label="21 executivos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Primeira etapa · 21 executivos</div>
+      <h2 class="rv" style="--d:.1s">Antes dos grupos, o autor conversou com 21 executivos de vendas</h2>
+      <p class="rv" style="--d:.15s">Entre outubro de 2021 e março de 2022, ele entrevistou sócios, diretores, vice-presidentes e presidentes de 21 empresas diferentes de tecnologia da informação, todas com vendas complexas. Todos disseram que o <em>forecast</em> é difícil, que a experiência do vendedor pesa e que o julgamento do gestor decide. <strong>Com que frequência você acha que essas empresas fazem a reunião de forecast?</strong></p>
+      <div class="answers rv" id="exec-ans" style="--d:.2s" role="group" aria-label="Seu palpite"></div>
+      <p id="exec-msg" aria-live="polite"></p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="chips" id="exec-chips" role="group" aria-label="Recorte dos 21 executivos"></div>
+      <div class="fit-wrap"><div class="scene draggable" id="exec-scene" data-fit="500x300" role="img" aria-label="21 cubos, um por executivo, coloridos pelo recorte escolhido"></div></div>
+      <div class="legend" id="exec-legend" aria-live="polite"></div>
+      <p class="note">Tabela 1. As entrevistas, de até uma hora, serviram para apresentar o estudo e convidar empresas para a etapa seguinte. Cada cubo é uma pessoa; a posição dos cubos não liga um recorte ao outro.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · GRUPOS -->
+<section class="slide" id="grupos" data-label="Os grupos focais">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> O método · grupos focais</div>
+      <h2 class="rv" style="--d:.1s">Nove vendedores de duas empresas conversaram em grupo, por vídeo</h2>
+      <p class="rv" style="--d:.15s">Num <strong>grupo focal</strong>, um moderador (aqui, o próprio autor) faz perguntas abertas e as pessoas respondem e comentam as respostas umas das outras. Foram duas conversas de cerca de uma hora e meia, com as câmeras abertas, uma em cada empresa. As duas aparecem como líderes nos rankings da consultoria Gartner e autorizaram o uso do nome.</p>
+      <div class="orgs rv" style="--d:.2s">
+        <div class="org" style="--oc:var(--tac)"><h3>SailPoint Technologies</h3><p>Software de segurança digital · 2.400 pessoas · 20 anos · ações na bolsa de Nova York<br><b>22/07/2022</b> · 1h29 · 4 vendedores</p><div class="ppl"><span></span><span></span><span></span><span></span></div></div>
+        <div class="org" style="--oc:var(--mid)"><h3>Deloitte Touche Tohmatsu</h3><p>Consultoria e auditoria · 415.000 pessoas · 177 anos · capital fechado<br><b>02/09/2022</b> · 1h30 · 5 sócios e diretores</p><div class="ppl"><span></span><span></span><span></span><span></span><span></span></div></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="chips" id="grp-chips" role="group" aria-label="Perfil dos nove"></div>
+      <div class="hbars" id="grp-bars"></div>
+      <p id="grp-note" aria-live="polite"></p>
+      <p class="note">Tabelas 2 e 3 e seção 5. Cada quadradinho é uma pessoa. Nas falas, usamos o código da dissertação sem a parte que indica o cargo (O1 = SailPoint, O2 = Deloitte; R = respondente). Com a fila de espera das respostas, cada um esperava em média 20 minutos para falar.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · DAS FALAS ÀS CATEGORIAS -->
+<section class="slide" id="analise" data-label="Das falas às categorias">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Análise de conteúdo</div>
+      <h2 class="rv" style="--d:.1s">Quatro perguntas, 18 temas e seis categorias</h2>
+      <p class="rv" style="--d:.15s">O autor transcreveu as conversas e marcou, em cada resposta, os <strong>temas</strong> que apareciam (como "combinação de conhecimentos" ou "falta de registro escrito"). Depois juntou os temas em seis <strong>categorias</strong> e contou as marcações. Cada coluna é uma categoria; cada fatia, um tema. Toque numa coluna.</p>
+      <div class="steps4 rv" style="--d:.18s">
+        <div><b>4</b><span>perguntas</span></div>
+        <div><b>18</b><span>temas</span></div>
+        <div><b>6</b><span>categorias</span></div>
+        <div><b>350</b><span>marcações</span></div>
+      </div>
+      <div class="panel rv" id="cat-panel" style="--d:.22s; margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="cat-scene" data-fit="540x360" role="img" aria-label="Seis colunas, uma por categoria, empilhadas por tema; a mais alta é troca de conhecimentos, com 112 marcações"></div></div>
+      <div class="vlist" id="cat-list" role="group" aria-label="As seis categorias"></div>
+      <p class="note">Quadros 6, 7 e 9 e Tabela 4. Altura proporcional ao número de marcações. A tabela imprime "SC" para o tema socialização, que o Quadro 7 chama de "SZ".</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · MATRIZ -->
+<section class="slide" id="matriz" data-label="Trocar conhecimento">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> O que encontrou</div>
+      <h2 class="rv" style="--d:.1s">Trocar conhecimento foi o assunto que mais apareceu</h2>
+      <p class="rv" style="--d:.15s">A categoria "troca de conhecimentos" somou <strong>112 das 350 marcações</strong> (32%, conta nossa) e liderou as três primeiras perguntas. Os vendedores contaram que ajustam o <em>forecast</em> conversando: com os colegas, com o time técnico, com parceiros e, sobretudo, com o cliente. Escolha uma pergunta.</p>
+      <div class="chips rv" id="mx-chips" style="--d:.18s" role="group" aria-label="Perguntas"></div>
+      <div class="panel rv" id="mx-panel" style="--d:.22s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="mx-scene" data-fit="540x360" role="img" aria-label="Matriz de colunas: seis categorias por quatro perguntas, altura igual ao número de marcações"></div></div>
+      <div class="legend" id="mx-legend"></div>
+      <p class="note">Tabelas 4 a 8 (seção 5.5). Na pergunta 3, troca de conhecimentos e <em>forecast</em> empataram (18 cada). Falas da seção 5.5; trechos cortados com […].</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · INESPERADO -->
+<section class="slide" id="inesperado" data-label="O inesperado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> O inesperado</div>
+      <h2 class="rv" style="--d:.1s">Enquanto contavam como acertam a previsão, ninguém falou em IA</h2>
+      <p class="rv" style="--d:.15s">Nas três primeiras perguntas, os vendedores falaram de como trocam e juntam conhecimento para ajustar o <em>forecast</em>. Foram 280 marcações de temas. <strong>Em quantas delas você acha que a inteligência artificial apareceu?</strong></p>
+      <div class="answers rv" id="ai-ans" style="--d:.2s" role="group" aria-label="Seu palpite"></div>
+      <p id="ai-msg" aria-live="polite"></p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="qbars" id="ai-bars"></div>
+      <div class="legend" style="justify-content:flex-start"><span><i style="background:var(--neutral)"></i>todas as marcações da pergunta</span><span><i style="background:var(--exp)"></i>marcações da categoria IA</span></div>
+      <p class="note">Tabelas 5 a 8. A pergunta 4 era a única que citava a IA. Contas nossas: 0 de 280 nas perguntas 1 a 3; 28 de 70 (40%) na pergunta 4. <b>Leitura nossa:</b> no dia a dia descrito pelos grupos, o <em>forecast</em> se faz em conversa entre pessoas; a IA entrou na conversa quando o moderador perguntou por ela.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · SINAIS -->
+<section class="slide" id="sinais" data-label="O que a IA poderia ler">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">10</span> Pergunta 4 · o que poderia ir para a IA</div>
+    <h2 class="rv" style="--d:.1s">Alguns sinais já ficam registrados, mas o “feeling” não</h2>
+    <p class="rv" style="--d:.12s; max-width:56em">Perguntados sobre o que a IA poderia aprender, os vendedores citaram sinais muito diferentes. Para cada um, diga se é saber <b>tácito</b> (fica na pessoa), <b>explícito</b> (já está registrado em algum lugar) ou <b>os dois</b>, e compare com a leitura do autor.</p>
+    <div class="sigs rv" id="sigs" style="--d:.18s"></div>
+    <p class="note rv" style="--d:.24s">Seção 5.5, pergunta 4. Das 28 marcações da categoria IA, só 4 foram do tema "a IA não incorpora a experiência dos vendedores"; para o autor, isso mostra a expectativa de que ela passe a incorporar. Rótulo "os dois" na última fala: o autor vê ali "evidências de conhecimentos tácitos", como as análises do momento do cliente, ao lado de dados registrados.</p>
+  </div>
+</section>
+
+<!-- 11 · PROPOSTA -->
+<section class="slide" id="proposta" data-label="Na prática">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> Conclusões e próximos passos</div>
+    <h2 class="rv" style="--d:.1s">Os grupos mostraram a troca de saber, mas a IA que a usaria ainda não foi construída</h2>
+    <div class="twocol">
+      <div class="rv" style="--d:.15s">
+        <h3>O que os grupos mostraram</h3>
+        <div class="src">conclusões do autor (capítulo 6)</div>
+        <ul class="chk yes">
+          <li><span>Os vendedores trocam conhecimento de vendas entre si, com clientes e com parceiros.</span></li>
+          <li><span>Esse conhecimento é em grande parte tácito; uma parte deixa rastro em algum registro.</span></li>
+          <li><span>As quatro passagens do SECI aparecem nas falas, mas as empresas não conhecem o modelo nem sabem usá-lo.</span></li>
+          <li><span>Para os entrevistados, a IA ajudaria a acertar o <i>forecast</i> se captasse parte do saber tácito.</span></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.2s">
+        <h3>O que ainda não foi feito</h3>
+        <div class="src">observação nossa</div>
+        <ul class="chk no">
+          <li><span>Construir o sistema: a "viabilidade do modelo" (Figura 10) vem das opiniões dos grupos, não de um teste.</span></li>
+          <li><span>Medir se a previsão passa a errar menos, em valor ou em data.</span></li>
+          <li><span>Usar o SECI de propósito numa reunião de <i>forecast</i> e ver o que muda.</span></li>
+          <li><span>Ouvir outros setores e mais empresas (o autor sugere um estudo quantitativo).</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="uses">
+      <div class="use rv" style="--d:.25s; --uc:var(--tac)"><h3>Gestores de vendas</h3><p>Organizar a reunião semanal de <i>forecast</i> pelas quatro passagens do SECI e registrar o que se aprende nela, em forma de dado. <em>· sugestão do autor</em></p></div>
+      <div class="use rv" style="--d:.3s; --uc:var(--exp)"><h3>Times de dados e operações</h3><p>Usar esse registro para ajustar os conjuntos de dados com que a IA aprende a projetar as vendas. <em>· sugestão do autor</em></p></div>
+      <div class="use rv" style="--d:.35s; --uc:var(--mid)"><h3>Vendedores</h3><p>Parte do "feeling" já pode ser contada: quantas propostas o cliente pediu, a velocidade das respostas, se houve reunião. Anotar isso é um começo. <em>· leitura nossa das falas</em></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Limites e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Limites e créditos</div>
+    <h2 class="rv" style="--d:.1s">O que esta pesquisa não diz</h2>
+    <div class="end">
+      <div class="rv" style="--d:.15s">
+        <ul class="limits">
+          <li><b>Duas empresas.</b> Nove pessoas de duas grandes empresas de tecnologia e consultoria não representam todas as equipes de vendas. <em>· segundo o autor</em></li>
+          <li><b>Por vídeo.</b> Os grupos foram on-line; ao vivo, gestos e reações dariam mais informação. <em>· segundo o autor</em></li>
+          <li><b>Opinião, não teste.</b> A pesquisa ouviu o que os vendedores pensam; não construiu a IA nem mediu se a previsão melhora. <em>· observação nossa</em></li>
+          <li><b>Um grupo parecido.</b> Os nove eram homens, com curso superior, e sete tinham mais de dez anos no ramo; vendedores de outro perfil poderiam contar outra história. <em>· Tabela 2 · observação nossa</em></li>
+          <li><b>Contagens de um leitor.</b> Os temas foram marcados pelo próprio autor; a dissertação não informa uma segunda codificação independente. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.2s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          CRUZ JUNIOR, Milton Prudencio da. <em>O aprimoramento da previsão de vendas por meio da incorporação do conhecimento da equipe de vendas na inteligência artificial, mediante utilização do modelo SECI.</em> Dissertação (Mestrado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2022. Orientador: Prof. Dr. Silvio Popadiuk.
+        </div>
+        <p style="margin-top:12px; font-size:.82rem">Pesquisa qualitativa com grupos focais e análise de conteúdo por temas (Bardin). Aprovada em 29 de novembro de 2022. As empresas autorizaram a menção dos nomes (Apêndice A). Esta versão simplifica o trabalho para o público em geral.</p>
+        <div class="ctas" style="margin-top:14px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a dissertação completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each;
+  var box = M.box, makeStage = M.makeStage, ramp = M.ramp, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(p, e){ return EN ? e : p; }
+  var css = getComputedStyle(document.documentElement);
+  var TAC = css.getPropertyValue('--navy').trim() || '#1f3b73';
+  var EXP = css.getPropertyValue('--red').trim() || 'hsl(348 94% 47%)';
+  var MID = '#334155', OFF = '#cbd5e1', GRY = '#94a3b8';
+  function q(t, c){ return '<div class="q">“' + t + '”<cite>' + c + '</cite></div>'; }
+  function sum(a){ return a.reduce(function(s, v){ return s + v; }, 0); }
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // Tabela 4 (conferida com as Tabelas 5 a 8): marcações por tema e pergunta (Q1..Q4)
+  var CATS = [
+    {k:'KE', n:L('Troca de conhecimentos','Knowledge exchange'), c:TAC, th:[
+      [L('Combinação de conhecimentos (com clientes, parceiros, concorrentes)','Combining knowledge (with customers, partners, competitors)'), [5,24,11,4]],
+      [L('Colaboração entre os vendedores','Collaboration among salespeople'), [24,11,4,0]],
+      [L('Socialização (troca com a equipe e outras áreas)','Socialization (exchange with the team and other areas)'), [14,3,3,0]],
+      [L('Ba, o lugar da troca (sala, chamada, ambiente virtual)','Ba, the place of exchange (room, call, virtual space)'), [6,3,0,0]] ]},
+    {k:'CS', n:L('Vendas complexas','Complex sales'), c:'#64748b', th:[
+      [L('Venda complexa','Complex sale'), [21,8,14,12]],
+      [L('Processos da venda','Sales processes'), [3,3,2,0]] ]},
+    {k:'FC', n:'Forecast', c:MID, th:[
+      [L('Forecast (valor e data prometidos)','Forecast (amount and date promised)'), [18,5,7,2]],
+      [L('Acerto do forecast','Forecast accuracy'), [0,7,11,2]] ]},
+    {k:'DT', n:L('Dados','Data'), c:'#be7a8a', th:[
+      [L('Dado registrado usado na venda','Recorded data used in the sale'), [7,2,4,12]],
+      [L('Internalização','Internalization'), [2,0,6,1]],
+      [L('Registro escrito organizado','Organized written record'), [0,6,0,0]],
+      [L('Falta de registro escrito','Lack of written record'), [0,5,0,0]],
+      [L('Burocracia inútil','Useless bureaucracy'), [1,2,0,0]],
+      [L('Externalização','Externalization'), [0,0,3,0]] ]},
+    {k:'TK', n:L('Conhecimento tácito','Tacit knowledge'), c:'#5b77a8', th:[
+      [L('Conhecimento tácito (experiência pessoal)','Tacit knowledge (personal experience)'), [13,7,14,9]],
+      [L('Cultura da empresa compradora','The buying company\'s culture'), [0,0,1,0]] ]},
+    {k:'AI', n:L('Inteligência artificial','Artificial intelligence'), c:EXP, th:[
+      [L('IA que gera o forecast','AI that generates the forecast'), [0,0,0,24]],
+      [L('A IA não incorpora a experiência do vendedor','AI does not capture the salesperson\'s experience'), [0,0,0,4]] ]}
+  ];
+  CATS.forEach(function(c){ c.q = [0,1,2,3].map(function(j){ return sum(c.th.map(function(t){ return t[1][j]; })); }); c.t = sum(c.q); });
+  var QS = [
+    {s:'P1', n:L('Conte-me de que forma você interage com seus colegas a fim de compartilhar experiências para ajustar seu forecast.','Tell me how you interact with your colleagues to share experiences and adjust your forecast.'),
+      quotes:[
+              [L('[…] a nossa ferramenta que a gente mais usa aqui é a conversa mesmo entre a equipe de vendas ou as pessoas que estão mais ligadas com os clientes pra gente ter uma previsibilidade aí do que está mais quente de virar negócio […]','[…] the tool we use most here is really conversation within the sales team or with the people closest to the customers, so we can foresee what is hottest to turn into business […]'), 'O2R1']]},
+    {s:'P2', n:L('De que forma você combina seus conhecimentos com os conhecimentos dos seus colegas e clientes a fim de melhorar o forecast?','How do you combine your knowledge with that of your colleagues and customers to improve the forecast?'),
+      quotes:[[L('[…] todo vendedor de vendas complexas, nós, também é um detetive. Então a gente está constantemente atrás da verdade, atrás do fato […]','[…] every complex-sales salesperson, all of us, is also a detective. So we are constantly after the truth, after the fact […]'), 'O1R3']]},
+    {s:'P3', n:L('De sua vivência com vendas, conte-me o que você já incorporou de conhecimentos das interações com seus colegas e clientes para fazer o forecast.','From your sales experience, tell me what knowledge from interactions with colleagues and customers you have already brought into your forecast.'),
+      quotes:[
+              [L('[…] com a interação aí com os nossos colegas a gente consegue identificar eventuais deadlines aí dos nossos clientes e consequentemente a gente consegue aí otimizar ou trabalhar o forecast de uma maneira mais positiva […]','[…] by interacting with our colleagues we can spot our customers\' deadlines and so we can optimize or work the forecast in a more positive way […]'), 'O2R2']]},
+    {s:'P4', n:L('De sua experiência com vendas, quais conhecimentos você acredita que poderiam ser incorporados em modelos de inteligência artificial para melhorar a precisão do forecast?','From your sales experience, what knowledge do you believe could be built into artificial intelligence models to improve forecast accuracy?'), quotes:[]}
+  ];
+  var TOT = [114, 86, 80, 70];
+
+  /* ================= 01 · CAPA ================= */
+  // Roda SECI: um cubo percorre S → E → C → I; em E e C deixa um bloco vermelho de dados na pilha ao lado.
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 480, 290, {ay:'58%'});
+    var POS = [{x:0, y:0}, {x:150, y:0}, {x:150, y:150}, {x:0, y:150}];   // S E C I
+    var LET = ['S', 'E', 'C', 'I'], COL = [TAC, EXP, EXP, TAC];
+    POS.forEach(function(p, i){ st.appendChild(box({w:135, d:135, x:p.x, y:p.y, h:30, c:i === 1 ? 'color-mix(in srgb, ' + TAC + ' 50%, ' + EXP + ')' : (i === 3 ? 'color-mix(in srgb, ' + EXP + ' 40%, ' + TAC + ')' : COL[i]), top:LET[i]})); });
+    st.appendChild(box({w:120, d:120, x:350, y:90, h:14, c:'#e2e8f0'}));
+    flatLabel(st, L('Dados para a IA','Data for the AI'), 340, 228, 140, 'font-size:16px;');
+    flatLabel(st, L('Equipe de vendas','Sales team'), 0, 312, 285, 'font-size:16px;');
+    var cube = box({w:36, d:36, x:50, y:50, z:30, h:36, c:TAC, cls:'cube'});
+    st.appendChild(cube);
+    var tower = [];
+    for (var k = 0; k < 7; k++){ var t = box({w:80, d:80, x:370, y:110, z:14 + k * 18, h:16, c:ramp(EXP, k % 3, 4), cls:'cube'}); t.style.display = 'none'; st.appendChild(t); tower.push(t); }
+    rotatable(sc, st, -20, 9);
+    function setN(n){ tower.forEach(function(t, i){ t.style.display = i < n ? '' : 'none'; }); }
+    if (reduce){ setN(4); return; }
+    var P = 8, last = -1;
+    function ease(f){ return f < .5 ? 2 * f * f : 1 - Math.pow(-2 * f + 2, 2) / 2; }
+    M.onTick(function(t){
+      var cyc = Math.floor(t / P), f = (t % P) / P * 4, seg = Math.floor(f), g = ease(f - seg);
+      var a = POS[seg], b = POS[(seg + 1) % 4];
+      var x = a.x + (b.x - a.x) * g + 50, y = a.y + (b.y - a.y) * g + 50, z = 30 + Math.sin(g * Math.PI) * 34;
+      cube.style.left = x + 'px'; cube.style.top = y + 'px'; cube.style.setProperty('--z', z + 'px');
+      cube.style.setProperty('--c', (seg === 1 || seg === 2) ? EXP : TAC);
+      var n = 1 + (cyc % 3) * 2 + (seg >= 2 ? 1 : 0) + (seg >= 3 ? 1 : 0);
+      if (n !== last){ setN(n); last = n; }
+    });
+  })();
+
+  /* ================= 02 · VENDA ================= */
+  (function(){
+    var sc = $('sale-scene'), st = makeStage(sc, 480, 230, {ay:'64%', rx:'58deg'});
+    var SEL = [L('Vendedor','Salesperson'), L('Time técnico','Tech team'), L('Parceiro','Partner')];
+    var BUY = [L('Compras','Purchasing'), L('Área usuária','User area'), L('Quem decide','Decision maker'), L('Consultoria','Consultancy')];
+    st.appendChild(box({w:200, d:200, x:0, y:15, h:10, c:'#dbe3ee'}));
+    st.appendChild(box({w:200, d:200, x:280, y:15, h:10, c:'#e8e1e3'}));
+    flatLabel(st, L('Quem vende','Seller'), 0, 222, 200, 'font-size:15px;');
+    flatLabel(st, L('Quem compra','Buyer'), 280, 222, 200, 'font-size:15px;');
+    var items = [];
+    function clear(){ items.forEach(function(b){ b.remove(); }); items = []; }
+    function add(o){ var b = box(o); st.appendChild(b); items.push(b); }
+    function lab(t, x, y){ items.push(flatLabel(st, t, x, y, 100, 'font-size:12.5px; color:var(--ink); transform:translateZ(11px);')); }
+    var PANEL = [
+      {h:L('Venda simples','Simple sale'), p:L('Como numa loja on-line: o comprador já sabe o que quer, compara preços e fecha sozinho, sem falar com vendedores. Vale também para muitas compras entre empresas, como material de escritório.','Like an online shop: the buyer already knows what they want, compares prices and closes alone, without talking to salespeople. This also applies to many purchases between companies, such as office supplies.'),
+        l:[L('Poucas interações','Few interactions'), L('Preço como foco','Price as the focus'), L('Prever é mais fácil','Easier to forecast')]},
+      {h:L('Venda complexa B2B','Complex B2B sale'), p:L('Muitas pessoas dos dois lados, várias etapas e meses de conversa. O vendedor faz o papel de "intermediário de conhecimento": ensina como o produto resolve o problema do cliente e aprende como a empresa compradora decide. Consultorias e institutos independentes também opinam.','Many people on both sides, several stages and months of conversation. The salesperson plays the role of "knowledge broker": teaching how the product solves the customer\'s problem and learning how the buying company decides. Independent consultancies and research firms also weigh in.'),
+        l:[L('Muitas interações','Many interactions'), L('Alto valor','High value'), L('Processo longo','Long process'), L('Prever é difícil','Hard to forecast')]}
+    ];
+    function show(m){
+      clear();
+      if (m === 0){
+        add({w:120, d:80, x:40, y:60, z:10, h:40, c:GRY, top:L('loja on-line','online shop')});
+        add({w:80, d:62, x:340, y:70, z:10, h:50, c:'#8b6b74', top:L('Comprador','Buyer')});
+      } else {
+        SEL.forEach(function(s, i){ var x = 20 + (i % 2) * 100 + (i === 2 ? 50 : 0), y = 18 + Math.floor(i / 2) * 108; add({w:76, d:62, x:x - 8, y:y, z:10, h:34 - i * 5, c:ramp(TAC, i + 1, 5), top:s}); });
+        BUY.forEach(function(s, i){ var x = 300 + (i % 2) * 100, y = 18 + Math.floor(i / 2) * 108; add({w:80, d:62, x:x - 10, y:y, z:10, h:i === 2 ? 42 : 30, c:i === 3 ? GRY : ramp('#8b6b74', i % 3, 4), top:s}); });
+      }
+      each($('sale-seg').children, function(b){ b.classList.toggle('on', +b.dataset.m === m); });
+      var P = PANEL[m];
+      $('sale-panel').innerHTML = '<h3>' + P.h + '</h3><p>' + P.p + '</p><div class="chips" style="margin:6px 0 0">' + P.l.map(function(x){ return '<span class="flag" style="color:var(--ink-2); background:#eef2f7">' + x + '</span>'; }).join('') + '</div>';
+    }
+    rotatable(sc, st, -18, 7);
+    each($('sale-seg').children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.m); }); });
+    show(1);
+  })();
+
+  /* ================= 03 · SECI ================= */
+  (function(){
+    var MODES = [
+      {l:'S', n:L('Socialização','Socialization'), f:L('tácito','tacit'), t:L('tácito','tacit'), fc:TAC, tc:TAC,
+        d:L('As pessoas trocam experiência convivendo: uma conta o que viveu e a outra aprende sem que nada seja escrito.','People share experience by spending time together: one tells what they lived through and the other learns, with nothing written down.'),
+        q:[L('[…] eventualmente se algum colega tem alguma forma de ajudar ou conhece o processo mais que eu, isso pode dar uma indicação para o ajuste […]','[…] if some colleague has a way to help or knows the process better than me, that can give a hint for the adjustment […]'), 'O1R1 · ' + L('pergunta 1','question 1')],
+        r:L('Para o autor, "claramente" socialização: um vendedor ajusta a previsão com a experiência que outro trouxe de um negócio parecido.','For the author, "clearly" socialization: a salesperson adjusts the forecast with the experience another brought from a similar deal.')},
+      {l:'E', n:L('Externalização','Externalization'), f:L('tácito','tacit'), t:L('explícito','explicit'), fc:TAC, tc:EXP,
+        d:L('Parte da experiência é posta em palavras e registrada, para que outros possam usar depois.','Part of the experience is put into words and recorded, so others can use it later.'),
+        q:[L('[…] a gente interage muito através de ferramentas como e-mail ou mensagens instantâneas, com o WhatsApp […]','[…] we interact a lot through tools like e-mail or instant messaging, with WhatsApp […]'), 'O2R1 · ' + L('pergunta 1','question 1')],
+        r:L('Para o autor, a troca por meios eletrônicos "sugere conhecimentos explicitados", ao lado da conversa diária.','For the author, exchange through electronic means "suggests explicit knowledge", alongside daily conversation.')},
+      {l:'C', n:L('Combinação','Combination'), f:L('explícito','explicit'), t:L('explícito','explicit'), fc:EXP, tc:EXP,
+        d:L('O que já está registrado é juntado com informação de fora (clientes, parceiros, mercado) e fica mais rico.','What is already on record is combined with outside information (customers, partners, the market) and becomes richer.'),
+        q:[L('[…] trazer o conhecimento do time, trazer o conhecimento do cliente e validar isso, e até contrapor as informações, é importante para se ter mais assertividade […]','[…] bringing the team\'s knowledge, bringing the customer\'s knowledge and validating it, and even setting the information against each other, matters to be more accurate […]'), 'O1R2 · ' + L('pergunta 2','question 2')],
+        r:L('Para o autor, "uma clara evidência de combinação" e da ligação entre conhecimento e acerto do forecast.','For the author, "clear evidence of combination" and of the link between knowledge and forecast accuracy.')},
+      {l:'I', n:L('Internalização','Internalization'), f:L('explícito','explicit'), t:L('tácito','tacit'), fc:EXP, tc:TAC,
+        d:L('O que foi aprendido e registrado volta para dentro das pessoas e vira repertório, e a roda recomeça.','What was learned and recorded goes back into people and becomes part of their repertoire, and the wheel starts again.'),
+        q:[L('[…] a gente internaliza a experiência ali, não é? Que é a gente montar um forecast focado na realidade, então assim, e não só no otimismo […]','[…] we internalize the experience there, right? Which is putting together a forecast focused on reality, and not just on optimism […]'), 'O2R4 · ' + L('pergunta 3','question 3')],
+        r:L('O autor lê aqui um conhecimento tácito, "internalizado" pela vivência.','The author reads here tacit knowledge, "internalized" through experience.')}
+    ];
+    var sc = $('seci-scene'), st = makeStage(sc, 330, 330, {ay:'66%', rx:'56deg'}), tiles = [];
+    var XY = [[0,0],[170,0],[170,170],[0,170]];
+    MODES.forEach(function(m, i){
+      var c = m.fc === m.tc ? m.fc : 'color-mix(in srgb, ' + m.fc + ' 50%, ' + m.tc + ')';
+      var b = box({w:150, d:150, x:XY[i][0], y:XY[i][1], h:34, c:c, top:m.l, label:m.f + ' → ' + m.t});
+      b.setAttribute('role', 'button'); b.tabIndex = 0; st.appendChild(b); tiles.push(b);
+      if (i === 1 || i === 2){ var d = box({w:34, d:34, x:XY[i][0] + 108, y:XY[i][1] + 8, z:34, h:34, c:EXP}); st.appendChild(d); }
+    });
+    rotatable(sc, st, -24, 8);
+    var list = $('seci-list');
+    list.innerHTML = MODES.map(function(m, i){ return '<button data-i="' + i + '" aria-pressed="false"><i style="background:' + (m.fc === m.tc ? m.fc : 'linear-gradient(90deg,' + m.fc + ' 50%,' + m.tc + ' 50%)') + '"></i>' + m.l + ' · ' + m.n + '</button>'; }).join('');
+    function show(i){
+      tiles.forEach(function(b, k){ b.classList.toggle('active', k === i); });
+      each(list.children, function(b){ var on = +b.dataset.i === i; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+      var m = MODES[i];
+      $('seci-panel').innerHTML = '<div class="conv"><span style="background:' + m.fc + '">' + m.f + '</span>→<span style="background:' + m.tc + '">' + m.t + '</span>' + ((i === 1 || i === 2) ? '<span style="background:transparent; color:var(--exp)">● ' + L('vira dado na proposta','becomes data in the proposal') + '</span>' : '') + '</div><h3>' + m.l + ' · ' + m.n + '</h3><p>' + m.d + '</p>' + q(m.q[0], m.q[1]) + '<p style="font-size:.8rem; color:var(--muted)">' + m.r + '</p>';
+    }
+    tiles.forEach(function(b, i){ b.addEventListener('click', function(){ if (!M.wasDrag(sc)) show(i); }); b.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(i); } }); });
+    each(list.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(0);
+  })();
+
+  /* ================= 04 · MODELO ================= */
+  (function(){
+    var N = [
+      {id:'team', h:L('Saber da equipe','Team know-how'), s:L('roda SECI','SECI wheel'), c:TAC,
+        d:[L('Hoje esse saber circula nas conversas e nas reuniões semanais, mas quase nada vira dado. O que a IA recebe é o que já estava no sistema.','Today this know-how circulates in conversations and weekly meetings, but almost none of it becomes data. What the AI receives is what was already in the system.'),
+           L('Na proposta, a Externalização e a Combinação registram parte do saber tácito, que passa a alimentar a IA.','In the proposal, Externalization and Combination record part of the tacit know-how, which starts to feed the AI.')]},
+      {id:'data', h:L('Conjunto de dados','Dataset'), s:'dataset', c:EXP,
+        d:[L('Dados do sistema de clientes (CRM), e-mails, histórico de vendas, informações de mercado e de concorrentes.','Data from the customer system (CRM), e-mails, sales history, market and competitor information.'),
+           L('Aos dados de sempre se junta o que a equipe registrou nas passagens E e C do SECI.','To the usual data is added what the team recorded in the E and C passages of SECI.')]},
+      {id:'ml', h:L('Aprendizado de máquina','Machine learning'), s:'', c:EXP,
+        d:[L('O algoritmo aprende com os dados, repetidamente, e muda o jeito de responder conforme a experiência.','The algorithm learns from the data, repeatedly, and changes how it responds with experience.'),
+           L('O mesmo aprendizado, agora com dados que carregam um pouco da experiência dos vendedores.','The same learning, now with data that carries some of the salespeople\'s experience.')]},
+      {id:'alg', h:L('Algoritmo de projeção','Projection algorithm'), s:'', c:EXP,
+        d:[L('O modelo que calcula quanto e quando cada negócio deve fechar.','The model that calculates how much and when each deal should close.'),
+           L('Para o autor, como o saber tácito muda junto com os clientes, uma IA que aprende sozinha seria a escolha certa.','For the author, since tacit know-how changes along with customers, an AI that learns on its own would be the right choice.')]},
+      {id:'fc', h:'Forecast', s:L('vendas complexas','complex sales'), c:MID,
+        d:[L('A previsão final, que a gestão compara semana a semana com o que de fato se vendeu.','The final forecast, which management compares week by week with what was actually sold.'),
+           L('O objetivo: uma previsão mais perto do real, em valor e em data. A dissertação não chegou a medir isso.','The goal: a forecast closer to reality, in amount and date. The dissertation did not get to measure this.')]},
+      {id:'mgr', h:L('Gestor de vendas','Sales manager'), s:L('julgamento','judgment'), c:MID,
+        d:[L('Na prática, o forecast ainda depende do julgamento do gestor, que ouve a equipe e decide.','In practice, the forecast still depends on the manager\'s judgment, who listens to the team and decides.'),
+           L('O gestor continua no desenho: a IA soma, não substitui.','The manager stays in the design: the AI adds, it does not replace.')]}
+    ];
+    var mode = 1, sel = 0;
+    function node(n, i){ return '<button class="node" data-i="' + i + '" style="--nc:' + n.c + '">' + n.h + (n.s ? '<small>' + n.s + '</small>' : '') + '</button>'; }
+    $('flow').innerHTML = [0,1,2,3,4].map(function(i){ return node(N[i], i) + (i < 4 ? '<div class="arr' + (i === 0 ? ' a0' : '') + '"></div>' : ''); }).join('');
+    $('mgr').innerHTML = node(N[5], 5) + '<div class="arr"></div><div style="font-size:.74rem; color:var(--muted)">' + L('também chega ao forecast','also reaches the forecast') + '</div>';
+    var nodes = document.querySelectorAll('#flow .node, #mgr .node');
+    function render(){
+      var a0 = document.querySelector('#flow .a0');
+      a0.classList.toggle('ghost', mode === 0);
+      nodes[0].classList.toggle('ghost', mode === 0);
+      each(nodes, function(b){ b.classList.toggle('on', +b.dataset.i === sel); });
+      each($('model-seg').children, function(b){ b.classList.toggle('on', +b.dataset.m === mode); });
+      var n = N[sel];
+      $('model-panel').innerHTML = '<div class="tag">' + (mode ? L('Como o autor propõe','What the author proposes') : L('Como é hoje · leitura nossa','How it is today · our reading')) + '</div><h3>' + n.h + '</h3><p>' + n.d[mode] + '</p>';
+    }
+    each(nodes, function(b){ b.addEventListener('click', function(){ sel = +b.dataset.i; render(); }); });
+    each($('model-seg').children, function(b){ b.addEventListener('click', function(){ mode = +b.dataset.m; render(); }); });
+    render();
+  })();
+
+  /* ================= 05 · EXECUTIVOS ================= */
+  (function(){
+    var CUTS = [
+      {n:L('Cargo','Position'), g:[[L('Diretor de vendas','Sales director'),8],[L('Vice-presidente de vendas','Sales VP'),6],[L('Sócio','Partner'),4],[L('Presidente','President'),3]]},
+      {n:L('Tamanho da empresa','Company size'), g:[[L('75 a 5 mil pessoas','75 to 5,000 people'),9],[L('5 mil a 100 mil','5,000 to 100,000'),3],[L('100 mil a 800 mil','100,000 to 800,000'),9]]},
+      {n:L('Setor','Sector'), g:[[L('Software','Software'),8],[L('Serviços','Services'),8],[L('Consultoria','Consulting'),5]]},
+      {n:L('País da matriz','Headquarters'), g:[[L('Estados Unidos','United States'),12],[L('Brasil','Brazil'),5],[L('Alemanha','Germany'),2],[L('Índia','India'),2]]},
+      {n:L('Idade','Age'), g:[['25–35',2],['36–45',8],['46–55',8],[L('mais de 55','over 55'),3]]}
+    ];
+    var COLS = [TAC, EXP, MID, '#94a3b8'];
+    var sc = $('exec-scene'), st = makeStage(sc, 7 * 56, 3 * 56, {ay:'60%', rx:'58deg'}), cubes = [];
+    for (var i = 0; i < 21; i++){ var b = box({w:40, d:40, x:(i % 7) * 56 + 8, y:Math.floor(i / 7) * 56 + 8, h:40, c:OFF}); st.appendChild(b); cubes.push(b); }
+    rotatable(sc, st, -16, 7);
+    var chips = $('exec-chips');
+    chips.innerHTML = CUTS.map(function(c, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="false">' + c.n + '</button>'; }).join('');
+    function cut(k){
+      var g = CUTS[k].g, idx = 0;
+      g.forEach(function(x, j){ for (var t = 0; t < x[1]; t++){ cubes[idx].style.setProperty('--c', COLS[j]); cubes[idx].style.setProperty('--h', '40px'); idx++; } });
+      each(chips.children, function(b){ b.setAttribute('aria-pressed', +b.dataset.i === k); });
+      $('exec-legend').innerHTML = g.map(function(x, j){ return '<span><i style="background:' + COLS[j] + '"></i>' + x[0] + ' · ' + x[1] + '</span>'; }).join('');
+    }
+    each(chips.children, function(b){ b.addEventListener('click', function(){ cut(+b.dataset.i); }); });
+    cut(0);
+    var OPTS = [L('Toda semana','Every week'), L('A cada 15 dias','Every two weeks'), L('Uma vez por mês','Once a month'), L('Uma vez por trimestre','Once a quarter')];
+    var ans = $('exec-ans');
+    ans.innerHTML = OPTS.map(function(o, i){ return '<button data-i="' + i + '">' + o + '</button>'; }).join('');
+    each(ans.children, function(b){ b.addEventListener('click', function(){
+      var k = +b.dataset.i;
+      each(ans.children, function(x){ x.classList.remove('pick', 'right'); });
+      if (k !== 0) b.classList.add('pick');
+      ans.children[0].classList.add('right');
+      each(chips.children, function(x){ x.setAttribute('aria-pressed', 'false'); });
+      cubes.forEach(function(c, j){ setTimeout(function(){ c.style.setProperty('--c', EXP); c.style.setProperty('--h', '58px'); }, reduce ? 0 : j * 40); });
+      $('exec-legend').innerHTML = '<span><i style="background:' + EXP + '"></i>' + L('reunião de forecast toda semana · 21','weekly forecast meeting · 21') + '</span><span><i style="background:' + OFF + '"></i>' + L('a cada 15 dias · 0','every two weeks · 0') + '</span>';
+      $('exec-msg').innerHTML = (k === 0 ? L('<b>Isso.</b> ','<b>Right.</b> ') : '') + L('<b>Todas as 21 fazem reunião de forecast toda semana</b>, e nenhuma a cada 15 dias. É nessa conversa semanal que o saber da equipe entra na previsão.','<b>All 21 hold a forecast meeting every week</b>, and none every two weeks. It is in this weekly conversation that the team\'s know-how enters the forecast.');
+    }); });
+  })();
+
+  /* ================= 06 · GRUPOS ================= */
+  (function(){
+    var CUTS = [
+      {n:L('Cargo','Position'), col:[MID, MID, TAC, TAC], g:[[L('Sócio','Partner'),3],[L('Diretor','Director'),2],[L('Vendedor de campo','Field salesperson'),3],[L('Vendedor interno','Inside salesperson'),1]],
+        t:L('Na Deloitte, três sócios e dois diretores, todos vendendo e respondendo pela própria previsão; na SailPoint, três vendedores de campo e um interno, do mesmo time para o Brasil e a América do Sul.','At Deloitte, three partners and two directors, all selling and answering for their own forecast; at SailPoint, three field salespeople and one inside salesperson, on the same team for Brazil and South America.')},
+      {n:L('Tempo no ramo','Years in the field'), g:[[L('menos de 3 anos','under 3 years'),0],[L('3 a 5 anos','3 to 5 years'),0],[L('5 a 10 anos','5 to 10 years'),2],[L('mais de 10 anos','over 10 years'),7]],
+        t:L('Gente experiente: sete dos nove estão há mais de dez anos no ramo.','Experienced people: seven of the nine have been in the field for over ten years.')},
+      {n:L('Tempo na empresa','Years at the company'), g:[[L('menos de 3 anos','under 3 years'),3],[L('3 a 5 anos','3 to 5 years'),3],[L('5 a 10 anos','5 to 10 years'),3],[L('mais de 10 anos','over 10 years'),0]],
+        t:L('Muita experiência no ramo, pouco tempo na empresa atual: ninguém tinha mais de dez anos de casa.','Lots of experience in the field, little time at the current company: no one had more than ten years there.')},
+      {n:L('Idade','Age'), g:[['25–35',2],['36–45',4],['46–55',2],[L('mais de 55','over 55'),1]],
+        t:L('A maioria entre 36 e 45 anos.','Most between 36 and 45.')},
+      {n:L('Estudo','Education'), g:[[L('Curso superior','University degree'),9],[L('MBA ou pós','MBA or postgraduate'),4],[L('Mestrado','Master\'s'),1]],
+        t:L('Todos com curso superior; quatro com MBA ou pós e um com mestrado (as linhas se sobrepõem).','All with a university degree; four with an MBA or postgraduate course and one with a master\'s (the rows overlap).')}
+    ];
+    var chips = $('grp-chips');
+    chips.innerHTML = CUTS.map(function(c, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="false">' + c.n + '</button>'; }).join('');
+    function cut(k){
+      var c = CUTS[k];
+      $('grp-bars').innerHTML = c.g.map(function(x, r){ var s = ''; for (var i = 0; i < 9; i++) s += '<i style="transform:scaleX(' + (i < x[1] ? 1 : 0) + ')' + (c.col ? '; background:' + c.col[r] : '') + '"></i>'; return '<div class="hbar"><span>' + x[0] + '</span><div class="tr">' + s + '</div><b>' + x[1] + '</b></div>'; }).join('');
+      $('grp-note').textContent = c.t;
+      each(chips.children, function(b){ b.setAttribute('aria-pressed', +b.dataset.i === k); });
+    }
+    each(chips.children, function(b){ b.addEventListener('click', function(){ cut(+b.dataset.i); }); });
+    cut(0);
+  })();
+
+  /* ================= 07 · CATEGORIAS ================= */
+  (function(){
+    var sc = $('cat-scene'), st = makeStage(sc, 6 * 82, 100, {ay:'84%', rx:'60deg'}), cols = [];
+    var SC = 2.25;
+    var order = CATS.slice().sort(function(a, b){ return b.t - a.t; });
+    order.forEach(function(c, i){
+      var z = 0, parts = [];
+      c.th.forEach(function(t, j){ var v = sum(t[1]); if (!v) return; var b = box({w:62, d:62, x:i * 82 + 10, y:20, z:z, h:v * SC, c:ramp(c.c, j, c.th.length + 1)}); st.appendChild(b); parts.push(b); z += v * SC; });
+      flatLabel(st, c.k + ' · ' + c.t, i * 82, 88, 82, 'font-size:14px;');
+      parts.forEach(function(b){ b.setAttribute('role', 'button'); b.addEventListener('click', function(){ if (!M.wasDrag(sc)) show(i); }); });
+      cols.push(parts);
+    });
+    rotatable(sc, st, -14, 6);
+    var list = $('cat-list');
+    list.innerHTML = order.map(function(c, i){ return '<button data-i="' + i + '" aria-pressed="false"><i style="background:' + c.c + '"></i>' + c.n + ' · ' + c.t + '</button>'; }).join('');
+    function show(i){
+      cols.forEach(function(p, k){ p.forEach(function(b){ b.classList.toggle('dim', k !== i); }); });
+      each(list.children, function(b){ var on = +b.dataset.i === i; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+      var c = order[i];
+      $('cat-panel').innerHTML = '<div class="tag">' + L('Categoria','Category') + ' ' + c.k + ' · <span class="nt">' + c.t + L(' marcações',' marks') + '</span></div><h3>' + c.n + '</h3><div class="themes">' + c.th.map(function(t){ return '<div><span>' + t[0] + '</span><b>' + sum(t[1]) + '</b></div>'; }).join('') + '</div>';
+    }
+    each(list.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(0);
+  })();
+
+  /* ================= 08 · MATRIZ ================= */
+  (function(){
+    var order = CATS.slice().sort(function(a, b){ return b.t - a.t; });
+    var CW = 70, RD = 64, SC = 2.8;
+    var sc = $('mx-scene'), st = makeStage(sc, 6 * CW, 4 * RD, {ay:'60%', rx:'56deg'}), cells = [];
+    order.forEach(function(c, i){
+      c.q.forEach(function(v, j){
+        var b = box({w:44, d:40, x:i * CW + 13, y:j * RD + 12, h:Math.max(1.5, v * SC), c:v ? c.c : '#e2e8f0', top:' '});
+        b.dataset.q = j; st.appendChild(b); cells.push({b:b, v:v, q:j});
+      });
+      flatLabel(st, c.k, i * CW, 4 * RD + 2, CW, 'font-size:14px;');
+    });
+    for (var j = 0; j < 4; j++) flatLabel(st, L('P','Q') + (j + 1), -46, j * RD + 22, 40, 'font-size:14px;');
+    rotatable(sc, st, -12, 6);
+    $('mx-legend').innerHTML = order.map(function(c){ return '<span><i style="background:' + c.c + '"></i>' + c.k + ' · ' + c.n + '</span>'; }).join('');
+    var chips = $('mx-chips');
+    chips.innerHTML = QS.map(function(x, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="false">' + L('Pergunta ','Question ') + (i + 1) + '</button>'; }).join('');
+    function show(k){
+      cells.forEach(function(c){ var on = c.q === k; c.b.classList.toggle('dim', !on); c.b.querySelector('.top-label').textContent = on && c.v ? c.v : ''; });
+      each(chips.children, function(b){ b.setAttribute('aria-pressed', +b.dataset.i === k); });
+      var Q = QS[k], ranked = order.map(function(c){ return [c, c.q[k]]; }).sort(function(a, b){ return b[1] - a[1]; });
+      var topV = ranked[0][1], tops = ranked.filter(function(r){ return r[1] === topV; }).map(function(r){ return r[0].n; });
+      $('mx-panel').innerHTML = '<div class="tag">' + L('Pergunta ','Question ') + (k + 1) + ' · <span class="nt">' + TOT[k] + L(' marcações',' marks') + '</span></div><h3 style="font-size:.95rem">' + Q.n + '</h3><p>' + L('Mais marcada: ','Most marked: ') + '<b>' + tops.join(L(' e ',' and ')) + '</b> (' + topV + ').</p>' + (Q.quotes.length ? Q.quotes.map(function(x){ return q(x[0], x[1]); }).join('') : '<p style="font-size:.82rem; color:var(--muted)">' + L('As falas desta pergunta estão na tela 10.','The quotes for this question are on screen 10.') + '</p>');
+    }
+    each(chips.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(0);
+  })();
+
+  /* ================= 09 · INESPERADO ================= */
+  (function(){
+    var ai = CATS.filter(function(c){ return c.k === 'AI'; })[0].q;
+    $('ai-bars').innerHTML = [0,1,2,3].map(function(j){ return '<div class="qbar"><b>' + L('P','Q') + (j + 1) + '</b><div class="tr"><div class="all" style="width:' + (TOT[j] / 114 * 100) + '%"></div><div class="ai"></div><em></em></div></div>'; }).join('');
+    var bars = document.querySelectorAll('#ai-bars .qbar');
+    var OPTS = ['0', L('cerca de 10','about 10'), L('cerca de 30','about 30'), L('mais de 60','over 60')];
+    var ans = $('ai-ans');
+    ans.innerHTML = OPTS.map(function(o, i){ return '<button data-i="' + i + '">' + o + '</button>'; }).join('');
+    function reveal(k){
+      each(ans.children, function(x){ x.classList.remove('pick', 'right'); });
+      if (k > 0) ans.children[k].classList.add('pick');
+      ans.children[0].classList.add('right');
+      each(bars, function(b, j){ b.querySelector('.ai').style.width = (ai[j] / 114 * 100) + '%'; b.querySelector('em').textContent = ai[j] + ' / ' + TOT[j]; });
+      $('ai-msg').innerHTML = (k === 0 ? L('<b>Isso.</b> ','<b>Right.</b> ') : '') + L('<b>Nenhuma.</b> A categoria IA ficou em zero nas três primeiras perguntas e só apareceu na quarta, que perguntava por ela: 28 das 70 marcações.','<b>None.</b> The AI category stayed at zero in the first three questions and only appeared in the fourth, which asked about it: 28 of the 70 marks.');
+    }
+    each(ans.children, function(b){ b.addEventListener('click', function(){ reveal(+b.dataset.i); }); });
+    each(bars, function(b, j){ b.querySelector('em').textContent = TOT[j] + L(' marcações',' marks'); });
+  })();
+
+  /* ================= 10 · SINAIS ================= */
+  (function(){
+    var SIG = [
+      {h:L('O "feeling" das interações','The "feel" of interactions'), a:'tac',
+        q:[L('[…] a inteligência artificial usa modelos matemáticos e estatísticos, mas como transformar isso para que ela incorpore esse feeling? E esse feeling ele não vem só de informações que estão registradas no sistema, esse feeling ele vem de interações […] o body language da pessoa e outras características humanas […]','[…] artificial intelligence uses mathematical and statistical models, but how do you turn that so it captures this feel? And this feel doesn\'t come only from information recorded in the system, this feel comes from interactions […] the person\'s body language and other human traits […]'), 'O1R2'],
+        r:L('Para o autor, o tipo de conhecimento que ajudaria a IA aqui é tácito.','For the author, the kind of knowledge that would help the AI here is tacit.')},
+      {h:L('Quantos e-mails, quantas propostas','How many e-mails, how many proposals'), a:'exp',
+        q:[L('[…] o cliente, quando ele está de fato interessado, ele te pede várias propostas, ele pede para que você faça simulação de cenários […] o sistema pode coletar esses pontos, quantos e-mails estão sendo trocados, qual a velocidade da resposta do cliente […]','[…] the customer, when they are really interested, asks you for several proposals, asks you to run scenario simulations […] the system can collect these points, how many e-mails are being exchanged, how fast the customer answers […]'), 'O1R3'],
+        r:L('Para o autor, conhecimento explícito que a IA já poderia captar: a frequência e o jeito das interações.','For the author, explicit knowledge the AI could already capture: the frequency and manner of interactions.')},
+      {h:L('Dados espalhados pela empresa','Data scattered across the company'), a:'exp',
+        q:[L('[…] dados a gente tem um monte e as vezes muito desorientados. Então a gente tem no CRM, a gente tem em ferramentas próprias […] só vai fazer sentido se a gente pegar o histórico, similaridade de companhia […]','[…] we have loads of data, and sometimes very scattered. So we have it in the CRM, we have it in our own tools […] it will only make sense if we take the history, company similarity […]'), 'O1R4'],
+        r:L('Para o autor, conhecimento explícito: a IA ajudaria a catalogar, organizar e relacionar o que já existe.','For the author, explicit knowledge: AI would help catalogue, organize and relate what already exists.')},
+      {h:L('O momento do cliente','The customer\'s moment'), a:'both',
+        q:[L('[…] se a gente fez alguma reunião com o cliente ou não […] quantas interações teve com o cliente, o momento do cliente, talvez a questão do período no ano […] alguns períodos ali que talvez mais propícios a fechar negócio, outros que não […]','[…] whether we had a meeting with the customer or not […] how many interactions there were with the customer, the customer\'s moment, maybe the time of year […] some periods that are perhaps more favourable for closing deals, others not […]'), 'O2R3'],
+        r:L('Para o autor, um relato parecido com os anteriores, mas com "evidências de conhecimentos tácitos", como as análises do momento.','For the author, an account similar to the previous ones, but with "evidence of tacit knowledge", such as reading the moment.')}
+    ];
+    var LAB = {tac:L('Tácito','Tacit'), exp:L('Explícito','Explicit'), both:L('Os dois','Both')};
+    $('sigs').innerHTML = SIG.map(function(s, i){ return '<div class="sig" data-i="' + i + '"><h3>' + s.h + '</h3>' + q(s.q[0], s.q[1]) + '<div class="pick">' + ['tac', 'exp', 'both'].map(function(k){ return '<button data-k="' + k + '">' + LAB[k] + '</button>'; }).join('') + '</div><div class="ans" aria-live="polite"></div></div>'; }).join('');
+    each(document.querySelectorAll('#sigs .sig'), function(card){
+      var s = SIG[+card.dataset.i];
+      each(card.querySelectorAll('.pick button'), function(b){ b.addEventListener('click', function(){
+        each(card.querySelectorAll('.pick button'), function(x){ x.classList.remove('mine', 'right'); });
+        b.classList.add('mine');
+        card.querySelector('.pick [data-k="' + s.a + '"]').classList.add('right');
+        card.classList.remove('tac', 'exp', 'both'); card.classList.add(s.a);
+        card.querySelector('.ans').innerHTML = (b.dataset.k === s.a ? L('<b>Como o autor.</b> ','<b>Same as the author.</b> ') : '') + s.r;
+      }); });
+    });
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
