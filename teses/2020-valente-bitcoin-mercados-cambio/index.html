@@ -1,0 +1,854 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Bitcoin em real corre atrás do Bitcoin em dólar · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de João Valente Filho (PPGA Mackenzie, 2020) sobre como o preço do Bitcoin se forma em dólar, euro e real e como se relaciona com seis bolsas de valores, explicada em 11 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2020-valente-bitcoin-mercados-cambio/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2223%22 font-family=%22Georgia%22 font-size=%2218%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>B</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --usd:var(--navy);     /* Bitcoin em dólar (Gdax) */
+    --eur:#5b6f96;         /* Bitcoin em euro (Kraken) */
+    --brl:var(--red);      /* Bitcoin em real (Mercado Bitcoin) */
+    --idx:#334155;         /* bolsas de valores */
+  }
+  .note{font-size:.76rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:12px; line-height:1.45;}
+  .note b{color:var(--ink-2);}
+  .ilus{display:inline-block; font-size:.62rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .warn{display:inline-flex; gap:8px; align-items:center; font-size:.78rem; color:#92400e; background:#fef3c7; border-radius:8px; padding:6px 10px; margin-top:12px; line-height:1.35;}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.82rem; cursor:pointer; color:var(--ink-2); font-family:inherit;}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin:10px 0;}
+  .chips button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-family:inherit; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .chips button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .stats{display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.74rem; color:var(--muted); line-height:1.35; display:block;}
+  svg text{font-family:var(--sans);}
+  .svgbox{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .slab.glass > i{--face:color-mix(in srgb, #94a3b8 14%, transparent) !important; box-shadow:inset 0 0 0 1.5px rgb(100 116 139 / .55);}
+  .slab.glass .face-label, .slab.glass .top-label{color:#64748b !important;}
+  .slab .top-label{font-family:var(--sans);}
+  .ctl{display:grid; gap:4px; margin:10px 0; font-size:.82rem; color:var(--ink-2);}
+  .ctl input[type=range]{width:100%; accent-color:var(--red);}
+  .ctl b{font-variant-numeric:tabular-nums; color:var(--ink);}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4vw, 2.6rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:36em; margin-left:auto; margin-right:auto;}
+  #hero-scene{perspective:2000px;}
+  #hero-scene .face-label{font-size:14px; font-weight:700; letter-spacing:.02em;}
+  #hero-scene .top-label{font-size:20px; font-weight:800;}
+
+  /* ---------- 02 · Praças ---------- */
+  .ex{display:grid; gap:12px; margin-top:4px;}
+  .exr{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 12px;}
+  .exr h3{font-size:.9rem; display:flex; justify-content:space-between; gap:8px; align-items:baseline; margin-bottom:6px; font-family:var(--sans);}
+  .exr h3 small{font-weight:400; color:var(--muted); font-size:.74rem;}
+  .exr h3 b{font-family:var(--serif); font-size:1.05rem; color:var(--ink); white-space:nowrap;}
+  .sq{display:flex; flex-wrap:wrap; gap:1px; min-height:7px;}
+  .sq i{width:6px; height:6px; border-radius:1px; background:var(--c); display:block;}
+  .sq i.part{opacity:.45;}
+
+  /* ---------- 03 · Arbitragem ---------- */
+  #arb-svg{max-width:520px; margin:0 auto;}
+  .res{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:10px;}
+  .res div{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:8px 10px; font-size:.72rem; color:var(--muted);}
+  .res div b{display:block; font-family:var(--serif); font-size:1.15rem; color:var(--ink);}
+  .res div.neg b{color:var(--red);}
+
+  /* ---------- 04 · Dados ---------- */
+  #day{display:grid; grid-template-columns:repeat(24, 1fr); gap:3px; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px;}
+  #day i{display:block; aspect-ratio:1; border-radius:3px; background:var(--navy); transition:opacity .35s, background .35s;}
+  #day.daily i{opacity:.08;}
+  #day.daily i:last-child{opacity:1; background:var(--red);}
+  .hours{display:flex; justify-content:space-between; font-size:.68rem; color:var(--muted); margin-top:4px; padding:0 4px;}
+  .clean{display:grid; gap:6px; margin-top:12px;}
+  .clean div{display:grid; grid-template-columns:118px 1fr 1fr; gap:8px; align-items:center; font-size:.76rem; color:var(--ink-2);}
+  .clean .h{font-size:.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em;}
+  .clean .tr{height:14px; background:#eef2f7; border-radius:4px; position:relative; overflow:hidden;}
+  .clean .tr i{position:absolute; left:0; top:0; bottom:0; border-radius:4px;}
+  .clean .tr span{position:absolute; right:4px; top:-1px; font-size:.66rem; font-weight:700; color:var(--ink);}
+
+  /* ---------- 05 · Tempo ---------- */
+  #lag-scene{perspective:2000px;}
+  #lag-scene .top-label{font-size:18px; font-weight:800;}
+  #lag-panel{min-height:96px; margin-top:12px;}
+  .votes{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .votes span{font-size:.72rem; border-radius:999px; padding:3px 9px; background:#eef2f7; color:var(--ink-2);}
+  .votes span b{color:var(--ink);}
+
+  /* ---------- 06 · Corrida ---------- */
+  #run-scene{perspective:2000px;}
+  #run-scene .top-label{font-size:16px; font-weight:800;}
+  #run-scene .face-label{font-size:13px; font-weight:700;}
+  .split{display:flex; height:30px; border-radius:8px; overflow:hidden; margin-top:10px; border:1px solid var(--border);}
+  .split i{display:flex; align-items:center; justify-content:center; color:#fff; font-style:normal; font-size:.74rem; font-weight:700; transition:flex-basis .6s; white-space:nowrap; overflow:hidden;}
+  .split i.ns{background:repeating-linear-gradient(135deg, #cbd5e1 0 6px, #e2e8f0 6px 12px) !important; color:var(--ink-2);}
+  #run-panel{min-height:100px; margin-top:12px;}
+
+  /* ---------- 07 · Bolsas ---------- */
+  #hm{max-width:560px; margin:0 auto;}
+  #hm rect.c{cursor:pointer; stroke:#fff; stroke-width:2;}
+  #hm rect.c.on{stroke:var(--ink); stroke-width:3;}
+  #hm-panel{min-height:80px; margin-top:12px;}
+  .scale{display:flex; align-items:center; gap:8px; font-size:.72rem; color:var(--muted); margin-top:8px; justify-content:center;}
+  .scale i{display:block; width:160px; height:10px; border-radius:5px; background:linear-gradient(90deg, var(--red), #fff 50%, var(--navy)); border:1px solid var(--border);}
+
+  /* ---------- 08 · Inesperado ---------- */
+  .quiz{display:grid; gap:8px; margin-top:10px;}
+  .quiz button{text-align:left; border:1px solid var(--border); background:var(--card); border-radius:12px; padding:10px 14px; font-family:inherit; font-size:.86rem; color:var(--ink-2); cursor:pointer;}
+  .quiz button.chosen{border-color:var(--ink); box-shadow:inset 4px 0 0 var(--red), var(--shadow); color:var(--ink);}
+  #q-msg{min-height:22px; font-size:.86rem; margin-top:8px; color:var(--ink-2);}
+  .hide{visibility:hidden;}
+  #glass-scene{perspective:2000px;}
+  #g-after .fit-wrap{margin-top:44px;}
+  #glass-scene .top-label{font-size:22px; font-weight:800; color:var(--ink);}
+  .coefs{display:grid; gap:4px; margin-top:10px;}
+  .coefs div{display:grid; grid-template-columns:96px 1fr 128px; gap:8px; align-items:center; font-size:.74rem; color:var(--ink-2);}
+  .coefs .tr{position:relative; height:12px; background:#eef2f7; border-radius:4px;}
+  .coefs .tr::after{content:''; position:absolute; left:50%; top:-2px; bottom:-2px; width:1.5px; background:#64748b;}
+  .coefs .tr i{position:absolute; top:2px; bottom:2px; border-radius:3px;}
+  .coefs .tr i.ns{background:repeating-linear-gradient(135deg, #cbd5e1 0 5px, #e2e8f0 5px 10px) !important;}
+  .coefs em{font-style:normal; font-variant-numeric:tabular-nums; text-align:right; font-size:.68rem; white-space:nowrap;}
+
+  /* ---------- 09 · Ondas ---------- */
+  #wave-svg{max-width:620px;}
+  #wave-svg .w{cursor:pointer;}
+  .cr{display:grid; gap:6px; margin-top:10px;}
+  .cr div{display:grid; grid-template-columns:96px 1fr 50px; gap:8px; align-items:center; font-size:.78rem; color:var(--ink-2);}
+  .cr .tr{position:relative; height:18px; background:#eef2f7; border-radius:4px;}
+  .cr .tr::after{content:''; position:absolute; left:50%; top:-3px; bottom:-3px; width:2px; background:#64748b; margin-left:-1px;}
+  .cr .tr i{position:absolute; top:3px; bottom:3px; border-radius:3px; transition:left .5s, width .5s;}
+  .cr b{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink);}
+  #wave-panel{min-height:70px; margin-top:10px;}
+
+  /* ---------- 10 · Placar ---------- */
+  .score{display:grid; grid-template-columns:1fr; gap:10px; margin-top:10px;}
+  @media (min-width:800px){ .score{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1150px){ .score{grid-template-columns:repeat(3, 1fr);} }
+  .sc{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px; box-shadow:var(--shadow); border-top:5px solid var(--sc); transition:opacity .3s;}
+  .sc.off{opacity:.25;}
+  .sc h3{font-size:.9rem; margin:4px 0 4px;}
+  .sc p{font-size:.76rem; margin:0; line-height:1.45; color:var(--ink-2);}
+  .sc .verd{font-size:.64rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--sc);}
+
+  /* ---------- 11 · Final ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.78rem; color:var(--ink-2); line-height:1.42;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+  .also{font-size:.8rem; margin-top:10px; color:var(--muted);}
+  .also a{color:var(--red); font-weight:600;}
+
+  @media (max-width:600px){
+    .clean div{grid-template-columns:90px 1fr 1fr; font-size:.72rem;}
+    .coefs div{grid-template-columns:78px 1fr 118px;}
+    .cr div{grid-template-columns:78px 1fr 44px;}
+    .res{grid-template-columns:1fr 1fr 1fr;}
+    .res div b{font-size:1rem;}
+    #day{grid-template-columns:repeat(16, 1fr);}
+    .sq i{width:5px; height:5px;}
+  }
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2020-valente-bitcoin-mercados-cambio/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 11</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2020</div>
+      <h1 class="rv" style="--d:.1s">O Bitcoin em real corre atrás do Bitcoin em dólar</h1>
+      <p class="sub rv" style="--d:.2s">Com quase 97 mil preços tomados a cada 15 minutos em três corretoras, de junho de 2017 a março de 2020, a tese mostra que o Bitcoin em dólar, euro e real anda junto, com o dólar na frente. Com as bolsas de valores, a ligação do dia a dia é fraca. Explicada em 11 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> João Valente Filho</span>
+        <span><b>Orientador:</b> Prof. Dr. Denis Forte</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#pracas">Começar →</a>
+        <a class="btn ghost" href="#corrida">Ver quem corre atrás</a>
+      </div>
+      <p class="warn rv" style="--d:.45s">⚠ Esta página explica uma pesquisa. Não é recomendação de investimento.</p>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="480x340" role="img" aria-label="Três plataformas 3D, uma por corretora (dólar, euro e real), cada uma com uma coluna de bitcoin que sobe e desce; a coluna em real repete o movimento com atraso"></div></div>
+      <p class="cap-legend"><span class="ilus">ilustração</span> O mesmo movimento do preço chega às três praças; em real, chega depois e é o real que faz a maior parte do ajuste (tela 06).</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-10"><a href="https://brasil.un.org/pt-br/sdgs/10" target="_blank" rel="noopener" title="ODS 10 · Redução das desigualdades: Estuda como o preço do Bitcoin se forma entre praças e moedas, informação útil para regular e acompanhar um mercado financeiro global ainda sem regras comuns."><b>10</b>Redução das desigualdades</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · PRAÇAS -->
+<section class="slide" id="pracas" data-label="Três praças">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O tema · seção 1.3 da tese</div>
+      <h2 class="rv" style="--d:.1s">Em dólar, negociava-se quase 90 vezes mais bitcoin por dia do que em real</h2>
+      <p class="lede rv" style="--d:.15s">O Bitcoin não tem dono nem horário: é negociado 24 horas por dia, todos os dias, em corretoras (as exchanges) do mundo todo, cada uma na sua moeda. A tese escolheu uma grande corretora por moeda. Troque entre a média, o pico e o vale de negociação diária.</p>
+      <div class="seg rv" id="vol-seg" style="--d:.2s" role="group" aria-label="Volume diário">
+        <button data-m="0" aria-pressed="true">Média</button><button data-m="1" aria-pressed="false">Pico</button><button data-m="2" aria-pressed="false">Vale</button>
+      </div>
+      <p class="note rv" style="--d:.25s">Cada quadradinho = 100 bitcoins negociados num dia. Volumes aproximados informados pela tese para o período de 2017 a 2020 (seção 1.3). A razão 35.000 ÷ 400 ≈ 88 é conta nossa.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="ex" id="ex"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · ARBITRAGEM -->
+<section class="slide" id="arbitragem" data-label="Preços diferentes">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> A ideia · arbitragem</div>
+      <h2 class="rv" style="--d:.1s">Quando o mesmo bitcoin custa diferente em duas praças, alguém compra na barata e vende na cara</h2>
+      <p class="lede rv" style="--d:.15s">Isso se chama arbitragem. Quem faz isso empurra os dois preços um para o outro até a diferença sumir. A tese mede quanto tempo essa reaproximação leva e qual praça se mexe mais. Mexa nos controles.</p>
+      <div class="ctl rv" style="--d:.2s"><label for="gap">Diferença de preço entre as praças (já convertida): <b id="gap-v"></b></label><input id="gap" type="range" min="0" max="40" value="15" step="1"></div>
+      <div class="ctl rv" style="--d:.25s"><label for="cost">Custos de quem tenta aproveitar (taxas, câmbio, transferência): <b id="cost-v"></b></label><input id="cost" type="range" min="0" max="40" value="10" step="1"></div>
+      <p class="note rv" style="--d:.3s"><span class="ilus">ilustração</span> Números inventados. A tese não simulou operações, taxas nem prazos: mostra que as diferenças existem por um tempo e se fecham, não que dê para lucrar com elas.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="arb-svg" class="svgbox" viewBox="0 0 520 300" role="img" aria-label="Duas plataformas com o preço do bitcoin em cada praça e uma seta da mais barata para a mais cara"></svg>
+      <div class="res" id="arb-res"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · DADOS -->
+<section class="slide" id="dados" data-label="Os dados">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Como a pesquisa olhou · capítulos I e II</div>
+      <h2 class="rv" style="--d:.1s">Quase 97 mil retratos do preço, um a cada 15 minutos, por quase três anos</h2>
+      <p class="lede rv" style="--d:.15s">De 30 de junho de 2017 a 31 de março de 2020, o autor coletou o preço nas três corretoras no mesmo relógio (o de Greenwich). O capítulo I usa um retrato a cada 15 minutos; o capítulo II, só o fechamento de cada dia. Troque a lente.</p>
+      <div class="seg rv" id="day-seg" style="--d:.2s" role="group" aria-label="Frequência">
+        <button data-m="0" aria-pressed="true">A cada 15 minutos</button><button data-m="1" aria-pressed="false">Fechamento do dia</button>
+      </div>
+      <div class="stats rv" style="--d:.25s">
+        <div class="stat"><b id="st1">97.235</b><span id="st1t">retratos coletados a cada 15 minutos</span></div>
+        <div class="stat"><b id="st2">96.568</b><span id="st2t">usados nos testes, depois da limpeza</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div id="day" role="img" aria-label="Um dia em 96 quadradinhos de 15 minutos"></div>
+      <div class="hours"><span>0h</span><span>6h</span><span>12h</span><span>18h</span><span>24h</span></div>
+      <div class="clean" id="clean"></div>
+      <p class="note">Sem negócio num intervalo de 15 minutos, o autor repetiu o último preço com volume zero; mais de 3 horas paradas numa corretora, o trecho saía das três. No total, 667 retratos saíram (0,685%) e 2.495 foram repetidos (2,565%). Dados do site bitcoincharts, testes no Stata.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · TEMPO -->
+<section class="slide" id="tempo" data-label="Quanto tempo">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Resultado · Tabelas 6 a 9, 24, 29, 34 e 39</div>
+      <h2 class="rv" style="--d:.1s">Nos dados de 15 minutos, as praças se acertam em cerca de uma hora</h2>
+      <p class="lede rv" style="--d:.15s">Para saber quanto do passado ainda pesa no preço de agora, o autor usou cinco critérios estatísticos. Cada um vota no número de passos para trás que melhor descreve os dados. Cada coluna mostra quantos critérios votaram naquele número de passos.</p>
+      <div class="seg rv" id="lag-seg" style="--d:.2s" role="group" aria-label="Frequência">
+        <button data-m="0" aria-pressed="true">Passos de 15 minutos</button><button data-m="1" aria-pressed="false">Passos de 1 dia</button>
+      </div>
+      <div class="chips rv" id="lag-chips" style="--d:.25s" role="group" aria-label="Moedas"></div>
+      <div class="panel rv" id="lag-panel" style="--d:.3s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="lag-scene" data-fit="500x360" role="img" aria-label="Colunas 3D de votos dos cinco critérios por número de passos, de 0 a 4"></div></div>
+      <p class="note">Critérios: razão de verossimilhança (LR), erro final de previsão (FPE), Akaike (AIC), Hannan-Quinn (HQIC) e Schwarz (SBIC). Leitura nossa: nos dados de 15 minutos, as tabelas testam até 4 passos e os cinco critérios escolhem o último; a hora pode ser um mínimo, e não o tempo exato.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · CORRIDA -->
+<section class="slide" id="corrida" data-label="Quem corre atrás">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Descoberta · Tabelas 10 a 13, 25, 30, 35 e 40</div>
+      <h2 class="rv" style="--d:.1s">Nos dados de 15 minutos, é o preço em real que faz quase todo o ajuste</h2>
+      <p class="lede rv" style="--d:.15s">Quando as praças se descolam, o modelo de correção de erros mede quanto cada uma se mexe no passo seguinte para voltar a andar junto. Coluna mais alta, mais ela se mexe. Escolha o par e a lente.</p>
+      <div class="seg rv" id="run-seg" style="--d:.2s" role="group" aria-label="Frequência">
+        <button data-m="0" aria-pressed="true">A cada 15 minutos</button><button data-m="1" aria-pressed="false">Fechamento do dia</button>
+      </div>
+      <div class="chips rv" id="run-chips" style="--d:.25s" role="group" aria-label="Moedas"></div>
+      <div class="panel rv" id="run-panel" style="--d:.3s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="run-scene" data-fit="480x330" role="img" aria-label="Colunas 3D com a velocidade de ajuste de cada moeda no par escolhido"></div></div>
+      <div class="split" id="run-split" aria-hidden="true"></div>
+      <p class="note">Altura = tamanho do coeficiente de ajuste (α, em módulo). A barra mostra a fatia de cada moeda no ajuste total do par, conta nossa. Listrado = sem efeito claro (p acima de 0,10).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · BOLSAS -->
+<section class="slide" id="bolsas" data-label="Bitcoin e bolsas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Resultado · capítulo III, Tabelas 62, 65, 67 e 69</div>
+      <h2 class="rv" style="--d:.1s">As bolsas andam juntas entre si, e o Bitcoin anda à parte delas</h2>
+      <p class="lede rv" style="--d:.15s">O capítulo III compara o retorno diário do Bitcoin com seis índices de bolsa: Ibovespa, S&amp;P 500, Dow Jones, Nasdaq, CAC 40 (França) e FTSE 100 (Reino Unido). A correlação vai de −1 (sempre ao contrário) a +1 (sempre juntos). Toque numa casa.</p>
+      <div class="seg rv" id="hm-seg" style="--d:.2s" role="group" aria-label="Período">
+        <button data-m="0" aria-pressed="true">2017–2020 inteiro</button><button data-m="1" aria-pressed="false">Alta de 2017</button><button data-m="2" aria-pressed="false">Recuperação de 2019</button><button data-m="3" aria-pressed="false">Queda de 2020</button>
+      </div>
+      <div class="panel rv" id="hm-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="hm" class="svgbox" viewBox="0 0 560 520" role="img" aria-label="Mapa de calor das correlações entre Bitcoin em três moedas e seis bolsas"></svg>
+      <div class="scale"><span>−1</span><i></i><span>+1</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · INESPERADO -->
+<section class="slide" id="inesperado" data-label="O inesperado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> O inesperado · Tabelas 62 a 70</div>
+      <h2 class="rv" style="--d:.1s">Uma regressão que explica 97% pode esconder de onde vem a explicação</h2>
+      <p class="lede rv" style="--d:.15s">O autor explicou o Bitcoin em dólar com oito variáveis: o Bitcoin em euro, o Bitcoin em real e as seis bolsas. O resultado explicou 97% da variação (R²). Antes de ver, dê seu palpite: quem faz esse trabalho?</p>
+      <div class="quiz rv" id="quiz" style="--d:.2s">
+        <button data-q="0">As bolsas de valores</button>
+        <button data-q="1">O próprio Bitcoin, em euro e em real</button>
+        <button data-q="2">Os dois, meio a meio</button>
+      </div>
+      <p id="q-msg" aria-live="polite"></p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div id="g-after" class="hide">
+        <div class="seg" id="gl-seg" role="group" aria-label="Variáveis">
+          <button data-m="0" aria-pressed="true">As oito</button><button data-m="1" aria-pressed="false">Só euro e real</button><button data-m="2" aria-pressed="false">Só as seis bolsas</button>
+        </div>
+        <div class="chips" id="gl-chips" role="group" aria-label="Período"></div>
+        <div class="fit-wrap"><div class="scene" id="glass-scene" data-fit="440x270" role="img" aria-label="Copo de vidro 3D que enche até o R² da combinação escolhida"></div></div>
+        <p class="note" id="gl-note"></p>
+      </div>
+      <div id="q-after" class="hide">
+        <div class="coefs" id="coefs"></div>
+        <p class="note">Coeficientes da regressão do período inteiro (Tabela 63). Listrado = sem efeito claro a 5%.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · ONDAS -->
+<section class="slide" id="ondas" data-label="As ondas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Resultado · seção 3.4, quatro períodos</div>
+      <h2 class="rv" style="--d:.1s">Em cada onda do Bitcoin, a ligação com as bolsas mudou de tamanho e de sinal</h2>
+      <p class="lede rv" style="--d:.15s">Para procurar efeito manada (todos indo para o mesmo lado) e contágio (a crise de um mercado passando para outro), o autor recortou quatro momentos de alta ou de queda forte do Bitcoin. Toque numa onda.</p>
+      <div class="panel rv" id="wave-panel" style="--d:.2s" aria-live="polite"></div>
+      <p class="note rv" style="--d:.25s">Para o autor, as mudanças nas correlações são indícios exploratórios de manada e de contágio; a tese não traz um teste próprio para cada efeito. A queda de 2020 tem só 60 dias.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="wave-svg" class="svgbox" viewBox="0 -6 620 220" role="img" aria-label="Linha do tempo de 2017 a 2020 com as quatro ondas do Bitcoin"></svg>
+      <div class="cr" id="cr"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · PLACAR -->
+<section class="slide" id="placar" data-label="As conclusões">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">10</span> Conclusão da tese · capítulo 4</div>
+    <h2 class="rv" style="--d:.1s">O que o autor conclui e quanto os números sustentam cada conclusão</h2>
+    <div class="chips rv" id="sc-chips" style="--d:.15s" role="group" aria-label="Apoio"></div>
+    <div class="score" id="score"></div>
+  </div>
+</section>
+
+<!-- 11 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e limites">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> Na prática · limites · créditos</div>
+    <h2 class="rv" style="--d:.1s">Um ativo global com preço puxado pelo dólar</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Quem investe ou pensa em investir</h3><p>A tese descreve como o preço se forma; não diz se comprar ou vender. O preço em real acompanha o do dólar com atraso e num mercado bem menor. Não é recomendação de investimento.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Reguladores</h3><p>O autor vê o trabalho como contribuição para a regulação, ainda em discussão no Brasil em 2020: o preço é global e se forma sobretudo fora do país.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--eur)"><h3>Gestores de fundos</h3><p>A tese aponta a relevância para a diversificação internacional, mas conclui que o efeito diversificador não pôde ser comprovado e não montou carteiras.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:var(--idx)"><h3>Pesquisadores</h3><p>O autor sugere estudar outros criptoativos, commodities e metais, derivativos, simulações de carteira e o comportamento do Bitcoin na pandemia de 2020.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Diferença de preço não é lucro.</b> A tese fala em oportunidades de arbitragem, mas não simula operações, taxas, câmbio nem tempo de transferência entre corretoras (tela 03).</li>
+          <li><b>Andar junto no curto prazo.</b> Os testes usam retornos, que já não têm tendência. Nesse caso, o teste de Johansen rejeitar até “no máximo uma relação” indica séries que voltam à média, e não uma ligação de longo prazo entre os preços. Leia “cointegração” aqui como andar junto. <em>· observação nossa</em></li>
+          <li><b>Caudas gordas.</b> Os testes de Jarque-Bera rejeitam a curva normal em todos os sistemas (p 0,000): saltos grandes acontecem bem mais do que a curva normal prevê. Isso pede cautela com a força dos testes z. <em>· observação nossa</em></li>
+          <li><b>Bolsas fecham no fim de semana.</b> O Bitcoin é negociado todos os dias; as bolsas, não. A tese não descreve como alinhou os dias, nem traz o teste de cointegração do Bitcoin com as bolsas (só a correção de erros). <em>· observação nossa</em></li>
+          <li><b>Só corretoras, uma por moeda.</b> Negócios diretos entre pessoas e de balcão ficaram de fora, segundo o autor, e o período termina em março de 2020, antes dos efeitos da pandemia.</li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          VALENTE FILHO, João. <em>Bitcoin: análise temporal entre mercados, câmbio e índices internacionais.</em> Tese (Doutorado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2020. Orientador: Prof. Dr. Denis Forte.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Preços do Bitcoin no bitcoincharts (Mercado Bitcoin, Gdax, Kraken) e índices no Yahoo Finance, de 30/06/2017 a 31/03/2020; testes no Stata. A tese teve isenção integral de mensalidades do Instituto Presbiteriano Mackenzie. Esta versão simplifica a tese para o público em geral; as tabelas completas estão no texto original.</p>
+        <p class="also">Leia também: <a href="../../dissertacoes/2026-palhao-fiagros-commodities/">FIAGROs e o preço do campo</a> (Palhão, 2026), outra pesquisa do mesmo orientador com preços diários, dólar e Ibovespa.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  function n0(n){ return n.toLocaleString(EN ? 'en-US' : 'pt-BR'); }
+  function sg(v, d){ return (v < 0 ? '−' : '') + fmt(Math.abs(v), d); }
+  function pv(p){ return p < 0.001 ? (EN ? 'p &lt; 0.001' : 'p &lt; 0,001') : 'p ' + fmt(p, 3); }
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, a, txt){ var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); if (txt !== undefined) e.textContent = txt; return e; }
+  function seg(id, fn){
+    var g = $(id);
+    each(g.querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){
+        each(g.querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        fn(+b.dataset.m);
+      });
+    });
+  }
+  function chips(id, items, fn, start){
+    var g = $(id); g.innerHTML = '';
+    items.forEach(function(it, i){
+      var b = document.createElement('button');
+      b.textContent = it; b.setAttribute('aria-pressed', i === start ? 'true' : 'false');
+      b.addEventListener('click', function(){ each(g.children, function(c){ c.setAttribute('aria-pressed', c === b ? 'true' : 'false'); }); fn(i); });
+      g.appendChild(b);
+    });
+  }
+
+  /* ================= DADOS DA TESE ================= */
+  var CUR = {
+    usd:{n:L('Dólar', 'Dollar'), s:'US$', ex:'Gdax', c:'var(--usd)', hex:'#1f3b73'},
+    eur:{n:'Euro', s:'€', ex:'Kraken', c:'var(--eur)', hex:'#5b6f96'},
+    brl:{n:'Real', s:'R$', ex:'Mercado Bitcoin', c:'var(--brl)', hex:'#e80734'}
+  };
+  // Volume diário aproximado em bitcoins (seção 1.3): média, pico, vale
+  var VOL = {usd:[35000, 130000, 5000], eur:[7000, 50000, 1000], brl:[400, 1400, 40]};
+  // Limpeza dos dados de 15 minutos (seção 1.3): retiradas, preenchidas
+  var CLEAN = {brl:[263, 1856], usd:[183, 0], eur:[221, 639]};
+  // Votos dos critérios (LR, FPE, AIC, HQIC, SBIC) no número de defasagens
+  var PAIRS = [
+    {k:'ue', a:'usd', b:'eur', n:'US$ · €'},
+    {k:'ub', a:'usd', b:'brl', n:'US$ · R$'},
+    {k:'eb', a:'eur', b:'brl', n:'€ · R$'},
+    {k:'all', n:L('As três', 'The three')}
+  ];
+  var LAGS = {
+    0:{ue:[4,4,4,4,4], ub:[4,4,4,4,4], eb:[4,4,4,4,4], all:[4,4,4,4,4], t:['6','7','8','9']},
+    1:{ue:[2,3,3,2,2], ub:[4,4,4,2,2], eb:[2,4,4,2,2], all:[3,3,3,2,2], t:['24','29','34','39']}
+  };
+  var CRIT = ['LR', 'FPE', 'AIC', 'HQIC', 'SBIC'];
+  // Coeficiente de ajuste α (L1._ce1): [coef, z, p]
+  var ALPHA = {
+    0:{ue:{usd:[-0.7630873, -37.57, 0], eur:[1.017721, 50.62, 0], t:'10'},
+       ub:{usd:[-0.2164473, -34.78, 0], brl:[1.2157, 168.8, 0], t:'11'},
+       eb:{eur:[-0.2349182, -38.43, 0], brl:[1.1850, 166.99, 0], t:'12'},
+       all:{usd:[-0.5235861, -43.49, 0], eur:[-0.0745, -6.16, 0], brl:[2.151456, 150.09, 0], t:'13'}},
+    1:{ue:{usd:[-0.9170680, -1.53, 0.125], eur:[0.8230, 1.39, 0.165], t:'25'},
+       ub:{usd:[-0.8779531, -4.27, 0], brl:[0.9131, 4.92, 0], t:'30'},
+       eb:{eur:[-0.9268757, -4.46, 0], brl:[0.8917, 4.71, 0], t:'35'},
+       all:{usd:[-1.3882100, -4.55, 0], eur:[-1.1118, -3.67, 0], brl:[1.240516, 4.54, 0], t:'40'}}
+  };
+  // Correlações dos retornos diários (Tabelas 62, 65, 67, 69). Ordem: usd, eur, brl, ibov, sp, cac, dow, nas, ftse
+  var VN = ['BTC US$', 'BTC €', 'BTC R$', 'Ibovespa', 'S&P 500', 'CAC 40', 'Dow Jones', 'Nasdaq', 'FTSE 100'];
+  var CORR = [
+    {t:'62', n:L('30/06/2017 a 31/03/2020 · 1.005 dias', '06/30/2017 to 03/31/2020 · 1,005 days'), m:[
+      [1],[0.984,1],[0.862,0.852,1],[-0.122,-0.129,-0.087,1],[0.058,0.065,0.064,0.132,1],[0.028,0.035,0.017,0.580,0.198,1],[-0.089,-0.100,-0.057,0.711,0.138,0.665,1],[-0.080,-0.090,-0.043,0.655,0.112,0.611,0.926,1],[0.030,0.036,0.004,0.579,0.176,0.888,0.652,0.583,1]]},
+    {t:'65', n:L('01/09 a 08/12/2017 · 99 dias', '09/01 to 12/08/2017 · 99 days'), m:[
+      [1],[0.977,1],[0.881,0.879,1],[-0.120,-0.114,-0.116,1],[0.097,0.112,0.054,-0.008,1],[0.112,0.126,0.095,0.244,-0.044,1],[0.002,0.021,0.107,0.132,-0.152,0.470,1],[0.024,0.030,0.042,0.213,-0.042,0.335,0.529,1],[0.318,0.334,0.304,0.240,0.043,0.535,0.305,0.363,1]]},
+    {t:'67', n:L('01/03 a 30/06/2019 · 122 dias', '03/01 to 06/30/2019 · 122 days'), m:[
+      [1],[0.995,1],[0.777,0.770,1],[-0.076,-0.079,-0.015,1],[0.150,0.157,0.120,0.134,1],[0.107,0.109,0.079,0.281,0.014,1],[-0.025,-0.038,-0.046,0.403,0.019,0.718,1],[0.036,0.028,0.023,0.408,-0.011,0.676,0.870,1],[0.159,0.155,0.179,0.280,0.114,0.811,0.699,0.693,1]]},
+    {t:'69', n:L('01/02 a 31/03/2020 · 60 dias', '02/01 to 03/31/2020 · 60 days'), m:[
+      [1],[0.996,1],[0.903,0.899,1],[-0.402,-0.412,-0.367,1],[0.079,0.093,0.145,0.184,1],[-0.027,-0.022,-0.030,0.810,0.320,1],[-0.362,-0.381,-0.304,0.908,0.209,0.753,1],[-0.400,-0.415,-0.325,0.888,0.162,0.723,0.978,1],[-0.063,-0.063,-0.120,0.835,0.266,0.963,0.810,0.768,1]]}
+  ];
+  function corr(m, i, j){ return i >= j ? m[i][j] : m[j][i]; }
+  // R² da regressão do BTC em dólar (Tabelas 63, 64, 66, 68, 70) e R² de subconjuntos (conta nossa a partir das correlações)
+  var R2 = [
+    {n:L('2017–2020', '2017–2020'), t:'63', all:0.971, cr:0.970, bo:0.039, days:1005},
+    {n:L('Alta de 2017', '2017 rise'), t:'64', all:0.958, cr:0.957, bo:0.155, days:99},
+    {n:L('Bolha 2017–18', '2017–18 bubble'), t:'66', all:0.944, cr:null, bo:null, days:113},
+    {n:L('Recuperação 2019', '2019 recovery'), t:'68', all:0.990, cr:0.990, bo:0.093, days:122},
+    {n:L('Queda de 2020', '2020 fall'), t:'70', all:0.995, cr:0.993, bo:0.454, days:60}
+  ];
+  // Tabela 63: coeficiente e p
+  var COEF = [['BTC €', 0.9286, 0], ['BTC R$', 0.0918, 0.000000000000005], ['Ibovespa', 0.0035, 0.883], ['S&P 500', -0.0295, 0.225], ['CAC 40', -0.0890, 0.120], ['Dow Jones', 0.1103, 0.080], ['Nasdaq', -0.0372, 0.498], ['FTSE 100', 0.0064, 0.919]];
+  // Ondas (seção 3.4): início, fim (fração da linha do tempo 30/06/2017–31/03/2020), preço de/para (US$)
+  var WAVES = [
+    {n:L('Alta de 2017', '2017 rise'), d:L('01/09 a 08/12/2017', '09/01 to 12/08/2017'), a:'2017-09-01', b:'2017-12-08', p:L('de US$ 3.200 a US$ 20.000', 'from US$3,200 to US$20,000'), up:true, c:1, s:'2017'},
+    {n:L('Bolha de 2017–18', '2017–18 bubble'), d:L('09/12/2017 a 31/03/2018', '12/09/2017 to 03/31/2018'), a:'2017-12-09', b:'2018-03-31', p:L('de US$ 20.000 a cerca de US$ 4.000–5.500', 'from US$20,000 to about US$4,000–5,500'), up:false, c:null, s:'2017–18'},
+    {n:L('Recuperação de 2019', '2019 recovery'), d:L('01/03 a 30/06/2019', '03/01 to 06/30/2019'), a:'2019-03-01', b:'2019-06-30', p:L('de US$ 3.000–3.500 a US$ 13.000', 'from US$3,000–3,500 to US$13,000'), up:true, c:2, s:'2019'},
+    {n:L('Queda de 2020', '2020 fall'), d:L('01/02 a 31/03/2020', '02/01 to 03/31/2020'), a:'2020-02-01', b:'2020-03-31', p:L('de US$ 11.000 a US$ 4.000', 'from US$11,000 to US$4,000'), up:false, c:3, s:'2020'}
+  ];
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 420, 200, {rx:'60deg'});
+    var keys = ['usd', 'eur', 'brl'], cols = [];
+    keys.forEach(function(k, i){
+      var x = 20 + i * 140;
+      st.appendChild(box({w:100, d:100, h:22, x:x, y:50, c:'#e2e8f0', label:CUR[k].s + ' · ' + CUR[k].ex.replace('Mercado Bitcoin', 'M. Bitcoin')}));
+      var col = box({w:56, d:56, h:80, x:x + 22, y:72, z:22, c:CUR[k].c, top:'B'});
+      st.appendChild(col); cols.push(col);
+    });
+    rotatable(sc, st, -18, 10);
+    // Ilustração: mesmo movimento; euro com pequeno atraso, real com atraso maior
+    var lag = [0, 0.35, 1.3];
+    M.onTick(function(t){
+      if (reduce) return;
+      cols.forEach(function(c, i){
+        var tt = t - lag[i], h = 90 + 46 * Math.sin(tt * 1.1) + 18 * Math.sin(tt * 2.7);
+        c.style.setProperty('--h', h.toFixed(1) + 'px');
+      });
+    });
+  })();
+
+  /* ================= 02 · PRAÇAS ================= */
+  (function(){
+    var host = $('ex'), keys = ['usd', 'eur', 'brl'];
+    var MAIS = L('mais de ', 'over '), CERCA = L('cerca de ', 'about ');
+    var PRE = [[MAIS, CERCA, CERCA], [MAIS, MAIS, ''], [CERCA, CERCA, CERCA]];
+    function draw(m){
+      host.innerHTML = keys.map(function(k){
+        var v = VOL[k][m], full = Math.floor(v / 100), part = v % 100 ? 1 : 0, sq = '';
+        for (var i = 0; i < full; i++) sq += '<i></i>';
+        if (part) sq += '<i class="part"></i>';
+        return '<div class="exr" style="--c:' + CUR[k].c + '"><h3><span>' + CUR[k].s + ' · ' + CUR[k].ex + ' <small>' + L(['Estados Unidos', 'Europa', 'Brasil'][keys.indexOf(k)], ['United States', 'Europe', 'Brazil'][keys.indexOf(k)]) + '</small></span><b>' + PRE[m][keys.indexOf(k)] + n0(v) + ' ₿</b></h3><div class="sq">' + sq + '</div></div>';
+      }).join('');
+    }
+    seg('vol-seg', draw); draw(0);
+  })();
+
+  /* ================= 03 · ARBITRAGEM ================= */
+  (function(){
+    var svg = $('arb-svg'), g = $('gap'), c = $('cost');
+    function draw(){
+      var gap = +g.value / 10, cost = +c.value / 10, net = gap - cost;
+      $('gap-v').textContent = fmt(gap, 1) + '%'; $('cost-v').textContent = fmt(cost, 1) + '%';
+      svg.innerHTML = '';
+      var base = 200, hA = 120, hB = 120 * (1 + gap / 10);
+      [[70, hA, 'var(--usd)', L('Praça A', 'Market A'), '100,0'], [330, hB, 'var(--brl)', L('Praça B', 'Market B'), fmt(100 + gap, 1)]].forEach(function(p){
+        svg.appendChild(el('rect', {x:p[0], y:base - p[1], width:120, height:p[1], rx:10, fill:p[2]}));
+        svg.appendChild(el('text', {x:p[0] + 60, y:base - p[1] + 34, 'text-anchor':'middle', fill:'#fff', 'font-size':26, 'font-weight':800}, 'B'));
+        svg.appendChild(el('text', {x:p[0] + 60, y:base + 26, 'text-anchor':'middle', fill:'#334155', 'font-size':15, 'font-weight':700}, p[3]));
+        svg.appendChild(el('text', {x:p[0] + 60, y:base + 46, 'text-anchor':'middle', fill:'#64748b', 'font-size':13}, L('preço ', 'price ') + p[4]));
+      });
+      svg.appendChild(el('path', {d:'M200,' + (base - 60) + ' Q260,' + (base - 120) + ' 320,' + (base - 60), fill:'none', stroke:'#0f172a', 'stroke-width':3, 'stroke-dasharray':'6 5'}));
+      svg.appendChild(el('path', {d:'M310,' + (base - 70) + ' L322,' + (base - 59) + ' L306,' + (base - 56), fill:'none', stroke:'#0f172a', 'stroke-width':3}));
+      svg.appendChild(el('text', {x:260, y:base - 26, 'text-anchor':'middle', fill:'#0f172a', 'font-size':13, 'font-weight':600}, L('compra em A,', 'buy in A,')));
+      svg.appendChild(el('text', {x:260, y:base - 9, 'text-anchor':'middle', fill:'#0f172a', 'font-size':13, 'font-weight':600}, L('vende em B', 'sell in B')));
+      svg.appendChild(el('text', {x:260, y:base + 80, 'text-anchor':'middle', fill:'#64748b', 'font-size':12}, L('as compras sobem A, as vendas descem B: a diferença se fecha', 'buying lifts A, selling lowers B: the gap closes')));
+      $('arb-res').innerHTML = '<div><b>' + fmt(gap, 1) + '%</b>' + L('diferença', 'gap') + '</div><div><b>' + fmt(cost, 1) + '%</b>' + L('custos', 'costs') + '</div><div class="' + (net < 0 ? 'neg' : '') + '"><b>' + sg(net, 1) + '%</b>' + (net <= 0 ? L('não compensa', 'not worth it') : L('sobra, se nada mudar no caminho', 'left over, if nothing changes on the way')) + '</div>';
+    }
+    g.addEventListener('input', draw); c.addEventListener('input', draw); draw();
+  })();
+
+  /* ================= 04 · DADOS ================= */
+  (function(){
+    var d = $('day'); d.innerHTML = new Array(97).join('<i></i>');
+    seg('day-seg', function(m){
+      d.classList.toggle('daily', m === 1);
+      $('st1').textContent = m ? n0(1003) : n0(97235);
+      $('st1t').textContent = m ? L('fechamentos diários por corretora', 'daily closes per exchange') : L('retratos coletados a cada 15 minutos', 'snapshots collected every 15 minutes');
+      $('st2').textContent = m ? '0' : n0(96568);
+      $('st2t').textContent = m ? L('lacunas: no fechamento do dia sempre houve negócio', 'gaps: there was always trading by the daily close') : L('usados nos testes, depois da limpeza', 'used in the tests, after cleaning');
+    });
+    var mx = 1856;
+    $('clean').innerHTML = '<div class="h"><span></span><span>' + L('retirados', 'dropped') + '</span><span>' + L('preço repetido', 'price repeated') + '</span></div>' + ['brl', 'usd', 'eur'].map(function(k){
+      return '<div><span>' + CUR[k].s + ' · ' + CUR[k].ex + '</span><span class="tr"><i style="width:' + (CLEAN[k][0] / mx * 100) + '%; background:' + CUR[k].c + '"></i><span>' + n0(CLEAN[k][0]) + '</span></span><span class="tr"><i style="width:' + (CLEAN[k][1] / mx * 100) + '%; background:' + CUR[k].c + '; opacity:.5"></i><span>' + n0(CLEAN[k][1]) + '</span></span></div>';
+    }).join('');
+  })();
+
+  /* ================= 05 · TEMPO ================= */
+  (function(){
+    var sc = $('lag-scene'), st = makeStage(sc, 440, 160, {rx:'58deg'}), cols = [], freq = 0, pair = 0;
+    for (var i = 0; i <= 4; i++){
+      var b = box({w:56, d:56, h:2, x:20 + i * 82, y:40, c:'var(--navy)', top:' '});
+      st.appendChild(b); cols.push(b);
+      flatLabel(st, String(i), 20 + i * 82, 110, 56, 'font-size:20px; font-weight:800; text-align:center; color:#0f172a;');
+    }
+    var axl = flatLabel(st, '', 0, 138, 440, 'font-size:15px; text-align:center; color:#64748b;');
+    rotatable(sc, st, -14, 8);
+    function draw(){
+      var P = PAIRS[pair], v = LAGS[freq][P.k], cnt = [0, 0, 0, 0, 0];
+      v.forEach(function(x){ cnt[x]++; });
+      var best = cnt.indexOf(Math.max.apply(null, cnt));
+      cols.forEach(function(c, i){
+        c.style.setProperty('--h', (cnt[i] ? cnt[i] * 44 : 2) + 'px');
+        c.style.setProperty('--c', i === best ? 'var(--red)' : 'var(--navy)');
+        c.querySelector('.top-label').textContent = cnt[i] ? cnt[i] : '';
+      });
+      axl.textContent = freq ? L('passos para trás (dias)', 'steps back (days)') : L('passos para trás (× 15 minutos)', 'steps back (× 15 minutes)');
+      var tb = LAGS[freq].t[pair];
+      var txt;
+      if (!freq) txt = '<h3>' + L('Os cinco critérios escolhem 4 passos: 60 minutos', 'All five criteria pick 4 steps: 60 minutes') + '</h3><p>' + L('Em todos os pares e nas três moedas juntas. Para a tese, é o tempo que o preço do Bitcoin leva para se equilibrar entre as praças, mais que os 16 minutos de um estudo anterior (Quinguri, 2018).', 'In every pair and in all three currencies together. For the thesis, this is the time Bitcoin’s price takes to even out across markets, longer than the 16 minutes found by an earlier study (Quinguri, 2018).') + '</p>';
+      else {
+        var ds = []; cnt.forEach(function(n, i){ if (n) ds.push(i); });
+        txt = '<h3>' + L('No fechamento do dia, os critérios se dividem entre ', 'At the daily close, the criteria split between ') + ds.join(L(' e ', ' and ')) + L(' dias', ' days') + '</h3><p>' + L('O autor lê que o preço incorpora a informação em cerca de 2 dias nos pares mais negociados (dólar e euro) e em 3 nos que envolvem o real.', 'The author reads that the price takes in information in about 2 days in the most traded pair (dollar and euro) and in 3 in those involving the real.') + '</p>';
+      }
+      txt += '<div class="votes">' + CRIT.map(function(c, i){ return '<span>' + c + ': <b>' + v[i] + '</b></span>'; }).join('') + '<span>' + L('Tabela ', 'Table ') + tb + '</span></div>';
+      $('lag-panel').innerHTML = txt;
+    }
+    seg('lag-seg', function(m){ freq = m; draw(); });
+    chips('lag-chips', PAIRS.map(function(p){ return p.n; }), function(i){ pair = i; draw(); }, 0);
+    draw();
+  })();
+
+  /* ================= 06 · CORRIDA ================= */
+  (function(){
+    var sc = $('run-scene'), st = makeStage(sc, 420, 170, {rx:'58deg'}), freq = 0, pair = 1;
+    rotatable(sc, st, -14, 8);
+    var slots = {};
+    ['usd', 'eur', 'brl'].forEach(function(k, i){
+      var b = box({w:80, d:80, h:2, x:30 + i * 130, y:40, c:CUR[k].c, top:' ', label:CUR[k].s});
+      st.appendChild(b); slots[k] = b;
+    });
+    function draw(){
+      var P = PAIRS[pair], A = ALPHA[freq][P.k], ks = Object.keys(A).filter(function(k){ return k !== 't'; });
+      var tot = 0; ks.forEach(function(k){ tot += Math.abs(A[k][0]); });
+      ['usd', 'eur', 'brl'].forEach(function(k){
+        var b = slots[k], a = A[k];
+        if (!a){ b.style.setProperty('--h', '0px'); b.style.visibility = 'hidden'; return; }
+        b.style.visibility = '';
+        b.classList.toggle('glass', a[2] > 0.10);
+        b.style.setProperty('--h', Math.max(4, Math.abs(a[0]) * 95) + 'px');
+        b.querySelector('.top-label').textContent = fmt(Math.abs(a[0]), 2);
+      });
+      var ns = ks.every(function(k){ return A[k][2] > 0.10; });
+      $('run-split').innerHTML = ks.map(function(k){
+        var sh = Math.abs(A[k][0]) / tot * 100;
+        return '<i class="' + (A[k][2] > 0.10 ? 'ns' : '') + '" style="flex-basis:' + sh + '%; background:' + CUR[k].c + '">' + CUR[k].s + ' ' + Math.round(sh) + '%</i>';
+      }).join('');
+      var det = ks.map(function(k){ return CUR[k].s + ' α ' + sg(A[k][0], 3) + ' · z ' + sg(A[k][1], 2) + ' · ' + pv(A[k][2]); }).join('<br>');
+      var h, p;
+      if (ns){ h = L('No fechamento do dia, dólar e euro não mostram ajuste claro', 'At the daily close, dollar and euro show no clear adjustment'); p = L('Os dois coeficientes ficam longe de 5% (p 0,125 e 0,165). Leitura nossa: os dois preços andam tão colados que, quando o dia fecha, quase não sobra diferença a corrigir.', 'Both coefficients are far from 5% (p 0.125 and 0.165). Our reading: the two prices move so closely that by the daily close there is almost no gap left to correct.'); }
+      else if (!freq && P.k === 'ue'){ h = L('Dólar e euro dividem o trabalho', 'Dollar and euro share the work'); p = L('Nos dois mercados mais negociados, os dois se mexem para fechar a diferença, o euro um pouco mais.', 'In the two most traded markets, both move to close the gap, the euro a little more.'); }
+      else if (!freq && P.k === 'all'){ h = L('Com as três juntas, o real faz quase quatro quintos do ajuste', 'With all three together, the real does almost four-fifths of the adjustment'); p = L('Para o autor, o dólar lidera a formação do preço pelo volume, e as outras moedas o seguem; o real, com pouca liquidez, precisa de mais esforço para acompanhar.', 'For the author, the dollar leads price formation through its volume, and the other currencies follow; the real, with little liquidity, needs more effort to keep up.'); }
+      else if (!freq){ h = L('O real faz mais de 80% do ajuste', 'The real does more than 80% of the adjustment'); p = L('A cada descolamento, o preço em real se mexe cerca de cinco vezes mais que o outro para voltar a andar junto. Para o autor, é sinal de um mercado brasileiro menos líquido e menos maduro.', 'At each drift, the price in reais moves about five times more than the other one to get back in line. For the author, it signals a less liquid, less mature Brazilian market.'); }
+      else { h = L('No fechamento do dia, o ajuste fica meio a meio', 'At the daily close, the adjustment is split about evenly'); p = L('Com um retrato por dia, o real já não carrega sozinho a correção. Para o autor, dentro do dia a informação já foi absorvida e a falta de liquidez pesa menos.', 'With one snapshot a day, the real no longer carries the correction alone. For the author, the information has been absorbed within the day and the lack of liquidity weighs less.'); }
+      $('run-panel').innerHTML = '<h3>' + h + '</h3><p>' + p + '</p><p style="font-size:.74rem; color:var(--muted)">' + L('Tabela ', 'Table ') + A.t + ': ' + det + '</p>';
+    }
+    seg('run-seg', function(m){ freq = m; draw(); });
+    chips('run-chips', PAIRS.map(function(p){ return p.n; }), function(i){ pair = i; draw(); }, 1);
+    draw();
+  })();
+
+  /* ================= 07 · BOLSAS ================= */
+  (function(){
+    var svg = $('hm'), per = 0, sel = [6, 0];
+    var X0 = 110, Y0 = 20, S = 48;
+    function col(r){
+      var a = Math.min(1, Math.abs(r));
+      return r >= 0 ? 'color-mix(in srgb, #1f3b73 ' + Math.round(a * 100) + '%, white)' : 'color-mix(in srgb, #e80734 ' + Math.round(a * 100) + '%, white)';
+    }
+    function draw(){
+      var m = CORR[per].m;
+      svg.innerHTML = '';
+      for (var i = 0; i < 9; i++){
+        svg.appendChild(el('text', {x:X0 - 8, y:Y0 + i * S + S / 2 + 5, 'text-anchor':'end', 'font-size':13, fill:i < 3 ? CUR[['usd', 'eur', 'brl'][i]].hex : '#334155', 'font-weight':700}, VN[i]));
+        for (var j = 0; j <= i; j++){
+          var r = corr(m, i, j);
+          var rc = el('rect', {x:X0 + j * S, y:Y0 + i * S, width:S, height:S, rx:4, fill:col(r), 'class':'c' + (i === sel[0] && j === sel[1] ? ' on' : ''), 'data-i':i, 'data-j':j, tabindex:0});
+          svg.appendChild(rc);
+          if (i !== j) svg.appendChild(el('text', {x:X0 + j * S + S / 2, y:Y0 + i * S + S / 2 + 4, 'text-anchor':'middle', 'font-size':11.5, 'font-weight':600, fill:Math.abs(r) > 0.55 ? '#fff' : '#0f172a', 'pointer-events':'none'}, sg(r, 2)));
+        }
+      }
+      // blocos
+      svg.appendChild(el('rect', {x:X0, y:Y0, width:3 * S, height:3 * S, fill:'none', stroke:'#e80734', 'stroke-width':2.5, 'stroke-dasharray':'6 4', rx:6, 'pointer-events':'none'}));
+      svg.appendChild(el('rect', {x:X0 + 3 * S, y:Y0 + 3 * S, width:6 * S, height:6 * S, fill:'none', stroke:'#334155', 'stroke-width':2.5, 'stroke-dasharray':'6 4', rx:6, 'pointer-events':'none'}));
+      svg.appendChild(el('text', {x:X0 + 3 * S + 8, y:Y0 + 2 * S, 'font-size':13, fill:'#e80734', 'font-weight':700}, L('bloco do Bitcoin', 'Bitcoin block')));
+      svg.appendChild(el('text', {x:X0 + 9 * S - 4, y:Y0 + 3 * S - 8, 'font-size':13, fill:'#334155', 'font-weight':700, 'text-anchor':'end'}, L('bloco das bolsas', 'stock block')));
+      svg.appendChild(el('text', {x:X0 + 4.5 * S, y:Y0 + 9 * S + 26, 'font-size':12, fill:'#64748b', 'text-anchor':'middle'}, CORR[per].n + ' · ' + L('Tabela ', 'Table ') + CORR[per].t));
+      panel();
+    }
+    function panel(){
+      var m = CORR[per].m, i = sel[0], j = sel[1], r = corr(m, i, j), a = Math.abs(r);
+      var word = a >= 0.7 ? L('forte', 'strong') : a >= 0.4 ? L('moderada', 'moderate') : a >= 0.2 ? L('fraca', 'weak') : L('quase nula', 'near zero');
+      var btc = m.slice(3).map(function(row){ return row[0]; });
+      var lo = Math.min.apply(null, btc), hi = Math.max.apply(null, btc);
+      $('hm-panel').innerHTML = '<h3>' + VN[i] + ' × ' + VN[j] + ': ' + sg(r, 3) + '</h3><p>' + L('Ligação ', 'Link: ') + word + (r < 0 ? L(', em sentidos opostos', ', in opposite directions') : '') + '. ' + L('Neste período, o Bitcoin em dólar fica entre ', 'In this period, Bitcoin in dollars sits between ') + sg(lo, 2) + L(' e ', ' and ') + sg(hi, 2) + L(' com as seis bolsas.', ' with the six indices.') + '</p>' + (per === 3 ? '<p style="font-size:.76rem">' + L('Na queda de 2020, o Bitcoin andou ao contrário do Ibovespa, do Dow Jones e do Nasdaq (cerca de −0,4), em só 60 dias.', 'In the 2020 fall, Bitcoin moved opposite to the Ibovespa, Dow Jones and Nasdaq (about −0.4), over just 60 days.') + '</p>' : '');
+    }
+    svg.addEventListener('click', function(e){
+      var t = e.target; if (!t.dataset || t.dataset.i === undefined) return;
+      sel = [+t.dataset.i, +t.dataset.j]; if (sel[0] === sel[1]) sel = [sel[0], 0];
+      draw();
+    });
+    seg('hm-seg', function(m){ per = m; draw(); });
+    draw();
+  })();
+
+  /* ================= 08 · INESPERADO ================= */
+  (function(){
+    var q = $('quiz'), answered = false, mode = 0, per = 0;
+    var sc = $('glass-scene'), st = makeStage(sc, 300, 160, {rx:'60deg'});
+    var glass = box({w:120, d:120, h:200, x:90, y:20, c:'#94a3b8', cls:'glass'});
+    var fill = box({w:112, d:112, h:2, x:94, y:24, z:0, c:'var(--red)', top:' '});
+    st.appendChild(fill); st.appendChild(glass);
+    rotatable(sc, st, -20, 8);
+    var maxH = 200;
+    function draw(){
+      var r = R2[per], v = mode === 0 ? r.all : mode === 1 ? r.cr : r.bo;
+      if (v === null){ fill.style.setProperty('--h', '0px'); fill.querySelector('.top-label').textContent = ''; $('gl-note').innerHTML = L('Para a bolha de 2017–18 a tese traz só a regressão completa (R² 94,4%), sem a tabela de correlações: não dá para separar as partes.', 'For the 2017–18 bubble the thesis has only the full regression (R² 94.4%), with no correlation table, so the parts cannot be separated.'); return; }
+      fill.style.setProperty('--c', mode === 2 ? 'var(--idx)' : mode === 1 ? 'var(--eur)' : 'var(--red)');
+      fill.style.setProperty('--h', Math.max(2, v * maxH) + 'px');
+      fill.querySelector('.top-label').textContent = fmt(v * 100, 1) + '%';
+      $('gl-note').innerHTML = (mode === 0 ? L('R² impresso na Tabela ', 'R² printed in Table ') + r.t + '. ' : L('Conta nossa: R² de uma regressão só com essas variáveis, refeito a partir da tabela de correlações do período. Com as oito, a conta dá o mesmo R² da tese. ', 'Our calculation: R² of a regression with only these variables, rebuilt from the period’s correlation table. With all eight, the calculation gives the thesis’s own R². ')) + n0(r.days) + L(' dias.', ' days.') + (per === 4 && mode === 2 ? L(' Com só 60 dias e seis variáveis, o número tende a sair alto por acaso.', ' With only 60 days and six variables, the number tends to come out high by chance.') : '');
+    }
+    seg('gl-seg', function(m){ mode = m; draw(); });
+    chips('gl-chips', R2.map(function(r){ return r.n; }), function(i){ per = i; draw(); }, 0);
+    var mx = 1;
+    $('coefs').innerHTML = COEF.map(function(c){
+      var w = Math.min(Math.abs(c[1]) / mx, 1) * 50, ns = c[2] >= 0.05;
+      return '<div><span>' + c[0] + '</span><span class="tr"><i class="' + (ns ? 'ns' : '') + '" style="left:' + (c[1] > 0 ? 50 : 50 - w) + '%; width:' + Math.max(w, 0.8) + '%; background:' + (c[0].indexOf('BTC') === 0 ? 'var(--red)' : 'var(--idx)') + '"></i></span><em>' + sg(c[1], 3) + ' · ' + pv(c[2]) + '</em></div>';
+    }).join('');
+    function reveal(){
+      $('q-after').classList.remove('hide'); $('g-after').classList.remove('hide');
+      M.fit(); draw();
+    }
+    each(q.querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){
+        each(q.children, function(c){ c.classList.toggle('chosen', c === b); });
+        answered = true;
+        var a = +b.dataset.q;
+        $('q-msg').innerHTML = a === 1 ? L('<b>Isso mesmo.</b> O Bitcoin em euro e em real responde por quase tudo; nenhuma bolsa tem efeito claro a 5%.', '<b>Right.</b> Bitcoin in euros and reais accounts for almost all of it; no stock index has a clear effect at 5%.')
+          : L('<b>Não foi assim.</b> Quem explica é o próprio Bitcoin em euro e em real; nenhuma bolsa tem efeito claro a 5%.', '<b>Not quite.</b> The explaining is done by Bitcoin itself in euros and reais; no stock index has a clear effect at 5%.');
+        reveal();
+      });
+    });
+    setTimeout(function(){ if (!answered) reveal(); }, 15000);
+  })();
+
+  /* ================= 09 · ONDAS ================= */
+  (function(){
+    var svg = $('wave-svg'), t0 = Date.parse('2017-06-30'), t1 = Date.parse('2020-03-31'), X0 = 30, W = 560, cur = 3;
+    function x(d){ return X0 + (Date.parse(d) - t0) / (t1 - t0) * W; }
+    var IDX = [3, 4, 5, 6, 7, 8];
+    function draw(){
+      var K = window.matchMedia('(max-width:600px)').matches ? 1.6 : 1;
+      svg.innerHTML = '';
+      svg.appendChild(el('line', {x1:X0, y1:170, x2:X0 + W, y2:170, stroke:'#cbd5e1', 'stroke-width':3}));
+      ['2018-01-01', '2019-01-01', '2020-01-01'].forEach(function(d, i){
+        svg.appendChild(el('line', {x1:x(d), y1:164, x2:x(d), y2:176, stroke:'#94a3b8', 'stroke-width':2}));
+        svg.appendChild(el('text', {x:x(d), y:200, 'text-anchor':'middle', 'font-size':13 * K, fill:'#64748b'}, String(2018 + i)));
+      });
+      WAVES.forEach(function(w, i){
+        var a = x(w.a), b = Math.max(x(w.b), a + 18), on = i === cur;
+        var g = el('g', {'class':'w', 'data-i':i, tabindex:0, role:'button', 'aria-label':w.n});
+        var c = w.up ? '#1f3b73' : '#e80734';
+        var path = w.up ? 'M' + a + ',160 L' + b + ',' + 70 : 'M' + a + ',70 L' + b + ',160';
+        g.appendChild(el('rect', {x:a - 6, y:40, width:b - a + 12, height:134, rx:8, fill:on ? 'rgba(15,23,42,.06)' : 'transparent', stroke:on ? '#0f172a' : 'transparent', 'stroke-width':1.5}));
+        g.appendChild(el('path', {d:path, stroke:c, 'stroke-width':on ? 7 : 5, fill:'none', 'stroke-linecap':'round'}));
+        g.appendChild(el('text', {x:(a + b) / 2, y:i % 2 ? 14 : 34, 'text-anchor':'middle', 'font-size':12.5 * K, 'font-weight':on ? 800 : 600, fill:on ? '#0f172a' : '#64748b'}, (w.up ? '▲ ' : '▼ ') + w.s));
+        g.addEventListener('click', function(){ cur = i; draw(); });
+        g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); cur = i; draw(); } });
+        svg.appendChild(g);
+      });
+      var w = WAVES[cur];
+      $('wave-panel').innerHTML = '<h3>' + w.n + ' · ' + w.d + '</h3><p>' + L('Bitcoin em dólar ', 'Bitcoin in dollars ') + w.p + '. ' + (w.c === null ? L('Para esta onda, a tese traz só a regressão (Tabela 66), sem tabela de correlações. Nela, só o Bitcoin em euro e em real têm efeito claro.', 'For this wave the thesis has only the regression (Table 66), with no correlation table. In it, only Bitcoin in euros and reais has a clear effect.') : L('Correlação do Bitcoin em dólar com cada bolsa (Tabela ', 'Correlation of Bitcoin in dollars with each index (Table ') + CORR[w.c].t + ').') + '</p>';
+      if (w.c === null){ $('cr').innerHTML = ''; return; }
+      var m = CORR[w.c].m;
+      $('cr').innerHTML = IDX.map(function(k){
+        var r = m[k][0], wd = Math.abs(r) * 50;
+        return '<div><span>' + VN[k] + '</span><span class="tr"><i style="left:' + (r > 0 ? 50 : 50 - wd) + '%; width:' + Math.max(wd, 0.6) + '%; background:' + (r > 0 ? 'var(--navy)' : 'var(--red)') + '"></i></span><b>' + sg(r, 2) + '</b></div>';
+      }).join('') + '<div style="font-size:.68rem; color:var(--muted)"><span></span><span style="display:flex; justify-content:space-between"><span>−1</span><span>0</span><span>+1</span></span><span></span></div>';
+    }
+    draw();
+  })();
+
+  /* ================= 10 · PLACAR ================= */
+  (function(){
+    var K = [
+      {n:L('Tabelas mostram', 'Tables show'), c:'var(--navy)'},
+      {n:L('Em parte', 'In part'), c:'var(--eur)'},
+      {n:L('Leitura do autor', 'Author’s reading'), c:'var(--red)'}
+    ];
+    var S = [
+      {k:0, h:L('As três praças andam juntas', 'The three markets move together'), p:L('Em todos os pares, nas duas lentes, os testes rejeitam que as séries sejam independentes. Ressalva nossa: com retornos, isso é andar junto no curto prazo (tela 11).', 'In every pair, with both lenses, the tests reject that the series are independent. Our caveat: with returns, this means moving together in the short run (screen 11).')},
+      {k:0, h:L('O dólar lidera, o real segue', 'The dollar leads, the real follows'), p:L('Nos dados de 15 minutos, o real faz mais de 80% do ajuste. No fechamento do dia, a divisão fica perto de meio a meio (tela 06).', 'In the 15-minute data, the real does more than 80% of the adjustment. At the daily close, the split is close to half and half (screen 06).')},
+      {k:1, h:L('Acerto em cerca de uma hora e em poucos dias', 'Lining up in about an hour and in a few days'), p:L('Os cinco critérios dão 4 passos de 15 minutos, o máximo testado; no diário, votam entre 2 e 4 dias (tela 05).', 'The five criteria give 4 steps of 15 minutes, the maximum tested; with daily data, they vote between 2 and 4 days (screen 05).')},
+      {k:2, h:L('O mercado brasileiro é menos maduro', 'The Brazilian market is less mature'), p:L('Apoiado no volume quase 90 vezes menor e no ajuste maior do real nos dados de 15 minutos (telas 02 e 06).', 'Backed by the almost 90 times smaller volume and the larger adjustment by the real in the 15-minute data (screens 02 and 06).')},
+      {k:2, h:L('Há oportunidades de arbitragem', 'There are arbitrage opportunities'), p:L('Diferenças existem por um tempo e se fecham, mas a tese não simula operações, custos nem prazos (tela 03).', 'Gaps exist for a while and close, but the thesis does not simulate trades, costs or delays (screen 03).')},
+      {k:2, h:L('O efeito diversificador não pôde ser comprovado', 'The diversification effect could not be proven'), p:L('O autor conclui que o Bitcoin não seria um bom ativo para diversificar, mas diz faltarem elementos. As correlações com as bolsas ficam perto de zero, e nenhuma carteira foi montada (telas 07 e 08).', 'The author concludes Bitcoin would not be a good asset for diversifying but says more evidence is needed. Correlations with stock indices sit near zero, and no portfolio was built (screens 07 and 08).')},
+      {k:1, h:L('Indícios de manada e de contágio', 'Signs of herding and contagion'), p:L('As correlações mudam de sinal e de tamanho entre as ondas; o próprio autor chama os sinais de exploratórios (tela 09).', 'Correlations change sign and size between waves; the author himself calls the signs exploratory (screen 09).')},
+      {k:2, h:L('Quem investe em cripto não é quem investe em bolsa', 'Crypto investors are not stock investors'), p:L('Hipótese do autor para explicar a ligação fraca com as bolsas, ilustrada com dois círculos que pouco se cruzam; a tese não tem dados de investidores.', 'The author’s hypothesis to explain the weak link with stock markets, illustrated with two barely overlapping circles; the thesis has no investor data.')},
+      {k:1, h:L('O Bitcoin se comporta como ativo financeiro', 'Bitcoin behaves like a financial asset'), p:L('Para o autor, o preço global, ligado entre moedas e com movimentos parecidos com os de ações, aproxima o Bitcoin de um ativo; as tabelas mostram a ligação entre moedas.', 'For the author, the global price, linked across currencies and with stock-like movements, brings Bitcoin close to an asset; the tables show the link across currencies.')}
+    ];
+    var host = $('score');
+    host.innerHTML = S.map(function(s){ return '<div class="sc" data-k="' + s.k + '" style="--sc:' + K[s.k].c + '"><span class="verd">' + K[s.k].n + '</span><h3>' + s.h + '</h3><p>' + s.p + '</p></div>'; }).join('');
+    chips('sc-chips', [L('Todas', 'All')].concat(K.map(function(k){ return k.n; })), function(i){
+      each(host.children, function(c){ c.classList.toggle('off', i > 0 && +c.dataset.k !== i - 1); });
+    }, 0);
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
