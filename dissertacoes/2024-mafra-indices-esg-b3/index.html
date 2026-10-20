@@ -1,0 +1,933 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Os índices ESG da B3 e o Ibovespa · PPGA Interativo</title>
+<meta name="description" content="A dissertação de mestrado de Alysson Collet Mafra (PPGA Mackenzie, 2024) compara os oito índices ESG da B3 com o Ibovespa de 2019 a 2023 e no começo da pandemia, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/dissertacoes/2024-mafra-indices-esg-b3/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2213%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>ESG</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  :root{
+    --esg:var(--navy);    /* os oito índices ESG */
+    --mkt:var(--red);     /* o Ibovespa, o mercado */
+    --off:#cbd5e1;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .ours{display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--red); background:color-mix(in srgb, var(--red) 9%, transparent); padding:2px 7px; border-radius:5px; vertical-align:1px;}
+  .warn{font-size:.76rem; color:var(--ink-2); background:#f1f5f9; border:1px solid var(--border); border-radius:10px; padding:7px 11px; margin-top:12px; line-height:1.4;}
+  .warn b{color:var(--red);}
+  svg text{font-family:var(--sans);}
+
+  /* ---------- Componentes comuns ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip.on, .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 20px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.06rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.9rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:18px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.82rem; cursor:pointer; color:var(--ink-2);}
+  .seg button.on{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; margin-top:14px;}
+  @media (min-width:600px){ .stats.s4{grid-template-columns:repeat(4, 1fr);} }
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:11px 13px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.3rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.75rem; color:var(--muted); line-height:1.3; display:block;}
+  .leg{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.76rem; color:var(--muted); margin-top:6px;}
+  .leg i{display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:5px; vertical-align:-2px;}
+  .range{width:100%; -webkit-appearance:none; appearance:none; height:30px; background:transparent; cursor:pointer;}
+  .range::-webkit-slider-runnable-track{height:6px; border-radius:3px; background:#e2e8f0;}
+  .range::-moz-range-track{height:6px; border-radius:3px; background:#e2e8f0;}
+  .range::-webkit-slider-thumb{-webkit-appearance:none; width:22px; height:22px; border-radius:50%; background:#fff; border:3px solid var(--ink); margin-top:-8px; box-shadow:var(--shadow);}
+  .range::-moz-range-thumb{width:18px; height:18px; border-radius:50%; background:#fff; border:3px solid var(--ink);}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4vw, 2.6rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{display:flex; gap:8px 16px; justify-content:center; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:6px; text-align:center;}
+  #hero-scene .floor-label{font-size:13px; font-weight:600;}
+  .advice{font-size:.74rem; color:var(--muted); margin-top:12px;}
+  .advice b{color:var(--red);}
+
+  /* ---------- 02 · Os oito índices ---------- */
+  .idx-grid{display:grid; grid-template-columns:repeat(4, 1fr); gap:8px;}
+  @media (max-width:520px){ .idx-grid{grid-template-columns:repeat(2, 1fr);} }
+  .idx{border:1px solid var(--border); background:var(--card); border-radius:12px; padding:10px 10px 9px; cursor:pointer; text-align:left; transition:all .25s; border-top:5px solid var(--gc); min-height:78px;}
+  .idx b{display:block; font-family:var(--serif); font-size:.98rem; color:var(--ink);}
+  .idx span{display:block; font-size:.72rem; color:var(--muted); line-height:1.3; margin-top:3px;}
+  .idx.dim{opacity:.32;}
+  .idx.on{box-shadow:inset 0 0 0 2px var(--ink);}
+  #idx-panel{min-height:132px; margin-top:12px;}
+
+  /* ---------- 03 · Apostas ---------- */
+  .bets{display:grid; gap:10px; margin-top:6px;}
+  .bet{display:grid; grid-template-columns:44px 1fr; gap:12px; align-items:center; text-align:left; border:1px solid var(--border); background:var(--card); border-radius:14px; padding:12px 14px; cursor:pointer; box-shadow:var(--shadow); transition:all .25s; font:inherit; color:var(--ink-2);}
+  .bet:hover{border-color:var(--ink);}
+  .bet .ic{width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-weight:900; font-size:1.3rem; color:#fff; background:var(--bc);}
+  .bet b{display:block; color:var(--ink); font-size:.98rem;}
+  .bet small{display:block; font-size:.8rem; color:var(--muted); margin-top:2px; line-height:1.35;}
+  .bet.pick{box-shadow:inset 0 0 0 2px var(--ink);}
+  .bet.other{opacity:.55;}
+  #bet-panel{min-height:110px; margin-top:12px;}
+
+  /* ---------- 04 · Método ---------- */
+  #tl-svg{width:100%; display:block;}
+  #tl-panel{min-height:120px; margin-top:10px;}
+  @media (max-width:600px){ #tl-svg text{font-size:17px !important;} #tl-svg text.sm{display:none;} }
+
+  /* ---------- 05 · Retorno médio ---------- */
+  #ret-scene .face-label{font-size:12px; letter-spacing:0; font-variant-numeric:tabular-nums;}
+  #ret-scene .floor-label{font-size:12.5px; font-weight:600;}
+  #ret-scene .slab{cursor:pointer; transition:transform .5s cubic-bezier(.2,.8,.2,1);}
+  #ret-scene .slab.active{--oz:14px;}
+  #ret-scene .slab.active > i{outline:2px solid #0f172a; outline-offset:-2px;}
+  #ret-panel{min-height:118px; margin-top:10px;}
+  #ret-bet{font-size:.88rem; color:var(--ink-2); margin-top:12px; min-height:1.4em;}
+  #ret-bet b{color:var(--ink);}
+
+  /* ---------- 06 · Empate ---------- */
+  .tests{display:grid; gap:5px;}
+  .tests .hd, .tests button{display:grid; grid-template-columns:96px 1fr 1fr; gap:8px; align-items:center;}
+  .tests .hd{font-size:.72rem; color:var(--muted); font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:0 10px;}
+  .tests button{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:8px 10px; cursor:pointer; font:inherit; text-align:left; color:var(--ink-2);}
+  .tests button b{color:var(--ink); font-size:.86rem;}
+  .tests button.on{box-shadow:inset 0 0 0 2px var(--ink);}
+  .lamp{display:flex; align-items:center; gap:7px; font-size:.78rem;}
+  .lamp i{width:16px; height:16px; border-radius:50%; background:#e2e8f0; border:2px solid #cbd5e1; flex:none;}
+  .lamp.diff i{background:var(--mkt); border-color:var(--mkt); box-shadow:0 0 0 4px color-mix(in srgb, var(--mkt) 18%, transparent);}
+  .lamp.diff{color:var(--ink); font-weight:600;}
+  #tst-panel{min-height:120px; margin-top:12px;}
+  .tally{display:flex; gap:10px; margin-top:12px;}
+  .tally div{flex:1; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 12px;}
+  .tally b{font-family:var(--serif); font-size:1.6rem; color:var(--ink); display:block; line-height:1.1;}
+  .tally span{font-size:.76rem; color:var(--muted);}
+
+  /* ---------- 07 · Réguas ---------- */
+  #rg-svg{width:100%; display:block;}
+  #rg-svg .row{cursor:pointer;}
+  @media (max-width:600px){ #rg-svg text{font-size:17px !important;} #rg-svg text.sm{display:none;} }
+  #rg-panel{min-height:110px; margin-top:10px;}
+
+  /* ---------- 08 · Balanço ---------- */
+  .calc label{font-size:.86rem; font-weight:600; color:var(--ink-2); display:flex; justify-content:space-between; gap:10px;}
+  .calc label b{font-variant-numeric:tabular-nums; color:var(--ink);}
+  #bt-svg{width:100%; display:block; margin-top:6px;}
+  @media (max-width:600px){ #bt-svg text{font-size:18px !important;} #bt-svg text.sm{display:none;} }
+  #bt-msg{font-size:.86rem; color:var(--ink-2); margin-top:8px; min-height:3em;}
+
+  /* ---------- 09 · Covid ---------- */
+  #cv-svg{width:100%; display:block;}
+  #cv-svg path.ln{fill:none; stroke-width:2.2; transition:stroke .3s, opacity .3s, stroke-width .3s;}
+  @media (max-width:600px){ #cv-svg text{font-size:18px !important;} #cv-svg text.sm{display:none;} }
+  .cv-ctl{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:8px;}
+  #cv-day{font-family:var(--serif); font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums; min-width:7em;}
+  #cv-panel{min-height:96px; margin-top:10px;}
+
+  /* ---------- 10 · Queda ---------- */
+  #dr-scene .face-label{font-size:12px; letter-spacing:0; font-variant-numeric:tabular-nums;}
+  #dr-scene .floor-label{font-size:12.5px; font-weight:600;}
+  #dr-scene .slab{transition:--h .7s cubic-bezier(.2,.8,.2,1);}
+  #dr-list{display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; margin-top:10px; font-size:.76rem;}
+  #dr-list div{background:var(--card); border:1px solid var(--border); border-radius:8px; padding:5px 8px; color:var(--ink-2);}
+  #dr-list b{display:block; color:var(--ink); font-variant-numeric:tabular-nums;}
+  @media (max-width:520px){ #dr-list{grid-template-columns:repeat(2, 1fr);} }
+
+  /* ---------- 11 · Virada (cartão de dois lados) ---------- */
+  .flip{perspective:1400px; cursor:pointer; outline:none;}
+  .flip-in{position:relative; transform-style:preserve-3d; transition:transform .9s cubic-bezier(.2,.8,.2,1); min-height:360px;}
+  .flip.turned .flip-in{transform:rotateY(180deg);}
+  .face{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:18px; padding:22px 24px; box-shadow:var(--shadow); color:#fff;}
+  .face.calm{background:linear-gradient(160deg, #1f3b73, #2c4f91);}
+  .face.storm{background:linear-gradient(160deg, #b0062a, #e80734); transform:rotateY(180deg);}
+  .face .tag{font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; font-weight:700; opacity:.85;}
+  .face h3{font-size:1.35rem; margin:6px 0 12px; color:#fff;}
+  .face ul{margin:0; padding-left:18px; display:grid; gap:7px; font-size:.9rem; line-height:1.42;}
+  .face .hint2{position:absolute; right:18px; bottom:14px; font-size:.75rem; opacity:.85;}
+  .sides{display:flex; gap:8px; justify-content:center; margin-top:12px;}
+
+  /* ---------- 12 · Prática, limites e créditos ---------- */
+  .cards3{display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px;}
+  @media (min-width:800px){ .cards3{grid-template-columns:repeat(3, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 15px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.95rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  #creditos h2{font-size:clamp(1.5rem, 2.6vw, 2rem);}
+  .end{display:grid; grid-template-columns:1fr; gap:18px; margin-top:12px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:6px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.78rem; color:var(--ink-2); line-height:1.4;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.82rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; line-height:1.55; margin-top:8px;}
+  .cite b{color:var(--ink);}
+  .also{font-size:.8rem; margin-top:10px; color:var(--muted);}
+  .also a{color:var(--red); font-weight:600;}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/dissertacoes/2024-mafra-indices-esg-b3/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Dissertação de mestrado · PPGA Mackenzie · 2024</div>
+      <h1 class="rv" style="--d:.1s">Ações com selo ESG renderam mais que a bolsa?</h1>
+      <p class="sub rv" style="--d:.2s">A B3 mantém oito índices de empresas com boas práticas ambientais, sociais e de governança. A pesquisa comparou cada um com o Ibovespa de 2019 a 2023 e no começo da pandemia. Nenhum rendeu mais; em dias comuns, balançaram um pouco menos; no choque da Covid, caíram mais.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Alysson Collet Mafra</span>
+        <span><b>Orientador:</b> Prof. Dr. Leonardo Fernando Cruz Basso</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#indices">Começar →</a>
+        <a class="btn ghost" href="#retorno">Ir direto aos resultados</a>
+      </div>
+      <p class="advice rv" style="--d:.45s"><b>Não é recomendação de investimento.</b> Índices são carteiras teóricas, sem custos de compra e venda.</p>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="540x360" role="img" aria-label="Oito colunas azuis, uma por índice ESG, e uma vermelha, o Ibovespa, sobem e descem juntas; as azuis balançam um pouco menos, na proporção do beta de cada índice"></div></div>
+      <div class="cap-legend">
+        <span><i class="dot" style="background:var(--esg)"></i>Os oito índices ESG</span>
+        <span><i class="dot" style="background:var(--mkt)"></i>Ibovespa, o mercado</span>
+        <span>Ilustração: o balanço segue o beta de cada índice (Tabela 5)</span>
+      </div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-12"><a href="https://brasil.un.org/pt-br/sdgs/12" target="_blank" rel="noopener" title="ODS 12 · Consumo e produção responsáveis: Testa se entrar num índice de boas práticas ambientais, sociais e de governança, um incentivo para as empresas adotarem e divulgarem práticas sustentáveis, também trouxe retorno na bolsa."><b>12</b>Consumo e produção responsáveis</a></li>
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Mostra a investidores e gestores de fundos como os índices ESG da bolsa brasileira se comportaram em risco e retorno, dentro e fora de uma crise."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · OS OITO ÍNDICES -->
+<section class="slide" id="indices" data-label="Os oito índices">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O ponto de partida · Tabela 1</div>
+      <h2 class="rv" style="--d:.1s">Entrar num índice ESG funciona como ganhar um selo</h2>
+      <p class="rv" style="--d:.15s">Um índice de ações é uma <strong>carteira teórica</strong>: uma lista de empresas cujo preço é acompanhado todos os dias. O Ibovespa reúne as ações mais negociadas do país. Nos índices ESG, cada bolsa define suas regras de entrada, e fazer parte vale como um selo de boas práticas.</p>
+      <p class="rv" style="--d:.2s">A B3 criou o primeiro deles, o de governança (IGC), em 2001; o de carbono (ICO2) veio em 2010 e o das melhores empresas para trabalhar (IGPTW), em 2019. Toque num índice.</p>
+      <p class="note rv" style="--d:.25s">O agrupamento por letra (E, S, G ou as três) é nosso, a partir da descrição de cada índice na Tabela 1.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="chips" id="idx-chips" role="group" aria-label="Filtrar por letra"></div>
+      <div class="idx-grid" id="idx-grid"></div>
+      <div class="panel" id="idx-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · APOSTAS -->
+<section class="slide" id="apostas" data-label="Três apostas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> A pergunta · seções 2.1 e 3.2</div>
+      <h2 class="rv" style="--d:.1s">Três teorias, três apostas sobre o selo ESG</h2>
+      <p class="rv" style="--d:.15s">Cuidar do ambiente, das pessoas e da governança custa dinheiro. Isso tira ou traz retorno para quem tem as ações? Cada teoria de finanças dá uma resposta diferente. Antes de ver os dados, escolha a sua.</p>
+      <p class="note rv" style="--d:.2s">A dissertação apostou na primeira: os índices ESG teriam rendido mais que o Ibovespa, porque o mercado vigia mais de perto essas empresas.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="bets" id="bets" role="group" aria-label="Sua aposta">
+        <button class="bet" data-k="mais" style="--bc:var(--esg)"><span class="ic">+</span><span><b>O selo ESG rende mais</b><small>Teoria dos stakeholders (Freeman): cuidar de todos os interessados melhora o resultado.</small></span></button>
+        <button class="bet" data-k="menos" style="--bc:var(--mkt)"><span class="ic">−</span><span><b>O selo ESG rende menos</b><small>Teoria do acionista (Friedman): a única tarefa da empresa é dar lucro ao dono; o resto é custo.</small></span></button>
+        <button class="bet" data-k="igual" style="--bc:#64748b"><span class="ic">=</span><span><b>Rende igual ao mercado</b><small>Mercados eficientes (Fama): o preço já reflete toda a informação, inclusive o selo.</small></span></button>
+      </div>
+      <div class="panel" id="bet-panel" aria-live="polite"><p>Escolha uma aposta. A resposta aparece na tela 5.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · MÉTODO -->
+<section class="slide" id="metodo" data-label="Como olhou">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Dois artigos · seções 3.3 e 3.4</div>
+      <h2 class="rv" style="--d:.1s">Quatro anos e meio de pregões, e um zoom no começo da pandemia</h2>
+      <p class="rv" style="--d:.15s">O autor baixou do site da B3 o preço de fechamento dos oito índices ESG e do Ibovespa. No <strong>artigo 1</strong>, comparou o retorno diário de 2019 a 2023. No <strong>artigo 2</strong>, isolou os dias em torno do primeiro caso de Covid confirmado no Brasil.</p>
+      <div class="stats s4 rv" style="--d:.2s">
+        <div class="stat"><b>1.128</b><span>pregões no artigo 1</span></div>
+        <div class="stat"><b>8 + 1</b><span>índices ESG e o Ibovespa</span></div>
+        <div class="stat"><b>157</b><span>pregões no artigo 2</span></div>
+        <div class="stat"><b>26/02/2020</b><span>o "dia zero": 1º caso no Brasil</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="tl-seg" role="group" aria-label="Escolha o artigo"><button class="on" data-k="a1">Artigo 1</button><button data-k="a2">Artigo 2</button></div>
+      <svg id="tl-svg" viewBox="0 0 600 250" role="img" aria-label="Linha do tempo de janeiro de 2019 a julho de 2023, com a janela do estudo de evento em fevereiro e março de 2020"></svg>
+      <div class="panel" id="tl-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · RETORNO -->
+<section class="slide" id="retorno" data-label="Nenhum rendeu mais">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Artigo 1 · Tabela 4</div>
+      <h2 class="rv" style="--d:.1s">Nenhum dos oito índices ESG rendeu mais que o Ibovespa</h2>
+      <p class="rv" style="--d:.15s">No período, até o Ibovespa terminou no vermelho na média dos dias: perdeu cerca de 0,011% por pregão. Todos os índices ESG perderam mais. O mais perto foi o ITAG; o mais longe, o IGPTW, que perdeu 0,07% por dia, mais de seis vezes o Ibovespa.</p>
+      <div id="ret-bet" class="rv" style="--d:.2s" aria-live="polite"></div>
+      <p class="note rv" style="--d:.25s">Cada coluna é a perda média de um dia (retorno logarítmico médio da Tabela 4, × 100). Toque numa coluna. A hipótese da dissertação, de que o selo ESG renderia mais, não se confirmou.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="ret-scene" data-fit="560x330" role="img" aria-label="Nove colunas da perda média diária: Ibovespa 0,011%, ITAG 0,016%, IGCT 0,017%, IDIVERSA 0,021%, IGC 0,024%, ICO2 0,028%, ISE 0,032%, IGCNM 0,049%, IGPTW 0,070%"></div></div>
+      <div class="panel" id="ret-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · EMPATE -->
+<section class="slide" id="empate" data-label="Cinco empates">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Artigo 1 · Tabela 3</div>
+      <h2 class="rv" style="--d:.1s">Para a estatística, cinco dos oito não se distinguem do Ibovespa</h2>
+      <p class="rv" style="--d:.15s">Perder um pouco mais na média não quer dizer muito se os dias variam bastante. O autor fez dois testes para cada índice, comparando dia a dia com o Ibovespa: um olha o <strong>formato</strong> dos retornos (os altos e baixos), outro a <strong>média</strong>.</p>
+      <div class="tally rv" style="--d:.2s">
+        <div><b>5</b><span>sem diferença nos dois testes</span></div>
+        <div><b>3</b><span>diferentes em um dos testes, os três de governança</span></div>
+      </div>
+      <p class="note rv" style="--d:.25s">Testes de Kolmogorov-Smirnov (formato) e t pareado ou Wilcoxon (média), ao nível de 5%. Luz vermelha = diferença em relação ao Ibovespa.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="tests" id="tests">
+        <div class="hd"><span>Índice</span><span>Formato</span><span>Média</span></div>
+      </div>
+      <div class="panel" id="tst-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · RÉGUAS DE RISCO -->
+<section class="slide" id="reguas" data-label="Réguas de risco">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Artigo 1 · Tabela 4</div>
+      <h2 class="rv" style="--d:.1s">Nas réguas de risco, o Ibovespa ficou em último</h2>
+      <p class="rv" style="--d:.15s">Os índices de <strong>Sharpe</strong> e <strong>Sortino</strong> dividem o ganho acima do CDI, a renda fixa de referência, pela oscilação (o Sortino só conta as quedas). Todos deram negativo: ninguém pagou o risco frente ao CDI. Mas, nas duas réguas, os oito índices ESG ficaram à frente do Ibovespa, como destaca o autor.</p>
+      <p class="warn rv" style="--d:.2s"><b>Leitura nossa.</b> Ligue a oscilação: quando o ganho é negativo, quem oscila mais fica com nota menos negativa. O IGPTW, o que mais oscilou e mais perdeu, teve a melhor nota.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="rg-seg" role="group" aria-label="Régua"><button class="on" data-k="sh">Sharpe</button><button data-k="so">Sortino</button><button data-k="sd">+ oscilação</button></div>
+      <svg id="rg-svg" viewBox="0 0 600 345" role="img" aria-label="Ordem dos nove índices no Sharpe e no Sortino, do menos negativo ao mais negativo: IGPTW primeiro e Ibovespa por último nas duas réguas"></svg>
+      <div class="panel" id="rg-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · BALANÇO -->
+<section class="slide" id="balanco" data-label="Balançam menos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Artigo 1 · Tabela 5 · CAPM</div>
+      <h2 class="rv" style="--d:.1s">Quando o mercado balança, os índices ESG balançam um pouco menos</h2>
+      <p class="rv" style="--d:.15s">O <strong>beta</strong> mede quanto um índice acompanha o prêmio do mercado (o Ibovespa menos o CDI). Os oito ficaram entre 0,81 e 0,89, todos abaixo de 1 com segurança estatística. Para o autor, isso faz dos índices ESG carteiras mais <strong>defensivas</strong> que o Ibovespa.</p>
+      <p class="note rv" style="--d:.2s">O prêmio do mercado explica de 55% (IGPTW) a 79% (IGCT) do vaivém de cada índice (R²). A simulação usa só os betas da Tabela 5, sem a constante: é uma ilustração, não uma previsão.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="calc">
+        <label for="bt-range">O mercado se afasta do CDI em <b id="bt-val">−10</b></label>
+        <input class="range" id="bt-range" type="range" min="-10" max="10" step="1" value="-10" aria-describedby="bt-msg">
+      </div>
+      <svg id="bt-svg" viewBox="0 0 600 340" role="img" aria-label="Barras do quanto cada índice se mexe para o movimento escolhido do mercado"></svg>
+      <div id="bt-msg" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · COVID -->
+<section class="slide" id="covid" data-label="O choque da Covid">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Artigo 2 · Tabela 5 e Figura 6</div>
+      <h2 class="rv" style="--d:.1s">Na chegada da Covid, os índices ESG caíram mais do que o Ibovespa fazia esperar</h2>
+      <p class="rv" style="--d:.15s">Com 116 pregões antes da crise, o autor estimou quanto cada índice costuma andar quando o Ibovespa anda. Depois, nos 20 dias antes e 20 depois do primeiro caso, somou a diferença entre o que aconteceu e o esperado: é o <strong>retorno anormal acumulado</strong>. Abaixo de zero, o índice foi pior que o esperado.</p>
+      <p class="note rv" style="--d:.2s">Curvas refeitas por nós somando os retornos anormais diários da Tabela 5; conferem com a Figura 6. Mostramos a forma e a ordem, na unidade da tabela. A faixa marca, pela nossa conta de pregões, os dias 9 a 18 de março de 2020, quando a B3 interrompeu os negócios seis vezes (circuit breakers).</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="cv-svg" viewBox="0 0 600 360" role="img" aria-label="Retorno anormal acumulado dos oito índices ESG de 20 dias antes a 20 dias depois de 26/02/2020: todos caem depois do dia zero; ICO2 e ISE caem menos, IGPTW cai mais"></svg>
+      <div class="cv-ctl"><button class="btn small" id="cv-play">▶ Passar os dias</button><span id="cv-day"></span></div>
+      <div class="chips" id="cv-chips" role="group" aria-label="Destacar índice" style="margin-top:8px"></div>
+      <div class="panel" id="cv-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · QUEDA -->
+<section class="slide" id="queda" data-label="Quem caiu mais">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Artigo 2 · soma nossa da Tabela 5</div>
+      <h2 class="rv" style="--d:.1s">O índice de carbono caiu menos; o das melhores empresas para trabalhar, mais</h2>
+      <p class="rv" style="--d:.15s">O ICO2 (carbono) e o ISE (sustentabilidade) ficaram bem menos abaixo do esperado que os demais. Para o autor, a eficiência no uso de energia pode passar ao investidor uma ideia de custo mais estável. O IGPTW, das empresas bem avaliadas pelos funcionários, caiu mais: talvez o mercado tenha visto nelas mais exposição às incertezas sociais da pandemia, sugere ele.</p>
+      <p class="note rv" style="--d:.2s">O texto aponta IGPTW e ITAG como os mais sensíveis; pela soma da tabela, o IDIVERSA (diversidade) fica entre os dois.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="dr-seg" role="group" aria-label="Momento"><button class="on" data-k="fim">No fim da janela (dia +20)</button><button data-k="min">No pior dia (+18)</button></div>
+      <div class="fit-wrap"><div class="scene draggable" id="dr-scene" data-fit="560x320" role="img" aria-label="Oito colunas da queda acumulada abaixo do esperado, da menor à maior: ICO2, ISE, IGCNM, IGC, IGCT, ITAG, IDIVERSA e IGPTW"></div></div>
+      <div id="dr-list"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · VIRADA -->
+<section class="slide" id="virada" data-label="Calmaria e tempestade">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> Os dois artigos juntos</div>
+      <h2 class="rv" style="--d:.1s">Na calmaria, mais defensivos; na tempestade, não protegeram</h2>
+      <p class="rv" style="--d:.15s">Os dois artigos parecem dizer coisas opostas. Na média de quatro anos e meio, os índices ESG balançaram menos que o mercado. No choque da Covid, ficaram abaixo do que o mercado fazia esperar. Vire o cartão.</p>
+      <p class="rv" style="--d:.2s">A leitura do autor: em crise extrema, a prioridade do investidor passa a ser a sobrevivência financeira, e as práticas ESG ficam em segundo plano.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="flip" id="flip" role="button" tabindex="0" aria-pressed="false" aria-label="Cartão de dois lados: dias comuns e choque da Covid. Toque para virar.">
+        <div class="flip-in">
+          <div class="face calm">
+            <div class="tag">Dias comuns · 2019 a 2023</div>
+            <h3>Um pouco mais calmos, sem render mais</h3>
+            <ul>
+              <li>Nenhum dos oito rendeu mais que o Ibovespa.</li>
+              <li>Cinco não se distinguem dele nos testes.</li>
+              <li>Betas de 0,81 a 0,89: acompanham o mercado com menos força.</li>
+              <li>Ficaram à frente do Ibovespa no Sharpe e no Sortino, todos negativos.</li>
+            </ul>
+            <span class="hint2">toque para virar ↻</span>
+          </div>
+          <div class="face storm">
+            <div class="tag">Choque da Covid · fev. e mar. de 2020</div>
+            <h3>Abaixo do esperado, todos</h3>
+            <ul>
+              <li>No dia do primeiro caso, os oito ficaram abaixo do esperado.</li>
+              <li>A distância cresceu nas semanas dos circuit breakers.</li>
+              <li>ICO2 e ISE caíram bem menos que os outros.</li>
+              <li>A hipótese de que o selo ESG protegeria na crise foi refutada.</li>
+            </ul>
+            <span class="hint2">toque para virar ↻</span>
+          </div>
+        </div>
+      </div>
+      <div class="sides"><button class="chip on" data-s="0">Dias comuns</button><button class="chip" data-s="1">Choque da Covid</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Na prática · limites · créditos</div>
+    <h2 class="rv" style="--d:.1s">O selo ESG não garantiu retorno maior nem proteção na crise</h2>
+    <div class="cards3">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--esg)"><h3>Para quem investe</h3><p>Muitos fundos de índice (ETFs) copiam carteiras como essas. A pesquisa mostra que, de 2019 a 2023, o selo ESG não trouxe retorno maior e não segurou as quedas no começo da pandemia. Resultado passado não garante o futuro, e esta página não é recomendação de investimento.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--mkt)"><h3>Para a bolsa e as empresas</h3><p>O autor sugere rediscutir os critérios de entrada em cada índice e divulgá-los mais, e usar os resultados ao montar carteiras e criar novos índices, no Brasil ou em outras bolsas.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:#64748b"><h3>Para pesquisadores</h3><p>Separar os setores dentro de cada índice, olhar o balanço das empresas que os compõem (ROA, ROI, EBITDA), estudar as empresas que ficam mais tempo nos índices e entender por que ICO2 e ISE seguiram o mercado com menos sobressalto.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Um período só.</b> 2019 a 2023, com uma pandemia no meio, numa bolsa que é a 19ª do mundo; as empresas de cada índice também mudam com o tempo. <em>· segundo o autor</em></li>
+          <li><b>Carteiras teóricas.</b> Índices não pagam taxas nem custos de compra e venda; um investidor real teria resultados diferentes. <em>· observação nossa</em></li>
+          <li><b>Réguas em escalas diferentes.</b> O CDI da Tabela 2 (média 0,0304) parece estar noutra escala que os retornos diários (perto de −0,0002); por isso mostramos só a ordem no Sharpe e no Sortino. Os retornos anormais da Tabela 5 chegam a −0,44 num dia, grande demais para um retorno diário comum; por isso mostramos a forma e a ordem das curvas, sem percentuais. <em>· observação nossa</em></li>
+          <li><b>Betas do artigo 2 sem força.</b> No modelo GMM, nenhum beta tem estatística t perto de 2; por isso não mostramos a leitura de que seis índices andaram ao contrário do mercado. <em>· observação nossa</em></li>
+          <li><b>Associação, não causa.</b> A pesquisa compara carteiras; não mostra que as práticas ESG causaram as perdas ou as quedas. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          MAFRA, Alysson Collet. <em>Análise de desempenho dos índices ESG na B3.</em> Dissertação (Mestrado em Administração de Empresas) – Universidade Presbiteriana Mackenzie, São Paulo, 2024. Orientador: Prof. Dr. Leonardo Fernando Cruz Basso.
+        </div>
+        <p style="margin-top:12px; font-size:.82rem">Dissertação em dois artigos, aprovada em 01/08/2024, com apoio da CAPES. Preços de fechamento do site da B3. Esta versão simplifica o trabalho para o público em geral; as tabelas completas estão no texto original.</p>
+        <p class="also">Leia também: <a href="../../teses/2025-cardillo-esg-desempenho-financeiro/">Fazer ou contar ESG?</a> (Cardillo, 2025), outra pesquisa do mesmo orientador sobre ESG e desempenho financeiro.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a dissertação completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  var LOC = EN ? 'en-US' : 'pt-BR';
+  function L(pt, en){ return EN ? en : pt; }
+  function num(n, d){ return n.toLocaleString(LOC, {minimumFractionDigits:d, maximumFractionDigits:d}); }
+  function sgn(n, d){ return (n > 0 ? '+' : n < 0 ? '−' : '') + num(Math.abs(n), d); }
+  var NS_ = 'http://www.w3.org/2000/svg';
+  function el(t, a, txt){ var e = document.createElementNS(NS_, t); for (var k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; return e; }
+  var NAVY = '#1f3b73', RED = '#e80734', SLATE = '#334155', GREY = '#94a3b8', INK = '#0f172a';
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // g = letra (agrupamento nosso a partir da Tabela 1).
+  // mean, sd, sharpe, sortino: Tabela 4 (artigo 1). ks, pks, t, pt: Tabela 3. beta, r2, tb (t para β = 1): Tabela 5.
+  var IDX = [
+    {k:'IGPTW', g:'S', mean:-0.0007, sd:0.016785, sh:-3.02057, so:-0.94944, ks:0.025254, pks:0.9079, t:-1.4331, pt:0.1525, beta:0.886, r2:0.553, tb:-3.167,
+      n:L('Melhores empresas para trabalhar', 'Best places to work'), d:L('Empresas com nota da consultoria Great Place To Work, que ouve os funcionários.', 'Companies scored by the Great Place To Work consultancy, which surveys employees.')},
+    {k:'IDIVERSA', g:'S', mean:-0.00021, sd:0.014591, sh:-3.44098, so:-0.96039, ks:0.036453, pks:0.521, t:-0.36793, pt:0.7131, beta:0.846, r2:0.667, tb:-5.704,
+      n:L('Diversidade', 'Diversity'), d:L('Empresas que atendem aos requisitos de diversidade de gênero, cor e raça definidos pela B3.', 'Companies that meet the gender, colour and race diversity requirements set by B3.')},
+    {k:'ICO2', g:'E', mean:-0.00028, sd:0.013989, sh:-3.59438, so:-0.9635, ks:0.046019, pks:0.2412, t:-0.82237, pt:0.4113, beta:0.836, r2:0.709, tb:-6.833,
+      n:L('Carbono eficiente', 'Efficient carbon'), d:L('Empresas com práticas de gestão que levam a emitir menos gases de efeito estufa.', 'Companies whose management practices lead to lower greenhouse gas emissions.')},
+    {k:'IGC', g:'G', mean:-0.00024, sd:0.013234, sh:-3.79616, so:-0.96708, ks:0.034655, pks:0.5867, t:-1.6848, pt:0.09266, beta:0.828, r2:0.776, tb:-8.600,
+      n:L('Governança corporativa', 'Corporate governance'), d:L('Ações de empresas com governança diferenciada, listadas no Novo Mercado ou nos Níveis 1 e 2 da B3.', 'Shares of companies with differentiated governance, listed on B3\'s Novo Mercado or Levels 1 and 2.')},
+    {k:'ITAG', g:'G', mean:-0.00016, sd:0.013238, sh:-3.78934, so:-0.96697, ks:0.061794, pks:0.04426, t:-0.60588, pt:0.5793, beta:0.831, r2:0.781, tb:-8.450,
+      n:L('Tag along diferenciado', 'Differentiated tag-along'), d:L('Empresas que dão melhores condições aos acionistas minoritários se o controle for vendido.', 'Companies that give minority shareholders better terms if control is sold.')},
+    {k:'IGCNM', g:'G', mean:-0.00049, sd:0.013658, sh:-3.69674, so:-0.96537, ks:0.036136, pks:0.5325, t:-2.0146, pt:0.04448, beta:0.814, r2:0.705, tb:-7.750,
+      n:L('Governança · Novo Mercado', 'Governance · Novo Mercado'), d:L('Só empresas listadas no Novo Mercado, o segmento de regras mais exigentes da B3.', 'Only companies listed on the Novo Mercado, B3\'s segment with the strictest rules.')},
+    {k:'IGCT', g:'G', mean:-0.00017, sd:0.013183, sh:-3.80556, so:-0.96724, ks:0.068801, pks:0.01776, t:-0.60377, pt:0.5354, beta:0.830, r2:0.786, tb:-8.947,
+      n:L('Governança · Trade', 'Governance · Trade'), d:L('Empresas do IGC com mais liquidez, isto é, mais negociadas.', 'IGC companies with more liquidity, that is, more heavily traded.')},
+    {k:'ISE', g:'ESG', mean:-0.00032, sd:0.013949, sh:-3.60778, so:-0.96375, ks:0.028637, pks:0.8078, t:-0.78484, pt:0.4329, beta:0.807, r2:0.664, tb:-7.423,
+      n:L('Sustentabilidade empresarial', 'Corporate sustainability'), d:L('Empresas que atendem aos critérios da B3 nas três frentes: ambiental, social e governança.', 'Companies that meet B3\'s criteria on all three fronts: environmental, social and governance.')}
+  ];
+  var IBOV = {k:'IBOV', name:'Ibovespa', mean:-0.00011, sd:0.013022, sh:-3.8485, so:-0.96793};
+  var GROUPS = [['all', L('Todos', 'All')], ['E', L('E · ambiental', 'E · environmental')], ['S', L('S · social', 'S · social')], ['G', L('G · governança', 'G · governance')], ['ESG', L('As três juntas', 'All three')]];
+  function byK(k){ return IDX.filter(function(x){ return x.k === k; })[0]; }
+
+  // Tabela 5 do artigo 2: retornos anormais diários, dias −20 a +20, colunas na ordem de AR_COLS.
+  var AR_COLS = ['ICO2', 'IGC', 'IGPTW', 'ISE', 'ITAG', 'IGCT', 'IGCNM', 'IDIVERSA'];
+  var AR = [
+    [-0.0211,-0.0575,-0.0947,-0.0162,-0.0794,-0.0577,-0.0435,-0.0770],
+    [0.0084,0.0269,0.0445,0.0054,0.0352,0.0259,0.0224,0.0410],
+    [-0.0085,-0.0172,-0.0334,-0.0073,-0.0252,-0.0178,-0.0127,-0.0252],
+    [-0.0016,-0.0043,-0.0057,-0.0104,-0.003,-0.003,-0.0069,-0.005],
+    [-0.0142,-0.0279,-0.0504,-0.015,-0.0393,-0.0282,-0.0206,-0.0398],
+    [0.0065,0.0122,0.014,0.0079,0.0149,0.0113,0.0135,0.017],
+    [0.0011,0.0103,0.0136,-0.0008,0.0146,0.0106,0.0066,0.0145],
+    [0.0045,0.0039,0.0042,0.0042,0.0058,0.0045,0.0031,0.0086],
+    [-0.0094,-0.0158,-0.0297,-0.0139,-0.0209,-0.0156,-0.0154,-0.0298],
+    [-0.0072,-0.0271,-0.0459,-0.0142,-0.0337,-0.0252,-0.0261,-0.0347],
+    [0.0002,-0.0259,-0.0422,-0.0085,-0.0302,-0.0229,-0.0282,-0.0367],
+    [0.017,0.0402,0.0625,0.018,0.0538,0.0397,0.0341,0.0564],
+    [0.0043,0.0177,0.0283,0.0094,0.0219,0.0164,0.0155,0.0238],
+    [-0.0085,-0.0152,-0.0253,-0.0006,-0.0232,-0.0165,-0.0087,-0.0252],
+    [-0.0103,-0.0201,-0.0321,-0.0078,-0.0296,-0.0211,-0.0139,-0.0274],
+    [-0.0018,0.0122,0.0174,-0.0016,0.0143,0.0106,0.0148,0.0154],
+    [-0.001,-0.0078,-0.0153,-0.0015,-0.0104,-0.007,-0.009,-0.0122],
+    [0.0137,0.0193,0.0288,0.0104,0.0267,0.0194,0.0145,0.0263],
+    [-0.0156,-0.0303,-0.0519,-0.013,-0.0415,-0.0308,-0.0227,-0.0446],
+    [-0.0035,-0.0155,-0.0254,0.0054,-0.022,-0.0156,-0.0102,-0.0194],
+    [-0.055,-0.1196,-0.1904,-0.0417,-0.1653,-0.1202,-0.09,-0.1686],
+    [-0.0186,-0.046,-0.0753,-0.025,-0.0621,-0.045,-0.0372,-0.0724],
+    [0.013,0.0139,0.0317,0.0057,0.0212,0.0153,0.0091,0.0248],
+    [0.0144,0.0387,0.0655,0.0181,0.0503,0.0376,0.0298,0.0527],
+    [-0.0113,-0.0194,-0.0336,-0.0032,-0.0281,-0.0203,-0.0126,-0.0286],
+    [0.0099,0.0225,0.0365,0.0159,0.0313,0.0237,0.014,0.0333],
+    [-0.0397,-0.0841,-0.1443,-0.0335,-0.1142,-0.0836,-0.0667,-0.125],
+    [-0.0348,-0.0737,-0.1093,-0.0327,-0.101,-0.0743,-0.0534,-0.0991],
+    [-0.0882,-0.2063,-0.3126,-0.0616,-0.2851,-0.2076,-0.1476,-0.2922],
+    [0.0479,0.1215,0.1701,0.0405,0.161,0.1179,0.1036,0.1606],
+    [-0.0615,-0.1271,-0.2057,-0.0422,-0.1786,-0.1299,-0.0927,-0.1856],
+    [-0.1106,-0.2493,-0.4423,-0.1058,-0.3432,-0.2505,-0.19,-0.3728],
+    [0.1128,0.2208,0.3826,0.0732,0.3107,0.2265,0.1613,0.3226],
+    [-0.119,-0.2336,-0.3936,-0.1079,-0.323,-0.234,-0.1811,-0.348],
+    [0.0427,0.0709,0.1269,0.0359,0.1017,0.0731,0.0567,0.1091],
+    [-0.0815,-0.1846,-0.3101,-0.0752,-0.249,-0.1838,-0.1455,-0.2735],
+    [0.0197,0.0382,0.0623,0.0235,0.0473,0.0346,0.0325,0.0429],
+    [-0.0178,-0.0304,-0.0567,-0.0207,-0.0459,-0.0346,-0.0167,-0.0533],
+    [-0.0506,-0.0877,-0.1547,-0.0456,-0.1242,-0.0908,-0.0621,-0.1446],
+    [0.0952,0.1559,0.2567,0.0391,0.22,0.1593,0.1152,0.2188],
+    [0.0553,0.1242,0.2039,0.0518,0.1692,0.124,0.0979,0.1951]
+  ];
+  // CAR = soma acumulada (conta nossa; confere com a Figura 6).
+  var CAR = {};
+  AR_COLS.forEach(function(k, j){ var s = 0; CAR[k] = AR.map(function(r){ s += r[j]; return s; }); });
+
+  /* ================= 01 · CAPA ================= */
+  // Oito colunas azuis (índices ESG) e uma vermelha (Ibovespa) sobem e descem juntas; amplitude × beta (Tabela 5).
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 470, 140, {ay:'66%', rx:'58deg'});
+    var cols = [];
+    var order = IDX.slice().sort(function(a, b){ return b.beta - a.beta; });
+    order.forEach(function(x, i){
+      var b = box({w:34, d:34, x:8 + i * 50, y:50, h:90, c:NAVY});
+      st.appendChild(b); cols.push([b, x.beta]);
+      flatLabel(st, x.k, i * 50 - 6, 92, 62, 'font-size:11px');
+    });
+    var ib = box({w:34, d:34, x:8 + 8 * 50 + 6, y:50, h:90, c:RED});
+    st.appendChild(ib); cols.push([ib, 1]);
+    flatLabel(st, 'IBOV', 8 * 50, 92, 62, 'font-size:11px; color:#e80734');
+    rotatable(sc, st, -10, 8);
+    function draw(t){ var w = Math.sin(t * 1.2) * 70; cols.forEach(function(c){ c[0].style.setProperty('--h', (110 + w * c[1]) + 'px'); }); }
+    if (reduce){ draw(1.3); return; }
+    M.onTick(function(t){ if (t >= 0) draw(t); });
+  })();
+
+  /* ================= 02 · OS OITO ÍNDICES ================= */
+  (function(){
+    var GC = {E:SLATE, S:'#6f8cc4', G:NAVY, ESG:INK};
+    var grid = $('idx-grid'), chips = $('idx-chips'), panel = $('idx-panel'), btns = {};
+    var GN = {E:L('Ambiental (E)', 'Environmental (E)'), S:L('Social (S)', 'Social (S)'), G:L('Governança (G)', 'Governance (G)'), ESG:L('As três frentes (ESG)', 'All three fronts (ESG)')};
+    IDX.forEach(function(x){
+      var b = document.createElement('button'); b.className = 'idx'; b.style.setProperty('--gc', GC[x.g]);
+      b.innerHTML = '<b>' + x.k + '</b><span>' + x.n + '</span>';
+      b.addEventListener('click', function(){ show(x); });
+      grid.appendChild(b); btns[x.k] = b;
+    });
+    GROUPS.forEach(function(g, i){
+      var c = document.createElement('button'); c.className = 'chip' + (i ? '' : ' on'); c.textContent = g[1]; c.setAttribute('aria-pressed', i ? 'false' : 'true');
+      c.addEventListener('click', function(){
+        each(chips.children, function(o){ o.classList.remove('on'); o.setAttribute('aria-pressed', 'false'); });
+        c.classList.add('on'); c.setAttribute('aria-pressed', 'true');
+        IDX.forEach(function(x){ btns[x.k].classList.toggle('dim', g[0] !== 'all' && x.g !== g[0]); });
+        var first = IDX.filter(function(x){ return g[0] === 'all' || x.g === g[0]; })[0];
+        show(first);
+      });
+      chips.appendChild(c);
+    });
+    function show(x){
+      IDX.forEach(function(y){ btns[y.k].classList.toggle('on', y === x); });
+      panel.innerHTML = '<div class="tag">' + GN[x.g] + '</div><h3>' + x.k + ' · ' + x.n + '</h3><p>' + x.d + '</p>';
+    }
+    show(IDX[0]);
+  })();
+
+  /* ================= 03 · APOSTAS ================= */
+  var BET = null;
+  (function(){
+    var panel = $('bet-panel');
+    var TXT = {
+      mais:L('Você apostou com a dissertação e com a teoria dos stakeholders. Veja na tela 5 se os dados concordaram.', 'You bet with the dissertation and with stakeholder theory. See on screen 5 whether the data agreed.'),
+      menos:L('Você apostou com Friedman: o selo seria um custo que tira retorno do acionista. Veja na tela 5.', 'You bet with Friedman: the seal would be a cost that takes return away from shareholders. See screen 5.'),
+      igual:L('Você apostou com Fama: se o mercado é eficiente, o selo já está no preço e não dá vantagem. Veja na tela 5.', 'You bet with Fama: if the market is efficient, the seal is already priced in and gives no edge. See screen 5.')
+    };
+    each(document.querySelectorAll('#bets .bet'), function(b){
+      b.addEventListener('click', function(){
+        BET = b.dataset.k;
+        each(document.querySelectorAll('#bets .bet'), function(o){ o.classList.toggle('pick', o === b); o.classList.toggle('other', o !== b); });
+        panel.innerHTML = '<p>' + TXT[BET] + '</p>';
+        betAnswer();
+      });
+    });
+  })();
+  function betAnswer(){
+    var t = $('ret-bet');
+    if (!BET){ t.innerHTML = L('Você não apostou na tela 3. ', 'You did not bet on screen 3. ') + L('Resposta: <b>rendeu menos</b>, mas, para a estatística, a maioria empatou com o mercado (tela 6).', 'Answer: <b>it earned less</b>, but, statistically, most tied with the market (screen 6).'); return; }
+    var R = {
+      mais:L('Sua aposta, <b>rende mais</b>, não se confirmou: os oito renderam menos que o Ibovespa.', 'Your bet, <b>earns more</b>, was not confirmed: all eight earned less than the Ibovespa.'),
+      menos:L('Sua aposta, <b>rende menos</b>, bate com a média: os oito renderam menos. Mas, na estatística, a maioria empatou (tela 6).', 'Your bet, <b>earns less</b>, matches the averages: all eight earned less. But, statistically, most tied (screen 6).'),
+      igual:L('Sua aposta, <b>rende igual</b>, bate com os testes: cinco dos oito não se distinguem do mercado (tela 6), apesar de as médias serem menores.', 'Your bet, <b>earns the same</b>, matches the tests: five of the eight cannot be told apart from the market (screen 6), even though their averages are lower.')
+    };
+    t.innerHTML = R[BET];
+  }
+  betAnswer();
+
+  /* ================= 04 · MÉTODO (linha do tempo) ================= */
+  (function(){
+    var svg = $('tl-svg'), panel = $('tl-panel');
+    var X0 = 30, X1 = 570;
+    function dx(y, m, d){ var t = Date.UTC(y, m - 1, d), a = Date.UTC(2019, 0, 4), b = Date.UTC(2023, 6, 19); return X0 + (t - a) / (b - a) * (X1 - X0); }
+    var g1 = el('g'), g2 = el('g');
+    // eixo de anos
+    svg.appendChild(el('line', {x1:X0, x2:X1, y1:70, y2:70, stroke:'#cbd5e1', 'stroke-width':2}));
+    [2019, 2020, 2021, 2022, 2023].forEach(function(y){ var x = dx(y, 1, y === 2019 ? 4 : 1); svg.appendChild(el('line', {x1:x, x2:x, y1:64, y2:76, stroke:GREY})); svg.appendChild(el('text', {x:x, y:96, 'text-anchor':'middle', 'font-size':13, fill:'#64748b'}, String(y))); });
+    // artigo 1: faixa inteira
+    g1.appendChild(el('rect', {x:X0, y:40, width:X1 - X0, height:22, rx:6, fill:NAVY, opacity:.9}));
+    g1.appendChild(el('text', {x:(X0 + X1) / 2, y:56, 'text-anchor':'middle', 'font-size':13, fill:'#fff', 'font-weight':600}, L('1.128 pregões · 04/01/2019 a 19/07/2023', '1,128 trading days · 4 Jan 2019 to 19 Jul 2023')));
+    svg.appendChild(g1);
+    // artigo 2: dia zero e zoom
+    var x0 = dx(2020, 2, 26);
+    g2.appendChild(el('line', {x1:x0, x2:x0, y1:30, y2:118, stroke:RED, 'stroke-width':2, 'stroke-dasharray':'4 3'}));
+    g2.appendChild(el('text', {x:x0 + 6, y:28, 'font-size':12, fill:RED, 'font-weight':700}, L('26/02/2020', '26 Feb 2020')));
+    // zoom: 116 de estimação + 20 antes + dia 0 + 20 depois = 157
+    var Z0 = 30, ZW = 540, u = ZW / 157, zy = 150;
+    g2.appendChild(el('path', {d:'M' + (x0 - 6) + ' 118 L' + Z0 + ' ' + (zy - 4) + ' M' + (x0 + 2) + ' 118 L' + (Z0 + ZW) + ' ' + (zy - 4), stroke:'#cbd5e1', fill:'none'}));
+    var parts = [[116, '#94a3b8', L('116 pregões para aprender o "normal"', '116 days to learn what is "normal"')], [20, '#6f8cc4', L('20 antes', '20 before')], [1, RED, ''], [20, NAVY, L('20 depois', '20 after')]];
+    var xx = Z0;
+    parts.forEach(function(p){
+      g2.appendChild(el('rect', {x:xx, y:zy, width:p[0] * u - 1, height:34, rx:4, fill:p[1]}));
+      if (p[2]) g2.appendChild(el('text', {x:xx + p[0] * u / 2, y:zy + 22, 'text-anchor':'middle', 'font-size':12, fill:'#fff', 'font-weight':600, 'class':p[0] < 30 ? 'sm' : ''}, p[2]));
+      xx += p[0] * u;
+    });
+    g2.appendChild(el('text', {x:Z0, y:zy + 58, 'font-size':12, fill:'#64748b'}, L('estimação: quanto cada índice anda quando o Ibovespa anda', 'estimation: how much each index moves when the Ibovespa moves')));
+    g2.appendChild(el('text', {x:Z0 + ZW, y:zy + 78, 'font-size':12, fill:'#64748b', 'text-anchor':'end'}, L('janela do evento: 41 pregões · total 157', 'event window: 41 trading days · 157 in all')));
+    svg.appendChild(g2);
+    var P = {
+      a1:L('<div class="tag">Artigo 1 · desempenho</div><p>Retorno diário de cada índice ESG comparado com o do Ibovespa, de 4 de janeiro de 2019 (quando começam os índices mais novos, IGPTW e IDIVERSA) a 19 de julho de 2023. Testes de diferença, índices de Sharpe e Sortino e um modelo de risco e retorno (CAPM).</p>', '<div class="tag">Article 1 · performance</div><p>Daily return of each ESG index compared with the Ibovespa, from 4 January 2019 (when the newest indexes, IGPTW and IDIVERSA, begin) to 19 July 2023. Difference tests, Sharpe and Sortino ratios, and a risk-and-return model (CAPM).</p>'),
+      a2:L('<div class="tag">Artigo 2 · estudo de evento</div><p>Dia zero: 26 de fevereiro de 2020, o primeiro caso confirmado de Covid no Brasil. Com os 116 pregões anteriores, um modelo (GMM) aprende quanto cada índice costuma se mexer com o Ibovespa; nos 41 pregões em torno do dia zero, mede o quanto cada um se afastou disso.</p>', '<div class="tag">Article 2 · event study</div><p>Day zero: 26 February 2020, Brazil\'s first confirmed Covid case. Using the 116 earlier trading days, a model (GMM) learns how much each index usually moves with the Ibovespa; over the 41 trading days around day zero, it measures how far each one strayed from that.</p>')
+    };
+    function set(k){
+      g1.style.opacity = k === 'a1' ? 1 : .25; g2.style.opacity = k === 'a2' ? 1 : .25;
+      panel.innerHTML = P[k];
+      each($('tl-seg').children, function(b){ b.classList.toggle('on', b.dataset.k === k); });
+    }
+    each($('tl-seg').children, function(b){ b.addEventListener('click', function(){ set(b.dataset.k); }); });
+    set('a1');
+  })();
+
+  /* ================= 05 · RETORNO MÉDIO ================= */
+  (function(){
+    var sc = $('ret-scene'), st = makeStage(sc, 500, 120, {ay:'72%', rx:'62deg'});
+    var panel = $('ret-panel'), K = 3000, slabs = [];
+    var all = IDX.concat([{k:'IBOV', mean:IBOV.mean, n:L('Ibovespa, o mercado', 'Ibovespa, the market'), ib:1}]);
+    all.sort(function(a, b){ return b.mean - a.mean; });
+    all.forEach(function(x, i){
+      var v = -x.mean * 100;
+      var b = box({w:36, d:30, x:6 + i * 55, y:40, h:Math.max(4, v * K), c:x.ib ? RED : NAVY});
+      st.appendChild(b); slabs.push(b);
+      flatLabel(st, x.k + '\n−' + num(v, 3) + '%', i * 55 - 10, 76, 70, 'white-space:pre-line; line-height:1.25;' + (x.ib ? 'color:#e80734' : ''));
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)) show(i); });
+    });
+    rotatable(sc, st, -4, 4);
+    function show(i){
+      var x = all[i], v = -x.mean * 100;
+      slabs.forEach(function(s, j){ s.classList.toggle('active', j === i); });
+      var times = v / (-IBOV.mean * 100);
+      panel.innerHTML = '<div class="tag">' + (x.ib ? L('Referência', 'Benchmark') : L('Índice ESG', 'ESG index')) + '</div><h3>' + x.k + (x.n ? ' · ' + x.n : '') + '</h3><p>' +
+        L('Perda média de ', 'Average loss of ') + '<b>' + num(v, 3) + '%</b>' + L(' por pregão', ' per trading day') +
+        (x.ib ? L('. Até o mercado perdeu na média do período.', '. Even the market lost on average over the period.') : (', ' + num(times, 1) + L('× a do Ibovespa.', '× the Ibovespa\'s.'))) + '</p>';
+    }
+    show(all.length - 1);
+  })();
+
+  /* ================= 06 · EMPATE ================= */
+  (function(){
+    var box_ = $('tests'), panel = $('tst-panel'), rows = [];
+    IDX.forEach(function(x){
+      var a = x.pks < 0.05, b = x.pt < 0.05;
+      var r = document.createElement('button');
+      r.innerHTML = '<b>' + x.k + '</b><span class="lamp' + (a ? ' diff' : '') + '"><i></i>' + (a ? L('diferente', 'different') : L('igual', 'same')) + '</span><span class="lamp' + (b ? ' diff' : '') + '"><i></i>' + (b ? L('diferente', 'different') : L('igual', 'same')) + '</span>';
+      r.addEventListener('click', function(){ show(x, r); });
+      box_.appendChild(r); rows.push(r);
+    });
+    function pv(p){ return 'p = ' + num(p, p < 0.1 ? 3 : 2); }
+    function show(x, r){
+      rows.forEach(function(o){ o.classList.toggle('on', o === r); });
+      var a = x.pks < 0.05, b = x.pt < 0.05, msg;
+      if (a) msg = L('O formato dos retornos diários difere do Ibovespa (', 'The shape of daily returns differs from the Ibovespa (') + pv(x.pks) + L('), mas a média não (', '), but the average does not (') + pv(x.pt) + ').';
+      else if (b) msg = L('A média diária difere da do Ibovespa (', 'The daily average differs from the Ibovespa\'s (') + pv(x.pt) + L('); o formato não (', '); the shape does not (') + pv(x.pks) + ').';
+      else msg = L('Nenhum dos dois testes separa este índice do Ibovespa (', 'Neither test separates this index from the Ibovespa (') + pv(x.pks) + L(' no formato, ', ' for shape, ') + pv(x.pt) + L(' na média).', ' for the average).') + (x.pt < 0.1 ? L(' Na média, é só uma pista (abaixo de 10%).', ' For the average, it is only a hint (below 10%).') : '');
+      panel.innerHTML = '<div class="tag">' + x.n + '</div><h3>' + x.k + '</h3><p>' + msg + '</p>';
+    }
+    show(byK('ITAG'), rows[4]);
+  })();
+
+  /* ================= 07 · RÉGUAS (ordem, não valores) ================= */
+  (function(){
+    var svg = $('rg-svg'), panel = $('rg-panel'), mode = 'sh', showSd = false;
+    var all = IDX.concat([{k:'IBOV', n:'Ibovespa', sh:IBOV.sh, so:IBOV.so, sd:IBOV.sd, ib:1}]);
+    var rowsEl = {};
+    var Y0 = 30, DY = 33, SDX = 340, SDW = 220, SDMAX = 0.017;
+    svg.appendChild(el('text', {x:20, y:16, 'font-size':12, fill:'#64748b', 'font-weight':700}, L('menos negativo (melhor)', 'least negative (better)')));
+    svg.appendChild(el('text', {x:20, y:Y0 + 9 * DY + 4, 'font-size':12, fill:'#64748b', 'font-weight':700}, L('mais negativo (pior)', 'most negative (worse)')));
+    var sdHead = el('text', {x:SDX, y:16, 'font-size':12, fill:'#64748b', 'font-weight':700}, L('oscilação diária (desvio-padrão)', 'daily swing (standard deviation)'));
+    svg.appendChild(sdHead);
+    all.forEach(function(x){
+      var g = el('g', {'class':'row'});
+      g.appendChild(el('rect', {x:16, y:-13, width:SDX - 30, height:26, rx:7, fill:x.ib ? '#fde8ec' : '#eef2f7'}));
+      var pos = el('text', {x:30, y:5, 'font-size':13, fill:'#64748b', 'font-weight':700});
+      g.appendChild(pos);
+      g.appendChild(el('text', {x:62, y:5, 'font-size':14, fill:x.ib ? RED : INK, 'font-weight':700}, x.k));
+      g.appendChild(el('text', {x:150, y:5, 'font-size':12, fill:'#64748b', 'class':'sm'}, x.ib ? L('o mercado', 'the market') : (x.n.length > 24 ? x.n.slice(0, 23) + '…' : x.n)));
+      var bar = el('rect', {x:SDX, y:-8, height:16, rx:4, width:0, fill:x.ib ? RED : NAVY, opacity:.85});
+      var bt = el('text', {x:SDX, y:5, 'font-size':12, fill:INK});
+      g.appendChild(bar); g.appendChild(bt);
+      g.addEventListener('click', function(){ show(x); });
+      svg.appendChild(g);
+      rowsEl[x.k] = {g:g, pos:pos, bar:bar, bt:bt};
+    });
+    function draw(){
+      var key = mode === 'so' ? 'so' : 'sh';
+      var ord = all.slice().sort(function(a, b){ return b[key] - a[key]; });
+      ord.forEach(function(x, i){
+        var r = rowsEl[x.k];
+        r.g.setAttribute('transform', 'translate(0,' + (Y0 + 4 + i * DY) + ')');
+        r.g.style.transition = reduce ? 'none' : 'transform .6s';
+        r.pos.textContent = (i + 1) + (EN ? '' : 'º');
+        var w = showSd ? x.sd / SDMAX * SDW : 0;
+        r.bar.setAttribute('width', w);
+        r.bt.setAttribute('x', SDX + w + 6);
+        r.bt.textContent = showSd ? num(x.sd * 100, 2) + '%' : '';
+      });
+      sdHead.style.opacity = showSd ? 1 : 0;
+    }
+    function show(x){
+      var key = mode === 'so' ? 'so' : 'sh';
+      var ord = all.slice().sort(function(a, b){ return b[key] - a[key]; });
+      var shr = all.slice().sort(function(a, b){ return b.sh - a.sh; }).indexOf(x) + 1, sor = all.slice().sort(function(a, b){ return b.so - a.so; }).indexOf(x) + 1;
+      panel.innerHTML = '<h3>' + x.k + '</h3><p>' + L('Sharpe: ', 'Sharpe: ') + shr + L('º de 9', ' of 9') + ' · Sortino: ' + sor + L('º de 9', ' of 9') + ' · ' + L('oscilação diária de ', 'daily swing of ') + num(x.sd * 100, 2) + '%.</p><p style="font-size:.8rem; color:var(--muted)">' + L('As duas notas são negativas para todos.', 'Both scores are negative for everyone.') + '</p>';
+      void ord;
+    }
+    each($('rg-seg').children, function(b){
+      b.addEventListener('click', function(){
+        if (b.dataset.k === 'sd'){ showSd = !showSd; b.classList.toggle('on', showSd); }
+        else { mode = b.dataset.k; each($('rg-seg').children, function(o){ if (o.dataset.k !== 'sd') o.classList.toggle('on', o === b); }); }
+        draw();
+        panel.innerHTML = showSd ? L('<p><b>Repare:</b> o IGPTW, no topo, tem a barra de oscilação mais longa; o Ibovespa, no pé, a mais curta. Com o ganho abaixo do CDI, dividir por uma oscilação maior deixa a nota menos negativa.</p>', '<p><b>Notice:</b> IGPTW, at the top, has the longest swing bar; the Ibovespa, at the bottom, the shortest. With the gain below the CDI, dividing by a larger swing makes the score less negative.</p>') : L('<p>Toque num índice para ver as posições nas duas réguas.</p>', '<p>Tap an index to see its positions on both yardsticks.</p>');
+      });
+    });
+    draw();
+    panel.innerHTML = L('<p>Toque num índice para ver as posições nas duas réguas. Ligue "+ oscilação" para a leitura nossa.</p>', '<p>Tap an index to see its positions on both yardsticks. Turn on "+ swings" for our reading.</p>');
+  })();
+
+  /* ================= 08 · BALANÇO (betas) ================= */
+  (function(){
+    var svg = $('bt-svg'), rg = $('bt-range'), msg = $('bt-msg');
+    var all = [{k:L('Mercado', 'Market'), beta:1, ib:1}].concat(IDX.slice().sort(function(a, b){ return b.beta - a.beta; }));
+    var CX = 380, SC = 18, DY = 34, bars = [];
+    svg.appendChild(el('line', {x1:CX, x2:CX, y1:6, y2:all.length * DY + 6, stroke:'#94a3b8'}));
+    all.forEach(function(x, i){
+      var y = 12 + i * DY;
+      svg.appendChild(el('text', {x:10, y:y + 15, 'font-size':13, fill:x.ib ? RED : INK, 'font-weight':700}, x.k));
+      if (!x.ib) svg.appendChild(el('text', {x:96, y:y + 15, 'font-size':12, fill:'#64748b', 'class':'sm'}, 'β ' + num(x.beta, 3)));
+      var r = el('rect', {x:CX, y:y, width:0, height:20, rx:4, fill:x.ib ? RED : NAVY});
+      var t = el('text', {x:CX, y:y + 15, 'font-size':12, fill:INK, 'font-weight':600});
+      svg.appendChild(r); svg.appendChild(t); bars.push([r, t, x]);
+    });
+    function draw(){
+      var m = +rg.value;
+      $('bt-val').textContent = sgn(m, 0) + L(' pontos', ' points');
+      bars.forEach(function(b){
+        var v = m * b[2].beta, w = Math.abs(v) * SC;
+        b[0].setAttribute('x', v < 0 ? CX - w : CX); b[0].setAttribute('width', w);
+        b[1].setAttribute('x', v < 0 ? CX - w - 6 : CX + w + 6); b[1].setAttribute('text-anchor', v < 0 ? 'end' : 'start');
+        b[1].textContent = m ? sgn(v, 1) : '0';
+      });
+      var lo = m * 0.807, hi = m * 0.886;
+      msg.innerHTML = m ? L('Se o mercado ficar ', 'If the market ends ') + sgn(m, 0) + L(' pontos em relação ao CDI, os índices ESG tendem a ficar, em média, entre ', ' points against the CDI, ESG indexes tend to end up, on average, between ') + sgn(Math.min(lo, hi), 1) + L(' e ', ' and ') + sgn(Math.max(lo, hi), 1) + L(': perdem menos na queda e ganham menos na alta.', ': they lose less in a fall and gain less in a rise.') : L('Mova o controle.', 'Move the slider.');
+    }
+    rg.addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 09 · COVID (curvas de CAR) ================= */
+  var CV_SET = null;
+  (function(){
+    var svg = $('cv-svg'), panel = $('cv-panel'), chips = $('cv-chips');
+    var X0 = 44, X1 = 530, Y0 = 20, Y1 = 330, YMIN = -1.9, YMAX = 0.1;
+    function X(d){ return X0 + (d + 20) / 40 * (X1 - X0); }
+    function Y(v){ return Y0 + (YMAX - v) / (YMAX - YMIN) * (Y1 - Y0); }
+    // faixa dos circuit breakers (dias +8 a +15, conta nossa)
+    svg.appendChild(el('rect', {x:X(7.5), y:Y0, width:X(15.5) - X(7.5), height:Y1 - Y0, fill:'#fde8ec'}));
+    svg.appendChild(el('text', {x:(X(7.5) + X(15.5)) / 2, y:Y1 - 8, 'text-anchor':'middle', 'font-size':11, fill:RED, 'class':'sm'}, L('9 a 18/mar', '9–18 Mar')));
+    [0, -0.5, -1, -1.5].forEach(function(v){ svg.appendChild(el('line', {x1:X0, x2:X1, y1:Y(v), y2:Y(v), stroke:v ? '#e2e8f0' : '#94a3b8'})); svg.appendChild(el('text', {x:X0 - 6, y:Y(v) + 4, 'text-anchor':'end', 'font-size':11, fill:'#64748b'}, num(v, 1))); });
+    [-20, -10, 0, 10, 20].forEach(function(d){ svg.appendChild(el('text', {x:X(d), y:Y1 + 18, 'text-anchor':'middle', 'font-size':12, fill:d ? '#64748b' : RED, 'font-weight':d ? 400 : 700}, d > 0 ? '+' + d : String(d))); });
+    svg.appendChild(el('line', {x1:X(0), x2:X(0), y1:Y0, y2:Y1, stroke:RED, 'stroke-dasharray':'4 3', 'stroke-width':1.5}));
+    svg.appendChild(el('text', {x:X(0) - 4, y:Y0 + 12, 'text-anchor':'end', 'font-size':11, fill:RED, 'font-weight':700}, L('dia zero', 'day zero')));
+    var lines = {}, labels = {};
+    var TONE = {ICO2:'#0f172a', ISE:'#334155', IGCNM:'#475569', IGC:'#1f3b73', IGCT:'#2c4f91', ITAG:'#4a6cb0', IDIVERSA:'#6f8cc4', IGPTW:'#8fa8d6'};
+    AR_COLS.forEach(function(k){
+      var p = el('path', {'class':'ln', stroke:TONE[k]});
+      svg.appendChild(p); lines[k] = p;
+      var t = el('text', {'font-size':11, fill:TONE[k], 'font-weight':700}, k);
+      svg.appendChild(t); labels[k] = t;
+    });
+    var cur = 20, hi = null, timer = null;
+    function draw(n){
+      cur = n;
+      AR_COLS.forEach(function(k){
+        var d = '';
+        for (var i = 0; i <= n + 20; i++) d += (i ? 'L' : 'M') + X(i - 20).toFixed(1) + ' ' + Y(CAR[k][i]).toFixed(1);
+        lines[k].setAttribute('d', d);
+        var on = !hi || hi === k;
+        lines[k].style.opacity = on ? 1 : .15; lines[k].style.strokeWidth = hi === k ? 3.5 : 2.2;
+        var lv = CAR[k][n + 20];
+        labels[k].setAttribute('x', X(n) + 4); labels[k].setAttribute('y', Y(lv) + 4);
+        labels[k].style.opacity = (n >= 15 && (on || !hi)) ? (hi && hi !== k ? 0 : 1) : 0;
+      });
+      $('cv-day').textContent = L('dia ', 'day ') + (n > 0 ? '+' : '') + n;
+      // evita rótulos sobrepostos no fim: mostra só os extremos quando nada está destacado
+      if (!hi && n >= 15) AR_COLS.forEach(function(k){ labels[k].style.opacity = (k === 'ICO2' || k === 'IGPTW' || k === 'ITAG' || k === 'IGCNM') ? 1 : 0; });
+    }
+    function info(k){
+      if (!k){ panel.innerHTML = L('<p>No dia zero, os oito ficaram abaixo do esperado. A distância cresceu nas semanas seguintes, sobretudo na faixa dos circuit breakers. Toque num índice.</p>', '<p>On day zero, all eight came in below expectations. The gap widened in the following weeks, especially in the circuit-breaker band. Tap an index.</p>'); return; }
+      var c = CAR[k], j = AR_COLS.indexOf(k), d0 = AR[20][j];
+      panel.innerHTML = '<h3>' + k + ' · ' + byK(k).n + '</h3><p>' + L('No dia zero: ', 'On day zero: ') + num(d0, 3) + L('. No fim da janela (+20), o acumulado ficou em ', '. At the end of the window (+20), the cumulative total stood at ') + '<b>' + num(c[40], 2) + '</b>' + L('; o pior ponto foi ', '; the worst point was ') + num(Math.min.apply(null, c), 2) + L(' no dia +18.', ' on day +18.') + '</p>';
+    }
+    var all = document.createElement('button'); all.className = 'chip on'; all.textContent = L('Todos', 'All'); chips.appendChild(all);
+    all.addEventListener('click', function(){ hi = null; mark(all); draw(cur); info(null); });
+    AR_COLS.forEach(function(k){
+      var c = document.createElement('button'); c.className = 'chip'; c.textContent = k; chips.appendChild(c);
+      c.addEventListener('click', function(){ hi = k; mark(c); draw(cur); info(k); });
+    });
+    function mark(c){ each(chips.children, function(o){ o.classList.toggle('on', o === c); }); }
+    $('cv-play').addEventListener('click', function(){
+      if (timer) clearInterval(timer);
+      var n = -20; draw(n);
+      timer = setInterval(function(){ n++; draw(n); if (n >= 20){ clearInterval(timer); timer = null; } }, reduce ? 10 : 160);
+    });
+    draw(20); info(null);
+    CV_SET = draw;
+  })();
+
+  /* ================= 10 · QUEDA (barras 3D) ================= */
+  (function(){
+    var sc = $('dr-scene'), st = makeStage(sc, 500, 120, {ay:'72%', rx:'62deg'});
+    var K = 120, ord = AR_COLS.slice().sort(function(a, b){ return CAR[b][40] - CAR[a][40]; }), sl = {};
+    ord.forEach(function(k, i){
+      var b = box({w:40, d:30, x:8 + i * 61, y:40, h:4, c:k === 'IGPTW' ? INK : NAVY});
+      st.appendChild(b); sl[k] = b;
+      flatLabel(st, k, i * 61 - 6, 76, 72);
+    });
+    rotatable(sc, st, -4, 4);
+    function set(mode){
+      var list = $('dr-list'); list.innerHTML = '';
+      ord.forEach(function(k){
+        var v = mode === 'fim' ? CAR[k][40] : CAR[k][38];
+        sl[k].style.setProperty('--h', Math.max(4, -v * K) + 'px');
+        sl[k].querySelector('.f-front').innerHTML = '<span class="face-label">' + num(v, 2) + '</span>';
+        var d = document.createElement('div'); d.innerHTML = k + '<b>' + num(v, 2) + '</b>'; list.appendChild(d);
+      });
+      each($('dr-seg').children, function(b){ b.classList.toggle('on', b.dataset.k === mode); });
+    }
+    each($('dr-seg').children, function(b){ b.addEventListener('click', function(){ set(b.dataset.k); }); });
+    set('fim');
+  })();
+
+  /* ================= 11 · VIRADA (cartão) ================= */
+  (function(){
+    var f = $('flip'), sides = document.querySelectorAll('.sides .chip');
+    function set(s){ f.classList.toggle('turned', !!s); f.setAttribute('aria-pressed', s ? 'true' : 'false'); each(sides, function(c){ c.classList.toggle('on', +c.dataset.s === s); }); }
+    f.addEventListener('click', function(){ set(f.classList.contains('turned') ? 0 : 1); });
+    f.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); e.stopPropagation(); set(f.classList.contains('turned') ? 0 : 1); } });
+    each(sides, function(c){ c.addEventListener('click', function(){ set(+c.dataset.s); }); });
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
