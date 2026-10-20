@@ -1,0 +1,936 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Do companies that earn more owe less? · PPGA Interactive</title>
+<meta name="description" content="The doctoral thesis of Kelvia Carneiro de Linhares Fernandes Passos (PPGA Mackenzie, 2021) on cash generation and debt in 28,756 listed companies from 43 G20 countries and 5,624 listed and privately held companies in Brazil, explained in 13 interactive screens.">
+<link rel="alternate" hreflang="pt-BR" href="../../../teses/2021-passos-geracao-caixa-endividamento-g20/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><path d=%22M18 4 L9 18 h6 l-2 10 l10 -15 h-6 z%22 fill=%22white%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/motor.css">
+<link rel="stylesheet" href="../../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  @property --z{syntax:'<length>'; inherits:false; initial-value:0px;}
+  :root{
+    --acc:var(--red);     /* lente do balanço (lucro contábil) */
+    --mkt:var(--navy);    /* lente do mercado (valor de mercado) */
+    --exp:#1f3b73;        /* como a tese esperava */
+    --con:hsl(348 94% 47%); /* ao contrário */
+    --ns:#cbd5e1;         /* sem efeito claro */
+    --cash:#334155;
+    --pub:var(--navy);    /* capital aberto */
+    --pri:#8a9bb8;        /* capital fechado */
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+  .ilus{display:inline-block; font-size:.64rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 13px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.75rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px;}
+  .chips button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-size:.78rem; cursor:pointer; color:var(--ink-2);}
+  .chips button:hover{border-color:var(--ink);}
+  .chips button[aria-pressed="true"]{border-color:var(--ink); background:var(--ink); color:#fff;}
+  .row-tools{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:12px;}
+  .sv{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .sv text{font-family:var(--sans);}
+  .scene{perspective:2200px;}
+  .scene .slab{transition:--h .6s cubic-bezier(.2,.8,.2,1), transform .5s;}
+  .scene .floor-label{font-size:12px; color:var(--muted); font-weight:600;}
+  .scene .top-label{font-size:14px; font-weight:700; color:#fff; font-family:var(--serif); text-align:center; line-height:1.2;}
+  .scene .face-label{font-size:12px; font-weight:700; color:#fff;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 3.8vw, 2.7rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.86rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.77rem; color:var(--muted); text-align:center; margin-top:6px; max-width:36em; margin-left:auto; margin-right:auto;}
+  #hero-line{font-family:var(--serif); text-align:center; font-size:1.02rem; color:var(--ink); margin-bottom:2px; min-height:1.6em;}
+  #hero-line b{color:var(--red);}
+  #hero-line b.m{color:var(--navy);}
+  .lg{display:flex; justify-content:center; gap:6px 14px; flex-wrap:wrap; font-size:.74rem; color:var(--muted); margin-top:4px;}
+
+  /* ---------- 02 · A aposta ---------- */
+  .pick3{display:grid; gap:8px; margin-top:12px;}
+  .pk{display:grid; grid-template-columns:118px 1fr; gap:10px; align-items:center; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 12px; box-shadow:var(--shadow);}
+  .pk b{font-size:.86rem; color:var(--ink); display:block;}
+  .pk small{font-size:.7rem; color:var(--muted); display:block; line-height:1.3;}
+  .pk .seg button{padding:6px 11px; font-size:.78rem;}
+  #ap-msg{margin-top:12px; min-height:5.6em;}
+  .gauge{height:14px; border-radius:7px; background:#eef2f7; overflow:hidden; margin:6px 0 2px;}
+  .gauge i{display:block; height:100%; background:var(--navy); border-radius:7px; transition:width .6s cubic-bezier(.2,.8,.2,1);}
+  @media (max-width:600px){ #ap-svg text{font-size:20px !important;} .pk{grid-template-columns:1fr;} }
+
+  /* ---------- 03 · Duas lentes ---------- */
+  .lens2{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+  .lens{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--lc); cursor:pointer; text-align:left; font:inherit; color:inherit;}
+  .lens[aria-pressed="true"]{box-shadow:0 0 0 2px var(--lc), var(--shadow);}
+  .lens h3{font-size:.95rem; margin-bottom:4px; color:var(--ink);}
+  .lens p{margin:0; font-size:.78rem; color:var(--ink-2); line-height:1.42;}
+  #ln-panel{margin-top:12px; min-height:7em;}
+  @media (max-width:600px){ .lens2{grid-template-columns:1fr;} #ln-svg text{font-size:19px !important;} }
+
+  /* ---------- 04 · Oito réguas ---------- */
+  #rg-panel{margin-top:10px; min-height:8.6em;}
+  .frac{display:inline-grid; text-align:center; vertical-align:middle; font-size:.82rem; margin:4px 0;}
+  .frac span:first-child{border-bottom:1.5px solid var(--ink-2); padding:0 6px 2px;}
+  .frac span:last-child{padding:2px 6px 0;}
+  .mean2{display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; margin-top:8px;}
+  .mean2 div{background:#f1f5f9; border-radius:9px; padding:6px 10px; font-size:.74rem; color:var(--muted);}
+  .mean2 b{display:block; font-family:var(--serif); font-size:1.1rem; color:var(--ink);}
+  #bs-svg rect{transition:fill .35s, stroke .35s, opacity .35s;}
+  @media (max-width:600px){ #bs-svg text{font-size:17px !important;} }
+
+  /* ---------- 05 · G20 ---------- */
+  .fun{display:grid; gap:7px; margin-top:10px;}
+  .fun > div{border:1px solid var(--border); background:var(--card); border-radius:11px; padding:7px 12px;}
+  .fun .fl{display:flex; justify-content:space-between; gap:10px; font-size:.8rem; color:var(--ink-2);}
+  .fun .fl b{font-family:var(--serif); font-size:1.05rem; color:var(--ink);}
+  .fun .fb{height:8px; background:#eef2f7; border-radius:4px; margin-top:5px; overflow:hidden;}
+  .fun .fb i{display:block; height:100%; background:var(--ink-2); border-radius:4px;}
+  .fun > div:last-child .fb i{background:var(--red);}
+  @media (max-width:600px){ #ct-svg text{font-size:19px !important;} }
+
+  /* ---------- 06 · Níveis ---------- */
+  #nv-scene .slab > i{transition:box-shadow .3s;}
+  #nv-scene .slab.sel > i{box-shadow:inset 0 0 0 2px var(--ink);}
+  #nv-panel{margin-top:10px; min-height:5.2em;}
+  .lvl{display:grid; gap:6px; margin-top:10px;}
+  .lvl div{display:grid; grid-template-columns:86px 1fr 52px; gap:8px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .lvl .bar{height:12px; background:#eef2f7; border-radius:6px; overflow:hidden;}
+  .lvl .bar i{display:block; height:100%; border-radius:6px; transition:width .6s;}
+  .lvl b{font-variant-numeric:tabular-nums; text-align:right; color:var(--ink);}
+
+  /* ---------- 07 · Dois mundos ---------- */
+  #mu-scene .face-label, #br-scene .face-label, #sm-scene .face-label{font-size:13px;}
+  #mu-panel{margin-top:10px; min-height:5.4em;}
+
+  /* ---------- 08 · Placar ---------- */
+  .tally{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 16px 12px; box-shadow:var(--shadow);}
+  .tally h3{font-size:.95rem; margin-bottom:2px;}
+  .tally .sub{font-size:.76rem; color:var(--muted); margin-bottom:8px;}
+  .tl{display:grid; grid-template-columns:118px 1fr; gap:10px; align-items:center; padding:8px 0; border-top:1px solid #f1f5f9; font-size:.8rem; color:var(--ink-2); cursor:pointer;}
+  .tl small{display:block; font-size:.68rem; color:var(--muted);}
+  .tl.sel{background:#f8fafc;}
+  .tbar{display:flex; height:28px; border-radius:6px; overflow:hidden; background:#f1f5f9;}
+  .tbar i{display:flex; align-items:center; justify-content:center; font-style:normal; font-size:.74rem; font-weight:700; color:#fff; transition:flex-grow .6s; min-width:0; overflow:hidden;}
+  .tbar i.e{background:var(--exp);} .tbar i.c{background:var(--con);} .tbar i.z{background:var(--ns); color:var(--ink-2);}
+  @media (max-width:600px){ .tl{grid-template-columns:86px 1fr; gap:6px;} }
+  #pl-panel{margin-top:10px; min-height:6.8em;}
+  .rl{display:flex; flex-wrap:wrap; gap:5px; margin-top:6px;}
+  .rl span{display:inline-flex; align-items:center; gap:4px; border-radius:7px; padding:3px 8px; font-size:.72rem; font-weight:600; color:#fff;}
+  .rl span.e{background:var(--exp);} .rl span.c{background:var(--con);} .rl span.z{background:var(--ns); color:var(--ink-2);}
+
+  /* ---------- 09 · Brasil ---------- */
+  #br-panel{margin-top:10px; min-height:4.6em;}
+
+  /* ---------- 10 · Lucro e dívida no Brasil ---------- */
+  @media (max-width:600px){ #lb-svg text{font-size:19px !important;} #lb-svg text.lab{font-size:17px !important;} }
+  #lb-panel{margin-top:10px; min-height:4.8em;}
+
+  /* ---------- 11 · Simulador ---------- */
+  .ctl{margin-top:12px;}
+  .ctl label{display:flex; justify-content:space-between; font-size:.86rem; font-weight:600; color:var(--ink);}
+  .ctl label span{font-variant-numeric:tabular-nums; color:var(--red);}
+  .ctl input{width:100%; accent-color:var(--red);}
+  .ctl small{display:block; font-size:.72rem; color:var(--muted);}
+  .vr-big{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+  .vr-big div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 13px; border-top:5px solid var(--vc);}
+  .vr-big b{display:block; font-family:var(--serif); font-size:1.6rem; color:var(--ink); line-height:1.1; font-variant-numeric:tabular-nums;}
+  .vr-big span{font-size:.76rem; color:var(--ink-2); display:block; line-height:1.35;}
+
+  /* ---------- 12 · Garantias ---------- */
+  .gtab{width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; font-size:.78rem;}
+  .gtab th, .gtab td{padding:7px 6px; text-align:center; border-bottom:1px solid #f1f5f9;}
+  .gtab th{font-size:.66rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); background:#f8fafc; font-weight:700;}
+  .gtab td:first-child, .gtab th:first-child{text-align:left; color:var(--ink); font-weight:600; padding-left:12px;}
+  .gtab .cell{display:inline-flex; width:24px; height:24px; border-radius:6px; align-items:center; justify-content:center; font-weight:800; color:#fff; font-size:.85rem;}
+  .gtab .cell.up{background:var(--navy);} .gtab .cell.dn{background:var(--red);} .gtab .cell.z{background:var(--ns); color:var(--ink-2);}
+  .gwrap{overflow-x:auto;}
+  @media (max-width:520px){ .gtab .cell{width:18px; height:18px; font-size:.7rem;} .gtab th, .gtab td{padding:6px 2px;} .gtab td:first-child{font-size:.7rem;} }
+  #ga-panel{margin-top:10px; min-height:4.4em;}
+
+  /* ---------- 13 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.77rem; color:var(--ink-2); line-height:1.42;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-meta="../../../teses/2021-passos-geracao-caixa-endividamento-g20/meta.json">
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interactive</span></a>
+  <div class="counter">
+    <a class="lang" href="../../../teses/2021-passos-geracao-caixa-endividamento-g20/" hreflang="pt-BR" lang="pt-BR" title="Ler em português"><img class="lang-flag" src="../../../assets/bandeira-br.svg" width="17" height="12" alt="">PT</a>
+    <span id="count">01 / 13</span>
+    <button class="nav-btn" id="prev" aria-label="Previous screen">↑</button>
+    <button class="nav-btn" id="next" aria-label="Next screen">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Screen navigation"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Start">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Doctoral thesis · PPGA Mackenzie · 2021</div>
+      <h1 class="rv" style="--d:.1s">Do companies that earn more owe less?</h1>
+      <p class="sub rv" style="--d:.2s">Two essays on company debt. The first looked at 28,756 listed companies from 43 G20 countries; the second, at 5,624 Brazilian companies, listed and privately held. The question is the same: can (and do) companies that generate more cash take on more debt? In 13 screens.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Author:</b> Kelvia Carneiro de Linhares Fernandes Passos</span>
+        <span><b>Advisor:</b> Prof. Dr. Wilson Toshiro Nakamura</span>
+        <span><b>Program:</b> Graduate Program in Business Administration (PPGA) · Mackenzie Presbyterian University</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#aposta">Start →</a>
+        <a class="btn ghost" href="#placar">Skip to the result</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div id="hero-line" aria-live="off"></div>
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="540x330" role="img" aria-label="Four coin stacks, from little to a lot of cash, each next to a debt block; through the balance-sheet lens debt shrinks as cash grows, through the market lens it grows, and the lens switches by itself"></div></div>
+      <div class="lg"><span><i class="dot" style="background:var(--cash)"></i>cash generated</span><span><i class="dot" style="background:var(--acc)"></i>debt, balance-sheet lens</span><span><i class="dot" style="background:var(--mkt)"></i>debt, market lens</span></div>
+      <p class="cap-legend"><span class="ilus">illustrative drawing</span> Only the direction comes from the thesis (G20, gross debt over assets, Tables 17 and 21); the heights are made up. The lens switches every 3 seconds.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">Closest UN Sustainable Development Goals</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://sdgs.un.org/goals/goal8" target="_blank" rel="noopener" title="SDG 8 · Decent Work and Economic Growth: Compares how much companies in 43 countries owe and shows that, in Brazil, privately held companies owe far less than listed ones (18% versus 31% of assets)."><b>8</b>Decent Work and Economic Growth</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">scroll<span></span></div>
+</section>
+
+<!-- 02 · A APOSTA -->
+<section class="slide" id="aposta" data-label="The thesis's bet">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> The idea tested</div>
+      <h2 class="rv" style="--d:.1s">The thesis bet that lenders lend more to companies with plentiful, growing and steady cash</h2>
+      <p class="lede rv" style="--d:.15s">Before lending, creditors look at how much cash a company generates. The thesis called this idea a modified <em>trade-off</em>: debt brings tax savings and the risk of going bust, and a company with plentiful, growing and steady cash could carry more debt with less risk. Build a company and see what the bet predicts.</p>
+      <div class="pick3 rv" id="ap-pick" style="--d:.2s">
+        <div class="pk"><div><b>Cash size</b><small>magnitude</small></div><div class="seg" data-k="m" role="group" aria-label="Cash size"><button data-v="0" aria-pressed="false">small</button><button data-v="1" aria-pressed="true">large</button></div></div>
+        <div class="pk"><div><b>Pace</b><small>growth</small></div><div class="seg" data-k="g" role="group" aria-label="Cash pace"><button data-v="0" aria-pressed="false">flat</button><button data-v="1" aria-pressed="true">growing</button></div></div>
+        <div class="pk"><div><b>Swings</b><small>volatility</small></div><div class="seg" data-k="v" role="group" aria-label="Cash swings"><button data-v="0" aria-pressed="true">steady</button><button data-v="1" aria-pressed="false">unsteady</button></div></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="ap-svg" class="sv" viewBox="0 0 560 300" role="img" aria-label="Line of cash generated over ten years, drawn from the choices"></svg>
+      <div class="panel" id="ap-msg" aria-live="polite"></div>
+      <p class="note"><span class="ilus">our illustration</span> The line and the "room to borrow" gauge are made up, only to show the logic of the hypotheses (section 1.1 and Chart 2): size and pace in favour (+), swings against (−).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · DUAS LENTES -->
+<section class="slide" id="lentes" data-label="Two lenses">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> How cash was measured</div>
+      <h2 class="rv" style="--d:.1s">Cash was read through two lenses: the balance sheet and the market</h2>
+      <p class="lede rv" style="--d:.15s">The thesis did not measure cash directly. It used three indicators: two look at operating profit in the year's balance sheet; the third looks at how much the stock market pays for the company, a bet on the cash it will generate. For each indicator, the thesis measured size (the year's value), pace (the change from one year to the next) and swings (the standard deviation over five years).</p>
+      <div class="lens2 rv" id="ln-pick" style="--d:.2s">
+        <button class="lens" data-l="acc" style="--lc:var(--acc)" aria-pressed="true"><h3>Balance-sheet lens</h3><p>ROA and ROIC: operating profit divided by what the company owns (assets) or by the capital invested in it.</p></button>
+        <button class="lens" data-l="mkt" style="--lc:var(--mkt)" aria-pressed="false"><h3>Market lens</h3><p><em>Market-to-book</em>: the company's stock market value divided by the equity shown in the balance sheet.</p></button>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="ln-svg" class="sv" viewBox="0 0 560 300" role="img" aria-label="Drawing of each lens's calculation"></svg>
+      <div class="panel" id="ln-panel" aria-live="polite"></div>
+      <p class="note">Chart 4 and Table 3 (2010–2020 averages across the 43 countries, after trimming the most extreme 1% of values at each end).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · OITO RÉGUAS -->
+<section class="slide" id="reguas" data-label="Eight yardsticks">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> How debt was measured</div>
+      <h2 class="rv" style="--d:.1s">Debt was measured with eight different yardsticks</h2>
+      <p class="lede rv" style="--d:.15s">How much a company owes depends on what goes into the calculation: only loans or suppliers too, all debt or only long-term debt, with or without the money already in the till, compared with the balance sheet or with market value. Pick a yardstick and see which parts of the balance sheet it uses.</p>
+      <div class="chips rv" id="rg-chips" style="--d:.2s" role="group" aria-label="Choose the yardstick"></div>
+      <div class="panel rv" id="rg-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="bs-svg" class="sv" viewBox="0 0 560 360" role="img" aria-label="Simplified company balance sheet: assets on the left, debts and equity on the right; the chosen yardstick lights up what goes on top (red) and at the bottom (blue) of the fraction"></svg>
+      <div class="legend"><span><i class="dot" style="background:var(--red)"></i>top of the fraction (what is owed)</span><span><i class="dot" style="background:var(--navy)"></i>bottom of the fraction (the base)</span></div>
+      <p class="note">Charts 3 and 11; averages from Tables 2 (G20, 2010–2020) and 24 (Brazil, 2010–2019). Both essays used the same eight yardsticks. Drawing not to scale.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · G20 -->
+<section class="slide" id="g20" data-label="Essay 1: the G20">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Essay 1 · who was studied</div>
+      <h2 class="rv" style="--d:.1s">28,756 companies from 43 countries, followed for 11 years</h2>
+      <p class="lede rv" style="--d:.15s">The first essay used listed companies from the 43 countries the thesis groups under the G20, from 2010 to 2020 (S&amp;P Capital IQ database). Banks and insurers were left out, as were companies without traded shares, with negative equity or without total assets reported.</p>
+      <div class="fun rv" id="fun" style="--d:.2s"></div>
+      <div class="stats rv" style="--d:.25s">
+        <div class="stat"><b>236.402</b><span>annual balance sheets (company-years)</span></div>
+        <div class="stat"><b>32 + 11</b><span>developed and developing countries (UN)</span></div>
+        <div class="stat"><b>300</b><span>companies from Brazil</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="ct-seg" role="group" aria-label="Country group">
+        <button data-g="dev" aria-pressed="true">Developed (18,200)</button>
+        <button data-g="emg" aria-pressed="false">Developing (10,556)</button>
+      </div>
+      <svg id="ct-svg" class="sv" viewBox="0 0 560 380" role="img" aria-label="Bars with the number of companies per country in the chosen group" style="margin-top:10px"></svg>
+      <p class="note">Table 1 and section 3.3.1. The country counts add up to 18,200 and 10,556 (checked). Among developed countries, those with fewer than 150 companies are grouped in the last bar.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · NÍVEIS -->
+<section class="slide" id="niveis" data-label="Where the difference lies">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Essay 1 · company, year and country</div>
+      <h2 class="rv" style="--d:.1s">How much a company owes depends more on the company itself than on its country</h2>
+      <p class="lede rv" style="--d:.15s">The essay used a three-storey (multilevel) model: the year, the company and the country. Before adding any variable, the model splits the difference in debt among the storeys. On the most common yardstick, out of every 100 parts of difference, 65 sit at the company storey, 27 in the year-to-year back-and-forth and only 8 in the country. Switch the yardstick.</p>
+      <div class="chips rv" id="nv-chips" style="--d:.2s" role="group" aria-label="Choose the yardstick"></div>
+      <div class="lvl rv" id="nv-bars" style="--d:.22s"></div>
+      <div class="panel rv" id="nv-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="nv-scene" data-fit="460x400" role="img" aria-label="3D three-storey tower (country, company and year), each with height proportional to its share of the difference in debt"></div></div>
+      <p class="note">Tables 5 and 6 (null model, intraclass correlation coefficient). The "short- and long-term debts" yardstick was left out: its company share (94.8%) is out of line with the other yardsticks, and we chose not to show it. On the market yardstick, the country weighs more (20.8%).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · DOIS MUNDOS -->
+<section class="slide" id="mundos" data-label="Two worlds">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Essay 1 · first look</div>
+      <h2 class="rv" style="--d:.1s">In developing countries, companies earned more, swung less and owed a little more</h2>
+      <p class="lede rv" style="--d:.15s">Averages from 2010 to 2020, before any model. Companies in developed countries had, on average, negative operating profit and more swings, and held far more cash than they owed. Choose what to compare.</p>
+      <div class="chips rv" id="mu-chips" style="--d:.2s" role="group" aria-label="Choose the indicator"></div>
+      <div class="panel rv" id="mu-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="mu-scene" data-fit="460x340" role="img" aria-label="Two 3D towers on the same scale: developed and developing countries"></div></div>
+      <div class="lg"><span><i class="dot" style="background:var(--navy)"></i>developed</span><span><i class="dot" style="background:var(--red)"></i>developing</span></div>
+      <p class="note">Table 4 (averages by country group). When the value is negative, the tower sinks below the floor.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · PLACAR -->
+<section class="slide" id="placar" data-label="The result">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> The result of both essays</div>
+      <h2 class="rv" style="--d:.1s">By the balance sheet, companies that earn more owe less; by market value, in the G20, they owe more</h2>
+      <p class="lede rv" style="--d:.15s">Each cash trait was tested on the eight debt yardsticks, with each lens. The scoreboard counts on how many yardsticks the result came out as the thesis expected, the other way round, or with no clear effect. Switch essay and lens; tap a row to see yardstick by yardstick.</p>
+      <div class="row-tools rv" style="--d:.2s">
+        <div class="seg" id="pl-ess" role="group" aria-label="Essay">
+          <button data-e="g20" aria-pressed="true">G20 · essay 1</button>
+          <button data-e="br" aria-pressed="false">Brazil · essay 2</button>
+        </div>
+        <div class="seg" id="pl-lens" role="group" aria-label="Lens">
+          <button data-l="acc" aria-pressed="true">Balance sheet</button>
+          <button data-l="mkt" aria-pressed="false">Market</button>
+        </div>
+      </div>
+      <div class="panel rv" id="pl-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="tally" id="pl-tally"></div>
+      <div class="legend"><span><i class="dot" style="background:var(--exp)"></i>as the thesis expected</span><span><i class="dot" style="background:var(--con)"></i>the other way round</span><span><i class="dot" style="background:var(--ns)"></i>no clear effect</span></div>
+      <p class="note">Our count, at the 5% level. G20: Tables 17 to 22 (model with company and country variables). Brazil: Tables 27 to 29; there the market lens only covers the 396 listed companies, because privately held ones have no stock price. The thesis expected + for size and pace and − for swings.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · BRASIL -->
+<section class="slide" id="brasil" data-label="Essay 2: listed and private">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Essay 2 · who was studied</div>
+      <h2 class="rv" style="--d:.1s">In Brazil, listed companies owe more than privately held ones on every yardstick</h2>
+      <p class="lede rv" style="--d:.15s">The second essay brought in what almost never appears in these studies: privately held corporations, whose shares do not trade on the stock exchange. Balance sheets from 2010 to 2019 came from the Valor Pro database, run by the newspaper Valor Econômico. Pick a yardstick.</p>
+      <div class="stats rv" style="--d:.2s">
+        <div class="stat"><b>5.624</b><span>companies, 41,561 annual balance sheets</span></div>
+        <div class="stat"><b>396</b><span>listed (7%)</span></div>
+        <div class="stat"><b>5.228</b><span>privately held (93%)</span></div>
+      </div>
+      <div class="chips rv" id="br-chips" style="--d:.22s" role="group" aria-label="Choose the yardstick"></div>
+      <div class="panel rv" id="br-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="br-scene" data-fit="460x340" role="img" aria-label="Two 3D towers on the same scale with the average debt of listed and privately held companies"></div></div>
+      <div class="lg"><span><i class="dot" style="background:var(--pub)"></i>listed</span><span><i class="dot" style="background:var(--pri)"></i>privately held</span></div>
+      <p class="note">Tables 23, 25 and 26. The market yardstick and net debt over EBITDA are left out of the comparison: the first only exists for listed companies, and the second is not a share of assets.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · LUCRO E DÍVIDA NO BRASIL -->
+<section class="slide" id="lucro" data-label="Profit and debt in Brazil">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Essay 2 · the result</div>
+      <h2 class="rv" style="--d:.1s">In Brazil, more profit came with less debt, in listed and private companies alike</h2>
+      <p class="lede rv" style="--d:.15s">With return on assets, cash size pulled debt down on 7 of the 8 yardsticks; pace moved none of them, and swings showed up on only two (both downward). The thesis itself recalls the classic explanation: companies that generate a lot of cash fund themselves with their own money and need the bank less.</p>
+      <div class="seg rv" id="lb-seg" style="--d:.2s" role="group" aria-label="Group of companies">
+        <button data-g="all" aria-pressed="true">All</button>
+        <button data-g="pri" aria-pressed="false">Private</button>
+        <button data-g="pub" aria-pressed="false">Listed</button>
+      </div>
+      <div class="panel rv" id="lb-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="tag" style="font-size:.8rem; font-weight:700; color:var(--ink); margin-bottom:6px">Points less debt for every +10 of return on assets</div>
+      <svg id="lb-svg" class="sv" viewBox="0 0 560 310" role="img" aria-label="Downward bars: how much debt falls, in points, for every 10 extra points of return on assets, on six yardsticks"></svg>
+      <p class="note">Tables 27, 30 and 31 (return on assets, ROA). Our calculation: coefficient × 10, in percentage points of the yardstick, for every 10 extra points of return on assets. Grey bar: no clear effect at 5%. Left out of the chart, because they are on another scale: debt over EBITDA (no clear effect) and the market yardstick (also down).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · SIMULADOR -->
+<section class="slide" id="simulador" data-label="Simulator">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> How big the effect is</div>
+      <h2 class="rv" style="--d:.1s">Ten more points of profit are worth just over one point less of debt</h2>
+      <p class="lede rv" style="--d:.15s">Take an average company from each group and raise its operating profit over assets. Gross debt over assets falls, a little more for listed companies. The effect is real, but small next to the gap between the two groups.</p>
+      <div class="ctl rv" style="--d:.2s"><label>Extra return on assets <span id="sm-v"></span></label><input type="range" id="sm-r" min="0" max="20" step="1" value="10" aria-label="Extra points of return on assets"><small>in percentage points (from 0 to 20)</small></div>
+      <div class="vr-big rv" id="sm-big" style="--d:.25s"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="sm-scene" data-fit="460x360" role="img" aria-label="Two 3D towers with gross debt over assets of an average listed and private company, which drop as profit rises"></div></div>
+      <div class="lg"><span><i class="dot" style="background:var(--pub)"></i>listed</span><span><i class="dot" style="background:var(--pri)"></i>privately held</span></div>
+      <p class="note"><span class="ilus">our calculation</span> Starting point: average gross debt over assets (Tables 25 and 26: 30.9% and 18.1%). Drop: coefficients from Table 30 (−0.1427 for listed, −0.1131 for private), which measure the change within each company over time. It illustrates direction and size; it is not a forecast for a real company.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · GARANTIAS -->
+<section class="slide" id="garantias" data-label="What always shows up">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">12</span> The firmest signals</div>
+      <h2 class="rv" style="--d:.1s">Owning assets that can serve as collateral and being large went with more debt in both essays</h2>
+      <p class="lede rv" style="--d:.15s">While the cash traits switched sign with the yardstick, two controls barely changed: tangibility (the share of assets in buildings, machinery and equipment, which banks accept as collateral) and size (sales). In the G20, companies paying more dividends owed less on seven of the eight yardsticks.</p>
+      <div class="seg rv" id="ga-seg" style="--d:.2s" role="group" aria-label="Essay">
+        <button data-e="g20" aria-pressed="true">G20 · essay 1</button>
+        <button data-e="br" aria-pressed="false">Brazil · essay 2</button>
+      </div>
+      <div class="panel rv" id="ga-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="gwrap"><table class="gtab" id="ga-tab"></table></div>
+      <div class="legend"><span><i class="dot" style="background:var(--navy)"></i>debt goes up</span><span><i class="dot" style="background:var(--red)"></i>debt goes down</span><span><i class="dot" style="background:var(--ns)"></i>no clear effect</span></div>
+      <p class="note">G20: Tables 17 and 18 (model with return on assets). Brazil: Table 27 (all companies). 5% level. In Brazil, the thesis did not use dividends as a control.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 13 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="In practice and limits">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">13</span> In practice · limits · credits</div>
+    <h2 class="rv" style="--d:.1s">What changes for those who decide how much to owe</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Finance directors</h3><p>The author recommends looking first at the company's own characteristics, without ignoring year-to-year changes and the country it operates in: that is the order in which these factors weighed on debt.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Lenders</h3><p>For the author, when lenders look at a company through its market value, they agree to finance those with more growth potential. Our reading: by balance-sheet profit, companies that earn more tend to need loans less.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ink-2)"><h3>Privately held companies</h3><p>Private companies owe far less than listed ones (18% versus 31% of assets, in gross debt). The thesis says this difference exists, unlike an earlier Brazilian study that did not find it.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#5b6f96"><h3>Researchers</h3><p>Suggested next steps: measure the effect of the Covid-19 pandemic on cash and debt, test other measures of future cash and dig deeper into combinations of cash size, pace and swings.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>What this research does not say</h3>
+        <ul class="limits">
+          <li><b>No sectors.</b> The sheer number of companies made it hard to split countries by sector in the G20, and in Brazil the sector variable had many gaps and was left out of the models. Each sector manages debt in its own way. <em>· according to the author</em></li>
+          <li><b>Cash by proxy.</b> Cash was measured through operating profit and market value, not the cash flow itself; and the three measures gave different answers. <em>· our note</em></li>
+          <li><b>Many tests.</b> Each essay adds up to 72 tests of the cash traits (3 traits × 3 indicators × 8 yardsticks). At 5%, about 4 would come out by chance; each isolated result calls for caution, and what matters is the pattern. <em>· our count</em></li>
+          <li><b>Business cycles left out.</b> The thesis also split Brazilian recession and expansion years, but the counts by period do not match the stated calendar; so we left that split out of this page. Association is not causation. <em>· our note</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Credits</h3>
+        <div class="cite">
+          <b>How to cite</b><br>
+          PASSOS, Kelvia Carneiro de Linhares Fernandes. <em>Ensaios de estrutura de capital: perspectivas sobre o endividamento das empresas.</em> Thesis (Doctorate in Business Administration), Universidade Presbiteriana Mackenzie, São Paulo, 2021. Advisor: Prof. Dr. Wilson Toshiro Nakamura.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Data from S&amp;P Capital IQ (G20) and Valor Pro (Brazil). This version simplifies the work for a general audience; the formulas and full tables are in the original text.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Read the full thesis (in Portuguese)</a>
+          <a class="btn ghost" href="#capa">↑ Back to start</a>
+          <a class="btn ghost" href="../../">More research</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  function int(n){ return n.toLocaleString(EN ? 'en-US' : 'pt-BR'); }
+  function pct(v, d){ return (v < 0 ? '−' : '') + fmt(Math.abs(v) * 100, d === undefined ? 1 : d) + '%'; }
+  function num(v, d){ return (v < 0 ? '−' : '') + fmt(Math.abs(v), d); }
+  function pressed(wrap, attr, val){ each(wrap.children, function(b){ b.setAttribute('aria-pressed', String(b.dataset[attr] === String(val))); }); }
+
+  /* ================= DADOS DA TESE ================= */
+  // Quadro 3 / 11: as oito réguas. Médias: Tabela 2 (G20) e Tabela 24 (Brasil; Div8 só abertas).
+  var DIV = [
+    {s:L('Líquida sobre o ativo líquido','Net debt over net assets'), num:L('dívida bruta − caixa e aplicações','gross debt − cash and investments'), den:L('ativo total − caixa e aplicações','total assets − cash and investments'), g:-.27655, b:.0839, top:['cp','lp','cxm'], bot:['out'], kind:'pct'},
+    {s:L('Líquida sobre o EBITDA','Net debt over EBITDA'), num:L('dívida bruta − caixa e aplicações','gross debt − cash and investments'), den:L('EBITDA (lucro da operação antes de depreciação)','EBITDA (operating profit before depreciation)'), g:.853156, b:.9753, top:['cp','lp','cxm'], bot:['ebitda'], kind:'x'},
+    {s:L('Bruta + fornecedores sobre o ativo','Gross debt + suppliers over assets'), num:L('dívida bruta + fornecedores','gross debt + suppliers'), den:L('ativo total','total assets'), g:.291624, b:.2890, top:['cp','lp','forn'], bot:['cx','out'], kind:'pct'},
+    {s:L('Bruta sobre o ativo','Gross debt over assets'), num:L('dívida bruta (empréstimos e debêntures)','gross debt (loans and bonds)'), den:L('ativo total','total assets'), g:.188803, b:.1929, top:['cp','lp'], bot:['cx','out'], kind:'pct'},
+    {s:L('De longo prazo sobre o ativo','Long-term debt over assets'), num:L('dívida de longo prazo','long-term debt'), den:L('ativo total','total assets'), g:.096511, b:.1157, top:['lp'], bot:['cx','out'], kind:'pct'},
+    {s:L('Curto + longo prazo sobre o ativo','Short + long-term debt over assets'), num:L('dívidas de curto prazo + de longo prazo','short-term + long-term debts'), den:L('ativo total','total assets'), g:.152905, b:.1956, top:['cp','lp'], bot:['cx','out'], kind:'pct'},
+    {s:L('Curto + longo + fornecedores sobre o ativo','Short + long-term + suppliers over assets'), num:L('dívidas de curto e longo prazo + fornecedores','short and long-term debts + suppliers'), den:L('ativo total','total assets'), g:.255734, b:.2920, top:['cp','lp','forn'], bot:['cx','out'], kind:'pct'},
+    {s:L('Dívida a valor de mercado','Debt at market value'), num:L('dívida total','total debt'), den:L('dívidas + valor de mercado do patrimônio','liabilities + market value of equity'), g:.522607, b:.8325, top:['cp','lp'], bot:['cp','lp','forn','plm'], kind:'pct', mkt:1}
+  ];
+  var DSH = [L('líquida/ativo','net/assets'), L('líquida/EBITDA','net/EBITDA'), L('bruta+forn.','gross+suppl.'), L('bruta/ativo','gross/assets'), L('longo prazo','long-term'), L('curto+longo','short+long'), L('c+l+forn.','s+l+suppl.'), L('mercado','market')];
+
+  // Tabela 1: empresas por país
+  var DEV = [[L('Estados Unidos','United States'),4861],[L('Japão','Japan'),3621],[L('Canadá','Canada'),2747],[L('Austrália','Australia'),1560],[L('Reino Unido','United Kingdom'),984],[L('Suécia','Sweden'),802],[L('Polônia','Poland'),617],[L('Alemanha','Germany'),591],[L('França','France'),563],[L('Itália','Italy'),319],[L('Espanha','Spain'),180],[L('Grécia','Greece'),159]];
+  var DEV_REST = 18200 - DEV.reduce(function(a, x){ return a + x[1]; }, 0); // 20 países com menos de 150 empresas
+  var EMG = [['China',5346],[L('Coreia do Sul','South Korea'),2241],[L('Índia','India'),1042],[L('Indonésia','Indonesia'),623],[L('Turquia','Turkey'),314],[L('Brasil','Brazil'),300],[L('Rússia','Russia'),184],[L('África do Sul','South Africa'),179],[L('Arábia Saudita','Saudi Arabia'),149],[L('México','Mexico'),110],['Argentina',68]];
+
+  // Tabelas 5 e 6: modelo nulo, % da variância [país, empresa, ano]
+  var ICC = [
+    {d:3, v:[7.8, 65.4, 26.7]}, {d:0, v:[4.5, 61.4, 34.1]}, {d:2, v:[7.2, 66.5, 26.3]},
+    {d:4, v:[8.9, 62.9, 28.2]}, {d:6, v:[5.5, 66.1, 28.5]}, {d:7, v:[20.8, 50.9, 28.3]}, {d:1, v:[0.9, 16.1, 82.9]}
+  ];
+
+  // Tabela 4: médias por grupo [desenvolvidos, em desenvolvimento]
+  var MUN = [
+    {n:L('Dívida bruta sobre o ativo','Gross debt over assets'), v:[.1816, .2005], f:'pct', t:L('As empresas dos países em desenvolvimento deviam um pouco mais: 20,0% do ativo, contra 18,2%. A diferença aparece em 6 das 8 réguas.','Companies in developing countries owed a little more: 20.0% of assets, versus 18.2%. The difference shows up on 6 of the 8 yardsticks.')},
+    {n:L('Dívida líquida sobre o ativo líquido','Net debt over net assets'), v:[-.4102, -.0612], f:'pct', t:L('Nos dois grupos a média é negativa: as empresas tinham mais caixa do que dívida. Nos desenvolvidos, a sobra de caixa era bem maior.','In both groups the average is negative: companies held more cash than debt. In developed countries, the cash surplus was much larger.')},
+    {n:L('Lucro da operação sobre o ativo','Operating profit over assets'), v:[-.0784, .0553], f:'pct', t:L('Nos desenvolvidos, a média ficou negativa (−7,8%): muitas empresas davam prejuízo na operação. Nos em desenvolvimento, positiva (5,5%).','In developed countries the average was negative (−7.8%): many companies made operating losses. In developing countries, positive (5.5%).')},
+    {n:L('Sobe e desce do lucro (5 anos)','Profit swings (5 years)'), v:[.2031, .0501], f:'pp', t:L('O lucro dos desenvolvidos oscilava cerca de quatro vezes mais (desvio-padrão de 20,3 pontos, contra 5,0).','Profit in developed countries swung about four times as much (standard deviation of 20.3 points, versus 5.0).')},
+    {n:L('Valor de mercado ÷ contábil','Market-to-book'), v:[3.5719, 3.0980], f:'x', t:L('O mercado pagava um pouco mais por real de patrimônio nos desenvolvidos: 3,6 vezes, contra 3,1.','The market paid a little more per unit of book equity in developed countries: 3.6 times, versus 3.1.')},
+    {n:L('Proteção à propriedade (0 a 100)','Property rights protection (0 to 100)'), v:[82.293, 44.9514], f:'n', t:L('A proteção legal da propriedade privada era quase o dobro nos desenvolvidos.','Legal protection of private property was almost twice as strong in developed countries.')},
+    {n:L('Crescimento do PIB','GDP growth'), v:[1.4941, 5.3084], f:'p', t:L('As economias em desenvolvimento cresciam mais de três vezes mais rápido.','Developing economies grew more than three times as fast.')},
+    {n:L('Bolsa sobre o PIB','Stock market over GDP'), v:[93.5105, 64.8257], f:'p', t:L('O mercado de ações era maior perto do tamanho da economia nos desenvolvidos.','The stock market was larger relative to the economy in developed countries.')}
+  ];
+
+  // Sinais a 5% por régua (Div1..Div8): '+' sobe, '-' cai, '0' sem efeito claro.
+  // G20: Tabelas 17–22. Brasil: Tabelas 27–29 (MBK só abertas).
+  var SIG = {
+    g20:{roa:{mag:'+-------', cres:'00------', vol:'--+0-0+0'}, roic:{mag:'+---0---', cres:'-0------', vol:'--++-++-'}, mbk:{mag:'--+++++-', cres:'0+++++++', vol:'++++++++'}},
+    br:{roa:{mag:'-0------', cres:'00000000', vol:'0-0-0000'}, roic:{mag:'-0-----0', cres:'00000000', vol:'+-+0-++0'}, mbk:{mag:'0000000-', cres:'000-000-', vol:'00000000'}}
+  };
+  var EXPECT = {mag:'+', cres:'+', vol:'-'};
+  var TRAIT = [['mag', L('Tamanho','Size'), L('magnitude do caixa','cash magnitude')], ['cres', L('Ritmo','Pace'), L('crescimento do caixa','cash growth')], ['vol', L('Sobe e desce','Swings'), L('volatilidade do caixa','cash volatility')]];
+
+  // Tabela 23, 25, 26: abertas × fechadas (médias)
+  var BR = [{d:3, pub:.3085, pri:.1812}, {d:0, pub:.2198, pri:.0699}, {d:2, pub:.3746, pri:.2797}, {d:4, pub:.2188, pri:.1052}, {d:5, pub:.3044, pri:.1845}, {d:6, pub:.3702, pri:.2835}];
+
+  // Tabelas 27, 30, 31: magnitude do ROA [coeficiente, p] nas réguas Div1, Div3..Div7
+  var LB = {
+    all:[[-.2460,0],[-.1644,0],[-.1157,0],[-.0478,0],[-.1299,0],[-.1797,0]],
+    pri:[[-.2478,0],[-.1609,0],[-.1131,0],[-.0484,0],[-.1299,0],[-.1789,0]],
+    pub:[[-.1857,.0023],[-.2154,0],[-.1427,.0011],[-.0089,.8427],[-.1321,.0068],[-.2059,.0002]]
+  };
+  var LBD = [0, 2, 3, 4, 5, 6];
+
+  // Tabelas 17–18 e 27: controles por régua
+  var CTRL = {
+    g20:[[L('Tangibilidade (garantias)','Tangibility (collateral)'), '++++++++'], [L('Tamanho (vendas)','Size (sales)'), '++++++++'], [L('Dividendos','Dividends'), '-------+']],
+    br:[[L('Tangibilidade (garantias)','Tangibility (collateral)'), '+++++++0'], [L('Tamanho (vendas)','Size (sales)'), '0++++++0']]
+  };
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), W = 470, D = 220;
+    var st = makeStage(sc, W, D, {ay:'70%', rx:'58deg'});
+    rotatable(sc, st, -16, 7);
+    var CASH = [40, 80, 120, 160], cols = [];
+    CASH.forEach(function(h, i){
+      var x = 20 + i * 115;
+      var coin = box({w:44, d:44, x:x, y:80, h:h, c:'var(--cash)'});
+      var debt = box({w:44, d:44, x:x + 50, y:80, h:60, c:'var(--acc)'});
+      st.appendChild(coin); st.appendChild(debt);
+      cols.push(debt);
+    });
+    flatLabel(st, L('menos caixa','less cash'), 0, 150, 120, 'text-align:center');
+    flatLabel(st, L('mais caixa','more cash'), 345, 150, 120, 'text-align:center');
+    var last = -1;
+    function show(i){
+      if (i === last) return; last = i;
+      var m = i === 1;
+      cols.forEach(function(b, j){
+        var h = m ? 30 + j * 30 : 120 - j * 30;
+        b.style.setProperty('--h', h + 'px');
+        b.style.setProperty('--c', m ? 'var(--mkt)' : 'var(--acc)');
+      });
+      $('hero-line').innerHTML = m ? L('Lente do <b class="m">mercado</b>: mais caixa, mais dívida', '<b class="m">Market</b> lens: more cash, more debt') : L('Lente do <b>balanço</b>: mais caixa, menos dívida', '<b>Balance-sheet</b> lens: more cash, less debt');
+    }
+    if (reduce) show(0);
+    else M.onTick(function(t){ show(Math.floor(t / 3) % 2); });
+  })();
+
+  /* ================= 02 · A APOSTA ================= */
+  (function(){
+    var S = {m:1, g:1, v:0}, svg = $('ap-svg');
+    function draw(){
+      var base = S.m ? 150 : 70, slope = S.g ? 9 : 0, amp = S.v ? 55 : 8;
+      var wig = [0, .8, -.6, 1, -1, .5, -.9, .7, -.4, .9];
+      var pts = [], x0 = 60, dx = 50, y0 = 250;
+      for (var i = 0; i < 10; i++){ var v = base + slope * i + amp * wig[i]; pts.push([x0 + i * dx, y0 - Math.max(5, v) * .9]); }
+      var h = '<line x1="50" y1="' + y0 + '" x2="530" y2="' + y0 + '" stroke="#94a3b8"/>' +
+        '<text x="290" y="282" text-anchor="middle" style="font-size:13px; fill:#64748b">' + L('dez anos de caixa gerado (inventado)','ten years of cash generated (made up)') + '</text>' +
+        '<polyline points="' + pts.map(function(p){ return p.join(','); }).join(' ') + '" fill="none" stroke="#334155" stroke-width="4" stroke-linejoin="round"/>';
+      pts.forEach(function(p){ h += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="5" fill="#334155"/>'; });
+      svg.innerHTML = h;
+      var score = S.m + S.g + (1 - S.v), w = [12, 38, 66, 92][score];
+      var msg = [
+        L('Pela aposta, esta empresa teria <b>pouco espaço para dever</b>: caixa pequeno, parado e instável assusta o credor.','By the bet, this company would have <b>little room to borrow</b>: small, flat and unsteady cash scares lenders.'),
+        L('Pela aposta, <b>algum espaço para dever</b>: só um dos três traços joga a favor.','By the bet, <b>some room to borrow</b>: only one of the three traits works in its favour.'),
+        L('Pela aposta, <b>bom espaço para dever</b>: dois dos três traços jogam a favor.','By the bet, <b>good room to borrow</b>: two of the three traits work in its favour.'),
+        L('Pela aposta, <b>muito espaço para dever</b>: caixa grande, crescendo e estável. É a empresa que a tese esperava ver mais endividada.','By the bet, <b>plenty of room to borrow</b>: large, growing and steady cash. This is the company the thesis expected to see more indebted.')
+      ][score];
+      $('ap-msg').innerHTML = '<div class="tag">' + L('Espaço para dever, segundo a aposta','Room to borrow, according to the bet') + '</div><div class="gauge"><i style="width:' + w + '%"></i></div><p>' + msg + '</p>';
+    }
+    each($('ap-pick').querySelectorAll('.seg'), function(g){
+      each(g.children, function(b){ b.addEventListener('click', function(){ S[g.dataset.k] = +b.dataset.v; pressed(g, 'v', b.dataset.v); draw(); }); });
+    });
+    draw();
+  })();
+
+  /* ================= 03 · DUAS LENTES ================= */
+  (function(){
+    var svg = $('ln-svg');
+    function block(x, y, w, h, c, t, tc){ return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="8" fill="' + c + '"/><text x="' + (x + w / 2) + '" y="' + (y + h / 2 + 5) + '" text-anchor="middle" style="font-size:14px; font-weight:700; fill:' + (tc || '#fff') + '">' + t + '</text>'; }
+    function draw(l){
+      var h = '';
+      if (l === 'acc'){
+        h += '<text x="280" y="34" text-anchor="middle" style="font-size:15px; font-weight:700; fill:#0f172a">' + L('Lucro do ano, visto no balanço','The year\'s profit, seen in the balance sheet') + '</text>';
+        h += block(170, 60, 220, 60, 'var(--acc)', L('lucro da operação (EBIT)','operating profit (EBIT)'));
+        h += '<line x1="140" y1="140" x2="420" y2="140" stroke="#0f172a" stroke-width="3"/>';
+        h += block(90, 160, 180, 60, '#e2e8f0', L('ativo total → ROA','total assets → ROA'), '#0f172a');
+        h += block(290, 160, 180, 60, '#e2e8f0', L('capital investido → ROIC','invested capital → ROIC'), '#0f172a');
+        h += '<text x="280" y="262" text-anchor="middle" style="font-size:13px; fill:#334155">' + L('olha para trás: o que a operação rendeu no ano','looks back: what operations earned in the year') + '</text>';
+      } else {
+        h += '<text x="280" y="34" text-anchor="middle" style="font-size:15px; font-weight:700; fill:#0f172a">' + L('Quanto a bolsa paga pela empresa','What the stock market pays for the company') + '</text>';
+        h += block(170, 60, 220, 60, 'var(--mkt)', L('valor de mercado (ações × preço)','market value (shares × price)'));
+        h += '<line x1="140" y1="140" x2="420" y2="140" stroke="#0f172a" stroke-width="3"/>';
+        h += block(170, 160, 220, 60, '#e2e8f0', L('patrimônio no balanço','book equity'), '#0f172a');
+        h += '<text x="280" y="262" text-anchor="middle" style="font-size:13px; fill:#334155">' + L('olha para a frente: a aposta no caixa que virá','looks ahead: a bet on the cash to come') + '</text>';
+      }
+      svg.innerHTML = h;
+      $('ln-panel').innerHTML = l === 'acc'
+        ? '<div class="tag">' + L('Média no G20, 2010–2020','G20 average, 2010–2020') + '</div><p>' + L('O lucro da operação sobre o ativo ficou, em média, em <b>−2,7%</b>, e sobre o capital investido em <b>−4,8%</b>: muitas empresas da amostra davam prejuízo na operação. Esta lente diz quanto a empresa gerou <b>no ano</b>.','Operating profit over assets averaged <b>−2.7%</b>, and over invested capital <b>−4.8%</b>: many companies in the sample made operating losses. This lens tells how much the company generated <b>in the year</b>.') + '</p>'
+        : '<div class="tag">' + L('Média no G20, 2010–2020','G20 average, 2010–2020') + '</div><p>' + L('O mercado pagava, em média, <b>3,4 vezes</b> o patrimônio do balanço. Para a autora, essa medida traz a valor presente o caixa que a empresa ainda vai gerar: é uma lente <b>para o futuro</b>, e só existe para quem tem ações em bolsa.','The market paid, on average, <b>3.4 times</b> book equity. For the author, this measure brings to present value the cash the company has yet to generate: it is a lens <b>on the future</b>, and only exists for companies with listed shares.') + '</p>';
+    }
+    var g = $('ln-pick');
+    each(g.children, function(b){ b.addEventListener('click', function(){ pressed(g, 'l', b.dataset.l); draw(b.dataset.l); }); });
+    draw('acc');
+  })();
+
+  /* ================= 04 · OITO RÉGUAS ================= */
+  (function(){
+    var svg = $('bs-svg');
+    // balanço simplificado: ativo (caixa, outros ativos) | passivo (fornecedores, curto prazo, longo prazo, patrimônio)
+    var P = {
+      cx:{x:40, y:60, w:220, h:70, t:L('caixa e aplicações','cash and investments')},
+      out:{x:40, y:130, w:220, h:180, t:L('outros ativos','other assets')},
+      forn:{x:300, y:60, w:220, h:46, t:L('fornecedores','suppliers')},
+      cp:{x:300, y:106, w:220, h:50, t:L('dívida de curto prazo','short-term debt')},
+      lp:{x:300, y:156, w:220, h:60, t:L('dívida de longo prazo','long-term debt')},
+      pl:{x:300, y:216, w:220, h:94, t:L('patrimônio (balanço)','equity (book)')}
+    };
+    function draw(i){
+      var d = DIV[i], h = '<text x="150" y="44" text-anchor="middle" style="font-size:13px; font-weight:700; fill:#64748b; letter-spacing:.08em">' + L('ATIVO','ASSETS') + '</text><text x="410" y="44" text-anchor="middle" style="font-size:13px; font-weight:700; fill:#64748b; letter-spacing:.08em">' + L('DÍVIDAS E PATRIMÔNIO','LIABILITIES AND EQUITY') + '</text>';
+      Object.keys(P).forEach(function(k){
+        var p = P[k], on = d.top.indexOf(k) >= 0, base = d.bot.indexOf(k) >= 0;
+        if (k === 'pl' && d.mkt) base = false;
+        var fill = on ? 'var(--red)' : base ? '#dbe4f3' : '#f1f5f9', stroke = base ? 'var(--navy)' : '#cbd5e1';
+        if (on && base) stroke = 'var(--navy)';
+        h += '<rect x="' + p.x + '" y="' + p.y + '" width="' + p.w + '" height="' + p.h + '" fill="' + fill + '" stroke="' + stroke + '" stroke-width="' + (base ? 3 : 1) + '"/>' +
+          '<text x="' + (p.x + p.w / 2) + '" y="' + (p.y + p.h / 2 + 5) + '" text-anchor="middle" style="font-size:13px; font-weight:600; fill:' + (on ? '#fff' : '#334155') + '">' + p.t + '</text>';
+      });
+      if (d.top.indexOf('cxm') >= 0){
+        var c = P.cx;
+        h += '<rect x="' + c.x + '" y="' + c.y + '" width="' + c.w + '" height="' + c.h + '" fill="#fde2e7" stroke="var(--red)" stroke-width="2" stroke-dasharray="6 4"/><text x="' + (c.x + c.w / 2) + '" y="' + (c.y + c.h / 2 + 5) + '" text-anchor="middle" style="font-size:13px; font-weight:700; fill:#be123c">' + L('− caixa (desconta da dívida)','− cash (subtracted from debt)') + '</text>';
+      }
+      if (d.mkt) h += '<rect x="300" y="216" width="220" height="94" fill="#dbe4f3" stroke="var(--navy)" stroke-width="3" stroke-dasharray="8 4"/><text x="410" y="260" text-anchor="middle" style="font-size:13px; font-weight:700; fill:#1f3b73">' + L('patrimônio a valor','equity at') + '</text><text x="410" y="278" text-anchor="middle" style="font-size:13px; font-weight:700; fill:#1f3b73">' + L('de mercado','market value') + '</text>';
+      if (d.bot.indexOf('ebitda') >= 0) h += '<rect x="40" y="322" width="480" height="30" rx="8" fill="#dbe4f3" stroke="var(--navy)" stroke-width="3"/><text x="280" y="342" text-anchor="middle" style="font-size:13px; font-weight:700; fill:#1f3b73">' + L('base: EBITDA do ano (vem do resultado, não do balanço)','base: the year\'s EBITDA (from the income statement, not the balance sheet)') + '</text>';
+      svg.innerHTML = h;
+      var fm = function(v){ return d.kind === 'x' ? fmt(v, 2) + L(' vez',' times') : pct(v); };
+      $('rg-panel').innerHTML = '<div class="tag">' + L('Régua ','Yardstick ') + (i + 1) + (d.mkt ? L(' · de mercado',' · market') : L(' · contábil',' · accounting')) + '</div><h3>' + d.s + '</h3>' +
+        '<div class="frac"><span>' + d.num + '</span><span>' + d.den + '</span></div>' +
+        '<div class="mean2"><div>' + L('média no G20','G20 average') + '<b>' + fm(d.g) + '</b></div><div>' + L('média no Brasil','Brazil average') + (d.mkt ? L(' (só abertas)',' (listed only)') : '') + '<b>' + fm(d.b) + '</b></div></div>' +
+        (i === 0 ? '<p style="margin-top:8px; font-size:.78rem">' + L('Média negativa no G20: em média, as empresas tinham mais caixa do que dívida.','Negative G20 average: on average, companies held more cash than debt.') + '</p>' : '');
+    }
+    var chips = $('rg-chips');
+    DIV.forEach(function(d, i){
+      var b = document.createElement('button'); b.textContent = (i + 1) + ' · ' + DSH[i]; b.dataset.i = i;
+      b.addEventListener('click', function(){ pressed(chips, 'i', i); draw(i); });
+      chips.appendChild(b);
+    });
+    pressed(chips, 'i', 3); draw(3);
+  })();
+
+  /* ================= 05 · G20 ================= */
+  (function(){
+    var FUN = [[L('Empresas extraídas da base','Companies extracted from the database'), 45899], [L('Depois dos filtros: a amostra','After the filters: the sample'), 28756]];
+    $('fun').innerHTML = FUN.map(function(f){ return '<div><div class="fl"><span>' + f[0] + '</span><b>' + int(f[1]) + '</b></div><div class="fb"><i style="width:' + (f[1] / 45899 * 100) + '%"></i></div></div>'; }).join('');
+    var svg = $('ct-svg');
+    function draw(g){
+      var rows = g === 'dev' ? DEV.concat([[L('Outros 20 países','Other 20 countries'), DEV_REST]]) : EMG;
+      var mx = 5346, top = 18, rh = (380 - top - 10) / rows.length, h = '';
+      rows.forEach(function(r, i){
+        var y = top + i * rh, w = r[1] / mx * 300, br = r[0] === L('Brasil','Brazil');
+        h += '<text x="150" y="' + (y + rh / 2 + 5) + '" text-anchor="end" style="font-size:13px; fill:' + (br ? '#be123c' : '#334155') + '; font-weight:' + (br ? 700 : 500) + '">' + r[0] + '</text>' +
+          '<rect x="160" y="' + (y + 3) + '" width="' + Math.max(2, w) + '" height="' + (rh - 6) + '" rx="4" fill="' + (br ? 'var(--red)' : g === 'dev' ? 'var(--navy)' : '#5b6f96') + '"/>' +
+          '<text x="' + (166 + w) + '" y="' + (y + rh / 2 + 5) + '" style="font-size:13px; font-weight:700; fill:#0f172a">' + int(r[1]) + '</text>';
+      });
+      svg.innerHTML = h;
+    }
+    var seg = $('ct-seg');
+    each(seg.children, function(b){ b.addEventListener('click', function(){ pressed(seg, 'g', b.dataset.g); draw(b.dataset.g); }); });
+    draw('dev');
+  })();
+
+  /* ================= 06 · NÍVEIS ================= */
+  (function(){
+    var sc = $('nv-scene'), st = makeStage(sc, 260, 200, {ay:'78%', rx:'60deg'});
+    rotatable(sc, st, -24, 8);
+    var NAMES = [L('país','country'), L('empresa','company'), L('ano','year')], COLS = ['var(--red)', 'var(--navy)', '#94a3b8'];
+    var K = 2.4, slabs = [0, 1, 2].map(function(j){ var b = box({w:150, d:150, x:55, y:25, h:10, z:0, c:COLS[j]}); st.appendChild(b); return b; });
+    var chips = $('nv-chips');
+    function draw(k){
+      var it = ICC[k], z = 0;
+      it.v.forEach(function(v, j){
+        var h = v * K; slabs[j].style.setProperty('--h', h + 'px'); slabs[j].style.setProperty('--z', z + 'px');
+        var fl = slabs[j].querySelector('.f-front'); fl.innerHTML = h > 22 ? '<span class="face-label">' + NAMES[j] + ' ' + fmt(v, 1) + '%</span>' : '';
+        z += h;
+      });
+      $('nv-bars').innerHTML = it.v.map(function(v, j){ return '<div><span>' + NAMES[j] + '</span><span class="bar"><i style="width:' + v + '%; background:' + COLS[j] + '"></i></span><b>' + fmt(v, 1) + '%</b></div>'; }).join('');
+      var d = it.d, msg;
+      if (d === 1) msg = L('Na dívida líquida sobre o EBITDA, o vaivém de um ano para o outro domina (82,9%). Para a autora, crises no período podem ter mexido nessa régua, que depende do lucro do ano.','For net debt over EBITDA, year-to-year back-and-forth dominates (82.9%). For the author, crises during the period may have moved this yardstick, which depends on the year\'s profit.');
+      else if (d === 7) msg = L('Na régua de mercado, o país pesa mais: 20,8%. Ainda assim, a empresa responde pela metade.','On the market yardstick, the country weighs more: 20.8%. Even so, the company accounts for half.');
+      else msg = L('A empresa responde por ','The company accounts for ') + fmt(it.v[1], 1) + L('% da diferença, o ano por ','% of the difference, the year for ') + fmt(it.v[2], 1) + L('% e o país por apenas ','% and the country for only ') + fmt(it.v[0], 1) + '%.';
+      $('nv-panel').innerHTML = '<div class="tag">' + DIV[d].s + '</div><p>' + msg + '</p>';
+    }
+    ICC.forEach(function(it, k){
+      var b = document.createElement('button'); b.textContent = DSH[it.d]; b.dataset.k = k;
+      b.addEventListener('click', function(){ pressed(chips, 'k', k); draw(k); });
+      chips.appendChild(b);
+    });
+    pressed(chips, 'k', 0); draw(0);
+  })();
+
+  /* ================= 07 · DOIS MUNDOS ================= */
+  (function(){
+    var sc = $('mu-scene'), st = makeStage(sc, 300, 160, {ay:'66%', rx:'58deg'});
+    rotatable(sc, st, -14, 6);
+    var b0 = box({w:90, d:90, x:30, y:35, h:10, c:'var(--navy)'}), b1 = box({w:90, d:90, x:180, y:35, h:10, c:'var(--red)'});
+    st.appendChild(b0); st.appendChild(b1);
+    flatLabel(st, L('desenvolvidos','developed'), 0, 132, 150, 'text-align:center');
+    flatLabel(st, L('em desenvolvimento','developing'), 150, 132, 150, 'text-align:center');
+    function f(v, t){ return t === 'pct' ? pct(v) : t === 'pp' ? fmt(v * 100, 1) + L(' pontos',' points') : t === 'x' ? fmt(v, 1) + '×' : t === 'p' ? fmt(v, 1) + '%' : fmt(v, 1); }
+    function draw(k){
+      var m = MUN[k], mx = Math.max(Math.abs(m.v[0]), Math.abs(m.v[1])), H = 170;
+      [b0, b1].forEach(function(b, j){
+        var v = m.v[j], h = Math.max(4, Math.abs(v) / mx * H);
+        b.style.setProperty('--h', h + 'px'); b.style.setProperty('--z', (v < 0 ? -h : 0) + 'px');
+        b.querySelector('.f-top').innerHTML = '<span class="top-label">' + f(v, m.f) + '</span>';
+      });
+      $('mu-panel').innerHTML = '<div class="tag">' + m.n + '</div><p>' + m.t + '</p>';
+    }
+    var chips = $('mu-chips');
+    MUN.forEach(function(m, k){
+      var b = document.createElement('button'); b.textContent = m.n; b.dataset.k = k;
+      b.addEventListener('click', function(){ pressed(chips, 'k', k); draw(k); });
+      chips.appendChild(b);
+    });
+    pressed(chips, 'k', 0); draw(0);
+  })();
+
+  /* ================= 08 · PLACAR ================= */
+  (function(){
+    var S = {e:'g20', l:'acc', t:'mag'};
+    function cls(ch, exp){ return ch === '0' ? 'z' : ch === exp ? 'e' : 'c'; }
+    function rows(){ return S.l === 'acc' ? [['roa', 'ROA'], ['roic', 'ROIC']] : [['mbk', L('valor de mercado ÷ contábil','market-to-book')]]; }
+    function count(t){
+      var c = {e:0, c:0, z:0};
+      rows().forEach(function(r){ SIG[S.e][r[0]][t].split('').forEach(function(ch){ c[cls(ch, EXPECT[t])]++; }); });
+      return c;
+    }
+    function draw(){
+      var n = S.l === 'acc' ? 16 : 8;
+      var h = '<h3>' + (S.e === 'g20' ? L('G20 · 28.756 empresas abertas','G20 · 28,756 listed companies') : (S.l === 'acc' ? L('Brasil · 5.624 empresas','Brazil · 5,624 companies') : L('Brasil · 396 empresas abertas','Brazil · 396 listed companies'))) + '</h3><div class="sub">' +
+        (S.l === 'acc' ? L('Lente do balanço: 2 indicadores × 8 réguas = 16 testes por traço','Balance-sheet lens: 2 indicators × 8 yardsticks = 16 tests per trait') : L('Lente do mercado: 1 indicador × 8 réguas = 8 testes por traço','Market lens: 1 indicator × 8 yardsticks = 8 tests per trait')) + '</div>';
+      TRAIT.forEach(function(t){
+        var c = count(t[0]);
+        h += '<div class="tl' + (S.t === t[0] ? ' sel' : '') + '" data-t="' + t[0] + '" role="button" tabindex="0"><div><b>' + t[1] + '</b><small>' + L('esperado: ','expected: ') + (EXPECT[t[0]] === '+' ? L('mais dívida','more debt') : L('menos dívida','less debt')) + '</small></div><div class="tbar">' +
+          ['e', 'c', 'z'].map(function(k){ return '<i class="' + k + '" style="flex-grow:' + c[k] + '">' + (c[k] ? c[k] : '') + '</i>'; }).join('') + '</div></div>';
+      });
+      $('pl-tally').innerHTML = h;
+      each($('pl-tally').querySelectorAll('.tl'), function(r){
+        var go = function(){ S.t = r.dataset.t; draw(); };
+        r.addEventListener('click', go);
+        r.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); } });
+      });
+      // painel: régua por régua
+      var t = S.t, tn = TRAIT.filter(function(x){ return x[0] === t; })[0], c = count(t);
+      var p = '<div class="tag">' + tn[1] + ' · ' + tn[2] + '</div>';
+      rows().forEach(function(r){
+        p += '<p style="margin:6px 0 2px; font-size:.78rem"><b>' + r[1] + '</b></p><div class="rl">' + SIG[S.e][r[0]][t].split('').map(function(ch, i){ return '<span class="' + cls(ch, EXPECT[t]) + '">' + (ch === '+' ? '↑' : ch === '-' ? '↓' : '·') + ' ' + DSH[i] + '</span>'; }).join('') + '</div>';
+      });
+      var verdict;
+      if (c.e > c.c && c.e > c.z) verdict = L('Aqui, a maioria das réguas veio <b>como a tese esperava</b>.','Here, most yardsticks came out <b>as the thesis expected</b>.');
+      else if (c.c > c.e && c.c > c.z) verdict = L('Aqui, a maioria das réguas veio <b>ao contrário</b> do esperado.','Here, most yardsticks came out <b>the other way round</b>.');
+      else if (c.z >= c.e && c.z >= c.c) verdict = L('Aqui, a maioria das réguas ficou <b>sem efeito claro</b>.','Here, most yardsticks showed <b>no clear effect</b>.');
+      else verdict = L('Aqui, o resultado se divide entre as réguas.','Here, the result splits across yardsticks.');
+      $('pl-panel').innerHTML = p + '<p style="margin-top:8px">' + verdict + ' ' + L('↑ a dívida sobe; ↓ a dívida cai; · sem efeito claro.','↑ debt goes up; ↓ debt goes down; · no clear effect.') + '</p>';
+    }
+    var se = $('pl-ess'), sl = $('pl-lens');
+    each(se.children, function(b){ b.addEventListener('click', function(){ S.e = b.dataset.e; pressed(se, 'e', S.e); draw(); }); });
+    each(sl.children, function(b){ b.addEventListener('click', function(){ S.l = b.dataset.l; pressed(sl, 'l', S.l); draw(); }); });
+    draw();
+  })();
+
+  /* ================= 09 · BRASIL ================= */
+  (function(){
+    var sc = $('br-scene'), st = makeStage(sc, 300, 160, {ay:'66%', rx:'58deg'});
+    rotatable(sc, st, -14, 6);
+    var b0 = box({w:90, d:90, x:30, y:35, h:10, c:'var(--pub)'}), b1 = box({w:90, d:90, x:180, y:35, h:10, c:'var(--pri)'});
+    st.appendChild(b0); st.appendChild(b1);
+    flatLabel(st, L('capital aberto','listed'), 0, 132, 150, 'text-align:center');
+    flatLabel(st, L('capital fechado','private'), 150, 132, 150, 'text-align:center');
+    var chips = $('br-chips'), H = 420;
+    function draw(k){
+      var r = BR[k];
+      [[b0, r.pub], [b1, r.pri]].forEach(function(x){ x[0].style.setProperty('--h', Math.max(4, x[1] * H) + 'px'); x[0].querySelector('.f-top').innerHTML = '<span class="top-label">' + pct(x[1]) + '</span>'; });
+      var ratio = r.pub / r.pri;
+      $('br-panel').innerHTML = '<div class="tag">' + DIV[r.d].s + '</div><p>' + L('Abertas: <b>','Listed: <b>') + pct(r.pub) + L('</b> · fechadas: <b>','</b> · private: <b>') + pct(r.pri) + '</b>. ' + L('As abertas devem ','Listed companies owe ') + fmt(ratio, 1) + L(' vezes o que devem as fechadas nesta régua.',' times what private ones owe on this yardstick.') + '</p>';
+    }
+    BR.forEach(function(r, k){
+      var b = document.createElement('button'); b.textContent = DSH[r.d]; b.dataset.k = k;
+      b.addEventListener('click', function(){ pressed(chips, 'k', k); draw(k); });
+      chips.appendChild(b);
+    });
+    pressed(chips, 'k', 0); draw(0);
+  })();
+
+  /* ================= 10 · LUCRO E DÍVIDA NO BRASIL ================= */
+  (function(){
+    var svg = $('lb-svg');
+    function draw(g){
+      var d = LB[g], y0 = 64, H = 210, mx = 2.6, h = '<line x1="40" y1="' + y0 + '" x2="530" y2="' + y0 + '" stroke="#64748b"/>';
+      d.forEach(function(c, i){
+        var v = c[0] * 10, sig = c[1] < .05, bh = Math.abs(v) / mx * H, cx = 85 + i * 82;
+        h += '<rect x="' + (cx - 28) + '" y="' + y0 + '" width="56" height="' + Math.max(2, bh) + '" rx="4" fill="' + (sig ? 'var(--red)' : 'var(--ns)') + '"/>' +
+          '<text x="' + cx + '" y="' + (y0 + bh + 20) + '" text-anchor="middle" style="font-size:14px; font-weight:700; fill:#0f172a">' + num(v, 1) + '</text>' +
+          '<text class="lab" x="' + cx + '" y="' + (y0 - (i % 2 ? 34 : 12)) + '" text-anchor="middle" style="font-size:15px; fill:#334155">' + DSH[LBD[i]] + '</text>';
+      });
+      svg.innerHTML = h;
+      var txt = {
+        all:L('Em todas as 5.624 empresas, o efeito foi para baixo nas seis réguas do gráfico. Na dívida bruta sobre o ativo: −1,2 ponto para cada 10 pontos a mais de lucro.','Across all 5,624 companies, the effect was downward on all six yardsticks in the chart. On gross debt over assets: −1.2 points for every 10 extra points of profit.'),
+        pri:L('Nas fechadas, o padrão se repete nas seis réguas, com tamanhos quase iguais aos do conjunto: elas são 93% das empresas.','For private companies, the pattern repeats on all six yardsticks, with sizes almost equal to the whole group: they are 93% of the companies.'),
+        pub:L('Nas abertas, o efeito para baixo aparece em cinco das seis réguas e é um pouco mais forte na dívida bruta (−1,4 ponto). Só a dívida de longo prazo ficou sem efeito claro.','For listed companies, the downward effect appears on five of the six yardsticks and is a little stronger on gross debt (−1.4 points). Only long-term debt showed no clear effect.')
+      }[g];
+      $('lb-panel').innerHTML = '<p>' + txt + '</p>';
+    }
+    var seg = $('lb-seg');
+    each(seg.children, function(b){ b.addEventListener('click', function(){ pressed(seg, 'g', b.dataset.g); draw(b.dataset.g); }); });
+    draw('all');
+  })();
+
+  /* ================= 11 · SIMULADOR ================= */
+  (function(){
+    var sc = $('sm-scene'), st = makeStage(sc, 300, 160, {ay:'66%', rx:'58deg'});
+    rotatable(sc, st, -14, 6);
+    var b0 = box({w:90, d:90, x:30, y:35, h:10, c:'var(--pub)'}), b1 = box({w:90, d:90, x:180, y:35, h:10, c:'var(--pri)'});
+    st.appendChild(b0); st.appendChild(b1);
+    flatLabel(st, L('capital aberto','listed'), 0, 132, 150, 'text-align:center');
+    flatLabel(st, L('capital fechado','private'), 150, 132, 150, 'text-align:center');
+    var G = [{b:b0, base:.3085, k:-.1427, n:L('aberta média','average listed'), c:'var(--pub)'}, {b:b1, base:.1812, k:-.1131, n:L('fechada média','average private'), c:'var(--pri)'}], H = 560;
+    function draw(){
+      var r = +$('sm-r').value;
+      $('sm-v').textContent = '+' + r + L(' pontos',' points');
+      var big = '';
+      G.forEach(function(g){
+        var v = g.base + g.k * r / 100;
+        g.b.style.setProperty('--h', v * H + 'px');
+        g.b.querySelector('.f-top').innerHTML = '<span class="top-label">' + pct(v) + '</span>';
+        big += '<div style="--vc:' + g.c + '"><b>' + pct(v) + '</b><span>' + L('dívida bruta sobre o ativo, ','gross debt over assets, ') + g.n + ' (' + L('partida ','start ') + pct(g.base) + '; ' + num(g.k * r, 1) + L(' ponto',' pt') + (Math.abs(g.k * r) >= 2 ? 's' : '') + ')</span></div>';
+      });
+      $('sm-big').innerHTML = big;
+    }
+    $('sm-r').addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 12 · GARANTIAS ================= */
+  (function(){
+    function draw(e){
+      var rows = CTRL[e], h = '<thead><tr><th>' + L('Fator','Factor') + '</th>' + DSH.map(function(s, i){ return '<th title="' + DIV[i].s + '">' + (i + 1) + '</th>'; }).join('') + '</tr></thead><tbody>';
+      rows.forEach(function(r){
+        h += '<tr><td>' + r[0] + '</td>' + r[1].split('').map(function(ch, i){ var c = ch === '+' ? 'up' : ch === '-' ? 'dn' : 'z'; return '<td><span class="cell ' + c + '" title="' + DIV[i].s + '">' + (ch === '+' ? '↑' : ch === '-' ? '↓' : '·') + '</span></td>'; }).join('') + '</tr>';
+      });
+      $('ga-tab').innerHTML = h + '</tbody>';
+      $('ga-panel').innerHTML = e === 'g20'
+        ? '<p>' + L('No G20, tangibilidade e tamanho subiram a dívida nas <b>8 de 8</b> réguas. Os dividendos baixaram a dívida em 7; só na régua de mercado o sinal virou.','In the G20, tangibility and size raised debt on <b>8 of 8</b> yardsticks. Dividends lowered debt on 7; only on the market yardstick did the sign flip.') + '</p>'
+        : '<p>' + L('No Brasil, a tangibilidade subiu a dívida em <b>7 de 8</b> réguas e o tamanho em 6; na régua de mercado (só abertas), nenhum dos dois teve efeito claro.','In Brazil, tangibility raised debt on <b>7 of 8</b> yardsticks and size on 6; on the market yardstick (listed only), neither had a clear effect.') + '</p>';
+    }
+    var seg = $('ga-seg');
+    each(seg.children, function(b){ b.addEventListener('click', function(){ pressed(seg, 'e', b.dataset.e); draw(b.dataset.e); }); });
+    draw('g20');
+    var ft = document.createElement('p'); ft.className = 'note'; ft.style.marginTop = '8px';
+    ft.innerHTML = L('Colunas: ','Columns: ') + DSH.map(function(s, i){ return (i + 1) + ' ' + s; }).join(' · ');
+    $('ga-tab').parentNode.appendChild(ft);
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
