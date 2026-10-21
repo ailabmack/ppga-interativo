@@ -1,0 +1,882 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Um imóvel ou vários? Fundos imobiliários · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Odilon Ferraroni Teixeira (PPGA Mackenzie) sobre o desempenho de 74 fundos imobiliários do IFIX, de 2011 a 2018: fundos de um só imóvel, de vários imóveis e de papéis, explicada em 13 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2019-teixeira-fundos-imobiliarios-diversificacao/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><path d=%22M7 25V12l5-3v16M14 25V7l6 3v15M22 25v-9l4 2v7%22 fill=%22none%22 stroke=%22white%22 stroke-width=%222%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --esp:var(--navy);   /* fundos especializados (um imóvel) */
+    --div:var(--red);    /* fundos diversificados (vários imóveis) */
+    --vm:#64748b;        /* fundos de valores mobiliários (papéis) */
+    --weak:#b45309;
+  }
+  .esp-t{color:var(--esp); font-weight:700;} .div-t{color:var(--div); font-weight:700;} .vm-t{color:var(--vm); font-weight:700;}
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .ill{display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--weak); border:1px solid color-mix(in srgb, var(--weak) 45%, white); border-radius:999px; padding:2px 9px; margin-bottom:6px;}
+  .sw{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .slab.dim > i{opacity:.22;}
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.82rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .ctrls{display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; margin:4px 0 12px;}
+  .legend{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.78rem; color:var(--ink-2); margin-top:8px;}
+  svg text{font-family:var(--sans);}
+  @media (max-width:600px){ #sc-svg text, #pd-svg text{font-size:17px !important;} #pd-svg text.v{font-size:13px !important;} }
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(1.9rem, 3.4vw, 2.4rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .disc{font-size:.76rem; color:var(--muted); margin-top:10px;}
+  .cap-legend{font-size:.76rem; color:var(--muted); margin-top:6px; text-align:center; line-height:1.4;}
+  #hero-scene .top-label{font-size:16px; font-weight:800;}
+  #hero-scene .face-label{font-size:11px; white-space:nowrap; font-weight:700;}
+  #hero-scene .floor-label{font-size:14px; font-weight:700;}
+
+  /* ---------- 02 · O que é ---------- */
+  .steps{display:grid; gap:8px; margin-top:6px;}
+  .step{display:grid; grid-template-columns:34px 1fr; gap:10px; align-items:start; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:9px 12px; font-size:.86rem; color:var(--ink-2); line-height:1.45;}
+  .step b.k{width:28px; height:28px; border-radius:50%; background:var(--ink); color:#fff; display:flex; align-items:center; justify-content:center; font-size:.8rem;}
+  #gr-svg{width:100%; display:block;}
+  #gr-panel{min-height:72px; margin-top:8px;}
+
+  /* ---------- 03 · Aposta ---------- */
+  .bet{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; margin-bottom:10px;}
+  .bet h3{font-size:.98rem; margin-bottom:8px;}
+  .bet .opts{display:flex; flex-wrap:wrap; gap:6px;}
+  .bet .opts button{border:1px solid var(--border); background:var(--bg-soft); border-radius:9px; padding:7px 12px; font-size:.82rem; cursor:pointer; color:var(--ink-2); font-weight:600;}
+  .bet .opts button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .basket{width:100%; display:block;}
+  #th-panel{min-height:110px;}
+
+  /* ---------- 04 · Amostra ---------- */
+  .funnel{display:grid; gap:6px; margin:6px 0 12px;}
+  .funnel div{display:grid; grid-template-columns:62px 1fr; gap:10px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .funnel b{font-family:var(--serif); font-size:1.15rem; color:var(--ink); text-align:right;}
+  .funnel i{display:block; height:22px; border-radius:5px; background:var(--neutral); font-style:normal; padding:2px 8px; color:var(--ink); white-space:nowrap; font-size:.74rem; line-height:18px;}
+  .funnel .last i{background:var(--ink); color:#fff;}
+  .sq-groups{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:10px;}
+  .sq-g h4{margin:0 0 6px; font-size:.82rem; font-family:var(--sans);}
+  .sq-g .n{font-family:var(--serif); font-size:1.3rem; display:block; line-height:1.1;}
+  .sqs{display:grid; grid-template-columns:repeat(6, 1fr); gap:3px;}
+  .sqs span{aspect-ratio:1; border-radius:3px; background:var(--c); transition:opacity .3s, transform .3s;}
+  .sqs span.off{opacity:.15;}
+  .sqs span.on{transform:scale(1.08); outline:2px solid var(--ink); outline-offset:-1px;}
+  #tp-chips .chip{padding:5px 11px; font-size:.78rem;}
+  #tp-panel{min-height:64px; margin-top:10px;}
+
+  /* ---------- 05 · Como mede ---------- */
+  #tl-svg{width:100%; display:block;}
+  .calc{display:grid; gap:10px; margin-top:12px;}
+  .calc label{display:grid; grid-template-columns:1fr auto; gap:2px 10px; font-size:.84rem; color:var(--ink-2);}
+  .calc label output{font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums;}
+  .calc input[type=range]{grid-column:1 / -1; width:100%; accent-color:var(--red);}
+  .res{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .res div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 12px; font-size:.76rem; color:var(--ink-2); line-height:1.3;}
+  .res b{display:block; font-family:var(--serif); font-size:1.45rem; color:var(--ink);}
+
+  /* ---------- 06 · Médias ---------- */
+  #md-scene .face-label{font-size:12px; font-weight:700; white-space:nowrap;}
+  #md-scene .top-label{font-size:15px; font-weight:800;}
+  #md-scene .floor-label{font-size:13px; font-weight:700;}
+  #md-scene .slab{transition:--h .7s cubic-bezier(.2,.8,.2,1);}
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  #rt-svg{width:100%; display:block; margin-top:6px;}
+  #md-panel{min-height:90px; margin-top:10px;}
+
+  /* ---------- 07 · Ordem ---------- */
+  #pd-svg{width:100%; display:block;}
+  #pd-svg .pod{transition:transform .8s cubic-bezier(.2,.8,.2,1);}
+  .formula{font-family:var(--serif); font-size:.95rem; color:var(--ink); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px; text-align:center; margin:6px 0 10px;}
+
+  /* ---------- 08 · Tipos ---------- */
+  #sc-svg{width:100%; display:block;}
+  #sc-svg .pt{cursor:pointer;}
+  #sc-panel{min-height:96px; margin-top:10px;}
+
+  /* ---------- 09 · Mercado ---------- */
+  #bt-svg{width:100%; display:block;}
+  #bt-panel{min-height:90px; margin-top:10px;}
+
+  /* ---------- 10 · Taxa ---------- */
+  #tx-scene .slab{cursor:pointer;}
+  #tx-scene .slab.active{--oz:14px;}
+  #tx-scene .top-label{font-size:18px; font-weight:800; color:var(--ink-2);}
+  #tx-scene .floor-label{font-size:12px; font-weight:700;}
+  #tx-scene .rl{font-size:12.5px; text-align:right; color:var(--ink-2);}
+  #tx-panel{min-height:96px; margin-top:10px;}
+  .duo{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;}
+  .duo div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 12px; font-size:.76rem; color:var(--ink-2); line-height:1.3;}
+  .duo b{display:block; font-family:var(--serif); font-size:1.3rem; color:var(--ink);}
+
+  /* ---------- 11 · Patrimonial ---------- */
+  #pv-svg{width:100%; display:block;}
+  .sig{width:100%; border-collapse:separate; border-spacing:0 4px; font-size:.8rem; margin-top:8px;}
+  .sig th{font-weight:600; color:var(--muted); font-size:.7rem; padding:0 4px 2px; text-align:center;}
+  .sig th:first-child{text-align:left;}
+  .sig td{background:var(--card); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:6px 4px; text-align:center;}
+  .sig td:first-child{border-left:1px solid var(--border); border-radius:9px 0 0 9px; text-align:left; padding-left:10px; color:var(--ink); font-weight:600;}
+  .sig td:last-child{border-right:1px solid var(--border); border-radius:0 9px 9px 0;}
+  .dot{display:inline-block; width:16px; height:16px; border-radius:50%; background:#e2e8f0; vertical-align:middle;}
+  .dot.p{background:var(--navy);} .dot.n{background:var(--red);}
+  .sig .v{font-size:.68rem; color:var(--muted); display:block;}
+
+  /* ---------- 12 · Na prática ---------- */
+  .cards3{display:grid; grid-template-columns:1fr; gap:12px; margin-top:12px;}
+  @media (min-width:760px){ .cards3{grid-template-columns:repeat(3, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:14px 16px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:1rem; margin-bottom:6px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:5px; font-size:.84rem; line-height:1.45; color:var(--ink-2);}
+  .pcard em{font-style:normal; font-size:.74rem; color:var(--muted);}
+  .warn{margin-top:14px; background:#fff5f6; border:1px solid color-mix(in srgb, var(--red) 30%, white); border-radius:12px; padding:10px 14px; font-size:.84rem; color:var(--ink-2);}
+  .warn b{color:var(--red);}
+
+  /* ---------- 13 · Limites e créditos ---------- */
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:12px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.08rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:8px 0 0; padding:0; list-style:none;}
+  .limits li{padding:7px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.72rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.5; margin-top:8px;}
+  .cite b{color:var(--ink);}
+  .also{font-size:.8rem; margin-top:10px; color:var(--ink-2);}
+  .also a{color:var(--red); font-weight:600;}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2019-teixeira-fundos-imobiliarios-diversificacao/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 13</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2019</div>
+      <h1 class="rv" style="--d:.1s">Nos fundos imobiliários, ter vários imóveis não deixou o fundo mais calmo</h1>
+      <p class="sub rv" style="--d:.2s">A teoria diz que espalhar o dinheiro por vários imóveis diminui o sobe e desce. A tese acompanhou <strong>74 fundos imobiliários</strong> do IFIX, mês a mês, de 2011 a 2018: os de vários imóveis oscilaram tanto quanto os de um só. Explicada em 13 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Odilon Ferraroni Teixeira</span>
+        <span><b>Orientador:</b> Prof. Dr. Denis Forte</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#fii">Começar →</a>
+        <a class="btn ghost" href="#medias">Ir direto ao resultado</a>
+      </div>
+      <p class="disc rv" style="--d:.45s">Esta página explica uma pesquisa. Não é recomendação de investimento.</p>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="480x330" role="img" aria-label="Três plataformas que sobem e descem: um prédio só (fundos especializados, 5,39%), vários prédios menores (diversificados, 5,42%) e uma pilha de papéis (valores mobiliários, 4,56%); a de vários prédios balança tanto quanto a de um só"></div></div>
+      <div class="cap-legend">Cada plataforma sobe e desce na proporção da oscilação mensal média do grupo (desvio-padrão do retorno, Tabela 5, jan/2011 a ago/2018). O balanço é ilustrativo.</div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Avalia fundos que levam o pequeno investidor ao mercado imobiliário e discute a informação que ele recebe para decidir."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · O QUE É UM FII -->
+<section class="slide" id="fii" data-label="O que é um fundo imobiliário">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O assunto</div>
+      <h2 class="rv" style="--d:.1s">Um fundo imobiliário divide imóveis em cotas que se compram na bolsa</h2>
+      <div class="steps rv" style="--d:.2s">
+        <div class="step"><b class="k">1</b><span>Muitas pessoas juntam dinheiro num fundo, que compra imóveis (shoppings, escritórios, galpões) ou papéis ligados a imóveis.</span></div>
+        <div class="step"><b class="k">2</b><span>O aluguel vira rendimento distribuído aos cotistas. As cotas são vendidas e compradas na bolsa, por um preço que muda todo dia.</span></div>
+        <div class="step"><b class="k">3</b><span>Para a pessoa física, o rendimento é isento de imposto de renda se a cota é negociada em bolsa, se ela tem menos de 10% das cotas e se o fundo tem pelo menos 50 cotistas.</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="chips" id="gr-chips"></div>
+      <svg id="gr-svg" viewBox="0 0 520 230" role="img" aria-label="Barras de antes e depois do crescimento dos fundos imobiliários"></svg>
+      <div class="panel" id="gr-panel"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · A APOSTA -->
+<section class="slide" id="aposta" data-label="A aposta">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> A pergunta</div>
+      <h2 class="rv" style="--d:.1s">“Não ponha todos os ovos na mesma cesta” vale para fundos imobiliários?</h2>
+      <p class="lede rv" style="--d:.15s">A tese separa os fundos em três grupos. Antes de ver os números, aposte.</p>
+      <div class="legend rv" style="--d:.2s">
+        <span><span class="sw" style="background:var(--esp)"></span><b class="esp-t">Especializado</b>: um só imóvel</span>
+        <span><span class="sw" style="background:var(--div)"></span><b class="div-t">Diversificado</b>: vários imóveis</span>
+        <span><span class="sw" style="background:var(--vm)"></span><b class="vm-t">Valores mobiliários</b>: papéis (cotas de outros fundos ou recebíveis)</span>
+      </div>
+      <svg class="basket rv" style="--d:.25s; margin-top:10px" viewBox="0 0 460 150" role="img" aria-label="Ilustração: uma cesta com um ovo grande, uma com vários ovos e uma com papéis" id="bk-svg"></svg>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="bet"><h3>1. Qual grupo sobe e desce mais de um mês para o outro?</h3><div class="opts" data-q="0"></div></div>
+      <div class="bet"><h3>2. Qual grupo rende mais, em média, por mês?</h3><div class="opts" data-q="1"></div></div>
+      <div class="panel" id="th-panel"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · AMOSTRA -->
+<section class="slide" id="amostra" data-label="Os 74 fundos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Quem entrou</div>
+      <h2 class="rv" style="--d:.1s">Os 74 fundos mais negociados da bolsa, em três grupos</h2>
+      <div class="funnel rv" style="--d:.15s">
+        <div><b>335</b><i style="width:100%">fundos imobiliários registrados na CVM</i></div>
+        <div><b>140</b><i style="width:41.8%">com cotas na bolsa (set/2017)</i></div>
+        <div class="last"><b>74</b><i style="width:22.1%">no índice IFIX</i></div>
+      </div>
+      <p class="rv" style="--d:.2s; font-size:.9rem">O IFIX é o índice dos fundos imobiliários da B3 e reúne os de maior negociação. A classificação por tipo de imóvel segue as regras da Anbima: o fundo é “de logística”, por exemplo, se mais de dois terços do patrimônio estão em galpões.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="chips" id="tp-chips"></div>
+      <div class="sq-groups" id="sq-groups"></div>
+      <div class="panel" id="tp-panel"></div>
+      <p class="note">Fonte: Tabela 4 (setembro de 2017). Cada quadrado é um fundo; a cor é o tipo de imóvel.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · COMO MEDIU -->
+<section class="slide" id="mede" data-label="Como mediu">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> O método</div>
+      <h2 class="rv" style="--d:.1s">O retorno de cada mês soma a variação do preço e o rendimento pago</h2>
+      <p class="lede rv" style="--d:.15s">O autor juntou preços e rendimentos de cada fundo (Bloomberg, B3 e CVM) e olhou duas janelas: a longa, desde a criação do IFIX, e a curta, com os 71 fundos que tinham cotação em todos os meses.</p>
+      <svg id="tl-svg" class="rv" style="--d:.2s" viewBox="0 0 520 170" role="img" aria-label="Linha do tempo das duas janelas e do número de fundos na amostra: 29 em dezembro de 2010, 71 em março de 2014 e 74 a partir de setembro de 2016"></svg>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <span class="ill">Calculadora ilustrativa</span>
+      <div class="panel">
+        <p>No fim do mês passado a cota valia <b>R$ 100</b>. Mexa no preço de hoje e no rendimento pago no mês.</p>
+        <div class="calc">
+          <label>Preço da cota no fim do mês <output id="c-p">R$ 100,00</output><input type="range" id="r-p" min="94" max="106" step="0.1" value="100"></label>
+          <label>Rendimento pago por cota <output id="c-d">R$ 0,70</output><input type="range" id="r-d" min="0" max="1.5" step="0.05" value="0.7"></label>
+        </div>
+        <div class="res" style="margin-top:10px">
+          <div><b id="c-r">0,70%</b>retorno do mês</div>
+          <div><b id="c-x">−0,15</b>pontos acima da Selic média do mês (0,85%)</div>
+        </div>
+      </div>
+      <p class="note">A Selic (juro básico) é a taxa “sem risco” da tese. 0,85% ao mês é a média de jan/2011 a ago/2018 (Tabela 5). Os demais valores são inventados.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · MÉDIAS -->
+<section class="slide" id="medias" data-label="O resultado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Médias dos grupos</div>
+      <h2 class="rv" style="--d:.1s">Os diversificados oscilaram um pouco mais que os de um só imóvel, nas duas janelas</h2>
+      <p class="lede rv" style="--d:.15s">É o contrário do que a teoria espera de quem diversifica. Os papéis foram os mais calmos. No retorno médio, a diferença entre os grupos é pequena e muda de lado conforme a janela.</p>
+      <div class="ctrls rv" style="--d:.2s"><div class="seg" id="md-seg"></div></div>
+      <div class="panel rv" style="--d:.25s" id="md-panel"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="fit-wrap"><div class="scene draggable" id="md-scene" data-fit="440x275" role="img" aria-label="Três colunas 3D com a oscilação mensal média de cada grupo"></div></div>
+      <svg id="rt-svg" viewBox="0 0 440 150" role="img" aria-label="Barras do retorno médio mensal de cada grupo e linha da Selic"></svg>
+      <p class="note">Fonte: Tabela 5. Colunas: desvio-padrão do retorno mensal (quanto sobe e desce em torno da média). Barras: retorno médio mensal; a linha tracejada é a Selic média do período.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · ORDEM -->
+<section class="slide" id="ordem" data-label="O inesperado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> O inesperado</div>
+      <h2 class="rv" style="--d:.1s">Na conta de retorno por oscilação, o primeiro lugar troca de janela para janela</h2>
+      <p class="lede rv" style="--d:.15s">O índice de Sharpe mede quanto o fundo rendeu acima da Selic para cada ponto de oscilação. Na janela longa, os papéis ficaram em 1º e os de um só imóvel em último. Na curta, foi o inverso para os especializados.</p>
+      <div class="formula rv" style="--d:.2s">Sharpe = (retorno médio − Selic) ÷ oscilação</div>
+      <div class="ctrls rv" style="--d:.2s"><div class="seg" id="pd-seg"></div></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <svg id="pd-svg" viewBox="0 0 460 300" role="img" aria-label="Pódio dos três grupos pelo índice de Sharpe, que muda conforme a janela"></svg>
+      <p class="note">Fonte: Tabela 5 (índice mensal; conferimos a conta com as médias da própria tabela). Valores perto de zero: na janela longa, os três grupos renderam, em média, um pouco menos que a Selic; na curta, só os especializados ficaram claramente acima.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · TIPOS -->
+<section class="slide" id="tipos" data-label="Tipos de imóvel">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Por tipo de imóvel</div>
+      <h2 class="rv" style="--d:.1s">O tipo de imóvel separa os fundos mais do que a estratégia</h2>
+      <p class="lede rv" style="--d:.15s">Entre os três grupos, o retorno médio mensal variou no máximo 0,12 ponto. Entre os tipos de imóvel, a distância passou de 0,8 ponto. Para o autor, o setor do imóvel influencia a relação entre risco e retorno.</p>
+      <div class="ctrls rv" style="--d:.2s"><div class="seg" id="sc-seg"></div></div>
+      <div class="panel rv" style="--d:.25s" id="sc-panel"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <svg id="sc-svg" viewBox="0 0 520 380" role="img" aria-label="Dispersão dos dez tipos de imóvel: oscilação no eixo horizontal e retorno médio mensal no vertical, com a linha da Selic"></svg>
+      <p class="note">Fonte: Tabela 5 (médias) e Tabela 4 (número de fundos). Toque num ponto. Tipos com poucos fundos (hotel, hospital, educacional) podem refletir um ou dois fundos. A comparação entre a distância dos grupos e a dos tipos é leitura nossa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · MERCADO -->
+<section class="slide" id="mercado" data-label="Junto com o mercado">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Os modelos</div>
+      <h2 class="rv" style="--d:.1s">Os diversificados acompanharam mais o sobe e desce do IFIX</h2>
+      <p class="lede rv" style="--d:.15s">O autor rodou regressões que explicam o retorno de cada grupo pelo retorno do mercado de fundos (IFIX). O coeficiente do mercado diz quanto o grupo se move quando o índice se move. Na logística, deu o contrário.</p>
+      <div class="ctrls rv" style="--d:.2s"><div class="seg" id="bt-v"></div><div class="seg" id="bt-p"></div></div>
+      <div class="panel rv" style="--d:.25s" id="bt-panel"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <svg id="bt-svg" viewBox="0 0 520 330" role="img" aria-label="Barras do coeficiente do mercado por grupo ou por tipo de imóvel"></svg>
+      <p class="note">Fontes: Tabelas 6 e 7 (grupos) e 9 e 10 (tipos, modelo de 3 fatores com oscilação). Barra cheia: coeficiente estatisticamente significativo; barra vazada: não significativo. Coeficientes de variáveis padronizadas, para comparar grupos, não para ler em reais.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · TAXA DE PERFORMANCE -->
+<section class="slide" id="taxa" data-label="Taxa de performance">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Hipótese 3</div>
+      <h2 class="rv" style="--d:.1s">Cobrar taxa de desempenho não mudou o retorno de forma clara</h2>
+      <p class="lede rv" style="--d:.15s">A taxa de performance é um extra que o gestor recebe quando o fundo supera uma meta. A ideia é alinhar o interesse do gestor ao do cotista. Dos 74 fundos, <b>12</b> cobram essa taxa. Em 16 comparações, nenhuma mostrou diferença estatística no retorno.</p>
+      <div class="panel rv" style="--d:.2s" id="tx-panel"></div>
+      <div class="duo rv" style="--d:.25s">
+        <div><b>0,0114 → 0,0164</b>coeficiente do IFIX sem → com taxa (jan/2011–ago/2018, Tabela 16)</div>
+        <div><b>0,0122 → 0,0197</b>o mesmo, mar/2014–ago/2018: os fundos com taxa acompanharam mais o índice</div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="fit-wrap"><div class="scene draggable" id="tx-scene" data-fit="460x320" role="img" aria-label="Grade 3D de 16 blocos cinza, um por comparação da taxa de performance; todos baixos e apagados, porque nenhum é significativo"></div></div>
+      <p class="note">Fontes: Tabelas 14 (sem controles) e 15 (com controles). Em cada bloco, o sinal do coeficiente da taxa (+ ou −); nenhum é significativo. Toque num bloco. Para o autor, a taxa não trouxe mais risco, o que não indica conflito de interesse.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · VALOR PATRIMONIAL -->
+<section class="slide" id="patrimonial" data-label="Preço × patrimônio">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> Hipótese 4</div>
+      <h2 class="rv" style="--d:.1s">Só nos fundos de papéis o preço na bolsa andou junto com o valor patrimonial</h2>
+      <p class="lede rv" style="--d:.15s">Toda cota tem dois valores: o <b>patrimonial</b> (o que os imóveis valem divididos pelas cotas, revisto em geral uma vez por ano por laudo) e o <b>de mercado</b> (o preço na bolsa). Se o fundo fosse encerrado, o cotista receberia pelo patrimonial, não pelo preço da bolsa.</p>
+      <span class="ill rv">Ilustração</span>
+      <div class="panel rv" style="--d:.2s">
+        <div class="calc"><label>Preço da cota na bolsa (valor patrimonial = R$ 100) <output id="pv-o">R$ 100</output><input type="range" id="pv-r" min="45" max="155" step="1" value="100"></label></div>
+        <svg id="pv-svg" viewBox="0 0 460 120" role="img" aria-label="Comparação entre o valor patrimonial e o preço da cota"></svg>
+        <p id="pv-t" style="font-size:.84rem; margin:0"></p>
+      </div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <p style="font-size:.88rem; margin-bottom:4px">Em setembro de 2017, <b>36</b> dos 74 fundos tinham preço abaixo do valor patrimonial e <b>38</b>, acima (Tabela 3, contagem nossa). A tese testou se a variação mensal do valor patrimonial ajuda a explicar o retorno na bolsa:</p>
+      <table class="sig" id="sig"></table>
+      <div class="legend"><span><span class="dot p"></span> significativo, mesmo sentido</span><span><span class="dot n"></span> significativo, sentido contrário</span><span><span class="dot"></span> não significativo</span></div>
+      <p class="note">Fontes: Tabelas 17 (grupos), 18 e 19 (tipos, sem controles). Com controles, por tipo (Tabelas 20 e 21), o quadro é o mesmo; por grupo (Tabela 15), os papéis seguem significativos só na janela longa. Para o autor, isso indica assimetria de informação: o preço na bolsa não reflete o valor patrimonial, em parte porque os imóveis são reavaliados poucas vezes. Nos fundos de cotas de outros fundos, o patrimônio já segue os preços da bolsa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA -->
+<section class="slide" id="pratica" data-label="Na prática">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> E daí?</div>
+    <h2 class="rv" style="--d:.1s">Vários imóveis não garantem um fundo mais estável</h2>
+    <p class="lede rv" style="--d:.15s">Para o autor, os fundos imobiliários brasileiros não seguem a ideia da teoria de que diversificar reduz o risco. A tese ajuda a discutir regras do setor, sobretudo como os imóveis são avaliados.</p>
+    <div class="cards3">
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Para quem investe</h3><ul><li>O preço na bolsa pode ficar longe do valor patrimonial; na liquidação, vale o patrimonial, já descontadas as despesas. <em>(autor)</em></li><li>O tipo de imóvel pesou mais que o número de imóveis nas médias (tela 08). <em>(leitura nossa)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--red)"><h3>Para administradores e reguladores</h3><ul><li>A reavaliação dos imóveis uma vez por ano, por laudo, pode separar o valor patrimonial do preço de mercado; isso é um fator de risco para pessoas físicas, que são grande parte dos cotistas. <em>(autor)</em></li><li>O debate sobre marcação a mercado dos imóveis pode tornar os preços mais informativos. <em>(autor)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#64748b"><h3>Como o autor resume</h3><ul><li>Pelos modelos, os diversificados tiveram maior retorno e maior volatilidade que os especializados, exceto na logística. <em>(autor)</em></li><li>Nas médias simples (tela 06), a oscilação maior dos diversificados aparece nas duas janelas; o retorno maior, só na longa. <em>(leitura nossa)</em></li></ul></div>
+    </div>
+    <div class="warn rv" style="--d:.35s"><b>Não é recomendação de investimento.</b> A tese descreve o passado (2011 a 2018) de um grupo de fundos; retorno passado não garante retorno futuro.</div>
+  </div>
+</section>
+
+<!-- 13 · LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Limites e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">13</span> Limites e créditos</div>
+    <h2 class="rv" style="--d:.1s">O que esta pesquisa não diz</h2>
+    <div class="end">
+      <div class="rv" style="--d:.2s">
+        <ul class="limits">
+          <li><b>Poucos fundos por grupo.</b> Poucos cobram taxa de performance, e há poucos especializados e diversificados do mesmo tipo de imóvel; por isso a análise por tipo ficou em shoppings, escritórios, logística e papéis. <em>· segundo o autor</em></li>
+          <li><b>Grupos comparados lado a lado.</b> Cada grupo teve sua própria regressão; a diferença entre os grupos não foi testada diretamente, e as médias simples diferem por pouco (no máximo 0,12 ponto ao mês). <em>· observação nossa</em></li>
+          <li><b>Retorno ou movimento com o mercado.</b> O autor compara os grupos pelo coeficiente do IFIX; aqui ele aparece como quanto o grupo acompanha o índice (tela 09), e o retorno vem das médias (tela 06). <em>· observação nossa</em></li>
+          <li><b>Fundos de hoje olhando para trás.</b> A amostra são os fundos do IFIX de setembro de 2017; fundos que saíram antes disso não entram. <em>· observação nossa</em></li>
+          <li><b>Anda junto, não causa.</b> As regressões mostram associação; não provam que a estratégia ou a taxa provoquem o retorno. <em>· observação nossa</em></li>
+        </ul>
+        <p style="margin-top:10px; font-size:.84rem">Para o autor, essas limitações devem diminuir com o crescimento do mercado de fundos imobiliários.</p>
+      </div>
+      <div class="rv" style="--d:.25s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          TEIXEIRA, Odilon Ferraroni. <em>Fundos especializados versus fundos diversificados: análise de desempenho dos fundos de investimento imobiliários no Brasil (2011-2018).</em> Tese (Doutorado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2019. Orientador: Prof. Dr. Denis Forte.
+        </div>
+        <p style="margin-top:10px; font-size:.78rem">Tese de 2019, aprovada em 26 de abril de 2019. Dados mensais da Bloomberg, B3, CVM e Banco Central; regressões por mínimos quadrados (MQO) no Stata, com os modelos CAPM e de 3 fatores de Fama-French. Esta versão simplifica o trabalho para o público em geral e não é recomendação de investimento.</p>
+        <p class="also">Leia também: <a href="../../teses/2025-cunha-fundos-imobiliarios/">Cunha (2025)</a>, a eficiência de 102 fundos imobiliários do IFIX; e, do mesmo orientador, <a href="../../dissertacoes/2026-palhao-fiagros-commodities/">Palhão (2026)</a>, fundos do agronegócio, e <a href="../../dissertacoes/2024-barbosa-fundos-multimercado/">Barbosa (2024)</a>, fundos multimercado.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable, ramp = M.ramp;
+  var EN = M.lang === 'en';
+  function L(p, e){ return EN ? e : p; }
+  function pct(v, d){ return fmt(v * 100, d === undefined ? 2 : d) + '%'; }
+  function segInit(el, items, cur, fn){
+    el.innerHTML = items.map(function(t, i){ return '<button data-v="' + i + '" aria-pressed="' + (i === cur) + '">' + t + '</button>'; }).join('');
+    each(el.children, function(b){ b.addEventListener('click', function(){ each(el.children, function(x){ x.setAttribute('aria-pressed', x === b); }); fn(+b.dataset.v); }); });
+  }
+
+  /* ================= DADOS DA TESE ================= */
+  var PER = [L('jan/2011–ago/2018', 'Jan 2011–Aug 2018'), L('mar/2014–ago/2018', 'Mar 2014–Aug 2018')];
+  var PERS = [L('Janela longa', 'Long window'), L('Janela curta', 'Short window')];
+  // Grupos (Tabela 5): r = retorno médio mensal, s = desvio-padrão, sh = Sharpe; [janela longa, janela curta]
+  var G = [
+    {k:'esp', n:L('Especializado', 'Specialized'), c:'var(--esp)', r:[0.0074857, 0.0097827], s:[0.053932, 0.0550974], sh:[-0.018829, 0.013463], nf:28},
+    {k:'div', n:L('Diversificado', 'Diversified'), c:'var(--div)', r:[0.0079647, 0.0086337], s:[0.0541513, 0.0559956], sh:[-0.009907, -0.007272], nf:30},
+    {k:'vm', n:L('Valores mobiliários', 'Securities'), c:'var(--vm)', r:[0.008255, 0.0090251], s:[0.0455771, 0.0430294], sh:[-0.005402, -0.000367], nf:16}
+  ];
+  var RF = [0.0085012, 0.0090409]; // Selic média mensal (Tabela 5)
+  // Tipos de imóvel (Tabela 5) e contagens (Tabela 4: diversificado, especializado, valores mobiliários, com taxa)
+  var T = [
+    {n:L('Agências bancárias', 'Bank branches'), r:[0.0083309, 0.0112351], s:[0.048045, 0.0453721], sh:[-0.003545, 0.048360], c:[6,0,0,0], col:'#7c93b8'},
+    {n:L('Desenvolvimento', 'Development'), r:[0.0074754, 0.008752], s:[0.0529391, 0.0542367], sh:[-0.019377, -0.005327], c:[2,1,0,3], col:'#a16207'},
+    {n:L('Educacional', 'Education'), r:[0.0138261, 0.0167233], s:[0.0409103, 0.0408122], sh:[0.130160, 0.188238], c:[2,1,0,0], col:'#0f766e'},
+    {n:L('Hospital', 'Hospital'), r:[0.0100369, 0.0160281], s:[0.0591489, 0.0523414], sh:[0.025963, 0.133493], c:[0,2,0,0], col:'#0891b2'},
+    {n:L('Hotel', 'Hotel'), r:[0.0072865, -0.0001314], s:[0.0802277, 0.0760887], sh:[-0.015141, -0.120547], c:[1,0,0,0], col:'#9333ea'},
+    {n:L('Escritórios (lajes)', 'Offices'), r:[0.0054134, 0.0064387], s:[0.0541577, 0.0556674], sh:[-0.057015, -0.046745], c:[12,14,0,1], col:'#1f3b73'},
+    {n:L('Logística (galpões)', 'Logistics (warehouses)'), r:[0.0076534, 0.0083604], s:[0.0629314, 0.0703527], sh:[-0.013472, -0.009673], c:[4,3,0,0], col:'#ea580c'},
+    {n:L('Shoppings', 'Shopping malls'), r:[0.0109521, 0.0131147], s:[0.0492206, 0.0510831], sh:[0.049794, 0.079748], c:[3,7,0,0], col:'#e11d48'},
+    {n:L('Cotas de outros fundos', 'Units of other funds'), r:[0.008185, 0.0106158], s:[0.0548448, 0.0533908], sh:[-0.005765, 0.029498], c:[0,0,4,3], col:'#475569'},
+    {n:L('Recebíveis imobiliários', 'Real estate receivables'), r:[0.0082786, 0.0083214], s:[0.0420302, 0.0375888], sh:[-0.005296, -0.019141], c:[0,0,12,5], col:'#94a3b8'}
+  ];
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), W = 420, D = 200, st = makeStage(sc, W, D, {ay:'64%'});
+    rotatable(sc, st, -24, 7);
+    var groups = [];
+    function plat(x, g, label, top){
+      var arr = [];
+      var p = box({w:118, d:110, x:x, y:46, z:0, h:10, c:'#e2e8f0', top:''});
+      st.appendChild(p); arr.push([p, 0]);
+      return {x:x, arr:arr, g:g};
+    }
+    // especializado: um prédio
+    var a = plat(0, 0);
+    var b1 = box({w:56, d:56, x:31, y:73, z:10, h:118, c:'var(--esp)', top:'5,39%'.replace(',', EN ? '.' : ',')}); st.appendChild(b1); a.arr.push([b1, 10]);
+    // diversificado: vários prédios menores
+    var bb = plat(150, 1);
+    [[160, 58, 52], [210, 58, 74], [160, 104, 40], [210, 104, 60]].forEach(function(q, i){
+      var b = box({w:40, d:40, x:q[0], y:q[1], z:10, h:q[2], c:ramp('var(--div)', i, 5), top:i === 1 ? (EN ? '5.42%' : '5,42%') : ''});
+      st.appendChild(b); bb.arr.push([b, 10]);
+    });
+    // valores mobiliários: pilha de papéis
+    var cc = plat(300, 2);
+    for (var i = 0; i < 6; i++){
+      var b = box({w:70, d:52, x:324 + (i % 2) * 4, y:75 - (i % 3) * 2, z:10 + i * 7, h:5, c:i % 2 ? '#e2e8f0' : '#cbd5e1', top:i === 5 ? (EN ? '4.56%' : '4,56%') : ''});
+      var tl = b.querySelector('.top-label'); if (tl) tl.style.color = 'var(--ink)';
+      st.appendChild(b); cc.arr.push([b, 10 + i * 7]);
+    }
+    flatLabel(st, L('um só imóvel', 'a single property'), 0, 166, 118, 'color:var(--esp)');
+    flatLabel(st, L('vários imóveis', 'several properties'), 150, 166, 118, 'color:var(--div)');
+    flatLabel(st, L('papéis', 'securities'), 300, 166, 118, 'color:var(--vm)');
+    groups = [[a, G[0].s[0]], [bb, G[1].s[0]], [cc, G[2].s[0]]];
+    if (M.reduce) return;
+    M.onTick(function(t){
+      groups.forEach(function(q, gi){
+        // mesmo "mercado" para os três, amplitude ∝ desvio-padrão (ilustrativo)
+        var m = Math.sin(t * 1.3) * 0.7 + Math.sin(t * 2.1 + 1) * 0.3;
+        var dz = m * q[1] * 420;
+        q[0].arr.forEach(function(e){ e[0].style.setProperty('--z', (e[1] + 14 + dz) + 'px'); });
+      });
+    });
+  })();
+
+  /* ================= 02 · CRESCIMENTO ================= */
+  (function(){
+    var D = [
+      {k:L('Fundos', 'Funds'), a:63, b:335, la:'2005', lb:L('mai/2017', 'May 2017'), f:function(v){ return fmt(v, 0); }, t:L('Número de fundos imobiliários registrados (CVM).', 'Number of registered real estate funds (CVM).')},
+      {k:L('Patrimônio', 'Assets'), a:2.4, b:71.2, la:'2005', lb:L('mai/2017', 'May 2017'), f:function(v){ return L('R$ ', 'R$ ') + fmt(v, 1) + L(' bi', ' bn'); }, t:L('Patrimônio somado dos fundos imobiliários (CVM).', 'Combined assets of real estate funds (CVM).')},
+      {k:L('Contas de investidores', 'Investor accounts'), a:89, b:345227, la:L('dez/2006', 'Dec 2006'), lb:L('fev/2018', 'Feb 2018'), f:function(v){ return v >= 1000 ? (EN ? '345,227' : '345.227') : fmt(v, 0); }, t:L('Contas investindo em fundos imobiliários contadas pela Anbima. A barra de 2006 é tão pequena que mal aparece.', 'Accounts investing in real estate funds counted by Anbima. The 2006 bar is so small it barely shows.')},
+      {k:L('Pessoas físicas', 'Individuals'), a:34.3, b:41.0, la:L('mai/2016', 'May 2016'), lb:L('abr/2018', 'Apr 2018'), f:function(v){ return fmt(v, 1) + '%'; }, t:L('Fatia do dinheiro dos fundos que vem do varejo, do varejo alta renda e do private (Tabela 1, Anbima), puxada pela isenção de imposto. Escala de 0 a 100%.', 'Share of the funds’ money coming from retail, high-income retail and private banking clients (Table 1, Anbima), driven by the tax exemption. Scale from 0 to 100%.'), max:100}
+    ];
+    var ch = $('gr-chips');
+    ch.innerHTML = D.map(function(d, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="' + (i === 0) + '">' + d.k + '</button>'; }).join('');
+    function show(i){
+      each(ch.children, function(x){ x.setAttribute('aria-pressed', +x.dataset.i === i); });
+      var d = D[i], mx = d.max || d.b, H = 160, base = 195;
+      var o = '<line x1="40" y1="' + base + '" x2="480" y2="' + base + '" stroke="#cbd5e1"/>';
+      [[d.a, d.la, 110, '#94a3b8'], [d.b, d.lb, 310, 'var(--red)']].forEach(function(q){
+        var h = Math.max(q[0] / mx * H, 1.5);
+        o += '<rect x="' + q[2] + '" y="' + (base - h) + '" width="100" height="' + h + '" rx="5" fill="' + q[3] + '"/>';
+        o += '<text x="' + (q[2] + 50) + '" y="' + (base - h - 10) + '" text-anchor="middle" style="font-size:18px; font-weight:800; fill:var(--ink)">' + d.f(q[0]) + '</text>';
+        o += '<text x="' + (q[2] + 50) + '" y="' + (base + 22) + '" text-anchor="middle" style="font-size:14px; fill:var(--muted)">' + q[1] + '</text>';
+      });
+      $('gr-svg').innerHTML = o;
+      $('gr-panel').innerHTML = '<p>' + d.t + (d.max ? '' : ' ' + L('Cresceu ', 'It grew ') + '<b>' + fmt(d.b / d.a, d.b / d.a > 100 ? 0 : 1).replace(/^(\d)(\d{3})$/, EN ? '$1,$2' : '$1.$2') + L(' vezes', ' times') + '</b>.') + '</p>';
+    }
+    each(ch.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(0);
+  })();
+
+  /* ================= 03 · APOSTA ================= */
+  var BET = [null, null];
+  (function(){
+    // cestas
+    var o = '';
+    [[20, 'var(--esp)', 1], [175, 'var(--div)', 5], [330, 'var(--vm)', 0]].forEach(function(q){
+      var x = q[0];
+      o += '<path d="M' + (x + 4) + ' 78 h112 l-12 56 h-88 z" fill="#f1e4cf" stroke="#a16207" stroke-width="2"/>';
+      o += '<path d="M' + (x + 14) + ' 78 q46 -70 92 0" fill="none" stroke="#a16207" stroke-width="3"/>';
+      if (q[2] === 1) o += '<ellipse cx="' + (x + 60) + '" cy="70" rx="24" ry="30" fill="' + q[1] + '"/>';
+      else if (q[2] === 5){ [[34, 68], [56, 62], [78, 68], [45, 76], [67, 76]].forEach(function(e){ o += '<ellipse cx="' + (x + e[0]) + '" cy="' + e[1] + '" rx="11" ry="14" fill="' + q[1] + '" stroke="#fff" stroke-width="1.5"/>'; }); }
+      else { [0, 1, 2].forEach(function(k){ o += '<rect x="' + (x + 30 + k * 8) + '" y="' + (48 + k * 6) + '" width="42" height="34" rx="2" fill="#fff" stroke="var(--vm)" stroke-width="1.5" transform="rotate(' + (k * 6 - 6) + ' ' + (x + 50) + ' 70)"/>'; }); o += '<path d="M' + (x + 44) + ' 66 h26 M' + (x + 44) + ' 72 h20" stroke="var(--vm)"/>'; }
+      o += '<path d="M' + (x + 4) + ' 92 h112 M' + (x + 8) + ' 108 h104 M' + (x + 12) + ' 122 h96" stroke="#d6b98c"/>';
+    });
+    $('bk-svg').innerHTML = o;
+    var opts = [L('Especializado', 'Specialized'), L('Diversificado', 'Diversified'), L('Valores mobiliários', 'Securities')];
+    each(document.querySelectorAll('.bet .opts'), function(el){
+      var q = +el.dataset.q;
+      el.innerHTML = opts.map(function(t, i){ return '<button data-v="' + i + '" aria-pressed="false">' + t + '</button>'; }).join('');
+      each(el.children, function(b){ b.addEventListener('click', function(){ each(el.children, function(x){ x.setAttribute('aria-pressed', x === b); }); BET[q] = +b.dataset.v; th(); if (window.__mdUpd) window.__mdUpd(); }); });
+    });
+    function th(){
+      $('th-panel').innerHTML = '<div class="tag">' + L('O que a teoria espera', 'What theory expects') + '</div>' +
+        '<p>' + L('Quem espalha o dinheiro por vários imóveis dilui o risco de um inquilino sair ou de uma região cair: deveria <b>oscilar menos</b>. Quem aposta tudo num só imóvel corre mais risco e, por isso, deveria <b>render mais</b> (hipóteses 1 e 2 da tese).', 'Spreading money over several buildings dilutes the risk of a tenant leaving or a region declining: it should <b>swing less</b>. Betting everything on a single building is riskier and should therefore <b>earn more</b> (hypotheses 1 and 2 of the thesis).') + '</p>' +
+        '<p>' + (BET[0] === null || BET[1] === null ? L('Marque as duas apostas; a resposta está na tela 06.', 'Mark both bets; the answer is on screen 06.') : L('Apostas guardadas. Veja na tela 06 como foram.', 'Bets saved. See how they did on screen 06.')) + '</p>';
+    }
+    th();
+  })();
+
+  /* ================= 04 · AMOSTRA ================= */
+  (function(){
+    var GN = [L('Diversificados', 'Diversified'), L('Especializados', 'Specialized'), L('Valores mobiliários', 'Securities')];
+    var GC = ['var(--div)', 'var(--esp)', 'var(--vm)'];
+    var wrap = $('sq-groups'), o = '';
+    [1, 0, 2].forEach(function(gi){
+      var n = 0, sq = '';
+      T.forEach(function(t, ti){ for (var k = 0; k < t.c[gi]; k++){ sq += '<span data-t="' + ti + '" style="--c:' + t.col + '"></span>'; n++; } });
+      o += '<div class="sq-g"><h4 style="color:' + GC[gi] + '"><span class="n">' + n + '</span>' + GN[gi] + '</h4><div class="sqs">' + sq + '</div></div>';
+    });
+    wrap.innerHTML = o;
+    var ch = $('tp-chips');
+    ch.innerHTML = '<button class="chip" data-i="-1" aria-pressed="true">' + L('Todos', 'All') + '</button>' + T.map(function(t, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="false"><span class="sw" style="background:' + t.col + '"></span>' + t.n + '</button>'; }).join('');
+    function show(i){
+      each(ch.children, function(x){ x.setAttribute('aria-pressed', +x.dataset.i === i); });
+      each(wrap.querySelectorAll('.sqs span'), function(s){ s.className = i < 0 ? '' : (+s.dataset.t === i ? 'on' : 'off'); });
+      if (i < 0){
+        $('tp-panel').innerHTML = '<p>' + L('<b>30</b> diversificados, <b>28</b> especializados e <b>16</b> de valores mobiliários. <b>12</b> dos 74 cobram taxa de performance: 3 de desenvolvimento, 1 de escritórios, 3 de cotas de outros fundos e 5 de recebíveis (tela 10).', '<b>30</b> diversified, <b>28</b> specialized and <b>16</b> securities funds. <b>12</b> of the 74 charge a performance fee: 3 development, 1 office, 3 fund-of-funds and 5 receivables funds (screen 10).') + '</p>';
+        return;
+      }
+      var t = T[i], tot = t.c[0] + t.c[1] + t.c[2], parts = [];
+      if (t.c[0]) parts.push(t.c[0] + ' ' + L('diversificado' + (t.c[0] > 1 ? 's' : ''), 'diversified'));
+      if (t.c[1]) parts.push(t.c[1] + ' ' + L('especializado' + (t.c[1] > 1 ? 's' : ''), 'specialized'));
+      if (t.c[2]) parts.push(t.c[2] + ' ' + L('de valores mobiliários', 'securities'));
+      $('tp-panel').innerHTML = '<div class="tag">' + t.n + '</div><p><b>' + tot + '</b> ' + L('fundo' + (tot > 1 ? 's' : ''), 'fund' + (tot > 1 ? 's' : '')) + ': ' + parts.join(', ') + '. ' + (t.c[3] ? t.c[3] + L(' cobra' + (t.c[3] > 1 ? 'm' : '') + ' taxa de performance.', ' charge' + (t.c[3] > 1 ? '' : 's') + ' a performance fee.') : L('Nenhum cobra taxa de performance.', 'None charges a performance fee.')) + '</p>';
+    }
+    each(ch.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(-1);
+  })();
+
+  /* ================= 05 · COMO MEDIU ================= */
+  (function(){
+    // linha do tempo: x de dez/2010 (0) a ago/2018 (92 meses)
+    var X0 = 30, X1 = 500, N = 92;
+    function xm(m){ return X0 + m / N * (X1 - X0); }
+    var o = '';
+    o += '<rect x="' + xm(1) + '" y="18" width="' + (xm(92) - xm(1)) + '" height="26" rx="6" fill="var(--ink)"/>';
+    o += '<text x="' + (xm(1) + 8) + '" y="36" style="font-size:13px; font-weight:700; fill:#fff">' + L('Janela longa · 74 fundos · jan/2011–ago/2018', 'Long window · 74 funds · Jan 2011–Aug 2018') + '</text>';
+    o += '<rect x="' + xm(39) + '" y="50" width="' + (xm(92) - xm(39)) + '" height="26" rx="6" fill="var(--red)"/>';
+    o += '<text x="' + (xm(39) + 8) + '" y="68" style="font-size:13px; font-weight:700; fill:#fff">' + L('Janela curta · 71 fundos', 'Short window · 71 funds') + '</text>';
+    // número de fundos (Gráfico 1, linha total)
+    var P = [[0, 29], [39, 71], [69, 74], [92, 74]], yb = 150, sc = 0.75;
+    o += '<line x1="' + X0 + '" y1="' + yb + '" x2="' + X1 + '" y2="' + yb + '" stroke="#cbd5e1"/>';
+    o += '<polyline points="' + P.map(function(p){ return xm(p[0]) + ',' + (yb - p[1] * sc); }).join(' ') + '" fill="none" stroke="var(--navy)" stroke-width="2.5" stroke-dasharray="0"/>';
+    P.slice(0, 3).forEach(function(p){ o += '<circle cx="' + xm(p[0]) + '" cy="' + (yb - p[1] * sc) + '" r="4" fill="var(--navy)"/><text x="' + xm(p[0]) + '" y="' + (yb - p[1] * sc - 8) + '" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--navy)">' + p[1] + '</text>'; });
+    [[0, '2010'], [37, '2014'], [85, '2018']].forEach(function(q){ o += '<text x="' + xm(q[0]) + '" y="166" text-anchor="' + (q[0] ? 'middle' : 'start') + '" style="font-size:12px; fill:var(--muted)">' + q[1] + '</text>'; });
+    o += '<text x="' + X0 + '" y="96" style="font-size:12px; fill:var(--muted)">' + L('fundos com cotação na amostra (Gráfico 1)', 'funds with a price in the sample (Chart 1)') + '</text>';
+    $('tl-svg').innerHTML = o;
+    function upd(){
+      var p = +$('r-p').value, d = +$('r-d').value, r = (p + d - 100) / 100;
+      $('c-p').textContent = 'R$ ' + fmt(p, 2); $('c-d').textContent = 'R$ ' + fmt(d, 2);
+      $('c-r').textContent = fmt(r * 100, 2) + '%';
+      var x = r * 100 - 0.85;
+      $('c-x').textContent = (x >= 0 ? '+' : '−') + fmt(Math.abs(x), 2);
+    }
+    $('r-p').addEventListener('input', upd); $('r-d').addEventListener('input', upd); upd();
+  })();
+
+  /* ================= 06 · MÉDIAS ================= */
+  (function(){
+    var sc = $('md-scene'), W = 390, D = 150, st = makeStage(sc, W, D, {ay:'74%'}), per = 0, bars = [];
+    rotatable(sc, st, -18, 6);
+    G.forEach(function(g, i){
+      var b = box({w:84, d:70, x:12 + i * 128, y:10, h:10, c:g.c, top:''});
+      st.appendChild(b); bars.push(b);
+      flatLabel(st, g.n, i * 128 - 8, 90, 124, 'color:' + g.c + '; font-size:12.5px');
+    });
+    flatLabel(st, L('oscilação mensal (desvio-padrão)', 'monthly swing (standard deviation)'), 0, 128, W, 'color:var(--muted); font-weight:600; font-size:12px');
+    function upd(){
+      G.forEach(function(g, i){ bars[i].style.setProperty('--h', (g.s[per] * 2600) + 'px'); bars[i].querySelector('.top-label') || (bars[i].querySelector('.f-top').innerHTML = '<span class="top-label"></span>'); bars[i].querySelector('.top-label').textContent = pct(g.s[per]); });
+      // barras de retorno
+      var o = '', X0 = 150, X1 = 420, mx = 0.011, rf = RF[per];
+      G.forEach(function(g, i){
+        var y = 14 + i * 40, w = g.r[per] / mx * (X1 - X0);
+        o += '<text x="' + (X0 - 10) + '" y="' + (y + 19) + '" text-anchor="end" style="font-size:14px; font-weight:700; fill:' + g.c + '">' + g.n + '</text>';
+        o += '<rect x="' + X0 + '" y="' + (y + 2) + '" width="' + w + '" height="24" rx="4" fill="' + g.c + '"/>';
+        o += '<text x="' + (X0 + w - 6) + '" y="' + (y + 19) + '" text-anchor="end" style="font-size:13px; font-weight:800; fill:#fff">' + pct(g.r[per]) + '</text>';
+      });
+      var xr = X0 + rf / mx * (X1 - X0);
+      o += '<line x1="' + xr + '" y1="8" x2="' + xr + '" y2="134" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 4"/>';
+      o += '<text x="' + Math.min(xr + 4, 428) + '" y="146" text-anchor="' + (xr > 380 ? 'end' : 'start') + '" style="font-size:12px; font-weight:700; fill:var(--ink)">Selic ' + pct(rf) + '</text>';
+      o += '<text x="' + X0 + '" y="146" style="font-size:12px; fill:var(--muted)">' + L('retorno médio por mês', 'average return per month') + '</text>';
+      $('rt-svg').innerHTML = o;
+      var sMax = G.slice().sort(function(a, b){ return b.s[per] - a.s[per]; })[0], rMax = G.slice().sort(function(a, b){ return b.r[per] - a.r[per]; })[0];
+      var bet = '';
+      if (BET[0] !== null && BET[1] !== null){
+        bet = '<p><b>' + L('Suas apostas: ', 'Your bets: ') + '</b>' + L('oscilou mais: ', 'swung most: ') + (G[BET[0]] === sMax ? '✓' : '✗') + ' · ' + L('rendeu mais: ', 'earned most: ') + (G[BET[1]] === rMax ? '✓' : '✗') + L(' (nesta janela)', ' (in this window)') + '</p>';
+      }
+      $('md-panel').innerHTML = '<div class="tag">' + PER[per] + '</div><p>' + L('Mais oscilação: ', 'Most swing: ') + '<b style="color:' + sMax.c + '">' + sMax.n + '</b> (' + pct(sMax.s[per]) + '). ' + L('Maior retorno médio: ', 'Highest average return: ') + '<b style="color:' + rMax.c + '">' + rMax.n + '</b> (' + pct(rMax.r[per]) + L(' ao mês).', ' a month).') + '</p>' +
+        '<p>' + (per === 0 ? L('Diversificados × especializados: 5,42% × 5,39% de oscilação e 0,80% × 0,75% de retorno. Diferenças de centésimos.', 'Diversified × specialized: 5.42% × 5.39% swing and 0.80% × 0.75% return. Differences of hundredths.') : L('Diversificados × especializados: 5,60% × 5,51% de oscilação, mas agora 0,86% × 0,98% de retorno: os de um só imóvel renderam mais.', 'Diversified × specialized: 5.60% × 5.51% swing, but now 0.86% × 0.98% return: single-property funds earned more.')) + '</p>' + bet;
+    }
+    window.__mdUpd = upd;
+    segInit($('md-seg'), PERS.map(function(p, i){ return p + ' · ' + PER[i]; }), 0, function(v){ per = v; upd(); });
+    upd();
+  })();
+
+  /* ================= 07 · ORDEM (Sharpe) ================= */
+  (function(){
+    var svg = $('pd-svg'), per = 0;
+    var PH = [150, 105, 70], PX = [160, 30, 290]; // 1º, 2º, 3º
+    var o = '<line x1="10" y1="270" x2="450" y2="270" stroke="#cbd5e1"/>';
+    [0, 1, 2].forEach(function(k){ o += '<rect x="' + PX[k] + '" y="' + (270 - PH[k]) + '" width="140" height="' + PH[k] + '" rx="6" fill="#eef2f6" stroke="#cbd5e1"/><text x="' + (PX[k] + 70) + '" y="' + (270 - PH[k] + 40) + '" text-anchor="middle" style="font-size:30px; font-weight:900; fill:#94a3b8; font-family:var(--serif)">' + (k + 1) + 'º</text>'; });
+    G.forEach(function(g, i){
+      o += '<g class="pod" id="pod' + i + '"><circle cx="70" cy="0" r="30" fill="' + g.c + '"/><text x="70" y="-40" text-anchor="middle" style="font-size:14px; font-weight:700; fill:' + g.c + '">' + g.n + '</text><text class="v" x="70" y="5" text-anchor="middle" style="font-size:13px; font-weight:800; fill:#fff"></text></g>';
+    });
+    o += '<text x="230" y="292" text-anchor="middle" style="font-size:12px; fill:var(--muted)">' + L('índice de Sharpe mensal (Tabela 5)', 'monthly Sharpe ratio (Table 5)') + '</text>';
+    svg.innerHTML = o;
+    function upd(){
+      var ord = G.map(function(g, i){ return i; }).sort(function(a, b){ return G[b].sh[per] - G[a].sh[per]; });
+      ord.forEach(function(gi, k){
+        var g = $('pod' + gi);
+        g.setAttribute('transform', 'translate(' + PX[k] + ',' + (270 - PH[k] - 32) + ')');
+        g.style.transform = 'translate(' + PX[k] + 'px,' + (270 - PH[k] - 32) + 'px)';
+        var v = G[gi].sh[per];
+        g.querySelector('.v').textContent = (v < 0 ? '−' : '+') + fmt(Math.abs(v), 3);
+      });
+    }
+    segInit($('pd-seg'), PERS.map(function(p, i){ return p + ' · ' + PER[i]; }), 0, function(v){ per = v; upd(); });
+    upd();
+  })();
+
+  /* ================= 08 · TIPOS (dispersão) ================= */
+  (function(){
+    var svg = $('sc-svg'), per = 0, cur = 2;
+    var X0 = 60, X1 = 500, Y0 = 330, Y1 = 20, sx = [0.035, 0.085], sy = [-0.002, 0.018];
+    function px(v){ return X0 + (v - sx[0]) / (sx[1] - sx[0]) * (X1 - X0); }
+    function py(v){ return Y0 - (v - sy[0]) / (sy[1] - sy[0]) * (Y0 - Y1); }
+    function draw(){
+      var o = '';
+      [0, 0.005, 0.01, 0.015].forEach(function(v){ o += '<line x1="' + X0 + '" y1="' + py(v) + '" x2="' + X1 + '" y2="' + py(v) + '" stroke="#eef2f6"/><text x="' + (X0 - 8) + '" y="' + (py(v) + 4) + '" text-anchor="end" style="font-size:12px; fill:var(--muted)">' + pct(v, 1) + '</text>'; });
+      [0.04, 0.05, 0.06, 0.07, 0.08].forEach(function(v){ o += '<text x="' + px(v) + '" y="' + (Y0 + 18) + '" text-anchor="middle" style="font-size:12px; fill:var(--muted)">' + pct(v, 0) + '</text>'; });
+      o += '<text x="' + ((X0 + X1) / 2) + '" y="' + (Y0 + 40) + '" text-anchor="middle" style="font-size:13px; fill:var(--ink-2); font-weight:600">' + L('oscilação mensal →', 'monthly swing →') + '</text>';
+      o += '<text x="14" y="' + ((Y0 + Y1) / 2) + '" text-anchor="middle" transform="rotate(-90 14 ' + ((Y0 + Y1) / 2) + ')" style="font-size:13px; fill:var(--ink-2); font-weight:600">' + L('retorno ao mês →', 'return per month →') + '</text>';
+      var yr = py(RF[per]);
+      o += '<line x1="' + X0 + '" y1="' + yr + '" x2="' + X1 + '" y2="' + yr + '" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="5 4"/><text x="' + X1 + '" y="' + (yr - 6) + '" text-anchor="end" style="font-size:12px; font-weight:700; fill:var(--ink)">Selic ' + pct(RF[per]) + '</text>';
+      // grupos (cruzes)
+      G.forEach(function(g){ var x = px(g.s[per]), y = py(g.r[per]); o += '<path d="M' + (x - 6) + ' ' + y + ' h12 M' + x + ' ' + (y - 6) + ' v12" stroke="' + g.c + '" stroke-width="3"/>'; });
+      T.forEach(function(t, i){
+        var x = px(t.s[per]), y = py(t.r[per]), on = i === cur;
+        o += '<g class="pt" data-i="' + i + '" role="button" tabindex="0"><circle cx="' + x + '" cy="' + y + '" r="' + (on ? 11 : 8) + '" fill="' + t.col + '" stroke="' + (on ? 'var(--ink)' : '#fff') + '" stroke-width="' + (on ? 3 : 2) + '"/>' +
+          (on ? '<text x="' + (x + (x > 380 ? -15 : 15)) + '" y="' + (y + 5) + '" text-anchor="' + (x > 380 ? 'end' : 'start') + '" style="font-size:14px; font-weight:800; fill:var(--ink); paint-order:stroke; stroke:#fff; stroke-width:4px">' + t.n + '</text>' : '') + '</g>';
+      });
+      o += '<text x="' + (X0 + 6) + '" y="' + (Y1 + 6) + '" style="font-size:12px; fill:var(--muted)">' + L('+ cruzes: médias dos três grupos', '+ crosses: averages of the three groups') + '</text>';
+      svg.innerHTML = o;
+      each(svg.querySelectorAll('.pt'), function(g){
+        g.addEventListener('click', function(){ cur = +g.dataset.i; draw(); });
+        g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); cur = +g.dataset.i; draw(); } });
+      });
+      var t = T[cur], n = t.c[0] + t.c[1] + t.c[2];
+      $('sc-panel').innerHTML = '<div class="tag">' + t.n + ' · ' + n + L(' fundo' + (n > 1 ? 's' : ''), ' fund' + (n > 1 ? 's' : '')) + '</div><p>' + L('Retorno médio ', 'Average return ') + '<b>' + pct(t.r[per]) + L('</b> ao mês, oscilação <b>', '</b> a month, swing <b>') + pct(t.s[per]) + '</b>, Sharpe <b>' + (t.sh[per] < 0 ? '−' : '+') + fmt(Math.abs(t.sh[per]), 3) + '</b> (' + PER[per] + ').</p>' +
+        '<p>' + (t.r[per] > RF[per] ? L('Rendeu acima da Selic nesta janela.', 'It earned above the Selic rate in this window.') : L('Rendeu abaixo da Selic nesta janela.', 'It earned below the Selic rate in this window.')) + '</p>';
+    }
+    segInit($('sc-seg'), PERS.map(function(p, i){ return p + ' · ' + PER[i]; }), 0, function(v){ per = v; draw(); });
+    draw();
+  })();
+
+  /* ================= 09 · MERCADO (coeficiente do IFIX) ================= */
+  (function(){
+    // b = coeficiente, s = significativo (p < 0,10)
+    var GR = {
+      capm:[[[0.0244, 1], [0.0264, 1], [0.0170, 1]], [[0.0256, 1], [0.0283, 1], [0.0172, 1]]],
+      ff:[[[0.00983, 1], [0.0121, 1], [0.0183, 1]], [[0.00977, 1], [0.0136, 1], [0.0229, 1]]]
+    };
+    // por tipo: [especializado, diversificado], Tabelas 9 e 10
+    var TY = [
+      {n:L('Shoppings', 'Shopping malls'), v:[[[0.0104, 1], [0.0155, 1]], [[0.00820, 0], [0.0140, 0]]]},
+      {n:L('Escritórios', 'Offices'), v:[[[0.00610, 0], [0.0234, 1]], [[0.00291, 0], [0.0297, 1]]]},
+      {n:L('Logística', 'Logistics'), v:[[[0.0187, 1], [-0.00521, 0]], [[0.0300, 1], [-0.0294, 1]]]}
+    ];
+    var view = 0, per = 0, svg = $('bt-svg');
+    function bar(o, x0, y, v, sig, col, mx, half){
+      var w = Math.abs(v) / mx * half, x = v >= 0 ? x0 : x0 - w;
+      o.s += '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="22" rx="4" fill="' + (sig ? col : '#fff') + '" stroke="' + col + '" stroke-width="2"' + (sig ? '' : ' stroke-dasharray="4 3"') + '/>';
+      o.s += '<text x="' + (v >= 0 ? x + w + 6 : x - 6) + '" y="' + (y + 16) + '" text-anchor="' + (v >= 0 ? 'start' : 'end') + '" style="font-size:13px; font-weight:800; fill:var(--ink)">' + (v < 0 ? '−' : '') + fmt(Math.abs(v), 4) + '</text>';
+    }
+    function draw(){
+      var o = {s:''};
+      if (view < 2){
+        var d = GR[view ? 'ff' : 'capm'][per], x0 = 170, mx = 0.03, half = 270;
+        o.s += '<line x1="' + x0 + '" y1="10" x2="' + x0 + '" y2="250" stroke="#94a3b8"/>';
+        G.forEach(function(g, i){
+          var y = 30 + i * 74;
+          o.s += '<text x="' + (x0 - 12) + '" y="' + (y + 16) + '" text-anchor="end" style="font-size:15px; font-weight:700; fill:' + g.c + '">' + g.n + '</text>';
+          bar(o, x0, y, d[i][0], d[i][1], g.c, mx, half);
+        });
+        o.s += '<text x="' + x0 + '" y="290" style="font-size:12.5px; fill:var(--muted)">' + L('quanto o grupo se move quando o IFIX se move →', 'how much the group moves when IFIX moves →') + '</text>';
+      } else {
+        var x0 = 300, mx = 0.032, half = 180;
+        o.s += '<line x1="' + x0 + '" y1="6" x2="' + x0 + '" y2="296" stroke="#94a3b8"/>';
+        TY.forEach(function(t, i){
+          var y = 14 + i * 98;
+          o.s += '<text x="10" y="' + (y + 38) + '" style="font-size:15px; font-weight:800; fill:var(--ink)">' + t.n + '</text>';
+          bar(o, x0, y + 8, t.v[per][0][0], t.v[per][0][1], 'var(--esp)', mx, half);
+          bar(o, x0, y + 40, t.v[per][1][0], t.v[per][1][1], 'var(--div)', mx, half);
+        });
+        o.s += '<text x="10" y="318" style="font-size:12.5px; fill:var(--muted)"><tspan fill="var(--esp)" font-weight="700">■</tspan> ' + L('especializado', 'specialized') + '  <tspan fill="var(--div)" font-weight="700">■</tspan> ' + L('diversificado', 'diversified') + '</text>';
+      }
+      svg.innerHTML = o.s;
+      var txt;
+      if (view === 0) txt = L('No modelo de um fator (CAPM), os diversificados têm o maior coeficiente nas duas janelas, os especializados vêm logo atrás e os papéis por último.', 'In the one-factor model (CAPM), diversified funds have the largest coefficient in both windows, specialized funds come right behind and securities last.');
+      else if (view === 1) txt = L('No modelo de 3 fatores (que também considera o tamanho do fundo e o preço em relação ao patrimônio), os papéis passam para o 1º lugar; os diversificados seguem acima dos especializados.', 'In the three-factor model (which also considers fund size and price relative to book value), securities move to 1st place; diversified funds stay above specialized ones.');
+      else txt = L('Em escritórios, só os diversificados acompanham o índice de forma clara. Na logística, são os especializados; o coeficiente dos diversificados fica negativo. É a exceção que o autor destaca.', 'In offices, only diversified funds clearly follow the index. In logistics, it is the specialized ones; the diversified funds’ coefficient turns negative. This is the exception the author highlights.');
+      $('bt-panel').innerHTML = '<div class="tag">' + PER[per] + '</div><p>' + txt + '</p><p style="font-size:.8rem">' + L('<b>Como o autor lê:</b> ele usa esse coeficiente para comparar o retorno dos grupos; daí vem a conclusão de que os diversificados renderam mais.', '<b>How the author reads it:</b> he uses this coefficient to compare the groups’ returns; that is where the conclusion that diversified funds earned more comes from.') + '</p>';
+    }
+    segInit($('bt-v'), [L('Grupos · CAPM', 'Groups · CAPM'), L('Grupos · 3 fatores', 'Groups · 3 factors'), L('Por tipo de imóvel', 'By property type')], 0, function(v){ view = v; draw(); });
+    segInit($('bt-p'), PERS, 0, function(v){ per = v; draw(); });
+    draw();
+  })();
+
+  /* ================= 10 · TAXA (16 blocos) ================= */
+  (function(){
+    // coeficientes da dummy de taxa de performance: [tabela][janela][grupo: todos, esp, div, vm]
+    var C = [
+      [[0.000745, -0.00417, 0.00376, -0.00103], [-0.000457, -0.00379, 0.00450, -0.00287]],
+      [[0.000205, -0.00304, 0.000520, -0.00194], [-0.00134, -0.000874, -0.00135, -0.00286]]
+    ];
+    var GN = [L('Todos', 'All'), L('Especial.', 'Special.'), L('Divers.', 'Divers.'), L('Val. mob.', 'Securities')];
+    var GNF = [L('todos os fundos', 'all funds'), L('especializados', 'specialized'), L('diversificados', 'diversified'), L('valores mobiliários', 'securities')];
+    var RW = [L('sem controles · longa', 'no controls · long'), L('sem controles · curta', 'no controls · short'), L('com controles · longa', 'with controls · long'), L('com controles · curta', 'with controls · short')];
+    var sc = $('tx-scene'), W = 300, D = 260, st = makeStage(sc, W, D, {ay:'60%'}), boxes = [];
+    st.style.marginLeft = '70px';
+    rotatable(sc, st, -20, 6);
+    var cur = null;
+    for (var r = 0; r < 4; r++){
+      for (var g = 0; g < 4; g++){
+        var v = C[r >> 1][r & 1][g];
+        var b = box({w:56, d:46, x:g * 72 + 6, y:r * 62 + 8, h:10, c:'#cbd5e1', top:v < 0 ? '−' : '+'});
+        b.dataset.r = r; b.dataset.g = g;
+        st.appendChild(b); boxes.push(b);
+        b.addEventListener('click', (function(b){ return function(){ if (M.wasDrag(sc)) return; pick(+b.dataset.r, +b.dataset.g); }; })(b));
+      }
+      flatLabel(st, RW[r], -150, r * 62 + 22, 142, 'text-align:right; font-size:12px; color:var(--ink-2)');
+    }
+    GN.forEach(function(n, g){ flatLabel(st, n, g * 72, 252, 68, 'font-size:12px'); });
+    function pick(r, g){
+      cur = [r, g];
+      boxes.forEach(function(b){ b.classList.toggle('active', +b.dataset.r === r && +b.dataset.g === g); });
+      var v = C[r >> 1][r & 1][g];
+      $('tx-panel').innerHTML = '<div class="tag">' + L('Tabela ', 'Table ') + (r < 2 ? 14 : 15) + ' · ' + PER[r & 1] + '</div><p>' + L('Em ', 'For ') + '<b>' + GNF[g] + '</b>, ' + L('o coeficiente da taxa de performance foi ', 'the performance-fee coefficient was ') + '<b>' + (v < 0 ? '−' : '+') + fmt(Math.abs(v), 4) + '</b> (' + (v < 0 ? L('sinal negativo', 'negative sign') : L('sinal positivo', 'positive sign')) + L('), sem significância estatística: não dá para dizer que a taxa muda o retorno.', '), not statistically significant: one cannot say the fee changes the return.') + '</p>';
+    }
+    $('tx-panel').innerHTML = '<p>' + L('<b>0 de 16</b> coeficientes significativos. Os sinais variam: positivos sobretudo nos diversificados, negativos nos especializados e nos de papéis, como o autor descreve. Toque num bloco.', '<b>0 of 16</b> coefficients significant. The signs vary: mostly positive for diversified funds, negative for specialized and securities funds, as the author describes. Tap a block.') + '</p>';
+  })();
+
+  /* ================= 11 · VALOR PATRIMONIAL ================= */
+  (function(){
+    function upd(){
+      var p = +$('pv-r').value, bm = 100 / p, o = '', s = 2.2;
+      o += '<rect x="120" y="14" width="' + (100 * s) + '" height="30" rx="5" fill="var(--navy)"/><text x="112" y="34" text-anchor="end" style="font-size:13px; font-weight:700; fill:var(--navy)">' + L('patrimonial', 'book') + '</text><text x="' + (120 + 100 * s - 8) + '" y="34" text-anchor="end" style="font-size:13px; font-weight:800; fill:#fff">R$ 100</text>';
+      o += '<rect x="120" y="54" width="' + (p * s * 0.95) + '" height="30" rx="5" fill="var(--red)"/><text x="112" y="74" text-anchor="end" style="font-size:13px; font-weight:700; fill:var(--red)">' + L('na bolsa', 'exchange') + '</text><text x="' + (120 + p * s * 0.95 - 8) + '" y="74" text-anchor="end" style="font-size:13px; font-weight:800; fill:#fff">R$ ' + p + '</text>';
+      o += '<text x="120" y="108" style="font-size:13px; fill:var(--ink-2)">' + L('patrimônio ÷ preço (book/market) = ', 'book ÷ price (book/market) = ') + '<tspan font-weight="800" fill="var(--ink)">' + fmt(bm, 2) + '</tspan></text>';
+      $('pv-svg').innerHTML = o;
+      $('pv-o').textContent = 'R$ ' + p;
+      $('pv-t').innerHTML = p < 100 ? L('A bolsa paga <b>menos</b> que o valor patrimonial (book/market acima de 1). Na amostra, o maior foi 2,19: preço menos da metade do patrimonial.', 'The exchange pays <b>less</b> than book value (book/market above 1). In the sample, the highest was 2.19: a price less than half of book value.') :
+        p > 100 ? L('A bolsa paga <b>mais</b> que o valor patrimonial (book/market abaixo de 1). Na amostra, o menor foi 0,68.', 'The exchange pays <b>more</b> than book value (book/market below 1). In the sample, the lowest was 0.68.') : L('Preço igual ao valor patrimonial.', 'Price equal to book value.');
+    }
+    $('pv-r').addEventListener('input', upd); upd();
+    // matriz de significância: [nome, [P1], [P2]] com 'p' positivo, 'n' negativo, '' n.s.; valor
+    var R = [
+      [L('Especializados', 'Specialized'), ['', '0,000254'], ['', '0,000861']],
+      [L('Diversificados', 'Diversified'), ['', '0,000400'], ['', '−0,00229']],
+      [L('Valores mobiliários', 'Securities'), ['p', '0,00368'], ['p', '0,00320']],
+      [L('Escritórios · diversificados', 'Offices · diversified'), ['', '−0,000179'], ['n', '−0,00578']],
+      [L('Outros 7 recortes por tipo', 'Other 7 type splits'), ['', L('todos n.s.', 'all n.s.')], ['', L('todos n.s.', 'all n.s.')]]
+    ];
+    var h = '<tr><th></th><th>' + PER[0] + '</th><th>' + PER[1] + '</th></tr>';
+    R.forEach(function(r){ h += '<tr><td>' + r[0] + '</td>' + [r[1], r[2]].map(function(c){ return '<td><span class="dot ' + c[0] + '"></span><span class="v">' + (EN ? c[1].replace(/,/g, '.') : c[1]) + '</span></td>'; }).join('') + '</tr>'; });
+    $('sig').innerHTML = h;
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
