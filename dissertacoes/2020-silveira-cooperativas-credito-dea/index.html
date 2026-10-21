@@ -1,0 +1,916 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quais cooperativas de crédito fazem mais com menos · PPGA Interativo</title>
+<meta name="description" content="A dissertação de mestrado de Márcio José da Silveira (PPGA Mackenzie, 2020) mede, com análise envoltória de dados (DEA), quantas de 583 cooperativas de crédito brasileiras chegaram à linha de frente da eficiência de 2014 a 2019, explicada em 13 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/dissertacoes/2020-silveira-cooperativas-credito-dea/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><path d=%22M10 23l4-9 4 9zM15 23l4-11 4 11z%22 fill=%22white%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  :root{
+    --ef:var(--red);       /* eficientes, linha de frente */
+    --coop:var(--navy);    /* cooperativas, sistemas */
+    --off:#cbd5e1;         /* não eficientes */
+  }
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  .note{font-size:.76rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:12px; line-height:1.45;}
+  .note b{color:var(--ink-2);}
+  .ilus{display:inline-block; font-size:.62rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.82rem; cursor:pointer; color:var(--ink-2); font-family:inherit;}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 10px;}
+  .chips button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-family:inherit; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .chips button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .chips button.hot{border-color:var(--red); color:var(--red);}
+  .chips button.hot[aria-pressed="true"]{background:var(--red); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.74rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  svg text{font-family:var(--sans);}
+  .svgbox{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .slab .top-label{font-family:var(--sans);}
+  .slab.glass > i{--face:color-mix(in srgb, #94a3b8 14%, transparent) !important; box-shadow:inset 0 0 0 1px rgb(100 116 139 / .4);}
+  .glass, .glass > i{pointer-events:none;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4vw, 2.7rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:36em; margin-left:auto; margin-right:auto;}
+  #hero-scene{perspective:2000px;}
+  #hero-scene .slab.fill{transition:--h 1.3s cubic-bezier(.2,.8,.2,1);}
+  #hero-scene .top-label{font-size:15px;}
+
+  /* ---------- 02 · Mercado ---------- */
+  .mk{display:grid; gap:7px; margin-top:8px;}
+  .mk .r{display:grid; grid-template-columns:150px 1fr 56px; gap:10px; align-items:center; font-size:.82rem; color:var(--ink-2);}
+  .mk .r .tr{height:20px; background:#eef2f7; border-radius:5px; position:relative; overflow:hidden;}
+  .mk .r .tr i{position:absolute; left:0; top:0; bottom:0; background:#64748b; border-radius:5px; transition:width .45s;}
+  .mk .r.coop{font-weight:700; color:var(--ink);}
+  .mk .r.coop .tr i{background:var(--red);}
+  .mk .r b{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink);}
+  @media (max-width:600px){ .mk .r{grid-template-columns:104px 1fr 50px; font-size:.74rem;} }
+
+  /* ---------- 03 · Dono e cliente ---------- */
+  .flips{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .flip{perspective:900px; border:0; background:transparent; padding:0; cursor:pointer; font-family:inherit; text-align:left; min-height:104px; display:block; width:100%;}
+  .flip .in{display:block; position:relative; width:100%; height:100%; min-height:104px; transition:transform .55s; transform-style:preserve-3d;}
+  .flip.on .in{transform:rotateY(180deg);}
+  .flip .fc{position:absolute; inset:0; border-radius:12px; padding:10px 12px; backface-visibility:hidden; -webkit-backface-visibility:hidden; font-size:.8rem; line-height:1.38; display:flex; flex-direction:column; justify-content:center;}
+  .flip .fc small{font-size:.62rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; opacity:.8; margin-bottom:3px;}
+  .flip .a{background:var(--navy); color:#fff;}
+  .flip .b{background:#e2e8f0; color:var(--ink); transform:rotateY(180deg);}
+  @media (prefers-reduced-motion:reduce){ .flip .in{transition:none;} }
+  @media (max-width:600px){ .flip, .flip .in{min-height:126px;} .flip .fc{font-size:.74rem; padding:8px 10px;} }
+  #coop-line{max-height:210px; margin-top:12px;}
+
+  /* ---------- 04 · Andares ---------- */
+  #lv-scene{perspective:2000px;}
+  #lv-scene .slab{cursor:pointer;}
+  #lv-scene .slab.dim > i{opacity:.28;}
+  #lv-panel{min-height:120px; margin-top:12px;}
+
+  /* ---------- 05 · Perguntas ---------- */
+  .bets{display:grid; gap:10px;}
+  .bet{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px 16px; box-shadow:var(--shadow);}
+  .bet .q{font-size:.92rem; color:var(--ink); font-weight:600; margin-bottom:8px; line-height:1.4;}
+  .bet .q small{display:block; font-weight:400; color:var(--muted); font-size:.76rem; margin-top:2px;}
+  .bet .opts{display:flex; gap:6px; flex-wrap:wrap;}
+  .bet .opts button{border:1px solid var(--border); background:#fff; border-radius:999px; padding:6px 14px; font-family:inherit; font-size:.82rem; cursor:pointer; color:var(--ink-2);}
+  .bet .opts button.chosen{background:var(--red); border-color:var(--red); color:#fff;}
+  #bet-msg{font-size:.84rem; color:var(--muted); margin-top:10px; min-height:1.3em;}
+
+  /* ---------- 06 · Régua ---------- */
+  .io{display:grid; grid-template-columns:1fr 92px 1fr; gap:10px; align-items:center;}
+  .io .col{display:grid; gap:7px;}
+  .io .col h4{font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:0 0 2px; font-family:var(--sans);}
+  .io button{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:9px 11px; font-family:inherit; font-size:.82rem; color:var(--ink-2); cursor:pointer; text-align:left; line-height:1.3;}
+  .io .in button{border-left:5px solid #64748b;}
+  .io .out button{border-left:5px solid var(--red);}
+  .io button[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); font-weight:600; box-shadow:var(--shadow);}
+  .io .mid{background:var(--navy); color:#fff; border-radius:14px; padding:14px 8px; text-align:center; font-size:.76rem; line-height:1.3; position:relative;}
+  .io .mid b{display:block; font-family:var(--serif); font-size:1rem;}
+  #io-panel{min-height:96px; margin-top:12px;}
+  @media (max-width:600px){ .io{grid-template-columns:1fr 64px 1fr; gap:6px;} .io button{font-size:.72rem; padding:7px 8px;} .io .mid{font-size:.64rem; padding:10px 4px;} .io .mid b{font-size:.82rem;} }
+
+  /* ---------- 07 · Fronteira ---------- */
+  #fr-svg .pt{cursor:pointer;}
+  .calc{display:flex; align-items:center; gap:12px; flex-wrap:wrap; font-size:.84rem; color:var(--muted); margin:8px 0 4px;}
+  .calc input{flex:1; min-width:140px; accent-color:var(--red);}
+  .calc b{font-family:var(--serif); color:var(--ink); font-size:1.05rem; min-width:3.4em;}
+  #fr-panel{min-height:96px; margin-top:10px;}
+
+  /* ---------- 08 · Resultado ---------- */
+  #grid583{display:grid; grid-template-columns:repeat(30, minmax(0, 1fr)); gap:2px; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:10px;}
+  #grid583 i{display:block; aspect-ratio:1; border-radius:2px; background:var(--off); transition:background .35s;}
+  #grid583 i.on{background:var(--ef);}
+  .big{font-family:var(--serif); font-size:2.4rem; color:var(--red); line-height:1; font-weight:900;}
+  #res-panel{min-height:96px; margin-top:12px;}
+  .yr{display:grid; grid-template-columns:repeat(6, 1fr); gap:4px; margin-top:10px; align-items:end; height:90px;}
+  .yr button{border:0; background:transparent; padding:0; font-family:inherit; cursor:pointer; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; height:100%; font-size:.7rem; color:var(--muted);}
+  .yr button i{display:block; width:70%; background:var(--off); border-radius:4px 4px 0 0; transition:background .3s;}
+  .yr button[aria-pressed="true"] i{background:var(--red);}
+  .yr button[aria-pressed="true"]{color:var(--ink); font-weight:700;}
+  .yr button span{margin-top:3px;}
+  @media (max-width:600px){ #grid583{grid-template-columns:repeat(22, minmax(0, 1fr)); gap:1.5px; padding:6px;} }
+
+  /* ---------- 09 · Mapa ---------- */
+  .uf{display:grid; gap:3px; margin-top:4px;}
+  .uf .r{display:grid; grid-template-columns:34px 1fr 40px; gap:8px; align-items:center; font-size:.76rem; color:var(--ink-2);}
+  .uf .r .tr{height:13px; position:relative;}
+  .uf .r .tr i{position:absolute; left:0; top:0; bottom:0; border-radius:3px; transition:width .45s; background:var(--rc);}
+  .uf .r b{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink);}
+  .reg{display:flex; flex-wrap:wrap; gap:6px 12px; font-size:.76rem; color:var(--muted); margin-top:8px;}
+  #map-panel{min-height:90px; margin-top:12px;}
+
+  /* ---------- 10 · Associação ---------- */
+  .stack{display:flex; height:46px; border-radius:10px; overflow:hidden; margin-top:6px; border:1px solid var(--border);}
+  .stack i{display:block; height:100%; transition:flex-grow .45s; min-width:0;}
+  .asl{display:grid; gap:4px; margin-top:12px;}
+  .asl .r{display:grid; grid-template-columns:14px 1fr 84px; gap:8px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .asl .r i{width:12px; height:12px; border-radius:3px; display:block;}
+  .asl .r b{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink);}
+
+  /* ---------- 11 · Sistemas ---------- */
+  .sy{display:grid; gap:7px; margin-top:6px;}
+  .sy .r{display:grid; grid-template-columns:132px 1fr 66px; gap:10px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .sy .r .nm{line-height:1.2;} .sy .r .nm small{display:block; color:var(--muted); font-size:.68rem;}
+  .sy .r .tr{height:22px; background:#eef2f7; border-radius:5px; position:relative; overflow:hidden;}
+  .sy .r .tr i{position:absolute; left:0; top:0; bottom:0; border-radius:5px; background:var(--navy); transition:width .45s;}
+  .sy .r.out .tr i{background:var(--red);}
+  .sy .r.out{font-weight:700; color:var(--ink);}
+  .sy .r b{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink);}
+  .sy .sep{font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-top:6px;}
+  @media (max-width:600px){ .sy .r{grid-template-columns:96px 1fr 54px; gap:6px; font-size:.72rem;} }
+  #sy-panel{min-height:90px; margin-top:12px;}
+
+  /* ---------- 12 · Placar ---------- */
+  .score{display:grid; gap:10px;}
+  .sc{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px 16px; box-shadow:var(--shadow); border-left:6px solid var(--sc, var(--navy));}
+  .sc h3{font-size:.95rem; margin-bottom:4px; color:var(--ink);}
+  .sc .verd{display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase; border-radius:5px; padding:2px 8px; margin-bottom:6px; color:#fff; background:var(--sc, var(--navy));}
+  .sc p{margin:0 0 4px; font-size:.82rem; line-height:1.45; color:var(--ink-2);}
+  .sc .yb{font-size:.74rem; color:var(--muted); margin-top:6px;}
+
+  /* ---------- 13 · Créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.78rem; color:var(--ink-2); line-height:1.42;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+  .also{font-size:.8rem; margin-top:10px; line-height:1.5; color:var(--ink-2);}
+  .also a{color:var(--red); font-weight:600;}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/dissertacoes/2020-silveira-cooperativas-credito-dea/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 13</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Dissertação de mestrado · PPGA Mackenzie · 2020</div>
+      <h1 class="rv" style="--d:.1s">Quais cooperativas de crédito fazem mais com menos</h1>
+      <p class="sub rv" style="--d:.2s">A pesquisa comparou 583 cooperativas de crédito, ano a ano, de 2014 a 2019, e marcou as que chegaram à linha de frente: as que mais entregam crédito, depósitos e sobras para o que gastam. Em quase todos os anos, foi menos de uma em cada quatro. Explicada em 13 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Márcio José da Silveira</span>
+        <span><b>Orientador:</b> Prof. Dr. Eli Hadad Junior</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#mercado">Começar →</a>
+        <a class="btn ghost" href="#fronteira">Entender a linha de frente</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="520x330" role="img" aria-label="Seis colunas de vidro 3D, uma por ano de 2014 a 2019, cada uma do tamanho das 583 cooperativas, preenchidas de vermelho até o número de eficientes: 138, 107, 99, 327, 103 e 109"></div></div>
+      <p class="cap-legend">Cada coluna de vidro são as 583 cooperativas de um ano. O vermelho são as que chegaram à linha de frente (Tabela 4). Arraste para girar.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Mede a eficiência das cooperativas de crédito, que levam crédito e conta a quem os bancos alcançam pouco."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · MERCADO -->
+<section class="slide" id="mercado" data-label="Um mercado de poucos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O problema · Tabela 1 · dez/2016</div>
+      <h2 class="rv" style="--d:.1s">Cinco bancos dominam o dinheiro do país, e as cooperativas são a alternativa</h2>
+      <p class="lede rv" style="--d:.15s">A dissertação parte de um incômodo: o sistema financeiro brasileiro é muito concentrado. As cooperativas de crédito somadas ainda são pequenas, mas oferecem crédito a quem os grandes atendem pouco. Escolha o que comparar.</p>
+      <div class="seg rv" id="mk-seg" style="--d:.2s" role="group" aria-label="Medida">
+        <button data-m="0" aria-pressed="true">Ativos</button><button data-m="1" aria-pressed="false">Depósitos</button><button data-m="2" aria-pressed="false">Crédito</button><button data-m="3" aria-pressed="false">Patrimônio</button>
+      </div>
+      <div class="stats rv" style="--d:.25s">
+        <div class="stat"><b id="mk-top5">70,1%</b><span>fatia dos cinco maiores bancos de varejo (soma nossa)</span></div>
+        <div class="stat"><b id="mk-coop">3,57%</b><span>fatia de todo o cooperativismo financeiro</span></div>
+        <div class="stat"><b>0,701 × 0,666</b><span>IDH de regiões com e sem cooperativas, segundo a OCB</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel"><div class="mk" id="mk" aria-live="polite"></div></div>
+      <p class="note">Tabela 1 da dissertação (Portal do Cooperativismo Financeiro, com dados do Bacen IF.data, dezembro de 2016; só instituições de varejo, cooperativismo inclui os bancos cooperativos). O IDH comparado é citado pela dissertação a partir da Organização das Cooperativas Brasileiras (OCB).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · DONO E CLIENTE -->
+<section class="slide" id="dono" data-label="Dono e cliente">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> O tema · Tabela 2 e Gráfico 1</div>
+      <h2 class="rv" style="--d:.1s">Na cooperativa, quem deposita e pede empréstimo também é dono</h2>
+      <p class="lede rv" style="--d:.15s">Ela não busca lucro: o que sobra no ano volta aos associados. Por isso, o objetivo é gastar pouco para servir bem. Toque em cada cartão para ver como funciona num banco.</p>
+      <div class="flips rv" id="flips" style="--d:.2s"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="coop-line" class="svgbox" viewBox="0 0 520 220" role="img" aria-label="Linha do número de cooperados no Brasil, de 4,2 milhões em 2008 a 10,6 milhões em 2018"></svg>
+      <p class="note">Gráfico 1 da dissertação (Bacen): cooperados em dezembro de cada ano, em milhões. Uma pessoa associada a duas cooperativas conta duas vezes. A dissertação descreve o salto como "pouco mais de 150%" em dez anos. Comparação da Tabela 2, elaborada pelo autor.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · ANDARES -->
+<section class="slide" id="andares" data-label="Três andares">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Como se organizam · Figura 1 · dez/2017</div>
+      <h2 class="rv" style="--d:.1s">As cooperativas se empilham em três andares e quatro grandes sistemas</h2>
+      <p class="lede rv" style="--d:.15s">A singular atende o associado. Três ou mais singulares formam uma central, que presta serviços, fiscaliza e garante as filiadas. Centrais formam confederações. Ao lado, os prédios de cada sistema em 2017. Toque em um.</p>
+      <div class="panel rv" id="lv-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="lv-scene" data-fit="560x340" role="img" aria-label="Prédios 3D, um por sistema: a base é o número de singulares, o andar do meio as centrais e o topo a confederação. Sicoob tem a base mais alta, 464 singulares; 200 cooperativas não têm central"></div></div>
+      <div class="legend"><span><i class="dot" style="background:#5b6f96"></i>singulares (altura = quantidade)</span><span><i class="dot" style="background:var(--navy)"></i>centrais</span><span><i class="dot" style="background:var(--red)"></i>confederação</span></div>
+      <p class="note">Figura 1 da dissertação (Bacen, dezembro de 2017). Cresol e Unicred são confederações autorizadas como instituições financeiras; no Sicoob e no Sicredi, os serviços financeiros ficam com os bancos cooperativos (Bancoob e Bansicredi).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · PERGUNTAS -->
+<section class="slide" id="perguntas" data-label="Três perguntas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> As hipóteses</div>
+      <h2 class="rv" style="--d:.1s">A pesquisa fez três perguntas sobre o que pesa na eficiência</h2>
+      <p class="lede rv" style="--d:.15s">Antes de ver os resultados, dê o seu palpite. As respostas do autor, e o que os números permitem dizer, aparecem na tela 12.</p>
+      <p id="bet-msg" class="rv" style="--d:.2s" aria-live="polite"></p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="bets" id="bets"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · RÉGUA -->
+<section class="slide" id="regua" data-label="A régua">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Método · Bacen · 2014 a 2019</div>
+      <h2 class="rv" style="--d:.1s">A régua compara o que cada cooperativa usa com o que ela entrega</h2>
+      <p class="lede rv" style="--d:.15s">O autor reuniu os balanços enviados ao Banco Central pelas 583 cooperativas que informaram todos os dados de 2014 a 2019. Para cada uma, três coisas entram e três saem. Toque em cada item.</p>
+      <div class="stats rv" style="--d:.2s">
+        <div class="stat"><b>583</b><span>cooperativas com dados em todos os anos</span></div>
+        <div class="stat"><b>6</b><span>anos, de 2014 a 2019, cada um medido à parte</span></div>
+        <div class="stat"><b>3.498</b><span>medições ao todo (583 × 6, conta nossa)</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="io" id="io">
+        <div class="col in"><h4>O que usa</h4></div>
+        <div class="mid"><b>DEA</b>cooperativa</div>
+        <div class="col out"><h4>O que entrega</h4></div>
+      </div>
+      <div class="panel" id="io-panel" aria-live="polite"></div>
+      <p class="note">Variáveis das seções de resultados e de comparação entre artigos, seguindo Abreu, Kimura, Araújo Neto e Peng (2018). O cálculo usou o modelo CCR da análise envoltória de dados, com retornos constantes de escala e orientação aos insumos, no Stata 16.1.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · FRONTEIRA -->
+<section class="slide" id="fronteira" data-label="A linha de frente">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Como a DEA decide <span class="ilus">ilustração nossa</span></div>
+      <h2 class="rv" style="--d:.1s">As melhores do grupo traçam a linha de frente, e as outras são medidas por ela</h2>
+      <p class="lede rv" style="--d:.15s">A análise envoltória de dados (DEA) não usa uma meta fixa: compara as cooperativas entre si. Quem entrega o mesmo usando menos fica na linha de frente. Para as outras, a pergunta é: dava para entregar o mesmo com quanto menos? Escolha uma cooperativa e corte os gastos dela.</p>
+      <div class="chips rv" id="fr-chips" style="--d:.2s" role="group" aria-label="Cooperativas inventadas"></div>
+      <div class="calc rv" style="--d:.25s"><label for="fr-cut">Usar só</label><input type="range" id="fr-cut" min="40" max="100" value="100" step="1"><b id="fr-val">100%</b></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="fr-svg" class="svgbox" viewBox="0 0 520 360" role="img" aria-label="Gráfico com seis cooperativas inventadas: no eixo horizontal, despesas para cada 100 reais entregues; no vertical, ativos para cada 100 reais entregues. Três delas formam a linha de frente vermelha"></svg>
+      <div class="panel" id="fr-panel" aria-live="polite"></div>
+      <p class="note"><span class="ilus">ilustração nossa</span> Cooperativas e números inventados, com dois insumos e uma entrega só, para caber num desenho. Na dissertação, a régua usa três insumos e três entregas, e a linha de frente é calculada a cada ano.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · RESULTADO -->
+<section class="slide" id="resultado" data-label="O resultado">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> O resultado · Tabela 4</div>
+      <h2 class="rv" style="--d:.1s">Na maioria dos anos, menos de uma em cada cinco chegou à linha de frente</h2>
+      <p class="lede rv" style="--d:.15s">Cada quadradinho é uma das 583 cooperativas. Escolha o ano: as vermelhas foram eficientes, as cinzas ficaram atrás da linha de frente. Um ano destoa.</p>
+      <div class="yr rv" id="yr" style="--d:.2s" role="group" aria-label="Ano"></div>
+      <div class="panel rv" id="res-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div id="grid583" role="img" aria-label="Grade de 583 quadrados, um por cooperativa; os vermelhos são as eficientes do ano escolhido"></div>
+      <div class="legend"><span><i class="dot" style="background:var(--ef)"></i>eficiente (na linha de frente)</span><span><i class="dot" style="background:var(--off)"></i>não eficiente</span></div>
+      <p class="note">Tabela 4 da dissertação. As porcentagens são conta nossa (eficientes ÷ 583). A dissertação mostra quem ficou ou não na linha de frente, sem a nota de cada cooperativa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · MAPA -->
+<section class="slide" id="mapa" data-label="Onde estão">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Por estado · Tabelas 5 e 6</div>
+      <h2 class="rv" style="--d:.1s">Duas em cada três eficientes estão no Sudeste, e 2017 acendeu quase todos os estados</h2>
+      <p class="lede rv" style="--d:.15s">Só as singulares, pelo estado onde estão registradas. Compare 2016 com 2017: o número salta em São Paulo, Minas Gerais e nos três estados do Sul. Para o autor, foi o bom momento do agronegócio.</p>
+      <div class="chips rv" id="map-chips" style="--d:.2s" role="group" aria-label="Ano"></div>
+      <div class="panel rv" id="map-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel"><div class="uf" id="uf" aria-live="polite"></div>
+      <div class="reg" id="reg"></div></div>
+      <p class="note">Tabela 6 (singulares eficientes por estado de registro; o estado de registro nem sempre é onde a cooperativa atua) e Tabela 5 (Bacen, adultos com relacionamento bancário). Somas por região e porcentagens: conta nossa. A explicação pelo agronegócio é do autor, sem teste.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · ASSOCIAÇÃO -->
+<section class="slide" id="associacao" data-label="Quem pode entrar">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Critério de associação · Tabela 7</div>
+      <h2 class="rv" style="--d:.1s">Cerca de 8 em cada 10 eficientes são de empregados ou de livre admissão</h2>
+      <p class="lede rv" style="--d:.15s">Cada cooperativa diz quem pode se associar: empregados de uma empresa ou órgão público, qualquer pessoa da região (livre admissão), uma profissão, produtores rurais. A barra mostra a mistura das eficientes em cada ano.</p>
+      <div class="chips rv" id="as-chips" style="--d:.2s" role="group" aria-label="Ano"></div>
+      <p class="note rv" style="--d:.25s"><b>Atenção:</b> a tabela conta só as eficientes. Sem saber quantas cooperativas de cada tipo existem entre as 583, não dá para dizer se esses tipos são mais eficientes ou só mais numerosos (observação nossa).</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel">
+        <div class="stack" id="stack" role="img" aria-label="Barra empilhada com a mistura das cooperativas eficientes por critério de associação"></div>
+        <div class="asl" id="asl" aria-live="polite"></div>
+      </div>
+      <p class="note">Tabela 7 da dissertação. Porcentagens: conta nossa. O autor lembra que o critério não diz tudo: uma cooperativa de livre admissão, como a Credicitrus, que serviu de referência em 2018, também sente o efeito da atividade rural.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · SISTEMAS -->
+<section class="slide" id="sistemas" data-label="Fora dos sistemas">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> A virada · Tabela 9 · conta nossa</div>
+      <h2 class="rv" style="--d:.1s">Longe dos grandes sistemas, mais cooperativas chegaram à linha de frente</h2>
+      <p class="lede rv" style="--d:.15s">A Tabela 9 diz, em cada sistema, quantas cooperativas existem e quantas foram eficientes. Dividindo uma pela outra, as singulares de fora dos quatro grandes sistemas chegaram à frente com mais frequência em cinco dos seis anos. Escolha o período.</p>
+      <div class="chips rv" id="sy-chips" style="--d:.2s" role="group" aria-label="Período"></div>
+      <div class="panel rv" id="sy-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel"><div class="sy" id="sy" aria-live="polite"></div></div>
+      <p class="note">Tabela 9 da dissertação (eficientes e total por classificação e sistema). As porcentagens são conta nossa e não têm teste estatístico; "Outros" reúne as singulares fora de Sicoob, Sicredi, Unicred e Cresol. O autor lê essa diferença como efeito da vinculação: entrar num sistema traz mais estrutura e mais despesa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · PLACAR -->
+<section class="slide" id="placar" data-label="As respostas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">12</span> As três perguntas · Conclusão</div>
+      <h2 class="rv" style="--d:.1s">As respostas do autor e o que os números permitem dizer</h2>
+      <p class="lede rv" style="--d:.15s">A dissertação responde às três perguntas pela lógica da régua: mais estrutura significa mais insumos e menos chance de estar na frente. Nenhuma das respostas teve teste estatístico. O seu palpite da tela 05 aparece embaixo de cada uma.</p>
+      <p class="note rv" style="--d:.2s">As respostas vêm da conclusão da dissertação. O que está marcado como observação nossa não está no texto: é a nossa leitura das tabelas.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="score" id="score"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e limites">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">13</span> Na prática · limites · créditos</div>
+    <h2 class="rv" style="--d:.1s">Crescer junto custa, e a eficiência precisa entrar na conta</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Gestores de cooperativas</h3><p>Para o autor, a régua premia estruturas simples: ativos e despesas pesam contra. Entrar numa central traz escala e proteção, mas também custo; vale acompanhar esse custo ano a ano.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Centrais e sistemas</h3><p>A central garante as filiadas quando algo dá errado. Por isso, diz o autor, seria importante que as centrais fossem eficientes, o que a amostra não mostra: fora de 2017, só de 3 a 6 das 19 centrais chegaram à frente em cada ano.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ink-2)"><h3>Quem regula e quem é associado</h3><p>A dissertação vê as cooperativas como contrapeso à concentração bancária e lembra que as que não querem se filiar a uma central enfrentam exigências maiores do Banco Central, o que também encarece os insumos.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#5b6f96"><h3>Pesquisadores</h3><p>O autor sugere a fronteira estocástica, que separa o acaso da ineficiência, modelos com retornos variáveis de escala e uma variável de inovação, já que as fintechs entram nesse mercado.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Sem as notas.</b> A dissertação mostra só quem ficou na linha de frente em cada ano, sem a nota de cada cooperativa nem quanto as outras ficaram atrás. <em>· observação nossa</em></li>
+          <li><b>2017 fora da curva.</b> 327 eficientes num ano, contra 99 a 138 nos outros. O autor explica pelo agronegócio, sem teste; um salto desse tamanho pede cautela antes de ser lido como mudança real. <em>· observação nossa</em></li>
+          <li><b>Contagens, não testes.</b> As três respostas e as diferenças entre sistemas vêm de contagens; nenhuma passou por teste estatístico. <em>· observação nossa</em></li>
+          <li><b>Régua determinística.</b> A DEA mede a distância até a linha estimada com os próprios dados e não separa erro ou sorte de ineficiência, como o autor reconhece. <em>· limitação do autor</em></li>
+          <li><b>Estado de registro.</b> Uma cooperativa registrada em Minas pode atuar também em Goiás; o mapa da tela 09 é o do registro. <em>· ressalva do autor</em></li>
+          <li><b>Só quem informou tudo.</b> Ficaram fora as cooperativas que fecharam, se fundiram ou não enviaram algum dado entre 2014 e 2019. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          SILVEIRA, Márcio José da. <em>Uma abordagem prática sobre cooperativas utilizando sistema DEA.</em> Dissertação (Mestrado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2020. Orientador: Prof. Dr. Eli Hadad Junior.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Balanços das cooperativas no Banco Central (2014–2019); análise envoltória de dados, modelo CCR orientado aos insumos, no Stata 16.1. Trabalho realizado com apoio do MackPesquisa (Fundo Mackenzie de Pesquisa). A dissertação tem 949 páginas porque traz em anexo os cadastros do Banco Central; esta versão usa só o texto principal e simplifica a dissertação para o público em geral.</p>
+        <p class="also"><b>Leia também:</b> <a href="../../dissertacoes/2021-cavalcante-eficiencia-cooperativas-credito/">Cavalcante (2021)</a>, do mesmo orientador e com os mesmos balanços do Banco Central, usou a fronteira estocástica que esta dissertação sugere; <a href="../../teses/2021-pereira-desempenho-cooperativas-credito/">Pereira (2021)</a> estuda o desempenho das cooperativas de crédito ao longo do tempo.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a dissertação completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  function n0(n){ return n.toLocaleString(EN ? 'en-US' : 'pt-BR'); }
+  function pc(v, d){ return fmt(v, d === undefined ? 1 : d) + '%'; }
+  var NS = 'http://www.w3.org/2000/svg';
+  var MOB = window.matchMedia('(max-width:600px)');
+  function el(tag, a, txt){ var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); if (txt !== undefined) e.textContent = txt; return e; }
+  function chips(id, items, fn, start, hot){
+    var g = $(id); g.innerHTML = '';
+    items.forEach(function(it, i){
+      var b = document.createElement('button');
+      b.textContent = it; b.setAttribute('aria-pressed', i === start ? 'true' : 'false');
+      if (hot && hot.indexOf(i) >= 0) b.className = 'hot';
+      b.addEventListener('click', function(){ each(g.children, function(c){ c.setAttribute('aria-pressed', c === b ? 'true' : 'false'); }); fn(i); });
+      g.appendChild(b);
+    });
+  }
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  var Y = [2014, 2015, 2016, 2017, 2018, 2019], N = 583;
+  var EF = [138, 107, 99, 327, 103, 109];                 // Tabela 4
+  // Tabela 9: eficientes por ano e total de cada grupo
+  var SING = [
+    {k:'Sicoob',  t:160, e:[21, 18, 17, 66, 28, 23]},
+    {k:'Sicredi', t:65,  e:[5, 11, 4, 33, 11, 9]},
+    {k:'Unicred', t:27,  e:[4, 2, 3, 16, 7, 1]},
+    {k:'Cresol',  t:14,  e:[2, 0, 2, 7, 0, 2]},
+    {k:L('Outros', 'Others'), t:297, e:[99, 73, 68, 195, 51, 70], out:true}
+  ];
+  var CENT = [
+    {k:'Unicred', t:6, e:[2, 0, 1, 1, 2, 2]},
+    {k:'Sicredi', t:2, e:[2, 0, 1, 2, 0, 0]},
+    {k:'Sicoob',  t:7, e:[1, 2, 3, 6, 2, 0]},
+    {k:L('Outros', 'Others'), t:4, e:[1, 1, 0, 1, 1, 1]}
+  ];
+  var CONF = {t:1, e:[1, 0, 0, 0, 1, 1]};
+  function sum(a){ return a.reduce(function(s, v){ return s + v; }, 0); }
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), H = 210;
+    var st = makeStage(sc, 330, 90, {ay:'76%', rx:'60deg'});
+    rotatable(sc, st, -24, 10);
+    var fills = [];
+    Y.forEach(function(y, i){
+      var x = 8 + i * 54, hot = i === 3;
+      var f = box({w:36, d:36, x:x + 3, y:30, h:2, c:hot ? 'var(--red)' : '#e85a75', top:String(EF[i]), cls:'fill'});
+      st.appendChild(f); fills.push(f);
+      st.appendChild(box({w:42, d:42, x:x, y:27, h:H, c:'#94a3b8', cls:'glass'}));
+      flatLabel(st, String(y), x - 6, 74, 54, 'font-size:13px;' + (hot ? 'color:var(--red);font-weight:800' : ''));
+    });
+    function go(){ fills.forEach(function(f, i){ f.style.setProperty('--h', Math.max(2, H * EF[i] / N) + 'px'); }); }
+    new IntersectionObserver(function(es){ if (es[0].isIntersecting) setTimeout(go, 300); }).observe(sc);
+    setTimeout(go, 2500);
+  })();
+
+  /* ================= 02 · MERCADO ================= */
+  (function(){
+    // Tabela 1 (dez/2016): % de ativos, depósitos, operações de crédito e patrimônio líquido
+    var B = [
+      {n:'Banco do Brasil', v:[17.33, 20.97, 19.46, 11.69]},
+      {n:'Itaú', v:[16.06, 17.29, 13.78, 19.72]},
+      {n:'Caixa Econômica Federal', v:[15.15, 24.02, 21.79, 4.12]},
+      {n:'Bradesco', v:[13.04, 11.04, 10.79, 15.36]},
+      {n:'Santander', v:[8.50, 6.88, 6.66, 9.11]},
+      {n:L('Cooperativismo financeiro', 'Financial cooperatives'), v:[3.57, 6.64, 3.42, 5.95], coop:true},
+      {n:'Safra', v:[1.79, 0.59, 1.34, 1.44]},
+      {n:'Banrisul', v:[0.82, 2.00, 0.85, 0.98]},
+      {n:'Citibank', v:[0.87, 0.91, 0.44, 1.28]},
+      {n:'Banco do Nordeste', v:[0.56, 0.50, 0.39, 0.51]}
+    ];
+    var g = $('mk');
+    var rows = B.map(function(b){
+      var r = document.createElement('div'); r.className = 'r' + (b.coop ? ' coop' : '');
+      r.innerHTML = '<span>' + b.n + '</span><span class="tr"><i></i></span><b></b>';
+      g.appendChild(r); return r;
+    });
+    function show(m){
+      var max = 25;
+      B.forEach(function(b, i){ rows[i].querySelector('i').style.width = (b.v[m] / max * 100) + '%'; rows[i].querySelector('b').textContent = pc(b.v[m], 2); });
+      $('mk-top5').textContent = pc(sum(B.slice(0, 5).map(function(b){ return b.v[m]; })), 1);
+      $('mk-coop').textContent = pc(B[5].v[m], 2);
+    }
+    each($('mk-seg').querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){ each($('mk-seg').querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); show(+b.dataset.m); });
+    });
+    show(0);
+  })();
+
+  /* ================= 03 · DONO E CLIENTE ================= */
+  (function(){
+    var P = [
+      [L('Sociedade simples, sem fins lucrativos.', 'A simple society, not for profit.'), L('Sociedade empresária que prioriza o lucro dos acionistas.', 'A business company that puts shareholders’ profit first.')],
+      [L('Número ilimitado de associados.', 'Unlimited number of members.'), L('Número limitado de ações.', 'Limited number of shares.')],
+      [L('Cada associado tem um voto.', 'Each member has one vote.'), L('Voto proporcional às ações.', 'Votes in proportion to shares.')],
+      [L('Quotas fechadas a quem é de fora, nem por herança.', 'Shares closed to outsiders, not even by inheritance.'), L('Ações livremente negociadas.', 'Shares freely traded.')],
+      [L('Resultado dos atos cooperativos isento de tributos.', 'Surplus from cooperative acts is tax-exempt.'), L('Resultado positivo tributado.', 'Profit is taxed.')],
+      [L('As sobras voltam aos associados ou ficam na cooperativa, como a assembleia decidir.', 'Surpluses go back to members or stay in the union, as the general meeting decides.'), L('O lucro vai aos acionistas, conforme a participação.', 'Profit goes to shareholders, by their stake.')]
+    ];
+    var g = $('flips');
+    P.forEach(function(p){
+      var b = document.createElement('button'); b.className = 'flip'; b.setAttribute('aria-pressed', 'false');
+      b.innerHTML = '<span class="in"><span class="fc a"><small>' + L('Cooperativa', 'Credit union') + '</small>' + p[0] + '</span><span class="fc b"><small>' + L('Banco', 'Bank') + '</small>' + p[1] + '</span></span>';
+      b.addEventListener('click', function(){ var on = !b.classList.contains('on'); b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+      g.appendChild(b);
+    });
+    // Gráfico 1: cooperados (milhões), dez/2008 a dez/2018
+    var V = [4.2, 4.5, 5.1, 5.8, 6.0, 6.2, 7.3, 8.3, 8.9, 9.6, 10.6];
+    var svg = $('coop-line'), x0 = 46, x1 = 496, y0 = 180, y1 = 30, vmax = 12;
+    function X(i){ return x0 + (x1 - x0) * i / (V.length - 1); }
+    function Yv(v){ return y0 - (y0 - y1) * v / vmax; }
+    [0, 4, 8, 12].forEach(function(t){
+      svg.appendChild(el('line', {x1:x0, x2:x1, y1:Yv(t), y2:Yv(t), stroke:'#e2e8f0'}));
+      svg.appendChild(el('text', {x:x0 - 8, y:Yv(t) + 4, 'text-anchor':'end', 'font-size':11, fill:'#64748b'}, String(t)));
+    });
+    svg.appendChild(el('text', {x:x0, y:18, 'font-size':12, fill:'#334155', 'font-weight':600}, L('Cooperados (milhões)', 'Members (millions)')));
+    var d = V.map(function(v, i){ return (i ? 'L' : 'M') + X(i) + ' ' + Yv(v); }).join(' ');
+    svg.appendChild(el('path', {d:d + ' L' + X(V.length - 1) + ' ' + y0 + ' L' + x0 + ' ' + y0 + ' Z', fill:'color-mix(in srgb, #1f3b73 10%, white)'}));
+    svg.appendChild(el('path', {d:d, fill:'none', stroke:'#1f3b73', 'stroke-width':3}));
+    V.forEach(function(v, i){
+      var last = i === V.length - 1, first = i === 0;
+      svg.appendChild(el('circle', {cx:X(i), cy:Yv(v), r:last || first ? 5 : 3, fill:last ? '#e80734' : '#1f3b73'}));
+      if (i % 2 === 0 || last) svg.appendChild(el('text', {x:X(i), y:y0 + 18, 'text-anchor':'middle', 'font-size':11, fill:'#64748b'}, String(2008 + i)));
+      if (first || last || i === 5) svg.appendChild(el('text', {x:X(i), y:Yv(v) - 10, 'text-anchor':'middle', 'font-size':13, 'font-weight':700, fill:last ? '#e80734' : '#0f172a'}, fmt(v, 1)));
+    });
+  })();
+
+  /* ================= 04 · ANDARES ================= */
+  (function(){
+    // Figura 1 (dez/2017): singulares e centrais por sistema
+    var S = [
+      {k:'Sicredi', s:116, c:5, conf:true, p:L('116 singulares filiadas a 5 centrais. Os serviços financeiros ficam com o banco cooperativo (Bansicredi).', '116 local unions in 5 central unions. Financial services are provided by its cooperative bank (Bansicredi).')},
+      {k:'Sicoob', s:464, c:16, conf:true, p:L('O maior sistema: 464 singulares em 16 centrais, com o banco cooperativo Bancoob.', 'The largest system: 464 local unions in 16 central unions, with the cooperative bank Bancoob.')},
+      {k:'Unicred', s:34, c:4, conf:true, p:L('34 singulares em 4 centrais; a confederação é autorizada pelo Banco Central como instituição financeira.', '34 local unions in 4 central unions; the confederation is licensed by the Central Bank as a financial institution.')},
+      {k:'Cresol', s:110, c:4, conf:true, p:L('110 singulares em 4 centrais; a confederação também é instituição financeira autorizada.', '110 local unions in 4 central unions; the confederation is also a licensed financial institution.')},
+      {k:L('Outras', 'Others'), s:43, c:6, conf:false, p:L('43 singulares em 6 centrais que não pertencem a nenhum dos quatro sistemas.', '43 local unions in 6 central unions that belong to none of the four systems.')},
+      {k:L('Sem central', 'No central'), s:200, c:0, conf:false, p:L('200 singulares que não se filiaram a nenhuma central. Segundo a dissertação, elas cumprem exigências mais rígidas do Banco Central para funcionar.', '200 local unions not affiliated with any central union. According to the dissertation, they meet stricter Central Bank requirements to operate.')}
+    ];
+    var sc = $('lv-scene'), st = makeStage(sc, 420, 120, {ay:'78%', rx:'60deg'});
+    rotatable(sc, st, -22, 9);
+    var K = 0.32, cols = [];
+    S.forEach(function(s, i){
+      var x = 6 + i * 70, w = 48, parts = [];
+      var hb = Math.max(4, s.s * K);
+      parts.push(box({w:w, d:w, x:x, y:34, h:hb, c:'#5b6f96', top:s.c ? '' : String(s.s)}));
+      if (s.c){ parts.push(box({w:w - 10, d:w - 10, x:x + 5, y:39, z:hb, h:18, c:'var(--navy)', top:s.conf ? '' : String(s.c)})); }
+      if (s.conf){ parts.push(box({w:w - 22, d:w - 22, x:x + 11, y:45, z:hb + 18, h:10, c:'var(--red)'})); }
+      parts.forEach(function(p){ st.appendChild(p); p.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick(i); }); });
+      flatLabel(st, s.k, x - 10, 92, w + 20, 'font-size:12px');
+      cols.push(parts);
+    });
+    function pick(i){
+      cols.forEach(function(ps, j){ ps.forEach(function(p){ p.classList.toggle('dim', j !== i); }); });
+      var s = S[i];
+      $('lv-panel').innerHTML = '<h3>' + s.k + '</h3><p>' + s.p + '</p><p style="font-size:.78rem;color:var(--muted)">' + n0(s.s) + ' ' + L('singulares', 'local unions') + (s.c ? ' · ' + s.c + ' ' + L('centrais', 'central unions') : '') + (s.conf ? ' · 1 ' + L('confederação', 'confederation') : '') + '</p>';
+    }
+    pick(1);
+  })();
+
+  /* ================= 05 · PERGUNTAS ================= */
+  var BETS = [null, null, null];
+  var renderScore = function(){};
+  (function(){
+    var Q = [
+      {q:L('Fazer parte de uma estrutura maior (central, sistema, confederação) muda a eficiência?', 'Does belonging to a larger structure (central union, system, confederation) change efficiency?'), s:L('Hipótese 1 · vinculação institucional', 'Hypothesis 1 · institutional affiliation')},
+      {q:L('Quem pode se associar (empregados, livre admissão, uma profissão, produtores rurais) afeta a eficiência?', 'Does who may join (employees, open membership, a profession, farmers) affect efficiency?'), s:L('Hipótese 2 · vinculação dos associados', 'Hypothesis 2 · member affiliation')},
+      {q:L('O tamanho da cooperativa interfere na eficiência?', 'Does a credit union’s size affect efficiency?'), s:L('Hipótese 3 · tamanho', 'Hypothesis 3 · size')}
+    ];
+    var g = $('bets');
+    Q.forEach(function(x, i){
+      var d = document.createElement('div'); d.className = 'bet';
+      d.innerHTML = '<div class="q">' + x.q + '<small>' + x.s + '</small></div><div class="opts"></div>';
+      var o = d.querySelector('.opts');
+      [L('Sim', 'Yes'), L('Não', 'No')].forEach(function(t, j){
+        var b = document.createElement('button'); b.textContent = t;
+        b.addEventListener('click', function(){
+          BETS[i] = j; each(o.children, function(c, k){ c.className = k === j ? 'chosen' : ''; });
+          var n = BETS.filter(function(v){ return v !== null; }).length;
+          $('bet-msg').textContent = n < 3 ? L('Palpites dados: ', 'Guesses made: ') + n + ' / 3' : L('Pronto. Guarde seus palpites: as respostas estão na tela 12.', 'Done. Keep your guesses in mind: the answers are on screen 12.');
+          renderScore();
+        });
+        o.appendChild(b);
+      });
+      g.appendChild(d);
+    });
+  })();
+
+  /* ================= 06 · RÉGUA ================= */
+  (function(){
+    var IN = [
+      {h:L('Ativo total', 'Total assets'), p:L('Tudo o que a cooperativa tem para trabalhar: dinheiro em caixa, empréstimos feitos, imóveis. Quanto maior, mais recurso ela precisa justificar.', 'Everything the credit union has to work with: cash, loans made, property. The larger it is, the more resources it has to justify.')},
+      {h:L('Despesas de pessoal e operacionais', 'Staff and operating expenses'), p:L('Quanto a cooperativa gasta com quem trabalha nela e para funcionar no dia a dia.', 'What the credit union spends on its staff and on running day to day.')},
+      {h:L('Despesas administrativas', 'Administrative expenses'), p:L('Aluguel, sistemas, serviços de terceiros e outras contas da administração.', 'Rent, systems, outsourced services and other administrative bills.')}
+    ];
+    var OUT = [
+      {h:L('Volume de crédito', 'Credit volume'), p:L('O dinheiro emprestado aos associados: o serviço principal de uma cooperativa de crédito.', 'Money lent to members: a credit union’s main service.')},
+      {h:L('Total de depósitos', 'Total deposits'), p:L('O que os associados guardam e aplicam na cooperativa: o serviço a quem poupa.', 'What members keep and invest in the credit union: the service to savers.')},
+      {h:L('Lucratividade (sobras)', 'Profitability (surplus)'), p:L('Sem fins lucrativos não quer dizer sem resultado: as receitas precisam cobrir as despesas para a cooperativa continuar de pé e devolver sobras.', 'Not for profit does not mean no surplus: revenue must cover expenses for the credit union to stay afloat and return surpluses.')}
+    ];
+    var cin = $('io').querySelector('.in'), cout = $('io').querySelector('.out'), all = [];
+    function add(col, it){
+      var b = document.createElement('button'); b.textContent = it.h; b.setAttribute('aria-pressed', 'false');
+      b.addEventListener('click', function(){ all.forEach(function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); show(it); });
+      col.appendChild(b); all.push(b);
+    }
+    IN.forEach(function(it){ add(cin, it); }); OUT.forEach(function(it){ add(cout, it); });
+    function show(it){ $('io-panel').innerHTML = '<h3>' + it.h + '</h3><p>' + it.p + '</p>'; }
+    $('io-panel').innerHTML = '<h3>' + L('Gastar menos para entregar o mesmo', 'Spend less to deliver the same') + '</h3><p>' + L('O autor escolheu olhar pelo lado dos insumos: a pergunta é se a cooperativa poderia usar menos ativos e despesas sem entregar menos. Para ele, isso combina com uma organização que existe para servir o associado, não para crescer o lucro.', 'The author chose to look from the input side: the question is whether the credit union could use fewer assets and expenses without delivering less. For the author, this suits an organisation that exists to serve members, not to grow profit.') + '</p>';
+  })();
+
+  /* ================= 07 · FRONTEIRA (ilustração) ================= */
+  (function(){
+    // Cooperativas inventadas: x = despesas por R$ 100 entregues; y = ativos por R$ 100 entregues
+    var P = [
+      {k:'A', x:2, y:10}, {k:'B', x:3.5, y:6}, {k:'C', x:7, y:3.5},
+      {k:'D', x:5, y:9}, {k:'E', x:6, y:6}, {k:'F', x:10, y:5}
+    ];
+    var FR = [P[0], P[1], P[2]];
+    var svg = $('fr-svg'), x0 = 54, x1 = 500, y0 = 318, y1 = 40, XM = 12, YM = 12;
+    function SX(v){ return x0 + (x1 - x0) * v / XM; }
+    function SY(v){ return y0 - (y0 - y1) * v / YM; }
+    // fator t em que o raio t·(x,y) toca a fronteira (A–B–C, vertical acima de A, horizontal à direita de C)
+    function theta(p){
+      var best = 1;
+      var segs = [[{x:FR[0].x, y:99}, FR[0]], [FR[0], FR[1]], [FR[1], FR[2]], [FR[2], {x:99, y:FR[2].y}]];
+      segs.forEach(function(s){
+        var a = s[0], b = s[1], dx = b.x - a.x, dy = b.y - a.y;
+        var det = p.x * (-dy) - (-dx) * p.y; if (Math.abs(det) < 1e-9) return;
+        var t = (a.x * (-dy) - (-dx) * a.y) / det, u = (p.x * a.y - p.y * a.x) / det;
+        if (u >= -1e-9 && u <= 1 + 1e-9 && t > 0 && t <= 1 + 1e-9) best = Math.min(best, t);
+      });
+      return best;
+    }
+    P.forEach(function(p){ p.t = theta(p); });
+    var cur = 4, cut = 100, g = el('g');
+    function draw(){
+      svg.innerHTML = '';
+      for (var v = 0; v <= 12; v += 2){
+        svg.appendChild(el('line', {x1:SX(v), x2:SX(v), y1:y0, y2:y1, stroke:'#f1f5f9'}));
+        svg.appendChild(el('line', {x1:x0, x2:x1, y1:SY(v), y2:SY(v), stroke:'#f1f5f9'}));
+        svg.appendChild(el('text', {x:SX(v), y:y0 + 16, 'text-anchor':'middle', 'font-size':11, fill:'#64748b'}, String(v)));
+        svg.appendChild(el('text', {x:x0 - 8, y:SY(v) + 4, 'text-anchor':'end', 'font-size':11, fill:'#64748b'}, String(v)));
+      }
+      svg.appendChild(el('text', {x:x1, y:y0 + 34, 'text-anchor':'end', 'font-size':12, fill:'#334155'}, L('despesas para cada R$ 100 entregues →', 'expenses per R$ 100 delivered →')));
+      svg.appendChild(el('text', {x:x0 - 30, y:20, 'font-size':12, fill:'#334155'}, L('↑ ativos para cada R$ 100 entregues', '↑ assets per R$ 100 delivered')));
+      // área "pior que a fronteira"
+      svg.appendChild(el('path', {d:'M' + SX(FR[0].x) + ' ' + SY(12) + ' L' + SX(FR[0].x) + ' ' + SY(FR[0].y) + ' L' + SX(FR[1].x) + ' ' + SY(FR[1].y) + ' L' + SX(FR[2].x) + ' ' + SY(FR[2].y) + ' L' + SX(12) + ' ' + SY(FR[2].y) + ' L' + SX(12) + ' ' + SY(12) + ' Z', fill:'color-mix(in srgb, #e80734 5%, white)'}));
+      svg.appendChild(el('path', {d:'M' + SX(FR[0].x) + ' ' + SY(12) + ' L' + SX(FR[0].x) + ' ' + SY(FR[0].y) + ' L' + SX(FR[1].x) + ' ' + SY(FR[1].y) + ' L' + SX(FR[2].x) + ' ' + SY(FR[2].y) + ' L' + SX(12) + ' ' + SY(FR[2].y), fill:'none', stroke:'#e80734', 'stroke-width':3}));
+      svg.appendChild(el('text', {x:SX(8.2), y:SY(3.5) + 18, 'font-size':12, 'font-weight':700, fill:'#e80734'}, L('linha de frente', 'frontier')));
+      var p = P[cur], f = cut / 100;
+      if (p.t < 0.999){
+        svg.appendChild(el('line', {x1:SX(0), y1:SY(0), x2:SX(p.x), y2:SY(p.y), stroke:'#94a3b8', 'stroke-dasharray':'4 4'}));
+        svg.appendChild(el('circle', {cx:SX(p.x * f), cy:SY(p.y * f), r:9, fill:f <= p.t + 0.005 ? '#e80734' : '#fff', stroke:'#e80734', 'stroke-width':2.5}));
+      }
+      P.forEach(function(q, i){
+        var on = q.t > 0.999, c = el('g', {'class':'pt', tabindex:0, role:'button', 'aria-label':L('Cooperativa ', 'Credit union ') + q.k});
+        c.appendChild(el('circle', {cx:SX(q.x), cy:SY(q.y), r:i === cur ? 10 : 8, fill:on ? '#e80734' : '#1f3b73', stroke:i === cur ? '#0f172a' : '#fff', 'stroke-width':i === cur ? 3 : 2, opacity:i === cur && p.t < 0.999 && f < 1 ? .35 : 1}));
+        c.appendChild(el('text', {x:SX(q.x) + 13, y:SY(q.y) - 8, 'font-size':14, 'font-weight':700, fill:'#0f172a'}, q.k));
+        c.addEventListener('click', function(){ sel(i); });
+        c.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); sel(i); } });
+        svg.appendChild(c);
+      });
+      var msg;
+      if (p.t > 0.999) msg = '<h3>' + L('Cooperativa ', 'Credit union ') + p.k + ': ' + L('na linha de frente', 'on the frontier') + '</h3><p>' + L('Nenhuma outra, nem uma mistura delas, entrega o mesmo gastando menos. Ela ajuda a traçar a linha e ganha nota máxima.', 'No other one, nor a mix of them, delivers the same while spending less. It helps draw the line and gets the top score.') + '</p>';
+      else {
+        var pct = Math.round(p.t * 100);
+        msg = '<h3>' + L('Cooperativa ', 'Credit union ') + p.k + ': ' + L('nota ', 'score ') + fmt(p.t, 2) + '</h3><p>' + (f <= p.t + 0.005
+          ? L('Chegou à linha. Usando só ' + pct + '% dos seus ativos e despesas, ela entregaria o mesmo que hoje. É isso que a DEA diz: dava para cortar ' + (100 - pct) + '%.', 'It reached the line. Using only ' + pct + '% of its assets and expenses, it would deliver the same as today. That is what DEA says: it could cut ' + (100 - pct) + '%.')
+          : L('Corte os gastos com o controle: ela precisa chegar a ' + pct + '% do que usa hoje para alcançar a linha de frente.', 'Cut its spending with the slider: it has to get down to ' + pct + '% of what it uses today to reach the frontier.')) + '</p>';
+      }
+      $('fr-panel').innerHTML = msg;
+      $('fr-val').textContent = cut + '%';
+    }
+    var setChip;
+    function sel(i){ cur = i; cut = 100; $('fr-cut').value = 100; each($('fr-chips').children, function(c, j){ c.setAttribute('aria-pressed', j === i ? 'true' : 'false'); }); draw(); }
+    chips('fr-chips', P.map(function(p){ return L('Cooperativa ', 'Union ') + p.k; }), sel, cur);
+    $('fr-cut').addEventListener('input', function(){ var mn = Math.ceil(P[cur].t * 100 - 1e-6); cut = Math.max(+this.value, mn); this.value = cut; draw(); });
+    draw();
+  })();
+
+  /* ================= 08 · RESULTADO ================= */
+  (function(){
+    var g = $('grid583'), cells = [];
+    for (var i = 0; i < N; i++){ var c = document.createElement('i'); g.appendChild(c); cells.push(c); }
+    var yr = $('yr'), btns = [];
+    Y.forEach(function(y, i){
+      var b = document.createElement('button'); b.setAttribute('aria-pressed', 'false');
+      b.innerHTML = '<i style="height:' + (EF[i] / N * 100 * 1.4) + '%"></i><span>' + y + '</span>';
+      b.addEventListener('click', function(){ show(i); });
+      yr.appendChild(b); btns.push(b);
+    });
+    function show(k){
+      btns.forEach(function(b, j){ b.setAttribute('aria-pressed', j === k ? 'true' : 'false'); });
+      cells.forEach(function(c, j){ c.classList.toggle('on', j < EF[k]); });
+      var r = EF[k] / N * 100;
+      var t = k === 3
+        ? L('Um salto: mais da metade ficou na linha de frente. Para o autor, foi o bom momento do agronegócio (21,3% do PIB em 2017, segundo o Cepea). A dissertação não testa essa explicação.', 'A jump: more than half sat on the frontier. For the author, it was the agribusiness boom (21.3% of GDP in 2017, according to Cepea). The dissertation does not test this explanation.')
+        : L('Cerca de uma em cada ' + Math.round(N / EF[k]) + ' cooperativas. As outras ' + n0(N - EF[k]) + ' poderiam, pela régua, entregar o mesmo gastando menos.', 'About one in ' + Math.round(N / EF[k]) + ' credit unions. By the yardstick, the other ' + n0(N - EF[k]) + ' could deliver the same while spending less.');
+      $('res-panel').innerHTML = '<div style="display:flex;gap:14px;align-items:baseline;flex-wrap:wrap"><span class="big">' + EF[k] + '</span><span style="font-size:.9rem;color:var(--ink-2)">' + L('de 583 eficientes em ', 'of 583 efficient in ') + Y[k] + ' · ' + pc(r, 1) + '</span></div><p style="margin-top:8px">' + t + '</p>';
+    }
+    show(0);
+  })();
+
+  /* ================= 09 · MAPA ================= */
+  (function(){
+    var RC = {SE:'#1f3b73', S:'#5b6f96', CO:'#94a3b8', NE:'#e85a75', N:'#b91c3c'};
+    var RN = {SE:L('Sudeste', 'Southeast'), S:L('Sul', 'South'), CO:L('Centro-Oeste', 'Centre-West'), NE:L('Nordeste', 'Northeast'), N:L('Norte', 'North')};
+    // Tabela 6: singulares eficientes por UF de registro, 2014–2019
+    var U = [
+      ['SP','SE',[36,35,31,92,21,25]], ['MG','SE',[27,21,18,71,30,33]], ['RJ','SE',[20,12,15,25,9,5]], ['RS','S',[11,12,12,30,10,10]],
+      ['PR','S',[4,7,4,23,6,7]], ['SC','S',[7,3,5,20,3,5]], ['ES','SE',[7,4,3,17,5,5]], ['GO','CO',[3,1,1,7,3,3]],
+      ['BA','NE',[2,2,3,7,4,1]], ['DF','CO',[3,0,0,5,1,1]], ['PB','NE',[2,0,0,2,1,2]], ['RO','N',[0,2,0,3,2,1]],
+      ['PE','NE',[3,1,0,3,1,0]], ['MT','CO',[0,0,1,2,0,3]], ['MS','CO',[2,1,0,3,0,1]], ['CE','NE',[0,1,0,3,0,1]],
+      ['PA','N',[2,1,1,3,0,1]], ['RN','NE',[1,0,0,0,1,0]], ['AL','NE',[0,1,0,0,0,1]], ['AM','N',[1,0,0,0,0,0]], ['RR','N',[0,0,0,1,0,0]]
+    ];
+    // Tabela 5: adultos com relacionamento bancário (%), 2015–2017
+    var BANK = {NE:[77,79,80], CO:[86,86,86], N:[70,71,72], SE:[92,90,91], S:[92,90,91]};
+    var g = $('uf'), rows = U.map(function(u){
+      var r = document.createElement('div'); r.className = 'r';
+      r.innerHTML = '<span>' + u[0] + '</span><span class="tr"><i style="--rc:' + RC[u[1]] + '"></i></span><b></b>';
+      g.appendChild(r); return r;
+    });
+    var regEl = $('reg');
+    function show(k){
+      var vals = U.map(function(u){ return k < 6 ? u[2][k] : sum(u[2]); });
+      var max = Math.max.apply(null, vals), tot = sum(vals);
+      vals.forEach(function(v, i){ rows[i].querySelector('i').style.width = (v / max * 100) + '%'; rows[i].querySelector('b').textContent = v ? v : '·'; });
+      var R = {}; U.forEach(function(u, i){ R[u[1]] = (R[u[1]] || 0) + vals[i]; });
+      regEl.innerHTML = ['SE','S','NE','CO','N'].map(function(r){ return '<span><i class="dot" style="background:' + RC[r] + '"></i>' + RN[r] + ' ' + R[r] + ' (' + pc(R[r] / tot * 100, 0) + ')</span>'; }).join('');
+      var bk = k >= 1 && k <= 3 ? k - 1 : null;
+      var txt = k === 6
+        ? L('Nos seis anos, 848 vezes uma singular chegou à frente: 567 no Sudeste e 179 no Sul. Norte e Nordeste juntos somam 61.', 'Over six years, a local union reached the frontier 848 times: 567 in the Southeast and 179 in the South. North and Northeast together add up to 61.')
+        : k === 3
+        ? L('De 2016 para 2017, São Paulo foi de 31 para 92 eficientes e Minas Gerais de 18 para 71. O Paraná passou de 4 para 23, Santa Catarina de 5 para 20.', 'From 2016 to 2017, São Paulo went from 31 to 92 efficient local unions and Minas Gerais from 18 to 71. Paraná went from 4 to 23, Santa Catarina from 5 to 20.')
+        : L(tot + ' singulares eficientes em ' + Y[k] + '. O Sudeste concentra a maior parte, como concentra também o acesso a bancos.', tot + ' efficient local unions in ' + Y[k] + '. The Southeast holds most of them, as it also holds most access to banks.');
+      var bt = bk !== null ? '<p style="font-size:.78rem;color:var(--muted)">' + L('Adultos com conta em banco em ', 'Adults with a bank account in ') + Y[k] + ': ' + ['SE','S','CO','NE','N'].map(function(r){ return RN[r] + ' ' + BANK[r][bk] + '%'; }).join(' · ') + ' (' + L('Tabela 5', 'Table 5') + ')</p>' : '';
+      $('map-panel').innerHTML = '<p>' + txt + '</p>' + bt;
+    }
+    chips('map-chips', Y.map(String).concat([L('6 anos', '6 years')]), show, 2, [3]);
+    show(2);
+  })();
+
+  /* ================= 10 · ASSOCIAÇÃO ================= */
+  (function(){
+    // Tabela 7
+    var A = [
+      {n:L('Empregados ou servidores', 'Employees or civil servants'), c:'#1f3b73', v:[88, 60, 56, 160, 40, 60]},
+      {n:L('Livre admissão', 'Open membership'), c:'#e80734', v:[27, 26, 21, 107, 41, 29]},
+      {n:L('Atividade profissional', 'Professional activity'), c:'#5b6f96', v:[10, 9, 7, 27, 7, 5]},
+      {n:L('Produtor rural', 'Farmers'), c:'#94a3b8', v:[6, 5, 6, 10, 6, 5]},
+      {n:L('Critérios mistos e outros', 'Mixed and other rules'), c:'#cbd5e1', v:[0, 4, 4, 13, 3, 6]},
+      {n:L('Sem informação', 'No information'), c:'#e2e8f0', v:[7, 3, 5, 10, 6, 4]}
+    ];
+    var st = $('stack'), segs = A.map(function(a){ var i = document.createElement('i'); i.style.background = a.c; st.appendChild(i); return i; });
+    var lst = $('asl'), rows = A.map(function(a){ var r = document.createElement('div'); r.className = 'r'; r.innerHTML = '<i style="background:' + a.c + '"></i><span>' + a.n + '</span><b></b>'; lst.appendChild(r); return r; });
+    function show(k){
+      var vals = A.map(function(a){ return k < 6 ? a.v[k] : sum(a.v); }), tot = sum(vals);
+      vals.forEach(function(v, i){ segs[i].style.flexGrow = v; segs[i].title = A[i].n + ': ' + v; rows[i].querySelector('b').textContent = v + ' · ' + pc(v / tot * 100, 0); });
+    }
+    chips('as-chips', Y.map(String).concat([L('6 anos', '6 years')]), show, 0);
+    show(0);
+  })();
+
+  /* ================= 11 · SISTEMAS ================= */
+  (function(){
+    var g = $('sy');
+    function row(it, cls){ var r = document.createElement('div'); r.className = 'r' + (cls ? ' ' + cls : ''); r.innerHTML = '<span class="nm">' + it.k + '<small>' + it.t + ' ' + L('cooperativas', 'credit unions') + '</small></span><span class="tr"><i></i></span><b></b>'; g.appendChild(r); return r; }
+    function sep(t){ var d = document.createElement('div'); d.className = 'sep'; d.textContent = t; g.appendChild(d); }
+    sep(L('Singulares nos quatro sistemas', 'Local unions in the four systems'));
+    var SYS = SING.slice(0, 4), OUTS = SING[4];
+    var rs = SYS.map(function(s){ return row(s); });
+    var sysAll = {k:L('Os quatro juntos', 'The four together'), t:sum(SYS.map(function(s){ return s.t; })), e:Y.map(function(y, i){ return sum(SYS.map(function(s){ return s.e[i]; })); })};
+    var rsa = row(sysAll);
+    sep(L('Singulares fora dos sistemas', 'Local unions outside the systems'));
+    var ro = row(OUTS, 'out');
+    sep(L('Centrais (todas)', 'Central unions (all)'));
+    var cenAll = {k:L('Centrais', 'Central unions'), t:sum(CENT.map(function(s){ return s.t; })), e:Y.map(function(y, i){ return sum(CENT.map(function(s){ return s.e[i]; })); })};
+    var rc = row(cenAll);
+    function rate(it, k){ return k < 6 ? it.e[k] / it.t * 100 : sum(it.e) / (it.t * 6) * 100; }
+    function set(r, it, k){ var v = rate(it, k); r.querySelector('i').style.width = Math.min(100, v / 70 * 100) + '%'; r.querySelector('b').textContent = pc(v, 0); }
+    function show(k){
+      SYS.forEach(function(s, i){ set(rs[i], s, k); }); set(rsa, sysAll, k); set(ro, OUTS, k); set(rc, cenAll, k);
+      var a = rate(sysAll, k), o = rate(OUTS, k), c = rate(cenAll, k);
+      var t = k === 6
+        ? L('Somando os seis anos, as singulares de fora dos sistemas ficaram na linha de frente em ' + pc(o, 0) + ' das vezes; as dos quatro sistemas, em ' + pc(a, 0) + '. As centrais, em ' + pc(c, 0) + ', perto das singulares no geral (25%).', 'Adding up the six years, local unions outside the systems were on the frontier ' + pc(o, 0) + ' of the time; those in the four systems, ' + pc(a, 0) + '. Central unions, ' + pc(c, 0) + ', close to local unions overall (25%).')
+        : k === 4
+        ? L('Em 2018 os dois grupos empataram: 17% de eficientes dentro e fora dos sistemas.', 'In 2018 the two groups tied: 17% efficient both inside and outside the systems.')
+        : L('Em ' + Y[k] + ': ' + pc(o, 0) + ' das singulares de fora dos sistemas foram eficientes, contra ' + pc(a, 0) + ' das que estão nos quatro sistemas.', 'In ' + Y[k] + ': ' + pc(o, 0) + ' of local unions outside the systems were efficient, against ' + pc(a, 0) + ' of those in the four systems.');
+      $('sy-panel').innerHTML = '<p>' + t + '</p>';
+    }
+    chips('sy-chips', [L('6 anos', '6 years')].concat(Y.map(String)), function(i){ show(i === 0 ? 6 : i - 1); }, 0);
+    show(6);
+  })();
+
+  /* ================= 12 · PLACAR ================= */
+  (function(){
+    var R = [
+      {h:L('1 · Estrutura maior', '1 · Larger structure'), v:L('Os números apontam o mesmo lado', 'The numbers point the same way'), c:'var(--navy)', ans:0,
+        a:L('<b>Autor:</b> sim, para pior. Ligar-se a centrais e sistemas aumenta ativos e despesas, os insumos da régua, e poucas cooperativas ligadas chegam à frente.', '<b>Author:</b> yes, for the worse. Joining central unions and systems raises assets and expenses, the yardstick’s inputs, and few affiliated credit unions reach the frontier.'),
+        o:L('<b>Observação nossa:</b> pela Tabela 9, as singulares fora dos sistemas foram eficientes em 31% dos anos e as dos sistemas em 18%. Combina com o autor, mas é contagem, sem teste, e em 2018 os grupos empataram.', '<b>Our observation:</b> by Table 9, local unions outside the systems were efficient in 31% of years and those inside in 18%. This fits the author, but it is a count, untested, and in 2018 the groups tied.')},
+      {h:L('2 · Quem pode se associar', '2 · Who may join'), v:L('Não dá para saber com estes números', 'These numbers cannot tell'), c:'#64748b', ans:0,
+        a:L('<b>Autor:</b> sim. Cooperativas de livre admissão e de empregados ou servidores têm mais eficientes, cerca de 8 em cada 10.', '<b>Author:</b> yes. Open-membership and employee or civil-servant credit unions have more efficient ones, about 8 in 10.'),
+        o:L('<b>Observação nossa:</b> a Tabela 7 só conta as eficientes. Sem o total de cada tipo entre as 583, não se sabe se esses tipos vão melhor ou só são mais numerosos.', '<b>Our observation:</b> Table 7 counts only the efficient ones. Without the total of each type among the 583, we cannot tell whether these types do better or are just more numerous.')},
+      {h:L('3 · Tamanho', '3 · Size'), v:L('Sem diferença clara nos números', 'No clear gap in the numbers'), c:'var(--red)', ans:0,
+        a:L('<b>Autor:</b> sim. As singulares, mais simples, usam menos insumos e tendem a ser mais eficientes que centrais e confederações.', '<b>Author:</b> yes. Local unions, being simpler, use fewer inputs and tend to be more efficient than central unions and confederations.'),
+        o:L('<b>Observação nossa:</b> em proporção, as centrais foram eficientes em 28% dos anos e as singulares em 25%. A resposta vem da lógica da régua, não de uma comparação que mostre a diferença.', '<b>Our observation:</b> in proportion, central unions were efficient in 28% of years and local unions in 25%. The answer comes from the yardstick’s logic, not from a comparison that shows the gap.')}
+    ];
+    var g = $('score');
+    renderScore = function(){
+      g.innerHTML = '';
+      R.forEach(function(r, i){
+        var d = document.createElement('div'); d.className = 'sc'; d.style.setProperty('--sc', r.c);
+        var b = BETS[i], yb = b === null ? L('Você não deu palpite na tela 05.', 'You made no guess on screen 05.') : L('Seu palpite: ', 'Your guess: ') + (b === 0 ? L('sim', 'yes') : L('não', 'no')) + (b === r.ans ? L(' (igual ao do autor)', ' (same as the author)') : L(' (diferente do autor)', ' (different from the author)'));
+        d.innerHTML = '<span class="verd">' + r.v + '</span><h3>' + r.h + '</h3><p>' + r.a + '</p><p>' + r.o + '</p><div class="yb">' + yb + '</div>';
+        g.appendChild(d);
+      });
+    };
+    renderScore();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
