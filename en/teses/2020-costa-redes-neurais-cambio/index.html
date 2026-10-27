@@ -1,0 +1,863 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A network with memory against “tomorrow equals today” · PPGA Interactive</title>
+<meta name="description" content="Marisa Gomes da Costa’s doctoral thesis (PPGA Mackenzie, 2020) on LSTM neural networks forecasting the Brazilian real, the euro and the pound against the dollar, explained in 11 interactive screens.">
+<link rel="alternate" hreflang="pt-BR" href="../../../teses/2020-costa-redes-neurais-cambio/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2223%22 font-family=%22Georgia%22 font-size=%2218%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>R$</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/motor.css">
+<link rel="stylesheet" href="../../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --lstm:var(--navy);    /* redes LSTM */
+    --rw:#94a3b8;          /* passeio aleatório (amanhã = hoje) */
+    --ar:#334155;          /* ARIMA */
+    --best:var(--red);     /* destaque */
+  }
+  .note{font-size:.76rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:12px; line-height:1.45;}
+  .note b{color:var(--ink-2);}
+  .ilus{display:inline-block; font-size:.62rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.82rem; cursor:pointer; color:var(--ink-2); font-family:inherit;}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stats.s4{grid-template-columns:repeat(2, 1fr);}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.74rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  svg text{font-family:var(--sans);}
+  .svgbox{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .runbar{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
+  .warn{font-size:.76rem; color:var(--muted); margin-top:10px;}
+  .warn b{color:var(--red);}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(1.9rem, 3.2vw, 2.35rem);}
+  html[lang="en"] #capa h1{font-size:clamp(1.8rem, 2.9vw, 2.15rem);}
+  html[lang="en"] #capa .sub{font-size:1.08rem;}
+  .meta{display:grid; gap:2px; margin-top:16px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:36em; margin-left:auto; margin-right:auto;}
+  #hero-scene{perspective:1800px;}
+  #hero-scene .slab{cursor:pointer;}
+  #hero-scene .slab.glass > i{--face:rgb(148 163 184 / .10); box-shadow:inset 0 0 0 1.5px rgb(100 116 139 / .75);}
+  #hero-scene .slab .f-front .face-label{font-size:17px; letter-spacing:0; align-items:flex-start; padding-top:8px;}
+  #hero-scene .slab.sel > i{--face:var(--red);}
+  #hero-scene .slab.sel .f-top{--face:color-mix(in srgb, var(--red) 70%, white);}
+  .hero-pick{display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-top:4px;}
+  .hero-pick button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:5px 12px; font-family:inherit; font-size:.78rem; cursor:pointer; color:var(--ink-2);}
+  .hero-pick button[aria-pressed="true"]{border-color:var(--red); color:var(--red); font-weight:600;}
+  #hero-read{font-size:.82rem; color:var(--ink-2); text-align:center; min-height:2.6em; margin-top:6px;}
+
+  /* ---------- 02 · Por que importa ---------- */
+  .why{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .why button{display:flex; flex-direction:column; align-items:flex-start; gap:6px; text-align:left; border:1px solid var(--border); background:var(--card); border-radius:14px; padding:14px; font-family:inherit; cursor:pointer; box-shadow:var(--shadow); min-height:118px;}
+  .why button svg{width:34px; height:34px;}
+  .why button b{font-family:var(--serif); font-size:.95rem; color:var(--ink);}
+  .why button span{font-size:.78rem; color:var(--muted); line-height:1.4;}
+  .why button[aria-pressed="true"]{border-color:var(--red); box-shadow:inset 0 0 0 1px var(--red), var(--shadow);}
+  .why button[aria-pressed="true"] span{color:var(--ink-2);}
+  .quote{font-family:var(--serif); font-size:1.02rem; color:var(--ink); border-left:4px solid var(--red); padding:4px 0 4px 14px; margin:14px 0 0;}
+
+  /* ---------- 03 · Publicações ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:12px;}
+  .chips button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-family:inherit; font-size:.78rem; cursor:pointer; color:var(--ink-2);}
+  .chips button[aria-pressed="true"]{background:var(--red); border-color:var(--red); color:#fff;}
+  #pub-panel{margin-top:12px; min-height:92px;}
+
+  /* ---------- 04 · Quem publica ---------- */
+  .hbars{display:grid; gap:5px; margin-top:12px;}
+  .hbars .r{display:grid; grid-template-columns:118px 1fr 44px; gap:8px; align-items:center; font-size:.76rem; color:var(--ink-2);}
+  .hbars .t{height:16px; background:#eef2f7; border-radius:5px; overflow:hidden;}
+  .hbars .t i{display:block; height:100%; background:var(--navy); border-radius:5px; transition:width .45s;}
+  .hbars .r.hl .t i{background:var(--red);}
+  .hbars .r.hl{color:var(--red); font-weight:700;}
+  .hbars .v{text-align:right; font-variant-numeric:tabular-nums; font-weight:600;}
+  #who-panel{margin-top:12px;}
+
+  /* ---------- 05 · Lacunas ---------- */
+  .gaps{display:grid; gap:7px;}
+  .gaps button{display:grid; grid-template-columns:1.6em 1fr; gap:8px; align-items:start; text-align:left; border:1px solid var(--border); background:var(--card); border-radius:12px; padding:10px 12px; font-family:inherit; font-size:.84rem; color:var(--ink-2); cursor:pointer; line-height:1.4;}
+  .gaps button b{font-family:var(--serif); color:var(--red);}
+  .gaps button[aria-pressed="true"]{border-color:var(--ink); box-shadow:inset 3px 0 0 var(--red); color:var(--ink);}
+  .bridge{display:grid; grid-template-columns:1fr 54px 1fr; align-items:stretch; gap:0; margin-top:4px;}
+  .bridge .side{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 16px; box-shadow:var(--shadow);}
+  .bridge .side h3{font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-family:var(--sans); margin-bottom:8px;}
+  .bridge .side p{margin:0; font-size:.92rem; color:var(--ink); line-height:1.45;}
+  .bridge .side.to{border-top:5px solid var(--navy);}
+  .bridge .side.from{border-top:5px solid var(--rw);}
+  .bridge svg{width:54px; height:100%; min-height:120px;}
+  @media (max-width:640px){ .bridge{grid-template-columns:1fr; } .bridge svg{width:100%; height:40px; min-height:0; transform:rotate(90deg); max-width:40px; margin:0 auto;} }
+
+  /* ---------- 06 · A vela ---------- */
+  #vela-svg g.pt{cursor:pointer;}
+  #vela-svg g.pt:hover circle, #vela-svg g.pt.on circle{stroke:var(--ink); stroke-width:3;}
+  #vela-panel{margin-top:12px; min-height:96px;}
+  .split{margin-top:12px;}
+  .split .bar{display:flex; height:30px; border-radius:8px; overflow:hidden; font-size:.74rem; font-weight:700; color:#fff;}
+  .split .bar i{display:flex; align-items:center; justify-content:center; font-style:normal;}
+  .split .bar i.tr{background:var(--navy); flex:80;}
+  .split .bar i.te{background:var(--red); flex:20;}
+  .split .lab{display:flex; justify-content:space-between; font-size:.7rem; color:var(--muted); margin-top:4px; font-variant-numeric:tabular-nums;}
+
+  /* ---------- 07 · Erro ---------- */
+  .ebars{display:grid; gap:3px; margin-top:10px;}
+  .ebars .r{display:grid; grid-template-columns:68px 1fr 64px; gap:8px; align-items:center; font-size:.72rem; cursor:pointer; border-radius:6px; padding:1px 2px;}
+  .ebars .r:hover, .ebars .r.on{background:#f1f5f9;}
+  .ebars .nm{color:var(--ink-2); font-weight:600; white-space:nowrap;}
+  .ebars .t{height:13px; position:relative;}
+  .ebars .t i{position:absolute; left:0; top:0; bottom:0; border-radius:4px; background:var(--lstm); transition:width .45s;}
+  .ebars .r.rw .t i{background:var(--rw);} .ebars .r.ar .t i{background:var(--ar);}
+  .ebars .r.b1 .t i{background:var(--best);}
+  .ebars .v{text-align:right; font-variant-numeric:tabular-nums; color:var(--muted);}
+  .ebars .rwline{position:absolute; top:-3px; bottom:-3px; width:0; border-left:2px dashed var(--rw);}
+  #err-panel{margin-top:12px; min-height:110px;}
+
+  /* ---------- 08 · Tabuleiro ---------- */
+  .board{display:grid; grid-template-columns:76px repeat(6, minmax(0, 1fr)); gap:5px; font-variant-numeric:tabular-nums;}
+  @media (max-width:520px){ .board{grid-template-columns:46px repeat(6, minmax(0, 1fr)); gap:3px;} .board .rh{font-size:.6rem;} .board .h{font-size:.56rem;} .board button{font-size:.78rem; height:42px; padding:0;} .board button small{font-size:.48rem;} }
+  .board .h{font-size:.66rem; color:var(--muted); font-weight:600; text-align:center; align-self:end; line-height:1.2;}
+  .board .rh{font-size:.7rem; color:var(--ink-2); font-weight:600; align-self:center; line-height:1.2;}
+  .board button{height:46px; border:0; border-radius:8px; font-family:inherit; font-size:.86rem; font-weight:700; cursor:pointer; color:#fff; background:var(--lstm); position:relative; transition:background .3s;}
+  .board button small{display:block; font-size:.58rem; font-weight:500; opacity:.85;}
+  .board button.out{background:#e2e8f0; color:var(--ink-2);}
+  .board button.top{background:var(--red);}
+  .board button.sel{box-shadow:0 0 0 3px var(--ink);}
+  .board .nx{border-radius:8px; background:repeating-linear-gradient(45deg, #f8fafc 0 5px, #eef2f7 5px 10px);}
+  #net-mini{margin-top:12px;}
+  #brd-panel{margin-top:12px; min-height:96px;}
+
+  /* ---------- 09 · Grupo dos melhores ---------- */
+  .alpha{display:flex; align-items:center; gap:12px; margin-top:14px; font-size:.84rem; color:var(--muted);}
+  .alpha input{flex:1; accent-color:var(--red);}
+  .alpha b{font-family:var(--serif); font-size:1.5rem; color:var(--ink); min-width:3.4em; text-align:right;}
+  .marks{display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;}
+  .grp{display:grid; gap:14px;}
+  .grp .cur{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:10px 12px 12px; box-shadow:var(--shadow);}
+  .grp .cur h3{font-size:.92rem; display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin-bottom:8px;}
+  .grp .cur h3 span{font-family:var(--sans); font-size:.76rem; color:var(--muted); font-weight:500;}
+  .grp .row{display:flex; flex-wrap:wrap; gap:4px;}
+  .grp .row i{font-style:normal; display:inline-flex; align-items:center; justify-content:center; min-width:30px; height:26px; padding:0 4px; border-radius:6px; font-size:.7rem; font-weight:700; color:#fff; background:var(--lstm); transition:background .25s, color .25s, box-shadow .25s;}
+  .grp .row i.rw{background:var(--rw);} .grp .row i.ar{background:var(--ar);}
+  .grp .row i.gone{background:transparent; color:#94a3b8; box-shadow:inset 0 0 0 1.5px #cbd5e1;}
+  #grp-panel{margin-top:12px; min-height:96px;}
+
+  /* ---------- 10 · Direção ---------- */
+  #dir-panel{margin-top:12px; min-height:110px;}
+
+  /* ---------- 11 · Créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.78rem; color:var(--ink-2); line-height:1.42;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+  .also{font-size:.8rem; margin-top:10px; color:var(--muted);}
+  .also a{color:var(--red); font-weight:600;}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-meta="../../../teses/2020-costa-redes-neurais-cambio/meta.json">
+
+<header class="topbar">
+  <a class="brand" href="../../../"><span class="sq">PPGA</span><span>PPGA<br>Interactive</span></a>
+  <div class="counter">
+    <a class="lang" href="../../../teses/2020-costa-redes-neurais-cambio/" hreflang="pt-BR" lang="pt-BR" title="Ler em português"><img class="lang-flag" src="../../../assets/bandeira-br.svg" width="17" height="12" alt="">PT</a>
+    <span id="count">01 / 11</span>
+    <button class="nav-btn" id="prev" aria-label="Previous screen">↑</button>
+    <button class="nav-btn" id="next" aria-label="Next screen">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Screen navigation"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Start">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Doctoral thesis · PPGA Mackenzie · 2020</div>
+      <h1 class="rv" style="--d:.1s">A neural network with memory beat “tomorrow equals today” on exchange rates</h1>
+      <p class="sub rv" style="--d:.2s">The thesis mapped 245 articles on neural networks and exchange rates, then tested an LSTM network on the real, the euro and the pound against the dollar, one day ahead, in 2019. Error fell by 13% to 31%; the direction was right on 56% to 80% of days. In 11 screens.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Author:</b> Marisa Gomes da Costa</span>
+        <span><b>Advisor:</b> Prof. Dr. Leonardo Fernando Cruz Basso</span>
+        <span><b>Program:</b> Graduate Program in Business Administration (PPGA) · Mackenzie Presbyterian University</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#porque">Start →</a>
+        <a class="btn ghost" href="#direcao">Up or down?</a>
+      </div>
+      <p class="warn rv" style="--d:.45s"><b>This is not investment advice.</b> This page explains academic research; the thesis does not simulate buying, selling or gains.</p>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="520x320" role="img" aria-label="Three glass boxes, one per currency, each the size of the error of the “tomorrow equals today” guess; inside each, a smaller blue block, the error of the best LSTM network"></div></div>
+      <div class="hero-pick" id="hero-pick" role="group" aria-label="Choose the currency"></div>
+      <p id="hero-read" aria-live="polite"></p>
+      <p class="cap-legend">Glass: typical error of “tomorrow equals today” (random walk), set to 100% for each currency. Blue block: error of the best network, on the same scale (red marks the chosen currency). Tables 3.1, 3.5 and 3.9. Drag to rotate.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">Closest UN Sustainable Development Goals</span>
+        <ul class="ods">
+          <li class="ods-17"><a href="https://sdgs.un.org/goals/goal17" target="_blank" rel="noopener" title="SDG 17 · Partnerships for the Goals: Tests ways to forecast the exchange rate of the real, the euro and the pound, information that firms, investors and governments use in decisions tied to economic stability."><b>17</b>Partnerships for the Goals</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">scroll<span></span></div>
+</section>
+
+<!-- 02 · POR QUE IMPORTA -->
+<section class="slide" id="porque" data-label="Why it matters">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> The problem · Introduction</div>
+      <h2 class="rv" style="--d:.1s">Since 1983, the guess “tomorrow equals today” has been hard to beat</h2>
+      <p class="lede rv" style="--d:.15s">In 1983, Meese and Rogoff showed that economic models almost never forecast exchange rates better than repeating today’s rate, the so-called random walk. The thesis notes that the debate goes on and asks whether neural networks, which learn patterns from data, can do better.</p>
+      <p class="quote rv" style="--d:.2s">Tomorrow = today. That is the opponent in every screen that follows.</p>
+      <p class="note rv" style="--d:.25s">The thesis also uses ARIMA, a classic statistical model that looks at the latest changes in the series. It joins the contest as a second opponent.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="why" id="why" role="group" aria-label="Why forecasting exchange rates matters"></div>
+      <div class="panel" id="why-panel" style="margin-top:12px" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · PUBLICAÇÕES NO TEMPO -->
+<section class="slide" id="publicacoes" data-label="245 articles">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> Essay 1 · Tables 2.2 and 2.3</div>
+      <h2 class="rv" style="--d:.1s">Articles on neural networks and exchange rates jumped to 32 in 2019</h2>
+      <p class="lede rv" style="--d:.15s">The author searched the Scopus database for everything on forecasting exchange rates with neural networks: 783 documents, 387 articles in English and, after reading titles and abstracts, 245 articles from 1993 to April 2020. Tap a crisis to see the years that, according to the thesis, pushed the topic forward.</p>
+      <div class="chips rv" id="pub-chips" style="--d:.2s" role="group" aria-label="Crises cited in the thesis"></div>
+      <div class="panel rv" id="pub-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="pub-svg" class="svgbox" viewBox="0 0 560 300" role="img" aria-label="Articles per year, 1993 to 2020: few until 2005, growing afterwards, peaking at 32 in 2019"></svg>
+      <div class="stats">
+        <div class="stat"><b>783 → 245</b><span>documents found → articles analysed</span></div>
+        <div class="stat"><b>156</b><span>different journals</span></div>
+        <div class="stat"><b>506</b><span>authors; 30 single-author articles</span></div>
+      </div>
+      <p class="note">2020 only up to April (striped bar). Counts from Table 2.3.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · QUEM PUBLICA -->
+<section class="slide" id="quem" data-label="Who publishes">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Essay 1 · Tables 2.4 to 2.7</div>
+      <h2 class="rv" style="--d:.1s">The topic is dominated by computer science, and Brazil ranks 15th</h2>
+      <p class="lede rv" style="--d:.15s">India leads, with 41 of the 245 articles. A third appear in computer science journals and only 12.8% in economics and finance. For the author, it is up to finance researchers to say which variables go into these models. Switch the view.</p>
+      <div class="seg rv" id="who-seg" style="--d:.2s" role="group" aria-label="Choose the view">
+        <button data-m="0" aria-pressed="true">Countries</button>
+        <button data-m="1" aria-pressed="false">Fields</button>
+        <button data-m="2" aria-pressed="false">Journals and authors</button>
+      </div>
+      <div class="panel rv" id="who-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="hbars" id="who-bars"></div>
+      <p class="note" id="who-note"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · LACUNAS -->
+<section class="slide" id="lacunas" data-label="Gaps">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Essay 1 → Essay 2 · sections 2.5 and 3.1</div>
+      <h2 class="rv" style="--d:.1s">What the literature lacked became the design of the second essay</h2>
+      <p class="lede rv" style="--d:.15s">Reading the most influential articles, the author noted what was missing. Each gap became a choice in the test that follows. Tap each one.</p>
+      <div class="gaps rv" id="gaps" style="--d:.2s" role="group" aria-label="Gaps found in the review"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="bridge" id="bridge" aria-live="polite">
+        <div class="side from"><h3>What the review saw</h3><p id="br-from"></p></div>
+        <svg viewBox="0 0 54 120" aria-hidden="true"><path d="M4,60 C24,60 30,60 50,60" fill="none" stroke="var(--red)" stroke-width="3"/><path d="M40,50 L50,60 L40,70" fill="none" stroke="var(--red)" stroke-width="3"/></svg>
+        <div class="side to"><h3>What essay 2 does</h3><p id="br-to"></p></div>
+      </div>
+      <p class="note">Gaps from sections 2.4 to 2.6; choices from sections 3.1 and 3.6. Recurrent, fuzzy and hybrid networks appear in Figure 2.5 as hot topics; the multilayer perceptron (MLP), as a heavily studied one.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · A VELA DO DIA -->
+<section class="slide" id="vela" data-label="The data">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Essay 2 · sections 3.1 and 3.6</div>
+      <h2 class="rv" style="--d:.1s">The network looks at yesterday’s four prices to forecast today’s rate</h2>
+      <p class="lede rv" style="--d:.15s">Instead of only the close, the network receives the previous day’s open, high, low and close, the numbers currency traders follow. Tap the points on the candle.</p>
+      <div class="panel rv" id="vela-panel" style="--d:.2s" aria-live="polite"></div>
+      <div class="split rv" style="--d:.25s">
+        <div class="bar"><i class="tr">80% learn</i><i class="te">20% test</i></div>
+        <div class="lab"><span>Dec 2014</span><span>Dec 2018 · 260 test days ·</span><span>Dec 2019</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="vela-svg" class="svgbox" viewBox="0 0 560 300" role="img" aria-label="Illustration: the candle of one exchange-rate day, with open, high, low and close"></svg>
+      <div class="stats">
+        <div class="stat"><b>3</b><span>currencies against the dollar: real, euro and pound</span></div>
+        <div class="stat"><b>1.266–1.295</b><span>days of data per currency, Dec 2014 to Dec 2019</span></div>
+        <div class="stat"><b>1 day</b><span>ahead: the forecast is always for the next day</span></div>
+      </div>
+      <p class="note"><span class="ilus">illustration</span> Candle with made-up prices. Rates from the central banks of Brazil, the European Union and the United Kingdom; open, high, low and close from Bloomberg. The network never saw the test days while learning.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · O ERRO -->
+<section class="slide" id="erro" data-label="The error">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Result · Tables 3.1, 3.5 and 3.9</div>
+      <h2 class="rv" style="--d:.1s">In all three currencies, all 19 networks erred less than “tomorrow equals today”</h2>
+      <p class="lede rv" style="--d:.15s">The yardstick is the typical one-day error (RMSE): the smaller, the better. ARIMA stayed close to the simple guess, and even behind it for the real and the pound. Choose the currency and tap a bar.</p>
+      <div class="seg rv" id="err-seg" style="--d:.2s" role="group" aria-label="Choose the currency">
+        <button data-m="0" aria-pressed="true">Real</button>
+        <button data-m="1" aria-pressed="false">Euro</button>
+        <button data-m="2" aria-pressed="false">Pound</button>
+      </div>
+      <div class="panel rv" id="err-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="ebars" id="ebars"></div>
+      <div class="legend"><span><i class="dot" style="background:var(--rw)"></i>tomorrow = today</span><span><i class="dot" style="background:var(--ar)"></i>ARIMA</span><span><i class="dot" style="background:var(--lstm)"></i>LSTM networks</span><span><i class="dot" style="background:var(--best)"></i>smallest error</span></div>
+      <p class="note">Bars from zero, sorted by error; the dashed line marks the error of the simple guess. Error in the units of the quote (our reading: reais per dollar; dollars per euro and per pound). Percentage differences for networks not in Table 3.2, 3.6 or 3.10: our calculation.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · O TABULEIRO DOS DESENHOS -->
+<section class="slide" id="desenhos" data-label="19 designs">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Result · Tables 3.1, 3.5 and 3.9</div>
+      <h2 class="rv" style="--d:.1s">For the real and the pound, the best network had one layer and three neurons</h2>
+      <p class="lede rv" style="--d:.15s">The author tested 19 designs: 1 to 5 neurons in one layer, or two layers with up to 5 neurons each. The one-neuron network was the worst of the 19 in all three currencies; for the euro, a two-layer one (5 and 3) won. For the author, one or two layers are enough. Tap a square.</p>
+      <div class="seg rv" id="brd-seg" style="--d:.2s" role="group" aria-label="Choose the currency">
+        <button data-m="0" aria-pressed="true">Real</button>
+        <button data-m="1" aria-pressed="false">Euro</button>
+        <button data-m="2" aria-pressed="false">Pound</button>
+      </div>
+      <div class="panel rv" id="brd-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="board" id="board" role="group" aria-label="The 19 network designs by number of neurons per layer, with each one’s rank by error"></div>
+      <svg id="net-mini" class="svgbox" viewBox="0 0 560 150" role="img" aria-label="Drawing of the chosen network: inputs, layers and output"></svg>
+      <div class="legend"><span><i class="dot" style="background:var(--red)"></i>1st place</span><span><i class="dot" style="background:var(--lstm)"></i>in the best group (screen 09)</span><span><i class="dot" style="background:#e2e8f0"></i>outside the group</span></div>
+      <p class="note">The number is the rank by error among the 21 forecasters (19 networks, the simple guess and ARIMA). Striped cells: no network, since the second layer never has more neurons than the first.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · GRUPO DOS MELHORES -->
+<section class="slide" id="grupo" data-label="Best group">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Result · Tables 3.2, 3.6 and 3.10</div>
+      <h2 class="rv" style="--d:.1s">Only networks made the best group: 9 for the real, 6 for the euro and 12 for the pound</h2>
+      <p class="lede rv" style="--d:.15s">A small difference can be luck. The model confidence set (MCS) test removes the worst forecaster, one at a time, until those left are tied within the margin of chance. The α setting decides how strict it is; the thesis uses 10% and 25%. Move the slider.</p>
+      <div class="alpha rv" style="--d:.2s"><span>1%</span><input type="range" id="alpha" min="1" max="30" step="1" value="10" aria-label="Test level α, in %"><span>30%</span><b id="alpha-v">10%</b></div>
+      <div class="marks rv" style="--d:.22s"><button class="btn small ghost" data-a="10">α = 10%</button><button class="btn small ghost" data-a="25">α = 25%</button><button class="btn small ghost" data-a="3">α = 3%</button></div>
+      <div class="panel rv" id="grp-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="grp" id="grp"></div>
+      <div class="legend"><span><i class="dot" style="background:var(--rw)"></i>RW · tomorrow = today</span><span><i class="dot" style="background:var(--ar)"></i>AR · ARIMA</span><span><i class="dot" style="background:var(--lstm)"></i>1 to 19 · LSTM networks</span><span><i class="dot" style="background:transparent; box-shadow:inset 0 0 0 1.5px #cbd5e1"></i>eliminated</span></div>
+      <p class="note">A forecaster stays in the group when its MCS p-value is at least α (Tables 3.1, 3.5 and 3.9; 10,000 resamples, squared-error loss). α values other than 10% and 25%: our reading with the same p-values.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · DIREÇÃO -->
+<section class="slide" id="direcao" data-label="Up or down">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Result · Tables 3.4, 3.8 and 3.12</div>
+      <h2 class="rv" style="--d:.1s">The network got right whether the rate would rise or fall on 56% to 80% of the test days</h2>
+      <p class="lede rv" style="--d:.15s">The “tomorrow equals today” guess never says up or down, so the thesis compares each network with always picking the more common side (about 50%). By our count, 259 coin tosses land between 44% and 56% in 95% of cases. Toss the coins.</p>
+      <div class="runbar rv" style="--d:.2s">
+        <button class="btn small" id="coin-run">Toss 259 coins per currency</button>
+        <button class="btn small ghost" id="coin-clear">Clear</button>
+      </div>
+      <div class="panel rv" id="dir-panel" style="--d:.25s" aria-live="polite"></div>
+      <p class="warn rv" style="--d:.3s"><b>This is not investment advice.</b> Getting the direction right is not the same as making money: the thesis does not simulate trades or costs.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="dir-svg" class="svgbox" viewBox="0 0 560 340" role="img" aria-label="Three 0 to 100% scales, one per currency, with the coin-toss band, ARIMA and the range of the 19 networks"></svg>
+      <div class="legend"><span><i class="dot" style="background:var(--lstm)"></i>19 LSTM networks</span><span><i class="dot" style="background:var(--ar)"></i>ARIMA</span><span><i class="dot" style="background:#cbd5e1"></i>95% coin band (our count)</span><span><i class="dot" style="background:var(--red)"></i>more common side (thesis)</span></div>
+      <p class="note">The thesis percentages match fractions of 259 days (260 test days minus the first, which has no previous day). 95% binomial band: our count. The thesis tests whether each network beats the more common side; ARIMA did not in any currency.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="In practice and limits">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> In practice · limits · credits</div>
+    <h2 class="rv" style="--d:.1s">A reference network for forecasting exchange rates one day ahead, not a buy signal</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--navy)"><h3>Researchers</h3><p>The author proposes LSTM as the network to beat and the day’s four prices as inputs, and suggests widening the review with other databases (Web of Science, ProQuest, EBSCO).</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--red)"><h3>Investors</h3><p>Nothing here says when to buy or sell currency. The thesis does not simulate trades, costs or taxes, and getting the direction right is not making a profit.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ink-2)"><h3>Firms and government</h3><p>The exchange rate weighs on trade, competitiveness and foreign debt. The thesis shows a gain at a one-day horizon, in 2019; horizons of weeks or months were not tested (our reading).</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#5b6f96"><h3>Teachers and students</h3><p>A good example of a fair comparison: the same test days, a naive opponent and a test that separates winning from luck (the MCS).</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>What this research does not say</h3>
+        <ul class="limits">
+          <li><b>A forecast is not a profit.</b> There is no simulation of buying and selling, bid-ask spreads, costs or taxes. <em>· our note</em></li>
+          <li><b>One test year, one day ahead.</b> The 260 test days run from December 2018 to December 2019. The test is worth repeating in other years before trusting such high direction hit rates. <em>· our reading</em></li>
+          <li><b>Three currencies, all against the dollar.</b> Real, euro and pound; other currencies and other inputs may give another result. <em>· our note</em></li>
+          <li><b>Review in a single database.</b> The 245 articles come only from Scopus. <em>· according to the author</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Credits</h3>
+        <div class="cite">
+          <b>How to cite</b><br>
+          COSTA, Marisa Gomes da. <em>Ensaios sobre o uso de redes neurais na previsão de taxa de câmbio.</em> Doctoral thesis (Business Administration), Mackenzie Presbyterian University, São Paulo, 2020. Advisor: Prof. Dr. Leonardo Fernando Cruz Basso.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Approved on 24 April 2020. The forecast charts for each currency are in the original text. <b>This is not investment advice.</b></p>
+        <p class="also">See also: <a href="../../../teses/2024-fukui-expected-shortfall-cambio/">When the exchange rate takes a plunge</a> (Fukui, 2024), by the same advisor, and <a href="../../../teses/2023-genin-projecao-cambio/">Which model forecasts the exchange rate best?</a> (Genin, 2023).</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Read the full thesis (in Portuguese)</a>
+          <a class="btn ghost" href="#capa">↑ Back to start</a>
+          <a class="btn ghost" href="../../../">Other research</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  function pc(v, d){ return fmt(v, d === undefined ? 1 : d) + '%'; }
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, a, txt){ var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); if (txt !== undefined) e.textContent = txt; return e; }
+  function seg(id, fn){
+    var g = $(id);
+    each(g.querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){
+        each(g.querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        fn(+b.dataset.m);
+      });
+    });
+  }
+  function rnd(seed){ return function(){ seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+  /* ================= DADOS DA TESE ================= */
+  // Desenhos das 19 redes (Tabela 3.1): neurônios por camada
+  var ARQ = [[1],[2],[3],[4],[5],[2,1],[2,2],[3,1],[3,2],[3,3],[4,1],[4,2],[4,3],[4,4],[5,1],[5,2],[5,3],[5,4],[5,5]];
+  // Por moeda: RMSE, posição pelo RMSE (entre 21), p-valor do MCS; [RW, ARIMA, LSTM1..LSTM19]
+  // e acerto de direção (DA) [ARIMA, LSTM1..19] e taxa de não informação (NIR)
+  var CUR = [
+    {k:'BRL', n:L('Real', 'Real'), sy:'R$', un:L('reais por dólar', 'reais per dollar'), pre:'R$ ', tab:['3.1','3.2','3.4'], arima:'(2,1,1)', obs:1266,
+     rmse:[0.02753,0.02827, 0.02525,0.02218,0.02141,0.02158,0.02151,0.02293,0.02282,0.02175,0.02168,0.02187,0.02210,0.02160,0.02260,0.02250,0.02264,0.02193,0.02215,0.02263,0.02204],
+     rank:[20,21, 19,12,1,3,2,18,17,6,5,7,10,4,14,13,16,8,11,15,9],
+     p:[0,0, 0,0.0751,1,0.2263,0.2812,0.0091,0.0039,0.21,0.21,0.21,0.0562,0.2812,0.0304,0.0277,0.0077,0.21,0.1908,0.0274,0.0751],
+     da:[0.4710, 0.6757,0.7143,0.7104,0.7069,0.7027,0.7027,0.6988,0.7220,0.6988,0.6873,0.7066,0.7066,0.6988,0.7027,0.7027,0.7027,0.7027,0.7181,0.7066], nir:0.5058},
+    {k:'EUR', n:L('Euro', 'Euro'), sy:'€', un:L('dólares por euro', 'dollars per euro'), pre:'US$ ', tab:['3.5','3.6','3.8'], arima:'(2,1,1)', obs:1295,
+     rmse:[0.00354,0.00352, 0.00265,0.00261,0.00253,0.00249,0.00254,0.00256,0.00252,0.00253,0.00252,0.00248,0.00253,0.00253,0.00246,0.00247,0.00252,0.00250,0.00245,0.00252,0.00248],
+     rank:[21,20, 19,18,13,6,16,17,10,12,11,5,15,14,2,3,8,7,1,9,4],
+     p:[0,0, 0.0035,0.0025,0.0341,0.1114,0.0332,0.0033,0.0483,0.0341,0.0332,0.1114,0.0341,0.0341,0.7473,0.7082,0.0341,0.0483,1,0.0341,0.2252],
+     da:[0.5405, 0.7683,0.7645,0.7683,0.7683,0.7838,0.7876,0.7761,0.7799,0.7915,0.7992,0.7954,0.7915,0.7876,0.7838,0.7799,0.7838,0.7992,0.8031,0.7954], nir:0.5290},
+    {k:'GBP', n:L('Libra', 'Pound'), sy:'£', un:L('dólares por libra', 'dollars per pound'), pre:'US$ ', tab:['3.9','3.10','3.12'], arima:'(1,1,1)', obs:1295,
+     rmse:[0.00696,0.00701, 0.00689,0.00607,0.00603,0.00615,0.00608,0.00611,0.00627,0.00686,0.00646,0.00669,0.00636,0.00613,0.00620,0.00674,0.00622,0.00610,0.00671,0.00650,0.00618],
+     rank:[20,21, 19,2,1,7,3,5,11,18,13,15,12,6,9,17,10,4,16,14,8],
+     p:[0.0323,0.0075, 0.0075,0.4943,1,0.1379,0.4943,0.4943,0.1379,0.0003,0.0457,0.0017,0.1196,0.2179,0.1196,0.0004,0.1196,0.4430,0.0253,0.0813,0.1196],
+     da:[0.4672, 0.6178,0.6564,0.6680,0.6409,0.6525,0.6680,0.6409,0.5598,0.6062,0.5907,0.5946,0.6448,0.6216,0.5676,0.6564,0.6293,0.5830,0.6100,0.6293], nir:0.5019}
+  ];
+  var NDA = 259;   // dias usados no acerto de direção (conta nossa: 260 dias de teste − 1)
+  function nm(i){ return i === 0 ? L('Amanhã = hoje', 'Tomorrow = today') : i === 1 ? 'ARIMA' : 'LSTM' + (i - 1); }
+  function short(i){ return i === 0 ? 'RW' : i === 1 ? 'AR' : String(i - 1); }
+  function arq(j){ var a = ARQ[j]; return a.length === 1 ? L('1 camada, ', '1 layer, ') + a[0] + (a[0] === 1 ? L(' neurônio', ' neuron') : L(' neurônios', ' neurons')) : L('2 camadas, ', '2 layers, ') + a[0] + L(' e ', ' and ') + a[1] + L(' neurônios', ' neurons'); }
+  function best(c){ var b = 2; for (var i = 2; i < 21; i++) if (c.rmse[i] < c.rmse[b]) b = i; return b; }
+  function red(c, i){ return (1 - c.rmse[i] / c.rmse[0]) * 100; }
+  function nth(n){ return EN ? n + (n % 10 === 1 && n !== 11 ? 'st' : n % 10 === 2 && n !== 12 ? 'nd' : n % 10 === 3 && n !== 13 ? 'rd' : 'th') : n + 'º'; }
+  function money(c, v){ return c.pre + fmt(v, c.k === 'BRL' ? 4 : 5); }
+  // Faixa de 95% de uma moeda para n lances (binomial central, conta nossa)
+  function band(n){
+    var lo = null, hi = null, c = 0, lp = -n * Math.log(2), lf = 0;
+    for (var k = 0; k <= n; k++){
+      if (k > 0) lf += Math.log((n - k + 1) / k);
+      c += Math.exp(lf + lp);
+      if (lo === null && c >= 0.025) lo = k;
+      if (hi === null && c >= 0.975){ hi = k; break; }
+    }
+    return [lo / n * 100, hi / n * 100];
+  }
+  var BAND = band(NDA);
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), H = 210, W = 96, gap = 70;
+    var st = makeStage(sc, 3 * W + 2 * gap, 150, {ay:'72%', rx:'60deg'});
+    rotatable(sc, st, -24, 10);
+    var glass = [], solid = [], pick = $('hero-pick');
+    CUR.forEach(function(c, k){
+      var b = best(c), r = c.rmse[b] / c.rmse[0], x = k * (W + gap);
+      var s = box({w:W - 24, d:W - 24, x:x + 12, y:27, h:H * r, c:'var(--lstm)', label:'−' + fmt(red(c, b), 0) + '%'});
+      var g = box({w:W, d:W, x:x, y:15, h:H, c:'#94a3b8', cls:'glass'});
+      flatLabel(st, c.sy + ' ' + c.n, x - 10, W + 24, W + 20, 'font-size:17px; font-family:var(--serif);');
+      st.appendChild(s); st.appendChild(g); solid.push(s); glass.push(g);
+      [s, g].forEach(function(o){ o.addEventListener('click', function(){ if (!M.wasDrag(sc)) show(k); }); });
+      var bt = document.createElement('button'); bt.textContent = c.n; bt.setAttribute('aria-pressed', 'false');
+      bt.addEventListener('click', function(){ show(k); }); pick.appendChild(bt);
+    });
+    function show(k){
+      var c = CUR[k], b = best(c);
+      solid.forEach(function(s, i){ s.classList.toggle('sel', i === k); });
+      each(pick.querySelectorAll('button'), function(x, i){ x.setAttribute('aria-pressed', i === k ? 'true' : 'false'); });
+      $('hero-read').innerHTML = '<b>' + c.n + '</b> · ' + L('erro típico de um dia: ', 'typical one-day error: ') + money(c, c.rmse[0]) + L(' no palpite simples, ', ' for the simple guess, ') + money(c, c.rmse[b]) + L(' na melhor rede (', ' for the best network (') + nm(b) + '): <b>' + fmt(red(c, b), 1) + L('% menor</b>', '% smaller</b>');
+    }
+    show(0);
+  })();
+
+  /* ================= 02 · POR QUE IMPORTA ================= */
+  (function(){
+    var W = [
+      {t:L('Comércio', 'Trade'), s:L('o quanto o país compra e vende lá fora', 'how much the country buys and sells abroad'), i:'<rect x="4" y="12" width="18" height="14" rx="2" fill="var(--navy)"/><rect x="20" y="16" width="10" height="10" rx="2" fill="var(--red)"/><circle cx="10" cy="28" r="3" fill="var(--ink)"/><circle cx="25" cy="28" r="3" fill="var(--ink)"/>',
+       d:L('Pela ótica da economia do país, a tese lembra que o câmbio influi sobre o nível de comércio com o exterior.', 'From the national economy’s point of view, the thesis notes that the exchange rate affects the level of foreign trade.')},
+      {t:L('Competitividade', 'Competitiveness'), s:L('o preço do produto nacional comparado ao de fora', 'the price of local goods compared with foreign ones'), i:'<path d="M4,28 L12,18 L18,23 L30,8" fill="none" stroke="var(--red)" stroke-width="3"/><path d="M24,8 H30 V14" fill="none" stroke="var(--red)" stroke-width="3"/>',
+       d:L('O câmbio mexe na competitividade do país, segundo a introdução da tese.', 'The exchange rate shifts the country’s competitiveness, according to the thesis introduction.')},
+      {t:L('Dívida externa', 'Foreign debt'), s:L('quanto pesa o que se deve em dólar', 'how heavy debt owed in dollars is'), i:'<rect x="6" y="6" width="22" height="24" rx="3" fill="none" stroke="var(--navy)" stroke-width="2.5"/><text x="17" y="24" text-anchor="middle" font-size="14" font-weight="800" fill="var(--red)">$</text>',
+       d:L('Quando o câmbio sobe, dívidas em moeda estrangeira ficam mais pesadas. A tese cita o peso da dívida externa entre os motivos para prever o câmbio.', 'When the rate rises, debts in foreign currency get heavier. The thesis cites the weight of foreign debt among the reasons to forecast exchange rates.')},
+      {t:L('Risco de carteira', 'Portfolio risk'), s:L('quem tem bens ou dívidas em outra moeda', 'whoever holds assets or debts in another currency'), i:'<rect x="5" y="11" width="24" height="17" rx="3" fill="var(--navy)"/><rect x="12" y="6" width="10" height="6" rx="2" fill="none" stroke="var(--navy)" stroke-width="2.5"/><path d="M5,19 H29" stroke="#fff" stroke-width="2"/>',
+       d:L('Pelo lado das empresas e investidores, os movimentos do câmbio criam risco para quem tem ativos e passivos em moeda estrangeira.', 'For firms and investors, exchange-rate moves create risk for anyone with assets and liabilities in foreign currency.')}
+    ];
+    var g = $('why'), p = $('why-panel');
+    W.forEach(function(w, i){
+      var b = document.createElement('button'); b.setAttribute('aria-pressed', 'false');
+      b.innerHTML = '<svg viewBox="0 0 34 34" aria-hidden="true">' + w.i + '</svg><b>' + w.t + '</b><span>' + w.s + '</span>';
+      b.addEventListener('click', function(){ sel(i); }); g.appendChild(b);
+    });
+    function sel(i){
+      each(g.querySelectorAll('button'), function(x, j){ x.setAttribute('aria-pressed', i === j ? 'true' : 'false'); });
+      p.innerHTML = '<h3>' + W[i].t + '</h3><p>' + W[i].d + '</p>';
+    }
+    sel(0);
+  })();
+
+  /* ================= 03 · PUBLICAÇÕES ================= */
+  (function(){
+    var Y0 = 1993, N = [1,2,2,7,5,8,4,5,6,5,4,4,7,3,9,8,10,6,9,13,12,12,14,19,13,11,32,14];
+    var CR = [
+      {t:L('México', 'Mexico'), a:1994, b:1995, d:L('A crise do México em 1994 e 1995. Os primeiros artigos da base são de 1993 a 1995.', 'The Mexican crisis of 1994 and 1995. The first articles in the database date from 1993 to 1995.')},
+      {t:L('Tigres Asiáticos', 'Asian Tigers'), a:1997, b:1997, d:L('A crise dos Tigres Asiáticos, em 1997. Entre 1996 e 2000 a produção cresce (29 artigos).', 'The Asian Tigers crisis, in 1997. Output grows between 1996 and 2000 (29 articles).')},
+      {t:'Subprime', a:2007, b:2009, d:L('A crise imobiliária dos EUA, de 2007 a 2009. O interesse volta a crescer a partir de 2006, depois de uma queda em 2001-2005.', 'The US housing crisis, 2007 to 2009. Interest grows again from 2006 on, after a dip in 2001–2005.')},
+      {t:L('Grécia', 'Greece'), a:2010, b:2010, d:L('A crise da Grécia, em 2010.', 'The Greek crisis, in 2010.')},
+      {t:'Brexit', a:2016, b:2016, d:L('O início da saída do Reino Unido da União Europeia, em 2016. Em 2019 sai o maior número de artigos: 32, 13% do total.', 'The start of the United Kingdom’s exit from the European Union, in 2016. 2019 has the most articles: 32, 13% of the total.')}
+    ];
+    var svg = $('pub-svg'), x0 = 40, bw = 17.4, yb = 262, sc = 6.6, sel = -1;
+    function draw(){
+      svg.innerHTML = '';
+      var defs = el('defs', {}); var pat = el('pattern', {id:'hatch', width:6, height:6, patternUnits:'userSpaceOnUse', patternTransform:'rotate(45)'});
+      pat.appendChild(el('rect', {width:6, height:6, fill:'#cbd5e1'})); pat.appendChild(el('line', {x1:0, y1:0, x2:0, y2:6, stroke:'var(--navy)', 'stroke-width':3})); defs.appendChild(pat); svg.appendChild(defs);
+      for (var g = 0; g <= 30; g += 10){ var y = yb - g * sc; svg.appendChild(el('line', {x1:x0 - 4, y1:y, x2:540, y2:y, stroke:'#eef2f7'})); svg.appendChild(el('text', {x:x0 - 8, y:y + 4, 'font-size':11, fill:'var(--muted)', 'text-anchor':'end'}, g)); }
+      if (sel >= 0){ var c = CR[sel]; svg.appendChild(el('rect', {x:x0 + (c.a - Y0) * (bw + 1.4) - 2, y:28, width:(c.b - c.a + 1) * (bw + 1.4) + 2, height:yb - 28, fill:'color-mix(in srgb, var(--red) 10%, transparent)', rx:4})); }
+      N.forEach(function(v, i){
+        var y = Y0 + i, x = x0 + i * (bw + 1.4), h = v * sc;
+        var on = sel >= 0 && y >= CR[sel].a && y <= CR[sel].b;
+        svg.appendChild(el('rect', {x:x, y:yb - h, width:bw, height:h, rx:2, fill:y === 2020 ? 'url(#hatch)' : (on ? 'var(--red)' : (y === 2019 ? 'var(--ink)' : 'var(--navy)'))}));
+        if ((y % 5 === 0 && y < 2020) || y === 1993 || y === 2019) svg.appendChild(el('text', {x:x + bw / 2, y:yb + 16, 'font-size':10.5, fill:'var(--muted)', 'text-anchor':'middle'}, (y === 1993 ? '1993' : "'" + String(y).slice(2))));
+        if (v >= 19 || on) svg.appendChild(el('text', {x:x + bw / 2, y:yb - h - 5, 'font-size':11, 'font-weight':700, fill:'var(--ink)', 'text-anchor':'middle'}, v));
+      });
+      svg.appendChild(el('text', {x:x0, y:18, 'font-size':11, fill:'var(--muted)'}, L('artigos por ano', 'articles per year')));
+    }
+    var chips = $('pub-chips'), p = $('pub-panel');
+    CR.forEach(function(c, i){ var b = document.createElement('button'); b.textContent = c.t + ' · ' + (c.a === c.b ? c.a : c.a + '–' + String(c.b).slice(2)); b.setAttribute('aria-pressed', 'false'); b.addEventListener('click', function(){ pick(sel === i ? -1 : i); }); chips.appendChild(b); });
+    function pick(i){
+      sel = i; draw();
+      each(chips.querySelectorAll('button'), function(x, j){ x.setAttribute('aria-pressed', i === j ? 'true' : 'false'); });
+      p.innerHTML = i < 0 ? '<p>' + L('Até 2005, nunca mais de 8 artigos por ano. De 2012 em diante, 11 a 19, e então 32 em 2019. Em 2020, 14 só até abril.', 'Until 2005, never more than 8 articles a year. From 2012 on, 11 to 19, then 32 in 2019. In 2020, 14 up to April alone.') + '</p>' : '<h3>' + CR[i].t + '</h3><p>' + CR[i].d + '</p><p style="font-size:.76rem; color:var(--muted)">' + L('Ligação feita pela autora; a tese não testa se as crises causaram os artigos.', 'Link drawn by the author; the thesis does not test whether the crises caused the articles.') + '</p>';
+    }
+    pick(-1);
+  })();
+
+  /* ================= 04 · QUEM PUBLICA ================= */
+  (function(){
+    var V = [
+      {max:41, rows:[[L('Índia', 'India'),41],[L('Reino Unido', 'United Kingdom'),37],['China',36],[L('Estados Unidos', 'United States'),35],[L('Malásia', 'Malaysia'),16],['Taiwan',13],[L('Turquia', 'Türkiye'),10],['Hong Kong',9],[L('Irã', 'Iran'),9],[L('Espanha', 'Spain'),8],[L('Itália', 'Italy'),7],[L('Canadá', 'Canada'),6],[L('Grécia', 'Greece'),6],[L('Coreia do Sul', 'South Korea'),6],[L('Brasil', 'Brazil'),5,1],[L('Indonésia', 'Indonesia'),5],[L('Holanda', 'Netherlands'),5],[L('Japão', 'Japan'),5]], suf:'',
+       note:L('Artigos com pelo menos um autor do país (Tabela 2.4). O Brasil divide o 15º lugar com Indonésia, Holanda e Japão, com 5 artigos.', 'Articles with at least one author from the country (Table 2.4). Brazil shares 15th place with Indonesia, the Netherlands and Japan, with 5 articles.'),
+       p:L('<h3>Índia, Reino Unido, China e EUA</h3><p>Os quatro têm de 35 a 41 artigos cada; o quinto, a Malásia, tem 16. Para a autora, o Brasil em 15º mostra um campo nacional ainda pouco explorado.</p>', '<h3>India, UK, China and US</h3><p>The four have 35 to 41 articles each; the fifth, Malaysia, has 16. For the author, Brazil in 15th shows a national field still little explored.</p>')},
+      {max:33, rows:[[L('Computação', 'Computer science'),33.0],[L('Economia e finanças', 'Economics and finance'),12.8,1],[L('Matemática', 'Mathematics'),12.1],[L('Engenharia', 'Engineering'),11.2],[L('Negócios e gestão', 'Business and management'),9.7],[L('Neurociência', 'Neuroscience'),5.5],[L('Outras', 'Others'),15.7]], suf:'%',
+       note:L('Áreas das revistas em que os artigos saíram (seção 2.3.3); somam 100%.', 'Fields of the journals where the articles appeared (section 2.3.3); they add up to 100%.'),
+       p:L('<h3>Um terço na computação</h3><p>Só 12,8% saem em revistas de economia, econometria e finanças. A autora vê aí um enfoque distante do financeiro e econômico.</p>', '<h3>A third in computer science</h3><p>Only 12.8% appear in economics, econometrics and finance journals. The author sees a focus that is distant from finance and economics.</p>')},
+      {max:14, rows:[['Neurocomputing',14,1],['Expert Systems with Appl.',11],['Applied Soft Computing',7],['Journal of Forecasting',7],['Neural Comp. and Appl.',7],['Neural Network World',5],['Computational Economics',4],[L('Comp. & Operations Res.', 'Comp. & Operations Res.'),4],['Intell. Syst. Acc. Fin. Mgmt.',4],['Int. J. Electronic Finance',3]], suf:'',
+       note:L('Os 10 periódicos com mais artigos (Tabela 2.5). Os nomes foram encurtados.', 'The 10 journals with the most articles (Table 2.5). Names were shortened.'),
+       p:L('<h3>Muitas revistas, muitos autores, poucos repetem</h3><p>115 das 156 revistas publicaram um único artigo, e 428 dos 506 autores também. Os mais produtivos, Dunis e Wang, têm 8 artigos cada. Para a autora, ainda não há um grupo de referência no tema.</p>', '<h3>Many journals, many authors, few repeat</h3><p>115 of the 156 journals published a single article, and so did 428 of the 506 authors. The most productive, Dunis and Wang, have 8 articles each. For the author, there is still no reference group on the topic.</p>')}
+    ];
+    var bars = $('who-bars');
+    function draw(m){
+      var v = V[m]; bars.innerHTML = '';
+      v.rows.forEach(function(r){
+        var d = document.createElement('div'); d.className = 'r' + (r[2] ? ' hl' : '');
+        d.innerHTML = '<span>' + r[0] + '</span><span class="t"><i style="width:0"></i></span><span class="v">' + (v.suf ? fmt(r[1], 1) + '%' : r[1]) + '</span>';
+        bars.appendChild(d);
+        var w = r[1] / v.max * 100; requestAnimationFrame(function(){ requestAnimationFrame(function(){ d.querySelector('i').style.width = w + '%'; }); });
+      });
+      $('who-note').textContent = v.note; $('who-panel').innerHTML = v.p;
+    }
+    seg('who-seg', draw); draw(0);
+  })();
+
+  /* ================= 05 · LACUNAS ================= */
+  (function(){
+    var G = [
+      {s:L('Só o tamanho do erro', 'Only the size of the error'), g:L('Quase todos medem só o tamanho do erro (RMSE, MAE), régua criticada por não dizer se a previsão serve na prática.', 'Almost all measure only the size of the error (RMSE, MAE), a yardstick criticised for not saying whether the forecast is useful in practice.'),
+       a:L('Mede também a direção: em quantos dias a rede acertou se o câmbio subiria ou cairia (tela 10).', 'Also measures direction: on how many days the network got right whether the rate would rise or fall (screen 10).')},
+      {s:L('Só o câmbio de ontem como entrada', 'Only yesterday’s rate as input'), g:L('A maioria alimenta a rede só com o próprio câmbio dos dias anteriores; assim, ela corre o risco de só repetir o “amanhã igual a hoje”.', 'Most feed the network only with the exchange rate of previous days; that way it risks merely repeating “tomorrow equals today”.'),
+       a:L('Usa os quatro preços do dia anterior: abertura, máxima, mínima e fechamento (tela 06).', 'Uses the previous day’s four prices: open, high, low and close (screen 06).')},
+      {s:L('Redes com memória em alta', 'Networks with memory on the rise'), g:L('Redes recorrentes, que têm memória, aparecem como tema em alta.', 'Recurrent networks, which have memory, appear as a hot topic.'),
+       a:L('Testa a LSTM, uma rede recorrente feita para guardar o que importa por mais tempo sem os problemas de treino das recorrentes simples.', 'Tests LSTM, a recurrent network built to keep what matters for longer without the training problems of simple recurrent networks.')},
+      {s:L('Que tamanho de rede?', 'What network size?'), g:L('Falta um jeito de escolher o tamanho certo da rede.', 'A way to choose the right network size is missing.'),
+       a:L('Testa 19 desenhos, de 1 a 5 neurônios em uma ou duas camadas (tela 08).', 'Tests 19 designs, 1 to 5 neurons in one or two layers (screen 08).')},
+      {s:L('Sem adversário ingênuo', 'No naive opponent'), g:L('Alguns estudos nem comparam a rede com o palpite ingênuo, e não há uma rede de referência a ser batida.', 'Some studies do not even compare the network with the naive guess, and there is no reference network to beat.'),
+       a:L('Compara com o “amanhã igual a hoje” e com o ARIMA nos mesmos dias, e separa vitória de sorte com o MCS (tela 09).', 'Compares with “tomorrow equals today” and with ARIMA on the same days, and separates winning from luck with the MCS (screen 09).')}
+    ];
+    var g = $('gaps');
+    G.forEach(function(x, i){ var b = document.createElement('button'); b.setAttribute('aria-pressed', 'false'); b.innerHTML = '<b>' + (i + 1) + '</b><span>' + x.s + '</span>'; b.addEventListener('click', function(){ sel(i); }); g.appendChild(b); });
+    function sel(i){
+      each(g.querySelectorAll('button'), function(x, j){ x.setAttribute('aria-pressed', i === j ? 'true' : 'false'); });
+      $('br-from').textContent = G[i].g; $('br-to').textContent = G[i].a;
+    }
+    sel(0);
+  })();
+
+  /* ================= 06 · A VELA ================= */
+  (function(){
+    var svg = $('vela-svg');
+    var P = [ // preços inventados, em R$ por US$
+      {k:'o', v:4.05, t:L('Abertura', 'Open'), d:L('O primeiro preço do dia. A diferença entre abertura e fechamento mostra para que lado o dia andou e quanto.', 'The first price of the day. The gap between open and close shows which way the day went, and how far.')},
+      {k:'h', v:4.11, t:L('Máxima', 'High'), d:L('O preço mais alto do dia. Junto com a mínima, mostra o intervalo de negociação, uma medida de quanto o câmbio balançou.', 'The highest price of the day. Together with the low, it gives the trading range, a measure of how much the rate swung.')},
+      {k:'l', v:4.01, t:L('Mínima', 'Low'), d:L('O preço mais baixo do dia. Máxima menos mínima é uma medida de volatilidade.', 'The lowest price of the day. High minus low is a measure of volatility.')},
+      {k:'c', v:4.08, t:L('Fechamento', 'Close'), d:L('O último preço do dia, o que a maioria dos estudos usa sozinho. Para a tese, juntar tendência e balanço do dia traz informação sobre o dia seguinte.', 'The last price of the day, the one most studies use on its own. For the thesis, combining the day’s trend and swing carries information about the next day.')}
+    ];
+    var lo = 3.98, hi = 4.14, cur = 3;
+    function y(v){ return 270 - (v - lo) / (hi - lo) * 240; }
+    function draw(){
+      svg.innerHTML = '';
+      for (var g = 4.00; g <= 4.141; g += 0.04){ var yy = y(g); svg.appendChild(el('line', {x1:60, y1:yy, x2:540, y2:yy, stroke:'#eef2f7'})); svg.appendChild(el('text', {x:54, y:yy + 4, 'font-size':11, fill:'var(--muted)', 'text-anchor':'end'}, 'R$ ' + fmt(g, 2))); }
+      var cx = 200;
+      svg.appendChild(el('line', {x1:cx, y1:y(P[1].v), x2:cx, y2:y(P[2].v), stroke:'var(--ink)', 'stroke-width':3}));
+      svg.appendChild(el('rect', {x:cx - 34, y:y(P[3].v), width:68, height:y(P[0].v) - y(P[3].v), fill:'var(--navy)', rx:4}));
+      // faixa do dia e tendência
+      svg.appendChild(el('path', {d:'M260 ' + y(P[1].v) + ' H275 V' + y(P[2].v) + ' H260', fill:'none', stroke:cur === 1 || cur === 2 ? 'var(--red)' : '#cbd5e1', 'stroke-width':2}));
+      var ym = (y(P[1].v) + y(P[2].v)) / 2, fc = cur === 1 || cur === 2 ? 'var(--red)' : 'var(--muted)';
+      svg.appendChild(el('text', {x:282, y:ym - 4, 'font-size':12, fill:fc}, L('máxima − mínima', 'high − low')));
+      svg.appendChild(el('text', {x:282, y:ym + 12, 'font-size':12, fill:fc}, L('= balanço do dia', '= the day’s swing')));
+      svg.appendChild(el('path', {d:'M120 ' + y(P[0].v) + ' H130 V' + y(P[3].v) + ' H120', fill:'none', stroke:cur === 0 || cur === 3 ? 'var(--red)' : '#cbd5e1', 'stroke-width':2}));
+      svg.appendChild(el('text', {x:114, y:(y(P[0].v) + y(P[3].v)) / 2 + 4, 'font-size':12, fill:cur === 0 || cur === 3 ? 'var(--red)' : 'var(--muted)', 'text-anchor':'end'}, L('tendência', 'trend')));
+      var pos = [[cx - 34, P[0].v], [cx, P[1].v], [cx, P[2].v], [cx + 34, P[3].v]];
+      P.forEach(function(p, i){
+        var g = el('g', {'class':'pt' + (i === cur ? ' on' : ''), tabindex:0, role:'button', 'aria-label':p.t});
+        g.appendChild(el('circle', {cx:pos[i][0], cy:y(p.v), r:10, fill:i === cur ? 'var(--red)' : '#fff', stroke:'var(--red)', 'stroke-width':2}));
+        var tx = i === 3 ? 420 : i === 0 ? 420 : 420;
+        g.appendChild(el('text', {x:tx, y:y(p.v) + 4, 'font-size':13, 'font-weight':i === cur ? 700 : 500, fill:i === cur ? 'var(--red)' : 'var(--ink-2)'}, p.t + ' · R$ ' + fmt(p.v, 2)));
+        function go(){ cur = i; draw(); panel(); }
+        g.addEventListener('click', go); g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); } });
+        svg.appendChild(g);
+      });
+      svg.appendChild(el('text', {x:cx, y:292, 'font-size':11, fill:'var(--muted)', 'text-anchor':'middle'}, L('um dia de câmbio (inventado)', 'one exchange-rate day (made up)')));
+    }
+    function panel(){ $('vela-panel').innerHTML = '<h3>' + P[cur].t + '</h3><p>' + P[cur].d + '</p>'; }
+    draw(); panel();
+  })();
+
+  /* ================= 07 · O ERRO ================= */
+  (function(){
+    var box2 = $('ebars'), p = $('err-panel'), cur = 0, sel = -1;
+    function draw(){
+      var c = CUR[cur], ord = c.rmse.map(function(v, i){ return i; }).sort(function(a, b){ return c.rmse[a] - c.rmse[b]; });
+      var mx = c.rmse[1] > c.rmse[0] ? c.rmse[1] : c.rmse[0], b = best(c);
+      box2.innerHTML = '';
+      ord.forEach(function(i){
+        var r = document.createElement('div');
+        r.className = 'r' + (i === 0 ? ' rw' : i === 1 ? ' ar' : '') + (i === b ? ' b1' : '') + (i === sel ? ' on' : '');
+        r.setAttribute('role', 'button'); r.tabIndex = 0;
+        r.innerHTML = '<span class="nm">' + (i === 0 ? L('amanhã=hoje', 'tmrw=today') : nm(i)) + '</span><span class="t"><i style="width:' + (c.rmse[i] / mx * 100) + '%"></i><span class="rwline" style="left:' + (c.rmse[0] / mx * 100) + '%"></span></span><span class="v">' + fmt(c.rmse[i], 5) + '</span>';
+        r.addEventListener('click', function(){ sel = i; draw(); });
+        r.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); sel = i; draw(); } });
+        box2.appendChild(r);
+      });
+      var i = sel < 0 ? b : sel, h;
+      if (i === 0) h = '<h3>' + L('Amanhã = hoje', 'Tomorrow = today') + '</h3><p>' + L('Num dia típico de 2019, repetir a cotação da véspera errou ', 'On a typical day in 2019, repeating the previous day’s rate missed by ') + money(c, c.rmse[0]) + ' (' + c.un + '). ' + L('Esta é a régua: 100%.', 'This is the yardstick: 100%.') + '</p>';
+      else if (i === 1) h = '<h3>ARIMA ' + c.arima + '</h3><p>' + L('Erro de ', 'Error of ') + money(c, c.rmse[1]) + ': ' + (c.rmse[1] > c.rmse[0] ? fmt((c.rmse[1] / c.rmse[0] - 1) * 100, 1) + L('% maior que o do palpite simples.', '% larger than the simple guess.') : fmt(red(c, 1), 1) + L('% menor que o do palpite simples, quase empate.', '% smaller than the simple guess, nearly a tie.')) + '</p>';
+      else h = '<h3>' + nm(i) + ' · ' + arq(i - 2) + '</h3><p>' + L('Erro de ', 'Error of ') + money(c, c.rmse[i]) + ', ' + fmt(red(c, i), 1) + L('% menor que o do palpite simples. Posição: ', '% smaller than the simple guess. Rank: ') + nth(c.rank[i]) + L(' de 21.', ' of 21.') + (i === b ? L(' É a melhor rede nesta moeda.', ' It is the best network for this currency.') : '') + '</p>';
+      p.innerHTML = h + '<p style="font-size:.76rem; color:var(--muted)">' + c.n + ': ' + L('melhor rede ', 'best network ') + fmt(red(c, b), 1) + L('% abaixo do palpite simples; a pior, LSTM1, ', '% below the simple guess; the worst, LSTM1, ') + fmt(red(c, 2), 1) + '%.</p>';
+    }
+    seg('err-seg', function(m){ cur = m; sel = -1; draw(); }); draw();
+  })();
+
+  /* ================= 08 · TABULEIRO ================= */
+  (function(){
+    var bd = $('board'), cur = 0, sel = 2;   // sel: índice da rede (0..18)
+    function cellOf(a, b){ for (var j = 0; j < 19; j++){ var q = ARQ[j]; if (q[0] === a && (b === 0 ? q.length === 1 : q[1] === b)) return j; } return -1; }
+    function draw(){
+      var c = CUR[cur]; bd.innerHTML = '';
+      var hd = ['', L('só 1 camada', '1 layer only'), L('+ 2ª: 1', '+ 2nd: 1'), '2', '3', '4', '5'];
+      hd.forEach(function(t){ var d = document.createElement('div'); d.className = 'h'; d.textContent = t; bd.appendChild(d); });
+      for (var a = 1; a <= 5; a++){
+        var rh = document.createElement('div'); rh.className = 'rh'; rh.textContent = a + (a === 1 ? L(' neurônio na 1ª', ' neuron in 1st') : L(' na 1ª', ' in 1st')); bd.appendChild(rh);
+        for (var b = 0; b <= 5; b++){
+          var j = cellOf(a, b);
+          if (j < 0){ var nx = document.createElement('div'); nx.className = 'nx'; bd.appendChild(nx); continue; }
+          (function(j){
+            var i = j + 2, bt = document.createElement('button');
+            bt.className = (c.rank[i] === 1 ? 'top' : c.p[i] >= 0.10 ? '' : 'out') + (j === sel ? ' sel' : '');
+            bt.innerHTML = c.rank[i] + '<small>LSTM' + (j + 1) + '</small>';
+            bt.setAttribute('aria-label', 'LSTM' + (j + 1) + ', ' + arq(j) + ': ' + nth(c.rank[i]) + L(' lugar', ' place'));
+            bt.addEventListener('click', function(){ sel = j; draw(); });
+            bd.appendChild(bt);
+          })(j);
+        }
+      }
+      var i = sel + 2;
+      $('brd-panel').innerHTML = '<h3>LSTM' + (sel + 1) + ' · ' + arq(sel) + '</h3><p>' + c.n + ': ' + nth(c.rank[i]) + L(' lugar entre 21, erro ', ' place of 21, error ') + fmt(red(c, i), 1) + L('% menor que o do palpite simples', '% smaller than the simple guess') + (c.p[i] >= 0.10 ? L(', dentro do grupo dos melhores.', ', inside the best group.') : L(', fora do grupo dos melhores.', ', outside the best group.')) + '</p><p style="font-size:.76rem; color:var(--muted)">' + L('Nas três moedas: ', 'In all three currencies: ') + CUR.map(function(x){ return x.n + ' ' + nth(x.rank[i]); }).join(' · ') + '</p>';
+      net(ARQ[sel]);
+    }
+    function net(a){
+      var svg = $('net-mini'); svg.innerHTML = '';
+      var nar = svg.clientWidth > 0 && svg.clientWidth < 520, VW = nar ? 380 : 560, FZ = nar ? 12 : 10.5;
+      svg.setAttribute('viewBox', '0 0 ' + VW + ' 150');
+      var cols = [{n:4, lab:L('entradas', 'inputs'), names:[L('abertura', 'open'), L('máxima', 'high'), L('mínima', 'low'), L('fechamento', 'close')]}];
+      a.forEach(function(n, k){ cols.push({n:n, lab:(k + 1) + L('ª camada', (k === 0 ? 'st' : 'nd') + ' layer'), mem:true}); });
+      cols.push({n:1, lab:L('previsão', 'forecast')});
+      var X = cols.map(function(c, k){ return (nar ? 92 : 120) + k * ((VW - (nar ? 120 : 180)) / (cols.length - 1)); });
+      var pts = cols.map(function(c, k){ var out = []; for (var q = 0; q < c.n; q++) out.push([X[k], 75 + (q - (c.n - 1) / 2) * 22]); return out; });
+      for (var k = 0; k < cols.length - 1; k++) pts[k].forEach(function(p0){ pts[k + 1].forEach(function(p1){ svg.appendChild(el('line', {x1:p0[0], y1:p0[1], x2:p1[0], y2:p1[1], stroke:'#cbd5e1', 'stroke-width':1})); }); });
+      cols.forEach(function(c, k){
+        pts[k].forEach(function(p0, q){
+          if (c.mem) svg.appendChild(el('path', {d:'M' + (p0[0] + 7) + ' ' + (p0[1] - 5) + ' a9 9 0 1 1 -14 0', fill:'none', stroke:'var(--red)', 'stroke-width':1.8}));
+          svg.appendChild(el('circle', {cx:p0[0], cy:p0[1], r:7.5, fill:k === 0 ? '#fff' : k === cols.length - 1 ? 'var(--red)' : 'var(--navy)', stroke:k === 0 ? 'var(--ink-2)' : 'none', 'stroke-width':1.5}));
+          if (c.names) svg.appendChild(el('text', {x:p0[0] - 13, y:p0[1] + 4, 'font-size':FZ, fill:'var(--ink-2)', 'text-anchor':'end'}, c.names[q]));
+        });
+        svg.appendChild(el('text', {x:X[k], y:144, 'font-size':FZ, fill:'var(--muted)', 'text-anchor':'middle'}, c.lab));
+      });
+      svg.appendChild(el('text', {x:10, y:16, 'font-size':FZ, fill:'var(--red)'}, L('laço vermelho = memória da LSTM', 'red loop = LSTM memory')));
+    }
+    seg('brd-seg', function(m){ cur = m; draw(); }); draw();
+  })();
+
+  /* ================= 09 · GRUPO DOS MELHORES ================= */
+  (function(){
+    var g = $('grp'), inp = $('alpha');
+    CUR.forEach(function(c, k){
+      var d = document.createElement('div'); d.className = 'cur';
+      d.innerHTML = '<h3>' + c.n + ' <span id="gc' + k + '"></span></h3><div class="row" id="gr' + k + '"></div>';
+      g.appendChild(d);
+      var ord = c.p.map(function(v, i){ return i; }).sort(function(a, b){ return c.p[b] - c.p[a] || c.rmse[a] - c.rmse[b]; });
+      var row = d.querySelector('.row');
+      ord.forEach(function(i){ var t = document.createElement('i'); t.className = i === 0 ? 'rw' : i === 1 ? 'ar' : ''; t.dataset.i = i; t.textContent = short(i); t.title = nm(i) + ' · p = ' + fmt(c.p[i], 4); row.appendChild(t); });
+    });
+    function upd(){
+      var a = +inp.value / 100, out = [];
+      $('alpha-v').textContent = inp.value + '%';
+      CUR.forEach(function(c, k){
+        var n = 0, rwIn = false;
+        each($('gr' + k).children, function(t){ var i = +t.dataset.i, on = c.p[i] >= a; t.classList.toggle('gone', !on); if (on) n++; if (on && i < 2) rwIn = true; });
+        $('gc' + k).textContent = n + L(' de 21 ficam', ' of 21 stay');
+        out.push({c:c, n:n, rw:rwIn});
+      });
+      var v = +inp.value, msg;
+      if (v === 10) msg = L('<h3>α = 10%, a régua principal da tese</h3><p>Ficam 9 redes no real, 6 no euro e 12 na libra. O palpite simples e o ARIMA saem nas três moedas.</p>', '<h3>α = 10%, the thesis’s main setting</h3><p>9 networks stay for the real, 6 for the euro and 12 for the pound. The simple guess and ARIMA are out in all three currencies.</p>');
+      else if (v === 25) msg = L('<h3>α = 25%, a régua mais exigente da tese</h3><p>Sobram 3 redes no real (LSTM3, 5 e 12), 3 no euro (13, 14 e 17) e 5 na libra (2, 3, 5, 6 e 16).</p>', '<h3>α = 25%, the thesis’s strictest setting</h3><p>3 networks remain for the real (LSTM3, 5 and 12), 3 for the euro (13, 14 and 17) and 5 for the pound (2, 3, 5, 6 and 16).</p>');
+      else msg = '<h3>α = ' + v + '% · ' + L('leitura nossa', 'our reading') + '</h3><p>' + out.map(function(o){ return o.c.n + ': ' + o.n; }).join(' · ') + '.' + (out[2].rw ? L(' Com uma régua tão tolerante, o palpite simples volta ao grupo na libra (p = 0,0323): lá, a vantagem das redes é menor.', ' With such a lenient setting, the simple guess rejoins the group for the pound (p = 0.0323): there, the networks’ edge is smaller.') : L(' Quanto maior o α, mais exigente o teste e menor o grupo.', ' The larger the α, the stricter the test and the smaller the group.')) + '</p>';
+      $('grp-panel').innerHTML = msg;
+    }
+    inp.addEventListener('input', upd);
+    each(document.querySelectorAll('.marks button'), function(b){ b.addEventListener('click', function(){ inp.value = b.dataset.a; upd(); }); });
+    upd();
+  })();
+
+  /* ================= 10 · DIREÇÃO ================= */
+  (function(){
+    var svg = $('dir-svg'), coins = [[], [], []], R = rnd(2020), sel = 0;
+    var X0 = 120, X1 = 540, VW = 560, FS = 1;
+    function x(v){ return X0 + v / 100 * (X1 - X0); }
+    function draw(){
+      var nar = svg.clientWidth > 0 && svg.clientWidth < 520;
+      VW = nar ? 360 : 560; X0 = nar ? 64 : 120; X1 = VW - 22; FS = nar ? 1.25 : 1;
+      svg.setAttribute('viewBox', '0 0 ' + VW + ' 340');
+      svg.innerHTML = '';
+      for (var g = 0; g <= 100; g += 10){ svg.appendChild(el('line', {x1:x(g), y1:24, x2:x(g), y2:312, stroke:g === 50 ? '#cbd5e1' : '#f1f5f9'})); if (!(FS > 1 && g % 20)) svg.appendChild(el('text', {x:x(g), y:330, 'font-size':10.5 * FS, fill:'var(--muted)', 'text-anchor':'middle'}, g + '%')); }
+      CUR.forEach(function(c, k){
+        var yc = 70 + k * 96, on = k === sel;
+        var gr = el('g', {style:'cursor:pointer', tabindex:0, role:'button', 'aria-label':c.n});
+        gr.appendChild(el('rect', {x:4, y:yc - 40, width:VW - 8, height:80, rx:10, fill:on ? '#f8fafc' : 'transparent', stroke:on ? 'var(--border)' : 'none'}));
+        gr.appendChild(el('text', {x:12, y:yc + 5, 'font-size':14 * FS, 'font-weight':700, fill:'var(--ink)'}, c.n));
+        gr.appendChild(el('rect', {x:x(BAND[0]), y:yc - 22, width:x(BAND[1]) - x(BAND[0]), height:44, fill:'#e2e8f0', rx:6}));
+        coins[k].forEach(function(v, q){ gr.appendChild(el('circle', {cx:x(v), cy:yc - 16 + (q % 9) * 4, r:2.2, fill:'#64748b', opacity:.7})); });
+        gr.appendChild(el('line', {x1:x(c.nir * 100), y1:yc - 28, x2:x(c.nir * 100), y2:yc + 28, stroke:'var(--red)', 'stroke-width':2, 'stroke-dasharray':'4 3'}));
+        var ls = c.da.slice(1), mn = Math.min.apply(null, ls) * 100, mxv = Math.max.apply(null, ls) * 100;
+        gr.appendChild(el('rect', {x:x(mn), y:yc - 7, width:x(mxv) - x(mn), height:14, rx:7, fill:'color-mix(in srgb, var(--lstm) 25%, transparent)'}));
+        ls.forEach(function(v){ gr.appendChild(el('circle', {cx:x(v * 100), cy:yc, r:4.5, fill:'var(--lstm)', stroke:'#fff', 'stroke-width':1})); });
+        gr.appendChild(el('path', {d:'M' + x(c.da[0] * 100) + ' ' + (yc - 9) + ' l7 9 -7 9 -7 -9 z', fill:'var(--ar)'}));
+        gr.appendChild(el('text', FS > 1 ? {x:x((mn + mxv) / 2), y:yc - 14, 'font-size':11.5 * FS, 'font-weight':700, fill:'var(--lstm)', 'text-anchor':'middle'} : {x:x(mxv) + 8, y:yc + 4, 'font-size':11.5, 'font-weight':700, fill:'var(--lstm)'}, pc(mn, 0) + '–' + pc(mxv, 0)));
+        gr.appendChild(el('text', {x:x(c.da[0] * 100), y:yc + 32, 'font-size':10.5 * FS, fill:'var(--ar)', 'text-anchor':'middle'}, 'ARIMA ' + pc(c.da[0] * 100, 1)));
+        gr.addEventListener('click', function(){ sel = k; draw(); panel(); });
+        gr.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); sel = k; draw(); panel(); } });
+        svg.appendChild(gr);
+      });
+      svg.appendChild(el('text', {x:x((BAND[0] + BAND[1]) / 2), y:16, 'font-size':10.5 * FS, fill:'var(--muted)', 'text-anchor':'middle'}, L('moeda: 95% entre ', 'coin: 95% between ') + pc(BAND[0], 0) + L(' e ', ' and ') + pc(BAND[1], 0)));
+    }
+    function panel(){
+      var c = CUR[sel], ls = c.da.slice(1), mn = Math.min.apply(null, ls), mxv = Math.max.apply(null, ls), bi = c.da.indexOf(mxv), wi = c.da.indexOf(mn);
+      var inband = ls.filter(function(v){ return v * 100 <= BAND[1] + 1e-9; }).length;
+      $('dir-panel').innerHTML = '<h3>' + c.n + '</h3><p>' + L('As 19 redes acertaram a direção de ', 'The 19 networks got the direction right on ') + pc(mn * 100, 1) + L(' a ', ' to ') + pc(mxv * 100, 1) + L(' dos 259 dias; a melhor foi a ', ' of the 259 days; the best was ') + 'LSTM' + bi + L('. Chutar sempre o lado mais comum acertaria ', '. Always picking the more common side would score ') + pc(c.nir * 100, 1) + L('; o ARIMA, ', '; ARIMA, ') + pc(c.da[0] * 100, 1) + '.</p>' +
+        (inband ? '<p style="font-size:.8rem; color:var(--muted)">' + L('Leitura nossa: a pior rede na libra, LSTM', 'Our reading: the worst network for the pound, LSTM') + wi + ' (' + pc(mn * 100, 1) + L('), fica na borda da faixa da moeda; as outras passam dela.', '), sits on the edge of the coin band; the others clear it.') + '</p>' : '<p style="font-size:.8rem; color:var(--muted)">' + L('Todas as 19 ficam bem acima da faixa da moeda (leitura nossa).', 'All 19 sit well above the coin band (our reading).') + '</p>');
+    }
+    $('coin-run').addEventListener('click', function(){
+      for (var k = 0; k < 3; k++){ var h = 0; for (var q = 0; q < NDA; q++) if (R() < 0.5) h++; coins[k].push(h / NDA * 100); if (coins[k].length > 45) coins[k].shift(); }
+      draw();
+    });
+    $('coin-clear').addEventListener('click', function(){ coins = [[], [], []]; draw(); });
+    draw(); panel();
+    window.addEventListener('resize', draw);
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
