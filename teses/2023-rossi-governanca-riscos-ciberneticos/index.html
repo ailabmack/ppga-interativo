@@ -1,0 +1,852 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Governança e riscos cibernéticos em serviços · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Marcia Cristiane Rossi (PPGA Mackenzie, 2023) sobre como fazer em casa, contratar fora ou misturar afeta a proteção das empresas de serviços contra riscos cibernéticos, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2023-rossi-governanca-riscos-ciberneticos/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><path d=%22M7 11h18v14H7z%22 fill=%22white%22/><path d=%22M7 15h18M7 19h18M7 23h18M13 11v4M19 15v4M13 19v4M19 23v2%22 stroke=%22%23e80734%22 stroke-width=%221.6%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --in:var(--navy);    /* em casa (hierarquia) */
+    --out:var(--red);    /* mercado (contratar fora) */
+    --hy:#334155;        /* híbrido */
+    --dk:#334155;
+  }
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  @property --z{syntax:'<length>'; inherits:true; initial-value:0px;}
+  .slab{transition:transform .6s cubic-bezier(.2,.8,.2,1), opacity .5s, --h .6s ease, --z .6s ease, left .6s ease, top .6s ease;}
+  .slab.dim > i{opacity:.22;}
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .in-t{color:var(--in); font-weight:700;} .out-t{color:var(--out); font-weight:700;} .hy-t{color:var(--hy); font-weight:700;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(1.9rem, 3.6vw, 2.3rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{display:flex; gap:8px 16px; justify-content:center; flex-wrap:wrap; font-size:.8rem; color:var(--muted); margin-top:6px; min-height:2.6em; text-align:center;}
+  #hero-scene .top-label{font-size:15px; font-family:var(--sans); font-weight:800;}
+  #hero-scene .floor-label{font-size:14px; letter-spacing:.08em; text-transform:uppercase;}
+
+  /* ---------- Componentes comuns ---------- */
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:18px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.83rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; margin-top:12px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:9px 12px;}
+  .stat b{display:block; font-family:var(--sans); font-size:1.25rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.74rem; color:var(--muted); line-height:1.35; display:block;}
+  .guess{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 6px;}
+  .guess button{border:1px solid var(--border); background:var(--card); border-radius:12px; padding:8px 14px; font-size:.86rem; cursor:pointer; color:var(--ink-2);}
+  .guess button:hover{border-color:var(--ink);}
+  .guess button[aria-pressed="true"]{border-color:var(--ink); background:var(--ink); color:#fff;}
+  .guess button.ok{border-color:var(--out); box-shadow:inset 0 0 0 1px var(--out);}
+  .msg{font-size:.88rem; color:var(--ink-2); min-height:1.5em; margin:4px 0 0;}
+  .qt{background:var(--card); border:1px solid var(--border); border-left:4px solid var(--out); border-radius:10px; padding:7px 12px; font-size:.84rem; margin-top:8px;}
+  .qt.b{border-left-color:var(--in);}
+  .qt q{font-family:var(--serif); font-style:italic; color:var(--ink); quotes:"“" "”";}
+  .qt span{display:block; font-size:.72rem; color:var(--muted); margin-top:2px;}
+  .blist{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .blist button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 13px; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .blist button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .lg{display:flex; flex-wrap:wrap; gap:4px 14px; font-size:.76rem; color:var(--ink-2); margin-top:6px; justify-content:center;}
+  .bars{display:grid; gap:6px; margin-top:10px;}
+  .bar{display:grid; grid-template-columns:minmax(0, 1.3fr) 2fr 3.2em; gap:8px; align-items:center; font-size:.82rem; color:var(--ink-2);}
+  .bar .tr{height:16px; background:#eef2f7; border-radius:99px; overflow:hidden;}
+  .bar .tr i{display:block; height:100%; width:0; background:var(--bc, var(--in)); border-radius:99px; transition:width .7s cubic-bezier(.2,.8,.2,1);}
+  .bar b{font-variant-numeric:tabular-nums; text-align:right; color:var(--ink); font-family:var(--sans);}
+  .bar span{line-height:1.2;}
+  .bar.hl span{color:var(--out); font-weight:700;}
+  @media (max-width:600px){ .stats{grid-template-columns:1fr 1fr;} }
+
+  /* ---------- 02 · Três caminhos ---------- */
+  #gv-scene .face-label{font-size:11px; letter-spacing:.06em;}
+  #gv-scene .top-label{font-size:22px; font-family:var(--sans); font-weight:800;}
+  #gv-panel{min-height:170px;}
+  .ingr{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; padding:0; list-style:none;}
+  .ingr li{font-size:.76rem; border:1px dashed var(--neutral); border-radius:999px; padding:4px 10px; color:var(--ink-2); background:#fff;}
+
+  /* ---------- 03 · Método ---------- */
+  #mt-scene .top-label{font-size:16px; font-family:var(--sans); font-weight:800;}
+  #mt-scene .floor-label{font-size:12px;}
+  #mt-panel{min-height:104px;}
+
+  /* ---------- 04 · Grupos ---------- */
+  #gr-scene .top-label{font-size:17px; font-family:var(--sans); font-weight:800;}
+  #gr-scene .floor-label{font-size:13px;}
+  #gr-panel{min-height:150px;}
+
+  /* ---------- 06 · Perdas ---------- */
+  .pgrid{display:grid; grid-template-columns:repeat(25, minmax(0, 1fr)); gap:3px; max-width:430px; margin:6px auto 0;}
+  .pgrid i{display:block; aspect-ratio:1; border-radius:3px; background:var(--gc); transition:background .35s, opacity .35s;}
+  .pgrid.loss i{opacity:.28;}
+  .pgrid.loss i.l{background:var(--out); opacity:1;}
+
+  /* ---------- 07 · Categorias ---------- */
+  #ct-scene .top-label{font-size:17px; font-family:var(--sans); font-weight:800;}
+  #ct-scene .floor-label{font-size:12px;}
+  #ct-panel{min-height:210px;}
+  .subs{display:flex; flex-wrap:wrap; gap:4px; margin:4px 0 2px; padding:0; list-style:none;}
+  .subs li{font-size:.74rem; border:1px solid var(--border); border-radius:8px; padding:3px 8px; color:var(--ink-2); background:#f8fafc;}
+
+  /* ---------- 08 · Descoberta ---------- */
+  #ds-scene .top-label{font-size:14px; font-family:var(--sans); font-weight:800;}
+  #ds-scene .floor-label{font-size:11.5px; line-height:1.1;}
+  #ds-panel{min-height:120px;}
+  .stack{display:flex; height:22px; border-radius:7px; overflow:hidden; margin:8px 0 4px;}
+  .stack i{display:flex; align-items:center; justify-content:center; color:#fff; font-size:.72rem; font-style:normal; font-weight:700; white-space:nowrap; overflow:hidden;}
+
+  /* ---------- 09 · Custo ---------- */
+  #cs-svg{width:100%; display:block; max-height:300px;}
+  #cs-svg text{font-family:var(--sans);}
+  .rng{margin:6px 0 4px;}
+  .rng input{width:100%; appearance:none; -webkit-appearance:none; height:30px; background:transparent; cursor:pointer;}
+  .rng input::-webkit-slider-runnable-track{height:8px; border-radius:99px; background:linear-gradient(90deg, var(--out), var(--hy), var(--in));}
+  .rng input::-moz-range-track{height:8px; border-radius:99px; background:linear-gradient(90deg, var(--out), var(--hy), var(--in));}
+  .rng input::-webkit-slider-thumb{-webkit-appearance:none; width:24px; height:24px; border-radius:50%; background:#fff; border:3px solid var(--ink); margin-top:-8px;}
+  .rng input::-moz-range-thumb{width:20px; height:20px; border-radius:50%; background:#fff; border:3px solid var(--ink);}
+  .rng .ends{display:flex; justify-content:space-between; font-size:.76rem; color:var(--muted);}
+  #cs-panel{min-height:140px;}
+
+  /* ---------- 10 · Terceiros ---------- */
+  #tp-scene .face-label{font-size:10.5px; letter-spacing:.04em;}
+  #tp-scene .top-label{font-size:10px; font-family:var(--sans); font-weight:800;}
+  #tp-scene .floor-label{font-size:12.5px;}
+  #tp-panel{min-height:110px;}
+  .btnrow{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
+
+  /* ---------- 11 · Modelo ---------- */
+  #md-svg{width:100%; display:block; max-height:470px;}
+  #md-svg text{font-family:var(--sans); pointer-events:none;}
+  #md-svg .nd{cursor:pointer;}
+  #md-svg .nd rect{transition:fill .3s, stroke .3s;}
+  #md-panel{min-height:150px;}
+
+  /* ---------- 12 · Créditos ---------- */
+  .cards3{display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px;}
+  @media (min-width:760px){ .cards3{grid-template-columns:repeat(3, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 15px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.95rem; margin-bottom:4px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:2px; font-size:.76rem; line-height:1.38; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.08rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:8px 0 0; padding:0; list-style:none;}
+  .limits li{padding:7px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.82rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; line-height:1.55; margin-top:8px;}
+  .cite b{color:var(--ink);}
+  .end .btn{padding:9px 12px; font-size:.82rem;} .end .ctas{gap:8px;}
+  @media (min-width:920px){ #creditos{padding-top:66px; padding-bottom:24px;} #creditos .end{margin-top:12px;} #creditos .lede{margin-bottom:4px;} }
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2023-rossi-governanca-riscos-ciberneticos/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2023</div>
+      <h1 class="rv" style="--d:.1s">Empresas de serviços cuidam em casa da defesa contra ataques digitais e levam os contratos ao mercado</h1>
+      <p class="sub rv" style="--d:.2s">Toda empresa decide o que <strong>faz em casa</strong>, o que <strong>contrata fora</strong> e o que <strong>mistura</strong>. A tese perguntou como essa escolha afeta a proteção das empresas de serviços contra <strong>riscos cibernéticos</strong> (fraudes, vazamentos, invasões). Ouviu <strong>175 profissionais</strong> num questionário e <strong>20</strong> em entrevistas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autoria:</b> Marcia Cristiane Rossi</span>
+        <span><b>Orientador:</b> Prof. Dr. Gilberto Perez</span>
+        <span><b>Coorientador:</b> Prof. Dr. Faïz Gallouj (Université de Lille)</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#caminhos">Começar →</a>
+        <a class="btn ghost" href="#descoberta">Ir direto à descoberta</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="460x330" role="img" aria-label="Um piso azul, a casa da empresa, com quatro blocos azuis em cima (ações de proteção, comportamento das pessoas, especificidades do serviço e tecnologia) e, do lado de fora, três blocos vermelhos (contratos, incerteza e relações com o governo); a altura é a parcela das menções nas entrevistas"></div></div>
+      <div class="cap-legend" id="hero-cap" aria-live="polite"></div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Mostra como empresas de serviços que se digitalizam dividem, entre fazer em casa e contratar fora, a proteção contra fraudes, vazamentos e ataques."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · TRÊS CAMINHOS -->
+<section class="slide" id="caminhos" data-label="Três caminhos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> A teoria · custos de transação</div>
+      <h2 class="rv" style="--d:.1s">Fazer em casa, contratar fora ou misturar: cada caminho tem seu custo</h2>
+      <p class="rv" style="--d:.15s">A <strong>Teoria dos Custos de Transação</strong> (Coase, Williamson) diz que negociar, vigiar e fazer cumprir um acordo também custa, e esse custo decide onde cada atividade fica. A tese chama esse arranjo de <strong>estrutura de governança</strong>. Escolha um caminho:</p>
+      <div class="seg rv" id="gv-seg" style="--d:.2s" role="group" aria-label="Estrutura de governança"></div>
+      <div class="panel rv" id="gv-panel" style="--d:.25s; margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="gv-scene" data-fit="440x290" role="img" aria-label="Três blocos: mercado em vermelho, híbrido em cinza-escuro e em casa em azul; o escolhido sobe"></div></div>
+      <p style="font-size:.84rem; margin:6px 0 0">O que encarece um acordo, segundo a teoria:</p>
+      <ul class="ingr">
+        <li>ninguém sabe tudo (racionalidade limitada)</li>
+        <li>alguém pode levar vantagem (oportunismo)</li>
+        <li>o que só serve ali (especificidade dos ativos)</li>
+        <li>o futuro incerto (incerteza)</li>
+        <li>quantas vezes se repete (frequência)</li>
+      </ul>
+      <p class="note">Seções 2.2 e 2.3 da tese. Os exemplos do dia a dia em cada caminho são <b>comparação nossa</b>; os de risco cibernético vêm das entrevistas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · MÉTODO -->
+<section class="slide" id="metodo" data-label="Como pesquisou">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> O método · pesquisa em duas fases</div>
+      <h2 class="rv" style="--d:.1s">Primeiro um questionário com 175 profissionais, depois 20 conversas longas</h2>
+      <p class="rv" style="--d:.15s">Na <strong>fase 1</strong>, a autora procurou no LinkedIn quem trabalha com risco cibernético e gestão de riscos em serviços. As respostas foram separadas por um <strong>agrupamento</strong> estatístico em três grupos parecidos por dentro. Siga a fase 1:</p>
+      <div class="seg rv" id="mt-seg" style="--d:.2s" role="group" aria-label="Etapa da fase 1"></div>
+      <div class="panel rv" id="mt-panel" style="--d:.25s; margin-top:10px" aria-live="polite"></div>
+      <p class="rv" style="--d:.3s; margin:12px 0 0; font-size:.9rem">Na <strong>fase 2</strong>, as perguntas das entrevistas saíram do que a fase 1 mostrou:</p>
+      <div class="stats rv" style="--d:.32s">
+        <div class="stat"><b>20 de 38</b><span>convidados deram entrevista, pelo Teams, de março a maio de 2023</span></div>
+        <div class="stat"><b>22 h</b><span>de conversa, cerca de 65 minutos cada</span></div>
+        <div class="stat"><b>453</b><span>páginas transcritas à mão pela autora</span></div>
+        <div class="stat"><b>2.648</b><span>códigos, agrupados em 7 categorias</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="mt-scene" data-fit="440x330" role="img" aria-label="Uma placa grande com os 618 profissionais procurados; em cima, uma placa menor com os 175 que responderam, que se divide em três blocos de 68, 62 e 45; a área é proporcional ao número de pessoas"></div></div>
+      <p class="note">Seções 3.1 e 3.2 e Tabela 1. Área das placas proporcional ao número de pessoas. Entre os 20 entrevistados, 13 são de multinacionais e 7 de empresas locais (<b>contagem nossa</b>), com cargos de segurança da informação, risco, auditoria, dados, jurídico, tributos, controladoria e TI. As pessoas aparecem só pelos códigos da tese (E1 a E20).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · TRÊS GRUPOS -->
+<section class="slide" id="grupos" data-label="Três grupos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Fase 1 · 175 profissionais</div>
+      <h2 class="rv" style="--d:.1s">Os três grupos vendem serviços digitais, mas cuidam do risco de jeitos diferentes</h2>
+      <p class="rv" style="--d:.15s">Serviços digitais (nuvem, comércio eletrônico, pagamentos, streaming) estão no centro do negócio nos três grupos. A partir daí, eles se afastam. Escolha uma pergunta e toque num grupo:</p>
+      <div class="seg rv" id="gr-seg" style="--d:.2s" role="group" aria-label="Pergunta"></div>
+      <div class="panel rv" id="gr-panel" style="--d:.25s; margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="gr-scene" data-fit="440x320" role="img" aria-label="Três torres, uma por grupo de empresas (68, 62 e 45 respostas); a altura é a porcentagem do grupo na pergunta escolhida"></div></div>
+      <div class="lg" id="gr-lg"></div>
+      <p class="note">Figura 7 e Tabelas 3, 4, 5, 6, 7 e 9. Os grupos não têm nome na tese: numeramos como ela. A tese descreve os grupos sem teste de diferença entre eles, e avisa que a presença de serviços digitais no centro do negócio não difere de forma significativa entre os três.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · RISCOS GERIDOS -->
+<section class="slide" id="riscos" data-label="Riscos vizinhos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Fase 1 · todas as respostas</div>
+      <h2 class="rv" style="--d:.1s">Para segurar o risco cibernético, as empresas se apoiam na segurança da informação e pouco nos terceiros</h2>
+      <p class="rv" style="--d:.15s">O questionário perguntou: <em>que riscos a empresa gerencia que ajudam a reduzir o risco cibernético?</em> Antes de ver, arrisque: qual foi o <strong>menos</strong> citado?</p>
+      <div class="guess rv" id="rk-guess" style="--d:.2s" role="group" aria-label="Palpite"></div>
+      <p class="msg rv" id="rk-msg" style="--d:.22s" aria-live="polite"></p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="bars" id="rk-bars"></div>
+      <p class="note">Figura 12, % das 175 respostas (cada empresa podia marcar vários).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · PERDAS -->
+<section class="slide" id="perdas" data-label="Riscos e perdas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Fase 1 · riscos, conversas e perdas</div>
+      <h2 class="rv" style="--d:.1s">Cerca de 8 em cada 10 dizem que o risco cresceu junto com as oportunidades</h2>
+      <p class="rv" style="--d:.15s">A maioria confia nas leis e conversa sobre o tema com a equipe, mas só cerca de um terço divulga quanto investe em cibersegurança. Escolha a pergunta:</p>
+      <div class="seg rv" id="ls-seg" style="--d:.2s" role="group" aria-label="Pergunta"></div>
+      <div class="bars rv" id="ls-bars" style="--d:.25s"></div>
+      <p class="note rv" style="--d:.3s">Tabela 7, % de "sim" em cada grupo. Para a tese, não divulgar pode ser escolha estratégica: 6,8% dos procurados, todos gestores, desistiram do questionário por achar as perguntas estratégicas demais.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <p style="font-size:.9rem; margin:0 0 4px">Cada quadradinho é uma das 175 respostas, por grupo. Quantas já tiveram prejuízo financeiro, de reputação ou de operação por ataque?</p>
+      <div class="pgrid" id="ls-grid" role="img" aria-label="Grade de 175 quadrados: 68 do grupo 1, 62 do grupo 2 e 45 do grupo 3; com as perdas ligadas, 17, 8 e 14 ficam vermelhos"></div>
+      <div class="lg" id="ls-lg"></div>
+      <div style="text-align:center; margin-top:8px"><button class="btn small" id="ls-loss" aria-pressed="false">Mostrar quem teve perdas</button></div>
+      <p class="msg" id="ls-msg" style="text-align:center" aria-live="polite"></p>
+      <p class="note">Tabela 6: perdas em 25,0% do grupo 1, 12,9% do grupo 2 e 31,1% do grupo 3; 22,3% no total. Os quadradinhos (17, 8 e 14, 39 ao todo) são <b>conta nossa</b> a partir dessas porcentagens. Para a tese, o grupo 1, que mais adota medidas contra ataques, também é alvo por guardar dados valiosos de clientes; investir mais não garante perder menos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · SETE CATEGORIAS -->
+<section class="slide" id="categorias" data-label="Sete assuntos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Fase 2 · 20 entrevistas</div>
+      <h2 class="rv" style="--d:.1s">As conversas giraram em torno de sete assuntos</h2>
+      <p class="rv" style="--d:.15s">A autora leu as 453 páginas, marcou os trechos com <strong>códigos</strong> e juntou os códigos em 7 <strong>categorias</strong>, com 42 subcategorias, dentro dos três eixos do roteiro. Toque numa categoria:</p>
+      <div class="blist rv" id="ct-list" style="--d:.2s" role="group" aria-label="Categoria"></div>
+      <div class="panel rv" id="ct-panel" style="--d:.25s; margin-top:10px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="ct-scene" data-fit="440x300" role="img" aria-label="Sete blocos em três grupos, um por eixo do roteiro: organização das atividades (três), governança contratual (três) e mitigação de riscos (um); a altura é o número de subcategorias"></div></div>
+      <div class="lg"><span><i class="dot" style="background:var(--in)"></i>eixo 1 · organização das atividades</span><span><i class="dot" style="background:var(--dk)"></i>eixo 2 · governança contratual</span><span><i class="dot" style="background:var(--out)"></i>eixo 3 · mitigação</span></div>
+      <p class="note">Figura 15 e Tabelas 10 a 17. Análise de conteúdo (Bardin), feita à mão no Excel. A tese foi escrita em inglês: as falas foram traduzidas por nós. Nomes das categorias encurtados por nós.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · A DESCOBERTA -->
+<section class="slide" id="descoberta" data-label="A descoberta">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> A descoberta · as duas fases juntas</div>
+      <h2 class="rv" style="--d:.1s">Quase toda a proteção é feita em casa, enquanto os contratos vão para o mercado</h2>
+      <p class="rv" style="--d:.15s">Para cada categoria, a autora contou com que estrutura as falas a ligavam: <span class="out-t">mercado</span>, <span class="in-t">em casa</span> ou <span class="hy-t">híbrido</span>. Escolha a estrutura e toque numa coluna:</p>
+      <div class="seg rv" id="ds-seg" style="--d:.2s" role="group" aria-label="Estrutura"></div>
+      <div class="panel rv" id="ds-panel" style="--d:.25s; margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="ds-scene" data-fit="460x320" role="img" aria-label="Sete colunas, uma por categoria; a altura é a parcela das menções ligadas à estrutura escolhida, em ordem da maior para a menor"></div></div>
+      <p class="note">Tabela 18 (frequências no SPSS) e seção 5.1. Cada categoria soma 100% entre as três estruturas. As porcentagens são de <b>menções codificadas nas entrevistas</b>, não de empresas, e não medem se a proteção funciona.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · CUSTO E ESPECIFICIDADE -->
+<section class="slide" id="custo" data-label="Quanto mais específico">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> A explicação · especificidade dos ativos</div>
+      <h2 class="rv" style="--d:.1s">Quanto mais algo só serve àquela empresa, mais compensa fazer em casa</h2>
+      <p class="rv" style="--d:.15s">Na teoria, cada estrutura tem uma curva de custo. O mercado é barato para o que é padrão, mas encarece rápido quando o serviço só serve a uma empresa. A tese pôs as categorias nessa régua. Mova a régua:</p>
+      <div class="panel rv" id="cs-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="cs-svg" viewBox="0 0 560 300" role="img" aria-label="Três curvas de custo de governança contra a especificidade dos ativos: mercado começa mais baixo e sobe rápido, híbrido no meio, em casa começa mais alto e sobe devagar"></svg>
+      <div class="rng"><input type="range" id="cs-range" min="0" max="100" value="25" aria-label="Especificidade dos ativos"><div class="ends"><span>serve a qualquer um</span><span>só serve àquela empresa</span></div></div>
+      <p class="note">Figura 16 redesenhada (a autora, com base em Williamson, 1975). É um <b>esquema sem escala</b>: as curvas não foram medidas. A posição das categorias é a da figura, que segue a ordem das frequências da tela 8.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · O INESPERADO -->
+<section class="slide" id="terceiros" data-label="O inesperado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> O inesperado · riscos de terceiros</div>
+      <h2 class="rv" style="--d:.1s">Passar a operação para outra empresa não passa o risco junto</h2>
+      <p class="rv" style="--d:.15s">No questionário, risco de terceiros foi o último da lista (39,4%). Nas entrevistas, virou preocupação central: o problema costuma aparecer no meio do contrato, e às vezes no fornecedor do fornecedor. Faça o caminho:</p>
+      <div class="btnrow rv" style="--d:.2s">
+        <button class="btn small" id="tp-out">1 · Contratar um fornecedor</button>
+        <button class="btn small ghost" id="tp-sub">2 · O fornecedor subcontrata</button>
+        <button class="btn small ghost" id="tp-reset">Recomeçar</button>
+      </div>
+      <div class="panel rv" id="tp-panel" style="--d:.25s; margin-top:10px" aria-live="polite"></div>
+      <div class="stats rv" style="--d:.3s; grid-template-columns:repeat(3, 1fr)">
+        <div class="stat"><b>77,6%</b><span>dizem dividir o risco cibernético com empresas parceiras (média dos grupos)</span></div>
+        <div class="stat"><b>39,4%</b><span>gerenciam riscos de terceiros para conter o cibernético</span></div>
+        <div class="stat"><b>55%</b><span>das empresas ouvidas, ao menos, criticam a rotatividade dos terceirizados</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="tp-scene" data-fit="460x300" role="img" aria-label="Três blocos lado a lado: a empresa em azul, o fornecedor e o subcontratado em cinza; um cubo claro, a operação, passa de bloco em bloco, enquanto o cubo vermelho do risco fica na empresa"></div></div>
+      <p class="note">Seções 4.1.10, 4.1.11, 4.2.2.1 e 5.1 e Figura 12. A cena é <b>ilustração nossa</b> do que dizem as falas. Ao treinar a equipe terceirizada, a empresa pode ver o profissional levar o que aprendeu para outra que paga mais, o que a faz hesitar em investir no fornecedor (o "<em>hold-up</em>" da teoria).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · O MODELO -->
+<section class="slide" id="modelo" data-label="O modelo">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> O resultado final · modelo teórico</div>
+      <h2 class="rv" style="--d:.1s">Do tipo de serviço até a proteção, tudo passa pelos contratos</h2>
+      <p class="rv" style="--d:.15s">A tese junta as duas fases num modelo: o tipo de serviço puxa a tecnologia e a relação com o governo; as duas desembocam nos contratos, que escolhem a estrutura e lidam com o comportamento das pessoas e a incerteza; daí saem as ações de proteção. Toque numa caixa ou siga o caminho:</p>
+      <div class="btnrow rv" style="--d:.2s"><button class="btn small" id="md-next">Seguir o caminho →</button></div>
+      <div class="panel rv" id="md-panel" style="--d:.25s; margin-top:10px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="md-svg" viewBox="0 0 600 470" role="img" aria-label="Mapa do modelo: especificidades dos serviços ligam-se à tecnologia e às relações com o governo, que levam às relações contratuais; os contratos ligam-se a mercado, em casa e híbrido, e aos pressupostos comportamentais (lacuna de conhecimento e oportunismo) e à incerteza, que levam às ações de mitigação"></svg>
+      <p class="note">Figura 17 redesenhada e seção 5.1. É um modelo para estudos futuros testarem, construído a partir das entrevistas e do questionário. A tese também propõe uma <b>taxonomia de serviços cibernéticos</b> (plataformas digitais e serviços digitais, Figura 18) e trata o ambiente cibernético como um novo tipo de especificidade de ativos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Limites e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Para levar</div>
+    <h2 class="rv" style="--d:.1s">Contratar fora alivia custos, mas a guarda do risco continua em casa</h2>
+    <p class="lede rv" style="--d:.15s">Para a autora, a escolha da estrutura de governança mexe nos custos, na eficiência e na forma como a empresa se protege: dá para terceirizar o que é padrão e manter perto o que é sensível.</p>
+    <div class="cards3">
+      <div class="pcard rv" style="--d:.2s; --pc:var(--in)"><h3>Para quem decide o que fica em casa</h3><ul><li>Investir em processos junto com a tecnologia: tecnologia sozinha não resolve.</li><li>Comitês periódicos de compliance e ética e acesso só ao necessário (<em>Zero Trust</em>).</li><li>Levar a segurança da informação às decisões de estratégia.</li></ul></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--out)"><h3>Para quem contrata fora</h3><ul><li>Gerir o risco de terceiros além do contrato, inclusive dos fornecedores do fornecedor.</li><li>Rever cláusulas de segurança a cada renovação; o seguro cibernético cobre depois do incidente, não o evita.</li><li>Empresas pequenas e médias terceirizam mais por falta de recursos e perdem controle direto: vale acompanhar de perto.</li></ul></div>
+      <div class="pcard rv" style="--d:.3s; --pc:var(--dk)"><h3>Para pesquisa e políticas</h3><ul><li>Tratar o ambiente cibernético como especificidade de ativos na teoria dos custos de transação.</li><li>Estudar riscos de terceiros em contratos de tecnologia, cocriação de serviços seguros e governança <em>Zero Trust</em>.</li></ul></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.2s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Que a proteção feita em casa funciona melhor.</b> As porcentagens da tela 8 contam menções nas entrevistas; nenhuma medida de ataques ou perdas foi comparada entre estruturas. <em>· observação nossa</em></li>
+          <li><b>Retrato de todas as empresas.</b> A amostra veio de buscas no LinkedIn e tem mais de metade de empresas com receita acima de 1 bilhão (52,6%). <em>· observação nossa</em></li>
+          <li><b>Todos os setores de serviço.</b> Serviços pessoais e de infraestrutura tiveram pouca participação. <em>· segundo a autora</em></li>
+          <li><b>Diferenças comprovadas entre os grupos.</b> Os três grupos foram descritos, não comparados por teste estatístico. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.25s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          ROSSI, Marcia Cristiane. <em>Effects of governance structure on mitigation of cyber risks in services.</em> Tese (Doutorado em Administração de Empresas) · Universidade Presbiteriana Mackenzie, São Paulo, 2023. Orientador: Prof. Dr. Gilberto Perez. Coorientador: Prof. Dr. Faïz Gallouj.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Pesquisa com apoio da CAPES e do CNPq, com estágio na Université de Lille. Questionário com termo de consentimento; entrevistas gravadas com consentimento e aprovadas pelo comitê de ética do Mackenzie. A tese foi escrita em inglês: as falas foram traduzidas por nós. As pessoas aparecem só pelos códigos da tese, sem cargo nem empresa. Versão simplificada para o público em geral.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa (em inglês)</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable, ramp = M.ramp;
+  var EN = M.lang === 'en';
+  function L(p, e){ return EN ? e : p; }
+  var NAVY = '#1f3b73', RED = 'hsl(348 94% 47%)', DK = '#334155', MID = '#94a3b8', NEU = '#cbd5e1', G3C = '#5b6f99';
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent){ var n = document.createElementNS(SVGNS, tag); for (var k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; }
+  function txt(t, attrs, parent){ var n = el('text', attrs, parent); n.textContent = t; return n; }
+  function press(group, btn){ each(group.querySelectorAll('button'), function(b){ b.setAttribute('aria-pressed', b === btn); }); }
+  function seg(id, names, fn, start){
+    var s = $(id); start = start || 0;
+    s.innerHTML = names.map(function(n, i){ return '<button data-i="' + i + '" aria-pressed="' + (i === start) + '">' + n + '</button>'; }).join('');
+    each(s.children, function(b){ b.addEventListener('click', function(){ press(s, b); fn(+b.dataset.i); }); });
+    fn(start);
+  }
+  // porcentagem: uma casa decimal quando a tese usa, inteiro quando não
+  function pc(v){ return M.fmt(v, v % 1 ? 1 : 0) + '%'; }
+  function q(t, who, cls){ return '<div class="qt' + (cls ? ' ' + cls : '') + '"><q>' + t + '</q><span>' + who + '</span></div>'; }
+
+  /* ================= DADOS DA TESE ================= */
+  // Tabela 18: % das menções de cada categoria por estrutura [mercado, em casa, híbrido]
+  var CAT = [
+    {k:'mit', n:L('Ações de mitigação dos riscos cibernéticos', 'Cyber risk mitigation actions'), s:L('Mitigação', 'Mitigation'), v:[6.5, 87.0, 6.5], ax:3,
+      subs:[L('Reconhecer os riscos', 'Recognizing cyber risks'), L('Políticas e provas de conformidade', 'Building policies and evidence of compliance'), L('Empresa orientada a riscos', 'Risk management oriented company'), L('Treinamento e consciência do risco', 'Training and risk awareness'), L('Gestão de crises', 'Crisis management process'), L('Gestão de riscos de terceiros', 'Third-party risk management')],
+      d:L('Camadas de segurança, comitês de compliance, times que caçam ameaças por dentro. Muitos dizem que o comum ainda é reagir depois do fato.', 'Security layers, compliance committees, in-house threat-hunting teams. Many say the norm is still to react after the fact.'),
+      q:[L('Nosso desafio é tentar identificar isso o mais cedo possível.', 'Our challenge is to try to identify this as early as possible'), 'E7']},
+    {k:'com', n:L('Pressupostos comportamentais', 'Behavioral assumptions'), s:L('Comportamento', 'Behaviour'), v:[7.9, 70.4, 21.7], ax:2,
+      subs:[L('Lacuna de conhecimento', 'Knowledge gap'), L('Oportunismo', 'Opportunism'), L('Ethos da organização', 'Organizational ethos'), L('Valores culturais', 'Cultural values'), L('Incentivos para cumprir regras', 'Incentives for compliance'), L('Reação tardia aos riscos', 'Late reaction to risks'), L('Aprendizagem organizacional', 'Organizational learning')],
+      d:L('O que as pessoas não sabem e quem pode levar vantagem. A resposta citada é a cultura de risco junto com a confiança zero: ninguém tem acesso prévio a nada.', 'What people don’t know and who might take advantage. The answer cited is a risk culture combined with zero trust: nobody has prior access to anything.'),
+      q:[L('É aquela política de confiança zero: você não tem acesso prévio a nada. Tudo a que você tem acesso, você pede, declara o uso, declara a finalidade do pedido.', 'it’s that Zero Trust policy, you don’t have prior access to anything, you’re not induced to have access to anything. Everything you have access to you ask for, you declare its use, you declare the purpose of your request'), 'E10']},
+    {k:'esp', n:L('Especificidades dos serviços', 'Services specificities'), s:L('Especificidades', 'Specificities'), v:[15.9, 69.6, 14.5], ax:1,
+      subs:[L('Inovação e adaptação ao mercado', 'Innovation and market adaptation'), L('Estratégias de fazer em casa', 'In-house strategies'), L('Valor dos ativos digitais', 'Value and attractiveness of digital assets'), L('Posicionamento do serviço', 'Service positioning'), L('Dependência entre empresas', 'Interdependence between companies'), L('Replicar o negócio', 'Business replicability')],
+      d:L('Seguradoras, bancos e varejistas passam a se ver como empresas de tecnologia, e guardam dados e sistemas que só servem a elas.', 'Insurers, banks and retailers start to see themselves as technology companies, and hold data and systems that only serve them.'),
+      q:[L('A empresa onde trabalho é uma seguradora, mas está começando a comunicar ao mercado que somos uma empresa de tecnologia.', 'The company I work for is an insurance company, but they are starting to communicate to the market we are a technology company'), 'E4']},
+    {k:'tec', n:L('Uso e mediação da tecnologia', 'Use and mediation of technology'), s:L('Tecnologia', 'Technology'), v:[18.6, 64.7, 16.7], ax:1,
+      subs:[L('Monitorar a tecnologia', 'Technological monitoring'), L('Retorno do investimento', 'Return on investment'), L('Interação entre pessoas e tecnologia', 'Human-technological interaction'), L('Infraestrutura tecnológica', 'Technological infrastructure'), L('Impactos da tecnologia', 'Technological impacts'), L('Adoção de tecnologia nova', 'New technology adoption process')],
+      d:L('Testes e simulações de engenharia social treinam as equipes. As pessoas são vistas como o elo mais fraco.', 'Social engineering tests and simulations train the teams. People are seen as the weakest link.'),
+      q:[L('Os usuários são a principal vulnerabilidade para o vazamento de dados.', 'Users are the main vulnerability to data leaks'), 'E3']},
+    {k:'gov', n:L('Relações governamentais', 'Governmental relations'), s:L('Governo', 'Government'), v:[56.3, 37.5, 6.2], ax:1,
+      subs:[L('Criação, regulação e fiscalização', 'Creation, regulation and supervision'), L('Dependência de serviços públicos', 'Direct dependence on public services'), L('Regulação do cliente', 'Regulatory interaction by the client'), L('Lobby', 'Lobbying'), L('Licenças e concessões', 'Licences and concessions'), L('Disputas na Justiça', 'Resolution of legal disputes')],
+      d:L('Consultorias, escritórios de advocacia e lobby fazem a ponte com o governo. Em setores regulados, como bancos, o peso é maior.', 'Consultancies, law firms and lobbying bridge the gap with government. In regulated sectors, such as banking, the weight is greater.'),
+      q:[L('Então, veja, a regulação é muito pesada.', 'So, you see, the regulatory framework is very heavy'), 'E6']},
+    {k:'inc', n:L('Incerteza', 'Uncertainty'), s:L('Incerteza', 'Uncertainty'), v:[57.1, 28.6, 14.3], ax:2,
+      subs:[L('Dilemas nas decisões econômicas', 'Dilemmas in economic decisions'), L('Regras complexas e incertas', 'Regulatory complexity and uncertainty'), L('Incerteza tecnológica e cibernética', 'Technological and cybernetic uncertainty'), L('Garantias do prestador', 'Service provider guarantees'), L('Gestão da incerteza', 'Uncertainty management')],
+      d:L('Ataques mudam o tempo todo. Seguro cibernético entra nos contratos, mas a seguradora exige controles, e ele só paga depois do incidente.', 'Attacks change all the time. Cyber insurance goes into contracts, but insurers demand controls, and it only pays after the incident.'),
+      q:[L('Para aprovar o seguro cibernético, a seguradora exige que a empresa implemente uma série de controles, e isso acabou dando certo.', 'in order for the insurer to approve cyber insurance, it requires the company to implement a series of controls, and this turned out to be successful'), 'E15']},
+    {k:'con', n:L('Relações contratuais', 'Contractual relations'), s:L('Contratos', 'Contracts'), v:[82.3, 14.0, 3.7], ax:2,
+      subs:[L('Ações antes do contrato', 'Pre-contractual actions'), L('Contratos em andamento', 'Contracts in progress'), L('Dividir e transferir o risco', 'Risk sharing and transfer'), L('Restrições e limites', 'Restrictions and limitations'), L('Contrato interno', 'In-house contract'), L('Escopo dos serviços', 'Scope of services')],
+      d:L('Cláusulas de segurança, auditorias de fornecedores estratégicos e revisão na renovação. Dentro de casa, o contrato vira acordo de nível de serviço entre áreas.', 'Security clauses, audits of strategic suppliers and review at renewal. In-house, the contract becomes a service-level agreement between departments.'),
+      q:[L('Como a gente se protege? Com contratos, e dizemos à outra parte: "se você repassar a operação para outro, não importa: se algo der errado, quem vai ser penalizado é você".', 'How do we protect? With contracts and we say to the other party: "if you outsource the operation to someone else, it doesn’t matter, if something goes wrong, you’ll be penalized"'), 'E13']}
+  ];
+  var STR = [{n:L('Mercado', 'Market'), c:RED, t:'out-t'}, {n:L('Em casa', 'In-house'), c:NAVY, t:'in-t'}, {n:L('Híbrido', 'Hybrid'), c:DK, t:'hy-t'}];
+  // Grupos da fase 1 (68, 62, 45)
+  var GN = [68, 62, 45], GC = [NAVY, DK, G3C];
+  var GQ = [
+    {n:L('Já teve perdas por ataque', 'Losses from attacks'), v:[25.0, 12.9, 31.1], src:L('Tabela 6', 'Table 6')},
+    {n:L('Comprou tecnologia nova', 'Bought new technology'), v:[63, 66, 70], src:L('Tabela 5 (três últimos anos)', 'Table 5 (last three years)')},
+    {n:L('Liderança entre quem respondeu', 'Leaders among respondents'), v:[93, 81, 76], src:L('Tabela 4', 'Table 4')},
+    {n:L('Terceiriza para cortar custos', 'Outsources to cut costs'), v:[96, 97, 93], src:L('Tabela 3', 'Table 3')},
+    {n:L('Confia em quem é próximo', 'Trusts those close by'), v:[34, 52, 44], src:L('Tabela 9 (confiança por proximidade social e cultural pesa na escolha de terceiros: "sim"; "em parte": 37, 34 e 29%)', 'Table 9 (trust from social and cultural closeness matters when hiring third parties: “yes”; “partly”: 37, 34 and 29%)')}
+  ];
+  var GP = [
+    L('<b>68 respostas.</b> No centro do negócio, serviços digitais (25%) e de conhecimento, como software, consultoria e auditoria (23%). É o único grupo com resultado expressivo em medidas contra phishing, fraude interna, violação de privacidade e hackers, e 91% aderem a iniciativas de crescimento. Contratos de médio e longo prazo com fornecedores.', '<b>68 answers.</b> At the core, digital services (25%) and knowledge services such as software, consulting and audit (23%). It is the only group with meaningful results on measures against phishing, internal fraud, privacy breaches and hackers, and 91% take part in growth initiatives. Medium- and long-term contracts with suppliers.'),
+    L('<b>62 respostas.</b> Serviços digitais (24%) e administrativos, como finanças, contabilidade e jurídico (22%). Menos de 3% aderem a iniciativas de crescimento, postura que a tese chama de conservadora. Vê a fase antes do contrato como a mais vulnerável.', '<b>62 answers.</b> Digital services (24%) and administrative services such as finance, accounting and legal (22%). Under 3% take part in growth initiatives, a stance the thesis calls conservative. Sees the pre-contract phase as the most vulnerable.'),
+    L('<b>45 respostas.</b> Comércio (24%, com atacado e varejo) e serviços digitais (22%). Quem mais compra tecnologia nova, mas só 6% aderem a iniciativas de crescimento. As respostas sobre contratos foram poucas demais para análise.', '<b>45 answers.</b> Commerce (24%, wholesale and retail) and digital services (22%). The biggest buyers of new technology, yet only 6% take part in growth initiatives. Too few answers on contracts to analyse.')
+  ];
+  // Figura 12: riscos geridos que ajudam no cibernético (% das 175)
+  var RK = [[L('Segurança da informação', 'Information security'), 92.0], [L('Operacional', 'Operational'), 86.3], [L('Compliance (conformidade)', 'Compliance'), 84.6], [L('Financeiro', 'Financial'), 69.1], [L('Estratégico', 'Strategic'), 62.9], [L('Reputacional', 'Reputational'), 60.0], [L('Trabalhista', 'Labour'), 46.9], [L('De terceiros', 'Third-party'), 39.4]];
+  // Tabela 7
+  var T7 = [
+    {n:L('Risco cresceu com as oportunidades', 'Risk grew with opportunities'), v:[77.9, 74.2, 84.4]},
+    {n:L('Leis protegem bem', 'Laws protect well'), v:[94.1, 88.7, 84.4]},
+    {n:L('Conversa com a equipe', 'Talks with staff'), v:[91.2, 75.8, 71.1]},
+    {n:L('Divulga o investimento', 'Discloses investment'), v:[39.7, 35.5, 31.1]}
+  ];
+  var LOSS = [17, 8, 14]; // conta nossa: 25,0% de 68; 12,9% de 62; 31,1% de 45
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 400, 280, {ay:'68%', rx:'58deg'});
+    rotatable(sc, st, -22, 10);
+    st.appendChild(box({w:230, d:200, h:8, x:10, y:40, c:ramp(NAVY, 4, 6)}));
+    flatLabel(st, L('em casa', 'in-house'), 10, 248, 230);
+    flatLabel(st, L('mercado', 'market'), 270, 248, 120);
+    var inside = CAT.filter(function(c){ return c.v[1] > 50; }), outside = CAT.filter(function(c){ return c.v[0] > 50; });
+    var pos = [[26, 54], [150, 54], [26, 160], [150, 160]];
+    var all = [];
+    inside.forEach(function(c, i){ var b = box({w:56, d:56, h:c.v[1] * 1.05, x:pos[i][0], y:pos[i][1], z:8, c:NAVY, top:M.fmt(c.v[1], c.v[1] % 1 ? 1 : 0)}); st.appendChild(b); all.push([b, c, 1]); });
+    outside.forEach(function(c, i){ var b = box({w:50, d:50, h:c.v[0] * 1.05, x:306, y:30 + i * 84, c:RED, top:M.fmt(c.v[0], c.v[0] % 1 ? 1 : 0)}); st.appendChild(b); all.push([b, c, 0]); });
+    var cap = $('hero-cap'), last = -1;
+    function show(i){
+      all.forEach(function(a, j){ a[0].classList.toggle('active', j === i); a[0].style.setProperty('--oz', j === i ? '14px' : '0px'); });
+      var a = all[i], c = a[1];
+      cap.innerHTML = '<span><b style="color:var(--ink)">' + c.n + '</b> · ' + pc(c.v[a[2]]) + L(' das menções ligadas a ', ' of mentions tied to ') + '<b class="' + (a[2] ? 'in-t' : 'out-t') + '">' + (a[2] ? L('fazer em casa', 'doing it in-house') : L('contratar fora', 'contracting out')) + '</b></span>';
+    }
+    show(0);
+    if (!reduce) M.onTick(function(t){ if (t < 0) return; var i = Math.floor(t / 2.6) % all.length; if (i !== last){ last = i; show(i); } });
+    st.addEventListener('click', function(e){ if (M.wasDrag(sc)) return; var s = e.target.closest('.slab'); var i = all.map(function(a){ return a[0]; }).indexOf(s); if (i >= 0) show(i); });
+  })();
+
+  /* ================= 02 · TRÊS CAMINHOS ================= */
+  (function(){
+    var G = [
+      {n:L('Contratar fora (mercado)', 'Contract out (market)'), f:L('Mercado', 'Market'), c:RED,
+        d:L('Comprar o serviço de outra empresa, com um contrato. Bom para o que é padrão e tem muitos fornecedores. <em>No dia a dia: pedir comida por aplicativo.</em> Nas entrevistas: consultoria, auditoria, nuvem e escritórios que cuidam da relação com o governo.', 'Buying the service from another company, under a contract. Good for standard things with many suppliers. <em>In everyday life: ordering food through an app.</em> In the interviews: consulting, audit, cloud and firms that handle relations with government.')},
+      {n:L('Misturar (híbrido)', 'Mix (hybrid)'), f:L('Híbrido', 'Hybrid'), c:DK,
+        d:L('Parcerias e contratos longos, ou gente de fora trabalhando junto com a equipe da casa. <em>No dia a dia: uma cozinheira que vem toda semana e usa a sua cozinha.</em> Nas entrevistas: prestadores lado a lado com o time interno em projetos.', 'Partnerships and long contracts, or outside people working alongside the in-house team. <em>In everyday life: a cook who comes every week and uses your kitchen.</em> In the interviews: providers working side by side with the internal team on projects.')},
+      {n:L('Fazer em casa (hierarquia)', 'Do it in-house (hierarchy)'), f:L('Em casa', 'In-house'), c:NAVY,
+        d:L('A própria empresa faz, com sua equipe e sob seu comando. Compensa quando o que se faz só serve àquela empresa ou é sensível. <em>No dia a dia: cozinhar em casa.</em> Nas entrevistas: times de segurança, regras internas e acordos de nível de serviço entre áreas.', 'The company does it itself, with its own staff and under its own command. It pays off when the work only fits that company or is sensitive. <em>In everyday life: cooking at home.</em> In the interviews: security teams, internal rules and service-level agreements between departments.')}
+    ];
+    var sc = $('gv-scene'), st = makeStage(sc, 400, 170, {ay:'66%', rx:'58deg'});
+    rotatable(sc, st, -14, 8);
+    st.appendChild(box({w:390, d:120, h:6, x:5, y:25, c:NEU}));
+    var bs = G.map(function(g, i){ var b = box({w:100, d:84, h:66, x:20 + i * 130, y:42, z:6, c:g.c, label:g.f}); b.dataset.i = i; st.appendChild(b); return b; });
+    function pick(i){
+      bs.forEach(function(b, j){ b.classList.toggle('active', j === i); b.style.setProperty('--oz', j === i ? '18px' : '0px'); b.classList.toggle('dim', j !== i); });
+      $('gv-panel').innerHTML = '<div class="tag">' + L('Caminho ', 'Path ') + (i + 1) + L(' de 3', ' of 3') + '</div><h3>' + G[i].n + '</h3><p>' + G[i].d + '</p>';
+      press($('gv-seg'), $('gv-seg').children[i]);
+    }
+    seg('gv-seg', G.map(function(g){ return g.f; }), pick, 2);
+    st.addEventListener('click', function(e){ if (M.wasDrag(sc)) return; var s = e.target.closest('.slab'); if (s && s.dataset.i) pick(+s.dataset.i); });
+  })();
+
+  /* ================= 03 · MÉTODO ================= */
+  (function(){
+    var sc = $('mt-scene'), st = makeStage(sc, 360, 300, {ay:'64%', rx:'58deg'});
+    rotatable(sc, st, -24, 9);
+    var S = 300 / Math.sqrt(618);
+    function side(n){ return Math.sqrt(n) * S; }
+    var w0 = side(618), b0 = box({w:w0, d:w0, h:10, x:(360 - w0) / 2, y:0, c:ramp(NAVY, 5, 6), top:'618'}); st.appendChild(b0);
+    var w1 = side(175), b1 = box({w:w1, d:w1, h:22, x:(360 - w1) / 2, y:(300 - w1) / 2, z:10, c:NAVY, top:'175'}); st.appendChild(b1);
+    var gs = GN.map(function(n, i){ var w = side(n); var b = box({w:w, d:w, h:22, x:(360 - w) / 2, y:(300 - w) / 2, z:10, c:GC[i], top:'' + n}); st.appendChild(b); return b; });
+    var P = [
+      L('<b>618 profissionais</b> procurados no LinkedIn pelas palavras <em>cyber risk</em>, <em>services</em>, <em>risk mitigation</em> e <em>risk management</em>: gestores e analistas de compliance, segurança, TI, controladoria, finanças e área comercial.', '<b>618 professionals</b> found on LinkedIn using the keywords <em>cyber risk</em>, <em>services</em>, <em>risk mitigation</em> and <em>risk management</em>: managers and analysts in compliance, security, IT, controllership, finance and sales.'),
+      L('<b>175 responderam</b> ao questionário de 24 perguntas, adaptado da pesquisa europeia de inovação (CIS 2018): cerca de 28%, em 21 dias, entre janeiro e fevereiro de 2023.', '<b>175 answered</b> the 24-question survey, adapted from the European innovation survey (CIS 2018): about 28%, over 21 days, in January and February 2023.'),
+      L('O <b>agrupamento</b> (dendrograma, em Python) separou as respostas em <b>três grupos</b>: 68, 62 e 45. O que eles têm em comum e de diferente virou o roteiro das entrevistas (tela 4).', '<b>Clustering</b> (a dendrogram, in Python) split the answers into <b>three groups</b>: 68, 62 and 45. What they share and what sets them apart became the interview guide (screen 4).')
+    ];
+    function draw(i){
+      b0.classList.toggle('dim', i > 0);
+      b1.style.visibility = i === 1 ? 'visible' : 'hidden';
+      var x = [-110, 0, 104];
+      gs.forEach(function(b, j){ var w = parseFloat(b.style.width); b.style.visibility = i === 2 ? 'visible' : 'hidden'; b.style.left = ((360 - w) / 2 + (i === 2 ? x[j] : 0)) + 'px'; b.style.setProperty('--oz', i === 2 ? '10px' : '0px'); });
+      $('mt-panel').innerHTML = '<p>' + P[i] + '</p>';
+    }
+    seg('mt-seg', [L('Procurados', 'Approached'), L('Responderam', 'Answered'), L('Três grupos', 'Three groups')], draw, 1);
+  })();
+
+  /* ================= 04 · TRÊS GRUPOS ================= */
+  (function(){
+    var sc = $('gr-scene'), st = makeStage(sc, 380, 170, {ay:'72%', rx:'58deg'});
+    rotatable(sc, st, -18, 9);
+    var cur = 0, sel = 0;
+    var bs = GN.map(function(n, i){ var b = box({w:80, d:80, h:10, x:24 + i * 120, y:45, c:GC[i], top:''}); b.dataset.i = i; st.appendChild(b); flatLabel(st, L('Grupo ', 'Group ') + (i + 1), i * 120 + 4, 142, 120); return b; });
+    $('gr-lg').innerHTML = GN.map(function(n, i){ return '<span><i class="dot" style="background:' + GC[i] + '"></i>' + L('grupo ', 'group ') + (i + 1) + ' (' + n + ')</span>'; }).join('');
+    function panel(){
+      var Q = GQ[cur];
+      $('gr-panel').innerHTML = '<div class="tag">' + L('Grupo ', 'Group ') + (sel + 1) + ' · ' + Q.n + ': ' + pc(Q.v[sel]) + '</div><p>' + GP[sel] + '</p><p style="font-size:.76rem; color:var(--muted)">' + Q.src + '</p>';
+    }
+    function draw(i){
+      cur = i;
+      bs.forEach(function(b, j){ b.style.setProperty('--h', (GQ[i].v[j] * 1.6) + 'px'); b.querySelector('.f-top').innerHTML = '<span class="top-label">' + pc(GQ[i].v[j]) + '</span>'; });
+      panel();
+    }
+    function pick(j){ sel = j; bs.forEach(function(b, k){ b.classList.toggle('active', k === j); b.style.setProperty('--oz', k === j ? '12px' : '0px'); }); panel(); }
+    seg('gr-seg', GQ.map(function(g){ return g.n; }), draw);
+    st.addEventListener('click', function(e){ if (M.wasDrag(sc)) return; var s = e.target.closest('.slab'); if (s && s.dataset.i) pick(+s.dataset.i); });
+    pick(0);
+  })();
+
+  /* ================= 05 · RISCOS GERIDOS ================= */
+  (function(){
+    var opts = [0, 2, 5, 7], g = $('rk-guess'), bars = $('rk-bars'), done = false;
+    bars.innerHTML = RK.map(function(r, i){ return '<div class="bar"><span>' + r[0] + '</span><div class="tr"><i style="--bc:' + (i === 7 ? RED : NAVY) + '"></i></div><b>' + (i === 7 ? '?' : pc(r[1])) + '</b></div>'; }).join('');
+    function reveal(){ each(bars.querySelectorAll('.tr i'), function(t, i){ t.style.width = RK[i][1] + '%'; }); var last = bars.children[7]; last.classList.add('hl'); last.querySelector('b').textContent = pc(RK[7][1]); }
+    g.innerHTML = opts.map(function(o){ return '<button data-i="' + o + '" aria-pressed="false">' + RK[o][0] + '</button>'; }).join('');
+    each(g.children, function(b){ b.addEventListener('click', function(){
+      press(g, b); var i = +b.dataset.i; g.querySelector('[data-i="7"]').classList.add('ok'); reveal(); done = true;
+      $('rk-msg').innerHTML = i === 7 ? L('Isso. Só <b>39,4%</b> citaram o risco de terceiros: o último da lista. Nas entrevistas, ele volta como grande preocupação (tela 10).', 'Right. Only <b>39.4%</b> mentioned third-party risk: last on the list. In the interviews it returns as a major concern (screen 10).') : L('Não: ', 'No: ') + RK[i][0].toLowerCase() + L(' teve ', ' got ') + pc(RK[i][1]) + L('. O menos citado foi o <b>risco de terceiros</b>, com 39,4%, que volta como grande preocupação nas entrevistas (tela 10).', '. The least mentioned was <b>third-party risk</b>, at 39.4%, which returns as a major concern in the interviews (screen 10).');
+    }); });
+    new IntersectionObserver(function(es){ es.forEach(function(en){ if (en.isIntersecting && !done) setTimeout(function(){ if (!done){ each(bars.querySelectorAll('.tr i'), function(t, i){ t.style.width = (i === 7 ? 0 : RK[i][1]) + '%'; }); } }, 400); }); }).observe(bars);
+  })();
+
+  /* ================= 06 · PERDAS ================= */
+  (function(){
+    var bars = $('ls-bars');
+    function draw(i){
+      bars.innerHTML = T7[i].v.map(function(v, j){ return '<div class="bar"><span>' + L('Grupo ', 'Group ') + (j + 1) + '</span><div class="tr"><i style="--bc:' + GC[j] + '"></i></div><b>' + pc(v) + '</b></div>'; }).join('');
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ each(bars.querySelectorAll('.tr i'), function(t, j){ t.style.width = T7[i].v[j] + '%'; }); }); });
+    }
+    seg('ls-seg', T7.map(function(t){ return t.n; }), draw);
+    var grid = $('ls-grid'), h = '';
+    GN.forEach(function(n, g){ for (var k = 0; k < n; k++) h += '<i style="--gc:' + GC[g] + '"' + (k < LOSS[g] ? ' class="l"' : '') + '></i>'; });
+    grid.innerHTML = h;
+    $('ls-lg').innerHTML = GN.map(function(n, i){ return '<span><i class="dot" style="background:' + GC[i] + '"></i>' + L('grupo ', 'group ') + (i + 1) + '</span>'; }).join('') + '<span><i class="dot" style="background:var(--out)"></i>' + L('teve perdas', 'had losses') + '</span>';
+    var on = false, btn = $('ls-loss');
+    btn.addEventListener('click', function(){
+      on = !on; grid.classList.toggle('loss', on); btn.setAttribute('aria-pressed', on);
+      btn.textContent = on ? L('Esconder as perdas', 'Hide the losses') : L('Mostrar quem teve perdas', 'Show who had losses');
+      $('ls-msg').innerHTML = on ? L('<b>39 de 175</b> (22,3%): 17 no grupo 1, 8 no grupo 2 e 14 no grupo 3.', '<b>39 of 175</b> (22.3%): 17 in group 1, 8 in group 2 and 14 in group 3.') : '';
+    });
+  })();
+
+  /* ================= 07 · SETE CATEGORIAS ================= */
+  (function(){
+    // ordem por eixo do roteiro
+    var ORD = ['esp', 'tec', 'gov', 'con', 'com', 'inc', 'mit'];
+    var C = ORD.map(function(k){ return CAT.filter(function(c){ return c.k === k; })[0]; });
+    var AXC = {1:NAVY, 2:DK, 3:RED};
+    var sc = $('ct-scene'), st = makeStage(sc, 400, 150, {ay:'70%', rx:'58deg'});
+    rotatable(sc, st, -16, 8);
+    var xs = [0, 52, 104, 172, 224, 276, 344];
+    var bs = C.map(function(c, i){ var b = box({w:44, d:60, h:c.subs.length * 15, x:xs[i] + 4, y:40, c:AXC[c.ax], top:'' + c.subs.length}); b.dataset.i = i; st.appendChild(b); return b; });
+    flatLabel(st, L('eixo 1', 'axis 1'), 0, 112, 152); flatLabel(st, L('eixo 2', 'axis 2'), 172, 112, 152); flatLabel(st, L('eixo 3', 'axis 3'), 330, 112, 70);
+    var list = $('ct-list');
+    list.innerHTML = C.map(function(c, i){ return '<button data-i="' + i + '" aria-pressed="false">' + c.s + '</button>'; }).join('');
+    function pick(i){
+      bs.forEach(function(b, j){ b.classList.toggle('active', j === i); b.style.setProperty('--oz', j === i ? '16px' : '0px'); });
+      each(list.children, function(b){ b.setAttribute('aria-pressed', +b.dataset.i === i); });
+      var c = C[i];
+      $('ct-panel').innerHTML = '<div class="tag">' + L('Eixo ', 'Axis ') + c.ax + ' · ' + c.subs.length + L(' subcategorias', ' subcategories') + '</div><h3>' + c.n + '</h3><p>' + c.d + '</p><ul class="subs">' + c.subs.map(function(s){ return '<li>' + s + '</li>'; }).join('') + '</ul>' + q(c.q[0], c.q[1], c.ax === 1 ? 'b' : '');
+    }
+    each(list.children, function(b){ b.addEventListener('click', function(){ pick(+b.dataset.i); }); });
+    st.addEventListener('click', function(e){ if (M.wasDrag(sc)) return; var s = e.target.closest('.slab'); if (s && s.dataset.i) pick(+s.dataset.i); });
+    pick(6);
+  })();
+
+  /* ================= 08 · A DESCOBERTA ================= */
+  (function(){
+    var sc = $('ds-scene'), st = makeStage(sc, 420, 160, {ay:'70%', rx:'56deg'});
+    rotatable(sc, st, -14, 8);
+    var cur = 1, sel = 0, labs = [];
+    var bs = CAT.map(function(c, i){ var b = box({w:42, d:46, h:10, x:0, y:46, c:NAVY, top:''}); b.dataset.k = i; st.appendChild(b); return b; });
+    function panel(){
+      var c = CAT[sel];
+      $('ds-panel').innerHTML = '<div class="tag">' + c.s + '</div><h3>' + c.n + '</h3><div class="stack">' + STR.map(function(s, j){ return '<i style="width:' + c.v[j] + '%; background:' + s.c + '">' + (c.v[j] >= 12 ? pc(c.v[j]) : '') + '</i>'; }).join('') + '</div><p style="font-size:.82rem">' + STR.map(function(s, j){ return '<span class="' + s.t + '">' + s.n + '</span> ' + pc(c.v[j]); }).join(' · ') + '</p>';
+    }
+    function draw(s){
+      cur = s;
+      var order = CAT.map(function(c, i){ return i; }).sort(function(a, b){ return CAT[b].v[s] - CAT[a].v[s]; });
+      labs.forEach(function(l){ l.remove(); }); labs = [];
+      order.forEach(function(ci, pos){
+        var b = bs[ci], v = CAT[ci].v[s];
+        b.style.left = (pos * 60 + 6) + 'px';
+        b.style.setProperty('--h', Math.max(3, v * 1.55) + 'px');
+        b.style.setProperty('--c', STR[s].c);
+        b.querySelector('.f-top').innerHTML = '<span class="top-label">' + M.fmt(v, v % 1 ? 1 : 0) + '</span>';
+        labs.push(flatLabel(st, CAT[ci].s, pos * 60 - 6, 102 + (pos % 2) * 22, 66));
+      });
+      sel = order[0]; mark(); panel();
+    }
+    function mark(){ bs.forEach(function(b, i){ b.classList.toggle('active', i === sel); b.style.setProperty('--oz', i === sel ? '12px' : '0px'); }); }
+    seg('ds-seg', STR.map(function(s){ return s.n; }), draw, 1);
+    st.addEventListener('click', function(e){ if (M.wasDrag(sc)) return; var s = e.target.closest('.slab'); if (s && s.dataset.k){ sel = +s.dataset.k; mark(); panel(); } });
+  })();
+
+  /* ================= 09 · CUSTO × ESPECIFICIDADE ================= */
+  (function(){
+    // esquema: custo em função de k (0 a 100), sem escala real
+    var F = [function(k){ return 8 + 0.011 * k * k; }, function(k){ return 28 + 0.0055 * k * k; }, function(k){ return 50 + 0.0022 * k * k; }];
+    var X0 = 60, X1 = 530, Y0 = 262, SY = 1.9;
+    function px(k){ return X0 + (X1 - X0) * k / 100; } function py(c){ return Y0 - c * SY; }
+    var SO = [STR[0], STR[2], STR[1]];
+    var svg = $('cs-svg');
+    el('line', {x1:X0, y1:Y0, x2:X1 + 10, y2:Y0, stroke:'#64748b', 'stroke-width':1.5}, svg);
+    el('line', {x1:X0, y1:Y0, x2:X0, y2:20, stroke:'#64748b', 'stroke-width':1.5}, svg);
+    txt(L('custo de governança', 'governance cost'), {x:X0 + 6, y:28, 'font-size':13, fill:'#334155'}, svg);
+    txt(L('especificidade dos ativos →', 'asset specificity →'), {x:X1, y:Y0 + 24, 'font-size':13, fill:'#334155', 'text-anchor':'end'}, svg);
+    var cut = [0, 60.3, 81.6, 100];
+    var zones = SO.map(function(s, j){ return el('rect', {x:px(cut[j]), y:20, width:px(cut[j + 1]) - px(cut[j]), height:Y0 - 20, fill:s.c, opacity:0}, svg); });
+    var paths = F.map(function(f, j){
+      var d = ''; for (var k = 0; k <= 100; k += 2){ var c = f(k); if (py(c) < 18) break; d += (d ? 'L' : 'M') + px(k).toFixed(1) + ',' + py(c).toFixed(1); }
+      return el('path', {d:d, fill:'none', stroke:SO[j].c, 'stroke-width':3.5, 'stroke-linecap':'round'}, svg);
+    });
+    // rótulos das curvas: [texto, k, deslocamento x, deslocamento y, âncora]
+    var tags = [[L('mercado', 'market'), 48, 8, 20, 'start'], [L('híbrido', 'hybrid'), 100, 0, -12, 'end'], [L('em casa', 'in-house'), 62, 0, -12, 'middle']];
+    tags.forEach(function(t, j){ txt(t[0], {x:px(t[1]) + t[2], y:py(F[j](t[1])) + t[3], 'font-size':13, 'font-weight':700, fill:SO[j].c, 'text-anchor':t[4]}, svg); });
+    var vline = el('line', {x1:0, y1:20, x2:0, y2:Y0, stroke:'#0f172a', 'stroke-width':1.5, 'stroke-dasharray':'4 4'}, svg);
+    var dots = F.map(function(f, j){ return el('circle', {r:6.5, fill:'#fff', stroke:SO[j].c, 'stroke-width':3}, svg); });
+    var CATS = [
+      [L('Relações contratuais', 'Contractual relations'), L('Incerteza', 'Uncertainty'), L('Relações governamentais', 'Government relations')],
+      [L('Pressupostos comportamentais', 'Behavioural assumptions'), L('Uso e mediação da tecnologia', 'Use and mediation of technology'), L('Especificidades dos serviços', 'Services specificities')],
+      [L('Ações de mitigação dos riscos', 'Cyber risk mitigation actions'), L('Pressupostos comportamentais', 'Behavioural assumptions'), L('Especificidades dos serviços', 'Services specificities'), L('Uso e mediação da tecnologia', 'Use and mediation of technology')]
+    ];
+    var WHY = [
+      L('Para o que é padrão, o mercado sai mais barato: há muitos fornecedores e o contrato basta.', 'For standard work, the market is cheaper: there are many suppliers and a contract is enough.'),
+      L('No meio do caminho, parcerias e contratos longos dividem o controle.', 'Midway, partnerships and long contracts share control.'),
+      L('Quando o que se faz só serve àquela empresa, vigiar um fornecedor fica caro demais e compensa fazer em casa, apesar da burocracia.', 'When the work only fits that company, monitoring a supplier gets too costly and it pays to do it in-house, despite the bureaucracy.')
+    ];
+    function upd(k){
+      var vals = F.map(function(f){ return f(k); }), best = vals.indexOf(Math.min.apply(null, vals));
+      vline.setAttribute('x1', px(k)); vline.setAttribute('x2', px(k));
+      dots.forEach(function(d, j){ var y = py(vals[j]); d.setAttribute('cx', px(k)); d.setAttribute('cy', Math.max(18, y)); d.style.display = y < 18 ? 'none' : ''; d.setAttribute('fill', j === best ? SO[j].c : '#fff'); });
+      zones.forEach(function(z, j){ z.setAttribute('opacity', j === best ? .07 : 0); });
+      paths.forEach(function(p, j){ p.setAttribute('stroke-width', j === best ? 5 : 3); });
+      $('cs-panel').innerHTML = '<div class="tag">' + L('Mais barato aqui: ', 'Cheapest here: ') + '<span class="' + SO[best].t + '">' + SO[best].n + '</span></div><p>' + WHY[best] + '</p><p style="font-size:.82rem">' + L('Na tese, ficam aqui: ', 'In the thesis, these sit here: ') + '<b>' + CATS[best].join(', ') + '</b>.</p>';
+    }
+    var r = $('cs-range'); r.addEventListener('input', function(){ upd(+r.value); }); upd(+r.value);
+  })();
+
+  /* ================= 10 · TERCEIROS ================= */
+  (function(){
+    var sc = $('tp-scene'), st = makeStage(sc, 420, 170, {ay:'68%', rx:'58deg'});
+    rotatable(sc, st, -18, 8);
+    var X = [10, 150, 290];
+    var co = box({w:110, d:90, h:34, x:X[0], y:40, c:NAVY, label:L('empresa', 'company')}); st.appendChild(co);
+    var su = box({w:110, d:90, h:34, x:X[1], y:40, c:MID, label:L('fornecedor', 'supplier')}); st.appendChild(su);
+    var sb = box({w:110, d:90, h:34, x:X[2], y:40, c:MID, label:L('subcontratado', 'subcontractor'), cls:'off'}); st.appendChild(sb);
+    var risk = box({w:34, d:34, h:34, x:X[0] + 70, y:68, z:34, c:RED, top:'!'}); st.appendChild(risk);
+    var op = box({w:56, d:44, h:30, x:X[0] + 8, y:63, z:34, c:ramp(NAVY, 4, 6), top:L('operação', 'operation')}); st.appendChild(op);
+    flatLabel(st, L('o risco', 'the risk'), X[0] + 40, 134, 80);
+    var P = [
+      L('<b>Tudo em casa.</b> A empresa faz a operação e responde pelo risco.', '<b>All in-house.</b> The company runs the operation and answers for the risk.'),
+      q(L('... você quer passar a operação para um terceiro, mas isso não significa que está passando o risco para ele: o risco continua com você.', '... you want to transfer the operation to a third party, it doesn’t mean that you are transferring the risk to them, the risk remains with you'), 'E4') + q(L('Com a terceirização, há uma série de cláusulas de segurança da informação que também colocamos para proteger a empresa, mas o problema só é descoberto no meio do contrato.', 'With the advent of outsourcing, there are a series of information security clauses that we also put in place to protect the company, but the problem is only discovered in the middle of the contract'), 'E4'),
+      L('<b>O fornecedor do fornecedor.</b> A operação vai ainda mais longe, mas o risco continua na empresa. Por isso há quem escreva no contrato que o fornecedor responde mesmo pelo que repassar:', '<b>The supplier’s supplier.</b> The operation travels even further, but the risk stays with the company. That is why some write into the contract that the supplier is liable even for what it passes on:') + q(L('Como a gente se protege? Com contratos, e dizemos à outra parte: "se você repassar a operação para outro, não importa: se algo der errado, quem vai ser penalizado é você".', 'How do we protect? With contracts and we say to the other party: "if you outsource the operation to someone else, it doesn’t matter, if something goes wrong, you’ll be penalized"'), 'E13')
+    ];
+    function stage(i){
+      op.style.left = (X[i] + 8) + 'px';
+      sb.classList.toggle('off', i < 2);
+      risk.style.setProperty('--oz', i > 0 ? '14px' : '0px'); risk.classList.toggle('active', i > 0);
+      $('tp-panel').innerHTML = P[i];
+      $('tp-out').className = 'btn small' + (i === 0 ? '' : ' ghost'); $('tp-sub').className = 'btn small' + (i === 1 ? '' : ' ghost');
+    }
+    $('tp-out').addEventListener('click', function(){ stage(1); });
+    $('tp-sub').addEventListener('click', function(){ stage(2); });
+    $('tp-reset').addEventListener('click', function(){ stage(0); });
+    stage(0);
+  })();
+
+  /* ================= 11 · O MODELO ================= */
+  (function(){
+    var svg = $('md-svg');
+    var N = {
+      esp:{x:40, y:14, w:170, h:52, t:[L('Especificidades', 'Services'), L('dos serviços', 'specificities')], c:NAVY},
+      tec:{x:270, y:14, w:170, h:52, t:[L('Uso e mediação', 'Use and mediation'), L('da tecnologia', 'of technology')], c:NAVY},
+      gov:{x:40, y:120, w:170, h:52, t:[L('Relações', 'Government'), L('governamentais', 'relations')], c:NAVY},
+      con:{x:270, y:160, w:170, h:52, t:[L('Relações', 'Contractual'), L('contratuais', 'relations')], c:DK},
+      mkt:{x:478, y:104, w:112, h:40, t:[L('Mercado', 'Market')], c:RED},
+      hie:{x:478, y:166, w:112, h:40, t:[L('Em casa', 'In-house')], c:NAVY},
+      hyb:{x:478, y:228, w:112, h:40, t:[L('Híbrido', 'Hybrid')], c:DK},
+      lac:{x:6, y:268, w:118, h:44, t:[L('Lacuna de', 'Knowledge'), L('conhecimento', 'gap')], c:MID},
+      opo:{x:6, y:326, w:118, h:40, t:[L('Oportunismo', 'Opportunism')], c:MID},
+      com:{x:150, y:282, w:160, h:52, t:[L('Pressupostos', 'Behavioural'), L('comportamentais', 'assumptions')], c:DK},
+      inc:{x:350, y:282, w:160, h:52, t:[L('Incerteza', 'Uncertainty')], c:DK},
+      mit:{x:240, y:394, w:180, h:62, t:[L('Ações de mitigação', 'Cyber risk'), L('dos riscos cibernéticos', 'mitigation actions')], c:RED}
+    };
+    var E = [['esp', 'tec', 'r'], ['esp', 'gov', 'd'], ['tec', 'con', 'd'], ['gov', 'con', 'r'], ['con', 'mkt', 'r'], ['con', 'hie', 'r'], ['con', 'hyb', 'r'], ['con', 'com', 'd'], ['con', 'inc', 'd'], ['com', 'inc', 'r'], ['lac', 'com', 'r'], ['opo', 'com', 'r'], ['com', 'mit', 'd'], ['inc', 'mit', 'd']];
+    var defs = el('defs', {}, svg);
+    var mk = el('marker', {id:'ah', viewBox:'0 0 10 10', refX:9, refY:5, markerWidth:7, markerHeight:7, orient:'auto-start-reverse'}, defs);
+    el('path', {d:'M0,0 L10,5 L0,10 z', fill:'#64748b'}, mk);
+    function cx(n){ return n.x + n.w / 2; } function cy(n){ return n.y + n.h / 2; }
+    var lines = E.map(function(e){
+      var a = N[e[0]], b = N[e[1]], x1, y1, x2, y2;
+      if (e[2] === 'r'){ x1 = a.x + a.w; y1 = cy(a); x2 = b.x; y2 = cy(b); if (b.x < a.x){ x1 = a.x; x2 = b.x + b.w; } }
+      else { x1 = cx(a); y1 = a.y + a.h; x2 = cx(b); y2 = b.y; }
+      var d = e[2] === 'r' ? 'M' + x1 + ',' + y1 + ' C' + (x1 + x2) / 2 + ',' + y1 + ' ' + (x1 + x2) / 2 + ',' + y2 + ' ' + x2 + ',' + y2 : 'M' + x1 + ',' + y1 + ' C' + x1 + ',' + (y1 + y2) / 2 + ' ' + x2 + ',' + (y1 + y2) / 2 + ' ' + x2 + ',' + y2;
+      var p = el('path', {d:d, fill:'none', stroke:'#94a3b8', 'stroke-width':2, 'marker-end':'url(#ah)'}, svg);
+      if (e[0] === 'con' && /mkt|hie|hyb/.test(e[1])) p.setAttribute('marker-start', 'url(#ah)');
+      if ((e[0] === 'com' && e[1] === 'inc') || (e[0] === 'con' && /com|inc/.test(e[1]))) p.setAttribute('marker-start', 'url(#ah)');
+      return {p:p, a:e[0], b:e[1]};
+    });
+    var T = {
+      esp:L('<b>O ponto de partida.</b> Que serviço a empresa vende e o que é central ou periférico no negócio. Muitos serviços envolvem ativos intangíveis (dados, algoritmos, sistemas próprios) difíceis de passar adiante, e isso atrai criminosos.', '<b>The starting point.</b> What service the company sells and what is core or peripheral. Many services involve intangible assets (data, algorithms, in-house systems) that are hard to hand over, and that attracts criminals.'),
+      tec:L('<b>A tecnologia.</b> Dois terços das empresas compraram tecnologia nova nos últimos três anos. O tipo de serviço decide como a tecnologia é usada e onde estão as brechas.', '<b>Technology.</b> Two thirds of the companies bought new technology in the last three years. The type of service decides how technology is used and where the gaps are.'),
+      gov:L('<b>O governo.</b> Em setores regulados, a estrutura precisa incorporar exigências legais, licenças e a obrigação de relatar incidentes; a ponte costuma ser contratada fora.', '<b>Government.</b> In regulated sectors, the structure must take on legal requirements, licences and the duty to report incidents; the bridge is usually contracted out.'),
+      con:L('<b>O centro do modelo.</b> "O que é uma empresa? Um conjunto de contratos, todos incompletos." Os contratos escolhem a estrutura e são revistos conforme o resultado, por isso as setas vão e voltam.', '<b>The centre of the model.</b> “What is a firm? A set of contracts, all incomplete.” Contracts choose the structure and are revised according to results, which is why the arrows go both ways.'),
+      mkt:L('<b>Mercado.</b> Contratos (82,3% das menções), incerteza (57,1%) e governo (56,3%). Bom para conseguir especialistas sem treinar a equipe; pequenas e médias recorrem mais a ele.', '<b>Market.</b> Contracts (82.3% of mentions), uncertainty (57.1%) and government (56.3%). Good for getting specialists without training staff; small and medium firms rely on it more.'),
+      hie:L('<b>Em casa.</b> Mitigação (87%), comportamento (70,4%), especificidades (69,6%) e tecnologia (64,7%). Mais controle e resposta mais rápida, com custo de governança maior.', '<b>In-house.</b> Mitigation (87%), behaviour (70.4%), specificities (69.6%) and technology (64.7%). More control and faster response, at a higher governance cost.'),
+      hyb:L('<b>Híbrido.</b> Mais presente no comportamento (21,7%) e na tecnologia (16,7%): prestadores trabalhando junto com o time da casa.', '<b>Hybrid.</b> Most present in behaviour (21.7%) and technology (16.7%): providers working alongside the in-house team.'),
+      lac:L('<b>Lacuna de conhecimento.</b> Ninguém sabe tudo (a racionalidade limitada da teoria). Por perto, fica mais fácil notar o que falta saber.', '<b>Knowledge gap.</b> Nobody knows everything (the theory’s bounded rationality). Up close, it is easier to notice what is missing.'),
+      opo:L('<b>Oportunismo.</b> Alguém pode levar vantagem, de dentro ou de fora. Daí a confiança zero e a separação física de equipes que lidam com dados sensíveis.', '<b>Opportunism.</b> Someone may take advantage, from inside or outside. Hence zero trust and the physical separation of teams handling sensitive data.'),
+      com:L('<b>Comportamento.</b> Lacunas de conhecimento e oportunismo pesam em qualquer estrutura, mas são tratados sobretudo em casa (70,4%), onde é possível vigiar e trocar conhecimento de perto.', '<b>Behaviour.</b> Knowledge gaps and opportunism weigh on any structure, but are handled mostly in-house (70.4%), where close monitoring and knowledge sharing are possible.'),
+      inc:L('<b>Incerteza.</b> Ataques novos, regras complexas, garantias do prestador. Fica mais com o mercado (57,1%), mas quase um terço é tratado em casa.', '<b>Uncertainty.</b> New attacks, complex rules, provider guarantees. It sits mostly with the market (57.1%), but almost a third is handled in-house.'),
+      mit:L('<b>O ponto de chegada.</b> Reconhecer riscos, políticas e provas de conformidade, treinamento, gestão de crises e de terceiros. 87% das menções ligam essas ações a fazer em casa.', '<b>The end point.</b> Recognizing risks, policies and evidence of compliance, training, crisis and third-party management. 87% of mentions tie these actions to doing it in-house.')
+    };
+    var G = {};
+    Object.keys(N).forEach(function(k){
+      var n = N[k], g = el('g', {class:'nd', tabindex:0, role:'button'}, svg);
+      var r = el('rect', {x:n.x, y:n.y, width:n.w, height:n.h, rx:10, fill:'#fff', stroke:n.c, 'stroke-width':2.2}, g);
+      n.t.forEach(function(s, i){ txt(s, {x:cx(n), y:cy(n) + (i - (n.t.length - 1) / 2) * 16 + 5, 'text-anchor':'middle', 'font-size':n.w < 130 ? 13 : 14, 'font-weight':700, fill:n.c}, g); });
+      G[k] = {g:g, r:r, n:n};
+      g.addEventListener('click', function(){ pick(k); });
+      g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); pick(k); } });
+    });
+    var PATH = ['esp', 'tec', 'gov', 'con', 'mkt', 'hie', 'hyb', 'lac', 'opo', 'com', 'inc', 'mit'], step = 0;
+    function pick(k){
+      step = PATH.indexOf(k);
+      Object.keys(G).forEach(function(j){ var on = j === k; G[j].r.setAttribute('fill', on ? G[j].n.c : '#fff'); each(G[j].g.querySelectorAll('text'), function(t){ t.setAttribute('fill', on ? '#fff' : G[j].n.c); }); });
+      lines.forEach(function(l){ var on = l.a === k || l.b === k; l.p.setAttribute('stroke', on ? '#0f172a' : '#94a3b8'); l.p.setAttribute('stroke-width', on ? 3 : 2); });
+      $('md-panel').innerHTML = '<p>' + T[k] + '</p>';
+    }
+    $('md-next').addEventListener('click', function(){ pick(PATH[(step + 1) % PATH.length]); });
+    pick('esp');
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
