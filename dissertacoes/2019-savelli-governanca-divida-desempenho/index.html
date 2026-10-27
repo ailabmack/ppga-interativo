@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quem manda na empresa, a dívida e o lucro · PPGA Interativo</title>
+<meta name="description" content="A dissertação de mestrado de Andrea Décourt Savelli (PPGA Mackenzie) sobre governança corporativa, dívida e desempenho de 39 grandes empresas brasileiras da bolsa, de 2010 a 2017, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/dissertacoes/2019-savelli-governanca-divida-desempenho/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><path d=%22M7 22 L9 11 L13 16 L16 9 L19 16 L23 11 L25 22 Z%22 fill=%22white%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  :root{
+    --debt:var(--navy);   /* dívida (estrutura de capital) */
+    --perf:var(--red);    /* desempenho (lucro) */
+    --weak:#b45309;
+  }
+  .debt-t{color:var(--debt); font-weight:700;} .perf-t{color:var(--perf); font-weight:700;}
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .ill{display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--weak); border:1px solid color-mix(in srgb, var(--weak) 45%, white); border-radius:999px; padding:2px 9px; margin-bottom:6px;}
+  .sw{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 10px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-size:.8rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px 16px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:4px;}
+  .panel p{margin:0 0 6px; font-size:.86rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .ctrls{display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; margin:4px 0 10px;}
+  .zleg{display:flex; flex-wrap:wrap; justify-content:center; gap:4px 16px; font-size:.78rem; color:var(--ink-2); margin-top:2px;}
+  .bigbtn{border:0; background:var(--red); color:#fff; border-radius:999px; padding:9px 18px; font-size:.86rem; font-weight:700; cursor:pointer;}
+  .bigbtn.ghost{background:var(--card); color:var(--ink); border:1px solid var(--border);}
+  svg text{font-family:var(--sans);}
+  .slab.ghost > i{opacity:.28;}
+  .slab.board > i{opacity:.5;}
+  .slab.board .f-top{--face:color-mix(in srgb, #94a3b8 60%, white);}
+  .zb .slab .f-front .face-label{font-size:16px; letter-spacing:0; text-transform:none; font-weight:800;}
+  .zb .slab .f-top .top-label{font-size:16px; color:var(--ink); text-shadow:0 0 3px #fff, 0 0 3px #fff;}
+  @media (max-width:600px){
+    #cf-svg text{font-size:15px !important;} #cf-svg text.s{font-size:12px !important;}
+    #ig-svg text{font-size:16px !important;}
+    #bs-svg text{font-size:15px !important;} #bs-svg text.s{font-size:14px !important;}
+    #fp-svg text{font-size:16px !important;} #fp-svg text.s{font-size:13px !important;}
+  }
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(1.7rem, 2.8vw, 2.1rem);}
+  #capa .sub{font-size:1rem;}
+  .meta{display:grid; gap:2px; margin-top:16px; font-size:.86rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.76rem; color:var(--muted); margin-top:4px; text-align:center; line-height:1.4;}
+  .cap-ctrl{display:flex; justify-content:center; margin-top:6px;}
+
+  /* ---------- 02 · Conflitos ---------- */
+  #cf-svg{width:100%; display:block; max-width:500px; margin:0 auto;}
+  #cf-panel{min-height:120px; margin-top:10px;}
+
+  /* ---------- 03 · Selos ---------- */
+  #ig-svg{width:100%; display:block;}
+  .lv{display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; margin-top:12px;}
+  .lv div{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:7px 9px; font-size:.72rem; color:var(--ink-2); line-height:1.3; border-top:4px solid var(--lc, var(--neutral));}
+  .lv b{display:block; font-size:.82rem; color:var(--ink);}
+  @media (max-width:600px){ .lv{grid-template-columns:1fr 1fr;} }
+  .range{width:100%; accent-color:var(--red);}
+  #ig-read{font-size:.86rem; color:var(--ink-2); margin:2px 0 0;}
+
+  /* ---------- 04 · Conselho ---------- */
+  #bd-panel{min-height:132px; margin-top:8px;}
+  .slab.seat .f-top .top-label{font-size:13px; font-weight:800; color:#fff; letter-spacing:0;}
+  .slab.tbl .f-top{--face:color-mix(in srgb, #94a3b8 35%, white);}
+
+  /* ---------- 05 · Amostra ---------- */
+  #fn-panel{min-height:76px; margin-top:8px;}
+  .facts{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:12px;}
+  .facts div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 11px; font-size:.74rem; color:var(--ink-2); line-height:1.3;}
+  .facts b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink);}
+  @media (max-width:600px){ .facts{grid-template-columns:1fr 1fr;} }
+  .slab.step .f-front .face-label{font-size:18px; font-weight:800; letter-spacing:0;}
+
+  /* ---------- 06 · Réguas ---------- */
+  #bs-svg{width:100%; display:block;}
+  #bs-panel{min-height:96px; margin-top:8px;}
+
+  /* ---------- 07 · Mapa ---------- */
+  #mp-panel{margin-top:8px;}
+  .res{display:grid; grid-template-columns:1fr 1fr; gap:4px 14px; font-size:.76rem; color:var(--ink-2);}
+  .res h4{font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; margin:0 0 2px; font-family:var(--sans);}
+  .res div.r{display:grid; grid-template-columns:18px 1fr auto; gap:6px; align-items:center; padding:2px 4px; border-radius:6px; line-height:1.25;}
+  .res div.r.on{background:#fff1f3;}
+  .res .m{font-weight:800; text-align:center; border-radius:4px; color:#fff; font-size:.72rem;}
+  .res .m.up{background:var(--ink);} .res .m.dn{background:var(--red);} .res .m.ns{background:#e2e8f0; color:var(--muted);}
+  .res .pv{font-variant-numeric:tabular-nums; color:var(--muted);}
+  .res .bad{font-style:italic; color:var(--muted);}
+  @media (max-width:600px){ .res{grid-template-columns:1fr;} }
+  .score{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.82rem; margin-top:6px; color:var(--ink-2);}
+  .score b{font-family:var(--serif); font-size:1.05rem; color:var(--ink);}
+
+  /* ---------- 08 · Descoberta ---------- */
+  #fp-svg{width:100%; display:block;}
+  #fp-panel{min-height:70px; margin-top:8px;}
+  .big{font-family:var(--serif); font-size:2.6rem; font-weight:900; color:var(--red); line-height:1;}
+
+  /* ---------- 09 · Dívida ---------- */
+  .sl{display:grid; gap:4px; margin:6px 0 8px;}
+  .sl label{font-size:.84rem; color:var(--ink-2);}
+  .sl label b{color:var(--ink);}
+  .tog{display:flex; align-items:center; gap:10px; font-size:.86rem; color:var(--ink-2); margin:6px 0;}
+  .tog button{border:1px solid var(--border); background:var(--bg-soft); border-radius:999px; padding:7px 14px; font-size:.82rem; cursor:pointer; font-weight:600; color:var(--ink-2);}
+  .tog button[aria-pressed="true"]{background:var(--red); color:#fff; border-color:var(--red);}
+  #dv-out{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;}
+  #dv-out div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 12px; font-size:.76rem; color:var(--ink-2); line-height:1.3; border-top:4px solid var(--debt);}
+  #dv-out b{display:block; font-family:var(--serif); font-size:1.3rem; color:var(--ink);}
+
+  /* ---------- 10 · Inesperado ---------- */
+  .bet{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px; margin-top:10px;}
+  .bet h3{font-size:.95rem; margin-bottom:8px;}
+  .bet .opts{display:flex; flex-wrap:wrap; gap:6px;}
+  .bet .opts button{border:1px solid var(--border); background:var(--bg-soft); border-radius:9px; padding:7px 12px; font-size:.82rem; cursor:pointer; color:var(--ink-2); font-weight:600;}
+  .bet .opts button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  #du-res{display:none; margin-top:10px;}
+  #du-res.on{display:block;}
+  .board2{display:grid; gap:8px;}
+  .board2 .row{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 12px;}
+  .board2 .row h4{font-size:.86rem; margin:0 0 6px; font-family:var(--sans); color:var(--ink);}
+  .pips{display:flex; flex-wrap:wrap; gap:5px;}
+  .pip{min-width:34px; height:28px; border-radius:7px; background:#e2e8f0; color:var(--muted); font-size:.7rem; font-weight:800; display:flex; align-items:center; justify-content:center; padding:0 5px;}
+  .pip.up{background:var(--ink); color:#fff;} .pip.dn{background:var(--red); color:#fff;}
+  .pip.bad{background:repeating-linear-gradient(45deg, #e2e8f0 0 4px, #fff 4px 8px); color:var(--muted);}
+  .pip.bad.dn{background:repeating-linear-gradient(45deg, color-mix(in srgb, var(--red) 45%, white) 0 4px, #fff 4px 8px); color:var(--ink);}
+  .pips small{font-size:.7rem; color:var(--muted); align-self:center; margin-left:4px;}
+
+  /* ---------- 11 · Na prática ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:12px; margin-top:10px;}
+  @media (min-width:760px){ .cards4{grid-template-columns:repeat(2, 1fr);} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:13px 15px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.98rem; margin-bottom:6px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:4px; font-size:.8rem; line-height:1.45; color:var(--ink-2);}
+  .pcard em{font-style:normal; font-size:.72rem; color:var(--muted);}
+  .warn{margin-top:14px; background:#fff5f6; border:1px solid color-mix(in srgb, var(--red) 30%, white); border-radius:12px; padding:10px 14px; font-size:.84rem; color:var(--ink-2);}
+  .warn b{color:var(--red);}
+
+  /* ---------- 12 · Limites e créditos ---------- */
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:12px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.08rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:8px 0 0; padding:0; list-style:none;}
+  .limits li{padding:7px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.72rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.5; margin-top:8px;}
+  .cite b{color:var(--ink);}
+  .also{font-size:.8rem; margin-top:10px; color:var(--ink-2);}
+  .also a{color:var(--red); font-weight:600;}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/dissertacoes/2019-savelli-governanca-divida-desempenho/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Dissertação de mestrado · PPGA Mackenzie · 2019</div>
+      <h1 class="rv" style="--d:.1s">Nas grandes empresas da bolsa, ter um dono com metade das ações com voto veio com lucro menor e, na maioria dos modelos, com mais dívida</h1>
+      <p class="sub rv" style="--d:.2s">A dissertação acompanhou <strong>39 empresas</strong> do índice IBrX 50, de 2010 a 2017, e testou seis peças da governança (quem é dono, quem senta no conselho, quem preside) em <strong>14 modelos</strong>. A peça que mais apareceu foi o dono majoritário: lucro menor em todos os modelos de desempenho. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autora:</b> Andrea Décourt Savelli</span>
+        <span><b>Orientador:</b> Prof. Dr. Eli Hadad Junior</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#conflitos">Começar →</a>
+        <a class="btn ghost" href="#descoberta">Ir direto ao resultado</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable zb" id="hero-scene" data-fit="440x250" role="img" aria-label="Duas colunas a partir de uma placa que marca o zero: com um dono majoritário, a dívida financeira fica 8,1 pontos percentuais acima (coluna azul, para cima) e o retorno sobre o patrimônio fica 7,6 pontos abaixo (coluna vermelha, pendurada)"></div></div>
+      <div class="zleg"><span><span class="sw" style="background:var(--debt)"></span>dívida financeira</span><span><span class="sw" style="background:var(--perf)"></span>lucro sobre o patrimônio (ROE)</span><span><span class="sw" style="background:#cbd5e1"></span>placa = sem diferença</span></div>
+      <div class="cap-legend">Diferença entre empresas com e sem alguém que tem 50% ou mais das ações com voto, em pontos percentuais (Tabela 1, efeitos fixos, e Tabela 12). Arraste para girar.</div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Mostra como o jeito de controlar e fiscalizar as grandes empresas da bolsa acompanha a dívida e o lucro delas, tema ligado à força do mercado de capitais brasileiro."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · DOIS CONFLITOS -->
+<section class="slide" id="conflitos" data-label="Dois conflitos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O assunto</div>
+      <h2 class="rv" style="--d:.1s">Governança é o conjunto de regras que protege o dinheiro de quem não manda na empresa</h2>
+      <p class="lede rv" style="--d:.15s">Quem investe numa empresa aberta raramente a administra. A governança corporativa nasceu para evitar abusos de quem está no comando. Mas quem é esse “alguém no comando” muda de um país para outro.</p>
+      <p class="rv" style="--d:.2s; font-size:.9rem">No Brasil, a lei permite ações sem direito a voto (as preferenciais). Assim, um controlador pode mandar com uma parte pequena do capital total, e o conflito principal passa a ser entre ele e os sócios menores.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="ctrls"><div class="seg" id="cf-seg"></div></div>
+      <svg id="cf-svg" viewBox="0 0 500 230" role="img" aria-label="Desenho de quem está em conflito em cada caso: acionistas espalhados contra executivos, ou um acionista majoritário contra os minoritários"></svg>
+      <div class="panel" id="cf-panel" aria-live="polite"></div>
+      <p class="note">Fonte: capítulo 1 (contextualização) e seção 2.2 da dissertação, com base em Andrade e Rossetti (2004) e Silveira et al. (2004).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · SELOS DA BOLSA -->
+<section class="slide" id="selos" data-label="Selos da bolsa">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> O contexto</div>
+      <h2 class="rv" style="--d:.1s">A bolsa criou selos de boa governança, e as empresas aderem se quiserem</h2>
+      <p class="lede rv" style="--d:.15s">A Lei das S.A. não exige várias boas práticas. Por isso a bolsa (hoje B3) criou segmentos com regras mais rígidas que a lei. A adesão é voluntária; a ideia é que mais proteção ao investidor diminua o risco percebido e valorize as ações.</p>
+      <div class="lv rv" style="--d:.2s">
+        <div style="--lc:#cbd5e1"><b>Tradicional</b>só a lei</div>
+        <div style="--lc:color-mix(in srgb, var(--red) 35%, white)"><b>Nível 1</b>mais transparência</div>
+        <div style="--lc:color-mix(in srgb, var(--red) 65%, white)"><b>Nível 2</b>mais direitos aos minoritários</div>
+        <div style="--lc:var(--red)"><b>Novo Mercado</b>o nível mais alto, criado em 2000</div>
+      </div>
+      <p class="rv" style="--d:.25s; font-size:.86rem; margin-top:10px">Segundo a autora, 206 empresas estavam em algum segmento especial da B3.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <span class="ill">Valores lidos do gráfico da dissertação (~)</span>
+      <svg id="ig-svg" viewBox="0 0 560 250" role="img" aria-label="Gráfico de linhas de 2001 a 2018: o índice das empresas com boa governança (IGC) sobe de 100% para cerca de 1.240%, e o Ibovespa para cerca de 630%"></svg>
+      <input class="range" id="ig-range" type="range" min="2001" max="2018" step="1" value="2017" aria-label="Escolha o ano">
+      <p id="ig-read" aria-live="polite"></p>
+      <p class="note">Fonte: Figura 1 (IGC × Ibovespa, base 2001 = 100%). O gráfico é contexto, não um teste da dissertação: mostra o preço dos índices, que mistura muitas coisas além da governança. A faixa cinza marca os anos estudados. Não é recomendação de investimento.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · O CONSELHO -->
+<section class="slide" id="conselho" data-label="Seis peças">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> O que foi medido</div>
+      <h2 class="rv" style="--d:.1s">Seis peças da governança: o dono, o conselho e o pagamento do executivo</h2>
+      <p class="lede rv" style="--d:.15s">O conselho de administração fiscaliza os executivos em nome dos acionistas. A autora mediu, ano a ano, seis características de cada empresa. Toque numa peça para ver como ela aparece no conselho médio da amostra.</p>
+      <div class="chips rv" style="--d:.2s" id="bd-chips"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <span class="ill">Conselho médio montado por nós com as médias, arredondadas</span>
+      <div class="fit-wrap"><div class="scene draggable" id="bd-scene" data-fit="460x250" role="img" aria-label="Uma mesa de conselho com nove cadeiras; as cadeiras mudam de cor conforme a peça escolhida"></div></div>
+      <div class="panel" id="bd-panel" aria-live="polite"></div>
+      <p class="note">Fonte: Quadros 1 e 2 (definições) e Apêndice A (médias de cerca de 300 empresas-ano). “Empresa-ano” é uma empresa num ano: 39 empresas × 8 anos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · AMOSTRA -->
+<section class="slide" id="amostra" data-label="A amostra">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Quem entrou</div>
+      <h2 class="rv" style="--d:.1s">Das 50 maiores ações da bolsa, sobraram 39 empresas, seguidas por oito anos</h2>
+      <p class="lede rv" style="--d:.15s">O IBrX 50 reúne as 50 ações mais negociadas da bolsa brasileira. A autora tirou bancos e seguradoras (o balanço deles é diferente), empresas que aparecem duas vezes e holdings. Os dados vieram da Bloomberg, da Capital IQ e da Economática, de 2010 (primeiro ano do padrão contábil internacional obrigatório) a 2017.</p>
+      <div class="facts rv" style="--d:.2s">
+        <div><b>~311</b>empresas-ano por medida (de 293 a 312)</div>
+        <div><b>54 anos</b>idade média das empresas</div>
+        <div><b>14</b>modelos de regressão com dados em painel</div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="fit-wrap"><div class="scene draggable" id="fn-scene" data-fit="420x260" role="img" aria-label="Quatro camadas empilhadas que encolhem: 50 ações, 48 empresas, 41 não financeiras e 39 na amostra final"></div></div>
+      <div class="chips" id="fn-chips" style="justify-content:center"></div>
+      <div class="panel" id="fn-panel" aria-live="polite"></div>
+      <p class="note">Fonte: Quadro 3 (composição da amostra) e Apêndice A. Os modelos são de dados em painel (a mesma empresa vista em vários anos); o teste de Hausman escolheu efeitos fixos em 3 deles e aleatórios em 11, com correção de Driscoll-Kraay para os erros.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · AS RÉGUAS -->
+<section class="slide" id="reguas" data-label="As réguas">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> O método</div>
+      <h2 class="rv" style="--d:.1s">Quatro réguas para a dívida e três para o lucro</h2>
+      <p class="lede rv" style="--d:.15s">Para não depender de um só número, a autora mediu a <b class="debt-t">dívida</b> de quatro jeitos e o <b class="perf-t">desempenho</b> de três. Escolha uma régua e veja que partes do balanço entram na conta.</p>
+      <div class="chips rv" style="--d:.2s" id="bs-chips"></div>
+      <div class="panel rv" style="--d:.25s" id="bs-panel" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <span class="ill">Empresa inventada para ilustrar</span>
+      <svg id="bs-svg" viewBox="0 0 540 312" role="img" aria-label="Balanço de uma empresa inventada: à esquerda o que ela tem (caixa e outros bens), à direita de onde veio o dinheiro (fornecedores e outras contas, dívida de curto prazo, dívida de longo prazo e capital dos sócios). As partes que entram na régua escolhida ficam destacadas."></svg>
+      <p class="note">Fonte: Quadros 1 e 2 (fórmulas) e Apêndice A (médias reais, no painel). (−) = entra subtraindo. Simplificamos o capital investido do ROIC como dívida + capital dos sócios.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · O MAPA DOS 14 MODELOS -->
+<section class="slide" id="mapa" data-label="14 modelos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Os resultados</div>
+      <h2 class="rv" style="--d:.1s">Das seis peças, duas apareceram com frequência; três quase nunca</h2>
+      <p class="lede rv" style="--d:.15s">Cada coluna é um modelo. Para cima: a peça veio com <b>mais</b> dívida ou lucro; pendurada: com <b>menos</b>; achatada: sem diferença clara (significância de 10%, a régua da autora). Escolha uma peça.</p>
+      <div class="chips rv" style="--d:.2s" id="mp-chips"></div>
+      <div class="score rv" style="--d:.25s" id="mp-score"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="fit-wrap"><div class="scene draggable zb" id="mp-scene" data-fit="480x260" role="img" aria-label="Catorze colunas sobre uma placa do zero: oito modelos de dívida, em azul, e seis de desempenho, em vermelho; as colunas sobem, descem ou ficam achatadas conforme o resultado da peça escolhida"></div></div>
+      <div class="zleg"><span><span class="sw" style="background:var(--debt)"></span>8 modelos de dívida</span><span><span class="sw" style="background:var(--perf)"></span>6 modelos de desempenho</span><span><span class="sw" style="background:repeating-linear-gradient(45deg,#cbd5e1 0 3px,#fff 3px 6px)"></span>passivo total (dados que não fecham)</span></div>
+      <div class="panel" id="mp-panel"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · DESCOBERTA -->
+<section class="slide" id="descoberta" data-label="A descoberta">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> A descoberta</div>
+      <h2 class="rv" style="--d:.1s">Com um dono majoritário, o lucro foi menor em todas as réguas</h2>
+      <p class="lede rv" style="--d:.15s">Nas empresas em que alguém tinha 50% ou mais das ações com voto (quase metade dos casos), o retorno foi de 6 a 10 pontos percentuais menor, nos seis modelos de desempenho. Para a autora, quando o dono comanda, a gestão tende a ser menos profissional.</p>
+      <div class="rv" style="--d:.2s"><span class="big">6 de 6</span> <span style="font-size:.86rem; color:var(--ink-2)">modelos de desempenho com sinal negativo (p entre 0,009 e 0,033)</span></div>
+      <p class="rv" style="--d:.25s; font-size:.84rem; margin-top:10px">A teoria esperava isso, mas a literatura não é unânime: alguns autores citados acham que o dono forte fiscaliza melhor e melhora o resultado.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="ctrls"><div class="seg" id="fp-seg"></div></div>
+      <svg id="fp-svg" viewBox="0 0 540 270" role="img" aria-label="Seis linhas, uma por modelo de desempenho: cada ponto é a diferença no retorno das empresas com dono majoritário, com o intervalo de confiança de 95%; todos ficam à esquerda do zero"></svg>
+      <div class="panel" id="fp-panel" aria-live="polite"></div>
+      <p class="note">Fonte: Tabelas 2 e 3 (efeitos fixos) e 11 a 14 (efeitos aleatórios). Os modelos controlam tamanho, idade, crescimento das vendas, investimento, liquidez e as outras peças da governança. Toque numa linha para ver o modelo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · MAIS DÍVIDA -->
+<section class="slide" id="divida" data-label="Mais dívida">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Hipótese 1 · dívida</div>
+      <h2 class="rv" style="--d:.1s">Dono majoritário e conselheiros independentes vieram com mais dívida</h2>
+      <p class="lede rv" style="--d:.15s">O dono majoritário apareceu com mais dívida em 4 dos 6 modelos de dívida com dados confiáveis; a fatia de conselheiros independentes, em 3. Para a autora, a dívida pode ser um freio ao oportunismo, e os independentes, mais técnicos, ajudam a buscar crédito com seus contatos.</p>
+      <span class="ill">Simulação nossa com os coeficientes, tudo o mais igual</span>
+      <div class="sl">
+        <label for="dv-ind">Conselheiros independentes: <b id="dv-indv">37%</b> (média da amostra: 36,6%)</label>
+        <input class="range" id="dv-ind" type="range" min="0" max="100" step="1" value="37">
+      </div>
+      <div class="tog"><button id="dv-own" aria-pressed="false">Tem dono com 50% ou mais das ações com voto</button></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="fit-wrap"><div class="scene draggable zb" id="dv-scene" data-fit="420x250" role="img" aria-label="Duas colunas azuis de dívida, com a média da amostra em fantasma ao lado: a dívida financeira e a dívida líquida de caixa, que sobem com mais independentes e com dono majoritário"></div></div>
+      <div id="dv-out"></div>
+      <p class="note">Partimos das médias (dívida financeira 44%, dívida líquida 28%, Apêndice A) e somamos coeficiente × mudança. Dívida financeira: Tabela 1 (efeitos fixos; independentes 0,081 por 100%, p 0,002; dono +0,081, p 0,013). Dívida líquida: Tabela 8 (independentes 0,404, p 0,004; dono +0,105, p 0,099). A coluna fantasma é a média.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · O INESPERADO -->
+<section class="slide" id="inesperado" data-label="O inesperado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> O inesperado</div>
+      <h2 class="rv" style="--d:.1s">Quando o CEO também presidia o conselho, o lucro foi um pouco maior, ao contrário do esperado</h2>
+      <p class="lede rv" style="--d:.15s">Pela teoria da agência, quem dirige a empresa não deveria presidir quem o fiscaliza: o CEO passa a controlar o que o conselho fica sabendo. A autora esperava lucro menor nesses casos.</p>
+      <div class="bet rv" style="--d:.2s"><h3>Aposte antes de ver: com o CEO na presidência do conselho, o lucro foi…</h3><div class="opts" id="du-opts"></div></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="panel" id="du-wait"><p>Faça sua aposta ao lado para ver o placar dos modelos.</p></div>
+      <div id="du-res" aria-live="polite">
+        <div class="panel" id="du-verdict" style="margin-bottom:10px"></div>
+        <div class="board2">
+          <div class="row"><h4>Lucro (6 modelos)</h4><div class="pips" id="du-p"></div></div>
+          <div class="row"><h4>Dívida (8 modelos)</h4><div class="pips" id="du-d"></div></div>
+        </div>
+        <p class="note">Só em cerca de 6% dos casos (umas 19 de 300 empresas-ano, contagem nossa) o CEO presidia o conselho: poucos casos, resultado frágil. Os três sinais de lucro só aparecem a 10%. Na Tabela 7 o coeficiente da dualidade foi impresso positivo, mas o z e o intervalo são negativos: seguimos o z. Fonte: Tabelas 1 a 14 e Apêndice A.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · NA PRÁTICA -->
+<section class="slide" id="pratica" data-label="Na prática">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> E daí?</div>
+    <h2 class="rv" style="--d:.1s">Quem é dono e quem fiscaliza acompanha como a empresa se financia e quanto ela rende</h2>
+    <p class="lede rv" style="--d:.15s">A dissertação conclui que algumas peças da governança se relacionam com a dívida e com o desempenho: o dono majoritário, a fatia de independentes no conselho e a dualidade do CEO. As outras três (mulheres no conselho, tamanho do conselho e opções de ações) quase não apareceram.</p>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.2s; --pc:var(--red)"><h3>Para quem investe</h3><ul><li>Nas 39 empresas, o controle concentrado veio junto com retorno menor. <em>(tela 08)</em></li><li>Vale olhar quem controla a empresa e quanto do capital com voto ele tem. <em>(leitura nossa)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--navy)"><h3>Para conselhos e gestores</h3><ul><li>Saber se a governança mexe com a dívida ajuda a achar o nível de dívida com mais benefício fiscal. <em>(autora)</em></li><li>Conselheiros independentes podem abrir portas para o crédito com sua rede de contatos. <em>(autora)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#334155"><h3>Para o mercado e reguladores</h3><ul><li>Boas práticas, sobretudo as que protegem os minoritários, ajudam a desenvolver o mercado de capitais e a economia. <em>(autora, com La Porta et al.)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.35s; --pc:#64748b"><h3>Para quem pesquisa</h3><ul><li>Repetir a análise com painéis dinâmicos, que podem revelar o que os estáticos não captaram. <em>(autora)</em></li><li>Uma variável de governança pode pesar diferente em cada país: estudar o caso brasileiro importa. <em>(autora)</em></li></ul></div>
+    </div>
+    <div class="warn rv" style="--d:.4s"><b>Relação não é causa.</b> A dissertação mostra o que andou junto nessas 39 empresas. Não dá para dizer que tirar o dono majoritário aumentaria o lucro, nem que pôr independentes faria a empresa se endividar. Esta página não é recomendação de investimento.</div>
+  </div>
+</section>
+
+<!-- 12 · LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Limites e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Limites e créditos</div>
+    <h2 class="rv" style="--d:.1s">O que esta pesquisa não diz</h2>
+    <div class="end">
+      <div class="rv" style="--d:.2s">
+        <ul class="limits">
+          <li><b>Só grandes empresas.</b> São 39 empresas do IBrX 50, as mais negociadas; empresas menores e fechadas podem se comportar de outro jeito. <em>· observação nossa</em></li>
+          <li><b>Painéis estáticos.</b> A autora sugere refazer com painéis dinâmicos, que levam em conta o ano anterior e podem mostrar outras relações. <em>· segundo a autora</em></li>
+          <li><b>Muitos testes, régua de 10%.</b> Com 14 modelos e 6 peças, alguns sinais isolados podem aparecer por acaso; vale mais o que se repete, como o dono majoritário. <em>· observação nossa</em></li>
+          <li><b>Uma régua com problema.</b> Na régua do passivo total, a tabela descritiva traz média de 0,13 com desvio de 2,96 e máximo de 0,72, o que não fecha; a autora já a chama de a mais “fraca”. Deixamos esses dois modelos hachurados e fora das contagens. <em>· observação nossa</em></li>
+          <li><b>Sinais e textos que divergem.</b> Seguimos o z e o intervalo de confiança de cada tabela. Assim, contamos o dono majoritário na Tabela 6 (p 0,036), que o texto diz ter perdido significância, e lemos a dualidade da Tabela 7 como negativa. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.25s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          SAVELLI, Andrea Décourt. <em>A influência da governança corporativa na estrutura de capital e no desempenho financeiro das companhias brasileiras de capital aberto.</em> Dissertação (Mestrado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2019. Orientador: Prof. Dr. Eli Hadad Junior.
+        </div>
+        <p style="margin-top:10px; font-size:.78rem">Dissertação aprovada em 7 de fevereiro de 2019 (a capa traz 2018). Dados da Bloomberg, da Capital IQ e da Economática; regressões com dados em painel no Stata, efeitos fixos e aleatórios escolhidos pelo teste de Hausman, erros de Driscoll-Kraay. Esta versão simplifica o trabalho para o público em geral e não é recomendação de investimento.</p>
+        <p class="also">Leia também, sobre empresas da B3: <a href="../../dissertacoes/2020-chagas-necessidade-capital-giro/">Chagas (2020)</a>, o dinheiro preso no dia a dia das empresas.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a dissertação completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(p, e){ return EN ? e : p; }
+  function sg(v, d, plus){ var s = fmt(Math.abs(v), d === undefined ? 2 : d); return (v < 0 ? '−' : (plus && v > 0 ? '+' : '')) + s; }
+  function pp(v, d){ return sg(v, d === undefined ? 1 : d, true) + L(' p.p.', ' pp'); }
+  function segInit(el, items, cur, fn){
+    el.innerHTML = items.map(function(t, i){ return '<button data-v="' + i + '" aria-pressed="' + (i === cur) + '">' + t + '</button>'; }).join('');
+    each(el.children, function(b){ b.addEventListener('click', function(){ each(el.children, function(x){ x.setAttribute('aria-pressed', x === b); }); fn(+b.dataset.v); }); });
+  }
+  function chipInit(el, items, cur, fn){
+    el.innerHTML = items.map(function(t, i){ return '<button class="chip" data-v="' + i + '" aria-pressed="' + (i === cur) + '">' + t + '</button>'; }).join('');
+    each(el.children, function(b){ b.addEventListener('click', function(){ each(el.children, function(x){ x.setAttribute('aria-pressed', x === b); }); fn(+b.dataset.v); }); });
+  }
+  function chipSet(el, i){ each(el.children, function(x){ x.setAttribute('aria-pressed', +x.dataset.v === i); }); }
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // Médias do Apêndice A
+  var MEAN = {alav1:0.4439, alav2:0.4075, alav3:0.2812, roa:0.0815, roe:0.1285, roic:0.1216, idade:54.1,
+              conprop:0.4936, consindep:0.3661, dualceo:0.0633, mulhcons:0.0729, tamcons:9.25, stock:0.6795};
+  // 14 modelos: f = família (d = dívida, p = desempenho), t = tabela, e = estimador, bad = régua alav4 (descritiva não fecha)
+  // g = [coeficiente, p] por peça; sinais conferidos com z e intervalo de confiança (Tabela 7 impressa com sinais trocados)
+  var MOD = [
+    {f:'d', t:1,  e:'FE', y:'alav1', g:{conprop:[0.0812,0.013], consindep:[0.0808,0.002], dualceo:[0.0463,0.021], mulhcons:[-0.0678,0.039], tamcons:[0.0037,0.322], stock:[0.0064,0.788]}},
+    {f:'d', t:4,  e:'RE', y:'alav1', g:{conprop:[0.0507,0.201], consindep:[0.1105,0.173], dualceo:[0.0225,0.266], mulhcons:[-0.0394,0.404], tamcons:[0.0005,0.923], stock:[-0.0035,0.861]}},
+    {f:'d', t:5,  e:'RE', y:'alav2', g:{conprop:[0.0637,0.072], consindep:[0.1132,0.112], dualceo:[0.0200,0.450], mulhcons:[-0.0265,0.543], tamcons:[-0.0033,0.554], stock:[0.0054,0.787]}},
+    {f:'d', t:6,  e:'RE', y:'alav2', g:{conprop:[0.0784,0.036], consindep:[0.1073,0.128], dualceo:[0.0181,0.470], mulhcons:[-0.0265,0.544], tamcons:[-0.0040,0.448], stock:[0.0075,0.702]}},
+    {f:'d', t:7,  e:'RE', y:'alav3', g:{conprop:[0.1038,0.175], consindep:[0.4157,0.004], dualceo:[-0.1383,0.052], mulhcons:[0.2252,0.189], tamcons:[0.0031,0.810], stock:[-0.0085,0.908]}},
+    {f:'d', t:8,  e:'RE', y:'alav3', g:{conprop:[0.1046,0.099], consindep:[0.4041,0.004], dualceo:[-0.1372,0.051], mulhcons:[0.2628,0.146], tamcons:[0.0000,0.994], stock:[-0.0176,0.803]}},
+    {f:'d', t:9,  e:'RE', y:'alav4', bad:true, g:{conprop:[0.1578,0.656], consindep:[0.6411,0.151], dualceo:[-0.1675,0.079], mulhcons:[0.5873,0.314], tamcons:[-0.0217,0.556], stock:[-0.1602,0.048]}},
+    {f:'d', t:10, e:'RE', y:'alav4', bad:true, g:{conprop:[0.0647,0.868], consindep:[0.6068,0.156], dualceo:[-0.1389,0.102], mulhcons:[0.6341,0.293], tamcons:[-0.0212,0.592], stock:[-0.1709,0.061]}},
+    {f:'p', t:2,  e:'FE', y:'roa',  g:{conprop:[-0.0627,0.009], consindep:[0.0250,0.370], dualceo:[0.0144,0.281], mulhcons:[-0.0028,0.929], tamcons:[-0.0009,0.633], stock:[-0.0034,0.572]}},
+    {f:'p', t:3,  e:'FE', y:'roic', g:{conprop:[-0.0973,0.033], consindep:[-0.0663,0.266], dualceo:[0.0595,0.086], mulhcons:[0.0928,0.168], tamcons:[-0.0059,0.191], stock:[0.0131,0.393]}},
+    {f:'p', t:11, e:'RE', y:'roe',  x:'alav1', g:{conprop:[-0.0722,0.022], consindep:[0.1293,0.162], dualceo:[0.0504,0.115], mulhcons:[0.1136,0.363], tamcons:[0.0012,0.783], stock:[-0.0140,0.605]}},
+    {f:'p', t:12, e:'RE', y:'roe',  x:'alav2', g:{conprop:[-0.0759,0.017], consindep:[0.1201,0.191], dualceo:[0.0519,0.093], mulhcons:[0.1153,0.353], tamcons:[0.0014,0.756], stock:[-0.0115,0.677]}},
+    {f:'p', t:13, e:'RE', y:'roe',  x:'alav3', g:{conprop:[-0.0782,0.023], consindep:[0.0820,0.447], dualceo:[0.0561,0.097], mulhcons:[0.1546,0.308], tamcons:[0.0003,0.939], stock:[-0.0068,0.814]}},
+    {f:'p', t:14, e:'RE', y:'roe',  x:'alav4', g:{conprop:[-0.0760,0.029], consindep:[0.0811,0.446], dualceo:[0.0547,0.106], mulhcons:[0.1564,0.307], tamcons:[-0.0001,0.975], stock:[-0.0140,0.587]}}
+  ];
+  // Intervalos de 95% do dono majoritário nos modelos de desempenho (Tabelas 2, 3, 11–14)
+  var CI = {2:[-0.1038,-0.0215], 3:[-0.1839,-0.0107], 11:[-0.1339,-0.0104], 12:[-0.1382,-0.0137], 13:[-0.1456,-0.0108], 14:[-0.1444,-0.0076]};
+  var YN = {
+    alav1:L('dívida financeira', 'financial debt'), alav2:L('dívida de longo prazo', 'long-term debt'), alav3:L('dívida líquida de caixa', 'debt net of cash'), alav4:L('passivo total', 'total liabilities'),
+    roa:'ROA', roic:'ROIC', roe:'ROE'
+  };
+  var PIECES = [
+    {k:'conprop', n:L('Dono majoritário', 'Majority owner')},
+    {k:'consindep', n:L('Independentes', 'Independent directors')},
+    {k:'dualceo', n:L('CEO preside o conselho', 'CEO chairs the board')},
+    {k:'mulhcons', n:L('Mulheres no conselho', 'Women on the board')},
+    {k:'tamcons', n:L('Tamanho do conselho', 'Board size')},
+    {k:'stock', n:L('Opções de ações', 'Stock options')}
+  ];
+  function mname(m){
+    var s = YN[m.y] + ' · ' + (m.e === 'FE' ? L('efeitos fixos', 'fixed effects') : L('efeitos aleatórios', 'random effects'));
+    if (m.x) s = 'ROE · ' + L('com ', 'with ') + YN[m.x];
+    return s;
+  }
+  function sigOf(m, k){ var g = m.g[k]; return g[1] < 0.10 ? (g[0] > 0 ? 1 : -1) : 0; }
+
+  /* ---------- placa do zero (mesmo componente de Mauad 2019) ---------- */
+  function zeroStage(sc, W, D, ay){
+    var st = makeStage(sc, W, D, {ay:ay || '34%', rx:'64deg', floor:false});
+    st.appendChild(box({w:W + 30, d:D, x:-15, y:0, z:-2, h:2, c:'#94a3b8', cls:'board'}));
+    return st;
+  }
+  function zbar(st, x, y, w, d, c, S, txt){
+    var b = box({w:w, d:d, x:x, y:y, z:-4, h:2, c:c});
+    st.appendChild(b);
+    var fr = b.querySelector('.f-front'), tp = b.querySelector('.f-top');
+    return {el:b, set:function(p, label){
+      var h = Math.max(Math.abs(p) * S, 3), t = label === undefined ? pp(p) : label;
+      b.style.setProperty('--h', h + 'px');
+      b.style.setProperty('--z', (p < 0 ? -2 - h : 0) + 'px');
+      if (txt === false){ fr.innerHTML = ''; tp.innerHTML = ''; return; }
+      fr.innerHTML = h >= 26 ? '<span class="face-label">' + t + '</span>' : '';
+      tp.innerHTML = h >= 26 ? '' : '<span class="top-label">' + t + '</span>';
+    }};
+  }
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), st = zeroStage(sc, 340, 110, '30%');
+    rotatable(sc, st, -16, 7);
+    var bd = zbar(st, 30, 25, 120, 60, 'var(--debt)', 9);
+    var bp = zbar(st, 190, 25, 120, 60, 'var(--perf)', 9);
+    bd.set(8.12); bp.set(-7.59);
+  })();
+
+  /* ================= 02 · DOIS CONFLITOS ================= */
+  (function(){
+    var svg = $('cf-svg');
+    function person(x, y, r, c, lbl){
+      return '<g><circle cx="' + x + '" cy="' + (y - r * 1.5) + '" r="' + r + '" fill="' + c + '"/><path d="M' + (x - r * 1.5) + ' ' + (y + r * 1.4) + ' q' + (r * 1.5) + ' ' + (-r * 3.4) + ' ' + (r * 3) + ' 0 z" fill="' + c + '"/>' +
+        (lbl ? '<text x="' + x + '" y="' + (y + r * 1.4 + 16) + '" text-anchor="middle" class="s" style="font-size:12px; fill:var(--ink-2)">' + lbl + '</text>' : '') + '</g>';
+    }
+    var CASES = [
+      {t:L('Muitos donos pequenos × executivos', 'Many small owners × executives'),
+       p:L('É o modelo clássico, de empresas com ações espalhadas entre muitos investidores (comum nos EUA). Ninguém tem força para vigiar sozinho, e os executivos podem decidir em benefício próprio. A governança aqui serve para obrigar os executivos a proteger os acionistas.', 'This is the classic model, of companies whose shares are spread among many investors (common in the US). No one is strong enough to watch alone, and executives can decide for their own benefit. Here governance serves to make executives protect shareholders.')},
+      {t:L('Um dono grande × sócios menores', 'One big owner × smaller partners'),
+       p:L('É o caso brasileiro: um controlador, muitas vezes com mais votos do que capital (por causa das ações sem voto), escolhe os executivos ou é ele mesmo o executivo. O risco passa a ser o controlador tirar vantagem dos minoritários. Para Silveira et al. (2004), é o principal conflito nas empresas abertas do país.', 'This is the Brazilian case: a controlling shareholder, often with more votes than capital (because of non-voting shares), picks the executives or is the executive. The risk becomes the controller taking advantage of minority shareholders. For Silveira et al. (2004), it is the main conflict in the country’s listed companies.')}
+    ];
+    function draw(i){
+      var o = '';
+      if (i === 0){
+        for (var r = 0; r < 3; r++) for (var c = 0; c < 6; c++) o += person(40 + c * 30 + (r % 2) * 14, 60 + r * 46, 7, '#94a3b8');
+        o += '<text x="125" y="214" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--ink)">' + L('acionistas espalhados', 'dispersed shareholders') + '</text>';
+        o += person(410, 120, 18, 'var(--navy)');
+        o += '<text x="410" y="190" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--navy)">' + L('executivos', 'executives') + '</text>';
+      } else {
+        o += person(110, 130, 26, 'var(--red)');
+        o += '<text x="110" y="214" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--red)">' + L('controlador', 'controlling owner') + '</text>';
+        for (var r2 = 0; r2 < 3; r2++) for (var c2 = 0; c2 < 5; c2++) o += person(330 + c2 * 30 + (r2 % 2) * 14, 60 + r2 * 46, 7, '#94a3b8');
+        o += '<text x="400" y="214" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--ink)">' + L('acionistas minoritários', 'minority shareholders') + '</text>';
+      }
+      o += '<path d="M232 112 l14 -16 l-4 14 l14 -2 l-14 18 l4 -14 z" fill="var(--red)"/>';
+      o += '<path d="M206 120 H222 M270 120 H288" stroke="#94a3b8" stroke-width="3" stroke-dasharray="4 4"/>';
+      svg.innerHTML = o;
+      $('cf-panel').innerHTML = '<div class="tag">' + (i === 0 ? L('conflito clássico', 'classic conflict') : L('conflito no Brasil', 'conflict in Brazil')) + '</div><h3>' + CASES[i].t + '</h3><p>' + CASES[i].p + '</p>';
+    }
+    segInit($('cf-seg'), [L('Dono espalhado', 'Dispersed ownership'), L('Dono concentrado (Brasil)', 'Concentrated ownership (Brazil)')], 1, draw);
+    draw(1);
+  })();
+
+  /* ================= 03 · IGC × IBOVESPA (Figura 1, valores lidos do gráfico) ================= */
+  (function(){
+    var YRS = [], IGC = [100, 102, 182, 252, 364, 512, 675, 367, 672, 757, 662, 788, 772, 789, 695, 895, 1162, 1243],
+        IBO = [100, 84, 165, 193, 248, 328, 472, 278, 505, 510, 420, 449, 380, 370, 320, 444, 565, 630];
+    for (var y = 2001; y <= 2018; y++) YRS.push(y);
+    var X0 = 56, X1 = 540, Y0 = 220, Y1 = 16, VMAX = 1400;
+    function xs(yr){ return X0 + (yr - 2001) / 17 * (X1 - X0); }
+    function ys(v){ return Y0 - v / VMAX * (Y0 - Y1); }
+    var svg = $('ig-svg'), base = '';
+    base += '<rect x="' + xs(2010) + '" y="' + Y1 + '" width="' + (xs(2017) - xs(2010)) + '" height="' + (Y0 - Y1) + '" fill="#eef2f7"/>';
+    base += '<text x="' + ((xs(2010) + xs(2017)) / 2) + '" y="' + (Y1 + 14) + '" text-anchor="middle" style="font-size:11px; fill:var(--muted)">' + L('anos da pesquisa', 'study years') + '</text>';
+    [0, 400, 800, 1200].forEach(function(v){
+      base += '<line x1="' + X0 + '" y1="' + ys(v) + '" x2="' + X1 + '" y2="' + ys(v) + '" stroke="#e2e8f0"/>';
+      base += '<text x="' + (X0 - 6) + '" y="' + (ys(v) + 4) + '" text-anchor="end" style="font-size:11px; fill:var(--muted)">' + (EN ? String(v).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : String(v).replace(/\B(?=(\d{3})+(?!\d))/g, '.')) + '%</text>';
+    });
+    [2001, 2005, 2010, 2014, 2018].forEach(function(yr){ base += '<text x="' + xs(yr) + '" y="' + (Y0 + 18) + '" text-anchor="middle" style="font-size:11px; fill:var(--muted)">' + yr + '</text>'; });
+    function line(arr, c){ return '<polyline fill="none" stroke="' + c + '" stroke-width="3" points="' + arr.map(function(v, i){ return xs(YRS[i]) + ',' + ys(v); }).join(' ') + '"/>'; }
+    base += line(IBO, '#64748b') + line(IGC, 'var(--red)');
+    base += '<text x="' + (xs(2018) - 4) + '" y="' + (ys(1243) - 8) + '" text-anchor="end" style="font-size:12px; font-weight:700; fill:var(--red)">IGC</text>';
+    base += '<text x="' + (xs(2018) - 4) + '" y="' + (ys(630) + 28) + '" text-anchor="end" style="font-size:12px; font-weight:700; fill:#64748b">Ibovespa</text>';
+    function th(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, EN ? ',' : '.'); }
+    function show(yr){
+      var i = yr - 2001, o = base;
+      o += '<line x1="' + xs(yr) + '" y1="' + Y1 + '" x2="' + xs(yr) + '" y2="' + Y0 + '" stroke="var(--ink)" stroke-dasharray="3 3"/>';
+      o += '<circle cx="' + xs(yr) + '" cy="' + ys(IGC[i]) + '" r="6" fill="var(--red)" stroke="#fff" stroke-width="2"/>';
+      o += '<circle cx="' + xs(yr) + '" cy="' + ys(IBO[i]) + '" r="6" fill="#64748b" stroke="#fff" stroke-width="2"/>';
+      svg.innerHTML = o;
+      $('ig-read').innerHTML = '<b>' + yr + '</b>: IGC ~' + th(IGC[i]) + '% · Ibovespa ~' + th(IBO[i]) + '% ' + L('(2001 = 100%)', '(2001 = 100%)');
+    }
+    $('ig-range').addEventListener('input', function(){ show(+this.value); });
+    show(2017);
+  })();
+
+  /* ================= 04 · O CONSELHO MÉDIO ================= */
+  (function(){
+    var sc = $('bd-scene'), st = makeStage(sc, 400, 220, {ay:'40%'});
+    rotatable(sc, st, -18, 8);
+    st.appendChild(box({w:250, d:90, x:90, y:65, h:26, c:'#94a3b8', cls:'tbl'}));
+    // nove cadeiras (tamanho médio do conselho 9,25): 4 atrás, 4 na frente, 1 na cabeceira (presidente)
+    var POS = [[105,18],[160,18],[215,18],[270,18],[105,168],[160,168],[215,168],[270,168],[30,93]];
+    var seats = POS.map(function(p, i){ var b = box({w:38, d:34, x:p[0], y:p[1], h:i === 8 ? 52 : 38, c:'#cbd5e1', cls:'seat'}); st.appendChild(b); return b; });
+    var crown = box({w:30, d:30, x:-12, y:95, h:3, c:'var(--red)'}); st.appendChild(crown);
+    function paint(cols, labels){
+      seats.forEach(function(s, i){ s.style.setProperty('--c', cols[i] || '#cbd5e1'); s.querySelector('.f-top').innerHTML = labels && labels[i] ? '<span class="top-label">' + labels[i] + '</span>' : ''; });
+    }
+    var ALL = [0,1,2,3,4,5,6,7,8];
+    var P = [
+      {n:L('Dono majoritário', 'Majority owner'), v:L('49% dos casos', '49% of cases'),
+       d:L('Marca 1 quando alguém tem 50% ou mais das ações com voto (ordinárias). Em quase metade das empresas-ano havia esse dono. Na cena, o bloco vermelho ao lado da cabeceira.', 'Set to 1 when someone holds 50% or more of the voting (common) shares. Almost half of the firm-years had such an owner. In the scene, the red block next to the head of the table.'),
+       e:L('Teoria: lucro menor (gestão menos profissional) e dívida maior.', 'Theory: lower profit (less professional management) and higher debt.'),
+       f:function(){ paint(ALL.map(function(){ return '#cbd5e1'; })); crown.style.setProperty('--h', '70px'); crown.style.setProperty('--c', 'var(--red)'); }},
+      {n:L('Independentes', 'Independent directors'), v:'37%',
+       d:L('A fatia de conselheiros sem vínculo com a empresa ou com o controlador. Em média, 37% do conselho: cerca de 3 das 9 cadeiras.', 'The share of directors with no ties to the company or the controlling owner. On average, 37% of the board: about 3 of the 9 seats.'),
+       e:L('Teoria: fiscalizam melhor; mais acesso a crédito e melhor desempenho.', 'Theory: they monitor better; more access to credit and better performance.'),
+       f:function(){ paint([ , 'var(--navy)', , 'var(--navy)', , , 'var(--navy)'], [ , 'I', , 'I', , , 'I']); crown.style.setProperty('--h', '3px'); }},
+      {n:L('CEO preside o conselho', 'CEO chairs the board'), v:L('6% dos casos', '6% of cases'),
+       d:L('Marca 1 quando o principal executivo também é o presidente do conselho (dualidade). Foi raro: 6% das empresas-ano.', 'Set to 1 when the chief executive is also the chair of the board (duality). It was rare: 6% of firm-years.'),
+       e:L('Teoria: o conselho fiscaliza pior; lucro menor.', 'Theory: the board monitors worse; lower profit.'),
+       f:function(){ var c = []; c[8] = 'var(--red)'; var l = []; l[8] = 'CEO'; paint(c, l); crown.style.setProperty('--h', '3px'); }},
+      {n:L('Mulheres no conselho', 'Women on the board'), v:'7%',
+       d:L('A fatia de mulheres no conselho. Em média, 7%: menos de uma cadeira em cada nove (na cena, arredondamos para uma).', 'The share of women on the board. On average, 7%: less than one seat in nine (in the scene, we rounded up to one).'),
+       e:L('Teoria: diversidade enriquece a discussão e melhora a fiscalização.', 'Theory: diversity enriches discussion and improves monitoring.'),
+       f:function(){ var c = []; c[5] = '#334155'; var l = []; l[5] = 'M'; if (EN) l[5] = 'W'; paint(c, l); crown.style.setProperty('--h', '3px'); }},
+      {n:L('Tamanho do conselho', 'Board size'), v:'9,25',
+       d:L('O número de conselheiros. Em média, 9,25 pessoas (de 5 a 16). Na cena, as nove cadeiras.', 'The number of directors. On average, 9.25 people (from 5 to 16). In the scene, the nine chairs.'),
+       e:L('Teoria: conselho maior traz mais recursos, conhecimento e experiência.', 'Theory: a larger board brings more resources, knowledge and experience.'),
+       f:function(){ paint(ALL.map(function(){ return 'var(--ink-2)'; }), ALL.map(function(i){ return String(i + 1); })); crown.style.setProperty('--h', '3px'); }},
+      {n:L('Opções de ações', 'Stock options'), v:L('68% dos casos', '68% of cases'),
+       d:L('Marca 1 quando a empresa tem plano de remuneração dos executivos com opções de compra de ações (stock options). Em 68% das empresas-ano havia.', 'Set to 1 when the company has an executive pay plan with stock options. 68% of firm-years had one.'),
+       e:L('Teoria: o executivo que ganha com a ação evita destruir valor.', 'Theory: an executive who gains from the share price avoids destroying value.'),
+       f:function(){ paint(ALL.map(function(){ return '#cbd5e1'; })); crown.style.setProperty('--h', '3px'); }}
+    ];
+    P[4].v = EN ? '9.25' : '9,25';
+    function show(i){
+      var p = P[i]; p.f();
+      $('bd-panel').innerHTML = '<div class="tag">' + p.n + '</div><h3>' + p.v + '</h3><p>' + p.d + '</p><p style="color:var(--ink-2)"><b>' + L('O que se esperava:', 'What was expected:') + '</b> ' + p.e.replace(/^Teoria: |^Theory: /, '') + '</p>';
+    }
+    chipInit($('bd-chips'), P.map(function(p){ return p.n; }), 0, show);
+    show(0);
+  })();
+
+  /* ================= 05 · AMOSTRA (Quadro 3) ================= */
+  (function(){
+    var sc = $('fn-scene'), st = makeStage(sc, 340, 200, {ay:'52%'});
+    rotatable(sc, st, -22, 8);
+    var STEPS = [
+      {n:50, t:L('IBrX 50', 'IBrX 50'), p:L('As 50 ações mais negociadas da bolsa brasileira.', 'The 50 most traded stocks on the Brazilian exchange.')},
+      {n:48, t:L('− 2 repetidas', '− 2 repeated'), p:L('Duas empresas tinham duas ações no índice (ordinária e preferencial) e contavam em dobro.', 'Two companies had two shares in the index (common and preferred) and counted twice.')},
+      {n:41, t:L('− 7 financeiras', '− 7 financial'), p:L('Bancos e outras financeiras saem: a dívida faz parte do negócio delas, e o balanço não se compara.', 'Banks and other financial firms are removed: debt is part of their business, and their balance sheets are not comparable.')},
+      {n:39, t:L('− 2 holdings', '− 2 holdings'), p:L('Saem as holdings. Ficam 39 empresas, seguidas de 2010 a 2017.', 'Holding companies are removed. 39 companies remain, followed from 2010 to 2017.')}
+    ];
+    var layers = STEPS.map(function(s, i){
+      var w = s.n * 5.6, d = 150 - i * 16;
+      var b = box({w:w, d:d, x:(340 - w) / 2, y:(200 - d) / 2, z:i * 34, h:30, c:M.ramp('var(--navy)', 3 - i, 4), label:String(s.n), cls:'step'});
+      st.appendChild(b); return b;
+    });
+    function show(i){
+      layers.forEach(function(b, k){ b.style.setProperty('--c', k === i ? 'var(--red)' : M.ramp('var(--navy)', 3 - k, 4)); });
+      $('fn-panel').innerHTML = '<div class="tag">' + STEPS[i].t + '</div><h3>' + STEPS[i].n + ' ' + L('empresas', 'companies') + '</h3><p>' + STEPS[i].p + '</p>';
+    }
+    chipInit($('fn-chips'), STEPS.map(function(s){ return s.t; }), 3, show);
+    show(3);
+  })();
+
+  /* ================= 06 · AS RÉGUAS (balanço inventado) ================= */
+  (function(){
+    // empresa inventada (R$ milhões): ativo = caixa 15 + outros 185 = 200; passivo = outros 40 + dívida CP 20 + dívida LP 50; PL 90
+    var A = {cx:15, out:185}, P = {oth:40, cp:20, lp:50, pl:90}, EBIT = 16, LL = 10;
+    var svg = $('bs-svg'), K = 1.25, TOP = 30, XA = 30, XP = 300, W = 220;
+    var BLK = {
+      cx:{x:XA, y:TOP, h:A.cx, t:L('caixa', 'cash')}, out:{x:XA, y:TOP + A.cx * K, h:A.out, t:L('outros bens', 'other assets')},
+      oth:{x:XP, y:TOP, h:P.oth, t:L('contas a pagar', 'bills payable')}, cp:{x:XP, y:TOP + P.oth * K, h:P.cp, t:L('dívida de curto prazo', 'short-term debt')},
+      lp:{x:XP, y:TOP + (P.oth + P.cp) * K, h:P.lp, t:L('dívida de longo prazo', 'long-term debt')}, pl:{x:XP, y:TOP + (P.oth + P.cp + P.lp) * K, h:P.pl, t:L('capital dos sócios', 'owners’ equity')}
+    };
+    var R = [
+      {n:L('Dívida financeira', 'Financial debt'), s:'alav1', fam:'d', num:['cp','lp'], den:['cp','lp','pl'], v:(P.cp + P.lp) / (P.cp + P.lp + P.pl), m:MEAN.alav1,
+       p:L('Empréstimos e debêntures de curto e longo prazo, divididos por essa dívida mais o capital dos sócios.', 'Loans and debentures, short and long term, divided by that debt plus owners’ equity.')},
+      {n:L('Dívida de longo prazo', 'Long-term debt'), s:'alav2', fam:'d', num:['lp'], den:['lp','pl'], v:P.lp / (P.lp + P.pl), m:MEAN.alav2,
+       p:L('Só a dívida que vence depois de um ano, dividida por ela mais o capital dos sócios.', 'Only debt due after one year, divided by it plus owners’ equity.')},
+      {n:L('Dívida líquida de caixa', 'Debt net of cash'), s:'alav3', fam:'d', num:['cp','lp','-cx'], den:['cp','lp','-cx','pl'], v:(P.cp + P.lp - A.cx) / (P.cp + P.lp - A.cx + P.pl), m:MEAN.alav3,
+       p:L('A dívida financeira menos o caixa e as aplicações: o que a empresa deve além do que já tem guardado. Pode ficar negativa.', 'Financial debt minus cash and investments: what the company owes beyond what it already has saved. It can be negative.')},
+      {n:L('Passivo total', 'Total liabilities'), s:'alav4', fam:'d', num:['oth','cp','lp'], den:['cx','out'], v:(P.oth + P.cp + P.lp) / (A.cx + A.out), m:null,
+       p:L('Tudo o que a empresa deve, inclusive fornecedores, dividido pelo ativo. A própria autora a chama de a régua mais “fraca”, porque mistura decisões do dia a dia.', 'Everything the company owes, suppliers included, divided by total assets. The author herself calls it the “weakest” yardstick, because it mixes day-to-day decisions.')},
+      {n:'ROA', s:'roa', fam:'p', num:[], den:['cx','out'], v:EBIT / (A.cx + A.out), m:MEAN.roa,
+       p:L('Retorno sobre o ativo: lucro da operação (EBIT, antes de juros e impostos) dividido por tudo o que a empresa tem.', 'Return on assets: operating profit (EBIT, before interest and taxes) divided by everything the company owns.')},
+      {n:'ROE', s:'roe', fam:'p', num:[], den:['pl'], v:LL / P.pl, m:MEAN.roe, ll:true,
+       p:L('Retorno sobre o patrimônio: lucro líquido dividido pelo capital dos sócios. É o que mais interessa ao acionista.', 'Return on equity: net profit divided by owners’ equity. It is what matters most to shareholders.')},
+      {n:'ROIC', s:'roic', fam:'p', num:[], den:['cp','lp','pl'], v:EBIT / (P.cp + P.lp + P.pl), m:MEAN.roic,
+       p:L('Retorno sobre o capital investido: lucro da operação (EBIT) dividido pelo dinheiro posto pelos sócios e pelos credores.', 'Return on invested capital: operating profit (EBIT) divided by the money put in by owners and lenders.')}
+    ];
+    function pc(v, d){ return fmt(v * 100, d === undefined ? 1 : d) + '%'; }
+    function draw(i){
+      var r = R[i], o = '', col = r.fam === 'd' ? 'var(--debt)' : 'var(--perf)';
+      o += '<text x="' + (XA + W / 2) + '" y="20" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--ink)">' + L('O que a empresa tem', 'What the company owns') + '</text>';
+      o += '<text x="' + (XP + W / 2) + '" y="20" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--ink)">' + L('De onde veio o dinheiro', 'Where the money came from') + '</text>';
+      Object.keys(BLK).forEach(function(k){
+        var b = BLK[k], inNum = r.num.indexOf(k) >= 0, inDen = r.den.indexOf(k) >= 0, neg = r.num.indexOf('-' + k) >= 0;
+        var fill = inNum ? col : (neg ? 'color-mix(in srgb, var(--red) 25%, white)' : '#f1f5f9');
+        o += '<rect x="' + b.x + '" y="' + b.y + '" width="' + W + '" height="' + (b.h * K) + '" fill="' + fill + '" stroke="' + (inDen ? 'var(--ink)' : '#cbd5e1') + '" stroke-width="' + (inDen ? 3 : 1) + '"' + (inDen ? ' stroke-dasharray="7 4"' : '') + '/>';
+        var ty = b.y + b.h * K / 2 + 5, tc = inNum ? '#fff' : 'var(--ink-2)';
+        o += '<text x="' + (b.x + 8) + '" y="' + ty + '" class="s" style="font-size:12px; fill:' + tc + '">' + b.t + (neg ? ' (−)' : '') + '</text>';
+        o += '<text x="' + (b.x + W - 8) + '" y="' + ty + '" text-anchor="end" class="s" style="font-size:12px; font-weight:700; fill:' + tc + '">' + b.h + '</text>';
+      });
+      if (r.fam === 'p'){
+        o += '<g transform="translate(' + (XA + 20) + ' 150)"><rect width="160" height="50" rx="10" fill="var(--perf)"/><text x="80" y="22" text-anchor="middle" style="font-size:12px; font-weight:700; fill:#fff">' + (r.ll ? L('lucro líquido', 'net profit') : L('lucro da operação (EBIT)', 'operating profit (EBIT)')) + '</text><text x="80" y="41" text-anchor="middle" style="font-size:15px; font-weight:800; fill:#fff">' + (r.ll ? LL : EBIT) + '</text></g>';
+      }
+      o += '<text x="270" y="304" text-anchor="middle" class="s" style="font-size:12px; fill:var(--muted)">' + L('cheio: em cima da conta · tracejado: embaixo', 'filled: top of the fraction · dashed: bottom') + '</text>';
+      svg.innerHTML = o;
+      var mean = r.m === null ? L('<b>Média real:</b> a tabela descritiva desta régua não fecha (média 0,13 com desvio de 2,96 e máximo de 0,72).', '<b>Real mean:</b> the descriptive table for this yardstick does not add up (mean 0.13 with a standard deviation of 2.96 and a maximum of 0.72).')
+                               : '<b>' + L('Média real nas 39 empresas:', 'Real mean in the 39 companies:') + '</b> ' + pc(r.m);
+      $('bs-panel').innerHTML = '<div class="tag">' + (r.fam === 'd' ? L('régua de dívida', 'debt yardstick') : L('régua de desempenho', 'performance yardstick')) + '</div><h3>' + r.n + ': ' + pc(r.v) + ' ' + L('na empresa inventada', 'in the made-up company') + '</h3><p>' + r.p + '</p><p style="color:var(--ink-2)">' + mean + '</p>';
+    }
+    chipInit($('bs-chips'), R.map(function(r){ return r.n; }), 0, draw);
+    draw(0);
+  })();
+
+  /* ================= 07 · MAPA DOS 14 MODELOS ================= */
+  (function(){
+    var sc = $('mp-scene'), W = 420, st = zeroStage(sc, W, 70, '36%');
+    rotatable(sc, st, -10, 5);
+    var bars = MOD.map(function(m, i){
+      var x = 6 + i * 27 + (m.f === 'p' ? 30 : 0);
+      var b = zbar(st, x, 15, 20, 40, m.f === 'd' ? 'var(--debt)' : 'var(--perf)', 1, false);
+      if (m.bad) b.el.classList.add('ghost');
+      b.el.style.cursor = 'pointer';
+      b.el.addEventListener('click', function(){ if (!M.wasDrag(sc)) hl(i); });
+      return b;
+    });
+    var cur = 0, sel = -1;
+    function fp(p){ return p < 0.001 ? '< ' + fmt(0.001, 3) : fmt(p, 3); }
+    function row(m, i, k){
+      var s = sigOf(m, k), g = m.g[k];
+      return '<div class="r' + (i === sel ? ' on' : '') + '" data-i="' + i + '"><span class="m ' + (s > 0 ? 'up' : s < 0 ? 'dn' : 'ns') + '">' + (s > 0 ? '↑' : s < 0 ? '↓' : '·') + '</span><span' + (m.bad ? ' class="bad"' : '') + '>' + mname(m) + ' <span class="pv">(' + L('Tab. ', 'Tab. ') + m.t + ')</span></span><span class="pv">p ' + fp(g[1]) + '</span></div>';
+    }
+    function render(){
+      var k = PIECES[cur].k, ok = 0, okd = 0, okp = 0;
+      bars.forEach(function(b, i){ var s = sigOf(MOD[i], k); b.set(s * 60 || 0.001); b.el.style.outline = ''; });
+      var dh = '', ph = '';
+      MOD.forEach(function(m, i){ if (m.f === 'd') dh += row(m, i, k); else ph += row(m, i, k); });
+      $('mp-panel').innerHTML = '<div class="res"><div><h4 style="color:var(--debt)">' + L('Dívida', 'Debt') + '</h4>' + dh + '</div><div><h4 style="color:var(--perf)">' + L('Desempenho', 'Performance') + '</h4>' + ph + '</div></div>';
+      each($('mp-panel').querySelectorAll('.r'), function(r){ r.addEventListener('click', function(){ hl(+r.dataset.i); }); });
+      var du = 0, dd = 0, pu = 0, pd = 0;
+      MOD.forEach(function(m){ if (m.bad) return; var s = sigOf(m, k); if (m.f === 'd'){ if (s > 0) du++; if (s < 0) dd++; } else { if (s > 0) pu++; if (s < 0) pd++; } });
+      $('mp-score').innerHTML = '<span><b>' + L('Dívida', 'Debt') + ':</b> ' + du + ' ↑ · ' + dd + ' ↓ ' + L('de 6', 'of 6') + '</span><span><b>' + L('Desempenho', 'Performance') + ':</b> ' + pu + ' ↑ · ' + pd + ' ↓ ' + L('de 6', 'of 6') + '</span><span style="font-size:.74rem; color:var(--muted)">' + L('contagem nossa, sem os 2 modelos hachurados', 'our count, without the 2 hatched models') + '</span>';
+    }
+    function hl(i){ sel = i; render(); }
+    chipInit($('mp-chips'), PIECES.map(function(p){ return p.n; }), 0, function(i){ cur = i; sel = -1; render(); });
+    render();
+  })();
+
+  /* ================= 08 · DESCOBERTA: dono majoritário × desempenho ================= */
+  (function(){
+    var svg = $('fp-svg'), ROWS = MOD.filter(function(m){ return m.f === 'p'; });
+    var X0 = 200, X1 = 520, LO = -20, HI = 15, mode = 0, sel = 1;
+    function xs(v){ return X0 + (v - LO) / (HI - LO) * (X1 - X0); }
+    var MEANS = {roa:MEAN.roa, roic:MEAN.roic, roe:MEAN.roe};
+    function draw(){
+      var o = '';
+      [-20, -15, -10, -5, 0, 5, 10, 15].forEach(function(v){
+        o += '<line x1="' + xs(v) + '" y1="18" x2="' + xs(v) + '" y2="232" stroke="' + (v === 0 ? 'var(--ink)' : '#e2e8f0') + '" stroke-width="' + (v === 0 ? 2 : 1) + '"/>';
+        o += '<text x="' + xs(v) + '" y="250" text-anchor="middle" class="s" style="font-size:11px; fill:var(--muted)">' + (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v) + '</text>';
+      });
+      o += '<text x="' + ((X0 + X1) / 2) + '" y="266" text-anchor="middle" class="s" style="font-size:11px; fill:var(--muted)">' + (mode === 0 ? L('diferença no retorno, em pontos percentuais', 'difference in return, in percentage points') : L('retorno, em %: média (cinza) e média menos a diferença (vermelho)', 'return, in %: mean (grey) and mean minus the difference (red)')) + '</text>';
+      ROWS.forEach(function(m, i){
+        var y = 36 + i * 34, g = m.g.conprop, ci = CI[m.t], c = g[0] * 100;
+        o += '<g class="fr" data-i="' + i + '" style="cursor:pointer"><rect x="0" y="' + (y - 15) + '" width="540" height="30" fill="' + (i === sel ? '#fff1f3' : 'transparent') + '"/>';
+        o += '<text x="8" y="' + (y + 4) + '" style="font-size:13px; font-weight:' + (i === sel ? 800 : 600) + '; fill:var(--ink)">' + m.y.toUpperCase() + ' · ' + L('Tabela ', 'Table ') + m.t + '</text>';
+        if (mode === 0){
+          o += '<line x1="' + xs(ci[0] * 100) + '" y1="' + y + '" x2="' + xs(ci[1] * 100) + '" y2="' + y + '" stroke="var(--red)" stroke-width="3" stroke-linecap="round"/>';
+          o += '<circle cx="' + xs(c) + '" cy="' + y + '" r="7" fill="var(--red)" stroke="#fff" stroke-width="2"/>';
+        } else {
+          var mu = MEANS[m.y] * 100;
+          o += '<line x1="' + xs(0) + '" y1="' + y + '" x2="' + xs(mu) + '" y2="' + y + '" stroke="#cbd5e1" stroke-width="10"/>';
+          o += '<line x1="' + xs(0) + '" y1="' + y + '" x2="' + xs(mu + c) + '" y2="' + y + '" stroke="var(--red)" stroke-width="10"/>';
+        }
+        o += '</g>';
+      });
+      svg.innerHTML = o;
+      each(svg.querySelectorAll('.fr'), function(g){ g.addEventListener('click', function(){ sel = +g.dataset.i; draw(); }); });
+      var m = ROWS[sel], g = m.g.conprop, ci = CI[m.t], mu = MEANS[m.y] * 100;
+      $('fp-panel').innerHTML = '<div class="tag">' + L('Tabela ', 'Table ') + m.t + ' · ' + mname(m) + '</div><h3>' + pp(g[0] * 100) + ' ' + L('com dono majoritário', 'with a majority owner') + '</h3><p>' +
+        L('Intervalo de 95%: de ', '95% interval: from ') + pp(ci[0] * 100) + L(' a ', ' to ') + pp(ci[1] * 100) + '; p ' + fmt(g[1], 3) + '. ' +
+        L('Para comparar: a média do ', 'For comparison: the mean ') + m.y.toUpperCase() + L(' na amostra é ', ' in the sample is ') + fmt(mu, 1) + '%.' + '</p>';
+    }
+    segInit($('fp-seg'), [L('Diferença e intervalo', 'Difference and interval'), L('Perto da média', 'Next to the mean')], 0, function(i){ mode = i; draw(); });
+    draw();
+  })();
+
+  /* ================= 09 · MAIS DÍVIDA (simulação nossa) ================= */
+  (function(){
+    var sc = $('dv-scene'), st = makeStage(sc, 340, 120, {ay:'64%'});
+    rotatable(sc, st, -18, 7);
+    var S = 2.2; // px por ponto percentual, escala fixa de 0 a 100%
+    function col(x, c, cls){ var b = box({w:70, d:60, x:x, y:30, h:2, c:c, cls:cls}); st.appendChild(b); return b; }
+    var g1 = col(20, '#94a3b8', 'ghost'), b1 = col(95, 'var(--debt)'), g3 = col(180, '#94a3b8', 'ghost'), b3 = col(255, 'var(--debt)');
+    function set(b, v, lbl){ b.style.setProperty('--h', Math.max(v, 0) * S + 'px'); b.querySelector('.f-front').innerHTML = lbl ? '<span class="face-label">' + lbl + '</span>' : ''; }
+    var own = false, ind = $('dv-ind');
+    // coeficientes: Tabela 1 (alav1, efeitos fixos) e Tabela 8 (alav3, efeitos aleatórios)
+    var C1 = {ind:0.0808, own:0.0812}, C3 = {ind:0.4041, own:0.1046};
+    var MI = MEAN.consindep, MO = MEAN.conprop;
+    function upd(){
+      var x = +ind.value / 100;
+      $('dv-indv').textContent = Math.round(x * 100) + '%';
+      var v1 = (MEAN.alav1 + C1.ind * (x - MI) + (own ? C1.own * (1 - MO) : 0)) * 100;
+      var v3 = (MEAN.alav3 + C3.ind * (x - MI) + (own ? C3.own * (1 - MO) : 0)) * 100;
+      set(g1, MEAN.alav1 * 100, fmt(MEAN.alav1 * 100, 0) + '%'); set(b1, v1, fmt(v1, 0) + '%');
+      set(g3, MEAN.alav3 * 100, fmt(MEAN.alav3 * 100, 0) + '%'); set(b3, v3, fmt(v3, 0) + '%');
+      $('dv-out').innerHTML = '<div><b>' + fmt(v1, 1) + '%</b>' + L('dívida financeira (média 44,4%)', 'financial debt (mean 44.4%)') + '</div><div><b>' + fmt(v3, 1) + '%</b>' + L('dívida líquida de caixa (média 28,1%)', 'debt net of cash (mean 28.1%)') + '</div>';
+    }
+    ind.addEventListener('input', upd);
+    $('dv-own').addEventListener('click', function(){ own = !own; this.setAttribute('aria-pressed', own); upd(); });
+    upd();
+  })();
+
+  /* ================= 10 · O INESPERADO: dualidade do CEO ================= */
+  (function(){
+    var OPTS = [L('Menor', 'Lower'), L('Igual', 'The same'), L('Maior', 'Higher')];
+    var el = $('du-opts');
+    el.innerHTML = OPTS.map(function(t, i){ return '<button data-v="' + i + '" aria-pressed="false">' + t + '</button>'; }).join('');
+    function pips(fam){
+      return MOD.filter(function(m){ return m.f === fam; }).map(function(m){
+        var s = sigOf(m, 'dualceo'), lbl = (m.y === 'roe' ? 'ROE' : m.y === 'roa' ? 'ROA' : m.y === 'roic' ? 'ROIC' : YN[m.y].split(' ').slice(-1)[0]);
+        lbl = {alav1:L('fin.', 'fin.'), alav2:L('LP', 'LT'), alav3:L('líq.', 'net'), alav4:L('pass.', 'liab.')}[m.y] || lbl;
+        return '<span class="pip ' + (s > 0 ? 'up' : s < 0 ? 'dn' : '') + (m.bad ? ' bad' : '') + '" title="' + mname(m) + ' · p ' + fmt(m.g.dualceo[1], 3) + '">' + (s > 0 ? '↑ ' : s < 0 ? '↓ ' : '') + lbl + '</span>';
+      }).join('');
+    }
+    each(el.children, function(b){ b.addEventListener('click', function(){
+      each(el.children, function(x){ x.setAttribute('aria-pressed', x === b); });
+      var v = +b.dataset.v;
+      $('du-wait').style.display = 'none'; $('du-res').classList.add('on');
+      $('du-verdict').innerHTML = '<div class="tag">' + (v === 2 ? L('Você acertou', 'You got it') : L('Não foi bem assim', 'Not quite')) + '</div><h3>' + L('Maior em 3 dos 6 modelos de lucro, e só a 10%', 'Higher in 3 of the 6 profit models, and only at 10%') + '</h3><p>' +
+        L('ROIC +6,0 p.p. (efeitos fixos, p 0,086) e ROE +5,2 e +5,6 p.p. (p 0,093 e 0,097). Nos outros três, sem diferença clara. Na dívida, o sinal mudou de modelo para modelo: mais dívida financeira num, menos dívida líquida em dois. A autora sugere que um CEO no comando decide mais rápido, útil num mercado que muda depressa como o brasileiro.', 'ROIC +6.0 pp (fixed effects, p 0.086) and ROE +5.2 and +5.6 pp (p 0.093 and 0.097). In the other three, no clear difference. For debt, the sign changed from model to model: more financial debt in one, less net debt in two. The author suggests that a CEO in command decides faster, useful in a fast-changing market like Brazil’s.') + '</p>';
+      $('du-p').innerHTML = pips('p');
+      $('du-d').innerHTML = pips('d') + '<small>' + L('hachurado: passivo total', 'hatched: total liabilities') + '</small>';
+    }); });
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
