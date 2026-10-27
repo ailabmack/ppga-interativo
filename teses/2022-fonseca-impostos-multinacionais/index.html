@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onde o lucro paga imposto? · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Peter Vaz da Fonseca (PPGA Mackenzie, 2022) sobre como os impostos pesam nas decisões de dívida e de investimento de multinacionais de cinco países emergentes, e por que elas abrem filiais em paraísos fiscais, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2022-fonseca-impostos-multinacionais/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><path d=%22M8 25 Q16 19 24 25 Z%22 fill=%22white%22/><path d=%22M16 24 Q15 15 18 9%22 stroke=%22white%22 stroke-width=%222.4%22 fill=%22none%22/><path d=%22M18 9 Q12 7 9 11 M18 9 Q24 6 26 11 M18 9 Q19 4 23 4%22 stroke=%22white%22 stroke-width=%222%22 fill=%22none%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --dom:var(--navy);     /* doméstica / sem filial em paraíso */
+    --mul:var(--red);      /* multinacional / com filial em paraíso */
+    --oth:#334155;
+    --off:#cbd5e1;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .sq{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4.2vw, 2.9rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:31em; margin-left:auto; margin-right:auto;}
+  #hero-scene .face-label{font-size:14px; font-weight:700; color:#fff;}
+  #hero-scene .coin{transition:left 1.1s cubic-bezier(.5,0,.3,1), top 1.1s cubic-bezier(.5,0,.3,1), transform 1.1s cubic-bezier(.5,0,.3,1);}
+
+  /* ---------- Componentes comuns ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s; font-family:inherit;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 20px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.05rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.9rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2); font-family:inherit;}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.35rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.76rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  .ctl{margin-top:12px;}
+  .ctl label{display:flex; justify-content:space-between; gap:10px; font-size:.86rem; font-weight:600; color:var(--ink);}
+  .ctl label span{font-variant-numeric:tabular-nums; color:var(--c, var(--red));}
+  .ctl small{font-size:.74rem; color:var(--muted);}
+  input[type=range]{width:100%; accent-color:var(--c, var(--red)); margin:6px 0 0;}
+  .svgbox{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .svgbox text{font-family:var(--sans);}
+  .warn{font-size:.8rem; color:var(--ink-2); background:#fff7ed; border:1px solid #fed7aa; border-radius:10px; padding:8px 12px; margin-top:10px;}
+
+  /* ---------- 02 · Contexto ---------- */
+  #ctx-msg{font-size:.86rem; color:var(--ink-2); margin-top:10px; min-height:4.2em;}
+
+  /* ---------- 03 · Funil ---------- */
+  #fun-scene .top-label{font-size:17px; font-family:var(--serif); font-weight:900; color:#fff;}
+  #fun-scene .slab{cursor:pointer;}
+  #fun-scene .slab.active{--oz:12px;}
+  #fun-scene .slab.dim > i{opacity:.3;}
+  .steps{display:grid; gap:6px; margin-top:8px;}
+  .step{display:grid; grid-template-columns:56px 1fr; gap:10px; align-items:center; text-align:left; border:1px solid var(--border); background:var(--card); border-radius:10px; padding:8px 12px; cursor:pointer; font:inherit; color:inherit; font-size:.84rem;}
+  .step b{font-family:var(--serif); font-size:1.15rem; color:var(--ink); text-align:right;}
+  .step[aria-pressed="true"]{border-color:var(--red); box-shadow:var(--shadow);}
+  .step[aria-pressed="true"] b{color:var(--red);}
+
+  /* ---------- 04 · Os 41 ---------- */
+  .grid41{display:grid; grid-template-columns:repeat(9, 1fr); gap:7px; max-width:400px; margin:6px auto 0;}
+  .grid41 i{aspect-ratio:3/4; border-radius:5px; background:var(--off); transition:background .45s; position:relative;}
+  .grid41 i::after{content:""; position:absolute; left:18%; right:18%; top:22%; height:2px; background:rgba(255,255,255,.7); box-shadow:0 6px 0 rgba(255,255,255,.7), 0 12px 0 rgba(255,255,255,.7);}
+  .sbar{display:flex; height:46px; border-radius:10px; overflow:hidden; box-shadow:var(--shadow); margin:16px auto 0; max-width:440px;}
+  .sbar div{display:flex; align-items:center; justify-content:center; color:#fff; font-size:.74rem; font-weight:700; white-space:nowrap; overflow:hidden;}
+  #g41-msg{font-family:var(--serif); font-size:1.02rem; color:var(--ink); text-align:center; margin-top:12px; min-height:2.6em;}
+  #g41-leg{justify-content:center;}
+
+  /* ---------- 05 · Área ---------- */
+  #ar-read{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+
+  /* ---------- 06 · Quatro efeitos ---------- */
+  .eff{display:grid; gap:8px; margin-top:8px;}
+  .ef{display:grid; grid-template-columns:132px 1fr; gap:10px; align-items:center; border:1px solid var(--border); background:var(--card); border-radius:12px; padding:9px 12px; cursor:pointer; font:inherit; color:inherit; text-align:left;}
+  .ef .n{font-size:.84rem; font-weight:600; color:var(--ink); line-height:1.25;}
+  .ef .n small{display:block; font-weight:400; color:var(--muted); font-size:.72rem;}
+  .ef .tr{position:relative; height:26px; background:#f1f5f9; border-radius:6px;}
+  .ef .tr::before{content:""; position:absolute; left:50%; top:-3px; bottom:-3px; width:2px; background:#94a3b8;}
+  .ef .tr i{position:absolute; top:3px; bottom:3px; border-radius:4px; transition:all .6s cubic-bezier(.2,.8,.2,1);}
+  .ef .tr b{position:absolute; top:4px; font-size:.74rem; color:var(--ink); font-variant-numeric:tabular-nums; transition:all .6s;}
+  .ef[aria-pressed="true"]{border-color:var(--red); box-shadow:var(--shadow);}
+  #ef-panel{margin-top:12px; min-height:150px;}
+  .axis2{display:flex; justify-content:space-between; font-size:.7rem; color:var(--muted); margin:4px 0 0 142px;}
+
+  /* ---------- 07 · Juros ---------- */
+  .guess{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;}
+  .guess button{border:2px solid var(--border); background:var(--card); border-radius:12px; padding:12px; font:inherit; font-weight:600; cursor:pointer; color:var(--ink);}
+  .guess button:hover{border-color:var(--ink);}
+  .guess button.right{border-color:#15803d; background:#f0fdf4;}
+  .guess button.wrong{border-color:var(--red); background:#fff1f2;}
+  #ju-msg{font-size:.88rem; color:var(--ink-2); margin-top:12px; min-height:4.5em;}
+  #ju-scene .face-label{font-size:13px; font-weight:700; color:#fff;}
+  #ju-scene .top-label{font-size:15px; font-family:var(--serif); font-weight:900; color:#fff;}
+  #ju-scene .slab{transition:--h .9s;}
+
+  /* ---------- 08 · Paraísos ---------- */
+  .isles{display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:6px; margin-top:6px;}
+  .isle{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:6px 8px 7px; cursor:pointer; font:inherit; color:var(--ink); text-align:left; font-size:.74rem; line-height:1.2; min-width:0;}
+  .isle span{display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600;}
+  .isle .pips{display:flex; gap:2px; margin-top:5px;}
+  .isle .pips i{flex:1; height:6px; border-radius:2px; background:#e2e8f0;}
+  .isle .pips i.on{background:var(--red);}
+  .isle[aria-pressed="true"]{border-color:var(--red); box-shadow:var(--shadow);}
+  #is-panel{margin-top:12px;}
+  .lists{display:flex; flex-wrap:wrap; gap:5px; margin-top:6px;}
+  .lists span{font-size:.72rem; border-radius:999px; padding:3px 9px; border:1px solid var(--border); color:var(--muted);}
+  .lists span.on{background:var(--red); border-color:var(--red); color:#fff; font-weight:600;}
+
+  /* ---------- 09 · Preço de transferência ---------- */
+  .flow{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:6px;}
+  .unit{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px 14px; box-shadow:var(--shadow); border-top:4px solid var(--uc);}
+  .unit h4{font-size:.86rem; margin:0 0 6px; color:var(--ink);}
+  .unit .row{display:flex; justify-content:space-between; font-size:.8rem; color:var(--ink-2); padding:2px 0;}
+  .unit .row b{font-variant-numeric:tabular-nums; color:var(--ink);}
+  .unit .bar{height:12px; border-radius:4px; background:#eef2f7; margin-top:6px; overflow:hidden;}
+  .unit .bar i{display:block; height:100%; background:var(--uc); transition:width .4s;}
+  .total{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;}
+  .total div{background:#f1f5f9; border-radius:12px; padding:10px 14px; font-size:.78rem; color:var(--muted);}
+  .total div b{display:block; font-family:var(--serif); font-size:1.4rem; color:var(--ink); font-variant-numeric:tabular-nums;}
+
+  /* ---------- 10 · Com × sem paraíso ---------- */
+  #cmp-scene .face-label{font-size:13px; font-weight:700; color:#fff;}
+  
+  #cmp-scene .slab{transition:--h .8s;}
+
+  /* ---------- 11 · Simulador ---------- */
+  .gauge{margin-top:14px; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 16px; box-shadow:var(--shadow);}
+  .gauge .big{font-family:var(--serif); font-size:2.2rem; font-weight:900; color:var(--red); line-height:1; font-variant-numeric:tabular-nums;}
+  .gauge .tr{position:relative; height:18px; background:#eef2f7; border-radius:6px; margin-top:10px;}
+  .gauge .tr i{position:absolute; left:0; top:0; bottom:0; background:var(--red); border-radius:6px; transition:width .35s;}
+  .gauge .tr em{position:absolute; top:-4px; bottom:-4px; width:2px; background:var(--ink);}
+  .gauge small{display:block; font-size:.74rem; color:var(--muted); margin-top:6px;}
+
+  /* ---------- 12 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:4px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.9rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:6px;}
+  .limits{list-style:none; padding:0; margin:0; display:grid; gap:6px;}
+  .limits li{padding:8px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+
+  @media (max-width:520px){
+    .isles{grid-template-columns:repeat(3, minmax(0, 1fr));}
+    .ef{grid-template-columns:96px 1fr;}
+    .axis2{margin-left:106px;}
+    .flow, .total{grid-template-columns:1fr 1fr; gap:8px;}
+    .unit{padding:10px;}
+  }
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2022-fonseca-impostos-multinacionais/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2022</div>
+      <h1 class="rv" style="--d:.1s">Onde o lucro de uma multinacional paga imposto?</h1>
+      <p class="sub rv" style="--d:.2s">Uma empresa com filiais em vários países pode escolher onde a dívida, as marcas e o lucro ficam registrados. A tese, escrita em inglês, junta três estudos: uma revisão de 41 pesquisas, <strong>977 empresas</strong> do Brasil, da China, da Índia, da Indonésia e da África do Sul atravessando a crise de 2008 e <strong>448 multinacionais</strong> desses países diante dos paraísos fiscais. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Peter Vaz da Fonseca</span>
+        <span><b>Orientadora:</b> Profa. Dra. Michele Nascimento Jucá</span>
+        <span><b>Coorientador:</b> Prof. Dr. João Paulo Torre Vieito</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#contexto">Começar →</a>
+        <a class="btn ghost" href="#perfil">Ir direto aos paraísos fiscais</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="500x330" role="img" aria-label="Uma torre azul, a sede num país de imposto alto, com moedas no topo; parte das moedas viaja até uma ilha vermelha baixa, o paraíso fiscal"></div></div>
+      <p class="cap-legend">Ilustração nossa: parte do lucro sai da sede e vai ficar registrada numa filial em paraíso fiscal. Arraste para girar.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-17"><a href="https://brasil.un.org/pt-br/sdgs/17" target="_blank" rel="noopener" title="ODS 17 · Parcerias e meios de implementação: Mostra como multinacionais de países emergentes combinam dívida, preços entre filiais, marcas e paraísos fiscais para pagar menos imposto, o que pesa na arrecadação dos países e no debate da alíquota mínima global."><b>17</b>Parcerias e meios de implementação</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · CONTEXTO -->
+<section class="slide" id="contexto" data-label="O cenário">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O cenário</div>
+      <h2 class="rv" style="--d:.1s">Nos cinco países, o imposto das empresas caiu e a dívida delas subiu</h2>
+      <p class="lede rv" style="--d:.15s">Pela teoria do equilíbrio (<em>trade-off</em>), a empresa se endivida porque os juros abatem imposto, até o ponto em que o risco de quebrar pesa mais. Se o imposto cai, a vantagem da dívida diminui. Mas, de 2004 a 2019, no Brasil, na China, na Índia, na Indonésia e na África do Sul, aconteceu o contrário do esperado. Escolha um indicador.</p>
+      <div class="seg rv" id="ctx-seg" style="--d:.2s" role="group" aria-label="Indicador">
+        <button data-k="tax">Alíquota oficial</button>
+        <button data-k="int">Juros reais</button>
+        <button data-k="debt">Dívida das empresas</button>
+      </div>
+      <p id="ctx-msg" aria-live="polite"></p>
+      <div class="stats rv" style="--d:.25s">
+        <div class="stat"><b>15%</b><span>alíquota mínima global defendida pelos EUA em 2021 (na campanha, eram 21%)</span></div>
+        <div class="stat"><b>139</b><span>países no fórum da OCDE contra a erosão da base tributária</span></div>
+        <div class="stat"><b>&gt;70%</b><span>do comércio mundial acontece dentro dos próprios grupos, segundo a OCDE</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg class="svgbox" id="ctx-svg" viewBox="0 0 520 330" role="img" aria-label="Gráfico de 2004 a 2019 com o indicador escolhido"></svg>
+      <p class="note">Média dos cinco países, de 2004 a 2019 (Figura 1.1 e seção 1.2 da tese, com dados do Banco Mundial, do FMI e da Tax Foundation). A tese mostra a série ano a ano; aqui ligamos só o começo e o fim. A conclusão do segundo estudo traz números um pouco diferentes para a alíquota (34,74% e 27,80%); os dois dizem "de cerca de 34% para cerca de 28%".</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · FUNIL -->
+<section class="slide" id="busca" data-label="Estudo 1: a busca">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> Estudo 1 · revisão da literatura</div>
+      <h2 class="rv" style="--d:.1s">Em 20 anos de pesquisa, 41 estudos testaram com dados se o imposto muda as decisões das multinacionais</h2>
+      <p class="lede rv" style="--d:.15s">O primeiro estudo vasculhou a Web of Science, de 2000 a setembro de 2019, atrás de pesquisas sobre imposto, investimento estrangeiro e estrutura de capital (como a empresa divide o dinheiro entre dívida e capital dos sócios). Toque nas camadas.</p>
+      <div class="steps rv" id="fun-steps" style="--d:.2s"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="fun-scene" data-fit="460x360" role="img" aria-label="Três placas empilhadas, cada vez menores: 211, 174 e 41 artigos"></div></div>
+      <div class="stats">
+        <div class="stat"><b>16</b><span>índice h dos 41 artigos</span></div>
+        <div class="stat"><b>0,80</b><span>índice M: tema "promissor" (faixa de 0,5 a 2)</span></div>
+        <div class="stat"><b>7</b><span>artigos numa só revista, a <em>International Tax and Public Finance</em></span></div>
+      </div>
+      <p class="note">Tabelas 2.1 e 2.2 e seção 2.4.1. A área de cada placa é proporcional ao número de artigos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · OS 41 -->
+<section class="slide" id="estudos" data-label="Estudo 1: o que dizem">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Estudo 1 · as lacunas</div>
+      <h2 class="rv" style="--d:.1s">Quase todos dizem que o imposto pesa, mas medem o imposto do jeito mais simples e olham para países ricos</h2>
+      <p class="lede rv" style="--d:.15s">O autor leu os 41 artigos e anotou o que cada um conclui, de onde tira os dados e como mede o imposto. Os resultados mudam conforme a régua: com os mesmos dados, estudos chegam a conclusões opostas. Escolha o que ver.</p>
+      <div class="chips rv" id="g41-chips" style="--d:.2s" role="group" aria-label="Escolha o recorte">
+        <button class="chip" data-k="conc">O que concluem</button>
+        <button class="chip" data-k="base">De onde vêm os dados</button>
+        <button class="chip" data-k="regua">Como medem o imposto</button>
+      </div>
+      <div class="panel rv" style="--d:.25s">
+        <div class="tag">O que ficou de fora e virou os estudos 2 e 3</div>
+        <p><b>Medidas de imposto</b> que olham para o futuro da empresa, não só a alíquota da lei. <b>Crises</b>, quase nunca estudadas. <b>Paraísos fiscais</b> e <b>países emergentes</b>: só 2 dos 41 estudam um país em desenvolvimento (Malásia e África do Sul), e os dois estão entre os 10 mais influentes.</p>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div id="g41-box"></div>
+      <div class="legend" id="g41-leg"></div>
+      <p id="g41-msg" aria-live="polite"></p>
+      <p class="note">Seções 2.5 e 2.6, Figuras 2.9 e 2.11. Os percentuais de bases e de medidas são da tese; "outras medidas" é a diferença, conta nossa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · A ÁREA -->
+<section class="slide" id="area" data-label="Uma régua melhor">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Como medir o imposto</div>
+      <h2 class="rv" style="--d:.1s">Cada real a mais de juros economiza cada vez menos imposto, e a área sob essa curva mede o espaço que sobra</h2>
+      <p class="lede rv" style="--d:.15s">Juros abatem imposto, mas só enquanto há lucro para abater. A tese usa medidas raras na literatura, como a <strong>área do benefício marginal</strong> (AREA): some a alíquota que cada aumento da dívida ainda economiza. Mova o controle e veja duas empresas da amostra, num exemplo do próprio autor.</p>
+      <div class="ctl rv" style="--d:.2s; --c:var(--red)">
+        <label for="ar-r">Aumento das despesas com juros <span id="ar-v">+0%</span></label>
+        <input type="range" id="ar-r" min="0" max="15" step="1" value="0">
+        <small>De 0% a 700%, nos mesmos degraus da tese.</small>
+      </div>
+      <div id="ar-read" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg class="svgbox" id="ar-svg" viewBox="0 0 520 340" role="img" aria-label="Duas curvas descendo: a alíquota que cada aumento de juros ainda economiza, para as empresas I e II"></svg>
+      <p class="note">Apêndice 1, Tabela 4.12 e Figura 4.1, com dados de 2016 de duas empresas da amostra (não identificadas) e alíquota de 34%. AREA da empresa I: 2,929; da empresa II: 7,342. Os estudos 2 e 3 também usam outras medidas desse tipo: a alíquota marginal, a do "último real" de dívida e o abatimento por depreciação.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · QUATRO EFEITOS -->
+<section class="slide" id="efeitos" data-label="Estudo 2: dívida e crise">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Estudo 2 · 977 empresas, 2004 a 2019</div>
+      <h2 class="rv" style="--d:.1s">Quanto mais a multinacional se endivida, mais ela gasta com juros, paga juro menor e vale mais na bolsa</h2>
+      <p class="lede rv" style="--d:.15s">O segundo estudo seguiu <strong>977 empresas de capital aberto</strong> dos cinco países (15.632 registros empresa-ano): <strong>349 multinacionais</strong> (mais de 5% da receita vem do exterior) e <strong>628 domésticas</strong>. Comparou os anos ao redor da crise de 2008 (2004 a 2007 contra 2008 a 2011) e o período inteiro. Toque em cada efeito.</p>
+      <div id="ef-panel" class="panel rv" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="ef-seg" role="group" aria-label="Período">
+        <button data-k="a">Em torno da crise (2004–2011)</button>
+        <button data-k="b">Todos os anos (2004–2019)</button>
+      </div>
+      <div class="eff" id="ef-list"></div>
+      <div class="axis2"><span>← diminui</span><span>aumenta →</span></div>
+      <p class="note">Tabelas 3.3 a 3.10, modelo de equações estruturais com variáveis instrumentais; todos significativos a 1%, e a conferência por mínimos quadrados dá o mesmo sentido. <b>O comprimento da barra é a força da evidência</b> (estatística z), não o tamanho do efeito: cada medida tem a sua unidade. São associações entre a dívida das multinacionais e cada medida.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · JUROS -->
+<section class="slide" id="juros" data-label="Quem paga menos juros">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Estudo 2 · multinacionais e domésticas</div>
+      <h2 class="rv" style="--d:.1s">A multinacional se endividou mais depois da crise, e pagando juro menor</h2>
+      <p class="lede rv" style="--d:.15s">Depois de 2008, os bancos centrais baixaram os juros e facilitaram o crédito. Quem aproveitou mais? Palpite: qual grupo pagou, em média, a menor taxa de juros sobre a dívida entre 2004 e 2019?</p>
+      <div class="guess rv" id="ju-guess" style="--d:.2s">
+        <button data-k="m">Multinacionais</button>
+        <button data-k="d">Domésticas</button>
+      </div>
+      <p id="ju-msg" aria-live="polite"></p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="ju-scene" data-fit="460x320" role="img" aria-label="Duas colunas: juros médios de 7,20% nas domésticas e 6,51% nas multinacionais"></div></div>
+      <div class="stats">
+        <div class="stat"><b>+0,59%</b><span>variação do endividamento das multinacionais, 2004–2019</span></div>
+        <div class="stat"><b>−0,04%</b><span>variação do endividamento das domésticas, 2004–2019</span></div>
+        <div class="stat"><b>−35,82%</b><span>queda dos juros dos depósitos bancários nos cinco países</span></div>
+      </div>
+      <p class="note">Números da conclusão do estudo 2 (seção 3.7), com dados do Banco Mundial; a tese não traz tabela com essas médias. Colunas com altura proporcional, a partir do zero.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · PARAÍSOS -->
+<section class="slide" id="paraisos" data-label="Estudo 3: os paraísos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Estudo 3 · 448 multinacionais, 2010 a 2020</div>
+      <h2 class="rv" style="--d:.1s">Mais da metade dos registros tinha ao menos uma filial num paraíso fiscal</h2>
+      <p class="lede rv" style="--d:.15s">O terceiro estudo seguiu <strong>448 multinacionais</strong> de grande porte dos cinco países (4.928 registros empresa-ano). O autor coletou à mão, empresa por empresa, onde ficam as filiais e quanto cada uma vende e tem de ativos. Paraíso fiscal, aqui, é o lugar citado por pelo menos 3 de 9 listas internacionais. Toque num lugar.</p>
+      <div class="stats rv" style="--d:.2s">
+        <div class="stat"><b>28</b><span>lugares considerados paraísos fiscais</span></div>
+        <div class="stat"><b>52,8%</b><span>dos registros com filial num deles (2.589 de 4.904)</span></div>
+        <div class="stat"><b>2.333</b><span>empresas no ponto de partida; 1.773 saíram por falta de dados</span></div>
+      </div>
+      <div class="panel" id="is-panel" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="isles" id="isles"></div>
+      <p class="note">Apêndice 2, Tabela 4.13 (levantamento de agosto de 2021). Cada tracinho é uma lista que cita o lugar: OCDE, cidadania por investimento (OCDE), União Europeia, Oxfam, GAFI, FMI, Corporate Tax Haven Index, Exhibit 21 e Financial Secrecy Index. Botsuana entra com 2 listas por ser relevante para a África do Sul. O 52,8% é conta nossa sobre a Tabela 4.10.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · PREÇO DE TRANSFERÊNCIA -->
+<section class="slide" id="preco" data-label="Preço entre filiais">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Experimente</div>
+      <h2 class="rv" style="--d:.1s">Quando uma filial vende para a outra, o preço decide em que país o lucro aparece</h2>
+      <p class="lede rv" style="--d:.15s">É o <strong>preço de transferência</strong>. A regra manda usar o preço que empresas independentes cobrariam, mas para marcas, patentes e projetos quase não há comparação no mercado. Faça de conta: uma fábrica num país com imposto de 34% produz uma peça por 40 e vende à filial num paraíso, que revende ao cliente por 100. Escolha o preço interno.</p>
+      <div class="ctl rv" style="--d:.2s; --c:var(--red)">
+        <label for="tp-r">Preço que a fábrica cobra da filial <span id="tp-v">80</span></label>
+        <input type="range" id="tp-r" min="40" max="100" step="5" value="80">
+      </div>
+      <p class="note">Exemplo inventado por nós, só para mostrar o mecanismo; a alíquota de 34% é a do exemplo da tese (Apêndice 1). A tese mede a <strong>intensidade dos preços de transferência</strong> pela fatia da receita do grupo que fica nas filiais menos a fatia dos ativos: filiais que faturam muito com poucos ativos dão número alto.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="flow">
+        <div class="unit" style="--uc:var(--navy)"><h4>Fábrica · imposto 34%</h4>
+          <div class="row"><span>Vende à filial por</span><b id="tp-a1"></b></div>
+          <div class="row"><span>Custo</span><b>40</b></div>
+          <div class="row"><span>Lucro</span><b id="tp-a2"></b></div>
+          <div class="row"><span>Imposto</span><b id="tp-a3"></b></div>
+          <div class="bar"><i id="tp-ab"></i></div>
+        </div>
+        <div class="unit" style="--uc:var(--red)"><h4>Filial no paraíso · imposto 0%</h4>
+          <div class="row"><span>Revende ao cliente por</span><b>100</b></div>
+          <div class="row"><span>Paga à fábrica</span><b id="tp-b1"></b></div>
+          <div class="row"><span>Lucro</span><b id="tp-b2"></b></div>
+          <div class="row"><span>Imposto</span><b>0</b></div>
+          <div class="bar"><i id="tp-bb"></i></div>
+        </div>
+      </div>
+      <div class="total">
+        <div><b>60</b>lucro do grupo, qualquer que seja o preço</div>
+        <div><b id="tp-t"></b>imposto pago pelo grupo</div>
+      </div>
+      <p id="tp-msg" style="font-size:.86rem; color:var(--ink-2); margin-top:12px; min-height:3em" aria-live="polite"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · COM × SEM PARAÍSO -->
+<section class="slide" id="perfil" data-label="Quem tem filial no paraíso">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Estudo 3 · quem usa paraíso</div>
+      <h2 class="rv" style="--d:.1s">Quem tem filial em paraíso é maior, tem mais marcas e patentes e fatura mais nas filiais</h2>
+      <p class="lede rv" style="--d:.15s">Compare as médias dos registros com e sem filial em paraíso fiscal. Escolha uma característica.</p>
+      <div class="chips rv" id="cmp-chips" style="--d:.2s" role="group" aria-label="Característica"></div>
+      <div class="panel rv" id="cmp-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="cmp-scene" data-fit="460x320" role="img" aria-label="Duas colunas comparando registros com e sem filial em paraíso fiscal"></div></div>
+      <div class="legend" style="justify-content:center"><span><span class="sq" style="background:var(--red)"></span>Com filial em paraíso</span><span><span class="sq" style="background:var(--navy)"></span>Sem</span></div>
+      <p class="note">Tabela 4.2 (médias) e seções 4.6.1 e 4.7 (gasto com pesquisa e desenvolvimento em dólares e margem operacional, só no texto). Colunas a partir do zero, na escala de cada característica. Diferenças de média, sem teste estatístico; os testes vêm na próxima tela.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · SIMULADOR -->
+<section class="slide" id="chance" data-label="A chance de ter filial">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> Estudo 3 · os modelos</div>
+      <h2 class="rv" style="--d:.1s">Pagar mais imposto e faturar mais nas filiais vêm com mais chance de ter filial em paraíso</h2>
+      <p class="lede rv" style="--d:.15s">Em regressões logísticas (a chance de ter ou não filial em paraíso), as seis hipóteses se confirmaram. Mova os controles para uma empresa com as demais características na média.</p>
+      <div class="ctl rv" style="--d:.2s; --c:var(--red)">
+        <label for="ch-etr">Imposto efetivo (imposto pago ÷ lucro antes do imposto) <span id="ch-etr-v"></span></label>
+        <input type="range" id="ch-etr" min="0" max="50" step="1" value="22">
+      </div>
+      <div class="ctl rv" style="--d:.22s; --c:var(--red)">
+        <label for="ch-tpi">Intensidade dos preços de transferência <span id="ch-tpi-v"></span></label>
+        <input type="range" id="ch-tpi" min="-30" max="80" step="2" value="16">
+        <small>Média da amostra: 0,16 (com paraíso 0,22; sem 0,10).</small>
+      </div>
+      <div class="gauge rv" style="--d:.25s">
+        <div class="big" id="ch-p"></div>
+        <div class="tr"><i id="ch-bar"></i><em id="ch-base"></em></div>
+        <small id="ch-msg" aria-live="polite"></small>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel">
+        <div class="tag">O inesperado</div>
+        <h3>Dívida e paraíso parecem caminhos alternativos</h3>
+        <p>Nos seis modelos, quem ainda tinha mais <b>espaço para abater imposto com juros</b> (a AREA da tela 5) tinha menos chance de ter filial em paraíso: cada ponto a mais de AREA vem com uma chance cerca de 8% menor. E, nos modelos sem os preços de transferência, mais <b>dívida</b> também veio com menos paraíso. Leitura do autor: quem já economiza imposto com a dívida precisa menos do paraíso.</p>
+        <p>Também vêm com mais chance: <b>marcas e patentes</b> no ativo (só a 10% de significância), <b>gasto com pesquisa</b>, <b>tamanho</b> e a <b>alíquota oficial</b> do país-sede.</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>58% a 65%</b><span>dos registros classificados certo pelos seis modelos</span></div>
+        <div class="stat"><b>52,8%</b><span>de acerto dizendo "tem filial" para todos (conta nossa)</span></div>
+        <div class="stat"><b>×0,92</b><span>na chance, por ponto de AREA (Tabela 4.4)</span></div>
+      </div>
+      <p class="note">Simulador montado por nós com o modelo da Tabela 4.8 (imposto efetivo, coef. 0,529; intensidade, 2,697), partindo da fatia de 52,8% dos registros com filial em paraíso; é ilustrativo e mostra associações, não causa. A tese lê as razões de chances como efeito de "1%" de aumento; como as medidas são frações, a razão vale para um aumento de 0 a 100%. Por isso não repetimos os percentuais do texto (como "98,8% a mais de chance").</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · PRÁTICA, LIMITES, CRÉDITOS -->
+<section class="slide" id="pratica" data-label="Na prática e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> E daí?</div>
+    <h2 class="rv" style="--d:.1s">Uma alíquota mínima global pode não bastar enquanto houver paraísos fiscais</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Governos e organismos internacionais</h3><p>As multinacionais combinam ferramentas para reduzir o imposto do grupo. Para o autor, a alíquota mínima discutida na OCDE, no G7 e no G20 pode falhar se ainda houver lugares de imposto baixo, e a alíquota da lei esconde deduções.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Quem fiscaliza</h3><p>Num mundo com mais intangíveis, fica mais difícil achar o preço "de mercado" de uma marca ou patente, o que abre espaço para mover lucro. Leitura nossa: as transações entre filiais e os ativos intangíveis são onde olhar primeiro.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--oth)"><h3>Gestores</h3><p>Quase metade das empresas não usa paraísos; as que usam tiveram margem operacional um pouco maior (11,57% contra 10,56%), diferença sem teste. E há riscos: ajustes do fisco e dupla tributação.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#5b7bb5"><h3>Quem pesquisa</h3><p>A régua do imposto muda o resultado: use medidas que olham para o futuro (como a AREA). O autor sugere estudar acordos para evitar dupla tributação, regras que limitam a dívida entre filiais, a produção espalhada em cadeia, auditorias do fisco e modelos multinível.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.35s">
+        <h3>O que a pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Não acusa nenhuma empresa.</b> A tese não lista as empresas e não julga, caso a caso, se houve planejamento legal (elisão) ou ilegal (evasão). <em>· observação nossa</em></li>
+          <li><b>Associação, não prova de causa.</b> Os modelos mostram o que anda junto; não provam que pagar mais imposto leva a abrir filial num paraíso. <em>· observação nossa</em></li>
+          <li><b>Dados difíceis:</b> as empresas raramente divulgam as transações entre filiais; no estudo 3, 1.773 de 2.333 saíram por falta de dados. No estudo 2, as séries longas que a alíquota marginal pede são curtas nos emergentes. <em>· seções 3.7, 4.3 e 4.7</em></li>
+          <li><b>Só cinco países emergentes</b> e, na revisão, só artigos da Web of Science com testes econométricos; os modelos do estudo 3 erram cerca de 4 em cada 10 registros. <em>· seção 2.7, Tabela 4.10</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.4s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          FONSECA, Peter Vaz da. <em>The tax impact on multinational corporate financial decisions.</em> Tese (Doutorado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2022. Orientadora: Profa. Dra. Michele Nascimento Jucá. Coorientador: Prof. Dr. João Paulo Torre Vieito.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Pesquisa com isenção integral de mensalidades e taxas do Instituto Presbiteriano Mackenzie. A tese foi escrita em inglês; os textos desta página são uma versão nossa, simplificada.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese (em inglês)</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(p, e){ return EN ? e : p; }
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent, text){
+    var e = document.createElementNS(SVGNS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (text !== undefined) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function int(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, EN ? ',' : '.'); }
+  function pressSet(group, attr, val){ each(group.children, function(b){ b.setAttribute('aria-pressed', String(b.dataset[attr] === val)); }); }
+
+  /* ================= DADOS DA TESE ================= */
+  // Seção 1.2 e Figura 1.1: média dos cinco países, 2004 → 2019
+  var CTX = {
+    tax:{a:34.14, b:28.40, max:40, u:'%', d:2, n:L('Alíquota oficial do imposto das empresas', 'Statutory corporate tax rate'),
+         m:L('A alíquota máxima do imposto sobre o lucro caiu de <b>34,14%</b> para <b>28,40%</b>. Entre 2007 e 2011, a queda foi mais forte (−3,17%). Pela teoria, isso deveria tornar a dívida menos atraente.', 'The top corporate income tax rate fell from <b>34.14%</b> to <b>28.40%</b>. Between 2007 and 2011 the drop was sharper (−3.17%). In theory, this should make debt less attractive.')},
+    int:{a:2.40, b:1.09, max:3, u:'%', d:2, n:L('Juros reais do crédito (descontada a inflação)', 'Real lending interest rate (net of inflation)'),
+         m:L('Os juros reais do crédito caíram de <b>2,40%</b> para <b>1,09%</b> ao ano. Dívida mais barata ajuda a explicar por que as empresas se endividaram mesmo com o imposto menor.', 'Real lending rates fell from <b>2.40%</b> to <b>1.09%</b> a year. Cheaper debt helps explain why companies borrowed even with lower tax.')},
+    debt:{a:100, b:134.92, max:150, u:'', d:0, n:L('Dívida das empresas em relação ao PIB (2004 = 100)', 'Corporate debt relative to GDP (2004 = 100)'),
+         m:L('A dívida das empresas em relação ao PIB subiu <b>34,92%</b> no período, sendo <b>15,37%</b> só de 2007 a 2011. O índice com 2004 = 100 é montado por nós a partir desse aumento.', 'Corporate debt relative to GDP rose <b>34.92%</b> over the period, <b>15.37%</b> of it from 2007 to 2011 alone. The index with 2004 = 100 is built by us from that increase.')}
+  };
+  // Tabelas 2.1 e 2.2
+  var FUN = [
+    {n:211, t:L('artigos achados na Web of Science (imposto + investimento estrangeiro + estrutura de capital)', 'articles found in the Web of Science (tax + foreign investment + capital structure)'), p:L('Busca de 25/9/2019, em economia, negócios, finanças e gestão.', 'Search of 9/25/2019, in economics, business, finance and management.')},
+    {n:174, t:L('com pelo menos uma citação, de 2000 a 2019', 'with at least one citation, 2000 to 2019'), p:L('Saíram 37 artigos que nunca foram citados na própria base.', '37 articles that were never cited in the database itself were removed.')},
+    {n:41, t:L('lidos e mantidos: testam com dados o efeito do imposto nas multinacionais', 'read and kept: they test with data the effect of tax on multinationals'), p:L('Saíram 55 sobre empresas domésticas, 24 que não estudam investimento ou financiamento das multinacionais, 23 sem imposto da empresa como explicação, 19 sem teste com dados, 9 de bancos ou imobiliárias e 3 sobre imposto de pessoas físicas.', 'Removed: 55 on domestic companies, 24 that do not study multinationals’ investment or financing, 23 without corporate tax as an explanation, 19 without a data test, 9 on banks or real estate firms and 3 on personal taxes.')}
+  ];
+  // Seção 2.6 (conclusões dos 41), Figura 2.11 (bases), seção 2.5 (medidas)
+  var G41 = {
+    conc:{g:[[30, 'var(--red)', L('O imposto pesa na decisão', 'Tax weighs on the decision')], [4, '#e88aa0', L('Pesa em certas situações', 'Weighs in some situations')], [4, 'var(--navy)', L('Pesa tanto quanto outros fatores', 'Weighs as much as other factors')], [3, '#94a3b8', L('Pesa pouco', 'Weighs little')]],
+          m:L('<b>30 de 41</b> concluem que o imposto é decisivo para as multinacionais.', '<b>30 of 41</b> conclude that tax is decisive for multinationals.')},
+    base:{bar:[[32, 'var(--navy)', 'MiDi'], [16, '#5b7bb5', 'Amadeus'], [13, '#7f97c6', 'Eurostat'], [13, '#9aaac4', L('OCDE', 'OECD')], [10, '#b4c0d6', 'BEA'], [10, '#94a3b8', 'Thomson'], [6, '#cbd5e1', 'UNCTAD']],
+          m:L('A base mais usada (<b>32%</b>) é a do banco central da <b>Alemanha</b>. Alemanha, EUA e Inglaterra somam mais de 55% das amostras.', 'The most used database (<b>32%</b>) is from <b>Germany’s</b> central bank. Germany, the US and England make up more than 55% of the samples.')},
+    regua:{bar:[[36, 'var(--red)', L('Alíquota da lei', 'Statutory rate')], [18, '#e88aa0', L('Alíquota média efetiva', 'Effective average rate')], [46, '#94a3b8', L('Outras medidas', 'Other measures')]],
+          m:L('A régua mais comum (<b>36%</b>) é a mais simples: a alíquota da lei. Medidas que pedem mais cálculo, como a alíquota marginal, quase não aparecem.', 'The most common yardstick (<b>36%</b>) is the simplest: the statutory rate. Measures that need more calculation, like the marginal rate, hardly appear.')}
+  };
+  // Apêndice 1, Tabela 4.12: aumento dos juros (%) e alíquota marginal por cenário
+  var AR_X = [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 300, 400, 500, 600, 700];
+  var AR_I = [0.340, 0.300, 0.261, 0.222, 0.183, 0.143, 0.104, 0.065, 0.026];
+  var AR_II = [0.340, 0.331, 0.322, 0.313, 0.304, 0.296, 0.287, 0.278, 0.269, 0.260, 0.252, 0.208, 0.164, 0.120, 0.076, 0.032];
+  // Tabelas 3.3 a 3.10, equações estruturais: [coef, z] em torno da crise (a) e em todos os anos (b)
+  var EF = [
+    {k:'iob', n:L('Custo de falência', 'Bankruptcy cost'), s:L('juros ÷ ativo', 'interest ÷ assets'), a:[0.085, 8.29], b:[0.049, 20.27], t:['3.3', '3.4'],
+     p:L('Mais dívida veio com mais despesa de juros em relação ao ativo, a medida de custo de falência usada pela tese. É o que a teoria do equilíbrio espera: dívida traz risco.', 'More debt came with more interest expense relative to assets, the bankruptcy cost measure used by the thesis. It is what trade-off theory expects: debt brings risk.')},
+    {k:'int', n:L('Taxa de juros', 'Interest rate'), s:L('juros ÷ dívida', 'interest ÷ debt'), a:[-0.233, -11.90], b:[-0.104, -14.20], t:['3.5', '3.6'],
+     p:L('Mais dívida veio com <b>juro menor</b> por real devido. Para o autor, a matriz e as filiais conseguem condições melhores emprestando entre si.', 'More debt came with a <b>lower rate</b> per unit owed. For the author, the parent and its subsidiaries get better terms by lending to each other.')},
+    {k:'tax', n:L('Benefício fiscal', 'Tax benefit'), s:L('alíquota do "último real"', '"last dollar" rate'), a:[-0.923, -17.21], b:[-0.203, -11.33], t:['3.7', '3.8'],
+     p:L('Mais dívida veio com <b>menos</b> imposto economizado por cada nova dívida: o abatimento dos juros vai se esgotando, como na curva da tela 5.', 'More debt came with <b>less</b> tax saved by each new borrowing: the interest deduction runs out, as in the curve on screen 5.')},
+    {k:'val', n:L('Valor de mercado', 'Market value'), s:L('valor na bolsa ÷ valor contábil', 'market ÷ book value'), a:[2.124, 8.17], b:[0.657, 5.40], t:['3.9', '3.10'],
+     p:L('Mais dívida veio com a multinacional valendo mais na bolsa em relação ao patrimônio, inclusive na crise. O autor liga isso a mais chances de diversificar.', 'More debt came with the multinational being worth more on the stock market relative to its book value, including during the crisis. The author links this to more room to diversify.')}
+  ];
+  // Seção 3.7: juros médios 2004–2019
+  var JU = {m:6.51, d:7.20};
+  // Apêndice 2, Tabela 4.13: listas na ordem OCDE, CBI, UE, Oxfam, GAFI, FMI, CTH, EX21, FSI
+  var LISTS = [L('OCDE', 'OECD'), L('Cidadania por investimento', 'Citizenship by investment'), L('União Europeia', 'European Union'), 'Oxfam', L('GAFI', 'FATF'), L('FMI', 'IMF'), 'Corporate Tax Haven', 'Exhibit 21', 'Financial Secrecy Index'];
+  var HAV = [
+    [L('Ilhas Cayman', 'Cayman Islands'), '101101111'], [L('Bahamas', 'Bahamas'), '110100111'], [L('Bermudas', 'Bermuda'), '100101111'], [L('Ilhas Virgens Britânicas', 'British Virgin Islands'), '100101111'],
+    ['Malta', '110100111'], [L('Maurício', 'Mauritius'), '100110111'], [L('Panamá', 'Panama'), '101010111'], [L('Antígua e Barbuda', 'Antigua and Barbuda'), '110100011'],
+    [L('Bahrein', 'Bahrain'), '110100011'], [L('Seicheles', 'Seychelles'), '111000011'], [L('Anguila', 'Anguilla'), '100100111'], [L('Chipre', 'Cyprus'), '110000111'],
+    ['Hong Kong', '000101111'], [L('Irlanda', 'Ireland'), '000101111'], [L('Luxemburgo', 'Luxembourg'), '000101111'], [L('Singapura', 'Singapore'), '000101111'],
+    [L('Holanda', 'Netherlands'), '000101101'], [L('Emirados Árabes Unidos', 'United Arab Emirates'), '010100101'], ['Aruba', '100100011'], ['Barbados', '010010011'],
+    [L('Ilhas Marshall', 'Marshall Islands'), '100100011'], [L('Suíça', 'Switzerland'), '000100111'], [L('Trinidad e Tobago', 'Trinidad and Tobago'), '001100001'], [L('Ilhas Virgens', 'Virgin Islands'), '001100001'],
+    [L('Malásia', 'Malaysia'), '010000011'], [L('Ilha de Man', 'Isle of Man'), '100000110'], ['Liechtenstein', '100000110'], [L('Botsuana', 'Botswana'), '000100001']
+  ];
+  // Tabela 4.2 (médias com × sem paraíso) e seções 4.6.1 e 4.7
+  var CMP = [
+    {k:'size', n:L('Tamanho', 'Size'), th:6.75, nth:4.60, f:function(v){ return 'US$ ' + fmt(v, 2) + L(' bi', ' bn'); }, p:L('Ativo total médio. As grandes multinacionais são as que mais usam paraísos, como em outros estudos citados pela tese.', 'Average total assets. Large multinationals are the main users of havens, as in other studies cited by the thesis.')},
+    {k:'tpi', n:L('Preços de transferência', 'Transfer pricing'), th:0.22, nth:0.10, f:function(v){ return fmt(v, 2); }, p:L('Intensidade média: as filiais de quem tem paraíso faturam mais para o volume de ativos que têm, o comportamento esperado de quem move lucro pelo preço interno.', 'Average intensity: subsidiaries of firms with havens bill more for the assets they hold, the behaviour expected from those moving profit through internal prices.')},
+    {k:'inta', n:L('Marcas e patentes', 'Brands and patents'), th:8, nth:6, f:function(v){ return v + '%'; }, p:L('Ativos intangíveis (marcas, patentes, projetos) como fatia do ativo total. Eles são fáceis de registrar noutro país e difíceis de avaliar pelo fisco.', 'Intangible assets (brands, patents, designs) as a share of total assets. They are easy to book in another country and hard for tax authorities to value.')},
+    {k:'rd', n:L('Pesquisa e desenvolvimento', 'Research and development'), th:64.4, nth:31.71, f:function(v){ return 'US$ ' + fmt(v, v < 50 ? 2 : 1) + L(' mi', ' m'); }, p:L('Gasto médio com pesquisa e desenvolvimento, quase o dobro. Como fatia das vendas, os dois grupos ficam em 2%.', 'Average research and development spending, almost double. As a share of sales, both groups are at 2%.')},
+    {k:'etr', n:L('Imposto efetivo', 'Effective tax'), th:23, nth:21, f:function(v){ return v + '%'; }, p:L('Imposto pago sobre o lucro antes do imposto. Quem tem paraíso paga um pouco mais aqui; a tese lê isso como o motivo para buscar o paraíso, não como resultado dele.', 'Tax paid over pre-tax profit. Firms with havens pay a bit more here; the thesis reads this as the reason to seek a haven, not as its result.')},
+    {k:'mrg', n:L('Margem operacional', 'Operating margin'), th:11.57, nth:10.56, f:function(v){ return fmt(v, 2) + '%'; }, p:L('Resultado operacional sobre a receita, citado na conclusão do estudo 3. Diferença pequena e sem teste estatístico.', 'Operating income over revenue, cited in the conclusion of study 3. A small difference, untested.')}
+  ];
+  // Tabela 4.8 (logit): coeficientes; base = 2.589 / 4.904 registros com filial (Tabela 4.10)
+  var LG = {etr:0.529, tpi:2.697, etr0:0.22, tpi0:0.16, base:2589 / 4904};
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), W = 440, D = 230;
+    var st = makeStage(sc, W, D, {ay:'66%', rx:'58deg'});
+    st.appendChild(box({w:120, d:110, h:150, x:30, y:60, c:'var(--navy)', label:L('Sede', 'HQ')}));
+    st.appendChild(box({w:150, d:130, h:16, x:270, y:50, c:'var(--red)', label:''}));
+    // coqueiro achatado: tronco e copa como caixas finas
+    st.appendChild(box({w:8, d:8, h:70, x:340, y:96, z:16, c:'#8b6b4a'}));
+    st.appendChild(box({w:54, d:54, h:8, x:317, y:73, z:86, c:'#2f7d4f'}));
+    var coins = [];
+    for (var i = 0; i < 6; i++){
+      var k = box({w:56, d:56, h:9, x:62, y:87, z:150 + i * 11, c:'#f59e0b', cls:'coin'});
+      st.appendChild(k); coins.push(k);
+    }
+    // as três de cima viajam para a ilha (ao lado do coqueiro)
+    function place(moved){
+      coins.forEach(function(k, i){
+        var go = moved && i >= 3, j = i - 3;
+        k.style.left = (go ? 276 : 62) + 'px';
+        k.style.top = (go ? 60 : 87) + 'px';
+        k.style.setProperty('--z', (go ? 16 + j * 11 : 150 + i * 11) + 'px');
+      });
+    }
+    place(true);
+    if (!M.reduce){
+      var last = -1;
+      M.onTick(function(t){ var s = Math.floor(t / 2.6) % 2; if (s !== last){ last = s; place(s === 1); } });
+    }
+    rotatable(sc, st, -14, 10);
+  })();
+
+  /* ================= 02 · CONTEXTO ================= */
+  (function(){
+    var svg = $('ctx-svg'), X0 = 90, X1 = 430, Y0 = 280, Y1 = 50;
+    function show(k){
+      pressSet($('ctx-seg'), 'k', k);
+      var c = CTX[k]; svg.innerHTML = '';
+      function sy(v){ return Y0 - (v / c.max) * (Y0 - Y1); }
+      for (var g = 0; g <= 4; g++){
+        var v = c.max * g / 4, y = sy(v);
+        el('line', {x1:X0 - 6, y1:y, x2:X1 + 30, y2:y, stroke:'#eef2f7', 'stroke-width':1}, svg);
+        el('text', {x:X0 - 12, y:y + 4, 'text-anchor':'end', 'font-size':12, fill:'#64748b'}, svg, fmt(v, k === 'int' ? 1 : 0) + c.u);
+      }
+      el('text', {x:20, y:28, 'font-size':14, 'font-weight':700, fill:'#0f172a'}, svg, c.n);
+      var col = k === 'debt' ? 'var(--navy)' : 'var(--red)';
+      var ln = el('line', {x1:X0, y1:sy(c.a), x2:X1, y2:sy(c.b), stroke:col, 'stroke-width':5, 'stroke-linecap':'round'}, svg);
+      ln.style.stroke = col;
+      [[X0, c.a, '2004', 'start'], [X1, c.b, '2019', 'end']].forEach(function(p){
+        var ci = el('circle', {cx:p[0], cy:sy(p[1]), r:9}, svg); ci.style.fill = col;
+        el('text', {x:p[0], y:Y0 + 24, 'text-anchor':'middle', 'font-size':13, fill:'#64748b'}, svg, p[2]);
+        el('text', {x:p[0] + (p[3] === 'start' ? -4 : 4), y:sy(p[1]) - 16, 'text-anchor':p[3] === 'start' ? 'start' : 'end', 'font-size':18, 'font-weight':700, fill:'#0f172a', 'font-family':'Merriweather, serif'}, svg, fmt(p[1], c.d) + c.u);
+      });
+      el('text', {x:(X0 + X1) / 2, y:Y0 + 44, 'text-anchor':'middle', 'font-size':11, fill:'#94a3b8'}, svg, L('linha reta só liga as pontas; a série real oscila', 'the straight line only joins the ends; the real series moves up and down'));
+      $('ctx-msg').innerHTML = c.m;
+    }
+    each($('ctx-seg').children, function(b){ b.addEventListener('click', function(){ show(b.dataset.k); }); });
+    show('tax');
+  })();
+
+  /* ================= 03 · FUNIL ================= */
+  (function(){
+    var sc = $('fun-scene'), W = 340, D = 340, cx = W / 2, cy = D / 2;
+    var st = makeStage(sc, W, D, {ay:'60%', rx:'56deg'});
+    var slabs = [], h = 30, cols = ['#9aaac4', '#5b7bb5', 'var(--red)'];
+    FUN.forEach(function(f, i){
+      var s = 300 * Math.sqrt(f.n / FUN[0].n);
+      var b = box({w:s, d:s, h:h, x:cx - s / 2, y:cy - s / 2, z:i * h, c:cols[i], top:String(f.n)});
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)) show(i); });
+      st.appendChild(b); slabs.push(b);
+    });
+    $('fun-steps').innerHTML = FUN.map(function(f, i){ return '<button class="step" data-i="' + i + '" aria-pressed="false"><b>' + f.n + '</b><span>' + f.t + '</span></button>'; }).join('');
+    function show(i){
+      each($('fun-steps').children, function(b){ b.setAttribute('aria-pressed', String(+b.dataset.i === i)); });
+      slabs.forEach(function(b, j){ b.classList.toggle('active', j === i); b.classList.toggle('dim', j > i); });
+      var old = $('fun-steps').querySelector('.fp'); if (old) old.remove();
+      var p = document.createElement('p'); p.className = 'fp'; p.style.cssText = 'grid-column:1/-1; margin:2px 0 0; font-size:.78rem; color:var(--muted)'; p.textContent = FUN[i].p;
+      $('fun-steps').children[i].appendChild(p);
+    }
+    each($('fun-steps').children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    rotatable(sc, st, -10, 8);
+    show(2);
+  })();
+
+  /* ================= 04 · OS 41 ================= */
+  (function(){
+    var bx = $('g41-box');
+    function show(k){
+      pressSet($('g41-chips'), 'k', k);
+      var d = G41[k];
+      if (d.g){
+        bx.innerHTML = '<div class="grid41">' + new Array(42).join('<i></i>') + '</div>';
+        var cols = [];
+        d.g.forEach(function(x){ for (var j = 0; j < x[0]; j++) cols.push(x[1]); });
+        each(bx.firstChild.children, function(c, j){ c.style.background = cols[j]; });
+        $('g41-leg').innerHTML = d.g.map(function(x){ return '<span><span class="sq" style="background:' + x[1] + '"></span>' + x[2] + ' (' + x[0] + ')</span>'; }).join('');
+      } else {
+        bx.innerHTML = '<div class="sbar">' + d.bar.map(function(x){ return '<div style="flex:' + x[0] + ' 1 0; background:' + x[1] + '">' + (x[0] >= 13 ? x[0] + '%' : '') + '</div>'; }).join('') + '</div>';
+        $('g41-leg').innerHTML = d.bar.map(function(x){ return '<span><span class="sq" style="background:' + x[1] + '"></span>' + x[2] + ' (' + x[0] + '%)</span>'; }).join('');
+      }
+      $('g41-msg').innerHTML = d.m;
+    }
+    each($('g41-chips').children, function(b){ b.addEventListener('click', function(){ show(b.dataset.k); }); });
+    show('conc');
+  })();
+
+  /* ================= 05 · ÁREA ================= */
+  (function(){
+    var svg = $('ar-svg'), X0 = 60, X1 = 490, Y0 = 290, Y1 = 40, r = $('ar-r');
+    function sx(v){ return X0 + (v / 700) * (X1 - X0); }
+    function sy(v){ return Y0 - (v / 0.36) * (Y0 - Y1); }
+    for (var g = 0; g <= 3; g++){
+      var v = g * 0.1, y = sy(v);
+      el('line', {x1:X0, y1:y, x2:X1, y2:y, stroke:'#eef2f7'}, svg);
+      el('text', {x:X0 - 8, y:y + 4, 'text-anchor':'end', 'font-size':12, fill:'#64748b'}, svg, fmt(v * 100, 0) + '%');
+    }
+    [0, 100, 200, 300, 400, 500, 600, 700].forEach(function(v){ el('text', {x:sx(v), y:Y0 + 20, 'text-anchor':'middle', 'font-size':12, fill:'#64748b'}, svg, '+' + v + '%'); });
+    el('text', {x:X0, y:24, 'font-size':13, 'font-weight':700, fill:'#0f172a'}, svg, L('Alíquota que o aumento dos juros ainda economiza', 'Rate the interest increase still saves'));
+    el('text', {x:X1, y:Y0 + 40, 'text-anchor':'end', 'font-size':12, fill:'#64748b'}, svg, L('aumento das despesas com juros →', 'increase in interest expenses →'));
+    function path(arr, close){
+      var d = arr.map(function(v, i){ return (i ? 'L' : 'M') + sx(AR_X[i]) + ' ' + sy(v); }).join(' ');
+      return close ? d + ' L' + sx(AR_X[arr.length - 1]) + ' ' + Y0 + ' L' + sx(0) + ' ' + Y0 + ' Z' : d;
+    }
+    var aII = el('path', {d:path(AR_II, true)}, svg); aII.style.fill = 'color-mix(in srgb, var(--navy) 14%, white)';
+    var aI = el('path', {d:path(AR_I, true)}, svg); aI.style.fill = 'color-mix(in srgb, var(--red) 18%, white)';
+    var lII = el('path', {d:path(AR_II), fill:'none', 'stroke-width':3.5}, svg); lII.style.stroke = 'var(--navy)';
+    var lI = el('path', {d:path(AR_I), fill:'none', 'stroke-width':3.5}, svg); lI.style.stroke = 'var(--red)';
+    el('text', {x:sx(160) + 8, y:sy(0.026) - 8, 'font-size':13, 'font-weight':700, fill:'#e80734'}, svg, L('Empresa I', 'Company I'));
+    el('text', {x:sx(560), y:sy(0.12) - 10, 'font-size':13, 'font-weight':700, fill:'#1f3b73'}, svg, L('Empresa II', 'Company II'));
+    var cur = el('line', {x1:sx(0), y1:Y1 - 6, x2:sx(0), y2:Y0, stroke:'#0f172a', 'stroke-width':1.5, 'stroke-dasharray':'4 3'}, svg);
+    var dI = el('circle', {r:7}, svg); dI.style.fill = 'var(--red)';
+    var dII = el('circle', {r:7}, svg); dII.style.fill = 'var(--navy)';
+    function draw(){
+      var i = +r.value, x = AR_X[i];
+      $('ar-v').textContent = '+' + x + '%';
+      cur.setAttribute('x1', sx(x)); cur.setAttribute('x2', sx(x));
+      var vI = i < AR_I.length ? AR_I[i] : null, vII = AR_II[i];
+      dI.style.display = vI === null ? 'none' : '';
+      if (vI !== null){ dI.setAttribute('cx', sx(x)); dI.setAttribute('cy', sy(vI)); }
+      dII.setAttribute('cx', sx(x)); dII.setAttribute('cy', sy(vII));
+      function card(n, v, col, tot){
+        return '<div class="stat" style="border-top:4px solid ' + col + '"><b>' + (v === null ? '—' : fmt(v * 100, 1) + '%') + '</b><span>' + n + ': ' +
+          (v === null ? L('o lucro acabou; mais juros não abatem nada (a tabela para em +160%)', 'profit has run out; more interest saves nothing (the table stops at +160%)') : L('ainda economizados por real a mais de juros', 'still saved per extra unit of interest')) + L('. Área total: ', '. Total area: ') + fmt(tot, 3) + '</span></div>';
+      }
+      $('ar-read').innerHTML = card(L('Empresa I', 'Company I'), vI, 'var(--red)', 2.929) + card(L('Empresa II', 'Company II'), vII, 'var(--navy)', 7.342);
+    }
+    r.addEventListener('input', draw); draw();
+  })();
+
+  /* ================= 06 · QUATRO EFEITOS ================= */
+  (function(){
+    var per = 'a', sel = 0, MAXZ = 21;
+    $('ef-list').innerHTML = EF.map(function(e, i){ return '<button class="ef" data-i="' + i + '" aria-pressed="false"><span class="n">' + e.n + '<small>' + e.s + '</small></span><span class="tr"><i></i><b></b></span></button>'; }).join('');
+    function draw(){
+      pressSet($('ef-seg'), 'k', per);
+      each($('ef-list').children, function(b, i){
+        var e = EF[i], v = e[per], z = v[1], w = Math.abs(z) / MAXZ * 50;
+        var bar = b.querySelector('i'), lab = b.querySelector('b');
+        bar.style.background = z > 0 ? 'var(--red)' : 'var(--navy)';
+        bar.style.left = (z > 0 ? 50 : 50 - w) + '%'; bar.style.width = w + '%';
+        lab.textContent = (z > 0 ? '↑ ' : '↓ ') + 'z ' + fmt(Math.abs(z), 2);
+        var tw = b.querySelector('.tr').offsetWidth || 220, inside = tw * w / 100 > 74;
+        lab.style.color = inside ? '#fff' : 'var(--ink)';
+        lab.style.whiteSpace = 'nowrap';
+        lab.style.left = z > 0 ? (inside ? 'auto' : 'calc(' + (50 + w) + '% + 6px)') : (inside ? 'calc(' + (50 - w) + '% + 6px)' : 'auto');
+        lab.style.right = z > 0 ? (inside ? 'calc(' + (50 - w) + '% + 6px)' : 'auto') : (inside ? 'auto' : 'calc(' + (50 + w) + '% + 6px)');
+        b.setAttribute('aria-pressed', String(i === sel));
+      });
+      var e = EF[sel], v = e[per];
+      $('ef-panel').innerHTML = '<div class="tag">' + L('Tabela ', 'Table ') + e.t[per === 'a' ? 0 : 1] + ' · ' + (per === 'a' ? L('em torno da crise', 'around the crisis') : L('todos os anos', 'all years')) + '</div><h3>' + e.n + ': ' + (v[0] > 0 ? L('sobe', 'goes up') : L('cai', 'goes down')) + '</h3><p>' + e.p + '</p><p style="font-size:.78rem; color:var(--muted)">' + L('Coeficiente ', 'Coefficient ') + (v[0] < 0 ? '−' : '+') + fmt(Math.abs(v[0]), 3) + ', z ' + (v[1] < 0 ? '−' : '') + fmt(Math.abs(v[1]), 2) + L(', na unidade da medida (', ', in the measure’s unit (') + e.s + ').</p>';
+    }
+    each($('ef-seg').children, function(b){ b.addEventListener('click', function(){ per = b.dataset.k; draw(); }); });
+    each($('ef-list').children, function(b){ b.addEventListener('click', function(){ sel = +b.dataset.i; draw(); }); });
+    draw();
+  })();
+
+  /* ================= 07 · JUROS ================= */
+  (function(){
+    var sc = $('ju-scene'), W = 340, D = 200;
+    var st = makeStage(sc, W, D, {ay:'70%', rx:'58deg'});
+    var H = 220 / 8;
+    var bd = box({w:110, d:90, h:120, x:35, y:55, c:'#94a3b8', label:'?'});
+    var bm = box({w:110, d:90, h:120, x:195, y:55, c:'#94a3b8', label:'?'});
+    st.appendChild(bd); st.appendChild(bm);
+    flat(L('Domésticas', 'Domestic'), 35); flat(L('Multinacionais', 'Multinationals'), 195);
+    function flat(t, x){ M.flatLabel(st, t, x, 152, 110, 'font-size:13px; font-weight:700; color:#334155; text-align:center'); }
+    function grow(){
+      bd.style.setProperty('--h', (JU.d * H) + 'px'); bm.style.setProperty('--h', (JU.m * H) + 'px');
+      bd.style.setProperty('--c', 'var(--navy)'); bm.style.setProperty('--c', 'var(--red)');
+      bd.querySelector('.face-label').textContent = fmt(JU.d, 2) + '%';
+      bm.querySelector('.face-label').textContent = fmt(JU.m, 2) + '%';
+    }
+    each($('ju-guess').children, function(b){
+      b.addEventListener('click', function(){
+        each($('ju-guess').children, function(x){ x.classList.remove('right', 'wrong'); });
+        b.classList.add(b.dataset.k === 'm' ? 'right' : 'wrong');
+        grow();
+        $('ju-msg').innerHTML = (b.dataset.k === 'm' ? L('<b>Acertou.</b> ', '<b>Right.</b> ') : L('<b>Foi o contrário.</b> ', '<b>It was the other way round.</b> ')) +
+          L('As multinacionais pagaram em média <b>6,51%</b>, contra <b>7,20%</b> das domésticas. E, enquanto o endividamento das domésticas ficou parado, o das multinacionais subiu. Para o autor, elas aproveitaram o crédito barato do pós-crise porque podem mover dinheiro entre filiais e negociar melhor.', 'Multinationals paid <b>6.51%</b> on average, against <b>7.20%</b> for domestic firms. And while domestic firms’ leverage stood still, multinationals’ rose. For the author, they made the most of cheap post-crisis credit because they can move money between subsidiaries and negotiate better.');
+      });
+    });
+    rotatable(sc, st, -12, 8);
+  })();
+
+  /* ================= 08 · PARAÍSOS ================= */
+  (function(){
+    var g = $('isles');
+    g.innerHTML = HAV.map(function(h, i){
+      var n = h[1].split('').filter(function(c){ return c === '1'; }).length;
+      return '<button class="isle" data-i="' + i + '" aria-pressed="false" title="' + h[0] + '"><span>' + h[0] + '</span><span class="pips">' + h[1].split('').map(function(c){ return '<i class="' + (c === '1' ? 'on' : '') + '"></i>'; }).join('') + '</span></button>';
+    }).join('');
+    function show(i){
+      each(g.children, function(b){ b.setAttribute('aria-pressed', String(+b.dataset.i === i)); });
+      var h = HAV[i], n = h[1].split('').filter(function(c){ return c === '1'; }).length;
+      $('is-panel').innerHTML = '<div class="tag">' + L('Citado por ', 'Named by ') + n + L(' de 9 listas', ' of 9 lists') + '</div><h3>' + h[0] + '</h3><div class="lists">' + LISTS.map(function(l, j){ return '<span class="' + (h[1][j] === '1' ? 'on' : '') + '">' + l + '</span>'; }).join('') + '</div>';
+    }
+    each(g.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(0);
+  })();
+
+  /* ================= 09 · PREÇO DE TRANSFERÊNCIA ================= */
+  (function(){
+    var r = $('tp-r');
+    function draw(){
+      var p = +r.value, la = p - 40, ta = la * 0.34, lb = 100 - p;
+      $('tp-v').textContent = p;
+      $('tp-a1').textContent = p; $('tp-a2').textContent = la; $('tp-a3').textContent = fmt(ta, 1);
+      $('tp-b1').textContent = p; $('tp-b2').textContent = lb;
+      $('tp-ab').style.width = (la / 60 * 100) + '%'; $('tp-bb').style.width = (lb / 60 * 100) + '%';
+      $('tp-t').textContent = fmt(ta, 1);
+      $('tp-msg').innerHTML = p >= 90 ? L('Preço alto: quase todo o lucro fica na fábrica e paga 34%.', 'High price: almost all the profit stays in the factory and pays 34%.')
+        : p <= 50 ? L('Preço baixo: o lucro "aparece" no paraíso e o imposto do grupo quase some. O lucro total não mudou; só mudou o país onde foi registrado.', 'Low price: the profit "shows up" in the haven and the group’s tax nearly vanishes. Total profit did not change; only the country where it was booked did.')
+        : L('A cada 10 de desconto no preço interno, o grupo paga 3,4 a menos de imposto, sem vender uma peça a mais.', 'Each 10 off the internal price, the group pays 3.4 less tax, without selling a single extra part.');
+    }
+    r.addEventListener('input', draw); draw();
+  })();
+
+  /* ================= 10 · COM × SEM PARAÍSO ================= */
+  (function(){
+    var sc = $('cmp-scene'), W = 340, D = 200;
+    var st = makeStage(sc, W, D, {ay:'70%', rx:'58deg'});
+    var bt = box({w:110, d:90, h:4, x:35, y:55, c:'var(--red)', label:'x'});
+    var bn = box({w:110, d:90, h:4, x:195, y:55, c:'var(--navy)', label:'x'});
+    st.appendChild(bt); st.appendChild(bn);
+    $('cmp-chips').innerHTML = CMP.map(function(c){ return '<button class="chip" data-k="' + c.k + '">' + c.n + '</button>'; }).join('');
+    function show(k){
+      pressSet($('cmp-chips'), 'k', k);
+      var c = CMP.filter(function(x){ return x.k === k; })[0], mx = Math.max(c.th, c.nth), H = 200;
+      bt.style.setProperty('--h', (c.th / mx * H) + 'px'); bn.style.setProperty('--h', (c.nth / mx * H) + 'px');
+      bt.querySelector('.face-label').textContent = c.f(c.th);
+      bn.querySelector('.face-label').textContent = c.f(c.nth);
+      $('cmp-panel').innerHTML = '<div class="tag">' + L('Com paraíso ', 'With haven ') + c.f(c.th) + ' · ' + L('sem ', 'without ') + c.f(c.nth) + '</div><h3>' + c.n + '</h3><p>' + c.p + '</p>';
+    }
+    each($('cmp-chips').children, function(b){ b.addEventListener('click', function(){ show(b.dataset.k); }); });
+    show('size');
+    rotatable(sc, st, -12, 8);
+  })();
+
+  /* ================= 11 · SIMULADOR ================= */
+  (function(){
+    var re = $('ch-etr'), rt = $('ch-tpi'), o0 = LG.base / (1 - LG.base);
+    $('ch-base').style.left = (LG.base * 100) + '%';
+    function draw(){
+      var e = +re.value / 100, t = +rt.value / 100;
+      $('ch-etr-v').textContent = Math.round(e * 100) + '%';
+      $('ch-tpi-v').textContent = (t < 0 ? '−' : '') + fmt(Math.abs(t), 2);
+      var o = o0 * Math.exp(LG.etr * (e - LG.etr0) + LG.tpi * (t - LG.tpi0)), p = o / (1 + o);
+      $('ch-p').textContent = fmt(p * 100, 0) + '%';
+      $('ch-bar').style.width = (p * 100) + '%';
+      $('ch-msg').innerHTML = L('Chance estimada de ter filial em paraíso. O traço preto marca a média da amostra (', 'Estimated odds of having a haven subsidiary. The black mark is the sample average (') + fmt(LG.base * 100, 1) + '%). ' +
+        L('Ilustração nossa a partir da Tabela 4.8.', 'Our illustration from Table 4.8.');
+    }
+    re.addEventListener('input', draw); rt.addEventListener('input', draw); draw();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
