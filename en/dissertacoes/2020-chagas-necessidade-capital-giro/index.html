@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What makes a company need more working capital? · PPGA Interactive</title>
+<meta name="description" content="The master's dissertation of Edílson Bezerra das Chagas (PPGA Mackenzie, 2020) on what drives the working capital requirement of 206 Brazilian companies listed on B3, from 2008 to 2018, explained in 11 interactive screens.">
+<link rel="alternate" hreflang="pt-BR" href="../../../dissertacoes/2020-chagas-necessidade-capital-giro/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><rect x=%227%22 y=%2210%22 width=%2214%22 height=%229%22 fill=%22white%22/><circle cx=%2210%22 cy=%2223%22 r=%223%22 fill=%22white%22/><circle cx=%2220%22 cy=%2223%22 r=%223%22 fill=%22white%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/motor.css">
+<link rel="stylesheet" href="../../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  :root{
+    --up:var(--red);       /* aumenta a necessidade */
+    --down:var(--navy);    /* diminui a necessidade */
+    --off:#cbd5e1;
+    --l1:#1f3b73; --l2:#3f5f99; --l3:#e80734; --l4:#7d8fb0; --l5:#334155;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .sq{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s; font:inherit; font-size:.84rem;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 20px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.05rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.9rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2); font-family:inherit;}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .segs{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:4px 0 12px;}
+  .segs small{font-size:.74rem; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.08em;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.4rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.76rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  .ctl{margin-top:12px;}
+  .ctl label{display:flex; justify-content:space-between; gap:10px; font-size:.86rem; font-weight:600; color:var(--ink);}
+  .ctl label span{font-variant-numeric:tabular-nums; color:var(--c, var(--red));}
+  .ctl small{font-size:.74rem; color:var(--muted);}
+  input[type=range]{width:100%; accent-color:var(--c, var(--red)); margin:6px 0 0;}
+  .svgbox{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .svgbox text{font-family:var(--sans);}
+  .out{font-family:var(--serif); font-size:1.12rem; color:var(--ink); margin-top:10px; min-height:2.6em;}
+  .out b{color:var(--red);}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4vw, 2.45rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:32em; margin-left:auto; margin-right:auto; min-height:2.6em;}
+  #hero-scene .slab{cursor:pointer;}
+  #hero-scene .top-label{font-size:15px; font-weight:700; color:#fff; letter-spacing:.02em;}
+  #hero-scene .slab.active{--oz:18px;}
+
+  /* ---------- 02 · Calendário ---------- */
+  .cal{display:grid; grid-template-columns:repeat(30, 1fr); gap:3px; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px;}
+  .cal i{aspect-ratio:1; border-radius:2px; background:#e8edf4; transition:background .35s;}
+  .cal i.on{background:var(--red);}
+  .cal i.neg{background:var(--navy);}
+  @media (max-width:600px){ .cal{grid-template-columns:repeat(20, 1fr); gap:2px; padding:10px;} }
+
+  /* ---------- 03 · Cinco réguas ---------- */
+  #bal-scene .slab{transition:transform .5s cubic-bezier(.2,.8,.2,1);}
+  #bal-scene .slab > i{transition:opacity .35s;}
+  #bal-scene .slab.dim > i{opacity:.18;}
+  #bal-scene .face-label{font-size:12px; color:#fff; font-weight:700; line-height:1.1; padding:0 4px; text-align:center;}
+  #bal-scene .floor-label{font-size:14px;}
+  #lens-panel{min-height:150px; margin-top:12px;}
+  .formula{font-family:var(--serif); font-size:.98rem; color:var(--ink); background:#f1f5f9; border-radius:8px; padding:8px 12px; margin:6px 0 8px;}
+  .formula .p{color:var(--red);} .formula .m{color:var(--navy);}
+
+  /* ---------- 04 · Amostra ---------- */
+  .waffle{display:grid; grid-template-columns:repeat(23, 1fr); gap:4px; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px;}
+  .waffle i{aspect-ratio:1; border-radius:3px; background:#e2e8f0; transition:background .3s, transform .3s;}
+  .waffle i.on{background:var(--red); transform:scale(1.08);}
+  .waffle i.big{background:#9aaac4;}
+  #sec-chips{gap:6px;} #sec-chips .chip{font-size:.72rem; padding:4px 10px;}
+  #sec-out{font-size:.9rem; color:var(--ink-2); margin-top:10px; min-height:2.6em;}
+  .funnel{display:flex; gap:6px; align-items:stretch; margin-top:12px; flex-wrap:wrap;}
+  .funnel div{flex:1 1 100px; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:8px 10px; font-size:.74rem; color:var(--muted);}
+  .funnel b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink);}
+
+  /* ---------- 05 · Suspeitos ---------- */
+  .sus{display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px;}
+  .su{display:grid; grid-template-columns:30px 1fr; gap:8px; align-items:center; text-align:left; border:1px solid var(--border); background:var(--card); border-radius:12px; padding:8px 10px; cursor:pointer; font:inherit; color:inherit; transition:all .2s;}
+  .su .ar{font-size:1.25rem; font-weight:900; text-align:center; font-family:var(--serif);}
+  .su .ar.u{color:var(--up);} .su .ar.d{color:var(--down);}
+  .su .t{display:block; font-weight:600; font-size:.84rem; color:var(--ink); line-height:1.2;}
+  .su .s{display:block; font-size:.7rem; color:var(--muted); line-height:1.25;}
+  .su[aria-pressed="true"]{border-color:var(--red); box-shadow:var(--shadow);}
+  #sus-panel{min-height:150px;}
+
+  /* ---------- 06 · Matriz ---------- */
+  .mx{display:grid; grid-template-columns:minmax(0, 1.5fr) repeat(5, minmax(0, 1fr)); gap:4px; font-size:.78rem;}
+  .mx .h{font-weight:700; color:var(--ink-2); text-align:center; font-size:.72rem; line-height:1.15; padding:4px 2px; align-self:end;}
+  .mx .rl{color:var(--ink); font-weight:600; display:flex; align-items:center; font-size:.78rem; line-height:1.15; overflow-wrap:anywhere; hyphens:auto;}
+  .mx button{border:1px solid var(--border); background:#f1f5f9; border-radius:8px; min-height:38px; cursor:pointer; font:inherit; font-weight:800; font-size:.92rem; color:var(--muted); transition:all .3s; padding:2px;}
+  .mx button.u{background:var(--up); color:#fff; border-color:var(--up);}
+  .mx button.d{background:var(--down); color:#fff; border-color:var(--down);}
+  .mx button.na{background:repeating-linear-gradient(45deg, #f8fafc 0 5px, #e2e8f0 5px 7px); color:var(--muted); font-weight:500; font-size:.68rem;}
+  .mx button.sel{outline:3px solid #f59e0b; outline-offset:1px;}
+  .mx button .st{display:block; font-size:.62rem; letter-spacing:.05em; font-weight:700; opacity:.9;}
+  #mx-panel{min-height:120px; margin-top:12px;}
+  @media (max-width:600px){ .mx{font-size:.7rem; gap:3px;} .mx .rl{font-size:.7rem;} .mx .h{font-size:.62rem;} .mx button{min-height:34px; font-size:.82rem;} }
+
+  /* ---------- 07 · Vendas e caixa ---------- */
+  .lenses5{display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:8px; margin-top:4px;}
+  .lz{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 6px 8px; text-align:center;}
+  .lz .nm{font-size:.72rem; font-weight:700; color:var(--ink-2); line-height:1.15; min-height:2.3em;}
+  .lz .big{font-family:var(--serif); font-size:2rem; font-weight:900; line-height:1.1; transition:color .3s, transform .4s;}
+  .lz .big.u{color:var(--up);} .lz .big.d{color:var(--down);} .lz .big.z{color:var(--off);}
+  .lz .cf{font-size:.68rem; color:var(--muted); font-variant-numeric:tabular-nums;}
+  @media (max-width:600px){ .lenses5{gap:4px;} .lz{padding:8px 2px;} .lz .big{font-size:1.5rem;} .lz .nm{font-size:.62rem;} }
+
+  /* ---------- 08 · Poder de mercado ---------- */
+  #pw-svg{margin-top:4px;}
+
+  /* ---------- 09 · Duas câmeras ---------- */
+  .duo{display:grid; gap:8px; margin-top:6px;}
+  .dr{display:grid; grid-template-columns:minmax(0, 1.2fr) minmax(0, 2fr); gap:10px; align-items:center; font-size:.82rem;}
+  .dr .nm{font-weight:600; color:var(--ink); line-height:1.2;}
+  .dr .nm small{display:block; font-weight:400; color:var(--muted); font-size:.7rem;}
+  .bar2{position:relative; height:30px; background:#f1f5f9; border-radius:6px;}
+  .bar2 .zero{position:absolute; left:50%; top:-3px; bottom:-3px; width:2px; background:var(--ink-2);}
+  .bar2 i{position:absolute; top:4px; bottom:4px; border-radius:4px; transition:all .6s cubic-bezier(.2,.8,.2,1);}
+  .bar2 span{position:absolute; top:50%; transform:translateY(-50%); font-size:.72rem; font-weight:700; white-space:nowrap; transition:all .6s;}
+  #duo-panel{margin-top:12px; min-height:90px;}
+
+  /* ---------- 10 · Quanto explicam ---------- */
+  .tanks{display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:10px; align-items:end;}
+  .tank{text-align:center;}
+  .tank .tb{position:relative; height:220px; border:2px solid var(--ink-2); border-radius:10px 10px 14px 14px; overflow:hidden; background:#fff;}
+  .tank .tb i{position:absolute; left:0; right:0; bottom:0; background:var(--red); transition:height .8s cubic-bezier(.2,.8,.2,1);}
+  .tank .tb b{position:absolute; left:0; right:0; top:8px; font-family:var(--serif); font-size:1.05rem; color:var(--ink);}
+  .tank .nm{font-size:.72rem; font-weight:700; color:var(--ink-2); margin-top:6px; line-height:1.15;}
+  @media (max-width:600px){ .tank .tb{height:160px;} .tank .tb b{font-size:.85rem;} .tanks{gap:5px;} .tank .nm{font-size:.62rem;} }
+
+  /* ---------- 11 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:4px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.9rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:6px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:8px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-meta="../../../dissertacoes/2020-chagas-necessidade-capital-giro/meta.json">
+
+<header class="topbar">
+  <a class="brand" href="../../../"><span class="sq">PPGA</span><span>PPGA<br>Interactive</span></a>
+  <div class="counter">
+    <a class="lang" href="../../../dissertacoes/2020-chagas-necessidade-capital-giro/" hreflang="pt-BR" lang="pt-BR" title="Ler em português"><img class="lang-flag" src="../../../assets/bandeira-br.svg" width="17" height="12" alt="">PT</a>
+    <span id="count">01 / 11</span>
+    <button class="nav-btn" id="prev" aria-label="Previous screen">↑</button>
+    <button class="nav-btn" id="next" aria-label="Next screen">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Screen navigation"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Start">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Master's dissertation · PPGA Mackenzie · 2020</div>
+      <h1 class="rv" style="--d:.1s">What makes a company need more money to keep running?</h1>
+      <p class="sub rv" style="--d:.2s">Before customers pay, a company has already paid its suppliers and filled its stockroom. That gap has to be financed: it is the <strong>working capital requirement</strong>. The dissertation measured this requirement in five ways for 206 companies listed on the Brazilian stock exchange (B3), from 2008 to 2018, and tested ten factors that might explain it. Explained in 11 screens.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Author:</b> Edílson Bezerra das Chagas</span>
+        <span><b>Advisor:</b> Prof. Dr. Wilson Toshiro Nakamura</span>
+        <span><b>Program:</b> Graduate Program in Business Administration (PPGA) · Mackenzie Presbyterian University</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#dias">Start →</a>
+        <a class="btn ghost" href="#matriz">Go straight to the finding</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="460x340" role="img" aria-label="Five stacked plates, one for each way of measuring the working capital requirement: firm, relative to the sector, in days, broad and with cash"></div></div>
+      <p class="cap-legend" id="hero-cap" aria-live="polite">Five yardsticks for the same need. Tap a plate to see its name.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">Closest UN Sustainable Development Goal</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://sdgs.un.org/goals/goal8" target="_blank" rel="noopener" title="SDG 8 · Decent Work and Economic Growth: Shows what goes along with the need to finance the day-to-day operations of Brazilian listed companies, such as sales, operating cash flow and weight in the sector."><b>8</b>Decent Work and Economic Growth</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">scroll<span></span></div>
+</section>
+
+<!-- 02 · 104 DIAS -->
+<section class="slide" id="dias" data-label="104 days to finance">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> The idea</div>
+      <h2 class="rv" style="--d:.1s">On average, a company finances 104 days of operations before it gets paid</h2>
+      <p class="lede rv" style="--d:.15s">Add the days goods sit in <strong>inventory</strong> and the days until the customer <strong>pays</strong>; subtract the days of credit the <strong>supplier</strong> gives. Across the 206 companies, from 2008 to 2018, the average result was <strong>104 days</strong>.</p>
+      <p class="rv" style="--d:.2s">During those days, the money comes from cash, from the owners or from loans. The average hides a lot of variation: values ranged from −951 to 971 days. When the number is negative, the supplier is financing the operation.</p>
+      <div class="chips rv" id="cal-chips" style="--d:.25s" role="group" aria-label="Examples">
+        <button class="chip" data-c="avg" aria-pressed="true">Company average: 104 days</button>
+        <button class="chip" data-c="neg" aria-pressed="false">Negative example (illustrative)</button>
+      </div>
+      <div class="ctl rv" style="--d:.3s"><label for="fat-r">Sales in the year (example) <span id="fat-v"></span></label><input type="range" id="fat-r" min="1" max="100" step="1" value="10" aria-describedby="cal-out"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="cal" id="cal" role="img" aria-label="A year in small squares, one per day; the days the company has to finance are red"></div>
+      <div class="out" id="cal-out" aria-live="polite"></div>
+      <p class="note">Mean, minimum and maximum from Table 4 (requirement in days = inventory days + collection days − payment days). <b>Our simplified calculation</b> for the amount: treats the days as days of sales (annual sales ÷ 365 × days). The negative example (30 + 20 − 80) is illustrative.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · CINCO RÉGUAS -->
+<section class="slide" id="reguas" data-label="Five yardsticks">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> How the study measured</div>
+      <h2 class="rv" style="--d:.1s">The same need, measured five ways</h2>
+      <p class="lede rv" style="--d:.15s">Companies differ: a manufacturer holds a lot of inventory, a retailer barely sells on credit. So the author did not stick to a single measure. Pick a yardstick and see which balance-sheet accounts go into it.</p>
+      <div class="chips rv" id="lens-chips" style="--d:.2s" role="group" aria-label="Pick the yardstick"></div>
+      <div class="panel rv" id="lens-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="bal-scene" data-fit="500x380" role="img" aria-label="Two stacks of blocks: what the company holds in the short term and what it owes in operations; the chosen yardstick lights up the blocks in the calculation"></div></div>
+      <p class="note">Formulas from section 3.4.1 (equations 1 to 8). Block heights are illustrative. Four yardsticks divide the result by the year's net revenue, to compare companies of different sizes; the days yardstick uses average periods.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · AMOSTRA -->
+<section class="slide" id="amostra" data-label="206 companies">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Who was studied</div>
+      <h2 class="rv" style="--d:.1s">206 companies from 22 sectors, followed for 11 years</h2>
+      <p class="lede rv" style="--d:.15s">Financial statements from the Economática database, from 2008 (the year of the global financial crisis) to 2018, excluding banks, insurers and companies without enough data.</p>
+      <div class="funnel rv" style="--d:.2s">
+        <div><b>538</b>B3 companies collected</div>
+        <div><b>206</b>non-financial companies in the final sample</div>
+        <div><b>2.266</b>firm-year observations</div>
+      </div>
+      <p class="rv" style="--d:.25s; margin-top:14px">Sectors follow the B3 classification. Tap a sector:</p>
+      <div class="chips rv" id="sec-chips" style="--d:.3s" role="group" aria-label="Pick the sector"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="waffle" id="waffle" role="img" aria-label="206 small squares, one per company, grouped by sector"></div>
+      <div id="sec-out" aria-live="polite"></div>
+      <p class="note">Table 3. One square = one company. The sector split fed two measures: the yardstick relative to the sector and the company's share of sector sales (market power).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · DEZ SUSPEITOS -->
+<section class="slide" id="suspeitos" data-label="Ten suspects">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> What was tested</div>
+      <h2 class="rv" style="--d:.1s">Ten factors, each with a guess before the test</h2>
+      <p class="lede rv" style="--d:.15s">Inspired by a study of US companies (Hill, Kelly and Highfield, 2010), the author chose ten factors and wrote down, before running the numbers, whether each should <strong style="color:var(--up)">increase ▲</strong> or <strong style="color:var(--down)">decrease ▼</strong> the working capital requirement.</p>
+      <div class="panel rv" id="sus-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="sus" id="sus" role="group" aria-label="Pick the factor"></div>
+      <p class="note">Table 2 and section 3.4.2. Factors use the previous year's data (except sales growth), to see the effect of a decision on the following year.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · MATRIZ -->
+<section class="slide" id="matriz" data-label="The finding">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> The finding</div>
+      <h2 class="rv" style="--d:.1s">The answer depends on which yardstick you use</h2>
+      <p class="lede rv" style="--d:.15s">No factor moved all five yardsticks. Rising sales and operating cash flow pushed some up and another down. Five of the nine factors measured in the main model left no trace.</p>
+      <div class="segs rv" style="--d:.2s"><small>Model</small><div class="seg" id="mx-seg" role="group" aria-label="Model"><button data-m="fe" aria-pressed="true">Each company against itself</button><button data-m="po" aria-pressed="false">All pooled</button></div></div>
+      <p class="rv" style="--d:.25s; font-size:.8rem"><b>Each company against itself</b> (fixed effects): compares a company's own years and removes what is fixed about it, such as its line of business. The statistical tests chose this model. <b>All pooled</b>: compares all companies and years at once.</p>
+      <div class="panel" id="mx-panel" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="mx" id="mx" role="group" aria-label="Table of factors by yardstick; tap a cell"></div>
+      <div class="legend"><span><i class="sq" style="background:var(--up)"></i>▲ increases the requirement</span><span><i class="sq" style="background:var(--down)"></i>▼ decreases</span><span><i class="sq" style="background:#f1f5f9; border:1px solid var(--border)"></i>no statistical effect</span><span>* 10% · ** 5% · *** 1%</span></div>
+      <p class="note" id="mx-note"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · VENDAS E CAIXA -->
+<section class="slide" id="opostos" data-label="Up and down">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> The unexpected</div>
+      <h2 class="rv" style="--d:.1s">Selling more lengthens the cycle and shrinks the broad yardstick</h2>
+      <p class="lede rv" style="--d:.15s">In the main model, sales growth came with more days to finance and a requirement above the sector's, but with the broad yardstick (all current items) <strong>lower</strong>. With operating cash flow, the yardstick that includes cash fell.</p>
+      <div class="segs rv" style="--d:.2s"><small>Factor</small><div class="seg" id="op-seg" role="group" aria-label="Factor"><button data-f="CRES" aria-pressed="true">Sales growing</button><button data-f="FCO" aria-pressed="false">Operating cash flow</button></div></div>
+      <div class="ctl rv" style="--d:.25s"><label for="op-r"><span id="op-l" style="color:var(--ink)"></span><span id="op-v"></span></label><input type="range" id="op-r" min="0" max="100" step="5" value="30" aria-describedby="op-out"><small id="op-s"></small></div>
+      <div class="out rv" id="op-out" style="--d:.3s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="lenses5" id="op-l5" role="img" aria-label="Direction of the chosen factor's effect on each of the five yardsticks"></div>
+      <div class="panel" id="op-panel" style="margin-top:12px" aria-live="polite"></div>
+      <p class="note" id="op-note"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · PODER DE MERCADO -->
+<section class="slide" id="poder" data-label="Weight in the sector">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Market power and size</div>
+      <h2 class="rv" style="--d:.1s">Companies with a bigger slice of sector sales have fewer days to finance</h2>
+      <p class="lede rv" style="--d:.15s">Market power is the company's share of its sector's sales. Bigger players negotiate better terms with customers and suppliers, the author notes. On the days yardstick, the relationship was negative, as he expected.</p>
+      <div class="ctl rv" style="--d:.2s; --c:var(--navy)"><label for="pw-r">Additional share of sector sales <span id="pw-v"></span></label><input type="range" id="pw-r" min="0" max="50" step="5" value="10" aria-describedby="pw-out"></div>
+      <div class="out rv" id="pw-out" style="--d:.25s" aria-live="polite"></div>
+      <p class="rv" style="--d:.3s; font-size:.88rem; margin-top:12px"><strong>Size</strong> (market value) showed up on one yardstick only, the broad one, and upwards: larger companies keep more current assets relative to sales, in both models.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="pw-svg" class="svgbox" viewBox="0 0 560 250" role="img" aria-label="Days to finance starting from the 104-day average, with and without the extra sector share, in both models"></svg>
+      <p class="note"><b>Our calculation.</b> Starts from the 104-day average (Table 4) and applies the market-power coefficient on the days yardstick: −164.73 days per 100% share in the main model (only at 10%, Table 9) and −119.40 with all pooled (at 1%, Table 8). Average share: 11%. Shows association, not causation.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · DUAS CÂMERAS -->
+<section class="slide" id="cameras" data-label="Governance and debt">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> All pooled × each against itself</div>
+      <h2 class="rv" style="--d:.1s">High governance came with 96 more days, but only with all companies pooled</h2>
+      <p class="lede rv" style="--d:.15s">The guess was that good governance would lower the requirement. With all companies pooled, those in the Novo Mercado and Level 2 segments had, on the contrary, about <strong>96 more days</strong> to finance. In the each-company-against-itself model this factor cannot be measured, because it barely changes from year to year.</p>
+      <p class="rv" style="--d:.2s">Three other factors only show up with all companies pooled. Compare the two models on the days yardstick:</p>
+      <div class="segs rv" style="--d:.25s"><div class="seg" id="duo-seg" role="group" aria-label="Model"><button data-m="po" aria-pressed="true">All pooled</button><button data-m="fe" aria-pressed="false">Each company against itself</button></div></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="duo" id="duo"></div>
+      <div class="panel" id="duo-panel" aria-live="polite"></div>
+      <p class="note">Tables 8 and 9, days yardstick. Bars on the same scale; grey = no statistical effect. Governance is a 0/1 variable (high = Novo Mercado and Level 2) and drops out of the fixed-effects model. Long-term debt is the long-term share of loans; volatility is how much sales swung over the previous five years.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · QUANTO EXPLICAM -->
+<section class="slide" id="explicam" data-label="How much they explain">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> The size of the answer</div>
+      <h2 class="rv" style="--d:.1s">The ten factors explain at most a quarter of the story</h2>
+      <p class="lede rv" style="--d:.15s">R² shows how much of the variation in each yardstick the factors can explain. It ranged from <strong>4% to 26%</strong>, in line with similar studies cited by the author. The rest depends on other things.</p>
+      <p class="rv" style="--d:.2s">The simplest yardstick, the firm one, responded the least: in the main model, the set of factors had no statistical effect on it.</p>
+      <div class="segs rv" style="--d:.25s"><div class="seg" id="r2-seg" role="group" aria-label="Model"><button data-m="fe" aria-pressed="true">Each company against itself</button><button data-m="po" aria-pressed="false">All pooled</button></div></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="tanks" id="tanks" role="img" aria-label="Five tanks, one per yardstick, filled up to the share explained by the factors"></div>
+      <p class="note">Overall R² from Table 9 and R² from Table 8. Joint F test (Prob &gt; F) in the main model: 0.1518 on the firm yardstick (no effect); 0.0000 to 0.0289 on the others.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="In practice and credits">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> In practice, limits and credits</div>
+    <h2 class="rv" style="--d:.1s">Purchasing, production, sales and finance jointly decide working capital</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Finance managers</h3><p>Look at the requirement through more than one yardstick: what improves the cycle can worsen current-asset slack. The author argues for broad decisions that weigh the consequences.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Sales targets</h3><p>Growing sales came with more days to finance. For the author, aggressive targets call for thinking at the same time about the mix of cash and credit sales and the cost of financing those days.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:#7d8fb0"><h3>Smaller players in a sector</h3><p>Companies with a smaller share of sector sales had more days to finance (a weak signal in the main model). Our reading: negotiating terms with suppliers matters more for them.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:var(--ink-2)"><h3>Researchers</h3><p>The debt measures the author built and B3 governance remain leads: they appear only with all companies pooled and call for further testing.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>What this research does not say</h3>
+        <ul class="limits">
+          <li><b>Only Brazilian listed companies.</b> Private companies, other countries and quarterly data may show something else. <em>· according to the author</em></li>
+          <li><b>Association, not causation.</b> The models show what moves together, and explain at most a quarter of the variation. <em>· our note</em></li>
+          <li><b>Weak signals and model-dependent results.</b> Market power is only significant at 10% in the main model; governance and long-term debt appear only when all are pooled. <em>· our note</em></li>
+          <li><b>Averages pulled by extremes.</b> Days to finance range from −951 to 971; the 104-day mean does not describe a typical company. <em>· our note</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Credits</h3>
+        <div class="cite">
+          <b>How to cite</b><br>
+          CHAGAS, Edílson Bezerra das. <em>Determinantes das necessidades de capital de giro nas empresas brasileiras.</em> Master's dissertation (Business Administration) — Universidade Presbiteriana Mackenzie, São Paulo, 2020. Advisor: Prof. Dr. Wilson Toshiro Nakamura.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Research funded by a CAPES scholarship (CAPES is Brazil's federal agency for graduate education). Data from Economática. This version simplifies the work for a general audience; the formulas and full tables are in the original text.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Read the full dissertation (in Portuguese)</a>
+          <a class="btn ghost" href="#capa">↑ Back to start</a>
+          <a class="btn ghost" href="../../../">More research</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent, text){
+    var e = document.createElementNS(SVGNS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (text !== undefined) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function th(n){ return n.toLocaleString(EN ? 'en-US' : 'pt-BR'); }
+  function sgn(n, d){ return (n > 0 ? '+' : n < 0 ? '−' : '') + fmt(Math.abs(n), d); }
+  function pressSet(group, attr, val){ each(group.children, function(b){ b.setAttribute('aria-pressed', String(b.dataset[attr] === val)); }); }
+  var STARS = ['', '*', '**', '***'];
+
+  /* ================= DADOS DA TESE ================= */
+  // Cinco réguas (seção 3.4.1, nota 17). in = blocos do balanço que entram na conta
+  var LENSES = [
+    {k:'AB', n:L('Da empresa', 'Firm'), s:L('absoluta', 'absolute'), c:'var(--l1)', in:['rec', 'est', 'for'],
+     f:L('(<span class="p">a receber</span> + <span class="p">estoques</span> − <span class="m">fornecedores</span>) ÷ receita', '(<span class="p">receivables</span> + <span class="p">inventory</span> − <span class="m">payables</span>) ÷ revenue'),
+     d:L('A conta básica: o dinheiro preso em vendas a receber e estoques, descontado o que os fornecedores financiam, como fração das vendas do ano.', 'The basic calculation: money tied up in receivables and inventory, minus what suppliers finance, as a share of the year\'s sales.')},
+    {k:'REL', n:L('Comparada ao setor', 'Relative to sector'), s:L('relativa', 'relative'), c:'var(--l2)', in:['rec', 'est', 'for'],
+     f:L('régua da empresa ÷ régua do setor', 'firm yardstick ÷ sector yardstick'),
+     d:L('A mesma conta da empresa, dividida pela do seu setor (a soma das empresas do setor). Mostra se ela precisa de mais ou de menos que os vizinhos.', 'The same firm calculation, divided by its sector\'s (the sum of the sector\'s companies). Shows whether it needs more or less than its neighbours.')},
+    {k:'DIAS', n:L('Em dias', 'In days'), s:L('ciclo financeiro', 'cash cycle'), c:'var(--l3)', in:['rec', 'est', 'for'],
+     f:L('dias de <span class="p">estoque</span> + dias para <span class="p">receber</span> − dias para <span class="m">pagar</span>', '<span class="p">inventory</span> days + days to <span class="p">collect</span> − days to <span class="m">pay</span>'),
+     d:L('Conta em dias, não em dinheiro: por quanto tempo a empresa precisa bancar a operação entre pagar o fornecedor e receber do cliente. Média: 104 dias.', 'Counted in days, not money: how long the company must finance operations between paying the supplier and collecting from the customer. Average: 104 days.')},
+    {k:'AMPL', n:L('Ampliada', 'Broad'), s:L('todo o circulante', 'all current items'), c:'var(--l4)', in:['cx', 'rec', 'est', 'out', 'for', 'sal'],
+     f:L('(<span class="p">ativo circulante</span> − <span class="m">passivo circulante da operação</span>) ÷ receita', '(<span class="p">current assets</span> − <span class="m">operating current liabilities</span>) ÷ revenue'),
+     d:L('Entra todo o ativo de curto prazo, inclusive o caixa, e saem as dívidas de curto prazo da operação (fornecedores, salários, impostos), sem os empréstimos bancários.', 'All short-term assets go in, including cash, minus the operating short-term liabilities (suppliers, wages, taxes), excluding bank loans.')},
+    {k:'DISP', n:L('Com o caixa', 'With cash'), s:L('disponibilidades', 'cash and equivalents'), c:'var(--l5)', in:['cx', 'rec', 'est', 'for'],
+     f:L('(<span class="p">caixa e aplicações</span> + <span class="p">a receber</span> + <span class="p">estoques</span> − <span class="m">fornecedores</span>) ÷ receita', '(<span class="p">cash and short-term investments</span> + <span class="p">receivables</span> + <span class="p">inventory</span> − <span class="m">payables</span>) ÷ revenue'),
+     d:L('A régua da empresa somada ao dinheiro em caixa e às aplicações de curto prazo.', 'The firm yardstick plus cash on hand and short-term investments.')}
+  ];
+  // Tabela 3: setores e número de empresas (somam 206)
+  var SECTORS = [
+    [L('Energia elétrica', 'Electric power'), 33], [L('Construção civil', 'Building construction'), 19], [L('Tecidos, vestuário e calçados', 'Textiles, apparel and footwear'), 17],
+    [L('Comércio de bens industriais e cíclicos', 'Industrial and cyclical goods trade'), 12], [L('Transporte', 'Transportation'), 12], [L('Consumo cíclico', 'Cyclical consumer'), 11],
+    [L('Alimentos processados', 'Processed foods'), 10], [L('Máquinas e equipamentos', 'Machinery and equipment'), 10], [L('Siderurgia e metalurgia', 'Steel and metals'), 9],
+    [L('Material de transporte', 'Transport equipment'), 8], [L('Construção e engenharia', 'Construction and engineering'), 7], [L('Madeira e papel', 'Wood and paper'), 7],
+    [L('Petróleo, gás e biocombustíveis', 'Oil, gas and biofuels'), 7], [L('Químicos', 'Chemicals'), 7], [L('Água, saneamento e gás', 'Water, sanitation and gas'), 6],
+    [L('Agropecuária', 'Agriculture'), 5], [L('Comércio e distribuição', 'Retail and distribution'), 5], [L('Saúde', 'Healthcare'), 5],
+    [L('TI e comunicações', 'IT and communications'), 5], [L('Materiais básicos', 'Basic materials'), 4], [L('Serviços diversos (bens industriais)', 'Miscellaneous services (industrial goods)'), 4],
+    [L('Bebidas, uso pessoal e limpeza', 'Beverages, personal care and cleaning'), 3]
+  ];
+  // Tabela 2: fatores, sinal esperado (+1 aumenta, −1 diminui) e como foram medidos
+  var VARS = [
+    {k:'CRES', n:L('Crescimento das vendas', 'Sales growth'), e:1, m:L('quanto as vendas cresceram sobre o ano anterior', 'how much sales grew over the previous year'), w:L('Vender mais costuma exigir mais estoque e mais vendas a prazo.', 'Selling more usually requires more inventory and more credit sales.')},
+    {k:'VOL', n:L('Oscilação das vendas', 'Sales volatility'), e:1, m:L('desvio-padrão das vendas dos cinco anos anteriores, sobre o ativo sem o caixa', 'standard deviation of sales over the previous five years, over assets net of cash'), w:L('Vendas instáveis pedem mais folga para atravessar os meses fracos.', 'Unstable sales call for more slack to get through weak months.')},
+    {k:'MARG', n:L('Margem de contribuição', 'Contribution margin'), e:-1, m:L('(receita − custos) ÷ receita', '(revenue − costs) ÷ revenue'), w:L('Margem maior gera lucro, uma fonte barata para bancar o dia a dia.', 'A higher margin generates profit, a cheap source for financing day-to-day operations.')},
+    {k:'FCO', n:L('Caixa da operação', 'Operating cash flow'), e:1, m:L('fluxo de caixa operacional ÷ receita', 'operating cash flow ÷ revenue'), w:L('Quem gera caixa tem como investir mais em estoque e em vendas a prazo.', 'Companies that generate cash can afford to invest more in inventory and credit sales.')},
+    {k:'MKB', n:L('Valor de mercado sobre o contábil', 'Market-to-book'), e:-1, m:L('valor das ações ÷ patrimônio líquido', 'market value of shares ÷ book equity'), w:L('Empresas valorizadas teriam projetos melhores para usar o dinheiro.', 'Highly valued companies would have better projects in which to use the money.')},
+    {k:'TAM', n:L('Tamanho', 'Size'), e:1, m:L('logaritmo do valor de mercado', 'logarithm of market value'), w:L('Empresas grandes têm mais acesso a crédito e ao mercado de capitais.', 'Large companies have more access to credit and capital markets.')},
+    {k:'POD', n:L('Poder de mercado', 'Market power'), e:-1, m:L('vendas da empresa ÷ vendas do setor', 'company sales ÷ sector sales'), w:L('Quem domina o setor impõe prazos a clientes e fornecedores.', 'Sector leaders impose terms on customers and suppliers.')},
+    {k:'MAT', n:L('Dívida de longo prazo', 'Long-term debt'), e:-1, m:L('empréstimos de longo prazo ÷ empréstimos totais', 'long-term loans ÷ total loans'), w:L('Medida criada pelo autor: dívidas longas deixariam menos pressão sobre o giro.', 'A measure the author built: long-term debt would put less pressure on working capital.')},
+    {k:'DIV', n:L('Endividamento total', 'Total debt'), e:-1, m:L('empréstimos ÷ (empréstimos + patrimônio líquido)', 'loans ÷ (loans + equity)'), w:L('Também criada pelo autor: compara o dinheiro de terceiros com o dos sócios.', 'Also built by the author: compares borrowed money with the owners\' money.')},
+    {k:'GOV', n:L('Governança da B3', 'B3 governance'), e:-1, m:L('1 para Novo Mercado e Nível 2; 0 para os demais', '1 for Novo Mercado and Level 2; 0 for the others'), w:L('Mais controle e transparência ajudariam a gerir melhor o giro.', 'More oversight and transparency would help manage working capital better.')}
+  ];
+  // Tabelas 9 (efeitos fixos) e 8 (pooled): [coeficiente, estrelas] por régua AB, REL, DIAS, AMPL, DISP; null = fora do modelo
+  var FE = {
+    CRES:[[0.06, 0], [0.42, 3], [2.64, 3], [-0.03, 2], [-0.04, 0]],
+    VOL:[[-2.81, 0], [-9.74, 0], [-41.02, 0], [-1.27, 0], [-3.47, 0]],
+    MARG:[[5.89, 0], [4.21, 0], [16.46, 0], [0.63, 0], [6.94, 0]],
+    FCO:[[-0.38, 0], [1.92, 2], [17.22, 2], [0.47, 3], [-0.76, 3]],   // DIAS: p 0,010 sem estrela na tabela → 5%
+    MKB:[[-0.01, 0], [-0.02, 0], [-0.15, 0], [-0.01, 0], [-0.02, 0]],
+    TAM:[[0.61, 0], [2.99, 0], [25.45, 0], [1.22, 3], [1.10, 0]],
+    POD:[[-4.37, 0], [-10.01, 0], [-164.73, 1], [0.68, 0], [-5.46, 1]],
+    MAT:[[0.12, 0], [-0.74, 0], [-27.96, 0], [-0.99, 0], [0.15, 0]],
+    DIV:[[0.01, 0], [-0.09, 0], [0.47, 0], [-0.02, 0], [0.01, 0]],
+    GOV:null
+  };
+  var PO = {
+    CRES:[[-0.04, 0], [0.18, 0], [0.14, 0], [0.02, 0], [-0.02, 0]],
+    VOL:[[-1.32, 0], [-4.19, 0], [-75.05, 2], [-0.75, 0], [-1.74, 0]],
+    MARG:[[5.05, 1], [9.31, 3], [-0.47, 0], [0.73, 0], [5.69, 2]],
+    FCO:[[0.01, 0], [2.33, 3], [27.72, 3], [0.61, 3], [-0.40, 0]],
+    MKB:[[-0.01, 0], [-0.01, 0], [-1.08, 2], [-0.01, 0], [-0.01, 0]],
+    TAM:[[-0.07, 0], [0.32, 0], [-3.75, 0], [0.78, 3], [0.08, 0]],
+    POD:[[0.26, 0], [0.75, 0], [-119.40, 3], [-1.40, 3], [-0.23, 0]],
+    MAT:[[-0.71, 0], [-2.54, 0], [-135.28, 3], [-1.47, 3], [-0.81, 0]],
+    DIV:[[-0.02, 0], [-0.18, 0], [0.92, 0], [-0.01, 0], [-0.01, 0]],
+    GOV:[[-0.02, 0], [-1.24, 0], [95.92, 3], [0.33, 2], [0.14, 0]]
+  };
+  var R2 = {fe:[0.0669, 0.1376, 0.0421, 0.2059, 0.0934], po:[0.0941, 0.1876, 0.1017, 0.2599, 0.1108]};
+  var NCGD = 104;   // Tabela 4: média da NCG em dias
+  var SIGTXT = [L('sem efeito estatístico', 'no statistical effect'), L('sinal fraco (10%)', 'weak signal (10%)'), L('significativo a 5%', 'significant at 5%'), L('significativo a 1%', 'significant at 1%')];
+  var MODEL = {fe:L('cada empresa com ela mesma', 'each company against itself'), po:L('todas misturadas', 'all pooled')};
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 300, 200, {ay:'62%', rx:'60deg', floor:false});
+    var slabs = [];
+    LENSES.forEach(function(l, i){
+      var b = box({w:250, d:150, h:12, x:25, y:25, z:i * 46, c:l.c, top:l.n});
+      st.appendChild(b); slabs.push(b);
+      b.addEventListener('click', function(){
+        if (M.wasDrag(sc)) return;
+        slabs.forEach(function(s, j){ s.classList.toggle('active', j === i); });
+        $('hero-cap').innerHTML = '<b>' + l.n + '</b> (' + l.s + '): ' + l.d;
+      });
+    });
+    rotatable(sc, st, -24, 14);
+  })();
+
+  /* ================= 02 · 104 DIAS ================= */
+  (function(){
+    var cal = $('cal'), cells = [];
+    for (var i = 0; i < 365; i++){ var c = document.createElement('i'); cal.appendChild(c); cells.push(c); }
+    var mode = 'avg';
+    function draw(){
+      var days = mode === 'avg' ? NCGD : -30, fat = +$('fat-r').value;
+      $('fat-v').textContent = 'R$ ' + fat + L(' milhões', ' million');
+      cells.forEach(function(c, i){ c.className = (mode === 'avg' && i < days) ? 'on' : (mode === 'neg' && i < 30) ? 'neg' : ''; });
+      var val = fat * Math.abs(days) / 365;
+      if (mode === 'avg') $('cal-out').innerHTML = L('<b>104 dias</b> do ano a bancar. Com vendas de R$ ' + fat + ' milhões por ano, são cerca de <b>R$ ' + fmt(val, 1) + ' milhões</b> presos no giro.', '<b>104 days</b> of the year to finance. With sales of R$ ' + fat + ' million a year, that is about <b>R$ ' + fmt(val, 1) + ' million</b> tied up.');
+      else $('cal-out').innerHTML = L('30 dias de estoque + 20 para receber − 80 para pagar = <b style="color:var(--navy)">−30 dias</b>. O fornecedor financia a empresa: cerca de R$ ' + fmt(val, 1) + ' milhões que ela usa antes de pagar.', '30 days of inventory + 20 to collect − 80 to pay = <b style="color:var(--navy)">−30 days</b>. The supplier finances the company: about R$ ' + fmt(val, 1) + ' million it uses before paying.');
+    }
+    each($('cal-chips').children, function(b){ b.addEventListener('click', function(){ mode = b.dataset.c; pressSet($('cal-chips'), 'c', mode); draw(); }); });
+    $('fat-r').addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 03 · CINCO RÉGUAS ================= */
+  (function(){
+    var sc = $('bal-scene'), st = makeStage(sc, 420, 260, {ay:'64%', rx:'58deg'});
+    // pilha da esquerda: o que a empresa tem (ativo circulante); da direita: o que deve na operação
+    var LEFT = [['cx', L('Caixa e aplicações', 'Cash and investments'), 34, '#5b7bb5'], ['rec', L('Contas a receber', 'Receivables'), 46, 'var(--red)'], ['est', L('Estoques', 'Inventory'), 46, '#c2334f'], ['out', L('Outros do circulante', 'Other current assets'), 26, '#94a3b8']];
+    var RIGHT = [['for', L('Fornecedores', 'Suppliers'), 52, 'var(--navy)'], ['sal', L('Salários, impostos e outras', 'Wages, taxes and other'), 34, '#475569']];
+    var blocks = {};
+    function stack(list, x){
+      var z = 0;
+      list.forEach(function(b){ var s = box({w:150, d:110, h:b[2], x:x, y:70, z:z, c:b[3], label:b[1]}); st.appendChild(s); blocks[b[0]] = s; z += b[2] + 3; });
+    }
+    stack(LEFT, 30); stack(RIGHT, 240);
+    flatLabel(st, L('O que tem (+)', 'What it holds (+)'), 20, 190, 170);
+    flatLabel(st, L('O que deve na operação (−)', 'What it owes in operations (−)'), 220, 190, 190);
+    rotatable(sc, st, -18, 10);
+    var chips = $('lens-chips');
+    chips.innerHTML = LENSES.map(function(l, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="' + (i === 0) + '">' + l.n + '</button>'; }).join('');
+    function show(i){
+      var l = LENSES[i];
+      for (var k in blocks) blocks[k].classList.toggle('dim', l.in.indexOf(k) < 0);
+      $('lens-panel').innerHTML = '<div class="tag">' + L('Régua ', 'Yardstick ') + (i + 1) + L(' de 5 · ', ' of 5 · ') + l.s + '</div><h3>' + l.n + '</h3><div class="formula">' + l.f + '</div><p>' + l.d + '</p>';
+      pressSet(chips, 'i', String(i));
+    }
+    each(chips.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(0);
+  })();
+
+  /* ================= 04 · AMOSTRA ================= */
+  (function(){
+    var w = $('waffle'), cells = [], idx = [];
+    SECTORS.forEach(function(s, si){ for (var j = 0; j < s[1]; j++){ var c = document.createElement('i'); w.appendChild(c); cells.push(c); idx.push(si); } });
+    var chips = $('sec-chips');
+    chips.innerHTML = SECTORS.map(function(s, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="' + (i === 0) + '">' + s[0] + '</button>'; }).join('');
+    function show(i){
+      cells.forEach(function(c, j){ c.className = idx[j] === i ? 'on' : ''; });
+      var s = SECTORS[i], pct = s[1] / 206 * 100;
+      $('sec-out').innerHTML = '<b>' + s[0] + '</b>: ' + s[1] + L(' empresas, ', ' companies, ') + fmt(pct, 2) + L('% da amostra.', '% of the sample.') + (i === 0 ? L(' É o maior setor.', ' It is the largest sector.') : '');
+      pressSet(chips, 'i', String(i));
+    }
+    each(chips.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(0);
+  })();
+
+  /* ================= 05 · DEZ SUSPEITOS ================= */
+  (function(){
+    var g = $('sus');
+    g.innerHTML = VARS.map(function(v, i){
+      return '<button class="su" data-i="' + i + '" aria-pressed="' + (i === 0) + '"><span class="ar ' + (v.e > 0 ? 'u' : 'd') + '">' + (v.e > 0 ? '▲' : '▼') + '</span><span><span class="t">' + v.n + '</span><span class="s">' + L('palpite: ', 'guess: ') + (v.e > 0 ? L('aumenta', 'increases') : L('diminui', 'decreases')) + '</span></span></button>';
+    }).join('');
+    function show(i){
+      var v = VARS[i];
+      $('sus-panel').innerHTML = '<div class="tag">' + L('Fator ', 'Factor ') + (i + 1) + L(' de 10', ' of 10') + '</div><h3>' + v.n + '</h3><p><b>' + L('Como foi medido: ', 'How it was measured: ') + '</b>' + v.m + '.</p><p><b>' + L('Palpite: ', 'Guess: ') + '</b><span style="color:' + (v.e > 0 ? 'var(--up)' : 'var(--down)') + '; font-weight:700">' + (v.e > 0 ? L('▲ aumenta a necessidade', '▲ increases the requirement') : L('▼ diminui a necessidade', '▼ decreases the requirement')) + '</span>. ' + v.w + '</p>';
+      pressSet(g, 'i', String(i));
+    }
+    each(g.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(0);
+  })();
+
+  /* ================= 06 · MATRIZ ================= */
+  (function(){
+    var g = $('mx'), model = 'fe', sel = null;
+    function cellTxt(c){ return c[1] ? (c[0] > 0 ? '▲' : '▼') + '<span class="st">' + STARS[c[1]] + '</span>' : '·'; }
+    function build(){
+      var D = model === 'fe' ? FE : PO, h = '<div></div>';
+      LENSES.forEach(function(l){ h += '<div class="h">' + l.n + '</div>'; });
+      VARS.forEach(function(v){
+        h += '<div class="rl">' + v.n + '</div>';
+        LENSES.forEach(function(l, j){
+          var c = D[v.k];
+          if (!c){ h += '<button class="na" data-v="' + v.k + '" data-j="' + j + '" aria-label="' + v.n + ', ' + l.n + ': ' + L('fora do modelo', 'not in the model') + '">' + L('fora', 'n/a') + '</button>'; return; }
+          var x = c[j], cls = x[1] ? (x[0] > 0 ? 'u' : 'd') : '';
+          h += '<button class="' + cls + '" data-v="' + v.k + '" data-j="' + j + '" aria-label="' + v.n + ', ' + l.n + ': ' + SIGTXT[x[1]] + '">' + cellTxt(x) + '</button>';
+        });
+      });
+      g.innerHTML = h;
+      each(g.querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ show(b.dataset.v, +b.dataset.j); }); });
+      var n = 0, tot = 0;
+      for (var k in D){ if (!D[k]) continue; D[k].forEach(function(x){ tot++; if (x[1]) n++; }); }
+      $('mx-note').innerHTML = L('Tabela ' + (model === 'fe' ? '9' : '8') + '. <b>Contagem nossa:</b> ' + n + ' de ' + tot + ' combinações com efeito estatístico neste modelo.', 'Table ' + (model === 'fe' ? '9' : '8') + '. <b>Our count:</b> ' + n + ' of ' + tot + ' combinations with a statistical effect in this model.') + (model === 'fe' ? L(' Caixa da operação × régua em dias: a tabela traz p 0,010 sem estrela; marcamos como 5%.', ' Operating cash flow × days yardstick: the table shows p 0.010 without a star; we mark it as 5%.') : '');
+      if (sel) show(sel[0], sel[1]); else show('CRES', 2);
+    }
+    function show(vk, j){
+      sel = [vk, j];
+      each(g.querySelectorAll('button'), function(b){ b.classList.toggle('sel', b.dataset.v === vk && +b.dataset.j === j); });
+      var v = VARS.filter(function(x){ return x.k === vk; })[0], l = LENSES[j], D = model === 'fe' ? FE : PO, c = D[vk];
+      var p = '<div class="tag">' + MODEL[model] + ' · ' + l.n + '</div><h3>' + v.n + '</h3>';
+      if (!c) p += '<p>' + L('A governança é uma variável 0 ou 1 que quase não muda de um ano para o outro na mesma empresa; por isso sai do modelo de efeitos fixos. Veja o modelo com todas misturadas.', 'Governance is a 0 or 1 variable that barely changes from year to year within a company, so it drops out of the fixed-effects model. See the pooled model.') + '</p>';
+      else {
+        var x = c[j], unit = l.k === 'DIAS' ? L(' dias', ' days') : '';
+        if (!x[1]) p += '<p>' + L('Sem efeito estatístico nesta régua (coeficiente ', 'No statistical effect on this yardstick (coefficient ') + sgn(x[0], 2) + unit + ').</p>';
+        else p += '<p><b style="color:' + (x[0] > 0 ? 'var(--up)' : 'var(--down)') + '">' + (x[0] > 0 ? L('▲ Aumenta', '▲ Increases') : L('▼ Diminui', '▼ Decreases')) + '</b> ' + L('a necessidade nesta régua', 'the requirement on this yardstick') + ' (' + L('coeficiente ', 'coefficient ') + sgn(x[0], 2) + unit + ', ' + SIGTXT[x[1]] + '). ' + L('Palpite do autor: ', 'Author\'s guess: ') + (v.e > 0 ? '▲' : '▼') + (Math.sign(x[0]) === v.e ? L(', confirmado.', ', confirmed.') : L(', o contrário.', ', the opposite.')) + '</p>';
+      }
+      $('mx-panel').innerHTML = p;
+    }
+    each($('mx-seg').children, function(b){ b.addEventListener('click', function(){ model = b.dataset.m; pressSet($('mx-seg'), 'm', model); build(); }); });
+    build();
+  })();
+
+  /* ================= 07 · VENDAS E CAIXA ================= */
+  (function(){
+    var f = 'CRES';
+    var CFG = {
+      CRES:{l:L('Vendas crescendo', 'Sales growing'), max:100, def:30, u:'%', s:L('crescimento médio das vendas na amostra: 28% ao ano', 'average sales growth in the sample: 28% a year'),
+        p:L('Na régua em dias e na comparada ao setor, vender mais veio com <b>mais</b> necessidade, como o autor esperava. Na ampliada, veio com <b>menos</b> (leitura nossa: essa régua é dividida pelas vendas, que crescem mais rápido que o circulante). Leitura do autor: quando a liquidez da operação cai, a necessidade de giro aumenta.', 'On the days and sector yardsticks, selling more came with a <b>higher</b> requirement, as the author expected. On the broad one, it came with a <b>lower</b> one (our reading: this yardstick is divided by sales, which grow faster than current items). The author\'s reading: when operating liquidity drops, the need for working capital rises.'),
+        n:L('Tabela 9 (efeitos fixos): +2,64 dias por 100% de crescimento (***), +0,42 na régua do setor (***) e −0,03 na ampliada (**). Com todas misturadas, o crescimento não teve efeito em nenhuma régua (Tabela 8). <b>Conta nossa</b> para os dias.', 'Table 9 (fixed effects): +2.64 days per 100% growth (***), +0.42 on the sector yardstick (***) and −0.03 on the broad one (**). With all pooled, growth had no effect on any yardstick (Table 8). <b>Our calculation</b> for the days.')},
+      FCO:{l:L('Caixa da operação a mais', 'Extra operating cash flow'), max:30, def:10, u:L(' pontos', ' points'), s:L('pontos percentuais de caixa operacional sobre a receita', 'percentage points of operating cash flow over revenue'),
+        p:L('Gerar mais caixa na operação veio com <b>mais</b> necessidade comparada ao setor, em dias e ampliada, como o autor esperava, e com <b>menos</b> na régua que inclui o próprio caixa. Para o autor, caixa e aplicações andam no sentido contrário ao da necessidade, talvez por uma visão de curto prazo das empresas brasileiras.', 'Generating more operating cash came with a <b>higher</b> requirement relative to the sector, in days and broad, as the author expected, and with a <b>lower</b> one on the yardstick that includes cash itself. For the author, cash and investments move against the requirement, perhaps reflecting a short-term view among Brazilian companies.'),
+        n:L('Tabela 9 (efeitos fixos): +17,22 dias por 100% de caixa sobre a receita (p 0,010, sem estrela na tabela), +1,92 no setor (**), +0,47 na ampliada (***) e −0,76 na régua com o caixa (***). <b>Conta nossa</b> para os dias.', 'Table 9 (fixed effects): +17.22 days per 100% of cash over revenue (p 0.010, no star in the table), +1.92 on the sector yardstick (**), +0.47 on the broad one (***) and −0.76 on the yardstick with cash (***). <b>Our calculation</b> for the days.')}
+    };
+    var r = $('op-r');
+    function draw(){
+      var c = CFG[f], v = +r.value, coef = FE[f];
+      $('op-l').textContent = c.l; $('op-v').textContent = '+' + v + c.u; $('op-s').textContent = c.s;
+      var days = coef[2][0] * v / 100;
+      $('op-out').innerHTML = L('Régua em dias: cerca de <b>' + sgn(days, 1) + ' dias</b> sobre a média de 104. Efeito pequeno.', 'Days yardstick: about <b>' + sgn(days, 1) + ' days</b> on top of the 104-day average. A small effect.');
+      $('op-l5').innerHTML = LENSES.map(function(l, j){
+        var x = coef[j], cls = x[1] ? (x[0] > 0 ? 'u' : 'd') : 'z';
+        return '<div class="lz"><div class="nm">' + l.n + '</div><div class="big ' + cls + '">' + (x[1] ? (x[0] > 0 ? '▲' : '▼') : '–') + '</div><div class="cf">' + (x[1] ? sgn(x[0], 2) + ' ' + STARS[x[1]] : L('sem efeito', 'no effect')) + '</div></div>';
+      }).join('');
+      $('op-panel').innerHTML = '<p>' + c.p + '</p>';
+      $('op-note').innerHTML = c.n;
+    }
+    each($('op-seg').children, function(b){ b.addEventListener('click', function(){ f = b.dataset.f; pressSet($('op-seg'), 'f', f); r.max = CFG[f].max; r.value = CFG[f].def; draw(); }); });
+    r.addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 08 · PODER DE MERCADO ================= */
+  (function(){
+    var svg = $('pw-svg'), r = $('pw-r'), X0 = 200, X1 = 530, MAX = 110;
+    var sx = function(d){ return X0 + (X1 - X0) * d / MAX; };
+    function draw(){
+      var s = +r.value, fe = NCGD - 164.73 * s / 100, po = NCGD - 119.40 * s / 100;
+      $('pw-v').textContent = '+' + s + L(' pontos', ' points');
+      svg.innerHTML = '';
+      for (var d = 0; d <= 100; d += 20){
+        el('line', {x1:sx(d), x2:sx(d), y1:22, y2:200, stroke:'#e2e8f0'}, svg);
+        el('text', {x:sx(d), y:222, 'font-size':15, 'text-anchor':'middle', fill:'#64748b'}, svg, d);
+      }
+      el('text', {x:X1, y:244, 'font-size':14, 'text-anchor':'end', fill:'#64748b'}, svg, L('dias a financiar', 'days to finance'));
+      var rows = [[L('Média', 'Average'), NCGD, '#94a3b8', ''], [L('Cada uma consigo', 'Each vs. itself'), fe, 'var(--navy)', '*'], [L('Todas misturadas', 'All pooled'), po, '#5b7bb5', '***']];
+      rows.forEach(function(rw, i){
+        var y = 40 + i * 56;
+        el('text', {x:X0 - 10, y:y + 23, 'font-size':17, 'text-anchor':'end', fill:'#0f172a', 'font-weight':600}, svg, rw[0]);
+        el('rect', {x:X0, y:y, width:Math.max(2, sx(rw[1]) - X0), height:34, rx:5, fill:rw[2]}, svg);
+        el('text', {x:sx(rw[1]) + 8, y:y + 24, 'font-size':17, fill:'#0f172a', 'font-weight':700}, svg, fmt(rw[1], 0) + ' ' + rw[3]);
+      });
+      $('pw-out').innerHTML = L('Com ' + s + ' pontos a mais de fatia no setor: <b>' + fmt(164.73 * s / 100, 0) + ' dias a menos</b> no modelo principal (sinal fraco, a 10%) e ' + fmt(119.40 * s / 100, 0) + ' com todas misturadas (a 1%).', 'With ' + s + ' more points of sector share: <b>' + fmt(164.73 * s / 100, 0) + ' fewer days</b> in the main model (weak signal, at 10%) and ' + fmt(119.40 * s / 100, 0) + ' with all pooled (at 1%).');
+    }
+    r.addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 09 · DUAS CÂMERAS ================= */
+  (function(){
+    var ROWS = [['GOV', L('Governança alta', 'High governance'), L('Novo Mercado ou Nível 2 (0 → 1)', 'Novo Mercado or Level 2 (0 → 1)'), 1],
+                ['MAT', L('Dívida de longo prazo', 'Long-term debt'), L('+10 pontos de dívida longa', '+10 points of long-term debt'), 0.1],
+                ['VOL', L('Oscilação das vendas', 'Sales volatility'), L('+0,10 na oscilação (média 0,17)', '+0.10 in volatility (mean 0.17)'), 0.1],
+                ['MKB', L('Valor de mercado sobre o contábil', 'Market-to-book'), L('+1 no índice (média 2,11)', '+1 in the ratio (mean 2.11)'), 1]];
+    var model = 'po', MAXD = 100;
+    var g = $('duo');
+    g.innerHTML = ROWS.map(function(rw){ return '<div class="dr"><div class="nm">' + rw[1] + '<small>' + rw[2] + '</small></div><div class="bar2" data-k="' + rw[0] + '"><div class="zero"></div><i></i><span></span></div></div>'; }).join('');
+    function draw(){
+      var D = model === 'fe' ? FE : PO;
+      ROWS.forEach(function(rw){
+        var bar = g.querySelector('[data-k="' + rw[0] + '"]'), i = bar.querySelector('i'), sp = bar.querySelector('span');
+        var c = D[rw[0]];
+        if (!c){ i.style.left = '50%'; i.style.width = '0'; sp.style.left = 'calc(50% + 8px)'; sp.style.right = 'auto'; sp.style.color = 'var(--muted)'; sp.textContent = L('fora do modelo', 'not in the model'); return; }
+        var x = c[2], d = x[0] * rw[3], w = Math.min(50, Math.abs(d) / MAXD * 50), col = x[1] ? (d > 0 ? 'var(--up)' : 'var(--down)') : 'var(--off)';
+        i.style.background = col; i.style.width = w + '%'; i.style.left = d >= 0 ? '50%' : (50 - w) + '%';
+        sp.style.color = x[1] ? 'var(--ink)' : 'var(--muted)';
+        var t = sgn(d, 1) + L(' dias ', ' days ') + (x[1] ? STARS[x[1]] : L('(sem efeito)', '(no effect)'));
+        if (w > 26){ sp.style.color = '#fff'; if (d >= 0){ sp.style.left = 'auto'; sp.style.right = 'calc(' + (50 - w) + '% + 6px)'; } else { sp.style.right = 'auto'; sp.style.left = 'calc(' + (50 - w) + '% + 6px)'; } }
+        else if (d >= 0){ sp.style.left = 'calc(' + (50 + w) + '% + 6px)'; sp.style.right = 'auto'; }
+        else { sp.style.left = 'auto'; sp.style.right = 'calc(' + (50 + w) + '% + 6px)'; }
+        sp.textContent = t;
+      });
+      $('duo-panel').innerHTML = model === 'po'
+        ? L('<p><b>Todas misturadas:</b> governança alta veio com mais dias (o contrário do palpite); dívida mais longa, vendas mais instáveis e valor de mercado maior vieram com menos dias (como o palpite, exceto a oscilação, que se esperava para cima).</p>', '<p><b>All pooled:</b> high governance came with more days (the opposite of the guess); longer debt, more volatile sales and higher market value came with fewer days (as guessed, except volatility, which was expected to push up).</p>')
+        : L('<p><b>Cada empresa com ela mesma:</b> nenhum dos três fatores restantes teve efeito estatístico, e a governança não entra. As diferenças vistas antes podem vir de quem as empresas são, e não de mudanças ao longo dos anos (leitura nossa).</p>', '<p><b>Each company against itself:</b> none of the remaining three factors had a statistical effect, and governance is not included. The differences seen before may come from who the companies are, rather than from changes over the years (our reading).</p>');
+    }
+    each($('duo-seg').children, function(b){ b.addEventListener('click', function(){ model = b.dataset.m; pressSet($('duo-seg'), 'm', model); draw(); }); });
+    draw();
+  })();
+
+  /* ================= 10 · QUANTO EXPLICAM ================= */
+  (function(){
+    var t = $('tanks'), model = 'fe';
+    t.innerHTML = LENSES.map(function(l){ return '<div class="tank"><div class="tb"><i></i><b></b></div><div class="nm">' + l.n + '</div></div>'; }).join('');
+    function draw(){
+      each(t.children, function(c, j){ var v = R2[model][j]; c.querySelector('i').style.height = (v * 100) + '%'; c.querySelector('b').textContent = fmt(v * 100, 1) + '%'; });
+    }
+    each($('r2-seg').children, function(b){ b.addEventListener('click', function(){ model = b.dataset.m; pressSet($('r2-seg'), 'm', model); draw(); }); });
+    draw();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
