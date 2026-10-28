@@ -1,0 +1,806 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Herding in eight stock markets · PPGA Interativo</title>
+<meta name="description" content="Gerson Caner's master's dissertation (PPGA Mackenzie) on herding and co-movement in the world's eight largest stock markets, 2008 to 2017, explained in 12 interactive screens.">
+<link rel="alternate" hreflang="pt-BR" href="../../../dissertacoes/2019-caner-efeito-manada-comovimento/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><path d=%22M6 22h4M12 20h4M18 18h4M24 16h3%22 fill=%22none%22 stroke=%22white%22 stroke-width=%223%22 stroke-linecap=%22round%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/motor.css">
+<link rel="stylesheet" href="../../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  :root{
+    --herd:var(--red);    /* sinal de manada */
+    --calm:var(--navy);   /* sem manada / referência */
+    --weak:#b45309;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .ill{display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--weak); border:1px solid color-mix(in srgb, var(--weak) 45%, white); border-radius:999px; padding:2px 9px; margin-bottom:6px;}
+  .chips{display:flex; flex-wrap:wrap; gap:7px; margin:6px 0 12px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 13px; font-size:.82rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .nt{text-transform:none; letter-spacing:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.82rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .legend{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.78rem; color:var(--ink-2); margin-top:8px;}
+  .sw{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  svg text{font-family:var(--sans);}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(1.9rem, 3.3vw, 2.45rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .disc{font-size:.76rem; color:var(--muted); margin-top:10px;}
+  .cap-legend{font-size:.76rem; color:var(--muted); margin-top:6px; text-align:center; line-height:1.4;}
+  .cap-state{text-align:center; font-weight:700; font-size:.92rem; color:var(--ink); min-height:1.4em; margin-top:2px;}
+  .cap-state span{color:var(--red);}
+  #hero-scene .floor-label{font-size:13px; font-weight:700; color:var(--muted);}
+
+  /* ---------- 02 · A pergunta ---------- */
+  .pick{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px;}
+  .pick button{border:1px solid var(--border); background:var(--card); border-radius:14px; padding:14px; text-align:left; cursor:pointer; font-size:.88rem; color:var(--ink-2); box-shadow:var(--shadow); transition:all .2s;}
+  .pick button b{display:block; font-family:var(--serif); font-size:1rem; color:var(--ink); margin-bottom:4px;}
+  .pick button[aria-pressed="true"]{border-color:var(--red); box-shadow:0 0 0 2px var(--red);}
+  .scene-card{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 18px; box-shadow:var(--shadow); font-size:.92rem; color:var(--ink-2);}
+  .scene-card .big{font-family:var(--serif); font-weight:900; font-size:2.2rem; color:var(--red); line-height:1;}
+  #q-out{margin-top:12px; min-height:150px;}
+
+  /* ---------- 03 · Régua da dispersão ---------- */
+  #cs-svg{width:100%; height:auto; display:block;}
+  .csad-out{display:flex; gap:18px; flex-wrap:wrap; margin-top:8px; font-size:.86rem; color:var(--ink-2);}
+  .csad-out b{font-family:var(--serif); font-size:1.4rem; color:var(--ink);}
+  .csad-out .r b{color:var(--red);}
+  @media (max-width:600px){ #cs-svg text{font-size:19px !important;} #cs-svg text.sm{display:none;} }
+
+  /* ---------- 04 · Amostra ---------- */
+  #am-scene .floor-label{font-size:13px; font-weight:700; color:var(--ink-2);}
+  #am-scene .top-label{font-size:12px; color:var(--ink);}
+  @media (max-width:600px){ #am-scene .floor-label{display:none;} }
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:8px;}
+  .stats div{background:var(--bg-soft); border-radius:10px; padding:8px 10px; font-size:.74rem; color:var(--muted);}
+  .stats b{display:block; font-family:var(--serif); font-size:1.15rem; color:var(--ink);}
+
+  /* ---------- 05 · A curva ---------- */
+  #cv-svg{width:100%; height:auto; display:block;}
+  .calc{display:grid; gap:10px; margin-top:6px;}
+  .calc label{display:grid; grid-template-columns:1fr auto; gap:2px 10px; font-size:.84rem; color:var(--ink-2);}
+  .calc label output{font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums;}
+  .calc input[type=range]{grid-column:1 / -1; width:100%; accent-color:var(--red);}
+  @media (max-width:600px){ #cv-svg text{font-size:20px !important;} }
+
+  /* ---------- 06 · Resultado ---------- */
+  #g2-scene .face-label{font-size:11px; letter-spacing:0; text-transform:none; writing-mode:vertical-rl; transform:rotate(180deg);}
+  #g2-scene .floor-label{font-size:13px; font-weight:700; color:var(--ink-2);}
+  #g2-scene .slab{cursor:pointer;}
+  @media (max-width:600px){ #g2-scene .floor-label{display:none;} }
+
+  /* ---------- 07 · Biênios ---------- */
+  .bgrid{display:grid; grid-template-columns:96px repeat(5, minmax(0, 1fr)); gap:4px; font-size:.78rem;}
+  .bgrid .h{font-size:.7rem; color:var(--muted); text-align:center; font-weight:600; padding:2px 0;}
+  .bgrid .c{font-weight:600; color:var(--ink-2); display:flex; align-items:center; font-size:.8rem;}
+  .bgrid button{border:1px solid var(--border); border-radius:8px; padding:7px 2px; cursor:pointer; font-size:.74rem; font-variant-numeric:tabular-nums; background:#fff; color:var(--muted); min-width:0;}
+  .bgrid button.s3{background:var(--red); color:#fff; border-color:var(--red);}
+  .bgrid button.s2{background:color-mix(in srgb, var(--red) 62%, white); color:#fff; border-color:transparent;}
+  .bgrid button.s1{background:color-mix(in srgb, var(--red) 30%, white); color:var(--ink); border-color:transparent;}
+  .bgrid button.sel{outline:3px solid var(--ink); outline-offset:1px;}
+  .bgrid button.fade{opacity:.25;}
+  @media (max-width:600px){ .bgrid{grid-template-columns:62px repeat(5, minmax(0, 1fr)); font-size:.7rem;} .bgrid button{font-size:.64rem; padding:6px 0;} .bgrid .c{font-size:.72rem;} }
+  .bcount{font-family:var(--serif); font-weight:900; font-size:2.6rem; color:var(--red); line-height:1;}
+
+  /* ---------- 08 · Alta x baixa ---------- */
+  #ud-svg{width:100%; height:auto; display:block;}
+  .guess{display:flex; gap:8px; flex-wrap:wrap; margin:6px 0 10px;}
+  .reveal{display:none;}
+  .reveal.on{display:block;}
+  @media (max-width:600px){ #ud-svg text{font-size:18px !important;} #ud-svg text.sm{display:none;} }
+
+  /* ---------- 09 · Volume ---------- */
+  .vrows{display:grid; gap:6px; margin-top:6px;}
+  .vrow{display:grid; grid-template-columns:84px 74px 1fr 1fr 74px; gap:6px; align-items:center; font-size:.8rem;}
+  .vrow .v{font-size:.72rem; font-weight:600; font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--ink-2);}
+  .vrow .v.l{text-align:right;}
+  .vrow .n{font-weight:700; color:var(--ink);}
+  .vbar{height:22px; border-radius:6px; background:var(--bg-soft); position:relative; overflow:hidden;}
+  .vbar i{position:absolute; top:0; bottom:0; border-radius:6px; transition:width .6s;}
+  .vbar.hi i{right:0; background:var(--red);}
+  .vbar.lo i{left:0; background:var(--navy);}
+  .vbar.ns i{background:repeating-linear-gradient(45deg, #cbd5e1 0 5px, #e2e8f0 5px 10px) !important;}
+  .vrow.win .n::after{content:" ●"; color:var(--red);}
+  .vrow.winlo .n::after{content:" ●"; color:var(--navy);}
+  .vhead{display:grid; grid-template-columns:84px 74px 1fr 1fr 74px; gap:6px; font-size:.72rem; color:var(--muted); font-weight:600;}
+  .vhead span:nth-child(3){text-align:right;}
+  .vhead .sh{display:none;}
+  @media (max-width:600px){ .vrow, .vhead{grid-template-columns:54px 46px 1fr 1fr 46px; gap:4px;} .vrow .v{font-size:.62rem; white-space:normal; line-height:1.15;} .vrow{font-size:.7rem;} .vhead{font-size:.64rem;} .vhead .lg{display:none;} .vhead .sh{display:inline;} }
+
+  /* ---------- 10 · Comovimento ---------- */
+  #net-svg{width:100%; height:auto; display:block;}
+  #net-svg .nd{cursor:pointer;}
+  .rk{display:grid; gap:4px; margin-top:6px;}
+  .rk div{display:grid; grid-template-columns:78px 1fr 84px; gap:6px; align-items:center; font-size:.76rem;}
+  .rk i{display:block; height:12px; border-radius:4px; background:var(--red);}
+  .rk i.neg{background:var(--navy);}
+  .rk i.ns{background:repeating-linear-gradient(45deg, #cbd5e1 0 4px, #e2e8f0 4px 8px);}
+  .rk b{font-variant-numeric:tabular-nums; text-align:right; font-weight:600; white-space:nowrap;}
+  .r2{display:flex; gap:14px; align-items:baseline; font-size:.82rem; color:var(--ink-2); margin-top:8px; flex-wrap:wrap;}
+  .r2 b{font-family:var(--serif); font-size:1.2rem; color:var(--ink);}
+  @media (max-width:600px){ #net-svg text{font-size:24px !important;} }
+
+  /* ---------- 11/12 · Prática, limites ---------- */
+  .cards3{display:grid; grid-template-columns:1fr; gap:12px; margin-top:12px;}
+  @media (min-width:760px){ .cards3{grid-template-columns:repeat(3, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:14px 16px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:1rem; margin-bottom:6px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:5px; font-size:.84rem; line-height:1.45; color:var(--ink-2);}
+  .pcard em{font-style:normal; font-size:.74rem; color:var(--muted);}
+  .warn{margin-top:14px; background:#fff5f6; border:1px solid color-mix(in srgb, var(--red) 30%, white); border-radius:12px; padding:10px 14px; font-size:.84rem; color:var(--ink-2);}
+  .warn b{color:var(--red);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:12px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.08rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:8px 0 0; padding:0; list-style:none;}
+  .limits li{padding:7px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.72rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.5; margin-top:8px;}
+  .cite b{color:var(--ink);}
+  .also{font-size:.8rem; margin-top:10px; color:var(--ink-2);}
+  .also a{color:var(--red); font-weight:600;}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-meta="../../../dissertacoes/2019-caner-efeito-manada-comovimento/meta.json">
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../../dissertacoes/2019-caner-efeito-manada-comovimento/" hreflang="pt-BR" lang="pt-BR" title="Ler em português"><img class="lang-flag" src="../../../assets/bandeira-br.svg" width="17" height="12" alt="">PT</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Previous screen">↑</button>
+    <button class="nav-btn" id="next" aria-label="Next screen">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Screen navigation"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Start">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Master's dissertation · PPGA Mackenzie · 2019</div>
+      <h1 class="rv" style="--d:.1s">In seven of the world's eight largest stock markets, stocks moved as a herd on turbulent days</h1>
+      <p class="sub rv" style="--d:.2s">When the market jumps or plunges, do investors stick to their own analysis or do what everyone else does? The dissertation followed the <strong>50 most traded stocks in eight stock markets</strong>, day by day, from 2008 to 2017. Explained in 12 screens.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Author:</b> Gerson Caner</span>
+        <span><b>Advisor:</b> Prof. Dr. Denis Forte</span>
+        <span><b>Program:</b> Graduate Program in Business Administration (PPGA) · Mackenzie Presbyterian University</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#pergunta">Start →</a>
+        <a class="btn ghost" href="#resultado">Skip to the result</a>
+      </div>
+      <p class="disc rv" style="--d:.45s">This page explains a piece of research. It is not investment advice.</p>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="480x300" role="img" aria-label="Fourteen cubes, the stocks, on a ruler of the day's return: on a calm day they are spread near zero; on a strong up day without herding they move right and spread further; on a strong up day with herding they move right tightly packed"></div></div>
+      <div class="cap-state" id="cap-state" aria-live="polite"></div>
+      <div class="cap-legend">Each cube is a stock; the red bar is the market average for the day. An illustration of what the dissertation measures, not real data.</div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">Closest UN Sustainable Development Goals</span>
+        <ul class="ods">
+          <li class="ods-10"><a href="https://sdgs.un.org/goals/goal10" target="_blank" rel="noopener" title="SDG 10 · Reduced Inequalities: Measures how the world's largest stock markets spill over into one another, the subject of the target on monitoring global financial markets."><b>10</b>Reduced inequalities</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">scroll<span></span></div>
+</section>
+
+<!-- 02 · A PERGUNTA -->
+<section class="slide" id="pergunta" data-label="The question">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> The question</div>
+      <h2 class="rv" style="--d:.1s">On a day of panic, do you follow your own analysis or the crowd?</h2>
+      <p class="lede rv" style="--d:.15s">Classical finance assumes a rational investor who decides alone with the information available. Behavioral finance studies departures from that rule. One of them is <b>herd behavior</b>: setting your own view aside to do what the market does.</p>
+      <div class="scene-card rv" style="--d:.2s"><span class="big">−8%</span><br>Picture it: the market opens sharply down, as on the days of the 2008 crisis. Your analysis says your stock is worth more than today's price. What do you do?</div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="pick" id="q-pick">
+        <button data-v="0" aria-pressed="false"><b>I hold</b>I trust my analysis and wait.</button>
+        <button data-v="1" aria-pressed="false"><b>I sell too</b>If everyone is selling, they must know something.</button>
+      </div>
+      <div class="panel" id="q-out"><p class="tag">Choose an option</p><p>There is no right answer: the research does not look at people, it looks at the trail everyone's choices leave in prices.</p></div>
+      <p class="note">Source: chapters 1 and 3 of the dissertation (Christie and Huang, 1995; Chang, Cheng and Khorana, 2000). The research question: “Is there evidence of herd behavior in the stock markets of these countries?”</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · COMO SE MEDE -->
+<section class="slide" id="medida" data-label="How it is measured">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> The method</div>
+      <h2 class="rv" style="--d:.1s">Herding shows up when stocks stray little from the average on a day of big moves</h2>
+      <p class="lede rv" style="--d:.15s">The measure is <b>dispersion</b> (CSAD): the average distance between each stock's return and the market's average return that day. On a turbulent day, if everyone decides alone, stocks spread out more. If everyone follows the same direction, they stay together.</p>
+      <p class="note rv" style="--d:.2s">In the dissertation, dispersion is computed every day for the 50 stocks of each market (equation 3). The ten returns on the right are made up, to show the arithmetic.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <span class="ill">Illustration</span>
+      <div class="seg" id="cs-seg" role="group" aria-label="Type of day"></div>
+      <svg id="cs-svg" viewBox="0 0 560 228" role="img" aria-label="Ten stocks on a ruler of the day's return, with the market average and each one's distance from it"></svg>
+      <div class="csad-out" id="cs-out"></div>
+      <div class="panel" id="cs-t" style="margin-top:8px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · AMOSTRA -->
+<section class="slide" id="amostra" data-label="Eight markets">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> The data</div>
+      <h2 class="rv" style="--d:.1s">Eight markets, 50 stocks in each, about 2,600 trading days</h2>
+      <p class="lede rv" style="--d:.15s">The markets of the eight countries with the largest trading volume in 2017, all G-20 members: United States, Brazil, China, Germany, South Korea, Japan, India and the United Kingdom. In each, the 50 most traded stocks, with daily prices from January 2008 to December 2017 (WRDS database).</p>
+      <div class="panel rv" style="--d:.2s" id="am-panel"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="chips" id="am-chips"></div>
+      <div class="fit-wrap"><div class="scene draggable" id="am-scene" data-fit="480x300" role="img" aria-label="3D columns of each market's average dispersion: United Kingdom 2.45%, India 2.15%, Brazil 1.81%, Germany 1.53%, China 1.52%, Japan 1.34%, Korea 1.24% and United States 1.03%"></div></div>
+      <p class="note">Column height: average daily dispersion (CSAD, % per day), Table 2. Click a column or a country.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · A CURVA -->
+<section class="slide" id="curva" data-label="The curve">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> The test</div>
+      <h2 class="rv" style="--d:.1s">Without herding, dispersion would grow in a straight line; with herding, the line bends down</h2>
+      <p class="lede rv" style="--d:.15s">The dissertation uses the Chang, Cheng and Khorana (2000) test: a regression of dispersion on the size of the market's move. If the curve term (γ2) comes out <b>negative and significant</b>, dispersion grows less than expected on big days: a sign of herding.</p>
+      <p class="note rv" style="--d:.2s">The lines use the coefficients estimated for each market (Table 3). The straight line is the same formula without the curve term, for comparison. The standard deviation of the market's daily return was between 1.18% and 2.09% (Table 2): days above 4% are rare.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="chips" id="cv-chips"></div>
+      <svg id="cv-svg" viewBox="0 0 560 300" role="img" aria-label="Chart of expected dispersion against the size of the market's move, with the straight no-herding line and the estimated curve"></svg>
+      <div class="calc"><label>Size of the market's move that day (up or down) <output id="cv-o">3%</output><input type="range" id="cv-r" min="0" max="6" step="0.1" value="3"></label></div>
+      <div class="panel" id="cv-t" style="margin-top:8px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · RESULTADO -->
+<section class="slide" id="resultado" data-label="Seven of eight">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> The result · 2008 to 2017</div>
+      <h2 class="rv" style="--d:.1s">Seven of the eight markets showed signs of herding; Germany did not</h2>
+      <p class="lede rv" style="--d:.15s">Over the whole period, the curve term came out negative and significant (at 1%) in seven markets. India had the strongest bend and Japan the weakest, close to Brazil. In Germany, the term was positive and not significant.</p>
+      <div class="panel rv" style="--d:.2s" id="g2-panel"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="chips" id="g2-chips"></div>
+      <div class="fit-wrap"><div class="scene draggable" id="g2-scene" data-fit="480x320" role="img" aria-label="3D columns of the strength of the herding bend by market: India 0.074, United Kingdom 0.057, Korea 0.046, China 0.035, United States 0.030, Brazil 0.019, Japan 0.015; Germany without a sign, in glass"></div></div>
+      <p class="note">Height: size of the curve term (γ2, absolute value), Table 3. Red: negative and significant at 1%. Glass: positive and not significant.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · BIÊNIOS -->
+<section class="slide" id="bienios" data-label="Every two years">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Five two-year periods</div>
+      <h2 class="rv" style="--d:.1s">Split into two-year periods, the herding sign appeared in 32 of 40 combinations</h2>
+      <p class="lede rv" style="--d:.15s">The dissertation re-ran the test for 2008/09, 2010/11, 2012/13, 2014/15 and 2016/17. China, Korea, India and Japan showed the sign in all five periods; Brazil and the United Kingdom in four; the United States in three; Germany in one, only at 10%.</p>
+      <div class="rv" style="--d:.2s"><span class="bcount" id="b-count">32</span> <span style="font-size:.9rem; color:var(--ink-2)" id="b-count-t"></span></div>
+      <p class="note rv" style="--d:.25s">Source: Annex F (Tables FA to FD), our count. The dissertation's text says the United States showed the sign in four periods; the table shows three (in 2012/13 and 2016/17 the term was not significant).</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="seg" id="b-seg" role="group" aria-label="Strictness" style="margin-bottom:10px"></div>
+      <div class="bgrid" id="b-grid"></div>
+      <div class="legend"><span><span class="sw" style="background:var(--red)"></span>at 1%</span><span><span class="sw" style="background:color-mix(in srgb, var(--red) 62%, white)"></span>at 5%</span><span><span class="sw" style="background:color-mix(in srgb, var(--red) 30%, white)"></span>at 10%</span><span><span class="sw" style="background:#fff; border:1px solid var(--border)"></span>no sign</span></div>
+      <div class="panel" id="b-panel" style="margin-top:10px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · ALTA X BAIXA -->
+<section class="slide" id="altabaixa" data-label="Up or down?">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> The unexpected</div>
+      <h2 class="rv" style="--d:.1s">Herding was not stronger on down days</h2>
+      <p class="lede rv" style="--d:.15s">The dissertation's hypothesis came from loss aversion (Kahneman and Tversky): the fear of losing weighs more than the pleasure of winning, so herding would be stronger on down days. Before you look, place your bet:</p>
+      <div class="guess rv" style="--d:.2s" id="ud-guess">
+        <button class="btn small ghost" data-v="0">Stronger on down days</button>
+        <button class="btn small ghost" data-v="1">Stronger on up days</button>
+        <button class="btn small ghost" data-v="2">No difference</button>
+      </div>
+      <div class="panel rv" style="--d:.25s" id="ud-panel"><p>Choose an answer to see what the eight markets showed.</p></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="reveal" id="ud-rev">
+        <svg id="ud-svg" viewBox="0 0 560 330" role="img" aria-label="For each market, two dots: the strength of the herding bend on up days and on down days"></svg>
+        <div class="legend"><span><span class="sw" style="background:var(--red); border-radius:50%"></span>up days</span><span><span class="sw" style="background:var(--navy); border-radius:50%"></span>down days</span><span><span class="sw" style="background:#fff; border:2px solid #94a3b8; border-radius:50%"></span>not significant</span></div>
+        <p class="note">Bend strength: γ3 (up) and γ4 (down) from Table 4, absolute value; further right = stronger herding. The dissertation compares the two values but does not test whether the difference between them is significant (our observation): in the United States and Korea it is less than 0.001.</p>
+      </div>
+      <div class="reveal on" id="ud-hold"><div class="scene-card" style="text-align:center; padding:40px 18px"><span class="big">?</span><p style="margin-top:10px">The chart appears after your bet.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · VOLUME -->
+<section class="slide" id="volume" data-label="Busy days">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Trading volume</div>
+      <h2 class="rv" style="--d:.1s">On busy trading days, herding was stronger in six markets; in the United States it was the opposite</h2>
+      <p class="lede rv" style="--d:.15s">A day counts as “busy” when traded volume exceeds the average of the previous 30 days. Korea, China, the United Kingdom, Japan, Brazil and India had a stronger bend on those days, most clearly in the three East Asian markets according to the author. In the United States the bend was stronger on quiet days. In Germany, no sign on either.</p>
+      <p class="note rv" style="--d:.2s">Source: Table 5 (γ3 and γ4, absolute value). Striped bars: not significant. In Brazil and Japan, the quiet-day bend was not even significant. In the two-year periods (Annex H), the author reports that in the United States the sign moved to busy days in all five, and in Japan, mostly to quiet days.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="seg" id="v-seg" role="group" aria-label="Order" style="margin-bottom:10px"></div>
+      <div class="vhead"><span></span><span></span><span><span class="lg">busy days ←</span><span class="sh">busy</span></span><span><span class="lg">→ quiet days</span><span class="sh">quiet</span></span><span></span></div>
+      <div class="vrows" id="v-rows"></div>
+      <div class="legend"><span><span style="color:var(--red)">●</span> stronger on busy days</span><span><span style="color:var(--navy)">●</span> stronger on quiet days</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · COMOVIMENTO -->
+<section class="slide" id="comovimento" data-label="Markets that move together">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> The finding</div>
+      <h2 class="rv" style="--d:.1s">When stocks in one market spread out, stocks in the others spread out too</h2>
+      <p class="lede rv" style="--d:.15s">The dissertation added the dispersion of the other seven markets to each market's equation. Of 56 links, 35 came out positive and significant (our count): dispersions move together. Neighbors weigh more (Korea with Japan and China; Germany with the United Kingdom), and so do the big ones (United States and Germany).</p>
+      <div class="r2 rv" style="--d:.2s" id="r2"></div>
+      <p class="note rv" style="--d:.25s">Source: Table 6 (daily data, 2008 to 2017, 2,584 days). Line thickness: coefficient size. Dashed blue lines: negative and significant coefficients. Germany, with no sign of herding, has the largest weights on the others (0.349 in the United States and 0.314 in the United Kingdom). The link shows that markets move together, not who copies whom (our observation).</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="seg" id="net-seg" role="group" aria-label="Direction" style="margin-bottom:8px"></div>
+      <svg id="net-svg" viewBox="0 0 600 330" role="img" aria-label="Map of the eight markets with lines between those whose dispersions are linked; click a country"></svg>
+      <div class="panel" id="net-panel" style="margin-top:6px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · NA PRÁTICA -->
+<section class="slide" id="pratica" data-label="In practice">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> So what?</div>
+    <h2 class="rv" style="--d:.1s">If markets spill over, spreading money across countries protects less than it seems</h2>
+    <p class="lede rv" style="--d:.15s">Diversifying works when assets do not move together. If herding appears in several countries at once, for the author, diversification across them loses part of its effect.</p>
+    <div class="cards3">
+      <div class="pcard rv" style="--d:.2s; --pc:var(--red)"><h3>For international investors</h3><ul><li>Take the strong links between markets into account when building a global portfolio. <em>(author)</em></li><li>Neighbors and large economies weigh more: markets in the same region offer less protection against each other. <em>(our reading of screen 10)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--navy)"><h3>For those who watch the market</h3><ul><li>Herding can threaten financial stability in turbulent periods, such as the 2008 crisis, which began in the United States and spread. <em>(author)</em></li><li>Busy trading days were the ones with the strongest herding in most markets (screen 09). <em>(Table 5)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#64748b"><h3>For research</h3><ul><li>Mature and emerging markets in the same test: herding appeared in both groups; only Germany stayed out. <em>(Table 3)</em></li><li>Suggested next steps: more countries and periods, real estate, funds and commodities, less traded stocks and corrections for multiple testing. <em>(author)</em></li></ul></div>
+    </div>
+    <div class="warn rv" style="--d:.35s"><b>This is not investment advice.</b> The dissertation describes the past (2008 to 2017) of 400 stocks in eight markets. It measures a pattern in prices; it does not test trading strategies or costs, and what held in the past does not guarantee the future.</div>
+  </div>
+</section>
+
+<!-- 12 · LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Limits and credits">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Limits and credits</div>
+    <h2 class="rv" style="--d:.1s">What this research does not say</h2>
+    <div class="end">
+      <div class="rv" style="--d:.2s">
+        <ul class="limits">
+          <li><b>A sign in prices, not in people.</b> The test looks at the dispersion of returns; it does not observe who bought or sold or why. Other causes that pull stocks together on the same day (news that affects them all) also reduce dispersion. <em>· our observation</em></li>
+          <li><b>Only the 50 most traded stocks.</b> Less traded stocks may behave differently; the author suggests comparing them. <em>· according to the author</em></li>
+          <li><b>Untested differences.</b> Up × down and busy × quiet days were compared by coefficient size, without testing whether the difference is significant. <em>· our observation</em></li>
+          <li><b>Many tests at once.</b> With dozens of regressions, some results at 10% may appear by chance; the author mentions multiple-testing corrections as a next step. <em>· according to the author</em></li>
+          <li><b>Moving together is not copying.</b> Screen 10 shows that dispersions move together on the same day; it does not say which market drives the other. <em>· our observation</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.25s">
+        <h3>Credits</h3>
+        <div class="cite">
+          <b>How to cite</b><br>
+          CANER, Gerson. <em>Finanças comportamentais: efeito manada e o comovimento dos mercados acionários globais entre 2008 e 2017.</em> Master's dissertation (Business Administration), Universidade Presbiteriana Mackenzie, São Paulo, 2019. Advisor: Prof. Dr. Denis Forte.
+        </div>
+        <p style="margin-top:10px; font-size:.78rem">Dissertation from 2019, with a CNPq scholarship from 2018 onward. Daily data from the WRDS database; ordinary least squares (OLS) regressions with Newey-West errors, in Stata 12. This version simplifies the work for a general audience and is not investment advice.</p>
+        <p class="also">Read also, by the same advisor: <a href="../../teses/2026-ikeda-cultura-vieses-investidor/">Ikeda (2026)</a>, national culture and herding in 64 markets; and <a href="../../teses/2020-valente-bitcoin-mercados-cambio/">Valente (2020)</a>, Bitcoin and six stock markets.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Read the full dissertation (in Portuguese)</a>
+          <a class="btn ghost" href="#capa">↑ Back to start</a>
+          <a class="btn ghost" href="../../">More research</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(p, e){ return EN ? e : p; }
+  function sg(v, d){ return (v < 0 ? '−' : '') + fmt(Math.abs(v), d); }
+  function stars(s){ return s ? ' ' + '*'.repeat(s) : ''; }
+  function segInit(el, items, cur, fn){
+    el.innerHTML = items.map(function(t, i){ return '<button data-v="' + i + '" aria-pressed="' + (i === cur) + '">' + t + '</button>'; }).join('');
+    each(el.children, function(b){ b.addEventListener('click', function(){ each(el.children, function(x){ x.setAttribute('aria-pressed', x === b); }); fn(+b.dataset.v); }); });
+  }
+  function chipsInit(el, items, cur, fn){
+    el.innerHTML = items.map(function(t, i){ return '<button class="chip" data-v="' + i + '" aria-pressed="' + (i === cur) + '">' + t + '</button>'; }).join('');
+    var api = {set:function(i){ each(el.children, function(x){ x.setAttribute('aria-pressed', +x.dataset.v === i); }); }};
+    each(el.children, function(b){ b.addEventListener('click', function(){ api.set(+b.dataset.v); fn(+b.dataset.v); }); });
+    return api;
+  }
+  var NS = 'http://www.w3.org/2000/svg';
+  function sv(tag, a, txt){ var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); if (txt !== undefined) e.textContent = txt; return e; }
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // ordem da dissertação: EUA, Brasil, China, Alemanha, Coreia, Japão, Índia, Reino Unido
+  var C = [
+    // Tabela 2: retorno médio do mercado (RM) média, DP, mín, máx; CSAD média, DP, máx; nº de dias
+    // Tabela 3: g1, g2 (estrelas), a, R² ajustado
+    {k:'us', n:L('Estados Unidos', 'United States'), s:L('EUA', 'US'), rm:[0.0096, 1.226, -8.365, 9.914], rmd:4, cs:[1.027, 0.692, 4.676], N:2609, g1:0.665, g2:-0.030, g2s:3, a:0.564, r2:0.539},
+    {k:'br', n:L('Brasil', 'Brazil'), s:L('Brasil', 'Brazil'), rm:[-0.0636, 1.524, -8.015, 9.344], rmd:4, cs:[1.814, 0.727, 5.289], N:2608, g1:0.452, g2:-0.019, g2s:3, a:1.372, r2:0.297},
+    {k:'cn', n:'China', s:'China', rm:[0.027, 2.090, -9.723, 9.535], rmd:3, cs:[1.522, 0.707, 5.260], N:2611, g1:0.429, g2:-0.035, g2s:3, a:1.065, r2:0.258},
+    {k:'de', n:L('Alemanha', 'Germany'), s:L('Alemanha', 'Germany'), rm:[-0.0201, 1.483, -7.553, 10.04], rmd:4, cs:[1.527, 0.538, 4.616], N:2608, g1:0.238, g2:0.003, g2s:0, a:1.273, r2:0.254},
+    {k:'kr', n:L('Coreia do Sul', 'South Korea'), s:L('Coreia', 'Korea'), rm:[-0.025, 1.640, -9.89, 9.88], rmd:3, cs:[1.237, 0.498, 3.70], N:2608, g1:0.621, g2:-0.046, g2s:3, a:1.831, r2:0.249},
+    {k:'jp', n:L('Japão', 'Japan'), s:L('Japão', 'Japan'), rm:[-0.022, 1.770, -10.61, 11.33], rmd:3, cs:[1.337, 0.533, 4.791], N:2585, g1:0.281, g2:-0.015, g2s:3, a:1.039, r2:0.234},
+    {k:'in', n:L('Índia', 'India'), s:L('Índia', 'India'), rm:[-0.162, 1.429, -7.812, 6.163], rmd:3, cs:[2.153, 0.733, 6.490], N:2611, g1:0.569, g2:-0.074, g2s:3, a:1.741, r2:0.172},
+    {k:'uk', n:L('Reino Unido', 'United Kingdom'), s:L('R. Unido', 'UK'), rm:[-0.158, 1.184, -7.561, 10.54], rmd:3, cs:[2.449, 0.653, 5.443], N:2610, g1:0.491, g2:-0.057, g2s:3, a:2.119, r2:0.144}
+  ];
+  // Anexo F: termo da curva por biênio [valor, estrelas] (08/09, 10/11, 12/13, 14/15, 16/17)
+  var BI = {
+    us:[[-0.0568,3],[-0.0399,3],[-0.00505,0],[-0.0798,3],[-0.0484,0]],
+    br:[[-0.0372,3],[-0.0414,3],[-0.101,3],[-0.0685,3],[0.0247,0]],
+    cn:[[-0.0409,3],[-0.0408,3],[-0.0477,3],[-0.0387,3],[-0.0406,3]],
+    de:[[-0.0125,0],[0.00535,0],[-0.0419,1],[-0.0227,0],[0.0201,0]],
+    kr:[[-0.0388,3],[-0.0231,1],[-0.0915,3],[-0.0781,3],[-0.0765,3]],
+    jp:[[-0.00731,1],[-0.00686,1],[-0.0248,2],[-0.0401,3],[-0.0283,3]],
+    in:[[-0.0574,3],[-0.0778,3],[-0.249,3],[-0.101,2],[-0.0651,3]],
+    uk:[[-0.0503,3],[-0.0670,0],[-0.112,3],[-0.0821,1],[-0.107,1]]
+  };
+  // Tabela 4: [alta γ3, estrelas, queda γ4, estrelas]
+  var UD = {us:[-0.0301,3,-0.0306,3], br:[-0.0214,3,-0.0178,2], cn:[-0.0493,3,-0.0400,3], de:[0.00433,0,0.00417,0], kr:[-0.0455,3,-0.0462,3], jp:[-0.0176,3,-0.0109,3], in:[-0.0984,3,-0.0604,3], uk:[-0.0619,3,-0.0543,3]};
+  // Tabela 5: [muito negócio γ3, estrelas, dias calmos γ4, estrelas]
+  var VO = {us:[-0.0162,2,-0.0402,3], br:[-0.0276,3,-0.0101,0], cn:[-0.0507,3,-0.0220,3], de:[-0.00177,0,0.00904,0], kr:[-0.0654,3,-0.0259,3], jp:[-0.0244,3,-0.00487,0], in:[-0.0849,3,-0.0687,3], uk:[-0.0703,3,-0.0477,3]};
+  // Tabela 6: CM[dependente][explicativa] = [coef, estrelas]; R² ajustado com as outras bolsas
+  var CM = {
+    us:{kr:[0.0342,3], jp:[0.111,3], in:[-0.0262,2], uk:[0.0174,0], cn:[0.0143,0], de:[0.349,3], br:[0.158,3]},
+    br:{kr:[0.0479,3], jp:[0.116,3], in:[0.0261,0], uk:[0.0139,0], cn:[0.0614,3], us:[0.240,3], de:[0.191,3]},
+    cn:{kr:[0.0532,3], jp:[0.0557,2], in:[0.101,3], uk:[0.00539,0], us:[-0.0287,0], de:[-0.0984,3], br:[0.0669,3]},
+    de:{kr:[0.0263,3], jp:[0.139,3], in:[0.0355,3], uk:[0.129,3], cn:[-0.0219,1], us:[0.262,3], br:[0.0831,3]},
+    kr:{jp:[0.152,3], in:[0.0753,3], uk:[0.0101,0], cn:[0.128,3], us:[0.103,3], de:[0.0734,1], br:[0.0942,3]},
+    jp:{kr:[0.0448,3], in:[-0.0218,1], uk:[0.0240,0], cn:[0.0231,0], us:[0.0643,3], de:[0.163,3], br:[0.0482,3]},
+    in:{kr:[0.0610,3], jp:[-0.0480,1], uk:[0.0506,2], cn:[0.107,3], us:[-0.108,3], de:[0.111,3], br:[0.0242,0]},
+    uk:{kr:[0.00681,0], jp:[0.0261,0], in:[0.0117,0], cn:[-0.0142,0], us:[-0.000221,0], de:[0.314,3], br:[0.0471,2]}
+  };
+  var R2B = {us:0.6755, br:0.4351, cn:0.2789, de:0.4762, kr:0.3021, jp:0.310, in:0.1924, uk:0.2122};
+  var BY = {}; C.forEach(function(c, i){ BY[c.k] = c; c.i = i; });
+  var BIEN = ['2008/09', '2010/11', '2012/13', '2014/15', '2016/17'];
+  function lv(s){ return s === 3 ? '1%' : s === 2 ? '5%' : s === 1 ? '10%' : ''; }
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), W = 440, D = 170, st = makeStage(sc, W, D, {ay:'62%', rx:'58deg'});
+    rotatable(sc, st, -14, 6);
+    // régua: chão listrado
+    var ruler = box({w:W, d:8, x:0, y:D - 20, z:0, h:2, c:'#94a3b8'}); st.appendChild(ruler);
+    flatLabel(st, L('queda ←  retorno do dia  → alta', 'down ←  day\'s return  → up'), 0, D - 6, W);
+    var mean = box({w:4, d:D - 30, x:W / 2 - 2, y:4, z:0, h:36, c:'var(--red)'}); st.appendChild(mean);
+    var N = 14, cubes = [];
+    // posições-base (desvio padronizado) para cada cubo
+    var Z = [-1.6, -1.2, -0.9, -0.7, -0.45, -0.25, -0.05, 0.1, 0.3, 0.5, 0.75, 0.95, 1.25, 1.65];
+    for (var i = 0; i < N; i++){
+      var b = box({w:22, d:22, x:W / 2 - 11, y:8 + (i % 5) * 26, z:0, h:22, c:i % 3 ? 'var(--navy)' : 'color-mix(in srgb, var(--navy) 70%, white)'});
+      st.appendChild(b); cubes.push(b);
+    }
+    // estados: [deslocamento da média, espalhamento]
+    var S = [
+      {m:0, sp:52, t:L('Dia calmo: as ações se espalham perto do zero', 'Calm day: stocks spread out near zero')},
+      {m:100, sp:70, t:L('Alta forte, cada um por si: <span>se espalham mais</span>', 'Strong up day, each on their own: <span>they spread out more</span>')},
+      {m:100, sp:14, t:L('Alta forte, em manada: <span>andam juntas</span>', 'Strong up day, as a herd: <span>they move together</span>')}
+    ];
+    var cap = $('cap-state'), cur = -1;
+    function show(k){
+      if (k === cur) return; cur = k;
+      var s = S[k];
+      cubes.forEach(function(b, i){ b.style.setProperty('--ox', (s.m + Z[i] * s.sp) + 'px'); });
+      mean.style.setProperty('--ox', s.m + 'px');
+      cap.innerHTML = s.t;
+    }
+    show(0);
+    if (M.reduce){ show(2); return; }
+    M.onTick(function(t){ show(Math.floor(t / 3.2) % 3); });
+  })();
+
+  /* ================= 02 · A PERGUNTA ================= */
+  (function(){
+    var T = [
+      L('<p class="tag">Você manteve a sua análise</p><p>É o que a teoria clássica espera: cada investidor decide por si. Se todos fossem assim, num dia de queda forte as ações cairiam em quantidades bem diferentes, conforme o que cada um pensa de cada empresa.</p><p>O pesquisador procura o oposto disso nos preços.</p>',
+        '<p class="tag">You kept your own analysis</p><p>That is what classical theory expects: each investor decides alone. If everyone acted this way, on a sharp down day stocks would fall by very different amounts, depending on what each person thinks of each company.</p><p>The researcher looks for the opposite of this in prices.</p>'),
+      L('<p class="tag">Você seguiu a multidão</p><p>É o comportamento de manada: nos dias extremos, as pessoas tendem a abrir mão das próprias análises em favor do consenso do mercado (Christie e Huang, 1995). Se muitos fazem isso, as ações passam a se mover juntas, todas para o mesmo lado.</p><p>É esse rastro que a dissertação procura nos preços.</p>',
+        '<p class="tag">You followed the crowd</p><p>That is herd behavior: on extreme days, people tend to give up their own analysis in favor of the market consensus (Christie and Huang, 1995). If many do this, stocks start moving together, all in the same direction.</p><p>That trail is what the dissertation looks for in prices.</p>')
+    ];
+    var bs = $('q-pick').children;
+    each(bs, function(b){ b.addEventListener('click', function(){ each(bs, function(x){ x.setAttribute('aria-pressed', x === b); }); $('q-out').innerHTML = T[+b.dataset.v]; }); });
+  })();
+
+  /* ================= 03 · RÉGUA DA DISPERSÃO ================= */
+  (function(){
+    var svg = $('cs-svg');
+    var DAYS = [
+      {n:L('Dia calmo', 'Calm day'), r:[-1.3, -0.8, -0.5, -0.1, 0.2, 0.4, 0.7, 1.0, 1.3, 2.1], t:L('O mercado quase não se mexeu e as ações ficaram espalhadas em volta da média. Essa é a dispersão “normal”.', 'The market barely moved and stocks were spread around the average. This is the “normal” dispersion.')},
+      {n:L('Alta forte, cada um por si', 'Strong up day, each on their own'), r:[0.9, 1.8, 2.6, 3.3, 3.9, 4.4, 4.9, 5.6, 6.3, 7.3], t:L('O mercado subiu muito, mas cada ação reagiu do seu jeito: a dispersão cresceu junto com o movimento. É o que se espera <b>sem manada</b>.', 'The market rose a lot, but each stock reacted in its own way: dispersion grew along with the move. That is what is expected <b>without herding</b>.')},
+      {n:L('Alta forte, em manada', 'Strong up day, as a herd'), r:[3.6, 3.7, 3.8, 3.9, 4.0, 4.1, 4.3, 4.4, 4.6, 4.6], t:L('O mercado subiu o mesmo tanto, mas as ações foram juntas: a dispersão ficou menor que a do dia calmo. É o rastro da <b>manada</b>.', 'The market rose by the same amount, but stocks moved together: dispersion was smaller than on the calm day. That is the trail of <b>herding</b>.')}
+    ];
+    var X0 = 30, X1 = 540, lo = -2, hi = 8;
+    function x(v){ return X0 + (v - lo) / (hi - lo) * (X1 - X0); }
+    function draw(k){
+      var d = DAYS[k], r = d.r, m = r.reduce(function(a, b){ return a + b; }, 0) / r.length;
+      var cs = r.reduce(function(a, b){ return a + Math.abs(b - m); }, 0) / r.length;
+      svg.innerHTML = '';
+      svg.appendChild(sv('line', {x1:X0, x2:X1, y1:180, y2:180, stroke:'#94a3b8', 'stroke-width':2}));
+      for (var v = lo; v <= hi; v += 2){
+        svg.appendChild(sv('line', {x1:x(v), x2:x(v), y1:175, y2:185, stroke:'#94a3b8'}));
+        svg.appendChild(sv('text', {x:x(v), y:202, 'text-anchor':'middle', 'font-size':12, fill:'#64748b'}, (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v) + '%'));
+      }
+      svg.appendChild(sv('line', {x1:x(m), x2:x(m), y1:14, y2:180, stroke:'var(--red)', 'stroke-width':3}));
+      svg.appendChild(sv('text', {x:x(m), y:11, 'text-anchor':'middle', 'font-size':12, 'font-weight':700, style:'fill:var(--red)'}, L('média ', 'average ') + sg(m, 1) + '%'));
+      r.forEach(function(v, i){
+        var y = 30 + i * 14;
+        svg.appendChild(sv('line', {x1:x(m), x2:x(v), y1:y, y2:y, stroke:'#cbd5e1', 'stroke-width':4, 'stroke-linecap':'round'}));
+        svg.appendChild(sv('rect', {x:x(v) - 6, y:y - 6, width:12, height:12, rx:3, style:'fill:var(--navy)'}));
+      });
+      svg.appendChild(sv('text', {x:X0, y:222, 'font-size':11, fill:'#64748b', 'class':'sm'}, L('cada quadrado é uma ação; a linha cinza, a distância até a média', 'each square is a stock; the grey line, its distance from the average')));
+      $('cs-out').innerHTML = '<span>' + L('Média do mercado', 'Market average') + '<br><b>' + sg(m, 1) + '%</b></span><span class="r">' + L('Dispersão (CSAD)', 'Dispersion (CSAD)') + '<br><b>' + fmt(cs, 2) + '%</b></span>';
+      $('cs-t').innerHTML = '<p>' + d.t + '</p>';
+    }
+    segInit($('cs-seg'), DAYS.map(function(d){ return d.n; }), 0, draw);
+    draw(0);
+  })();
+
+  /* ================= 04 · AMOSTRA ================= */
+  (function(){
+    var sc = $('am-scene'), W = 420, D = 90, st = makeStage(sc, W, D, {ay:'74%', rx:'60deg'});
+    rotatable(sc, st, -12, 6);
+    var order = C.slice().sort(function(a, b){ return b.cs[0] - a.cs[0]; });
+    var bars = {}, sel = 'br';
+    order.forEach(function(c, j){
+      var b = box({w:36, d:36, x:j * 54, y:20, z:0, h:c.cs[0] * 80, c:c.k === 'br' ? 'var(--red)' : 'var(--navy)', top:fmt(c.cs[0], 2)});
+      b.style.cursor = 'pointer';
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick(c.k); });
+      st.appendChild(b); bars[c.k] = b;
+      flatLabel(st, c.s, j * 54 - 10, 64 + (j % 2) * 18, 56);
+    });
+    var api = chipsInit($('am-chips'), C.map(function(c){ return c.s; }), 1, function(i){ pick(C[i].k); });
+    function pick(k){
+      sel = k; var c = BY[k];
+      api.set(c.i);
+      C.forEach(function(o){ bars[o.k].classList.toggle('active', o.k === k); bars[o.k].style.setProperty('--c', o.k === k ? 'var(--red)' : 'var(--navy)'); });
+      $('am-panel').innerHTML = '<p class="tag">' + c.n + ' · ' + c.N.toLocaleString(EN ? 'en-US' : 'pt-BR') + L(' pregões', ' trading days') + '</p>' +
+        '<div class="stats"><div>' + L('Retorno médio do dia', 'Average daily return') + '<b>' + (c.rm[0] > 0 ? '+' : '') + sg(c.rm[0], c.rmd) + '%</b></div>' +
+        '<div>' + L('Oscilação (desvio-padrão)', 'Swing (standard deviation)') + '<b>' + fmt(c.rm[1], 2) + '%</b></div>' +
+        '<div>' + L('Dispersão média', 'Average dispersion') + '<b>' + fmt(c.cs[0], 2) + '%</b></div>' +
+        '<div>' + L('Pior dia do mercado', 'Worst market day') + '<b>' + sg(c.rm[2], 2) + '%</b></div>' +
+        '<div>' + L('Melhor dia do mercado', 'Best market day') + '<b>+' + fmt(c.rm[3], 2) + '%</b></div>' +
+        '<div>' + L('Maior dispersão', 'Highest dispersion') + '<b>' + fmt(c.cs[2], 2) + '%</b></div></div>' +
+        '<p style="margin-top:8px; font-size:.78rem; color:var(--muted)">' + L('Retorno do mercado = média simples dos retornos das 50 ações, cada uma com o mesmo peso (Tabela 2).', 'Market return = simple average of the 50 stocks\' returns, each with the same weight (Table 2).') + '</p>';
+    }
+    pick('br');
+  })();
+
+  /* ================= 05 · A CURVA ================= */
+  (function(){
+    var svg = $('cv-svg'), sel = 1, X0 = 60, X1 = 540, Y0 = 260, Y1 = 20, xmax = 6, ymax = 7;
+    function x(v){ return X0 + v / xmax * (X1 - X0); }
+    function y(v){ return Y0 - v / ymax * (Y0 - Y1); }
+    var api = chipsInit($('cv-chips'), C.map(function(c){ return c.s; }), 1, function(i){ sel = i; draw(); });
+    function draw(){
+      var c = C[sel], r = +$('cv-r').value;
+      svg.innerHTML = '';
+      for (var v = 0; v <= ymax; v += 1){
+        svg.appendChild(sv('line', {x1:X0, x2:X1, y1:y(v), y2:y(v), stroke:'#e2e8f0'}));
+        svg.appendChild(sv('text', {x:X0 - 8, y:y(v) + 4, 'text-anchor':'end', 'font-size':12, fill:'#64748b'}, v + '%'));
+      }
+      for (var u = 0; u <= xmax; u += 1) svg.appendChild(sv('text', {x:x(u), y:Y0 + 18, 'text-anchor':'middle', 'font-size':12, fill:'#64748b'}, u + '%'));
+      svg.appendChild(sv('text', {x:X1, y:Y0 + 36, 'text-anchor':'end', 'font-size':12, fill:'#334155'}, L('tamanho do movimento do mercado →', 'size of the market\'s move →')));
+      svg.appendChild(sv('text', {x:X0, y:12, 'font-size':12, fill:'#334155'}, L('dispersão esperada (CSAD)', 'expected dispersion (CSAD)')));
+      var pl = '', pc = '';
+      for (var t = 0; t <= xmax + 1e-9; t += 0.1){
+        pl += (t ? 'L' : 'M') + x(t).toFixed(1) + ',' + y(c.a + c.g1 * t).toFixed(1);
+        pc += (t ? 'L' : 'M') + x(t).toFixed(1) + ',' + y(Math.max(0, c.a + c.g1 * t + c.g2 * t * t)).toFixed(1);
+      }
+      svg.appendChild(sv('path', {d:pl, fill:'none', stroke:'#94a3b8', 'stroke-width':3, 'stroke-dasharray':'7 6'}));
+      svg.appendChild(sv('path', {d:pc, fill:'none', style:'stroke:' + (c.g2s ? 'var(--red)' : 'var(--navy)'), 'stroke-width':4}));
+      var yl = c.a + c.g1 * r, yc = c.a + c.g1 * r + c.g2 * r * r;
+      svg.appendChild(sv('line', {x1:x(r), x2:x(r), y1:Y0, y2:y(Math.max(yl, yc)), stroke:'#334155', 'stroke-dasharray':'2 4'}));
+      svg.appendChild(sv('circle', {cx:x(r), cy:y(yl), r:6, fill:'#94a3b8'}));
+      svg.appendChild(sv('circle', {cx:x(r), cy:y(yc), r:7, style:'fill:' + (c.g2s ? 'var(--red)' : 'var(--navy)')}));
+      svg.appendChild(sv('text', {x:x(xmax) - 4, y:y(c.a + c.g1 * xmax) - 8, 'text-anchor':'end', 'font-size':13, fill:'#64748b', 'font-weight':700}, L('reta (sem curva)', 'straight line (no bend)')));
+      $('cv-o').textContent = fmt(r, 1) + '%';
+      var gap = yl - yc;
+      $('cv-t').innerHTML = '<p class="tag">' + c.n + ' <span class="nt">· γ2 = ' + sg(c.g2, 3) + (c.g2s ? '***' : L(' (não significativo)', ' (not significant)')) + '</span></p>' +
+        '<p>' + L('Num dia em que o mercado se move ', 'On a day when the market moves ') + fmt(r, 1) + '%, ' +
+        L('a reta daria uma dispersão de ', 'the straight line would give a dispersion of ') + '<b>' + fmt(yl, 2) + '%</b>; ' +
+        L('a curva estimada dá ', 'the estimated curve gives ') + '<b>' + fmt(yc, 2) + '%</b>. ' +
+        (c.g2s ? L('As ações ficaram mais juntas do que o tamanho do movimento faria esperar.', 'Stocks stayed closer together than the size of the move would suggest.') : L('Na Alemanha, a curva não se dobra para baixo: sem sinal de manada.', 'In Germany the line does not bend down: no sign of herding.')) + '</p>';
+    }
+    $('cv-r').addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 06 · RESULTADO ================= */
+  (function(){
+    var sc = $('g2-scene'), W = 420, D = 80, st = makeStage(sc, W, D, {ay:'78%', rx:'62deg'});
+    rotatable(sc, st, -12, 6);
+    var order = C.slice().sort(function(a, b){ return (b.g2s ? -b.g2 : 0) - (a.g2s ? -a.g2 : 0); });
+    var bars = {};
+    order.forEach(function(c, j){
+      var h = Math.max(6, Math.abs(c.g2) * 2500);
+      var b = box({w:36, d:36, x:j * 54, y:16, z:0, h:h, c:c.g2s ? 'var(--red)' : 'var(--navy)', cls:c.g2s ? '' : 'off', label:h > 40 ? fmt(Math.abs(c.g2), 3) : ''});
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick(c.k); });
+      st.appendChild(b); bars[c.k] = b;
+      flatLabel(st, c.s, j * 54 - 10, 58 + (j % 2) * 18, 56);
+    });
+    var api = chipsInit($('g2-chips'), C.map(function(c){ return c.s; }), 6, function(i){ pick(C[i].k); });
+    function pick(k){
+      var c = BY[k]; api.set(c.i);
+      C.forEach(function(o){ bars[o.k].classList.toggle('active', o.k === k); });
+      var n = BI[k].filter(function(b){ return b[1]; }).length;
+      $('g2-panel').innerHTML = '<p class="tag">' + c.n + ' <span class="nt">· γ2 = ' + sg(c.g2, 3) + (c.g2s ? '***' : '') + '</span></p><p>' +
+        (c.g2s ? L('Sinal de manada no período todo, significativo a 1%.', 'Sign of herding over the whole period, significant at 1%.') : L('Termo positivo e não significativo: sem sinal de manada no período todo.', 'Positive, non-significant term: no sign of herding over the whole period.')) +
+        ' ' + L('Nos cinco biênios, o sinal apareceu em ', 'In the five two-year periods, the sign appeared in ') + '<b>' + n + L(' de 5', ' of 5') + '</b> (' + L('tela 07', 'screen 07') + ').</p>';
+    }
+    pick('in');
+  })();
+
+  /* ================= 07 · BIÊNIOS ================= */
+  (function(){
+    var g = $('b-grid'), min = 1, sel = null;
+    function build(){
+      var h = '<span class="h"></span>' + BIEN.map(function(b){ return '<span class="h">' + b + '</span>'; }).join('');
+      C.forEach(function(c){
+        h += '<span class="c">' + c.s + '</span>';
+        BI[c.k].forEach(function(v, j){
+          var s = v[0] < 0 ? v[1] : 0;
+          h += '<button data-k="' + c.k + '" data-j="' + j + '" class="' + (s ? 's' + s : '') + (s && s < min ? ' fade' : '') + (sel && sel[0] === c.k && sel[1] === j ? ' sel' : '') + '" aria-label="' + c.n + ' ' + BIEN[j] + ': ' + sg(v[0], 3) + '">' + sg(v[0], 3) + '</button>';
+        });
+      });
+      g.innerHTML = h;
+      var cnt = 0;
+      C.forEach(function(c){ BI[c.k].forEach(function(v){ if (v[0] < 0 && v[1] >= min) cnt++; }); });
+      $('b-count').textContent = cnt;
+      $('b-count-t').textContent = L(' de 40 combinações com sinal de manada', ' of 40 combinations with a herding sign') + (min === 1 ? L(' (a 10% ou menos)', ' (at 10% or less)') : min === 3 ? L(' (só a 1%)', ' (at 1% only)') : '');
+      each(g.querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ sel = [b.dataset.k, +b.dataset.j]; build(); info(); }); });
+    }
+    function info(){
+      if (!sel) return;
+      var c = BY[sel[0]], v = BI[sel[0]][sel[1]];
+      $('b-panel').innerHTML = '<p class="tag">' + c.n + ' · ' + BIEN[sel[1]] + ' <span class="nt">· γ2 = ' + sg(v[0], 4).replace(/0+$/, '') + stars(v[1]) + '</span></p><p>' +
+        (v[0] < 0 && v[1] ? L('Sinal de manada, significativo a ', 'Herding sign, significant at ') + lv(v[1]) + '.' : (v[0] > 0 ? L('Termo positivo: sem sinal de manada.', 'Positive term: no herding sign.') : L('Termo negativo, mas não significativo: sem sinal claro.', 'Negative but not significant: no clear sign.'))) + '</p>';
+    }
+    segInit($('b-seg'), [L('a 10% ou menos', 'at 10% or less'), L('só a 1%', 'at 1% only')], 0, function(i){ min = i ? 3 : 1; build(); });
+    sel = ['us', 2]; build(); info();
+  })();
+
+  /* ================= 08 · ALTA × BAIXA ================= */
+  (function(){
+    var svg = $('ud-svg'), X0 = 110, X1 = 500, xmax = 0.10;
+    function x(v){ return X0 + v / xmax * (X1 - X0); }
+    function draw(){
+      svg.innerHTML = '';
+      for (var v = 0; v <= xmax + 1e-9; v += 0.02){
+        svg.appendChild(sv('line', {x1:x(v), x2:x(v), y1:18, y2:300, stroke:'#e2e8f0'}));
+        svg.appendChild(sv('text', {x:x(v), y:318, 'text-anchor':'middle', 'font-size':12, fill:'#64748b'}, fmt(v, 2)));
+      }
+      svg.appendChild(sv('text', {x:X1, y:12, 'text-anchor':'end', 'font-size':12, fill:'#334155', 'class':'sm'}, L('manada mais forte →', 'stronger herding →')));
+      var order = C.slice().sort(function(a, b){ return Math.abs(UD[b.k][0]) - Math.abs(UD[a.k][0]); });
+      order.forEach(function(c, i){
+        var d = UD[c.k], yy = 36 + i * 35, up = d[1] && d[0] < 0, dn = d[3] && d[2] < 0;
+        var a = Math.abs(d[0]), b = Math.abs(d[2]);
+        svg.appendChild(sv('text', {x:X0 - 10, y:yy + 5, 'text-anchor':'end', 'font-size':13, 'font-weight':700, fill:'#0f172a'}, c.s));
+        svg.appendChild(sv('line', {x1:x(Math.min(a, b)), x2:x(Math.max(a, b)), y1:yy, y2:yy, stroke:'#cbd5e1', 'stroke-width':4}));
+        svg.appendChild(sv('circle', {cx:x(b), cy:yy, r:8, style:dn ? 'fill:var(--navy)' : 'fill:#fff; stroke:#94a3b8; stroke-width:2'}));
+        svg.appendChild(sv('circle', {cx:x(a), cy:yy, r:8, style:up ? 'fill:var(--red); fill-opacity:.9' : 'fill:#fff; stroke:#94a3b8; stroke-width:2'}));
+        var w = !up && !dn ? L('sem sinal', 'no sign') : a > b ? L('alta', 'up') : L('queda', 'down');
+        svg.appendChild(sv('text', {x:x(Math.max(a, b)) + 14, y:yy + 5, 'font-size':12, fill:a > b ? '#be123c' : '#1f3b73', 'font-weight':600}, w));
+      });
+    }
+    var T = [
+      L('Não foi o que os dados mostraram.', 'That is not what the data showed.'),
+      L('Foi o que mais apareceu.', 'That is what showed up most.'),
+      L('Em parte: as diferenças são pequenas.', 'Partly: the differences are small.')
+    ];
+    var gs = $('ud-guess').children;
+    each(gs, function(b){ b.addEventListener('click', function(){
+      each(gs, function(x){ x.classList.toggle('ghost', x !== b); });
+      $('ud-rev').classList.add('on'); $('ud-hold').classList.remove('on'); draw();
+      $('ud-panel').innerHTML = '<p class="tag">' + T[+b.dataset.v] + '</p><p>' + L('Em cinco bolsas (Índia, China, Reino Unido, Japão e Brasil), a curva foi mais forte nos dias de <b>alta</b>. Só nos Estados Unidos e na Coreia ela foi mais forte nas quedas, e por muito pouco. Na Alemanha, sem sinal em nenhum dos dois. O próprio autor conclui que o resultado não é conclusivo; nos biênios, o sinal apareceu com mais frequência nas altas.', 'In five markets (India, China, the United Kingdom, Japan and Brazil), the bend was stronger on <b>up</b> days. Only in the United States and Korea was it stronger on down days, and by very little. In Germany, no sign on either. The author himself concludes that the result is inconclusive; in the two-year periods, the sign appeared more often on up days.') + '</p>';
+    }); });
+  })();
+
+  /* ================= 09 · VOLUME ================= */
+  (function(){
+    var rows = $('v-rows'), mx = 0.09;
+    function draw(mode){
+      var list = C.slice();
+      if (mode === 1) list.sort(function(a, b){ return (Math.abs(VO[a.k][2]) - Math.abs(VO[a.k][0])) - (Math.abs(VO[b.k][2]) - Math.abs(VO[b.k][0])); });
+      rows.innerHTML = list.map(function(c){
+        var d = VO[c.k], hi = d[0] < 0 && d[1], lo = d[2] < 0 && d[3];
+        var a = Math.abs(d[0]), b = Math.abs(d[2]);
+        var cls = (hi || lo) ? (a > b && hi ? 'win' : (b > a && lo ? 'winlo' : '')) : '';
+        return '<div class="vrow ' + cls + '"><span class="n">' + c.s + '</span><span class="v l">' + sg(d[0], 4).replace(/0+$/, '') + stars(d[1]) + '</span>' +
+          '<div class="vbar hi' + (hi ? '' : ' ns') + '"><i style="width:' + (a / mx * 100) + '%"></i></div>' +
+          '<div class="vbar lo' + (lo ? '' : ' ns') + '"><i style="width:' + (b / mx * 100) + '%"></i></div><span class="v">' + sg(d[2], 4).replace(/0+$/, '') + stars(d[3]) + '</span></div>';
+      }).join('');
+    }
+    segInit($('v-seg'), [L('ordem da dissertação', 'dissertation order'), L('maior diferença primeiro', 'largest gap first')], 0, draw);
+    draw(0);
+  })();
+
+  /* ================= 10 · COMOVIMENTO ================= */
+  (function(){
+    var svg = $('net-svg'), sel = 'br', dir = 0;
+    var P = {us:[95, 120], br:[175, 265], uk:[265, 60], de:[330, 135], in:[400, 260], cn:[460, 150], kr:[545, 85], jp:[545, 225]};
+    function coef(dep, ex){ return CM[dep][ex]; }
+    function draw(){
+      svg.innerHTML = '';
+      var links = [];
+      C.forEach(function(o){ if (o.k === sel) return;
+        var v = dir === 0 ? coef(sel, o.k) : coef(o.k, sel);
+        links.push({k:o.k, v:v[0], s:v[1]});
+      });
+      links.forEach(function(l){
+        if (!l.s) return;
+        var a = P[sel], b = P[l.k], w = 1.5 + Math.abs(l.v) * 40;
+        var ln = sv('line', {x1:a[0], y1:a[1], x2:b[0], y2:b[1], 'stroke-width':w.toFixed(1), 'stroke-linecap':'round', style:l.v > 0 ? 'stroke:var(--red); stroke-opacity:.75' : 'stroke:var(--navy); stroke-opacity:.8; stroke-dasharray:6 6'});
+        svg.appendChild(ln);
+      });
+      C.forEach(function(o){
+        var p = P[o.k], on = o.k === sel;
+        var g = sv('g', {'class':'nd', tabindex:0, role:'button', 'aria-label':o.n});
+        g.appendChild(sv('rect', {x:p[0] - 46, y:p[1] - 17, width:92, height:34, rx:17, style:on ? 'fill:var(--ink)' : 'fill:#fff; stroke:#cbd5e1; stroke-width:1.5'}));
+        g.appendChild(sv('text', {x:p[0], y:p[1] + 5, 'text-anchor':'middle', 'font-size':14, 'font-weight':700, fill:on ? '#fff' : '#0f172a'}, o.s));
+        g.addEventListener('click', function(){ sel = o.k; draw(); });
+        g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); sel = o.k; draw(); } });
+        svg.appendChild(g);
+      });
+      var c = BY[sel];
+      links.sort(function(a, b){ return b.v - a.v; });
+      var mx = 0.35;
+      $('net-panel').innerHTML = '<p class="tag">' + c.n + ' · ' + (dir === 0 ? L('quem anda junto com a dispersão do país', 'who moves with this market\'s dispersion') : L('onde a dispersão do país pesa', 'where this market\'s dispersion weighs')) + '</p><div class="rk">' +
+        links.map(function(l){ return '<div><span>' + BY[l.k].s + '</span><i class="' + (!l.s ? 'ns' : l.v < 0 ? 'neg' : '') + '" style="width:' + Math.max(3, Math.abs(l.v) / mx * 100) + '%"></i><b>' + sg(l.v, 3) + stars(l.s) + '</b></div>'; }).join('') + '</div>';
+      $('r2').innerHTML = '<span>' + c.n + L(': a regressão explica ', ': the regression explains ') + '<b>' + fmt(c.r2 * 100, 1) + '%</b>' + L(' da dispersão sozinha e ', ' of dispersion alone and ') + '<b style="color:var(--red)">' + fmt(R2B[sel] * 100, 1) + '%</b>' + L(' com as outras bolsas (R² ajustado, Tabelas 3 e 6).', ' with the other markets (adjusted R², Tables 3 and 6).') + '</span>';
+    }
+    segInit($('net-seg'), [L('quem anda junto com o país', 'who moves with the country'), L('onde o país pesa', 'where the country weighs')], 0, function(i){ dir = i; draw(); });
+    draw();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
