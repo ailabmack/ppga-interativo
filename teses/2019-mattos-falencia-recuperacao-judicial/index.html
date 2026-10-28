@@ -1,0 +1,900 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O que tira uma empresa da recuperação judicial · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Eduardo da Silva Mattos (PPGA Mackenzie, 2019) sobre falências e recuperações judiciais no Brasil: previsão mensal de falências com dados da economia, as 185 recuperações ativas no Paraná e a reforma da Lei 11.101/2005, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2019-mattos-falencia-recuperacao-judicial/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2216%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>%25</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --obs:var(--navy);     /* observado, empresa */
+    --mod:var(--red);      /* modelo, advogado, processo */
+    --mid:#5b6f96;
+    --ns:#cbd5e1;
+  }
+  .note{font-size:.76rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:12px; line-height:1.45;}
+  .note b{color:var(--ink-2);}
+  .ilus{display:inline-block; font-size:.62rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:18px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.82rem; cursor:pointer; color:var(--ink-2); font-family:inherit;}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.74rem; color:var(--muted); line-height:1.35; display:block;}
+  .stat.red b{color:var(--red);}
+  svg text{font-family:var(--sans);}
+  .svgbox{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+  .sw{display:inline-block; width:18px; height:4px; border-radius:2px; vertical-align:middle; margin-right:6px;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4vw, 2.6rem);}
+  html[lang=en] #capa h1{font-size:clamp(1.9rem, 3.5vw, 2.35rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:36em; margin-left:auto; margin-right:auto;}
+  #hero-scene{perspective:2000px;}
+  #hero-scene .face-label{font-size:13px; letter-spacing:.04em;}
+  .plate{position:absolute; transform:translateZ(0px); background:color-mix(in srgb, #e2e8f0 70%, transparent); border:1px solid #cbd5e1; border-radius:6px;}
+  .plate{background:#e6ebf2; border:0;}
+  .slab.pit > i{--face:color-mix(in srgb, var(--c) 55%, #cbd5e1) !important;}
+  .slab.pit > .f-top{display:none;}
+  .pit-floor{position:absolute; background:var(--navy); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:20px;}
+
+  /* ---------- 02 · Dois caminhos ---------- */
+  .paths{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .path{border:2px solid var(--border); background:var(--card); border-radius:14px; padding:12px 14px; text-align:left; cursor:pointer; font-family:inherit; color:var(--ink-2);}
+  .path b{display:block; font-family:var(--serif); font-size:1rem; color:var(--ink); margin-bottom:4px;}
+  .path span{font-size:.78rem; line-height:1.4; display:block;}
+  .path[aria-pressed="true"]{border-color:var(--pc); box-shadow:0 0 0 3px color-mix(in srgb, var(--pc) 18%, transparent);}
+  .ba{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+  .ba .stat b{font-size:1.05rem;}
+
+  /* ---------- 03 · Apostas da economia ---------- */
+  .bets{display:grid; grid-template-columns:repeat(2, 1fr); gap:8px;}
+  .bet{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-size:.8rem;}
+  .bet h3{font-size:.9rem; margin-bottom:2px;}
+  .bet p{margin:0 0 6px; color:var(--muted); font-size:.74rem; line-height:1.35;}
+  .bet .q{display:flex; gap:6px;}
+  .bet .q button{flex:1; border:1px solid var(--border); background:#f8fafc; border-radius:8px; padding:6px 4px; font-family:inherit; font-size:.74rem; cursor:pointer; color:var(--ink-2);}
+  .bet .q button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .bet .ans{display:none; margin-top:6px; font-size:.74rem; line-height:1.4; color:var(--ink-2);}
+  .bet.shown .ans{display:block;}
+  .bet .tag{display:inline-block; font-size:.62rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; border-radius:5px; padding:1px 6px; margin-right:4px;}
+  .tag.ok{background:#dbeafe; color:var(--navy);}
+  .tag.no{background:#fee2e2; color:#b91c1c;}
+
+  /* ---------- 04 · Previsão ---------- */
+  #fc-svg .obs{fill:none; stroke:var(--obs); stroke-width:2.5;}
+  #fc-svg .est{fill:none; stroke:var(--mod); stroke-width:2.5; stroke-dasharray:6 4;}
+  #fc-svg .err{stroke:var(--mod); stroke-opacity:.25; stroke-width:5;}
+  #fc-svg .ax{stroke:#cbd5e1; stroke-width:1;}
+  #fc-svg .lb{font-size:11px; fill:#64748b;}
+  .errbar{display:grid; gap:6px; margin-top:10px;}
+  .errbar div{display:grid; grid-template-columns:150px 1fr 54px; gap:8px; align-items:center; font-size:.78rem;}
+  .errbar i{display:block; height:12px; border-radius:6px; background:var(--ns); transition:width .5s;}
+  .errbar .on i{background:var(--mod);}
+  .errbar .on span{font-weight:700; color:var(--ink);}
+
+  /* ---------- 05 · Grupos ---------- */
+  .gx{display:grid; grid-template-columns:96px repeat(6, 1fr); gap:4px; font-size:.74rem;}
+  .gx .h{font-size:.64rem; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); text-align:center; align-self:end; line-height:1.15;}
+  .gx button.rl{border:1px solid transparent; background:transparent; text-align:left; font-family:inherit; font-size:.76rem; font-weight:600; color:var(--ink); padding:4px 6px; border-radius:8px; cursor:pointer;}
+  .gx button.rl[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .gx .c{border-radius:8px; min-height:32px; display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-weight:700; font-size:.95rem; border:1px solid var(--border);}
+  .gx .c.as{background:var(--navy); color:#fff; border-color:var(--navy);}
+  .gx .c.co{background:var(--red); color:#fff; border-color:var(--red);}
+  .gx .c.na{background:repeating-linear-gradient(135deg, #f1f5f9 0 6px, #fff 6px 12px); color:#94a3b8;}
+  .gx .c small{font-family:var(--sans); font-size:.6rem; font-weight:600; margin-left:3px; opacity:.85;}
+  .rank{list-style:none; padding:0; margin:8px 0 0; display:grid; gap:5px;}
+  .rank li{display:grid; grid-template-columns:24px 1fr auto; gap:8px; align-items:center; font-size:.8rem; background:var(--card); border:1px solid var(--border); border-radius:9px; padding:3px 10px;}
+  .rank{gap:3px !important;}
+  .rank li b{font-family:var(--serif); color:var(--muted);}
+  .rank li:first-child{border-color:var(--ink);}
+
+  /* ---------- 06 · 185 processos ---------- */
+  #proc-grid{display:grid; grid-template-columns:repeat(20, 1fr); gap:3px; max-width:440px;}
+  #proc-grid i{display:block; aspect-ratio:1; border-radius:2px; background:var(--ns); transition:background .4s;}
+  #proc-grid i.cap{background:var(--red);}
+  #proc-grid i.int{background:var(--navy);}
+  #proc-grid i.dim{background:#e2e8f0;}
+
+  /* ---------- 07 · Placar dos fatores ---------- */
+  .px{display:grid; grid-template-columns:minmax(120px, 1.5fr) 92px repeat(4, minmax(0, 1fr)); gap:4px; font-size:.76rem; align-items:stretch;}
+  .px .h{font-size:.62rem; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); text-align:center; align-self:end; line-height:1.15;}
+  .px .rl{font-weight:600; color:var(--ink); display:flex; align-items:center; line-height:1.2; font-size:.78rem;}
+  .px .gs{display:flex; gap:3px;}
+  .px .gs button{flex:1; border:1px solid var(--border); background:#f8fafc; border-radius:7px; font-size:.78rem; cursor:pointer; font-family:inherit; padding:3px 0;}
+  .px .gs button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .px .c{border-radius:8px; min-height:30px; display:flex; flex-direction:column; align-items:center; justify-content:center; border:1px dashed var(--border); color:#cbd5e1; line-height:1.05; text-align:center;}
+  .px .c.hid{color:transparent; background:#f1f5f9; border-style:solid;}
+  .px .c.up{background:var(--navy); color:#fff; border:0;}
+  .px .c.dn{background:var(--red); color:#fff; border:0;}
+  .px .c b{font-family:var(--serif); font-size:.82rem;}
+  .px .c small{font-size:.58rem; opacity:.9;}
+  .gone{font-size:.78rem; color:var(--muted); margin-top:10px; line-height:1.5;}
+  .gone b{color:var(--ink-2);}
+
+  /* ---------- 08 · Advogado ---------- */
+  .folders{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .folder{position:relative; border:0; background:none; cursor:pointer; padding:0; font-family:inherit; text-align:left;}
+  .folder svg{width:100%; display:block;}
+  .folder[aria-pressed="true"] .fbody{stroke:var(--ink); stroke-width:3;}
+  .folder span{display:block; font-size:.8rem; font-weight:600; color:var(--ink); margin-top:4px; text-align:center;}
+  .gap-meter{margin-top:12px; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px;}
+  .gm-track{position:relative; height:22px; background:#f1f5f9; border-radius:11px; margin:8px 0 4px; overflow:hidden;}
+  .gm-fill{position:absolute; left:0; top:0; bottom:0; background:var(--red); border-radius:11px; transition:width .6s;}
+  .gm-rng{position:absolute; top:0; bottom:0; background:repeating-linear-gradient(135deg, rgb(232 7 52 / .35) 0 5px, transparent 5px 10px);}
+  .gm-scale{display:flex; justify-content:space-between; font-size:.66rem; color:var(--muted);}
+  .twobars{display:grid; gap:6px; margin-top:12px;}
+  .twobars div{display:grid; grid-template-columns:70px 1fr 56px; gap:8px; align-items:center; font-size:.78rem;}
+  .twobars i{display:block; height:14px; border-radius:7px; background:var(--navy);}
+
+  /* ---------- 09 · Deságio ---------- */
+  #hc-svg rect.bar{fill:var(--mid); cursor:pointer; transition:fill .3s;}
+  #hc-svg rect.bar.zero{fill:var(--red);}
+  #hc-svg rect.bar.sel{stroke:var(--ink); stroke-width:2.5;}
+  #hc-svg .lb{font-size:11px; fill:#64748b;}
+
+  /* ---------- 10 · Reforma ---------- */
+  .rf{display:grid; grid-template-columns:repeat(2, 1fr); gap:8px;}
+  .rf button{border:1px solid var(--border); background:var(--card); border-radius:12px; padding:10px 12px; text-align:left; cursor:pointer; font-family:inherit; color:var(--ink-2); font-size:.8rem; line-height:1.3; border-left:5px solid var(--vc);}
+  .rf button b{display:block; color:var(--ink); font-size:.86rem; margin-bottom:2px;}
+  .rf button em{font-style:normal; font-size:.64rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--vc);}
+  .rf button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--vc); background:color-mix(in srgb, var(--vc) 6%, white);}
+
+  /* ---------- 11 · Calculadora ---------- */
+  .calc input[type=range]{width:100%; accent-color:var(--red);}
+  .calc .big{font-family:var(--serif); font-size:2rem; font-weight:900; color:var(--red); line-height:1.1;}
+  .calc .row{display:flex; justify-content:space-between; font-size:.8rem; color:var(--muted); margin-top:4px;}
+  .coins{display:flex; flex-wrap:wrap; gap:3px; margin-top:10px; min-height:18px;}
+  .coins i{width:14px; height:14px; border-radius:50%; background:var(--red); display:block;}
+  .coins i.n{background:var(--navy);}
+
+  /* ---------- 12 · Final ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.78rem; color:var(--ink-2); line-height:1.42;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+
+  @media (max-width:600px){
+    .paths, .ba, .bets, .rf{grid-template-columns:1fr;}
+    .gx{grid-template-columns:78px repeat(6, 1fr); gap:3px;}
+    .gx .h{font-size:.56rem;}
+    .gx .c small{display:none;}
+    .px{grid-template-columns:minmax(0, 1.3fr) 70px repeat(4, minmax(0, 1fr)); gap:3px;}
+    .px .rl{font-size:.68rem; hyphens:auto; -webkit-hyphens:auto; overflow-wrap:anywhere;}
+    .px .h{font-size:.54rem;}
+    .px .c small{display:none;}
+    .errbar div{grid-template-columns:110px 1fr 48px; font-size:.72rem;}
+    .stats{grid-template-columns:1fr 1fr;}
+  }
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2019-mattos-falencia-recuperacao-judicial/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2019</div>
+      <h1 class="rv" style="--d:.1s">Sair da recuperação judicial depende também de quem conduz o pedido</h1>
+      <p class="sub rv" style="--d:.2s">A tese olhou as falências no Brasil por três lados: previu os pedidos de falência de cada mês a partir da economia, leu uma a uma as 185 recuperações judiciais ativas no Paraná e avaliou a reforma da lei em discussão. Sair dela dependeu tanto da empresa quanto do processo, como ter advogado que conhece a lei. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Eduardo da Silva Mattos</span>
+        <span><b>Orientador:</b> Prof. Dr. Leonardo Fernando Cruz Basso</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#caminhos">Começar →</a>
+        <a class="btn ghost" href="#fatores">Ver o que pesou</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="460x360" role="img" aria-label="Um piso com uma torre vermelha que sobe 31 pontos, o advogado especializado, e um poço azul que desce 19 pontos, o setor de serviços: o quanto cada um muda a chance de a empresa sair da recuperação judicial"></div></div>
+      <p class="cap-legend">Quanto muda a chance de a empresa sair da recuperação com o plano aprovado e funcionando, no modelo mais completo da tese: +31 pontos com advogado especializado, −19 pontos no setor de serviços (tela 07). Arraste para girar.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-16"><a href="https://brasil.un.org/pt-br/sdgs/16" target="_blank" rel="noopener" title="ODS 16 · Paz, justiça e instituições eficazes: Mostra o que faz o processo de recuperação judicial funcionar e avalia se a reforma da lei ataca os problemas que os dados apontam."><b>16</b>Paz, justiça e instituições eficazes</a></li>
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: As recuperações são, na maioria, de pequenos negócios locais, e as pequenas empresas sentem mais as oscilações da economia."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · DOIS CAMINHOS -->
+<section class="slide" id="caminhos" data-label="Dois caminhos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> A pergunta · introdução e capítulo 3</div>
+      <h2 class="rv" style="--d:.1s">A lei de falências serve para separar a empresa que ainda tem jeito da que não tem</h2>
+      <p class="lede rv" style="--d:.15s">Para o autor, a lei deve deixar seguir quem é viável e tirar do mercado, do jeito mais eficiente, quem não é, para que bens e pessoas voltem a ser usados. A pergunta geral da tese: como reconhecer uma da outra? Toque em cada caminho.</p>
+      <div class="paths rv" style="--d:.2s" id="paths" role="group" aria-label="Caminhos">
+        <button class="path" style="--pc:var(--navy)" data-m="0" aria-pressed="true"><b>Recuperação judicial</b><span>A empresa propõe um plano e os credores votam</span></button>
+        <button class="path" style="--pc:var(--red)" data-m="1" aria-pressed="false"><b>Falência</b><span>A empresa fecha e os bens pagam os credores</span></button>
+      </div>
+      <div class="panel rv" id="path-panel" style="--d:.25s; margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel">
+        <h3>A lei de 2005 mudou o jogo</h3>
+        <p>A Lei 11.101/2005 acabou com a antiga concordata e deu aos credores o voto sobre o plano. Pedir a falência de alguém ficou mais difícil: só com dívida acima de 40 salários mínimos e protesto prévio. Antes, credores usavam o pedido de falência para cobrar dívidas.</p>
+      </div>
+      <div class="ba">
+        <div class="stat"><b>~2.700 → ~100 a 200</b><span>pedidos de falência por mês: o pico de 2002 e o nível depois de 2010</span></div>
+        <div class="stat red"><b>~10 a 40 → ~150</b><span>pedidos de concordata ou recuperação por mês: antes da lei e no fim de 2015</span></div>
+      </div>
+      <p class="note">Valores aproximados (~), lidos por nós nas Figuras 1 e 6 da tese (dados do Serasa Experian, jan. 2001 a dez. 2015). A queda brusca das falências em 2005 tem parte jurídica, explica o autor: a lei mudou quem pode pedir.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · APOSTAS DA ECONOMIA -->
+<section class="slide" id="apostas" data-label="A economia e as falências">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> Capítulo 1 · falências mensais no Brasil, 2006–2016</div>
+      <h2 class="rv" style="--d:.1s">Nem tudo na economia empurrou as falências para o lado esperado</h2>
+      <p class="lede rv" style="--d:.15s">O autor tentou prever o número de pedidos de falência de cada mês com seis indicadores da economia, olhados de 1 a 12 meses antes. Treinou os modelos com 2006 a 2016 e testou em 2017 e 2018. Aposte: quando o indicador sobe, as falências sobem ou descem?</p>
+      <p class="note rv" style="--d:.2s">O sinal é o do modelo das falências totais (Tabela 2), somando os efeitos dos vários meses de atraso escolhidos. Dados mensais do Serasa Experian (falências), Banco Central, FGV e IBGE.</p>
+      <button class="btn ghost rv" style="--d:.25s; margin-top:10px" id="bet-all">Mostrar todas as respostas</button>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="bets" id="bets"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · PREVISÃO -->
+<section class="slide" id="previsao" data-label="A previsão">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Capítulo 1 · teste em 2017 e 2018 · Tabela 3</div>
+      <h2 class="rv" style="--d:.1s">Prever o total direto errou menos que somar as partes</h2>
+      <p class="lede rv" style="--d:.15s">O modelo do total errou, em média, 18% das falências de cada mês. Somar as previsões por setor ou por porte errou 23% a 24%; o modelo “ingênuo”, que só repete o passado da própria série, 34%. Troque o modelo e veja mês a mês.</p>
+      <div class="seg rv" id="fc-seg" style="--d:.2s" role="group" aria-label="Modelo">
+        <button data-m="0" aria-pressed="true">Total</button><button data-m="1" aria-pressed="false">Soma por setor</button><button data-m="2" aria-pressed="false">Soma por porte</button><button data-m="3" aria-pressed="false">Ingênuo</button><button data-m="4" aria-pressed="false">Total recalibrado</button>
+      </div>
+      <div class="errbar rv" id="errbar" style="--d:.25s"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg class="svgbox" id="fc-svg" viewBox="0 0 640 300" role="img" aria-label="Pedidos de falência observados e previstos, mês a mês, de janeiro de 2017 a dezembro de 2018"></svg>
+      <div class="legend"><span><i class="sw" style="background:var(--navy)"></i>observado</span><span><i class="sw" style="background:repeating-linear-gradient(90deg, var(--red) 0 6px, transparent 6px 10px)"></i>previsto</span><span><i class="sw" style="background:rgb(232 7 52 / .25); height:8px"></i>erro do mês</span></div>
+      <p class="note" id="fc-note">Previsto = observado menos a diferença da Tabela 3 (conta nossa). “Total recalibrado” refaz o modelo com os dados de 2017 e 2018 incluídos, por isso acerta mais: serve para mostrar que os pesos mudam com o tempo, não como previsão.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · GRUPOS -->
+<section class="slide" id="grupos" data-label="Setores e portes">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Capítulo 1 · Tabelas 2 e 4</div>
+      <h2 class="rv" style="--d:.1s">O PIB pesou mais em quase todos os grupos, e os juros ficaram por último</h2>
+      <p class="lede rv" style="--d:.15s">O autor fez um modelo para cada setor e cada porte. Azul: o indicador empurrou as falências para o lado esperado. Vermelho: para o lado contrário. O número é a posição do indicador no próprio grupo (1 = o que mais pesa). Toque num grupo.</p>
+      <div class="panel rv" id="gx-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="gx" id="gx"></div>
+      <p class="note">Pequenas: faturam até R$ 4 milhões por ano; médias, de R$ 4 milhões a R$ 50 milhões; grandes, acima disso (critério do Serasa Experian). A ordem vale dentro de cada grupo, avisa o autor: comparar a força de um fator entre grupos pediria outra análise. O modelo do total não tem ordem na Tabela 4; o comércio não usou desemprego.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · 185 PROCESSOS -->
+<section class="slide" id="processos" data-label="Os 185 processos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Capítulo 2 · base inédita · Tabela 6</div>
+      <h2 class="rv" style="--d:.1s">Todas as 185 recuperações ativas no Paraná, lidas uma a uma</h2>
+      <p class="lede rv" style="--d:.15s">O autor, advogado, consultou as 160 comarcas do estado e abriu cada processo de recuperação judicial ativo em 1º de janeiro de 2017, inclusive os que já tinham virado falência. O resultado de cada um foi lido em 1º de março de 2019. Por ser a população inteira, não há sorteio de amostra.</p>
+      <div class="seg rv" id="pr-seg" style="--d:.2s" role="group" aria-label="Onde corre o processo">
+        <button data-m="0" aria-pressed="false">Capital (40)</button><button data-m="1" aria-pressed="true">Interior (145)</button>
+      </div>
+      <div class="stats" id="pr-stats"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div id="proc-grid" role="img" aria-label="185 quadradinhos, um por processo: 40 da capital, 145 do interior"></div>
+      <div class="panel" style="margin-top:14px">
+        <h3>Muitas chegam tarde</h3>
+        <p id="pr-late"></p>
+      </div>
+      <p class="note">Só a capital, Curitiba, tem varas especializadas em falência: 21,62% dos casos. Só 14,59% dos processos tinham administrador judicial com site do caso. Médias e medianas da Tabela 6.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · FATORES -->
+<section class="slide" id="fatores" data-label="O que pesou">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Capítulo 2 · quatro modelos · Tabela 7</div>
+      <h2 class="rv" style="--d:.1s">Dois fatores apareceram nos quatro modelos, com o mesmo sinal</h2>
+      <p class="lede rv" style="--d:.15s">“Sair” aqui é ter o plano aprovado e continuar funcionando. Para cada fator, aposte se ajudou (↑) ou atrapalhou (↓). A resposta aparece nos quatro modelos da tese: dois lineares, que dão o efeito em pontos de chance, e dois de probabilidade (probit e logit).</p>
+      <div class="panel rv" id="px-panel" style="--d:.2s" aria-live="polite"><p>Faça suas apostas na tabela ao lado.</p></div>
+      <p class="note rv" style="--d:.25s">Estrelas: significância nos modelos lineares (* 10%, ** 5%, *** 1%). A tabela da tese não marca significância no probit e no logit; ali mostramos só o sinal. 163 a 165 processos com dados completos.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="px" id="px"></div>
+      <button class="btn ghost" style="margin-top:10px" id="px-all">Mostrar todas as respostas</button>
+      <p class="gone"><b>Ficaram fora de todos os modelos finais:</b> vara especializada em falência, banco público entre os credores, número de credores, número de empregados, ser S.A., lucros acumulados, lucro do último ano, patrimônio frente às dívidas e setor primário.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · ADVOGADO -->
+<section class="slide" id="advogado" data-label="O advogado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Capítulo 2 · uma medida criada pelo autor</div>
+      <h2 class="rv" style="--d:.1s">Quase metade dos pedidos chegou sem os documentos que a própria lei lista</h2>
+      <p class="lede rv" style="--d:.15s">O artigo 51 da lei diz quais documentos devem acompanhar o pedido de recuperação. O autor chamou de especializado o advogado que juntou todos eles já no início. É um critério simples, mas viu petições emendadas quatro vezes e administradores destituídos por falta de experiência. Toque numa pasta.</p>
+      <div class="twobars rv" id="twobars" style="--d:.2s"></div>
+      <p class="note rv" style="--d:.25s">Processos sem advogado especializado, por região (Tabela 6). No total, 89 de 185, ou 48% (conta nossa a partir da tabela).</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="folders" id="folders" role="group" aria-label="Pasta do pedido"></div>
+      <div class="gap-meter" aria-live="polite">
+        <div style="font-size:.84rem; color:var(--ink-2)" id="gm-txt"></div>
+        <div class="gm-track"><div class="gm-rng" id="gm-rng"></div><div class="gm-fill" id="gm-fill"></div></div>
+        <div class="gm-scale"><span>0</span><span>+10</span><span>+20</span><span>+30</span><span>+40 pontos</span></div>
+      </div>
+      <p class="note">Diferença na chance de sair da recuperação, nos dois modelos lineares (+25,7 e +31,1 pontos percentuais, Tabela 7). No probit e no logit o sinal é o mesmo. Para o autor, além das petições, conta a rede de contatos com bancos, fundos e administradores.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · DESÁGIO -->
+<section class="slide" id="desagio" data-label="O inesperado">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> O inesperado · Capítulo 2 · Figura 3</div>
+      <h2 class="rv" style="--d:.1s">Pedir desconto maior aos credores não diminuiu a chance de aprovar o plano</h2>
+      <p class="lede rv" style="--d:.15s">O deságio é o corte que a empresa pede no valor das dívidas. Esperava-se que cortes maiores afastassem os credores. Nos dados, o sinal saiu positivo em três modelos. A leitura do autor: quem negocia bem já pede o máximo que os credores aceitam; deságio zero é de quem não tinha outra carta, muitas vezes empresas pequenas. Toque nas barras.</p>
+      <div class="panel rv" id="hc-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg class="svgbox" id="hc-svg" viewBox="0 0 600 300" role="img" aria-label="Distribuição do deságio proposto: cerca de 36% dos planos não pediram desconto nenhum, e o resto se concentra entre 30% e 75%"></svg>
+      <p class="note">Alturas aproximadas (~), lidas por nós na Figura 3 da tese (fatia dos planos em cada faixa de deságio). Os dois planos mais ousados, com deságio de 85% e 95%, foram rejeitados e as empresas faliram: há limite.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · REFORMA -->
+<section class="slide" id="reforma" data-label="A reforma">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Capítulo 3 · Projeto de Lei 10.220/2018</div>
+      <h2 class="rv" style="--d:.1s">A reforma em discussão mirava o juiz, mas nos dados quem pesou foi o advogado</h2>
+      <p class="lede rv" style="--d:.15s">O projeto de reforma da lei, de um grupo de trabalho do Ministério da Fazenda, tramitava quando a tese foi escrita. O autor confrontou cada mudança com os seus resultados. Toque numa mudança.</p>
+      <div class="panel rv" id="rf-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="rf" id="rf" role="group" aria-label="Mudanças do projeto"></div>
+      <p class="note">Avaliações do autor no capítulo 3 (seções 3.2 a 3.4). Os rótulos resumem a leitura dele.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · ADMINISTRADOR E PEQUENAS -->
+<section class="slide" id="pequenas" data-label="Os casos pequenos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> Capítulo 3 · seções 3.3.1 e 3.3.3</div>
+      <h2 class="rv" style="--d:.1s">Num caso de R$ 1 milhão, o administrador judicial receberia R$ 833 por mês</h2>
+      <p class="lede rv" style="--d:.15s">Mais de 15% das recuperações do Paraná tinham dívidas abaixo de R$ 1 milhão. O autor fez a conta do teto de remuneração: 5% das dívidas (2% para microempresas), 60% pagos ao longo de três anos e 40% no fim. Menos de um salário mínimo por mês, o que pode afastar bons profissionais. Mude o tamanho do caso.</p>
+      <div class="panel rv" style="--d:.2s">
+        <h3>Para o pequeno, um recomeço</h3>
+        <p>O autor, apoiado em Baird, lembra que muitas pequenas empresas não têm um negócio a salvar: a recuperação serve para o dono organizar as contas e seguir para o próximo empreendimento. Dar tratamento mais favorável sem reconhecer essa diferença pode só adiar o inevitável. A reforma não tratava disso.</p>
+      </div>
+    </div>
+    <div class="rv calc" style="--d:.2s">
+      <div class="panel">
+        <label for="dv" style="font-size:.84rem; color:var(--ink-2)">Dívidas da empresa em recuperação: <b id="dv-out"></b></label>
+        <input type="range" id="dv" min="0" max="40" step="1" value="9">
+        <div class="seg" id="cl-seg" role="group" aria-label="Tipo de empresa" style="margin:8px 0 12px">
+          <button data-m="0" aria-pressed="true">Empresa comum (5%)</button><button data-m="1" aria-pressed="false">Microempresa (2%)</button>
+        </div>
+        <div style="font-size:.8rem; color:var(--muted)">Por mês, durante 36 meses</div>
+        <div class="big" id="cl-month"></div>
+        <div class="row"><span>No fim, depois do relatório final</span><b id="cl-final" style="color:var(--ink)"></b></div>
+        <div class="coins" id="coins" aria-hidden="true"></div>
+        <p style="font-size:.74rem; color:var(--muted); margin:6px 0 0">Cada bolinha: R$ 250 por mês.</p>
+      </div>
+      <p class="note">Conta do autor para R$ 1 milhão (R$ 833,33 por mês e R$ 20 mil no fim; microempresa, R$ 333,33 e R$ 8 mil), refeita por nós para outros valores com as mesmas regras e o teto. Na base da tese, só 6 casos (3,24%) passariam do limite de 300 mil salários mínimos que levaria o processo à vara da capital.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e limites">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Na prática · limites · créditos</div>
+    <h2 class="rv" style="--d:.1s">Olhar a economia, o balanço e também o processo</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Empresas em crise</h3><p>Contratar quem conhece recuperação judicial fez diferença nos dados. E chegar cedo: dois terços das empresas do interior pediram quando os prejuízos já tinham comido todos os lucros passados.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Bancos e quem empresta</h3><p>O autor espera que os modelos ajudem a ver como cada setor e porte reage à economia, e que fatores do processo, e não só do balanço, entrem na análise do risco de crédito.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ink-2)"><h3>Legisladores e Judiciário</h3><p>Para o autor, falta um filtro que separe as empresas viáveis antes da votação, e a escolha do administrador só pelo preço e o pagamento baixo nos casos pequenos podem piorar o serviço.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#5b6f96"><h3>Pesquisadores</h3><p>O autor sugere estudar por que o PIB andou junto com mais falências, medir melhor o desemprego e a abertura de empresas, e olhar classes de credores e o congestionamento das varas.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Um estado só.</b> As 185 recuperações são do Paraná; o autor o vê como boa referência para o país, mas não foi testado fora dele.</li>
+          <li><b>Relação não é causa.</b> O “advogado especializado” é medido só pelos documentos completos e pode carregar outras coisas, como o porte da empresa, que o próprio autor cita. <em>· observação nossa</em></li>
+          <li><b>Acertar 71% não é tanto quanto parece.</b> Os modelos de probabilidade acertaram 70,9% e 71,8% dos casos. Chutar sempre “a empresa sai” acertaria perto de 56% a 58%, a taxa de sucesso da Tabela 6. <em>· comparação nossa</em></li>
+          <li><b>Resultados de março de 2019.</b> Uma empresa que hoje cumpre o plano pode falir depois, avisa o autor.</li>
+          <li><b>Previsão das falências com pesos que mudam.</b> Os modelos usam muitos meses de atraso (o R² de 0,99 cai para 0,85 quando ajustado), e o autor recomenda recalibrá-los sempre que possível. Não servem para decidir sozinhos um empréstimo. <em>· em parte observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          MATTOS, Eduardo da Silva. <em>Fundamentos falimentares em risco de crédito.</em> Tese (Doutorado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2019. Orientador: Prof. Dr. Leonardo Fernando Cruz Basso.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Falências mensais do Serasa Experian (2006–2018) com dados do Banco Central, FGV e IBGE; 185 processos de recuperação judicial do Paraná coletados pelo autor no sistema Projudi do Tribunal de Justiça. Esta versão simplifica a tese para o público em geral; as tabelas completas estão no texto original.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  function pc(v){ return fmt(v, v % 1 ? (Math.abs(v * 10 - Math.round(v * 10)) < 1e-9 ? 1 : 2) : 0); }
+  function n0(n){ return Math.round(n).toLocaleString(EN ? 'en-US' : 'pt-BR'); }
+  function money(v, d){ return 'R$ ' + v.toLocaleString(EN ? 'en-US' : 'pt-BR', {minimumFractionDigits:d || 0, maximumFractionDigits:d || 0}); }
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, a, txt){ var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); if (txt !== undefined) e.textContent = txt; return e; }
+  function seg(id, fn){
+    var g = $(id);
+    each(g.querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){
+        each(g.querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        fn(+b.dataset.m);
+      });
+    });
+  }
+
+  /* ================= DADOS DA TESE ================= */
+  // Tabela 3: pedidos de falência observados, jan/2017 a dez/2018, e diferença observado − estimado
+  var MESES = EN ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] : ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  var OBS = [92,141,161,106,194,135,157,165,178,156,120,103,79,96,121,121,151,118,127,153,125,140,123,105];
+  var DIF = [
+    [-51.166,29.596,0.272,-46.563,15.571,-1.354,0.188,2.674,24.449,26.893,-33.095,-34.995,-28.681,-21.63,-30.56,-11.153,22.367,20.4844,-1.989,13.591,-0.133,64.9343,-10.536,11.9949],
+    [-70.01254,21.01797,-14.02637,-58.40959,-1.79522,-17.91833,-25.91071,-19.87394,7.83755,0.72666,-43.15943,-48.14934,-55.79094,-43.95339,-42.70723,-31.68579,3.97676,-5.37851,-23.61481,-1.05345,-32.3468,26.57385,-19.00909,20.50121],
+    [-44.8731,37.4918,-1.1584,-59.5806,-2.3789,-15.0225,-1.6379,-20.8266,15.1277,11.4054,-59.5849,-46.5042,-54.9124,-45.3823,-37.5211,-35.45169,-8.9249,-10.7114,-17.1792,-14.259,-28.3416,30.9699,-29.45621,-5.90177],
+    [-59.343,-11.708,6.963,-49.33,37.41,-22.816,-2.009,4.829,16.698,-6.403,-43.474,-61.518,-86.533,-70.522,-46.484,-47.421,-18.333,-52.221,-44.085,-18.927,-47.746,-33.543,-51.319,-70.075],
+    [-22.146,9.93,-12.151,-20.235,14.347,7.628,-5.116,4.984,19.56,17.998,-17.982,-17.8,-26.714,-25.863,-20.305,3.573,24.981,15.889,3.959,1.713,-7.123,34.383,-3.006,10.3235]
+  ];
+  // Erro % médio em módulo (Tabela 3)
+  var ERR = [17.77, 23.72, 23.26, 33.67, 12.05];
+  var MODN = [L('Total (1)', 'Total (1)'), L('Soma por setor (2)', 'Sum by sector (2)'), L('Soma por porte (3)', 'Sum by size (3)'), L('Ingênuo, ARMA(1)', 'Naive, ARMA(1)'), L('Total recalibrado', 'Total, re-estimated')];
+
+  // Tabela 2 (sinal líquido e defasagens) e Tabela 4 (ordem dentro do grupo)
+  var VARS = [
+    {k:'cam', n:L('Câmbio', 'Exchange rate'), d:L('cotação média do dólar no mês', 'average US dollar rate in the month'), esp:-1,
+      why:L('Dólar mais caro ajuda quem compete com produtos de fora.', 'A pricier dollar helps those competing with imports.')},
+    {k:'pib', n:L('PIB', 'GDP'), d:L('produção da economia, descontada a inflação', 'economic output, net of inflation'), esp:-1,
+      why:L('Economia crescendo, mais vendas, menos quebras.', 'A growing economy means more sales, fewer failures.')},
+    {k:'jur', n:L('Juros', 'Interest'), d:L('taxa média do capital de giro das empresas', 'average working-capital loan rate for firms'), esp:1,
+      why:L('Crédito mais caro, mais difícil pagar as dívidas.', 'Costlier credit makes debts harder to pay.')},
+    {k:'liq', n:L('Dinheiro em circulação', 'Money in circulation'), d:L('M1, descontada a inflação', 'M1, net of inflation'), esp:-1,
+      why:L('Mais dinheiro circulando, mais folga para pagar.', 'More money circulating, more room to pay.')},
+    {k:'exp', n:L('Expectativa', 'Expectations'), d:L('índice de expectativas da FGV', 'FGV expectations index'), esp:-1,
+      why:L('Quem espera dias melhores adia o pedido de falência.', 'Those expecting better days delay filing.')},
+    {k:'des', n:L('Desemprego', 'Unemployment'), d:L('taxa oficial do IBGE', 'official IBGE rate'), esp:1,
+      why:L('Menos renda das famílias, menos vendas.', 'Less household income, fewer sales.')}
+  ];
+  // [sinal, defasagens] por grupo, na ordem de VARS; null = não entrou
+  var GR = [
+    {n:L('Total', 'Total'), r2:0.849744, s:[[-1,'3, 8, 10'],[1,'3, 5, 6, 9, 10, 11, 12'],[-1,'2, 3, 5, 8, 10, 11'],[-1,'2, 6, 8, 12'],[-1,'1, 2, 7, 8, 10, 11'],[-1,'4, 6, 8, 11']], rk:null},
+    {n:L('Comércio', 'Retail'), r2:0.862628, s:[[-1,'4, 6, 10, 11, 12'],[1,'3, 6, 9, 10'],[1,'2, 3, 11, 12'],[-1,'3, 6, 7, 12'],[1,'5, 6, 7, 8, 10, 11'],null], rk:['pib','liq','exp','jur','cam']},
+    {n:L('Indústria', 'Industry'), r2:0.781121, s:[[-1,'2, 3, 4, 6, 7, 11, 12'],[1,'3, 5, 6, 9, 10, 11, 12'],[-1,'3, 7, 8, 10, 12'],[-1,'2, 5, 12'],[-1,'3, 4, 5, 8, 10'],[1,'4, 6']], rk:['pib','exp','liq','cam','des','jur']},
+    {n:L('Serviços', 'Services'), r2:0.625442, s:[[-1,'2, 3, 6, 8, 10'],[1,'2, 5, 6, 9, 10, 11, 12'],[-1,'5, 7, 10'],[-1,'2, 6, 7, 12'],[-1,'4, 5, 6'],[1,'9, 11']], rk:['pib','liq','exp','des','cam','jur']},
+    {n:L('Primário', 'Primary'), r2:0.549261, s:[[-1,'4, 7'],[1,'2, 5, 6, 12'],[-1,'4, 7, 8'],[1,'4, 5, 7, 8, 10'],[-1,'3, 5, 6, 7'],[1,'10, 11']], rk:['exp','pib','liq','des','cam','jur']},
+    {n:L('Pequenas', 'Small'), r2:0.919324, s:[[-1,'3, 8, 10'],[1,'3, 5, 6, 9, 10, 12'],[-1,'2, 3, 6, 8, 9, 10, 11'],[-1,'2, 3, 6, 7, 8, 12'],[1,'1, 2, 7, 8, 10, 12'],[-1,'8, 11']], rk:['pib','liq','cam','des','exp','jur']},
+    {n:L('Médias', 'Medium'), r2:0.515709, s:[[-1,'1, 3, 7, 10'],[1,'3, 5, 7, 11'],[-1,'3, 4, 7, 8'],[1,'11'],[-1,'1, 2, 12'],[1,'4, 6, 12']], rk:['pib','exp','des','liq','cam','jur']},
+    {n:L('Grandes', 'Large'), r2:0.719773, s:[[-1,'1, 3, 8, 11'],[1,'3'],[-1,'9, 11'],[1,'5, 8, 11'],[-1,'1, 3, 8, 11'],[-1,'3, 4, 7, 8, 11']], rk:['pib','exp','des','cam','liq','jur']}
+  ];
+
+  // Tabela 6: capital × interior
+  var T6 = [
+    {n:L('Capital', 'Capital city'), tot:40, media:47036888.35, mediana:9747433.81, semAdv:35, reNeg:62.5, plNeg:47.5, idade:220, cred:90, emp:38, dias:25, ok:55},
+    {n:L('Interior', 'Rest of the state'), tot:145, media:47990707.18, mediana:7471464.62, semAdv:51.72, reNeg:66.21, plNeg:42.66, idade:209, cred:91, emp:57.5, dias:75, ok:57.69}
+  ];
+
+  // Tabela 7: [valor, estrelas] em (1) OLS, (2) OLS, (3) probit, (4) logit; null = fora do modelo
+  var FAT = [
+    {n:L('Advogado especializado', 'Specialized lawyer'), c:[[0.31061,3],[0.257176,3],[0.799221,0],[1.45798,0]],
+      t:L('Juntar todos os documentos exigidos já no pedido. Nos modelos lineares, +31,1 e +25,7 pontos de chance de sair. Mesmo sinal no probit e no logit.', 'Attaching all required documents from the start. In the linear models, +31.1 and +25.7 points of chance of getting through. Same sign in probit and logit.')},
+    {n:L('Setor de serviços', 'Service sector'), c:[[-0.187995,2],[-0.18614,2],[-0.685337,0],[-0.898672,0]],
+      t:L('Cerca de 19 pontos a menos de chance que uma indústria ou empresa do setor primário, nos quatro modelos. Para o autor, empresas de serviços costumam ter bens alugados, sem o que dar em garantia, e dependem da figura de um sócio.', 'About 19 points less chance than an industrial or primary-sector firm, in all four models. For the author, service firms tend to rent their assets, with nothing to pledge, and depend on one partner.')},
+    {n:L('Idade da empresa', 'Company age'), c:[[0.000708339,3],null,[0.0009444,0],null],
+      t:L('Cada ano de vida a mais soma cerca de 0,85 ponto de chance (0,0007 por mês × 12). Efeito pequeno, como o autor nota; claro só no primeiro modelo.', 'Each extra year of age adds about 0.85 points of chance (0.0007 per month × 12). A small effect, as the author notes; clear only in the first model.')},
+    {n:L('Bens tangíveis', 'Tangible assets'), c:[[0.261874,3],null,null,null],
+      t:L('Imóveis, máquinas e estoques como parte do ativo: mais o que oferecer aos credores. Ajudou, mas só entrou no primeiro modelo.', 'Property, machinery and inventory as a share of assets: more to offer creditors. It helped, but only entered the first model.')},
+    {n:L('Folga de caixa', 'Working capital'), c:[[0.246077,2],null,null,null],
+      t:L('Capital circulante sobre o ativo total. Ajudou, só no primeiro modelo.', 'Working capital over total assets. It helped, only in the first model.')},
+    {n:L('Giro do ativo', 'Asset turnover'), c:[[0.0283532,1],[-0.0332383,2],null,[-0.225323,0]],
+      t:L('Vendas sobre o ativo. O sinal muda: positivo no primeiro modelo, negativo no segundo e no logit. O autor lê o negativo: quem depende menos de vender muito sofre menos quando as vendas caem.', 'Sales over assets. The sign flips: positive in the first model, negative in the second and in logit. The author reads the negative: firms less dependent on high sales suffer less when sales drop.')},
+    {n:L('Deságio pedido', 'Haircut requested'), c:[[0.317161,2],null,[0.48179,0],[1.19431,0]],
+      t:L('O corte pedido nas dívidas. Sinal positivo, ao contrário do esperado (tela 09).', 'The cut requested on debts. Positive sign, contrary to expectations (screen 09).')},
+    {n:L('Tamanho da dívida', 'Size of the debt'), c:[null,[0.0365277,3],[-0.0169985,0],null],
+      t:L('Em logaritmo: dobrar a dívida soma cerca de 2,5 pontos de chance no segundo modelo (0,0365 × 0,69, conta nossa). No probit, o sinal sai negativo. O autor vê ganhos de escala que se esgotam.', 'In logarithm: doubling the debt adds about 2.5 points of chance in the second model (0.0365 × 0.69, our calculation). In probit the sign is negative. The author sees economies of scale that run out.')}
+  ];
+
+  // Figura 3 (aproximada): fatia dos planos por faixa de deságio
+  var HC = [[0,0.36],[8,0.005],[16,0.016],[24,0.04],[32,0.078],[40,0.122],[48,0.183],[56,0.016],[64,0.072],[72,0.1],[80,0],[88,0.005],[96,0.005]];
+
+  // Capítulo 3: mudanças do PL 10.220/2018 e avaliação do autor
+  var RF = [
+    {n:L('Grandes casos na capital', 'Big cases to the capital'), v:L('Atinge poucos casos', 'Reaches few cases'), c:'var(--mid)',
+      t:L('Casos acima de 300 mil salários mínimos iriam para a vara da capital, mais especializada. No Paraná, só 6 dos 185 processos (3,24%) passariam do limite, e um já corria na capital. E a vara especializada não ficou em nenhum modelo final da tese; o advogado, sim. O autor também questiona se lei ordinária pode reorganizar o Judiciário dos estados.', 'Cases above 300,000 minimum wages would go to the capital’s more specialized court. In Paraná, only 6 of the 185 cases (3.24%) would cross the line, and one was already in the capital. And the specialized court stayed out of every final model in the thesis; the lawyer did not. The author also questions whether an ordinary law can reorganize state courts.')},
+    {n:L('Fisco com mais poder', 'More power for the tax authority'), v:L('Novo obstáculo', 'New obstacle'), c:'var(--red)',
+      t:L('O projeto deixaria o Fisco cobrar e penhorar bens fora do juízo da recuperação e até pedir a falência da empresa. Para o autor, o Fisco viraria um credor superqualificado, contra a jurisprudência que vinha abrandando esse privilégio.', 'The bill would let the tax authority collect and seize assets outside the reorganization court and even file for the firm’s bankruptcy. For the author, it would become a super-privileged creditor, against case law that had been softening this privilege.')},
+    {n:L('Administrador com experiência e site', 'Experienced administrator with a website'), v:L('Bem-vindo', 'Welcome'), c:'var(--navy)',
+      t:L('Experiência e certificação no lugar da formação, e um site público com os documentos do caso. O autor aprova: a falta de especialização apareceu nos dados, e só 14,59% dos casos tinham site.', 'Experience and certification instead of academic background, plus a public website with the case documents. The author approves: lack of specialization showed in the data, and only 14.59% of cases had a website.')},
+    {n:L('Administrador escolhido por preço', 'Administrator chosen by price'), v:L('Risco', 'Risk'), c:'var(--red)',
+      t:L('Os interessados apresentariam propostas e o juiz escolheria. Mais transparente, mas, como em licitações, só o preço pode levar ao serviço pior. E a remuneração nos casos pequenos já é baixa (tela 11).', 'Candidates would submit bids and the judge would choose. More transparent but, as in public tenders, price alone may lead to worse service. And pay in small cases is already low (screen 11).')},
+    {n:L('Empréstimo durante a recuperação', 'Lending during reorganization'), v:L('Avanço parcial', 'Partial progress'), c:'var(--navy)',
+      t:L('Inspirado no modelo americano, dá garantias e prioridade a quem emprestar à empresa em recuperação. Pode criar um mercado que apoie as melhores empresas, diz o autor.', 'Inspired by the US model, it gives collateral and priority to whoever lends to the firm in reorganization. It may create a market that backs the best firms, the author says.')},
+    {n:L('Suspensão das cobranças até o fim', 'Stay on collections until the end'), v:L('Risco', 'Risk'), c:'var(--red)',
+      t:L('Hoje as cobranças ficam suspensas por 180 dias; o projeto estenderia até o fim da recuperação. Para o autor, isso turva a separação entre viáveis e inviáveis e pode forçar credores a aceitar planos de empresas que deveriam fechar.', 'Today collections are stayed for 180 days; the bill would extend this to the end of reorganization. For the author, this blurs the line between viable and unviable firms and may force creditors to accept plans from firms that should close.')},
+    {n:L('Um filtro de viabilidade', 'A viability filter'), v:L('Não tratado', 'Not addressed'), c:'#64748b',
+      t:L('Nada no projeto ajuda a separar as empresas viáveis antes da votação, e juízes têm resistido a pedir perícia prévia. Muitas empresas chegam tarde, com patrimônio negativo.', 'Nothing in the bill helps separate viable firms before the vote, and judges have resisted ordering a preliminary expert review. Many firms arrive late, with negative equity.')},
+    {n:L('Pequenas empresas', 'Small firms'), v:L('Não tratado', 'Not addressed'), c:'#64748b',
+      t:L('O projeto repete o tratamento mais leve para as pequenas, mas não reconhece que, para elas, a recuperação é mais um recomeço do dono do que o resgate de um negócio (tela 11).', 'The bill repeats the lighter treatment for small firms but does not recognize that, for them, reorganization is more the owner’s fresh start than the rescue of a business (screen 11).')}
+  ];
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene');
+    var st = makeStage(sc, 300, 200, {ay:'62%', rx:'58deg'});
+    var hp = Math.round(18.8 * 4.2), k = 4.2;
+    // piso com um buraco onde fica o poço (efeito negativo)
+    [[-30,-20,220,240],[274,-20,56,240],[190,-20,84,80],[190,144,84,76]].forEach(function(r){
+      var p = document.createElement('div'); p.className = 'plate';
+      p.style.cssText = 'left:' + r[0] + 'px; top:' + r[1] + 'px; width:' + r[2] + 'px; height:' + r[3] + 'px; border-radius:0;'; st.appendChild(p);
+    });
+    st.appendChild(box({w:84, d:84, h:Math.round(31.1 * k), x:30, y:60, c:'var(--red)', label:'+31'}));
+    st.appendChild(box({w:84, d:84, h:hp, x:190, y:60, z:-hp, c:'var(--navy)', cls:'pit'}));
+    var bt = document.createElement('div'); bt.className = 'pit-floor'; bt.textContent = '−19';
+    bt.style.cssText = 'left:190px; top:60px; width:84px; height:84px; transform:translateZ(' + (1 - hp) + 'px);'; st.appendChild(bt);
+    flatLabel(st, L('advogado especializado: +31', 'specialized lawyer: +31'), 0, 170, 144, 'font-size:15px;');
+    flatLabel(st, L('setor de serviços: −19', 'service sector: −19'), 166, 170, 132, 'font-size:15px;');
+    rotatable(sc, st, -28, 14);
+  })();
+
+  /* ================= 02 · CAMINHOS ================= */
+  (function(){
+    var T = [
+      L('<h3>Recuperação judicial</h3><p>A empresa em crise pede proteção à Justiça e apresenta um plano: prazos e um desconto nas dívidas, o deságio. Os credores votam. Se aprovam, a empresa segue funcionando, vigiada pelo juízo por até dois anos. Se rejeitam, vira falência.</p><p>A tese pergunta o que faz uma empresa que já está em crise sair dessa situação, e se fatores jurídicos, de fora da empresa, mudam o resultado.</p>',
+        '<h3>Judicial reorganization</h3><p>The distressed firm asks the court for protection and presents a plan: deadlines and a cut on debts, the haircut. Creditors vote. If they approve, the firm keeps operating, supervised by the court for up to two years. If they reject it, it becomes bankruptcy.</p><p>The thesis asks what helps a firm already in crisis get out of it, and whether legal factors, outside the firm, change the outcome.</p>'),
+      L('<h3>Falência</h3><p>A empresa encerra as atividades e os bens são vendidos para pagar os credores, numa ordem fixada em lei. Desde 2005, quem compra esses bens não herda as dívidas, o que os torna mais atraentes.</p><p>A tese prevê quantos pedidos de falência o Brasil terá a cada mês, olhando a economia (telas 03 a 05).</p>',
+        '<h3>Bankruptcy</h3><p>The firm shuts down and its assets are sold to pay creditors, in an order set by law. Since 2005, buyers of these assets do not inherit the debts, which makes them more attractive.</p><p>The thesis forecasts how many bankruptcy filings Brazil will have each month, looking at the economy (screens 03 to 05).</p>')
+    ];
+    var g = $('paths');
+    function show(i){ $('path-panel').innerHTML = T[i]; each(g.children, function(b){ b.setAttribute('aria-pressed', +b.dataset.m === i ? 'true' : 'false'); }); }
+    each(g.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.m); }); });
+    show(0);
+  })();
+
+  /* ================= 03 · APOSTAS ================= */
+  var EXTRA = {
+    pib: L(' O PIB foi o fator que mais pesou e saiu ao contrário em todos os modelos. Uma explicação do autor: a economia crescendo atrai empresas novas, que tiram do mercado as menos eficientes.', ' GDP weighed most and came out the opposite way in every model. One explanation from the author: a growing economy attracts new firms, which push out the less efficient ones.'),
+    jur: L(' Foi o fator de menor peso. Para o autor, os juros altos fazem as empresas evitarem dívida, e atingem pela inadimplência dos clientes.', ' It was the least weighty factor. For the author, high rates make firms avoid debt, and hit them through customers’ defaults instead.'),
+    des: L(' O desemprego foi o mais instável entre os modelos. O autor suspeita que a ordem seja a inversa: as falências vêm antes do desemprego.', ' Unemployment was the most erratic across models. The author suspects the order is reversed: bankruptcies come before unemployment.'),
+    cam: L(' Mesmo sinal em todos os setores e portes.', ' Same sign in every sector and size.')
+  };
+  (function(){
+    var g = $('bets'), tot = GR[0];
+    VARS.forEach(function(v, i){
+      var s = tot.s[i][0], ok = s === v.esp;
+      var d = document.createElement('div'); d.className = 'bet';
+      d.innerHTML = '<h3>' + v.n + '</h3><p>' + v.d + '</p><div class="q"><button data-g="1">' + L('Sobem ↑', 'Rise ↑') + '</button><button data-g="-1">' + L('Descem ↓', 'Fall ↓') + '</button></div>' +
+        '<div class="ans"><span class="tag ' + (ok ? 'ok' : 'no') + '">' + (ok ? L('como esperado', 'as expected') : L('ao contrário', 'opposite')) + '</span>' +
+        L('Nos dados, as falências ', 'In the data, bankruptcies ') + '<b>' + (s > 0 ? L('subiram', 'rose') : L('caíram', 'fell')) + '</b>' +
+        L(' quando o indicador subiu (atraso de ', ' when the indicator rose (lag of ') + tot.s[i][1] + L(' meses). ', ' months). ') +
+        L('Esperado: ', 'Expected: ') + (v.esp > 0 ? L('subirem', 'rise') : L('caírem', 'fall')) + '. ' + v.why + (EXTRA[v.k] || '') + '</div>';
+      each(d.querySelectorAll('.q button'), function(b){
+        b.setAttribute('aria-pressed', 'false');
+        b.addEventListener('click', function(){ each(d.querySelectorAll('.q button'), function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); d.classList.add('shown'); });
+      });
+      g.appendChild(d);
+    });
+    $('bet-all').addEventListener('click', function(){ each(g.children, function(d){ d.classList.add('shown'); }); });
+  })();
+
+  /* ================= 04 · PREVISÃO ================= */
+  (function(){
+    var sv = $('fc-svg'), W = 640, H = 300, x0 = 46, x1 = 624, y0 = 262, y1 = 20, mx = 220;
+    function X(i){ return x0 + i * (x1 - x0) / 23; }
+    function Y(v){ return y0 - v / mx * (y0 - y1); }
+    [0, 50, 100, 150, 200].forEach(function(v){
+      sv.appendChild(el('line', {x1:x0, x2:x1, y1:Y(v), y2:Y(v), 'class':'ax'}));
+      sv.appendChild(el('text', {x:x0 - 6, y:Y(v) + 4, 'text-anchor':'end', 'class':'lb'}, v));
+    });
+    for (var i = 0; i < 24; i += 3) sv.appendChild(el('text', {x:X(i), y:H - 18, 'text-anchor':'middle', 'class':'lb'}, MESES[i % 12] + '/' + (i < 12 ? '17' : '18')));
+    var gErr = el('g', {}), pObs = el('path', {'class':'obs'}), pEst = el('path', {'class':'est'});
+    sv.appendChild(gErr); sv.appendChild(pObs); sv.appendChild(pEst);
+    var dots = el('g', {}); sv.appendChild(dots);
+    pObs.setAttribute('d', OBS.map(function(v, i){ return (i ? 'L' : 'M') + X(i).toFixed(1) + ',' + Y(v).toFixed(1); }).join(''));
+    OBS.forEach(function(v, i){ dots.appendChild(el('circle', {cx:X(i), cy:Y(v), r:3, fill:'#1f3b73'})); });
+    var eb = $('errbar');
+    ERR.forEach(function(e, i){
+      var d = document.createElement('div');
+      d.innerHTML = '<span>' + MODN[i] + '</span><i style="width:' + (e / 35 * 100) + '%"></i><span>' + fmt(e, 1) + '%</span>';
+      eb.appendChild(d);
+    });
+    function show(m){
+      var est = OBS.map(function(v, i){ return v - DIF[m][i]; });
+      pEst.setAttribute('d', est.map(function(v, i){ return (i ? 'L' : 'M') + X(i).toFixed(1) + ',' + Y(v).toFixed(1); }).join(''));
+      gErr.innerHTML = '';
+      est.forEach(function(v, i){ gErr.appendChild(el('line', {x1:X(i), x2:X(i), y1:Y(v), y2:Y(OBS[i]), 'class':'err'})); });
+      each(eb.children, function(d, j){ d.className = j === m ? 'on' : ''; });
+    }
+    seg('fc-seg', show); show(0);
+    var lab = el('text', {x:x0 + 4, y:y1 - 4, 'class':'lb'}, L('pedidos de falência por mês', 'bankruptcy filings per month'));
+    sv.appendChild(lab);
+  })();
+
+  /* ================= 05 · GRUPOS ================= */
+  (function(){
+    var g = $('gx'), sel = 5;
+    g.appendChild(document.createElement('span'));
+    VARS.forEach(function(v){ var h = document.createElement('span'); h.className = 'h'; h.textContent = v.n; g.appendChild(h); });
+    var rows = [];
+    GR.forEach(function(gr, gi){
+      var b = document.createElement('button'); b.className = 'rl'; b.textContent = gr.n; b.setAttribute('aria-pressed', 'false');
+      b.addEventListener('click', function(){ show(gi); });
+      g.appendChild(b); rows.push(b);
+      VARS.forEach(function(v, vi){
+        var c = document.createElement('span'), s = gr.s[vi];
+        if (!s){ c.className = 'c na'; c.textContent = '–'; }
+        else {
+          var r = gr.rk ? gr.rk.indexOf(v.k) + 1 : 0;
+          c.className = 'c ' + (s[0] === v.esp ? 'as' : 'co');
+          c.innerHTML = (r ? r : '') + '<small>' + (s[0] > 0 ? '↑' : '↓') + '</small>';
+          c.title = v.n + ': ' + (s[0] > 0 ? L('falências sobem', 'bankruptcies rise') : L('falências caem', 'bankruptcies fall')) + L(' quando sobe; atrasos ', ' when it rises; lags ') + s[1];
+        }
+        g.appendChild(c);
+      });
+    });
+    function show(gi){
+      rows.forEach(function(b, j){ b.setAttribute('aria-pressed', j === gi ? 'true' : 'false'); });
+      var gr = GR[gi], h = '<h3>' + gr.n + '</h3>';
+      if (gr.rk){
+        h += '<p>' + L('Do fator que mais pesa ao que menos pesa:', 'From the weightiest factor to the lightest:') + '</p><ol class="rank">';
+        gr.rk.forEach(function(k, j){
+          var vi = VARS.map(function(v){ return v.k; }).indexOf(k), s = gr.s[vi][0];
+          h += '<li><b>' + (j + 1) + '</b><span>' + VARS[vi].n + '</span><span style="color:' + (s === VARS[vi].esp ? 'var(--navy)' : 'var(--red)') + '; font-size:.74rem; font-weight:600">' +
+            (s > 0 ? L('↑ mais falências', '↑ more failures') : L('↓ menos falências', '↓ fewer failures')) + '</span></li>';
+        });
+        h += '</ol>';
+      } else {
+        h += '<p>' + L('O modelo do total não tem ordem na Tabela 4. Sinais: câmbio, juros, dinheiro em circulação, expectativa e desemprego derrubam as falências quando sobem; o PIB, ao contrário, vem junto com mais falências.', 'The total model has no ranking in Table 4. Signs: exchange rate, interest, money in circulation, expectations and unemployment lower bankruptcies when they rise; GDP, by contrast, comes with more bankruptcies.') + '</p>';
+      }
+      h += '<p style="font-size:.76rem; color:var(--muted); margin-top:8px">' + L('R² ajustado do modelo: ', 'Model’s adjusted R²: ') + fmt(gr.r2, 2) + '. ' + (gi === 5 ? L('Para o autor, as pequenas sentem mais o PIB, o câmbio e os juros, e as grandes mais a expectativa: quanto maior a empresa, menos ela sente a economia.', 'For the author, small firms feel GDP, the exchange rate and interest more, and large ones feel expectations more: the bigger the firm, the less it feels the economy.') : gi === 7 ? L('Nas grandes, a expectativa é o 2º fator; nas pequenas, o 5º.', 'For large firms, expectations are the 2nd factor; for small ones, the 5th.') : '') + '</p>';
+      $('gx-panel').innerHTML = h;
+    }
+    show(sel);
+  })();
+
+  /* ================= 06 · PROCESSOS ================= */
+  (function(){
+    var g = $('proc-grid'), cells = [];
+    for (var i = 0; i < 185; i++){ var c = document.createElement('i'); c.className = i < 40 ? 'cap' : 'int'; g.appendChild(c); cells.push(c); }
+    function show(m){
+      var t = T6[m];
+      cells.forEach(function(c, i){ var cap = i < 40; c.className = (m === 0 ? cap : !cap) ? (cap ? 'cap' : 'int') : 'dim'; });
+      $('pr-stats').innerHTML =
+        '<div class="stat"><b>' + money(t.mediana / 1e6, 1).replace('R$ ', 'R$ ') + L(' mi', 'm') + '</b><span>' + L('dívida mediana em recuperação (média de ', 'median debt under reorganization (mean of ') + money(t.media / 1e6, 1) + L(' mi)', 'm)') + '</span></div>' +
+        '<div class="stat"><b>' + n0(t.idade) + L(' meses', ' months') + '</b><span>' + L('idade média da empresa (mais de 17 anos)', 'average company age (over 17 years)') + '</span></div>' +
+        '<div class="stat"><b>' + n0(t.cred) + ' · ' + fmt(t.emp, t.emp % 1 ? 1 : 0) + '</b><span>' + L('credores e empregados (medianas); 2 sócios, sociedade limitada', 'creditors and employees (medians); 2 partners, limited company') + '</span></div>' +
+        '<div class="stat"><b>' + t.dias + L(' dias', ' days') + '</b><span>' + L('em média até o juiz aceitar o pedido', 'on average until the judge accepts the filing') + '</span></div>' +
+        '<div class="stat red"><b>' + pc(t.ok) + '%</b><span>' + L('saíram com plano aprovado e em operação', 'got through with the plan approved and operating') + '</span></div>' +
+        '<div class="stat"><b>' + pc(t.semAdv) + '%</b><span>' + L('sem advogado especializado (tela 08)', 'without a specialized lawyer (screen 08)') + '</span></div>';
+      $('pr-late').innerHTML = L('Na ', 'In the ') + t.n.toLowerCase() + ', <b>' + pc(t.reNeg) + '%</b>' +
+        L(' chegaram com os prejuízos já maiores que todos os lucros guardados, e ', ' arrived with losses already larger than all retained profits, and ') + '<b>' + pc(t.plNeg) + '%</b>' +
+        L(' com patrimônio negativo: nem vendendo tudo pagariam os credores. Para o autor, ou a recuperação é pedida tarde demais, ou são negócios que perdem dinheiro há muito tempo.', ' with negative equity: not even selling everything would pay creditors. For the author, either reorganization is sought too late, or these businesses have been losing money for a long time.');
+    }
+    seg('pr-seg', show); show(1);
+  })();
+
+  /* ================= 07 · FATORES ================= */
+  (function(){
+    var g = $('px'), cellsBy = [], heads = [L('Fator', 'Factor'), L('Sua aposta', 'Your bet'), L('Linear (1)', 'Linear (1)'), L('Linear (2)', 'Linear (2)'), 'Probit', 'Logit'];
+    heads.forEach(function(h){ var s = document.createElement('span'); s.className = 'h'; s.textContent = h; g.appendChild(s); });
+    function reveal(i){
+      var f = FAT[i];
+      cellsBy[i].forEach(function(c, j){
+        var v = f.c[j];
+        if (!v){ c.className = 'c'; c.innerHTML = L('fora', 'out'); return; }
+        c.className = 'c ' + (v[0] > 0 ? 'up' : 'dn');
+        c.innerHTML = '<b>' + (v[0] > 0 ? '↑' : '↓') + (v[1] ? ' ' + '***'.slice(0, v[1]) : '') + '</b>' + (j < 2 && i < 3 ? '<small>' + (v[0] > 0 ? '+' : '−') + fmt(Math.abs(v[0]) * (i === 2 ? 1200 : 100), i === 2 ? 2 : 1) + (i === 2 ? L(' p/ano', ' pts/yr') : ' pts') + '</small>' : '');
+      });
+    }
+    FAT.forEach(function(f, i){
+      var r = document.createElement('span'); r.className = 'rl'; r.textContent = f.n; g.appendChild(r);
+      var gs = document.createElement('span'); gs.className = 'gs';
+      gs.innerHTML = '<button aria-pressed="false" aria-label="' + L('ajudou', 'helped') + '">↑</button><button aria-pressed="false" aria-label="' + L('atrapalhou', 'hurt') + '">↓</button>';
+      g.appendChild(gs);
+      var cs = [];
+      for (var j = 0; j < 4; j++){ var c = document.createElement('span'); c.className = 'c hid'; c.textContent = '?'; g.appendChild(c); cs.push(c); }
+      cellsBy.push(cs);
+      each(gs.children, function(b, k){
+        b.addEventListener('click', function(){
+          each(gs.children, function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+          reveal(i);
+          var main = f.c[0] || f.c[1], hit = (k === 0) === (main[0] > 0);
+          $('px-panel').innerHTML = '<h3>' + f.n + ' · ' + (hit ? L('acertou', 'you got it') : L('não foi isso', 'not quite')) + '</h3><p>' + f.t + '</p>';
+        });
+      });
+    });
+    $('px-all').addEventListener('click', function(){
+      FAT.forEach(function(f, i){ reveal(i); });
+      $('px-panel').innerHTML = '<h3>' + L('O que ficou claro', 'What came out clearly') + '</h3><p>' + L('Só dois fatores aparecem nos quatro modelos com o mesmo sinal: o advogado especializado (ajuda) e o setor de serviços (atrapalha). Os outros entram em um ou dois modelos, alguns com sinal trocado. Os modelos de probabilidade acertaram 70,9% e 71,8% dos casos.', 'Only two factors appear in all four models with the same sign: the specialized lawyer (helps) and the service sector (hurts). The others enter one or two models, some with flipped signs. The probability models got 70.9% and 71.8% of cases right.') + '</p>';
+    });
+  })();
+
+  /* ================= 08 · ADVOGADO ================= */
+  (function(){
+    var tb = $('twobars');
+    T6.forEach(function(t){
+      var d = document.createElement('div');
+      d.innerHTML = '<span>' + t.n + '</span><i style="width:' + t.semAdv + '%; background:' + (t.tot === 40 ? 'var(--red)' : 'var(--navy)') + '"></i><b>' + pc(t.semAdv) + '%</b>';
+      tb.appendChild(d);
+    });
+    function folderSvg(full){
+      var s = '<svg viewBox="0 0 160 130" aria-hidden="true"><path class="fbody" d="M8,22 h48 l10,10 h86 v90 h-144 z" fill="' + (full ? '#e8eef8' : '#f8fafc') + '" stroke="#94a3b8" stroke-width="2"/>';
+      for (var i = 0; i < 5; i++){
+        var y = 46 + i * 15, ok = full || i < 2;
+        s += '<rect x="22" y="' + (y - 6) + '" width="12" height="12" rx="2" fill="#fff" stroke="#94a3b8"/>' +
+          (ok ? '<path d="M24,' + y + ' l3,4 l6,-8" fill="none" stroke="' + (full ? '#1f3b73' : '#94a3b8') + '" stroke-width="2.5"/>' : '<path d="M24,' + (y - 4) + ' l8,8 M32,' + (y - 4) + ' l-8,8" stroke="#e80734" stroke-width="2.5"/>') +
+          '<rect x="42" y="' + (y - 3) + '" width="' + (90 - i * 8) + '" height="6" rx="3" fill="' + (ok ? '#cbd5e1' : '#fecdd3') + '"/>';
+      }
+      return s + '</svg>';
+    }
+    var f = $('folders');
+    [[true, L('Pedido completo', 'Complete filing')], [false, L('Pedido incompleto', 'Incomplete filing')]].forEach(function(p, i){
+      var b = document.createElement('button'); b.className = 'folder'; b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+      b.innerHTML = folderSvg(p[0]) + '<span>' + p[1] + '</span>';
+      b.addEventListener('click', function(){ each(f.children, function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); show(p[0]); });
+      f.appendChild(b);
+    });
+    function show(full){
+      $('gm-fill').style.width = full ? (31.061 / 40 * 100) + '%' : '0%';
+      $('gm-rng').style.left = (25.7176 / 40 * 100) + '%'; $('gm-rng').style.width = ((31.061 - 25.7176) / 40 * 100) + '%';
+      $('gm-txt').innerHTML = full ? L('Com o pedido completo: <b>+25,7 a +31,1 pontos</b> de chance de sair da recuperação, comparado a um pedido incompleto.', 'With a complete filing: <b>+25.7 to +31.1 points</b> of chance of getting through, compared with an incomplete one.')
+        : L('Pedido incompleto: é a base de comparação. A distância até o completo é a faixa marcada.', 'Incomplete filing: this is the baseline. The distance to the complete one is the marked band.');
+    }
+    show(true);
+  })();
+
+  /* ================= 09 · DESÁGIO ================= */
+  (function(){
+    var sv = $('hc-svg'), x0 = 50, x1 = 584, y0 = 250, y1 = 24, mx = 0.4, bw = (x1 - x0) / HC.length;
+    function Y(v){ return y0 - v / mx * (y0 - y1); }
+    [0, 0.1, 0.2, 0.3, 0.4].forEach(function(v){
+      sv.appendChild(el('line', {x1:x0, x2:x1, y1:Y(v), y2:Y(v), stroke:'#e2e8f0'}));
+      sv.appendChild(el('text', {x:x0 - 6, y:Y(v) + 4, 'text-anchor':'end', 'class':'lb'}, Math.round(v * 100) + '%'));
+    });
+    var bars = [];
+    HC.forEach(function(h, i){
+      var r = el('rect', {x:x0 + i * bw + 3, y:Y(h[1]), width:bw - 6, height:Math.max(1.5, y0 - Y(h[1])), 'class':'bar' + (i === 0 ? ' zero' : ''), tabindex:0, role:'button', 'aria-label':h[0] + '%'});
+      r.addEventListener('click', function(){ show(i); });
+      r.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(i); } });
+      sv.appendChild(r); bars.push(r);
+      if (i % 2 === 0) sv.appendChild(el('text', {x:x0 + i * bw + bw / 2, y:y0 + 18, 'text-anchor':'middle', 'class':'lb'}, '~' + h[0] + '%'));
+    });
+    sv.appendChild(el('text', {x:(x0 + x1) / 2, y:y0 + 40, 'text-anchor':'middle', 'class':'lb'}, L('deságio pedido no plano (corte nas dívidas)', 'haircut requested in the plan (cut on debts)')));
+    function show(i){
+      bars.forEach(function(b, j){ b.classList.toggle('sel', j === i); });
+      var h = HC[i], t;
+      if (i === 0) t = L('<h3>Deságio zero: ~36% dos planos</h3><p>Mais de um terço não pediu corte nenhum. A dívida mediana desses casos era de pouco mais de R$ 3 milhões, menos da metade da mediana de todos. Para o autor, o pequeno precisa mostrar que quer reerguer o negócio, não fugir das dívidas; e quem não pede desconto é quem não conseguiu negociar nada melhor.</p>',
+        '<h3>Zero haircut: ~36% of plans</h3><p>More than a third asked for no cut at all. The median debt in these cases was just over R$3 million, less than half the overall median. For the author, small firms need to show they want to rebuild, not dodge debts; and those asking for no discount are those who could not negotiate anything better.</p>');
+      else if (h[0] >= 80) t = L('<h3>Os mais ousados</h3><p>Os dois planos com os maiores cortes da base, 85% e 95% das dívidas, foram rejeitados pelos credores. A relação não sobe para sempre.</p>', '<h3>The boldest</h3><p>The two plans with the biggest cuts in the data, 85% and 95% of debts, were rejected by creditors. The relationship does not rise forever.</p>');
+      else t = L('<h3>Deságio de ~' + h[0] + '%</h3><p>Cerca de ' + fmt(h[1] * 100, 1) + '% dos planos (leitura aproximada da figura). Entre 30% e 75% está o grosso dos planos que pediram algum corte.</p>', '<h3>Haircut of ~' + h[0] + '%</h3><p>About ' + fmt(h[1] * 100, 1) + '% of plans (approximate reading of the figure). Between 30% and 75% lies the bulk of plans that asked for some cut.</p>');
+      $('hc-panel').innerHTML = t;
+    }
+    show(0);
+  })();
+
+  /* ================= 10 · REFORMA ================= */
+  (function(){
+    var g = $('rf');
+    RF.forEach(function(r, i){
+      var b = document.createElement('button'); b.style.setProperty('--vc', r.c); b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+      b.innerHTML = '<em>' + r.v + '</em><b>' + r.n + '</b>';
+      b.addEventListener('click', function(){ show(i); });
+      g.appendChild(b);
+    });
+    function show(i){
+      each(g.children, function(b, j){ b.setAttribute('aria-pressed', j === i ? 'true' : 'false'); });
+      $('rf-panel').innerHTML = '<h3>' + RF[i].n + '</h3><p>' + RF[i].t + '</p>';
+    }
+    show(0);
+  })();
+
+  /* ================= 11 · CALCULADORA ================= */
+  (function(){
+    var STEPS = [100e3, 200e3, 300e3, 400e3, 500e3, 600e3, 700e3, 800e3, 900e3, 1e6, 1.1e6, 1.25e6, 1.5e6, 1.75e6, 2e6, 2.5e6, 3e6, 3.5e6, 4e6, 4.5e6, 5e6, 6e6, 7e6, 7.5e6, 8e6, 9e6, 10e6, 12e6, 14e6, 16e6, 18e6, 20e6, 22.5e6, 25e6, 27.5e6, 30e6, 35e6, 40e6, 45e6, 47.5e6, 50e6];
+    var rate = 0.05, r = $('dv');
+    function upd(){
+      var D = STEPS[+r.value], fee = D * rate, mo = fee * 0.6 / 36, fin = fee * 0.4;
+      $('dv-out').textContent = D >= 1e6 ? money(D / 1e6, D % 1e6 ? 2 : 0).replace(/([,.]\d*?)0+$/, '$1').replace(/[,.]$/, '') + (D === 1e6 ? L(' milhão', ' million') : L(' milhões', ' million')) : money(D);
+      $('cl-month').textContent = money(mo, 2);
+      $('cl-final').textContent = money(fin);
+      var n = Math.min(120, Math.round(mo / 250)), c = $('coins'), h = '';
+      for (var i = 0; i < n; i++) h += '<i' + (i % 2 ? ' class="n"' : '') + '></i>';
+      c.innerHTML = h + (mo / 250 > 120 ? '<span style="font-size:.74rem; color:var(--muted)">…</span>' : '');
+    }
+    r.addEventListener('input', upd);
+    seg('cl-seg', function(m){ rate = m ? 0.02 : 0.05; upd(); });
+    upd();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
