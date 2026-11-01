@@ -1,0 +1,879 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Central Bank’s auctions did not calm the dollar futures market · PPGA Interactive</title>
+<meta name="description" content="Aparecido Francisco de Sales’s master’s dissertation (PPGA Mackenzie, 2019) on how the Brazilian Central Bank’s currency swap auctions affected the agitation of the dollar futures market, minute by minute, explained in 11 interactive screens.">
+<link rel="alternate" hreflang="pt-BR" href="../../../dissertacoes/2019-sales-swap-cambial-volatilidade/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2216%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>$</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/motor.css">
+<link rel="stylesheet" href="../../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  :root{
+    --dol:var(--navy);     /* contrato padrão (DOL) */
+    --wdo:#7c8db0;         /* minicontrato (WDO) */
+    --auc:var(--red);      /* o leilão */
+    --rol:var(--navy);     /* programado, rolagem */
+    --nov:var(--red);      /* programado, vencimentos novos */
+    --sur:#0f172a;         /* surpresa */
+  }
+  .note{font-size:.76rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:12px; line-height:1.45;}
+  .note b{color:var(--ink-2);}
+  .ilus{display:inline-block; font-size:.62rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .nossa{display:inline-block; font-size:.62rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#e0e7ff; color:#1f3b73; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.82rem; cursor:pointer; color:var(--ink-2); font-family:inherit;}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 10px;}
+  .chips button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-family:inherit; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .chips button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .stats{display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.74rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:620px){ .stats{grid-template-columns:1fr 1fr;} }
+  svg text{font-family:var(--sans);}
+  .svgbox{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .ctrls{display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; margin:6px 0 10px;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4vw, 2.6rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .warn{font-size:.76rem; color:var(--muted); margin-top:10px;}
+  .warn b{color:var(--red);}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:36em; margin-left:auto; margin-right:auto;}
+  #hero-scene{perspective:1800px;}
+  #hero-scene .slab{transition:transform .2s;}
+  #hero-scene .slab > i{transition:none;}
+
+  /* ---------- 02 · Por que ---------- */
+  .reasons{display:grid; gap:8px; margin-top:12px;}
+  .reasons button{display:flex; gap:12px; align-items:flex-start; text-align:left; border:1px solid var(--border); background:var(--card); border-radius:12px; padding:10px 14px; font-family:inherit; font-size:.88rem; color:var(--ink-2); cursor:pointer; line-height:1.4;}
+  .reasons button b{font-family:var(--serif); color:var(--red); min-width:1.3em; font-size:1rem;}
+  .reasons button[aria-pressed="true"]{border-color:var(--ink); box-shadow:inset 3px 0 0 var(--red); color:var(--ink);}
+  .reasons.con button b{color:var(--navy);}
+  #why-panel{margin-top:12px; min-height:92px;}
+
+  /* ---------- 03 · Futuro ---------- */
+  #fut-scene{perspective:1800px;}
+  #fut-panel{margin-top:12px; min-height:112px;}
+
+  /* ---------- 04 · Swap ---------- */
+  #swap-panel{margin-top:10px; min-height:80px;}
+  .range{display:flex; align-items:center; gap:10px; margin-top:10px; font-size:.82rem; color:var(--muted);}
+  .range input{flex:1; accent-color:var(--red);}
+  .range output{min-width:4.2em; text-align:right; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums;}
+
+  /* ---------- 05 · Leilões ---------- */
+  #auc-scene{perspective:1800px;}
+  #auc-scene .slab.dim > i{opacity:.16;}
+  #auc-panel{margin-top:10px; min-height:150px;}
+  .pbar{display:grid; grid-template-columns:118px 1fr 54px; gap:8px; align-items:center; font-size:.78rem; margin-top:5px;}
+  .pbar .tr{height:14px; background:#eef2f7; border-radius:7px; overflow:hidden;}
+  .pbar .tr i{display:block; height:100%; border-radius:7px; transition:width .35s;}
+  .pbar b{font-variant-numeric:tabular-nums; text-align:right; color:var(--ink);}
+
+  /* ---------- 06 · Método ---------- */
+  #met-panel{margin-top:10px; min-height:118px;}
+
+  /* ---------- 07 · Mapa ---------- */
+  #map-scene{perspective:2000px;}
+  #map-scene .slab{cursor:pointer;}
+  #map-scene .slab.ref, #map-scene .slab.ref *{pointer-events:none; cursor:default;}
+  #map-scene .slab.active{--oz:12px;}
+  #map-panel{margin-top:10px; min-height:104px;}
+  .mtab{width:100%; border-collapse:collapse; font-size:.74rem; margin-top:10px; font-variant-numeric:tabular-nums;}
+  .mtab th, .mtab td{padding:4px 6px; border-bottom:1px solid var(--border); text-align:right;}
+  .mtab th:first-child, .mtab td:first-child{text-align:left;}
+  .mtab th{color:var(--muted); font-weight:600;}
+  .mtab td.hot{color:var(--red); font-weight:700;}
+
+  /* ---------- 08 · Surpresa ---------- */
+  #sur-panel{margin-top:10px; min-height:96px;}
+
+  /* ---------- 09 · Acaso ---------- */
+  #luck-panel{margin-top:10px; min-height:84px;}
+  .cellgrid{display:grid; grid-template-columns:92px repeat(6, 1fr); gap:3px; font-size:.7rem; margin-top:10px; font-variant-numeric:tabular-nums;}
+  .cellgrid div{padding:5px 4px; border-radius:6px; text-align:center; background:#eef2f7; color:var(--ink-2);}
+  .cellgrid div.h{background:transparent; color:var(--muted); font-weight:600; line-height:1.2;}
+  .cellgrid div.rl{text-align:left; background:transparent; font-weight:600; color:var(--ink);}
+  .cellgrid div.out{background:var(--red); color:#fff; font-weight:700;}
+  @media (max-width:520px){ .cellgrid{grid-template-columns:62px repeat(6, 1fr); font-size:.62rem;} }
+
+  /* ---------- 10 · Fases ---------- */
+  #ph-scene{perspective:1800px;}
+  #ph-panel{margin-top:10px; min-height:100px;}
+
+  /* ---------- 11 · Créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.78rem; color:var(--ink-2); line-height:1.42;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-meta="../../../dissertacoes/2019-sales-swap-cambial-volatilidade/meta.json">
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interactive</span></a>
+  <div class="counter">
+    <a class="lang" href="../../../dissertacoes/2019-sales-swap-cambial-volatilidade/" hreflang="pt-BR" lang="pt-BR" title="Ler em português"><img class="lang-flag" src="../../../assets/bandeira-br.svg" width="17" height="12" alt="">PT</a>
+    <span id="count">01 / 11</span>
+    <button class="nav-btn" id="prev" aria-label="Previous screen">↑</button>
+    <button class="nav-btn" id="next" aria-label="Next screen">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Screen navigation"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Start">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Master’s dissertation · PPGA Mackenzie · 2019</div>
+      <h1 class="rv" style="--d:.1s">The Central Bank’s auctions did not calm the dollar futures market</h1>
+      <p class="sub rv" style="--d:.2s">To steady the dollar, Brazil’s Central Bank holds currency swap auctions. The study measured, minute by minute, how agitated dollar futures prices were in the 70 minutes around 215 of these auctions, July 2017 to September 2018. Explained in 11 screens.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Author:</b> Aparecido Francisco de Sales</span>
+        <span><b>Advisor:</b> Prof. Dr. Eli Hadad Junior</span>
+        <span><b>Program:</b> Graduate Program in Business Administration (PPGA) · Mackenzie Presbyterian University</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#porque">Start →</a>
+        <a class="btn ghost" href="#mapa">See the result</a>
+      </div>
+      <p class="warn rv" style="--d:.45s"><b>Not investment advice.</b> This page explains an academic study on exchange-rate policy.</p>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="560x320" role="img" aria-label="A 70-minute strip with one column per minute that rises and falls; the 10 auction minutes are red in the middle"></div></div>
+      <p class="cap-legend"><span class="ilus">illustration</span> One column per minute: 30 minutes before, the 10 auction minutes (red) and 30 after. The study asked whether the ups and downs shrink in the red part and right after it.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">Closest UN Sustainable Development Goals</span>
+        <ul class="ods">
+          <li class="ods-17"><a href="https://sdgs.un.org/goals/goal17" target="_blank" rel="noopener" title="SDG 17 · Partnerships for the Goals: Measures whether a Central Bank exchange-rate policy tool (the swap auction) calms the dollar market, part of macroeconomic stability."><b>17</b>Partnerships for the Goals</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">scroll<span></span></div>
+</section>
+
+<!-- 02 · POR QUE INTERVIR -->
+<section class="slide" id="porque" data-label="Why intervene">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> The problem</div>
+      <h2 class="rv" style="--d:.1s">Central banks step into the currency market, and studies disagree on whether it works</h2>
+      <p class="lede rv" style="--d:.15s">The dollar’s price flows into the price of imports and inputs, and from there into inflation. Even countries that say they let the currency float show a "fear of floating" (Calvo and Reinhart, 2000) and intervene. But the studies cited in the dissertation reach different answers depending on method and period.</p>
+      <div class="seg rv" id="why-seg" style="--d:.2s" role="group" aria-label="Choose the side">
+        <button data-m="0" aria-pressed="true">Why intervene</button>
+        <button data-m="1" aria-pressed="false">Why doubt it</button>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="reasons" id="why-list"></div>
+      <div class="panel" id="why-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · O MERCADO FUTURO -->
+<section class="slide" id="futuro" data-label="The futures market">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> Where it was measured</div>
+      <h2 class="rv" style="--d:.1s">In Brazil, the dollar’s price is born in the futures market</h2>
+      <p class="lede rv" style="--d:.15s">In most countries, the exchange rate is formed in the spot market. Here, studies cited in the dissertation show the opposite: the futures market on the B3 exchange trades far more and pulls the spot price. One paper called it "the tail wags the dog" (Ventura and Garcia, 2012).</p>
+      <div class="seg rv" id="fut-seg" style="--d:.2s" role="group" aria-label="Choose what to see">
+        <button data-m="0" aria-pressed="true">How much is traded</button>
+        <button data-m="1" aria-pressed="false">Who pulls the price</button>
+        <button data-m="2" aria-pressed="false">The two contracts</button>
+      </div>
+      <div class="panel rv" id="fut-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="fut-scene" data-fit="520x400" role="img" aria-label="Two blocks: the spot market, short, and the futures market, four times taller"></div></div>
+      <p class="cap-legend">Trading per day, in US dollars, according to Rossi (2015), cited in the dissertation. Height proportional to value.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · O SWAP -->
+<section class="slide" id="swap" data-label="The currency swap">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> The tool</div>
+      <h2 class="rv" style="--d:.1s">In a swap, the Central Bank pays for the dollar’s rise without handing over a single dollar</h2>
+      <p class="lede rv" style="--d:.15s">In a "traditional" currency swap, the Central Bank takes the side that loses if the dollar rises and earns interest (the Selic rate); whoever buys the contract takes the opposite side. No dollars change hands: at the end, only the difference is paid in reais. For the market, it is as if the Central Bank sold dollars in the future, without touching its reserves or the money in circulation.</p>
+      <div class="range rv" style="--d:.2s">
+        <label for="swap-r">The dollar moved</label>
+        <input type="range" id="swap-r" min="-8" max="8" step="0.5" value="3">
+        <output id="swap-o">+3%</output>
+      </div>
+      <div class="panel rv" id="swap-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="swap-svg" class="svgbox" viewBox="0 0 560 300" role="img" aria-label="Swap illustration: the Central Bank and the market swap the dollar’s change for interest, and only the difference is paid"></svg>
+      <p class="note"><span class="ilus">illustration</span> Made-up contract of R$ 100 million and 1.5% interest over the period, only to show who pays whom. No real terms, costs or amounts.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · OS LEILÕES -->
+<section class="slide" id="leiloes" data-label="The auctions">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> The data · Tables 1 and 2</div>
+      <h2 class="rv" style="--d:.1s">In 14 months there were 215 auctions, almost all to renew contracts that were expiring</h2>
+      <p class="lede rv" style="--d:.15s">From 18 July 2017 to 30 September 2018, the Central Bank held swap auctions on 173 of the 295 trading days, sometimes more than one a day, offering 599 maturities. The study separated three types. Tap each one.</p>
+      <div class="chips rv" id="auc-chips" style="--d:.2s" role="group" aria-label="Auction type">
+        <button data-v="all" aria-pressed="true">All (215)</button>
+        <button data-v="rol" aria-pressed="false">Rollover (164)</button>
+        <button data-v="nov" aria-pressed="false">New maturities (28)</button>
+        <button data-v="sur" aria-pressed="false">Surprise (23)</button>
+      </div>
+      <div class="panel rv" id="auc-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="auc-scene" data-fit="520x330" role="img" aria-label="One block per auction, 215 in all, coloured by type: rollover, new maturities and surprise"></div></div>
+      <div class="legend" style="justify-content:center">
+        <span><i class="dot" style="background:var(--rol)"></i>scheduled rollover</span>
+        <span><i class="dot" style="background:var(--nov)"></i>scheduled new maturities</span>
+        <span><i class="dot" style="background:var(--sur)"></i>surprise</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · O MÉTODO -->
+<section class="slide" id="metodo" data-label="How it measured">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> The method · Table 3</div>
+      <h2 class="rv" style="--d:.1s">Each auction became five time windows, each compared with the next</h2>
+      <p class="lede rv" style="--d:.15s">The author downloaded from B3 every dollar futures trade, to the millisecond, in the standard (DOL) and mini (WDO) contracts. He computed the price change each minute and, for each window, estimated the agitation with a volatility model (ARCH-GARCH, in the Stata software). Then he counted in how many auctions one window’s agitation exceeded the previous one’s.</p>
+      <div class="seg rv" id="met-seg" style="--d:.2s" role="group" aria-label="Choose the comparison">
+        <button data-m="0" aria-pressed="true">Did it rise?</button>
+        <button data-m="1" aria-pressed="false">Three in a row?</button>
+        <button data-m="2" aria-pressed="false">Same direction?</button>
+      </div>
+      <div class="panel rv" id="met-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="met-svg" class="svgbox" viewBox="0 0 560 300" role="img" aria-label="The five windows of an auction and the agitation measured in each on the 18 July 2018 trading day"></svg>
+      <p class="note">Example from the dissertation: standard contract (DOL), 18 July 2018 trading day (Table 8). The number the study calls volatility is a model estimate for each window; in some auctions it comes out negative (Chart 2 and Table 4), so it is not an ordinary measure of the size of swings.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · O MAPA -->
+<section class="slide" id="mapa" data-label="The result">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Result · Tables 5, 6, 7, 10, 11 and 12</div>
+      <h2 class="rv" style="--d:.1s">During the auction, agitation rose about half of the time</h2>
+      <p class="lede rv" style="--d:.15s">If the auction calmed the market, agitation would fall in the auction window (3) compared with the previous one (2) most of the time. That is not what showed up: across all auctions it rose in 49.3% of cases in the standard contract and in 56.3% in the mini. Each column is one comparison; tap to see the numbers.</p>
+      <div class="ctrls rv" style="--d:.2s">
+        <div class="seg" id="map-ct" role="group" aria-label="Contract">
+          <button data-v="DOL" aria-pressed="true">Standard (DOL)</button>
+          <button data-v="WDO" aria-pressed="false">Mini (WDO)</button>
+        </div>
+        <div class="seg" id="map-me" role="group" aria-label="Comparison">
+          <button data-v="up" aria-pressed="true">Rose</button>
+          <button data-v="three" aria-pressed="false">3 in a row</button>
+          <button data-v="same" aria-pressed="false">Same direction</button>
+        </div>
+      </div>
+      <div class="panel rv" id="map-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="map-scene" data-fit="560x430" role="img" aria-label="3D columns: auction type by window comparison, height equal to the percentage of auctions, and a hollow plate at the coin-toss level"></div></div>
+      <p class="cap-legend"><span class="dot" style="background:var(--auc)"></span>the comparison with the auction window · hollow plate: what a coin toss would give (our reading, screen 09)</p>
+      <table class="mtab" id="map-tab"></table>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · SURPRESA E NOVOS -->
+<section class="slide" id="surpresa" data-label="Surprise and new">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> By auction type · Tables 6 and 11</div>
+      <h2 class="rv" style="--d:.1s">In surprise and new-maturity auctions, agitation rose most of the time</h2>
+      <p class="lede rv" style="--d:.15s">In rollover auctions, which are the majority and expected by the market, the auction window stayed close to half. In surprise auctions, announced minutes before, agitation rose in 17 of 23 in the standard contract; in new-maturity auctions, in 22 of 28 in the mini.</p>
+      <div class="seg rv" id="sur-seg" style="--d:.2s" role="group" aria-label="Choose the window">
+        <button data-m="0" aria-pressed="true">During the auction (3 › 2)</button>
+        <button data-m="1" aria-pressed="false">Right after (4 › 3)</button>
+      </div>
+      <div class="panel rv" id="sur-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="sur-svg" class="svgbox" viewBox="0 0 560 330" role="img" aria-label="Bars with the percentage of auctions in which agitation rose, by auction type and contract, with the 50% line"></svg>
+      <div class="legend" style="justify-content:center">
+        <span><i class="dot" style="background:var(--dol)"></i>standard contract (DOL)</span>
+        <span><i class="dot" style="background:var(--wdo)"></i>mini contract (WDO)</span>
+        <span><i class="dot" style="background:var(--red); border-radius:0; width:14px; height:2px; vertical-align:3px"></i>half of the auctions</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · A RÉGUA DO ACASO -->
+<section class="slide" id="acaso" data-label="The chance ruler">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> <span class="nossa">our reading</span></div>
+      <h2 class="rv" style="--d:.1s">With no auction at all, agitation would already rise in half the comparisons</h2>
+      <p class="lede rv" style="--d:.15s">If nothing happened, the next window would be more agitated than the previous one about 50% of the time, and three rising windows in a row about 1 in 6 (16.7%), as in random draws. Pick a result from the dissertation and draw 2,000 fake periods with the same number of auctions to see the chance range.</p>
+      <div class="chips rv" id="luck-chips" style="--d:.2s" role="group" aria-label="Dissertation result"></div>
+      <div class="panel rv" id="luck-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="luck-svg" class="svgbox" viewBox="0 0 560 250" role="img" aria-label="Histogram of 2,000 draws with the chance range and the dissertation result marked in red"></svg>
+      <div class="ctas" style="margin-top:8px"><button class="btn small" id="luck-again" type="button">Draw again</button></div>
+      <div class="cellgrid" id="luck-grid" aria-label="Results outside the chance range"></div>
+      <p class="note">Only windows of the same length (10 minutes) are included: 3 › 2, 4 › 3 and 4 › 3 › 2. In red, results outside the 95% chance range (our binomial calculation). There are 24 comparisons: by luck alone, one or two would already fall outside.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · FASES -->
+<section class="slide" id="fases" data-label="Three phases">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Over time · Tables 4 and 9</div>
+      <h2 class="rv" style="--d:.1s">Average agitation fell in mid-2018 and rose again near the election</h2>
+      <p class="lede rv" style="--d:.15s">Grouping auction days by similarity, the author found three phases. From the first to the second, the average range of agitation fell to less than half; in the third, which runs up to the October 2018 election, it rose again. That was also when the Central Bank used swaps the most (Chart 1).</p>
+      <div class="seg rv" id="ph-seg" style="--d:.2s" role="group" aria-label="Contract">
+        <button data-v="DOL" aria-pressed="true">Standard (DOL)</button>
+        <button data-v="WDO" aria-pressed="false">Mini (WDO)</button>
+      </div>
+      <div class="panel rv" id="ph-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="ph-scene" data-fit="520x340" role="img" aria-label="Three blocks over time, width by the days in each phase and height by the average range of agitation"></div></div>
+      <p class="cap-legend">Width: calendar days in each phase. Height: average range of agitation (Tables 4 and 9). Tap a block.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="In practice and limits">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> In practice · limits · credits</div>
+    <h2 class="rv" style="--d:.1s">In the minutes around the auction, the swap showed no calming effect</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Central Bank and public policy</h3><p>The author concludes that, in the short run, the auctions did not reduce the agitation of the dollar futures market, and notes that the Central Bank’s goals are broader and long-term.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Currency traders</h3><p>For the author, knowing how the market behaves before, during and after the auction helps reposition portfolios. The study does not simulate trades or costs: nothing here says when to buy or sell.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ink-2)"><h3>Researchers</h3><p>The author suggests repeating the analysis in other economic cycles and measuring the cost of interventions. Comparing with times without auctions and testing against chance would make the answer firmer (our reading).</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#5b6f96"><h3>Press and public</h3><p>The study looked only at the 70 minutes around each auction, not at the effect on the dollar’s level or on inflation.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>What this study does not say</h3>
+        <ul class="limits">
+          <li><b>One period only.</b> July 2017 to September 2018, with an election at the end; other cycles may differ. Economic indicators (inflation, interest rates, GDP) were left out. <em>· according to the author</em></li>
+          <li><b>Surprises at tense times.</b> Surprise auctions tend to come at turbulent moments, so the agitation may have come before the auction rather than because of it. <em>· according to the author</em></li>
+          <li><b>No comparison group or test.</b> The study does not measure times without auctions or test the percentages against chance (screen 09). Each 10-minute window gives the model about 10 one-minute changes. <em>· our note</em></li>
+          <li><b>"Volatility" that can be negative.</b> The number compared is a model estimate for each window and is sometimes negative; "rose" refers to that number, not to the size of the swings. <em>· our note</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Credits</h3>
+        <div class="cite">
+          <b>How to cite</b><br>
+          SALES, Aparecido Francisco de. <em>Eficácia do swap cambial nas intervenções intraday do Banco Central, como redutor da volatilidade nas negociações no mercado futuro de câmbio.</em> Master’s dissertation (Business Administration), Universidade Presbiteriana Mackenzie, São Paulo, 2019. Advisor: Prof. Dr. Eli Hadad Junior.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Trade data from B3 and the Central Bank; ARCH-GARCH models in Stata 14. This version simplifies the work for a general audience; the formulas and full tables are in the original text. <b>Not investment advice.</b></p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Read the full dissertation (in Portuguese)</a>
+          <a class="btn ghost" href="#capa">↑ Back to start</a>
+          <a class="btn ghost" href="../../">Other research</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  function pct(v){ return fmt(v, 1) + '%'; }
+  function rnd(seed){ return function(){ seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, a, txt){ var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); if (txt !== undefined) e.textContent = txt; return e; }
+  function seg(id, fn){
+    var g = $(id);
+    each(g.querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){
+        each(g.querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        fn(b.dataset.m !== undefined ? +b.dataset.m : b.dataset.v);
+      });
+    });
+  }
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // Tabela 1: leilões por tipo (N de cada grupo) e vencimentos
+  var TYPES = [
+    {k:'all', n:215, v:599, c:'var(--ink-2)', name:L('Todos', 'All')},
+    {k:'rol', n:164, v:461, c:'var(--rol)', name:L('Rolagem', 'Rollover')},
+    {k:'nov', n:28,  v:71,  c:'var(--nov)', name:L('Vencimentos novos', 'New maturities')},
+    {k:'sur', n:23,  v:67,  c:'var(--sur)', name:L('Surpresa', 'Surprise')}
+  ];
+  // Tabelas 5, 6, 7 (DOL) e 10, 11, 12 (WDO); ordem: todos, rolagem, novos, surpresa
+  var RES = {
+    DOL:{
+      same:[[50.7,49.3,52.6,44.7],[51.8,53.0,54.9,46.3],[46.4,32.1,53.6,50.0],[56.5,43.5,47.8,34.8]],
+      up:  [[51.6,49.3,55.3,42.3],[55.5,44.5,53.7,47.0],[35.7,64.3,60.7,32.1],[30.4,73.9,52.2,26.1]],
+      three:[[15.3,18.6,15.8],[17.1,15.2,19.5],[14.3,32.1,3.6],[13.0,26.1,8.7]]
+    },
+    WDO:{
+      same:[[51.2,53.5,46.0,47.9],[53.7,53.7,49.4,51.2],[42.9,57.1,35.7,25.0],[39.1,52.2,43.5,52.2]],
+      up:  [[56.7,56.3,49.8,45.6],[60.4,50.6,51.8,45.7],[53.6,78.6,42.9,46.4],[34.8,65.2,52.2,39.1]],
+      three:[[26.0,20.0,13.0],[25.0,18.3,14.6],[39.3,25.0,14.3],[13.0,30.4,4.3]]
+    }
+  };
+  var COLS = {
+    same:['2 ⇒ 1', '3 ⇒ 2', '4 ⇒ 3', '5 ⇒ 4'],
+    up:['2 › 1', '3 › 2', '4 › 3', '5 › 4'],
+    three:['3 › 2 › 1', '4 › 3 › 2', '5 › 4 › 3']
+  };
+  // Tabela 2: aceitação por vencimento (programados = rolagem + novos; surpresas). Só os %.
+  var ACC = {prog:[20.1, 11.7, 45.9, 22.4], sur:[13.4, 10.4, 71.6, 4.5]};
+  // Tabela 8: volatilidade nas cinco janelas, DOL, 18/07/2018
+  var EX = [0.000329, 0.000959, 0.001649, 0.001681, 0.001984];
+  var WIN = [20, 10, 10, 10, 20];   // Tabela 3, minutos
+  // Tabelas 4 (DOL) e 9 (WDO): fases por k-médias
+  var PH = {
+    DOL:[{a:'18/07/2017', b:'26/04/2018', days:282, max:0.01565, min:-0.01892, avg:0.00745},
+         {a:'27/04/2018', b:'20/06/2018', days:54,  max:0.00877, min:-0.00614, avg:0.00270},
+         {a:'21/06/2018', b:'27/09/2018', days:98,  max:0.00739, min:-0.00610, avg:0.00339}],
+    WDO:[{a:'18/07/2017', b:'23/04/2018', days:279, max:0.01146, min:-0.00957, avg:0.00654},
+         {a:'24/04/2018', b:'19/06/2018', days:56,  max:0.00479, min:-0.00435, avg:0.00267},
+         {a:'20/06/2018', b:'27/09/2018', days:99,  max:0.00834, min:-0.01144, avg:0.00361}]
+  };
+  function cnt(p, n){ return Math.round(p / 100 * n); }  // contagem nossa: % × N (todas fecham num inteiro)
+  function ofn(p, n){ return L(cnt(p, n) + ' de ' + n, cnt(p, n) + ' of ' + n); }
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), r = rnd(11), cols = [], x = 10, k = 0;
+    var st = makeStage(sc, 530, 80, {ay:'66%', rx:'58deg'});
+    rotatable(sc, st, -16, 7);
+    var labels = [L('20 min antes', '20 min before'), L('10 min', '10 min'), L('leilão', 'auction'), L('10 min', '10 min'), L('20 min depois', '20 min after')];
+    WIN.forEach(function(w, p){
+      var x0 = x;
+      for (var i = 0; i < w; i++){
+        var b = box({w:6, d:30, x:x, y:16, h:10, c:p === 2 ? 'var(--auc)' : M.ramp('var(--navy)', p === 1 || p === 3 ? 0 : 2, 4)});
+        st.appendChild(b); cols.push(b); x += 7; k++;
+      }
+      flatLabel(st, labels[p], x0 - 6, 54, w * 7 + 12, 'font-size:12px; text-align:center;' + (p === 2 ? 'color:var(--red); font-weight:700;' : ''));
+      x += 8;
+    });
+    // a mesma regra de sorteio em todos os minutos (ilustração: não indica efeito)
+    var h = cols.map(function(){ return 10 + r() * 40; }), last = -1;
+    function step(){ for (var i = 0; i < cols.length; i++){ h[i] = Math.max(5, Math.min(95, h[i] * 0.55 + (8 + r() * 72) * 0.45)); cols[i].style.setProperty('--h', h[i].toFixed(1) + 'px'); } }
+    step();
+    if (!reduce) M.onTick(function(t){ var s = Math.floor(t * 4); if (s !== last){ last = s; step(); } });
+  })();
+
+  /* ================= 02 · POR QUE ================= */
+  (function(){
+    var PRO = [
+      {t:L('Inflação', 'Inflation'), d:L('O dólar mais caro encarece insumos e importados e passa para os preços. O Relatório de Inflação do Banco Central (set/2018), citado na dissertação, mostra que esse repasse cresce quando a desvalorização é maior e quando as expectativas se desancoram.', 'A pricier dollar makes inputs and imports more expensive and passes into prices. The Central Bank’s Inflation Report (Sep 2018), cited in the dissertation, shows this pass-through grows when depreciation is larger and when expectations become unanchored.')},
+      {t:L('Menos sustos', 'Fewer shocks'), d:L('Reduzir a volatilidade do câmbio e o prêmio de risco que vem com ela é uma das razões clássicas para intervir (Sarno e Taylor, 2001 e 2003).', 'Reducing exchange-rate volatility and the risk premium that comes with it is one of the classic reasons to intervene (Sarno and Taylor, 2001 and 2003).')},
+      {t:L('Liquidez e proteção', 'Liquidity and protection'), d:L('Oferecer liquidez e proteção a quem precisa de dólar, como empresas com dívidas ou compras no exterior.', 'Providing liquidity and protection to those who need dollars, such as firms with foreign debts or purchases.')},
+      {t:L('Planejar o longo prazo', 'Long-term planning'), d:L('Menos incerteza no câmbio ajuda decisões de investimento de longo prazo e torna as projeções mais confiáveis.', 'Less exchange-rate uncertainty helps long-term investment decisions and makes forecasts more reliable.')}
+    ];
+    var CON = [
+      {t:L('Difícil saber o preço certo', 'Hard to know the right price'), d:L('O banco central pode não conseguir dizer se a cotação está de acordo com os fundamentos; muitas vezes a necessidade de intervir só fica clara depois (Sarno e Taylor, 2003).', 'The central bank may be unable to tell whether the rate matches fundamentals; often the need to intervene only becomes clear afterwards (Sarno and Taylor, 2003).')},
+      {t:L('Pode sair caro', 'It can be costly'), d:L('A relação entre custo e benefício pode ser desfavorável. No período estudado, o Gráfico 1 da dissertação mostra uma sequência de resultados negativos do Banco Central com os swaps.', 'The cost–benefit balance may be unfavourable. In the period studied, the dissertation’s Chart 1 shows a run of negative results for the Central Bank on swaps.')},
+      {t:L('Pode sair ao contrário', 'It can backfire'), d:L('A intervenção pode levar o mercado a rever expectativas no sentido oposto ao desejado (Reitz, 2002) e pode somar volatilidade em vez de tirar (Araujo, 2004).', 'Intervention can lead the market to revise expectations in the opposite direction from the one intended (Reitz, 2002) and may add volatility instead of removing it (Araujo, 2004).')},
+      {t:L('Estudos inconclusivos', 'Inconclusive studies'), d:L('O resultado depende do método, do período e dos testes; por isso, segundo o resumo da dissertação, inúmeros estudos são inconclusivos.', 'The result depends on method, period and tests; that is why, according to the dissertation’s abstract, many studies are inconclusive.')}
+    ];
+    var list = $('why-list'), panel = $('why-panel'), mode = 0;
+    function show(arr, i){
+      each(list.children, function(b, j){ b.setAttribute('aria-pressed', i === j ? 'true' : 'false'); });
+      panel.innerHTML = '<h3>' + arr[i].t + '</h3><p>' + arr[i].d + '</p>';
+    }
+    function draw(){
+      var arr = mode ? CON : PRO;
+      list.className = 'reasons' + (mode ? ' con' : '');
+      list.innerHTML = '';
+      arr.forEach(function(o, i){
+        var b = document.createElement('button'); b.type = 'button';
+        b.innerHTML = '<b>' + (mode ? '?' : '✓') + '</b><span>' + o.t + '</span>';
+        b.addEventListener('click', function(){ show(arr, i); });
+        list.appendChild(b);
+      });
+      show(arr, 0);
+    }
+    seg('why-seg', function(m){ mode = m; draw(); });
+    draw();
+  })();
+
+  /* ================= 03 · MERCADO FUTURO ================= */
+  (function(){
+    var sc = $('fut-scene');
+    var st = makeStage(sc, 400, 190, {ay:'74%', rx:'56deg'});
+    rotatable(sc, st, -24, 9);
+    var K = 8; // px por US$ bilhão
+    var spot = box({w:110, d:90, x:40, y:40, h:6.4 * K, c:'var(--navy)', top:fmt(6.4, 1)});
+    var fut = box({w:110, d:90, x:230, y:40, h:27 * K, c:'var(--red)', top:'27'});
+    st.appendChild(spot); st.appendChild(fut);
+    flatLabel(st, L('à vista: US$ 6,4 bi/dia', 'spot: US$ 6.4 bn/day'), 15, 150, 160, 'font-size:13px; text-align:center;');
+    flatLabel(st, L('futuro: US$ 27 bi/dia', 'futures: US$ 27 bn/day'), 205, 150, 160, 'font-size:13px; text-align:center; color:var(--red); font-weight:700;');
+    var P = [
+      L('<h3>Quatro vezes mais negócios no futuro</h3><p>Segundo Rossi (2015), citado na dissertação, o mercado futuro de dólar movimentou em média <b>US$ 27 bilhões por dia</b>, contra <b>US$ 6,4 bilhões</b> no à vista. É por isso que o swap, um contrato que vive nesse mercado, ganhou tanto peso na política cambial brasileira.</p>',
+        '<h3>Four times more trading in futures</h3><p>According to Rossi (2015), cited in the dissertation, the dollar futures market traded on average <b>US$ 27 billion a day</b>, against <b>US$ 6.4 billion</b> in the spot market. That is why the swap, a contract that lives in this market, became so important in Brazilian exchange-rate policy.</p>'),
+      L('<h3>O futuro puxa o à vista</h3><p>Ventura e Garcia (2012) viram que os últimos dez minutos do dólar futuro mexem no dólar à vista, e não o contrário. Medeiros, Santos e Garcia (2014) chamaram isso de exemplo único no mundo. Por isso a pesquisa mediu o efeito dos leilões no futuro.</p>',
+        '<h3>Futures pull the spot market</h3><p>Ventura and Garcia (2012) found that the last ten minutes of dollar futures move the spot dollar, and not the other way round. Medeiros, Santos and Garcia (2014) called it a unique case in the world. That is why the study measured the auctions’ effect on futures.</p>'),
+      L('<h3>Dois contratos, dois públicos</h3><p>A pesquisa olhou o <b>contrato padrão (DOL)</b>, em que, segundo o autor, predominam os grandes participantes, e o <b>minicontrato (WDO)</b>, a versão menor do mesmo contrato. Em cada mês, usou o vencimento mais negociado.</p>',
+        '<h3>Two contracts, two audiences</h3><p>The study looked at the <b>standard contract (DOL)</b>, where, according to the author, large players dominate, and the <b>mini contract (WDO)</b>, the smaller version of the same contract. Each month it used the most traded maturity.</p>')
+    ];
+    seg('fut-seg', function(m){ $('fut-panel').innerHTML = P[m]; });
+    $('fut-panel').innerHTML = P[0];
+  })();
+
+  /* ================= 04 · SWAP ================= */
+  (function(){
+    var svg = $('swap-svg'), r = $('swap-r'), o = $('swap-o'), NOC = 100, SELIC = 1.5;
+    function money(v){ return 'R$ ' + fmt(Math.abs(v), 1) + L(' mi', ' m'); }
+    function draw(){
+      var d = +r.value; o.textContent = (d > 0 ? '+' : '') + fmt(d, 1) + '%';
+      var payBC = NOC * d / 100, payMk = NOC * SELIC / 100, net = payBC - payMk;
+      svg.innerHTML = '';
+      function actor(x, name, c){
+        svg.appendChild(el('rect', {x:x, y:110, width:150, height:80, rx:14, fill:c}));
+        svg.appendChild(el('text', {x:x + 75, y:156, 'text-anchor':'middle', fill:'#fff', 'font-size':16, 'font-weight':700}, name));
+      }
+      actor(30, L('Banco Central', 'Central Bank'), 'var(--navy)');
+      actor(380, L('Mercado', 'Market'), 'var(--red)');
+      // seta de cima: o BC paga a variação do dólar (se subiu) ou recebe (se caiu)
+      var w1 = 2 + Math.abs(payBC) * 1.6, w2 = 2 + payMk * 1.6;
+      var dir1 = d >= 0;
+      svg.appendChild(el('line', {x1:dir1 ? 186 : 374, y1:118, x2:dir1 ? 368 : 196, y2:118, stroke:'#334155', 'stroke-width':w1, 'stroke-linecap':'round'}));
+      svg.appendChild(el('path', {d:dir1 ? 'M368,106 L382,118 L368,130 Z' : 'M196,106 L182,118 L196,130 Z', fill:'#334155'}));
+      svg.appendChild(el('text', {x:280, y:96, 'text-anchor':'middle', 'font-size':13, fill:'#0f172a', 'font-weight':600}, L('variação do dólar: ', 'dollar change: ') + money(payBC)));
+      svg.appendChild(el('line', {x1:374, y1:182, x2:196, y2:182, stroke:'#94a3b8', 'stroke-width':w2, 'stroke-linecap':'round'}));
+      svg.appendChild(el('path', {d:'M196,170 L182,182 L196,194 Z', fill:'#94a3b8'}));
+      svg.appendChild(el('text', {x:280, y:214, 'text-anchor':'middle', 'font-size':13, fill:'#0f172a', 'font-weight':600}, L('juros (Selic): ', 'interest (Selic): ') + money(payMk)));
+      var who = net > 0.001 ? L('O Banco Central paga ', 'The Central Bank pays ') + money(net) + L(' ao mercado', ' to the market')
+              : net < -0.001 ? L('O mercado paga ', 'The market pays ') + money(net) + L(' ao Banco Central', ' to the Central Bank')
+              : L('Ninguém paga nada', 'Nobody pays anything');
+      svg.appendChild(el('rect', {x:120, y:240, width:320, height:40, rx:10, fill:'#f1f5f9', stroke:'#e2e8f0'}));
+      svg.appendChild(el('text', {x:280, y:265, 'text-anchor':'middle', 'font-size':14, fill:net > 0 ? 'var(--red)' : '#1f3b73', 'font-weight':700}, who));
+      svg.appendChild(el('text', {x:280, y:40, 'text-anchor':'middle', 'font-size':12, fill:'#64748b'}, L('Contrato de R$ 100 milhões (inventado)', 'R$ 100 million contract (made up)')));
+      svg.appendChild(el('text', {x:280, y:58, 'text-anchor':'middle', 'font-size':12, fill:'#64748b'}, L('só a diferença troca de mãos, em reais', 'only the difference changes hands, in reais')));
+      $('swap-panel').innerHTML = Math.abs(d - SELIC) < 0.01
+        ? L('<p>O dólar subiu exatamente o que rendem os juros: <b>as duas pontas se anulam</b> e ninguém paga nada.</p>', '<p>The dollar rose exactly as much as the interest: <b>the two sides cancel out</b> and nobody pays anything.</p>')
+        : d > SELIC
+        ? L('<p>O dólar subiu mais que os juros: <b>o Banco Central cobre a alta</b> para quem está do outro lado. É assim que o swap oferece proteção contra a subida do dólar sem vender as reservas.</p>', '<p>The dollar rose more than the interest: <b>the Central Bank covers the rise</b> for whoever is on the other side. This is how the swap offers protection against a rising dollar without selling reserves.</p>')
+        : L('<p>O dólar subiu menos que os juros ou caiu: <b>o Banco Central recebe</b>. O resultado do Banco Central com swaps pode ser positivo ou negativo; no período estudado, foi negativo em vários meses (Gráfico 1).</p>', '<p>The dollar rose less than the interest or fell: <b>the Central Bank receives</b>. The Central Bank’s result on swaps can be positive or negative; in the period studied it was negative in several months (Chart 1).</p>');
+    }
+    r.addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 05 · LEILÕES ================= */
+  (function(){
+    var sc = $('auc-scene'), cols = 18, s = 17, g = 4;
+    var st = makeStage(sc, cols * (s + g) + 10, 12 * (s + g) + 10, {ay:'70%', rx:'58deg'});
+    rotatable(sc, st, -28, 8);
+    var cubes = [], seq = [];
+    TYPES.slice(1).forEach(function(t){ for (var i = 0; i < t.n; i++) seq.push(t); });
+    seq.forEach(function(t, i){
+      var b = box({w:s, d:s, x:5 + (i % cols) * (s + g), y:5 + Math.floor(i / cols) * (s + g), h:t.k === 'rol' ? 14 : 22, c:t.c});
+      b.dataset.k = t.k; st.appendChild(b); cubes.push(b);
+    });
+    function bars(arr, c){
+      var lab = [L('aceitou 70% ou mais', 'accepted 70% or more'), L('de 50% a 70%', '50% to 70%'), L('menos de 50%', 'under 50%'), L('nenhuma proposta', 'no bids')];
+      return arr.map(function(v, i){ return '<div class="pbar"><span>' + lab[i] + '</span><span class="tr"><i style="width:' + v + '%; background:' + c + '"></i></span><b>' + pct(v) + '</b></div>'; }).join('');
+    }
+    var TXT = {
+      all:L('<h3>215 leilões, 599 vencimentos</h3><p>Cada leilão oferece, em geral, dois ou três vencimentos. Em todos os leilões do período, o Banco Central aceitou propostas até o limite oferecido. Só houve swap tradicional (nenhum reverso).</p>',
+            '<h3>215 auctions, 599 maturities</h3><p>Each auction usually offers two or three maturities. In every auction of the period, the Central Bank accepted bids up to the limit offered. There were only traditional swaps (no reverse swaps).</p>'),
+      rol:L('<h3>Rolagem programada: 164 leilões (76,3%)</h3><p>Anunciados com antecedência, com quantidade e hora marcadas, para renovar contratos que venciam: 461 vencimentos (77,0%). Aceitação por vencimento nos programados (rolagem e novos juntos):</p>',
+            '<h3>Scheduled rollover: 164 auctions (76.3%)</h3><p>Announced in advance, with quantity and time set, to renew contracts that were expiring: 461 maturities (77.0%). Acceptance per maturity in scheduled auctions (rollover and new together):</p>') + bars(ACC.prog, 'var(--rol)'),
+      nov:L('<h3>Vencimentos novos programados: 28 leilões (13,0%)</h3><p>Também anunciados antes, mas para colocar contratos novos no mercado: 71 vencimentos (11,8%). Aceitação por vencimento nos programados (rolagem e novos juntos):</p>',
+            '<h3>Scheduled new maturities: 28 auctions (13.0%)</h3><p>Also announced beforehand, but to place new contracts in the market: 71 maturities (11.8%). Acceptance per maturity in scheduled auctions (rollover and new together):</p>') + bars(ACC.prog, 'var(--nov)'),
+      sur:L('<h3>Surpresa: 23 leilões (10,7%)</h3><p>Anunciados poucos minutos antes de acontecer: 67 vencimentos (11,2%). Neles, o Banco Central aceitou menos da metade das propostas em 71,6% dos vencimentos:</p>',
+            '<h3>Surprise: 23 auctions (10.7%)</h3><p>Announced just minutes before they happen: 67 maturities (11.2%). In them, the Central Bank accepted less than half of the bids in 71.6% of maturities:</p>') + bars(ACC.sur, 'var(--sur)')
+    };
+    function show(k){
+      cubes.forEach(function(b){ b.classList.toggle('dim', k !== 'all' && b.dataset.k !== k); });
+      $('auc-panel').innerHTML = TXT[k];
+    }
+    seg('auc-chips', show);
+    show('all');
+  })();
+
+  /* ================= 06 · MÉTODO ================= */
+  (function(){
+    var svg = $('met-svg'), mode = 0;
+    var X0 = 30, PX = 500 / 70, top = 60, base = 230, maxv = 0.0021;
+    var names = [L('Janela 1', 'Window 1'), L('Janela 2', 'Window 2'), L('Janela 3', 'Window 3'), L('Janela 4', 'Window 4'), L('Janela 5', 'Window 5')];
+    var subs = [L('20 min antes', '20 min before'), L('10 min antes', '10 min before'), L('o leilão', 'the auction'), L('10 min depois', '10 min after'), L('20 min depois', '20 min after')];
+    var HL = [[1, 2], [1, 2, 3], [1, 2]];
+    function draw(){
+      svg.innerHTML = '';
+      var x = X0;
+      WIN.forEach(function(w, i){
+        var wpx = w * PX, on = HL[mode].indexOf(i) >= 0, h = EX[i] / maxv * (base - top);
+        svg.appendChild(el('rect', {x:x + 2, y:base + 8, width:wpx - 4, height:24, rx:5, fill:i === 2 ? 'var(--red)' : (on ? '#1f3b73' : '#cbd5e1')}));
+        svg.appendChild(el('text', {x:x + wpx / 2, y:base + 25, 'text-anchor':'middle', 'font-size':10, fill:i === 2 || on ? '#fff' : '#334155', 'font-weight':600}, subs[i]));
+        svg.appendChild(el('rect', {x:x + wpx / 2 - 18, y:base - h, width:36, height:h, rx:4, fill:on ? (i === 2 ? 'var(--red)' : '#1f3b73') : '#cbd5e1'}));
+        svg.appendChild(el('text', {x:x + wpx / 2, y:base - h - 8, 'text-anchor':'middle', 'font-size':11, fill:'#0f172a', 'font-weight':on ? 700 : 400}, fmt(EX[i], 6)));
+        svg.appendChild(el('text', {x:x + wpx / 2, y:top - 26, 'text-anchor':'middle', 'font-size':11, fill:'#64748b'}, names[i]));
+        x += wpx;
+      });
+      svg.appendChild(el('line', {x1:X0, y1:base, x2:X0 + 500, y2:base, stroke:'#94a3b8'}));
+      svg.appendChild(el('text', {x:X0, y:290, 'font-size':11, fill:'#64748b'}, L('70 minutos, largura proporcional ao tempo', '70 minutes, width proportional to time')));
+    }
+    var P = [
+      L('<h3>"Subiu?": janela 3 › janela 2</h3><p>No exemplo, a agitação do leilão (0,001649) passou a dos 10 minutos anteriores (0,000959): conta como <b>subiu</b>. A pesquisa faz o mesmo para 2 › 1, 4 › 3 e 5 › 4, e conta em quantos leilões isso acontece.</p>',
+        '<h3>"Did it rise?": window 3 › window 2</h3><p>In the example, the auction’s agitation (0.001649) exceeded that of the previous 10 minutes (0.000959): it counts as <b>rose</b>. The study does the same for 2 › 1, 4 › 3 and 5 › 4, and counts in how many auctions it happens.</p>'),
+      L('<h3>"Três seguidas?": 4 › 3 › 2</h3><p>Aqui a agitação sobe em três janelas seguidas (0,000959 → 0,001649 → 0,001681). No exemplo, ela sobe em todas as janelas, de 0,000329 a 0,001984. A pesquisa conta 3 › 2 › 1, 4 › 3 › 2 e 5 › 4 › 3.</p>',
+        '<h3>"Three in a row?": 4 › 3 › 2</h3><p>Here agitation rises across three windows in a row (0.000959 → 0.001649 → 0.001681). In the example it rises in every window, from 0.000329 to 0.001984. The study counts 3 › 2 › 1, 4 › 3 › 2 and 5 › 4 › 3.</p>'),
+      L('<h3>"Mesmo sentido?": o sinal se manteve</h3><p>A terceira comparação olha se o número de uma janela manteve o sinal da anterior: positivo continuou positivo, ou negativo continuou negativo. No exemplo, todos são positivos.</p>',
+        '<h3>"Same direction?": the sign held</h3><p>The third comparison checks whether a window’s number kept the previous one’s sign: positive stayed positive, or negative stayed negative. In the example, all are positive.</p>')
+    ];
+    seg('met-seg', function(m){ mode = m; draw(); $('met-panel').innerHTML = P[m]; });
+    draw(); $('met-panel').innerHTML = P[0];
+  })();
+
+  /* ================= 07 · MAPA ================= */
+  (function(){
+    var sc = $('map-scene'), ct = 'DOL', me = 'up', sel = [0, 1];
+    var CW = 50, CD = 36, GX = 26, GY = 30, X0 = 130, Y0 = 20, K = 2.1;
+    var st = makeStage(sc, X0 + 4 * (CW + GX) + 10, Y0 + 4 * (CD + GY) + 40, {ay:'76%', rx:'56deg'});
+    rotatable(sc, st, -14, 6);
+    var slabs = [], colLabels = [], ref = null;
+    TYPES.forEach(function(t, i){ flatLabel(st, t.name, 0, Y0 + i * (CD + GY) + 10, X0 - 10, 'font-size:12px; text-align:right; font-weight:600;'); });
+    for (var j = 0; j < 4; j++) colLabels.push(flatLabel(st, '', X0 + j * (CW + GX) - 10, Y0 + 4 * (CD + GY) - 14, CW + 20, 'font-size:12px; text-align:center;'));
+    for (var i = 0; i < 4; i++) for (j = 0; j < 4; j++){
+      var b = box({w:CW, d:CD, x:X0 + j * (CW + GX), y:Y0 + i * (CD + GY), h:10, c:'var(--navy)'});
+      b.dataset.i = i; b.dataset.j = j; st.appendChild(b); slabs.push(b);
+      b.addEventListener('click', function(){ if (M.wasDrag(sc)) return; sel = [+this.dataset.i, +this.dataset.j]; draw(); });
+    }
+    ref = box({w:4 * (CW + GX), d:4 * (CD + GY), x:X0 - GX / 2, y:Y0 - GY / 2, h:1, z:50 * K, c:'var(--red)', cls:'ref off'});
+    st.appendChild(ref);
+    var NAMES = {up:L('subiu', 'rose'), three:L('subiu 3 vezes seguidas', 'rose 3 times in a row'), same:L('manteve o sentido', 'kept its direction')};
+    function isAuc(j){ return me === 'three' ? j === 0 || j === 1 : j === 1 || j === 2; }
+    function draw(){
+      var data = RES[ct][me], nc = COLS[me].length, base = me === 'three' ? 100 / 6 : 50;
+      if (sel[1] >= nc) sel[1] = nc - 1;
+      slabs.forEach(function(b){
+        var i = +b.dataset.i, j = +b.dataset.j;
+        if (j >= nc){ b.style.display = 'none'; return; }
+        b.style.display = '';
+        var v = data[i][j];
+        b.style.setProperty('--h', (v * K).toFixed(1) + 'px');
+        b.style.setProperty('--c', j === 1 ? 'var(--auc)' : (isAuc(j) ? '#5b6f96' : 'var(--navy)'));
+        b.querySelector('.f-top').innerHTML = '<span class="top-label" style="font-size:11px">' + fmt(v, 0) + '</span>';
+        b.classList.toggle('active', i === sel[0] && j === sel[1]);
+      });
+      colLabels.forEach(function(l, j){ l.textContent = j < nc ? COLS[me][j] : ''; l.style.color = j === 1 ? 'var(--red)' : ''; l.style.fontWeight = j === 1 ? '700' : '400'; });
+      ref.style.setProperty('--z', (base * K).toFixed(1) + 'px');
+      var v = data[sel[0]][sel[1]], t = TYPES[sel[0]];
+      $('map-panel').innerHTML = '<h3>' + t.name + ' · ' + (ct === 'DOL' ? L('contrato padrão', 'standard contract') : L('minicontrato', 'mini contract')) + ' · ' + COLS[me][sel[1]] + '</h3>' +
+        '<p>' + L('A agitação ', 'Agitation ') + NAMES[me] + L(' em ', ' in ') + '<b>' + pct(v) + '</b>' + L(' dos leilões (', ' of auctions (') + ofn(v, t.n) + L(', contagem nossa).', ', our count).') +
+        ' ' + L('Pelo acaso, o esperado seria cerca de ', 'By chance, about ') + pct(base) + L('.', ' would be expected.') + '</p>';
+      // tabela de apoio (alternativa textual)
+      var h = '<tr><th>' + (ct === 'DOL' ? 'DOL' : 'WDO') + ' · ' + NAMES[me] + '</th>' + COLS[me].map(function(c){ return '<th>' + c + '</th>'; }).join('') + '</tr>';
+      data.forEach(function(row, i){ h += '<tr><td>' + TYPES[i].name + ' (' + TYPES[i].n + ')</td>' + row.map(function(x, j){ return '<td' + (j === 1 ? ' class="hot"' : '') + '>' + pct(x) + '</td>'; }).join('') + '</tr>'; });
+      $('map-tab').innerHTML = h;
+    }
+    seg('map-ct', function(v){ ct = v; draw(); });
+    seg('map-me', function(v){ me = v; draw(); });
+    draw();
+  })();
+
+  /* ================= 08 · SURPRESA ================= */
+  (function(){
+    var svg = $('sur-svg'), j = 1;
+    function draw(){
+      svg.innerHTML = '';
+      var X0 = 150, W = 380, rowH = 70;
+      [0, 25, 50, 75, 100].forEach(function(t){
+        var x = X0 + t / 100 * W;
+        svg.appendChild(el('line', {x1:x, y1:20, x2:x, y2:20 + 4 * rowH, stroke:t === 50 ? 'var(--red)' : '#e2e8f0', 'stroke-width':t === 50 ? 2 : 1, 'stroke-dasharray':t === 50 ? '5 4' : ''}));
+        svg.appendChild(el('text', {x:x, y:20 + 4 * rowH + 18, 'text-anchor':'middle', 'font-size':11, fill:'#64748b'}, t + '%'));
+      });
+      TYPES.forEach(function(t, i){
+        var y = 26 + i * rowH;
+        svg.appendChild(el('text', {x:X0 - 10, y:y + 24, 'text-anchor':'end', 'font-size':13, fill:'#0f172a', 'font-weight':600}, t.name));
+        svg.appendChild(el('text', {x:X0 - 10, y:y + 40, 'text-anchor':'end', 'font-size':11, fill:'#64748b'}, t.n + L(' leilões', ' auctions')));
+        ['DOL', 'WDO'].forEach(function(c, k){
+          var v = RES[c].up[i][j], w = v / 100 * W, yy = y + k * 26;
+          svg.appendChild(el('rect', {x:X0, y:yy, width:w, height:20, rx:4, fill:k ? 'var(--wdo)' : 'var(--dol)'}));
+          svg.appendChild(el('text', {x:X0 + w + 6, y:yy + 15, 'font-size':11, fill:'#0f172a', 'font-weight':v > 60 ? 700 : 400}, pct(v) + ' · ' + ofn(v, t.n)));
+        });
+      });
+    }
+    var P = [
+      L('<h3>Durante o leilão</h3><p>Surpresa: 73,9% no padrão e 65,2% no mini. Vencimentos novos: 64,3% e 78,6%. Rolagem: 44,5% e 50,6%. Para o autor, os leilões de vencimentos novos "têm efeito bastante forte" na agitação, e os surpresa a aumentam de forma acentuada; mas ele pondera que os surpresa acontecem em momentos de grande turbulência, então a agitação pode ser a causa do leilão, e não o efeito.</p>',
+        '<h3>During the auction</h3><p>Surprise: 73.9% in the standard contract and 65.2% in the mini. New maturities: 64.3% and 78.6%. Rollover: 44.5% and 50.6%. For the author, new-maturity auctions have "a very strong effect" on agitation, and surprise auctions raise it sharply; but he notes that surprise auctions happen at times of great turbulence, so the agitation may be the cause of the auction rather than its effect.</p>'),
+      L('<h3>Nos 10 minutos seguintes</h3><p>Depois do leilão, tudo volta para perto de metade: de 42,9% a 60,7%. O autor lê a alta logo depois como o mercado se reposicionando ao saber o resultado do leilão.</p>',
+        '<h3>In the next 10 minutes</h3><p>After the auction, everything returns to around half: from 42.9% to 60.7%. The author reads the rise right after as the market repositioning once it learns the auction result.</p>')
+    ];
+    seg('sur-seg', function(m){ j = m ? 2 : 1; draw(); $('sur-panel').innerHTML = P[m]; });
+    draw(); $('sur-panel').innerHTML = P[0];
+  })();
+
+  /* ================= 09 · RÉGUA DO ACASO ================= */
+  (function(){
+    // comparações justas: janelas de 10 minutos (3 › 2, 4 › 3, 4 › 3 › 2)
+    function lnC(n, k){ var s = 0; for (var i = 1; i <= k; i++) s += Math.log(n - k + i) - Math.log(i); return s; }
+    function pmf(n, k, p){ return Math.exp(lnC(n, k) + k * Math.log(p) + (n - k) * Math.log(1 - p)); }
+    function band(n, p){ // faixa central de 95% (contagens)
+      var c = 0, lo = 0, hi = n;
+      for (var k = 0; k <= n; k++){ c += pmf(n, k, p); if (c >= 0.025){ lo = k; break; } }
+      c = 0; for (k = n; k >= 0; k--){ c += pmf(n, k, p); if (c >= 0.025){ hi = k; break; } }
+      return [lo, hi];
+    }
+    var FAIR = [
+      {ct:'DOL', me:'up', j:1, lab:'DOL 3 › 2'}, {ct:'DOL', me:'up', j:2, lab:'DOL 4 › 3'}, {ct:'DOL', me:'three', j:1, lab:'DOL 4 › 3 › 2'},
+      {ct:'WDO', me:'up', j:1, lab:'WDO 3 › 2'}, {ct:'WDO', me:'up', j:2, lab:'WDO 4 › 3'}, {ct:'WDO', me:'three', j:1, lab:'WDO 4 › 3 › 2'}
+    ];
+    // grade de 24 resultados
+    var g = $('luck-grid'), h = '<div class="h"></div>' + FAIR.map(function(f){ return '<div class="h">' + f.lab + '</div>'; }).join('');
+    TYPES.forEach(function(t, i){
+      h += '<div class="rl">' + t.name + '</div>';
+      FAIR.forEach(function(f){
+        var v = RES[f.ct][f.me][i][f.j], p = f.me === 'three' ? 1 / 6 : 0.5, k = cnt(v, t.n), b = band(t.n, p);
+        h += '<div' + (k < b[0] || k > b[1] ? ' class="out"' : '') + '>' + fmt(v, 1) + '</div>';
+      });
+    });
+    g.innerHTML = h;
+    var PICK = [
+      {ti:0, f:0}, {ti:0, f:3}, {ti:3, f:0}, {ti:2, f:3}, {ti:0, f:2}, {ti:2, f:2}
+    ];
+    var chips = $('luck-chips');
+    PICK.forEach(function(pk, n){
+      var f = FAIR[pk.f], t = TYPES[pk.ti], v = RES[f.ct][f.me][pk.ti][f.j];
+      var b = document.createElement('button'); b.type = 'button'; b.dataset.v = n; b.setAttribute('aria-pressed', n === 0 ? 'true' : 'false');
+      b.textContent = t.name + ' · ' + f.lab + ' · ' + pct(v);
+      chips.appendChild(b);
+    });
+    var cur = 0, seed = 5;
+    function run(){
+      var pk = PICK[cur], f = FAIR[pk.f], t = TYPES[pk.ti], N = t.n, v = RES[f.ct][f.me][pk.ti][f.j];
+      var three = f.me === 'three', p = three ? 1 / 6 : 0.5, r = rnd(seed), S = 2000, hist = [], sims = [];
+      for (var s = 0; s < S; s++){
+        var k = 0;
+        for (var a = 0; a < N; a++){
+          // sorteia a agitação de janelas iguais (sem leilão) e compara
+          var w2 = r(), w3 = r(), w4 = three ? r() : 0;
+          if (three ? (w4 > w3 && w3 > w2) : (w3 > w2)) k++;
+        }
+        sims.push(k / N * 100);
+      }
+      sims.sort(function(x, y){ return x - y; });
+      var lo = sims[Math.floor(S * 0.025)], hi = sims[Math.ceil(S * 0.975) - 1];
+      var above = sims.filter(function(x){ return x >= v - 1e-9; }).length;
+      // histograma em faixas de 2,5 pontos
+      var B = 40, bw = 100 / B; for (var i = 0; i < B; i++) hist.push(0);
+      sims.forEach(function(x){ hist[Math.min(B - 1, Math.floor(x / bw))]++; });
+      var svg = $('luck-svg'); svg.innerHTML = '';
+      var X0 = 30, W = 500, Y1 = 200, H = 150, mx = Math.max.apply(null, hist);
+      svg.appendChild(el('rect', {x:X0 + lo / 100 * W, y:Y1 - H - 10, width:Math.max(2, (hi - lo) / 100 * W), height:H + 10, fill:'#e0e7ff'}));
+      hist.forEach(function(c, i){ if (c) svg.appendChild(el('rect', {x:X0 + i * bw / 100 * W + 1, y:Y1 - c / mx * H, width:bw / 100 * W - 2, height:c / mx * H, fill:'#1f3b73'})); });
+      svg.appendChild(el('line', {x1:X0, y1:Y1, x2:X0 + W, y2:Y1, stroke:'#94a3b8'}));
+      [0, 25, 50, 75, 100].forEach(function(tk){ svg.appendChild(el('text', {x:X0 + tk / 100 * W, y:Y1 + 18, 'text-anchor':'middle', 'font-size':11, fill:'#64748b'}, tk + '%')); });
+      var xv = X0 + v / 100 * W;
+      svg.appendChild(el('line', {x1:xv, y1:Y1 - H - 14, x2:xv, y2:Y1 + 4, stroke:'var(--red)', 'stroke-width':3}));
+      svg.appendChild(el('text', {x:Math.min(X0 + W - 4, Math.max(X0 + 4, xv)), y:Y1 - H - 20, 'text-anchor':xv > X0 + W - 90 ? 'end' : (xv < X0 + 90 ? 'start' : 'middle'), 'font-size':12, fill:'var(--red)', 'font-weight':700}, L('dissertação: ', 'dissertation: ') + pct(v)));
+      svg.appendChild(el('text', {x:X0, y:Y1 + 38, 'font-size':11, fill:'#64748b'}, L('faixa azul: 95% dos 2.000 sorteios', 'blue band: 95% of the 2,000 draws')));
+      var inside = v >= lo && v <= hi;
+      $('luck-panel').innerHTML = '<p><span class="nossa">' + L('simulação nossa', 'our simulation') + '</span> ' +
+        L('Com ', 'With ') + N + L(' leilões e nenhum efeito, 95% dos sorteios ficaram entre ', ' auctions and no effect, 95% of draws fell between ') + '<b>' + pct(lo) + L(' e ', ' and ') + pct(hi) + '</b>' +
+        L('. Chegaram a ', '. Draws reaching ') + pct(v) + L(' ou mais: ', ' or more: ') + '<b>' + above + L(' de 2.000', ' of 2,000') + '</b>. ' +
+        (inside ? L('O resultado da dissertação cabe no que o acaso produz.', 'The dissertation’s result fits within what chance produces.')
+                : L('O resultado da dissertação fica fora da faixa do acaso.', 'The dissertation’s result falls outside the chance range.')) + '</p>';
+    }
+    seg('luck-chips', function(v){ cur = +v; run(); });
+    $('luck-again').addEventListener('click', function(){ seed++; run(); });
+    run();
+  })();
+
+  /* ================= 10 · FASES ================= */
+  (function(){
+    var sc = $('ph-scene'), ct = 'DOL', sel = 2, K = 15000, PXD = 1.0;
+    var st = makeStage(sc, 470, 130, {ay:'72%', rx:'56deg'});
+    rotatable(sc, st, -14, 6);
+    var blocks = [], labs = [];
+    var cols = ['var(--navy)', '#5b6f96', 'var(--red)'];
+    for (var i = 0; i < 3; i++){
+      var b = box({w:50, d:56, x:0, y:30, h:20, c:cols[i]});
+      b.dataset.i = i; st.appendChild(b); blocks.push(b);
+      b.addEventListener('click', function(){ if (M.wasDrag(sc)) return; sel = +this.dataset.i; draw(); });
+      labs.push(flatLabel(st, '', 0, 94 + (i === 1 ? 16 : 0), 100, 'font-size:12px; text-align:center; font-weight:600;'));
+    }
+    var READ = [
+      L('Fase de maior agitação nas janelas de leilão.', 'The phase with the most agitation in auction windows.'),
+      L('Para o autor, a queda "parece indicar" que a atuação do Banco Central foi eficiente na passagem da primeira para a segunda fase.', 'For the author, the drop "seems to indicate" that the Central Bank’s action was effective in the move from the first to the second phase.'),
+      L('O autor liga a nova alta à proximidade da eleição de outubro de 2018. Foi também a fase com o maior estoque de swaps do Banco Central (Gráfico 1).', 'The author links the new rise to the approaching October 2018 election. It was also the phase with the Central Bank’s largest stock of swaps (Chart 1).')
+    ];
+    var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    function dt(d){ if (!EN) return d; var q = d.split('/'); return (+q[0]) + ' ' + MON[+q[1] - 1] + ' ' + q[2]; }
+    function draw(){
+      var x = 10;
+      PH[ct].forEach(function(p, i){
+        var w = p.days * PXD;
+        blocks[i].style.left = x + 'px'; blocks[i].style.width = (w - 6) + 'px';
+        blocks[i].style.setProperty('--h', (p.avg * K).toFixed(1) + 'px');
+        blocks[i].querySelector('.f-top').innerHTML = '<span class="top-label" style="font-size:12px">' + fmt(p.avg, 5) + '</span>';
+        blocks[i].classList.toggle('active', i === sel);
+        labs[i].style.left = (x - 10) + 'px'; labs[i].style.width = (w + 14) + 'px';
+        labs[i].textContent = L('fase ', 'phase ') + (i + 1);
+        x += w;
+      });
+      var p = PH[ct][sel];
+      $('ph-panel').innerHTML = '<h3>' + L('Fase ', 'Phase ') + (sel + 1) + ': ' + dt(p.a) + ' – ' + dt(p.b) + '</h3><p>' +
+        L('Amplitude média: ', 'Average range: ') + '<b>' + fmt(p.avg, 5) + '</b>' + L(' (maior ', ' (highest ') + fmt(p.max, 5) + L(', menor ', ', lowest ') + fmt(p.min, 5).replace('-', '−') + '). ' + READ[sel] + '</p>' +
+        '<p class="note" style="margin-top:6px">' + L('A dissertação não testa se a queda ou a alta vieram dos leilões; as fases saem de um agrupamento estatístico (k-médias) das janelas.', 'The dissertation does not test whether the fall or rise came from the auctions; the phases come from a statistical grouping (k-means) of the windows.') + '</p>';
+    }
+    seg('ph-seg', function(v){ ct = v; draw(); });
+    draw();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
