@@ -1,0 +1,877 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cybersecurity in connected financial services · PPGA Interativo</title>
+<meta name="description" content="André Lozano Ferreira's master's dissertation (PPGA Mackenzie, 2023) on cybersecurity trends in the use of the Internet of Things in financial services, with experts in two Delphi rounds, explained in 12 interactive screens.">
+<link rel="alternate" hreflang="pt-BR" href="../../../dissertacoes/2023-ferreira-iot-seguranca-servicos-financeiros/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2214%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>AF</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/motor.css">
+<link rel="stylesheet" href="../../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  :root{
+    --def:var(--navy);   /* defesa, organização */
+    --atk:var(--red);    /* ameaça, destaque */
+    --mid:#94a3b8;
+    --dk:#334155;
+    --soft:#eef2f7;
+  }
+  .slide h2{font-size:clamp(1.5rem, 2.7vw, 2.1rem);}
+  .slab.dim > i{opacity:.25;}
+  .note{font-size:.76rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:4px;}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  q{quotes:"“" "”"; font-family:var(--serif); font-style:italic; color:var(--ink);}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .seg button:disabled{opacity:.4; cursor:not-allowed;}
+  .chips{display:flex; flex-wrap:wrap; gap:6px;}
+  .chips button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:5px 11px; font-size:.78rem; cursor:pointer; color:var(--ink-2); line-height:1.3;}
+  .chips button[aria-pressed="true"]{border-color:var(--ink); background:var(--ink); color:#fff;}
+  .chips button.done{border-color:var(--atk); color:var(--atk);}
+  .stats{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 12px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.74rem; color:var(--muted); line-height:1.3; display:block;}
+  .lg{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.76rem; color:var(--muted); margin-top:8px;}
+  @media (max-width:600px){ .stats{grid-template-columns:1fr 1fr;} }
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 3.8vw, 2.6rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-cap{text-align:center; font-size:.8rem; color:var(--ink-2); min-height:2.8em; margin-top:2px; padding:0 8px;}
+  .cap-cap b{color:var(--ink);}
+  .dev .top-label{font-size:10px; font-weight:700; letter-spacing:.02em; color:#fff;}
+  .dev{cursor:pointer;}
+  .atk .f-top{box-shadow:0 0 0 2px #fff inset;}
+
+  /* ---------- 02 · Coisas conectadas ---------- */
+  .rng{margin:10px 0 4px;}
+  .rng input{width:100%; accent-color:var(--atk);}
+  .rng .val{display:flex; justify-content:space-between; align-items:baseline; font-size:.86rem; color:var(--muted);}
+  .rng .val b{font-family:var(--serif); font-size:1.5rem; color:var(--ink);}
+  .ticks{display:flex; justify-content:space-between; font-size:.72rem; color:var(--muted);}
+  #dv-svg{width:100%; height:auto; display:block;}
+  .atk-list{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px;}
+  .atk-list span{font-size:.76rem; padding:4px 10px; border-radius:999px; background:color-mix(in srgb, var(--atk) 10%, white); color:color-mix(in srgb, var(--atk) 80%, black); border:1px solid color-mix(in srgb, var(--atk) 30%, white);}
+
+  /* ---------- 03 · Método ---------- */
+  #mt-svg{width:100%; height:auto; display:block;}
+  #mt-svg .st{cursor:pointer;}
+  #mt-svg .st:focus{outline:none;}
+  #mt-svg .st:focus rect.bar{stroke:var(--ink); stroke-width:2;}
+
+  /* ---------- 04 · Quem respondeu ---------- */
+  #pp-svg{width:100%; height:auto; display:block;}
+  .pp-leg{display:grid; gap:4px; margin-top:8px; font-size:.8rem; color:var(--ink-2);}
+  .pp-leg div{display:flex; align-items:center; gap:8px;}
+  .pp-leg b{margin-left:auto; color:var(--ink); font-variant-numeric:tabular-nums;}
+
+  /* ---------- 05 · Responda ---------- */
+  .lik{display:grid; grid-template-columns:repeat(7, minmax(0,1fr)); gap:6px; margin:10px 0 4px;}
+  .lik button{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:8px 0; font-weight:700; font-size:.95rem; cursor:pointer; color:var(--ink);}
+  .lik button[aria-pressed="true"]{background:var(--atk); border-color:var(--atk); color:#fff;}
+  .lik-ends{display:flex; justify-content:space-between; font-size:.72rem; color:var(--muted);}
+  .stmt{font-family:var(--serif); font-size:.98rem; line-height:1.5; color:var(--ink); background:var(--card); border:1px solid var(--border); border-left:4px solid var(--atk); border-radius:10px; padding:12px 14px; min-height:7.5em;}
+  #rs-svg{width:100%; height:auto; display:block; margin-top:6px;}
+
+  /* ---------- 06 · Frases ---------- */
+  .fr-list{display:grid; gap:2px; margin-top:8px; counter-reset:fr;}
+  .fr-list button{display:grid; grid-template-columns:1.6em minmax(0,1fr) 3em; gap:8px; align-items:center; border:0; background:transparent; text-align:left; padding:1px 6px; border-radius:6px; font-size:.78rem; color:var(--ink-2); cursor:pointer;}
+  .fr-list button:hover, .fr-list button[aria-pressed="true"]{background:var(--soft);}
+  .fr-list button[aria-pressed="true"]{color:var(--ink); font-weight:700;}
+  .fr-list .rk{font-variant-numeric:tabular-nums; color:var(--muted); text-align:right;}
+  .fr-list .mv{font-variant-numeric:tabular-nums; text-align:right; font-weight:700;}
+  .fr-list .sw{display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:6px; vertical-align:0;}
+  .col .top-label{font-size:10px;}
+  .slab.off .top-label{visibility:hidden;}
+
+  /* ---------- 07 · Consenso ---------- */
+  #ws-svg, #sl-svg{width:100%; height:auto; display:block;}
+  #sl-svg .ln{cursor:pointer;}
+
+  /* ---------- 08 · Inesperado ---------- */
+  .opts{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0;}
+  .opts button{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:9px 14px; font-size:.86rem; cursor:pointer; color:var(--ink);}
+  .opts button[aria-pressed="true"]{background:var(--ink); border-color:var(--ink); color:#fff;}
+  .pair{display:grid; gap:10px; margin-top:6px;}
+  .pair .row{display:grid; grid-template-columns:minmax(0, 9.5em) 1fr; gap:10px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .pair .tr{display:flex; flex-direction:column; gap:3px;}
+  .pair .br{height:16px; border-radius:3px; background:var(--c); display:flex; align-items:center; justify-content:flex-end; padding-right:6px; color:#fff; font-size:.7rem; font-weight:700; min-width:3.6em;}
+  #in-svg{width:100%; height:auto; display:block;}
+
+  /* ---------- 09 · Critérios ---------- */
+  .ord{display:grid; gap:6px; margin-top:8px;}
+  .ord button{display:flex; gap:10px; align-items:center; border:1px solid var(--border); background:var(--card); border-radius:10px; padding:8px 12px; text-align:left; cursor:pointer; font-size:.86rem; color:var(--ink);}
+  .ord button .pos{display:inline-grid; place-items:center; width:1.7em; height:1.7em; border-radius:50%; background:var(--soft); color:var(--muted); font-weight:700; font-size:.8rem; flex:none;}
+  .ord button.picked .pos{background:var(--atk); color:#fff;}
+  .ord button.picked{border-color:var(--atk);}
+  .ord button small{display:block; color:var(--muted); font-size:.74rem;}
+
+  /* ---------- 10 · Matriz ---------- */
+  .tot{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:8px; margin-top:10px;}
+  .tot div{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:8px 10px; font-size:.74rem; color:var(--muted); border-top:4px solid var(--c);}
+  .tot b{display:block; font-family:var(--serif); font-size:1.1rem; color:var(--ink);}
+  @media (max-width:600px){ .tot{grid-template-columns:1fr 1fr;} }
+
+  /* ---------- 11 · Prazos ---------- */
+  #pz-svg{width:100%; height:auto; display:block;}
+
+  /* ---------- 12 · Créditos ---------- */
+  #creditos h2{font-size:clamp(1.5rem, 2.6vw, 2rem);}
+  .cards3{display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px;}
+  @media (min-width:760px){ .cards3{grid-template-columns:repeat(3, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 15px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.95rem; margin-bottom:4px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:2px; font-size:.76rem; line-height:1.38; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:12px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:8px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.79rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:8px;}
+  .cite b{color:var(--ink);}
+  .end .btn{padding:9px 12px; font-size:.82rem;} .end .ctas{gap:8px;}
+  .also{font-size:.8rem; margin-top:10px;}
+  .also a{color:var(--atk); font-weight:600;}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-meta="../../../dissertacoes/2023-ferreira-iot-seguranca-servicos-financeiros/meta.json">
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../../dissertacoes/2023-ferreira-iot-seguranca-servicos-financeiros/" hreflang="pt-BR" lang="pt-BR" title="Ler em português"><img class="lang-flag" src="../../../assets/bandeira-br.svg" width="17" height="12" alt="">PT</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Previous screen">↑</button>
+    <button class="nav-btn" id="next" aria-label="Next screen">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Screen navigation"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Start">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Master's dissertation · PPGA Mackenzie · 2023</div>
+      <h1 class="rv" style="--d:.1s">Paying with your watch needs security by design</h1>
+      <p class="sub rv" style="--d:.2s">Watches, phones, cards and voice assistants have become doorways into the bank. The author asked <strong>cybersecurity experts in two rounds</strong> (27 and 29 answers) and then three of them in depth. Almost all agree that <strong>every financial services company will be hit</strong> and that protection must be born with the product. To act, they put <strong>educating people</strong> first. In 12 screens.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Author:</b> André Lozano Ferreira</span>
+        <span><b>Advisor:</b> Prof. Gilberto Perez</span>
+        <span><b>Program:</b> Graduate Program in Business Administration (PPGA) · Mackenzie Presbyterian University</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#coisas">Start →</a>
+        <a class="btn ghost" href="#frases">Go straight to the results</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="520x360" role="img" aria-label="A navy block, the bank, surrounded by six connected devices (watch, phone, card, ATM, voice assistant and car); a red cube, the threat, hops from one device into the bank"></div></div>
+      <div class="cap-cap" id="hero-cap" aria-live="polite">Each connected thing is one more door. Tap a device.</div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">Closest UN Sustainable Development Goals</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://sdgs.un.org/goals/goal8" target="_blank" rel="noopener" title="SDG 8 · Decent Work and Economic Growth: Shows what cybersecurity experts think banks, fintechs and insurers should prioritize to protect increasingly connected financial services."><b>8</b>Decent work and economic growth</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">scroll<span></span></div>
+</section>
+
+<!-- 02 · COISAS CONECTADAS -->
+<section class="slide" id="coisas" data-label="Connected things">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> The problem · Internet of Things</div>
+      <h2 class="rv" style="--d:.1s">Connected things are multiplying, and each one can be a door for an attack</h2>
+      <p class="rv" style="--d:.15s">The Internet of Things (IoT) is the name for devices that exchange data on their own over the internet: the watch that pays, the car that sends data to the insurer, the ATM that recognizes your face. For banks, they mean new services and more data. For attackers, more doors. Drag the year:</p>
+      <div class="rng rv" style="--d:.2s">
+        <div class="val"><span id="dv-y">2019</span><b id="dv-v">8,6</b></div>
+        <input type="range" id="dv-r" min="2019" max="2030" step="1" value="2019" aria-label="Year">
+        <div class="ticks"><span>2019</span><span>2030 (forecast)</span></div>
+      </div>
+      <p class="rv" style="--d:.25s">The dissertation's own abstract lists what grows along with them: <strong>unauthorized access, malware, zero-day attacks, data breaches, denial of service (DDoS), social engineering and phishing</strong>, above all in financial services. The author's question: <strong>what are the cybersecurity trends once the bank starts living in these things?</strong></p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="dv-svg" viewBox="0 0 520 330" role="img" aria-label="Columns with the number of connected devices worldwide, from 8.6 billion in 2019 to 29.4 billion forecast for 2030"></svg>
+      <div class="lg"><span><i class="dot" style="background:var(--def)"></i>measured</span><span><i class="dot" style="background:repeating-linear-gradient(45deg, var(--def) 0 2px, #fff 2px 4px); border:1px solid var(--def)"></i>forecast</span><span><i class="dot" style="background:var(--atk)"></i>chosen year</span></div>
+      <p class="note">Connected devices worldwide, in billions: Figure 1 of the dissertation (data from Vailshery, 2022). From 2022 on, forecast.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · MÉTODO -->
+<section class="slide" id="metodo" data-label="How it asked">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> The method · Delphi + ANP</div>
+      <h2 class="rv" style="--d:.1s">Ask the experts, show them the average, and ask again</h2>
+      <p class="rv" style="--d:.15s">In the Delphi technique, experts answer anonymously; then they see the group's opinion and can revise their own. The aim is agreement without the loudest voice in the room deciding. At the end, three experts compared the findings two at a time in a decision program (ANP), to say what comes first. Tap each step:</p>
+      <div class="panel rv" id="mt-panel" style="--d:.2s; min-height:150px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="mt-svg" viewBox="0 0 540 330" role="group" aria-label="Timeline from February to April 2023 with five steps: pilot, first round, analysis, second round and pairwise comparisons"></svg>
+      <p class="note">Dates and numbers from sections 5.2 to 5.5 and 6.5. Invitations to 89 experts on LinkedIn, plus an open post and WhatsApp groups, asking each to pass it on (snowball): so there is no response rate.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · QUEM RESPONDEU -->
+<section class="slide" id="painel" data-label="Who answered">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> The panel · 27 and 29 experts</div>
+      <h2 class="rv" style="--d:.1s">Most respondents work at large companies and hold a graduate degree</h2>
+      <p class="rv" style="--d:.15s">Each figure is one person. Choose the round and what to show:</p>
+      <div class="rv" style="--d:.2s; display:grid; gap:8px">
+        <div class="seg" id="pp-round" role="group" aria-label="Round"></div>
+        <div class="seg" id="pp-attr" role="group" aria-label="Attribute"></div>
+      </div>
+      <div class="stats rv" id="pp-stats" style="--d:.25s"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="pp-svg" viewBox="0 0 500 200" role="img" aria-label="Figures, one per expert, colored by the chosen attribute"></svg>
+      <div class="pp-leg" id="pp-leg" aria-live="polite"></div>
+      <p class="note" id="pp-note"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · RESPONDA -->
+<section class="slide" id="responda" data-label="Your turn">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Do what the experts did</div>
+      <h2 class="rv" style="--d:.1s">From 1 to 7, how much do you agree?</h2>
+      <p class="rv" style="--d:.15s">Both rounds had the same 14 statements about the future. Pick one, give your score and see the group's average in each round.</p>
+      <div class="chips rv" id="rs-chips" style="--d:.2s" role="group" aria-label="Statements"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="stmt" id="rs-stmt" aria-live="polite"></div>
+      <div class="lik" id="rs-lik" role="group" aria-label="Your score from 1 to 7"></div>
+      <div class="lik-ends"><span>1 · strongly disagree</span><span>7 · strongly agree</span></div>
+      <svg id="rs-svg" viewBox="0 0 500 120" role="img" aria-label="A 1 to 7 ruler with your score and the averages of both rounds"></svg>
+      <p class="note">Statements from Tables 7 and 15 (questionnaires in Appendices B and C, translated by us); averages from Tables 8 and 15. In the second round, each person saw the first-round average before answering.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · FRASES -->
+<section class="slide" id="frases" data-label="14 statements">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Result · the 14 statements</div>
+      <h2 class="rv" style="--d:.1s">Almost everyone agrees that every financial company will be hit</h2>
+      <p class="rv" style="--d:.15s">In the second round, the statement “every organization that provides financial services will be impacted by cybersecurity issues” averaged <strong>6.83 out of 7</strong>, the highest and the one with the closest opinions. Right behind: <strong>security built into product creation</strong> and <strong>leadership held accountable for digital risk</strong> (6.79 each). Switch the round and tap a column:</p>
+      <div class="seg rv" id="fr-round" style="--d:.2s" role="group" aria-label="Round"></div>
+      <div class="panel rv" id="fr-panel" style="--d:.25s; margin-top:12px; min-height:138px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="fr-scene" data-fit="560x270" role="img" aria-label="Fourteen 3D columns, one per statement, with height equal to the average agreement from 1 to 7, ordered from highest to lowest"></div></div>
+      <div class="lg" style="justify-content:center"><span><i class="dot" style="background:var(--atk)"></i>agreement (6 or more)</span><span><i class="dot" style="background:var(--def)"></i>in between</span><span><i class="dot" style="background:var(--mid)"></i>disagreement (4 or less)</span></div>
+      <div class="fr-list" id="fr-list"></div>
+      <p class="note">Averages from Tables 8 (27 people) and 15 (29 people); agreement bands defined by the author (section 6.1.1). Order with ties as in Table 18.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · CONSENSO -->
+<section class="slide" id="consenso" data-label="More agreement">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Result · agreement across rounds</div>
+      <h2 class="rv" style="--d:.1s">In the second round, the answers became more alike</h2>
+      <p class="rv" style="--d:.15s">Kendall's coefficient (W) measures whether people put the statements in the same order: 0 means each has their own order; 1 means everyone agrees. It rose from <strong>0.335</strong> to <strong>0.519</strong>, and the author closed the Delphi after the second round. Some statements changed places; tap a line:</p>
+      <div class="seg rv" id="ws-round" style="--d:.2s" role="group" aria-label="Round"></div>
+      <svg id="ws-svg" class="rv" style="--d:.25s; margin-top:10px" viewBox="0 0 500 110" role="img" aria-label="A 0 to 1 ruler of the W coefficient with Schmidt's bands and the chosen round's value"></svg>
+      <div class="panel rv" id="sl-panel" style="--d:.3s; margin-top:8px; min-height:92px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="sl-svg" viewBox="0 0 500 440" role="group" aria-label="Each statement's position in the first and second rounds, joined by lines"></svg>
+      <p class="note">W and chi-square in Tables 10 and 17 (p &lt; 0.001 in both); bands from Table 6 (Schmidt, 1997), which Schmidt himself says need not be followed to the letter. Positions from Table 18. Note: the rounds did not have exactly the same people (only 11 were identified in both).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · INESPERADO -->
+<section class="slide" id="dinheiro" data-label="The unexpected">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> The unexpected · is the money enough?</div>
+      <h2 class="rv" style="--d:.1s">The experts do not believe the money being invested will be enough</h2>
+      <p class="rv" style="--d:.15s">The questionnaire showed the numbers alongside: global cybersecurity investment grew, but incidents in the financial sector grew more. Then it asked for a score on the statement <q>I believe global cybersecurity investments will be sufficient</q>. Guess: what did the group answer?</p>
+      <div class="opts rv" id="in-opts" style="--d:.2s" role="group" aria-label="Your guess"></div>
+      <div class="panel rv" id="in-panel" style="--d:.25s; margin-top:6px; min-height:112px" aria-live="polite"><p>Choose an option.</p></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <h3 style="font-size:1rem; margin-bottom:6px">What the question said</h3>
+      <div class="pair">
+        <div class="row"><span>Global cybersecurity investment, US$ billions</span><div class="tr"><div class="br" style="--c:var(--mid); width:37%">101,5</div><div class="br" style="--c:var(--def); width:62%">169</div></div></div>
+        <div class="row"><span>Incidents reported in the financial sector</span><div class="tr"><div class="br" style="--c:var(--mid); width:18%">721</div><div class="br" style="--c:var(--atk); width:62%">2,527</div></div></div>
+      </div>
+      <p class="lg"><span>grey: 2017 (investment) and 2020 (incidents); color: 2022 and 2021</span></p>
+      <p style="font-size:.86rem; margin-top:8px">In each row, the longer bar is the latest year: investment grew <strong>by about two thirds</strong> in five years; incidents became <strong>3.5 times</strong> larger from one year to the next (our calculations, using the values in the question).</p>
+      <svg id="in-svg" viewBox="0 0 500 120" role="img" aria-label="A 1 to 7 ruler with the average answer, revealed after the guess"></svg>
+      <p class="note">Numbers from question 16 (Statista, 2022, cited in the dissertation). Averages and deviations from Tables 8 and 15. Each row has its own scale.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · CRITÉRIOS -->
+<section class="slide" id="criterios" data-label="Educate first">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Result · what comes first</div>
+      <h2 class="rv" style="--d:.1s">To act, the experts put educating people first</h2>
+      <p class="rv" style="--d:.15s">From the open answers of the first round, the author drew five fronts for action. In the second round, each expert put them in order (1st place was worth 5 points; 5th, 1 point). Build your own order by tapping from most to least important:</p>
+      <div class="ord rv" id="cr-ord" style="--d:.2s"></div>
+      <div class="ctas rv" style="--d:.25s; margin-top:10px"><button class="btn small ghost" id="cr-reset">Start over</button><button class="btn small ghost" id="cr-skip">See the group's order</button></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="cr-scene" data-fit="480x300" role="img" aria-label="Five 3D blocks with height equal to each front's points: cyber-education 114, protection actions 105, technology management 91, investment management 70 and institutional actions 55"></div></div>
+      <div class="panel" id="cr-panel" style="margin-top:6px; min-height:96px" aria-live="polite"><p>The group's blocks appear when you finish your order.</p></div>
+      <p class="note">Points from Table 19 (29 people; the total, 435, checks out); descriptions from Table 14.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · MATRIZ -->
+<section class="slide" id="matriz" data-label="Risk ahead">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Result · fronts × factors</div>
+      <h2 class="rv" style="--d:.1s">Adding up all the fronts, risk is the factor that weighs most</h2>
+      <p class="rv" style="--d:.15s">Using the scores of the 14 statements, the author grouped 11 of them into four <strong>factors</strong>: risk, technology, management and strategy. Then he asked the experts to rank the four within each front for action. Choose a front:</p>
+      <div class="chips rv" id="mx-chips" style="--d:.2s" role="group" aria-label="Front for action"></div>
+      <div class="panel rv" id="mx-panel" style="--d:.25s; margin-top:12px; min-height:110px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="mx-scene" data-fit="500x370" role="img" aria-label="A 3D matrix of 5 fronts by 4 factors; the height of each block is the points the experts gave"></div></div>
+      <div class="tot" id="mx-tot"></div>
+      <p class="note">Points from Table 20 (1st place = 4 points; each front adds up to 290) and totals from Table 21. The factors come from the factor analysis in Table 12; three near-consensus statements (every company hit, leadership held accountable, risk from changing technology) were left out of it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · PRAZOS -->
+<section class="slide" id="prazos" data-label="Three timeframes">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> The turn · three experts in depth</div>
+      <h2 class="rv" style="--d:.1s">Each expert set a different timeframe to act</h2>
+      <p class="rv" style="--d:.15s">In the last phase, three experts from the second round compared everything two at a time (“which weighs more, risk or management? and by how much?”) in a network decision program, the ANP. The result is not an average: it is each person's scenario. The author labels them by their outlook:</p>
+      <div class="seg rv" id="pz-seg" style="--d:.2s" role="group" aria-label="Expert"></div>
+      <div class="panel rv" id="pz-panel" style="--d:.25s; margin-top:12px; min-height:150px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="pz-svg" viewBox="0 0 520 400" role="img" aria-label="Weights of the four factors and the four timeframes (immediate, three months, six months, one year or more) for the chosen expert"></svg>
+      <p class="note">Normalized weights from Tables 24, 25 and 26 (each group adds up to 1). Comparisons made with the researcher, keeping inconsistency below 0.1.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="In practice and credits">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Takeaways</div>
+    <h2 class="rv" style="--d:.1s">Protecting connected services starts with people and with product design</h2>
+    <p class="lede rv" style="--d:.15s">The author suggests companies use the same path (listen to experts, then prioritize with the ANP) to decide what to do now, in three months, in six, or in a year.</p>
+    <div class="cards3">
+      <div class="pcard rv" style="--d:.2s; --pc:var(--atk)"><h3>For banks, fintechs and insurers</h3><ul><li>Count on the threat arriving: that was the statement with most agreement.</li><li>Put cybersecurity on the board's risk map.</li><li>Invest in educating customers and staff, the top-ranked front.</li></ul></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--def)"><h3>For product creators</h3><ul><li>Security from the design of each new product, with AI, cloud or blockchain.</li><li>Take care of identity: the open answers call for multi-factor authentication and for <q>proving you are you</q>.</li></ul></div>
+      <div class="pcard rv" style="--d:.3s; --pc:var(--dk)"><h3>For research</h3><ul><li>A path that combines Delphi and ANP to rank security actions.</li><li>Next steps, according to the author: repeat it in health, transport, energy and manufacturing.</li></ul></div>
+    </div>
+    <p class="note rv" style="--d:.3s; margin-top:8px">The cards summarize sections 6.3, 6.4 and 7 and Table 11 of the dissertation.</p>
+    <div class="end">
+      <div class="rv" style="--d:.2s">
+        <h3>What this research does not say</h3>
+        <ul class="limits">
+          <li><b>How many attacks will happen.</b> These are experts' opinions about the future, not measurements of incidents. <em>· our note</em></li>
+          <li><b>The view of bank employees.</b> The panel is made up of security experts; the most cited sector was technology and communications, and no answer was marked as the financial sector. <em>· our note</em></li>
+          <li><b>That the same people changed their minds.</b> People who skipped the first round could answer the second; only 11 were identified in both. <em>· according to the author</em></li>
+          <li><b>A single priority for the sector.</b> The ANP was done with three people and shows three scenarios. <em>· our note</em></li>
+          <li><b>The opinion of everyone invited.</b> Internal security rules prevented some experts from answering the questionnaire. <em>· according to the author</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.25s">
+        <h3>Credits</h3>
+        <div class="cite">
+          <b>How to cite</b><br>
+          FERREIRA, André Lozano. <em>Internet das coisas em serviços financeiros: análise de tendências em segurança cibernética.</em> Master's dissertation (Business Administration) · Universidade Presbiteriana Mackenzie, São Paulo, 2023. Advisor: Prof. Gilberto Perez.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Anonymous online questionnaires (Microsoft Forms), without asking participants' names; e-mail was optional. This page identifies no one. The work was supported by CNPq and CAPES (Brazilian research funding agencies). This version simplifies the dissertation for a general audience.</p>
+        <p class="also">Read also, by the same advisor: <a href="../../teses/2023-rossi-governanca-riscos-ciberneticos/">making or buying digital protection</a>.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Read the full dissertation (in Portuguese)</a>
+          <a class="btn ghost" href="#capa">↑ Back to the start</a>
+          <a class="btn ghost" href="../../">More research</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, rotatable = M.rotatable, flatLabel = M.flatLabel;
+  var EN = M.lang === 'en';
+  function L(p, e){ return EN ? e : p; }
+  var NAVY = '#1f3b73', RED = 'hsl(348 94% 47%)', DK = '#334155', MID = '#94a3b8', NEU = '#cbd5e1';
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent){ var n = document.createElementNS(SVGNS, tag); for (var k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; }
+  function txt(parent, x, y, s, attrs){ var t = el('text', Object.assign({x:x, y:y, 'font-size':12, fill:DK, 'font-family':'Inter, sans-serif'}, attrs || {}), parent); t.textContent = s; return t; }
+  function press(group, btn){ each(group.querySelectorAll('button'), function(b){ b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); }); }
+  function segButtons(group, items, onPick){
+    var bs = items.map(function(it, i){ var b = document.createElement('button'); b.textContent = it; b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'); b.addEventListener('click', function(){ press(group, b); onPick(i); }); group.appendChild(b); return b; });
+    return bs;
+  }
+  var n0 = function(v){ return EN ? String(v).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : String(v).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); };
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // Frases (Tabela 7; Tabelas 8, 15 e 18): [código, curto, frase, média R1, DP R1, média R2, DP R2, posição R1, posição R2]
+  var F = [
+    ['ORG_FUTURE', L('Toda empresa financeira será atingida', 'Every financial firm will be hit'), L('No futuro, toda e qualquer organização que presta serviços financeiros, por exemplo, Fintechs, será impactada por questões de segurança cibernética.', 'In the future, every organization that provides financial services, fintechs for example, will be impacted by cybersecurity issues.'), 6.63, 1.182, 6.83, 0.468, 2, 1],
+    ['NEW_PROD', L('Segurança desde a criação do produto', 'Security built into products'), L('Novos produtos serão criados, de forma disruptiva (baseados em Inteligência Artificial, Cloud, blockchain, entre outros). Em consequência, as necessidades de segurança cibernética devem fazer parte da criação de novos serviços ou produtos financeiros.', 'New products will be created disruptively (based on artificial intelligence, cloud, blockchain and others). As a result, cybersecurity needs must be part of the creation of new financial services or products.'), 6.78, 0.641, 6.79, 0.491, 1, 2],
+    ['LIDER_ORG', L('A diretoria será cobrada', 'Leadership held accountable'), L('Cada vez mais, a liderança das organizações financeiras será cobrada para que a segurança cibernética faça parte do mapa de riscos da organização, com elevado impacto ao negócio.', 'Increasingly, the leaders of financial organizations will be held accountable for making cybersecurity part of the organization\'s risk map, with high impact on the business.'), 6.52, 0.643, 6.79, 0.491, 3, 3],
+    ['RISK_TECH', L('Risco vem da tecnologia que muda', 'Risk from changing tech'), L('No futuro, os riscos relacionados ao uso da IoT em serviços financeiros estarão potencialmente relacionados às vulnerabilidades geradas pelo dinamismo da evolução das tecnologias inovadoras.', 'In the future, the risks of using IoT in financial services will potentially be related to vulnerabilities created by the fast evolution of innovative technologies.'), 6.04, 0.808, 6.45, 0.736, 5, 4],
+    ['GEST_ID', L('Identidade é o grande desafio', 'Identity is the big challenge'), L('A gestão de identidade dos clientes ou usuários será o grande desafio de cibersegurança nos serviços financeiros.', 'Managing the identity of customers or users will be the great cybersecurity challenge in financial services.'), 6.26, 0.944, 6.41, 0.867, 4, 5],
+    ['RISK_INFRA', L('Risco vem da infraestrutura', 'Risk from IT infrastructure'), L('No futuro, os riscos relacionados ao uso da IoT em serviços financeiros estarão potencialmente relacionados às vulnerabilidades geradas pela infraestrutura de TI.', 'In the future, the risks of using IoT in financial services will potentially be related to vulnerabilities created by IT infrastructure.'), 5.56, 1.340, 5.72, 1.334, 7, 6],
+    ['RISK_MIT', L('Mais IoT por causa da proteção', 'More IoT thanks to protection'), L('O uso da IoT em serviços financeiros, incluindo Fintechs, será intensificado no futuro, em função dos planos de mitigação de riscos cibernéticos.', 'The use of IoT in financial services, including fintechs, will intensify in the future thanks to cyber-risk mitigation plans.'), 5.44, 1.281, 5.59, 1.376, 10, 7],
+    ['RISK_USER', L('Risco vem do próprio cliente', 'Risk from the customers'), L('No futuro, os riscos relacionados ao uso da IoT em serviços financeiros estarão potencialmente relacionados às vulnerabilidades geradas pelo próprio cliente, no papel de usuário.', 'In the future, the risks of using IoT in financial services will potentially be related to vulnerabilities created by the customers themselves, as users.'), 5.44, 1.340, 5.41, 1.452, 9, 8],
+    ['TERC_SEG', L('Seguro contra ataques vira prática', 'Cyber insurance becomes standard'), L('Contratar seguros, terceirizando, assim, os riscos cibernéticos, será uma prática entre as organizações que prestam serviços financeiros.', 'Buying insurance, thus outsourcing cyber risks, will be a practice among organizations that provide financial services.'), 5.15, 1.725, 5.38, 1.347, 11, 9],
+    ['CHANGE_DEF', L('Muda rápido para se defender', 'Changes fast to defend itself'), L('A velocidade das mudanças tecnológicas em serviços financeiros é maior do que em outros serviços, pois objetiva proteger e defender os ambientes tecnológicos face às ameaças cibernéticas.', 'Technology changes faster in financial services than in other services, because it aims to protect and defend technology environments against cyber threats.'), 5.63, 1.418, 5.38, 1.237, 6, 10],
+    ['RISK_LIDER', L('Risco vem da gestão', 'Risk from management'), L('No futuro, os riscos relacionados ao uso da IoT em serviços financeiros estarão potencialmente relacionados às vulnerabilidades geradas pela gestão das organizações (liderança).', 'In the future, the risks of using IoT in financial services will potentially be related to vulnerabilities created by how organizations are managed (leadership).'), 5.07, 1.752, 5.14, 1.356, 12, 11],
+    ['VEL_CHANGE', L('Muda rápido para atender o cliente', 'Changes fast to serve customers'), L('A velocidade das mudanças tecnológicas em serviços financeiros é maior do que em outros serviços, para atender às necessidades do cliente.', 'Technology changes faster in financial services than in other services, to meet customer needs.'), 5.48, 1.424, 5.00, 1.389, 8, 12],
+    ['RISK_INVEST', L('O investimento vai bastar', 'Investment will be enough'), L('Os investimentos globais entre 2017 e 2022 cresceram 62,5% (de US$ 101,5 para US$ 169 bilhões). Entretanto, em 2021, houve 2.527 incidentes cibernéticos relatados no setor financeiro em todo o mundo, contra 721 no ano anterior. Mesmo assim, considero que os investimentos globais em cibersegurança serão suficientes para desenvolver projetos de mitigação dos riscos cibernéticos, no futuro.', 'Global investments between 2017 and 2022 grew 62.5% (from US$ 101.5 to US$ 169 billion). However, in 2021 there were 2,527 cyber incidents reported in the financial sector worldwide, against 721 the year before. Even so, I believe global cybersecurity investments will be sufficient to develop cyber-risk mitigation projects in the future.'), 3.67, 2.094, 3.66, 1.518, 14, 13],
+    ['CRED_USER', L('Uso da IoT cai por desconfiança', 'IoT use falls for lack of trust'), L('O uso da IoT em serviços financeiros, incluindo Fintechs, será reduzido no futuro, considerando a falta de credibilidade dos clientes/ usuários.', 'The use of IoT in financial services, including fintechs, will decrease in the future, given customers\'/users\' lack of trust.'), 3.70, 1.918, 3.17, 1.692, 13, 14]
+  ];
+  function ord(n){ return EN ? n + (n === 1 ? 'st' : n === 2 ? 'nd' : n === 3 ? 'rd' : 'th') : n + 'º'; }
+  function band(v){ return v >= 6 ? RED : (v <= 4 ? MID : NAVY); }
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var scene = $('hero-scene'), cap = $('hero-cap');
+    var st = makeStage(scene, 440, 340, {ay:'60%'});
+    var cx = 220, cy = 170;
+    var bank = box({w:96, d:82, h:118, x:cx - 48, y:cy - 41, c:NAVY, label:L('Banco', 'Bank')});
+    st.appendChild(bank);
+    var D = [
+      [L('relógio', 'watch'), L('<b>Relógio e celular por aproximação:</b> pagar sem tirar o cartão do bolso, um dos exemplos que a dissertação deu aos especialistas.', '<b>Contactless watch and phone:</b> paying without taking out a card, one of the examples the dissertation gave the experts.')],
+      [L('celular', 'phone'), L('<b>Celular:</b> ofertas que aparecem ao passar por uma loja e a localização do aparelho conferida contra fraude no cartão.', '<b>Phone:</b> offers that pop up as you walk past a store, and the device\'s location checked against card fraud.')],
+      [L('cartão', 'card'), L('<b>Cartão de proximidade:</b> citado nas perguntas aos especialistas como parte de um cenário mais complexo para a segurança.', '<b>Contactless card:</b> cited in the questions to experts as part of a more complex security scenario.')],
+      [L('caixa', 'ATM'), L('<b>Caixa eletrônico:</b> coleta dados do cliente e, segundo um estudo citado, bancos na Rússia começaram a usar reconhecimento facial.', '<b>ATM:</b> collects customer data and, according to a cited study, banks in Russia began using facial recognition.')],
+      [L('voz', 'voice'), L('<b>Assistente de voz:</b> um banco americano deixa pagar contas pela Alexa; um britânico, ver o saldo pelo Google Home.', '<b>Voice assistant:</b> a US bank lets customers pay bills through Alexa; a British one, check balances through Google Home.')],
+      [L('carro', 'car'), L('<b>Carro conectado:</b> seguradoras podem usar o jeito de dirigir para entender o risco de cada cliente.', '<b>Connected car:</b> insurers can use driving patterns to understand each customer\'s risk.')]
+    ];
+    var pos = [], devs = [];
+    D.forEach(function(d, i){
+      var a = -Math.PI / 2 + i * Math.PI * 2 / D.length;
+      var x = cx + Math.cos(a) * 168, y = cy + Math.sin(a) * 128;
+      pos.push([x, y]);
+      var b = box({w:58, d:42, h:24, x:x - 29, y:y - 21, c:MID, top:d[0], cls:'dev'});
+      b.addEventListener('click', function(){ if (M.wasDrag(scene)) return; pick(i, true); });
+      st.appendChild(b); devs.push(b);
+    });
+    var atk = box({w:22, d:22, h:22, x:cx - 11, y:cy - 11, z:0, c:RED, cls:'atk'});
+    atk.style.opacity = '0';
+    st.appendChild(atk);
+    rotatable(scene, st, -28, 10);
+    var cur = -1, manual = false;
+    function pick(i, byUser){
+      if (byUser) manual = true;
+      cur = i;
+      devs.forEach(function(b, j){ b.style.setProperty('--c', j === i ? RED : MID); b.classList.toggle('active', j === i); });
+      cap.innerHTML = D[i][1];
+    }
+    if (!reduce){
+      var phase = 0, last = 0, k = 0;
+      M.onTick(function(t){
+        if (t - last < 1.3) return;
+        last = t;
+        if (phase === 0){
+          k = (k + 1) % D.length;
+          atk.style.transition = 'none';
+          atk.style.setProperty('--ox', (pos[k][0] - cx) + 'px'); atk.style.setProperty('--oy', (pos[k][1] - cy) + 'px'); atk.style.setProperty('--oz', '26px');
+          atk.style.opacity = '1';
+          if (!manual) pick(k, false);
+          phase = 1;
+        } else {
+          atk.style.transition = '';
+          atk.style.setProperty('--ox', '0px'); atk.style.setProperty('--oy', '0px'); atk.style.setProperty('--oz', '122px');
+          phase = 0;
+        }
+      });
+    }
+  })();
+
+  /* ================= 02 · APARELHOS CONECTADOS ================= */
+  (function(){
+    var Y = [[2019, 8.6], [2020, 9.7], [2021, 11.3], [2022, 13.1], [2023, 15.1], [2024, 17.1], [2025, 19.1], [2026, 21.1], [2027, 23.1], [2028, 25.2], [2029, 27.3], [2030, 29.4]];
+    var svg = $('dv-svg');
+    var defs = el('defs', {}, svg);
+    var pat = el('pattern', {id:'hatch', width:6, height:6, patternUnits:'userSpaceOnUse', patternTransform:'rotate(45)'}, defs);
+    el('rect', {width:6, height:6, fill:'#fff'}, pat); el('rect', {width:3, height:6, fill:NAVY}, pat);
+    var x0 = 40, w = 460, base = 290, sc = 8.4, bw = 26, gap = (w - bw * Y.length) / (Y.length - 1);
+    [0, 10, 20, 30].forEach(function(v){ el('line', {x1:x0, x2:x0 + w, y1:base - v * sc, y2:base - v * sc, stroke:'#e2e8f0'}, svg); txt(svg, x0 - 8, base - v * sc + 4, String(v), {'text-anchor':'end', 'font-size':11, fill:'#64748b'}); });
+    var bars = Y.map(function(d, i){
+      var x = x0 + i * (bw + gap);
+      var r = el('rect', {x:x, y:base - d[1] * sc, width:bw, height:d[1] * sc, fill:d[0] >= 2022 ? 'url(#hatch)' : NAVY, stroke:NAVY, 'stroke-width':1, rx:2}, svg);
+      txt(svg, x + bw / 2, base + 16, String(d[0]).slice(2), {'text-anchor':'middle', 'font-size':11, fill:'#64748b'});
+      var v = txt(svg, x + bw / 2, base - d[1] * sc - 6, fmt(d[1], 1), {'text-anchor':'middle', 'font-size':11, 'font-weight':700, fill:DK});
+      return [r, v];
+    });
+    txt(svg, x0, 18, L('bilhões de aparelhos conectados', 'billions of connected devices'), {'font-size':12, fill:'#64748b'});
+    var r = $('dv-r');
+    function show(){
+      var y = +r.value, i = y - 2019;
+      bars.forEach(function(b, j){ b[0].setAttribute('fill', j === i ? RED : (Y[j][0] >= 2022 ? 'url(#hatch)' : NAVY)); b[0].setAttribute('stroke', j === i ? RED : NAVY); b[1].setAttribute('fill', j === i ? RED : DK); });
+      $('dv-y').textContent = y + (y >= 2022 ? L(' (previsão)', ' (forecast)') : '');
+      $('dv-v').textContent = fmt(Y[i][1], 1) + L(' bilhões', ' billion');
+    }
+    r.addEventListener('input', show); show();
+  })();
+
+  /* ================= 03 · MÉTODO ================= */
+  (function(){
+    var S = [
+      [L('Teste', 'Pilot'), 1, 15, '6', L('1 a 15 de fevereiro de 2023', 'February 1 to 15, 2023'), L('Seis pessoas, entre acadêmicos e técnicos em segurança, testaram o questionário. As sugestões foram aceitas quase todas, sem mudar a estrutura.', 'Six people, academics and security technicians, tested the questionnaire. Almost all suggestions were accepted, without changing its structure.')],
+      [L('1ª rodada', 'Round 1'), 16, 58, '27', L('16 de fevereiro a 29 de março', 'February 16 to March 29'), L('<b>27 especialistas</b> deram notas de 1 a 7 a 14 frases sobre o futuro e responderam a 9 perguntas abertas, em 15 a 20 minutos. O acordo ainda era baixo, então houve nova rodada.', '<b>27 experts</b> scored 14 statements about the future from 1 to 7 and answered 9 open questions, in 15 to 20 minutes. Agreement was still low, so there was another round.')],
+      [L('Análise', 'Analysis'), 58, 60, '', L('fim de março', 'end of March'), L('O autor agrupou as frases em <b>quatro fatores</b> (risco, tecnologia, gestão, estratégia) e tirou das respostas abertas <b>cinco frentes de ação</b> (de educação a leis), que viraram perguntas de ordenar.', 'The author grouped the statements into <b>four factors</b> (risk, technology, management, strategy) and drew from the open answers <b>five fronts for action</b> (from education to laws), which became ranking questions.')],
+      [L('2ª rodada', 'Round 2'), 59, 75, '29', L('31 de março a 16 de abril', 'March 31 to April 16'), L('<b>29 especialistas</b> reviram as mesmas 14 frases, agora com a média da primeira rodada ao lado e em ordem da maior para a menor, e ordenaram frentes e fatores. 5 a 7 minutos.', '<b>29 experts</b> reviewed the same 14 statements, now with the first-round average shown and ordered from highest to lowest, and ranked fronts and factors. 5 to 7 minutes.')],
+      [L('ANP', 'ANP'), 78, 85, '3', L('19 e 25 de abril', 'April 19 and 25'), L('<b>Três especialistas</b> da segunda rodada compararam fatores, subcritérios e prazos de dois em dois no programa SuperDecisions, com o pesquisador ao lado.', '<b>Three experts</b> from the second round compared factors, sub-criteria and timeframes two at a time in the SuperDecisions program, with the researcher alongside.')]
+    ];
+    var svg = $('mt-svg'), x0 = 30, w = 490, d0 = 1, d1 = 86, sc = w / (d1 - d0);
+    function X(d){ return x0 + (d - d0) * sc; }
+    [[1, L('fev', 'Feb')], [29, L('mar', 'Mar')], [60, L('abr', 'Apr')]].forEach(function(m){ el('line', {x1:X(m[0]), x2:X(m[0]), y1:30, y2:300, stroke:'#e2e8f0'}, svg); txt(svg, X(m[0]) + 4, 316, m[1] + ' 2023', {'font-size':11, fill:'#64748b'}); });
+    var gs = S.map(function(s, i){
+      var g = el('g', {class:'st', tabindex:0, role:'button', 'aria-label':s[0]}, svg);
+      var y = 46 + i * 52;
+      el('rect', {class:'bar', x:X(s[1]), y:y, width:Math.max(10, X(s[2]) - X(s[1])), height:30, rx:6, fill:i === 2 ? DK : (i === 4 ? RED : NAVY)}, g);
+      var lft = i >= 3, lx = lft ? X(s[1]) - 8 : X(s[2]) + 8;
+      txt(g, lx, y + 14, s[0], {'font-size':13, 'font-weight':700, fill:'#0f172a', 'text-anchor':lft ? 'end' : 'start'});
+      txt(g, lx, y + 28, s[3] ? s[3] + L(' pessoas', ' people') : L('fatores e frentes', 'factors and fronts'), {'font-size':11, fill:'#64748b', 'text-anchor':lft ? 'end' : 'start'});
+      g.addEventListener('click', function(){ show(i); });
+      g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(i); } });
+      return g;
+    });
+    function show(i){
+      gs.forEach(function(g, j){ g.style.opacity = j === i ? 1 : .45; });
+      var s = S[i];
+      $('mt-panel').innerHTML = '<div class="tag">' + L('Etapa ', 'Step ') + (i + 1) + L(' de 5 · ', ' of 5 · ') + s[4] + '</div><h3>' + s[0] + '</h3><p>' + s[5] + '</p>';
+    }
+    show(1);
+  })();
+
+  /* ================= 04 · QUEM RESPONDEU ================= */
+  (function(){
+    var C6 = [RED, NAVY, '#5b74a6', DK, MID, NEU];
+    var A = [
+      [L('Porte da empresa', 'Company size'),
+        [[L('grande (100+ funcionários)', 'large (100+ employees)'), 23], [L('médio (50 a 99)', 'medium (50 to 99)'), 1], [L('pequeno (10 a 49)', 'small (10 to 49)'), 0], [L('micro (até 9)', 'micro (up to 9)'), 3]],
+        [[L('grande (100+ funcionários)', 'large (100+ employees)'), 21], [L('médio (50 a 99)', 'medium (50 to 99)'), 2], [L('pequeno (10 a 49)', 'small (10 to 49)'), 2], [L('micro (até 9)', 'micro (up to 9)'), 4]]],
+      [L('Formação', 'Education'),
+        [[L('doutorado', 'doctorate'), 5], [L('mestrado', "master's"), 6], [L('especialização', 'specialization'), 11], [L('graduação', "bachelor's"), 5]],
+        [[L('doutorado', 'doctorate'), 4], [L('mestrado', "master's"), 8], [L('especialização', 'specialization'), 13], [L('graduação', "bachelor's"), 3], [L('ensino médio', 'high school'), 1]]],
+      [L('Experiência', 'Experience'), null,
+        [[L('5 anos ou mais', '5 years or more'), 16], [L('4 a 5 anos', '4 to 5 years'), 1], [L('3 a 4 anos', '3 to 4 years'), 2], [L('2 a 3 anos', '2 to 3 years'), 1], [L('1 a 2 anos', '1 to 2 years'), 6], [L('menos de 1 ano', 'under 1 year'), 3]]],
+      [L('Setor', 'Sector'), null,
+        [[L('tecnologia e comunicação', 'technology and communications'), 12], [L('serviços', 'services'), 6], [L('administração pública e outros', 'public administration and other'), 5], [L('educação', 'education'), 4], [L('indústria', 'manufacturing'), 2]]]
+    ];
+    var ST = [
+      [['27', L('respostas', 'answers')], ['37%', L('com certificação em segurança', 'with security certification')], ['41%', L('em cargos de gestão', 'in management roles')]],
+      [['29', L('respostas', 'answers')], ['38%', L('com certificação em segurança', 'with security certification')], ['55%', L('em cargos de gestão', 'in management roles')]]
+    ];
+    var round = 0, attr = 0, svg = $('pp-svg');
+    var rb = segButtons($('pp-round'), [L('1ª rodada', 'Round 1'), L('2ª rodada', 'Round 2')], function(i){ round = i; if (round === 0 && attr > 1){ attr = 0; press($('pp-attr'), ab[0]); } draw(); });
+    var ab = segButtons($('pp-attr'), A.map(function(a){ return a[0]; }), function(i){ attr = i; draw(); });
+    function person(x, y, c){
+      var g = el('g', {}, svg);
+      el('circle', {cx:x, cy:y, r:6.5, fill:c}, g);
+      el('path', {d:'M' + (x - 10) + ',' + (y + 26) + ' v-9 q0,-8 10,-8 q10,0 10,8 v9 z', fill:c}, g);
+    }
+    function draw(){
+      each(ab, function(b, i){ b.disabled = round === 0 && i > 1; });
+      svg.innerHTML = '';
+      var cats = A[attr][round + 1], k = 0, n = round ? 29 : 27;
+      cats.forEach(function(c, ci){ for (var j = 0; j < c[1]; j++){ var col = k % 10, row = Math.floor(k / 10); person(30 + col * 46, 22 + row * 60, C6[ci]); k++; } });
+      $('pp-leg').innerHTML = cats.map(function(c, ci){ return '<div><i class="dot" style="background:' + C6[ci] + '"></i>' + c[0] + '<b>' + c[1] + '</b></div>'; }).join('');
+      $('pp-stats').innerHTML = ST[round].map(function(s){ return '<div class="stat"><b>' + s[0] + '</b><span>' + s[1] + '</span></div>'; }).join('');
+      $('pp-note').innerHTML = (round ? L('Figuras 22 a 26 da dissertação. Experiência e setor só foram perguntados na 2ª rodada; não há categoria “setor financeiro”.', 'Figures 22 to 26 of the dissertation. Experience and sector were only asked in round 2; there is no "financial sector" category.') : L('Figuras 18 a 20 da dissertação. Experiência e setor só foram perguntados na 2ª rodada.', 'Figures 18 to 20 of the dissertation. Experience and sector were only asked in round 2.')) + ' ' + L('Total: ', 'Total: ') + n + L(' pessoas.', ' people.');
+    }
+    draw();
+  })();
+
+  /* ================= 05 · RESPONDA ================= */
+  (function(){
+    var chips = $('rs-chips'), lik = $('rs-lik'), svg = $('rs-svg'), cur = 0, mine = {};
+    var order = F.slice().sort(function(a, b){ return a[1].localeCompare(b[1]); });
+    var cb = order.map(function(f, i){ var b = document.createElement('button'); b.textContent = f[1]; b.addEventListener('click', function(){ cur = F.indexOf(f); show(); }); chips.appendChild(b); return b; });
+    var lb = [];
+    for (var v = 1; v <= 7; v++){ (function(v){ var b = document.createElement('button'); b.textContent = v; b.setAttribute('aria-pressed', 'false'); b.addEventListener('click', function(){ mine[cur] = v; show(); }); lik.appendChild(b); lb.push(b); })(v); }
+    var x0 = 30, w = 440;
+    function X(v){ return x0 + (v - 1) / 6 * w; }
+    function show(){
+      var f = F[cur];
+      cb.forEach(function(b){ var on = b.textContent === f[1]; b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.classList.toggle('done', !on && mine[F.findIndex(function(x){ return x[1] === b.textContent; })] !== undefined); });
+      $('rs-stmt').textContent = '“' + f[2] + '”';
+      lb.forEach(function(b, i){ b.setAttribute('aria-pressed', mine[cur] === i + 1 ? 'true' : 'false'); });
+      svg.innerHTML = '';
+      el('line', {x1:x0, x2:x0 + w, y1:60, y2:60, stroke:NEU, 'stroke-width':6, 'stroke-linecap':'round'}, svg);
+      for (var v = 1; v <= 7; v++){ el('line', {x1:X(v), x2:X(v), y1:54, y2:66, stroke:MID}, svg); txt(svg, X(v), 84, String(v), {'text-anchor':'middle', 'font-size':11, fill:'#64748b'}); }
+      if (mine[cur] === undefined){ txt(svg, x0 + w / 2, 110, L('Dê a sua nota para ver as médias.', 'Give your score to see the averages.'), {'text-anchor':'middle', 'font-size':12, fill:'#64748b'}); return; }
+      [[f[3], L('1ª rodada', 'Round 1') + ' ' + fmt(f[3], 2), MID, 22], [f[5], L('2ª rodada', 'Round 2') + ' ' + fmt(f[5], 2), NAVY, 40]].forEach(function(m){
+        el('circle', {cx:X(m[0]), cy:60, r:7, fill:m[2], stroke:'#fff', 'stroke-width':2}, svg);
+        txt(svg, X(m[0]), m[3] - 6, m[1], {'text-anchor':'middle', 'font-size':11, 'font-weight':700, fill:m[2]});
+        el('line', {x1:X(m[0]), x2:X(m[0]), y1:m[3] - 2, y2:53, stroke:m[2]}, svg);
+      });
+      el('path', {d:'M' + X(mine[cur]) + ',72 l-7,12 h14 z', fill:RED}, svg);
+      txt(svg, X(mine[cur]), 112, L('você: ', 'you: ') + mine[cur], {'text-anchor':'middle', 'font-size':12, 'font-weight':700, fill:RED});
+    }
+    show();
+  })();
+
+  /* ================= 06 · FRASES (colunas 3D) ================= */
+  (function(){
+    var scene = $('fr-scene'), st = makeStage(scene, 500, 120, {ay:'72%', rx:'58deg'}), round = 1, sel = 0;
+    var step = 35, cols = F.map(function(f, i){
+      var b = box({w:24, d:24, h:10, x:4, y:50, c:NAVY, cls:'col'});
+      b.addEventListener('click', function(){ if (M.wasDrag(scene)) return; pick(i); });
+      st.appendChild(b); return b;
+    });
+    flatLabel(st, L('← mais acordo', '← more agreement'), 0, 92, 140, 'font-size:12px; text-align:left; color:#64748b');
+    flatLabel(st, L('menos acordo →', 'less agreement →'), 360, 92, 140, 'font-size:12px; text-align:right; color:#64748b');
+    rotatable(scene, st, -12, 6);
+    var list = $('fr-list');
+    var lbs = F.map(function(f, i){ var b = document.createElement('button'); b.addEventListener('click', function(){ pick(i); }); list.appendChild(b); return b; });
+    segButtons($('fr-round'), [L('2ª rodada (29)', 'Round 2 (29)'), L('1ª rodada (27)', 'Round 1 (27)')], function(i){ round = i === 0 ? 1 : 0; draw(); });
+    function mean(f){ return round ? f[5] : f[3]; }
+    function rank(f){ return round ? f[8] : f[7]; }
+    function draw(){
+      F.forEach(function(f, i){
+        var v = mean(f), c = cols[i];
+        c.style.setProperty('--h', (v * 19) + 'px');
+        c.style.setProperty('--c', band(v));
+        c.style.setProperty('--ox', ((rank(f) - 1) * step) + 'px');
+        c.classList.toggle('active', i === sel);
+        c.querySelector('.f-top').innerHTML = '<span class="top-label">' + rank(f) + '</span>';
+      });
+      var seq = F.map(function(f, i){ return i; }).sort(function(a, b){ return rank(F[a]) - rank(F[b]); });
+      seq.forEach(function(i, k){
+        var f = F[i], b = lbs[i];
+        b.innerHTML = '<span class="rk">' + rank(f) + '</span><span><i class="sw" style="background:' + band(mean(f)) + '"></i>' + f[1] + '</span><span class="mv">' + fmt(mean(f), 2) + '</span>';
+        b.style.order = k;
+        b.setAttribute('aria-pressed', i === sel ? 'true' : 'false');
+      });
+      list.style.display = 'grid';
+      var f = F[sel];
+      $('fr-panel').innerHTML = '<div class="tag">' + (round ? L('2ª rodada', 'Round 2') : L('1ª rodada', 'Round 1')) + ' · ' + ord(rank(f)) + L(' lugar', ' place') + '</div><h3>' + f[1] + '</h3><p style="font-family:var(--serif)">“' + f[2] + '”</p><p>' + L('Média ', 'Average ') + '<b>' + fmt(mean(f), 2) + '</b>' + L(' de 7 · desvio-padrão ', ' out of 7 · standard deviation ') + fmt(round ? f[6] : f[4], 2) + L(' (quanto menor, mais parecidas as notas)', ' (the smaller, the more alike the scores)') + '</p>';
+    }
+    function pick(i){ sel = i; draw(); }
+    // lista compacta: só as 6 primeiras e as 2 últimas cabem bem no celular; mostramos todas em fonte pequena
+    draw();
+  })();
+
+  /* ================= 07 · CONSENSO ================= */
+  (function(){
+    var W = [0.335, 0.519], round = 1, svg = $('ws-svg');
+    var B = [[0.1, L('muito fraca', 'very weak')], [0.3, L('fraca', 'weak')], [0.5, L('moderada', 'moderate')], [0.7, L('forte', 'strong')], [0.9, L('muito forte', 'very strong')]];
+    var x0 = 20, w = 460;
+    function X(v){ return x0 + v * w; }
+    segButtons($('ws-round'), [L('2ª rodada', 'Round 2'), L('1ª rodada', 'Round 1')], function(i){ round = i === 0 ? 1 : 0; drawW(); });
+    function drawW(){
+      svg.innerHTML = '';
+      el('rect', {x:x0, y:46, width:w, height:12, rx:6, fill:'#e9eef4'}, svg);
+      el('rect', {x:x0, y:46, width:W[round] * w, height:12, rx:6, fill:NAVY}, svg);
+      B.forEach(function(b){ el('line', {x1:X(b[0]), x2:X(b[0]), y1:42, y2:62, stroke:'#fff', 'stroke-width':2}, svg); txt(svg, X(b[0]), 80, fmt(b[0], 1), {'text-anchor':'middle', 'font-size':11, fill:'#64748b'}); txt(svg, X(b[0]), 96, b[1], {'text-anchor':'middle', 'font-size':11, fill:DK}); });
+      txt(svg, X(0), 80, '0', {'text-anchor':'middle', 'font-size':11, fill:'#64748b'}); txt(svg, X(1), 80, '1', {'text-anchor':'middle', 'font-size':11, fill:'#64748b'});
+      el('path', {d:'M' + X(W[round]) + ',40 l-7,-12 h14 z', fill:RED}, svg);
+      txt(svg, X(W[round]), 20, 'W = ' + fmt(W[round], 3), {'text-anchor':'middle', 'font-size':13, 'font-weight':700, fill:RED});
+    }
+    drawW();
+    // gráfico de posições R1 → R2
+    var s = $('sl-svg'), xa = 200, xb = 300, y0 = 40, dy = 28;
+    txt(s, xa, 20, L('1ª rodada', 'Round 1'), {'text-anchor':'middle', 'font-size':12, 'font-weight':700, fill:'#0f172a'});
+    txt(s, xb, 20, L('2ª rodada', 'Round 2'), {'text-anchor':'middle', 'font-size':12, 'font-weight':700, fill:'#0f172a'});
+    function moved(f){ return f[7] - f[8]; }
+    var lines = F.map(function(f, i){
+      var g = el('g', {class:'ln', tabindex:0, role:'button', 'aria-label':f[1]}, s);
+      var ya = y0 + (f[7] - 1) * dy, yb = y0 + (f[8] - 1) * dy, m = moved(f);
+      var c = m >= 3 ? NAVY : (m <= -3 ? RED : NEU);
+      el('line', {x1:xa, x2:xb, y1:ya, y2:yb, stroke:c, 'stroke-width':Math.abs(m) >= 3 ? 3.5 : 2}, g);
+      el('circle', {cx:xa, cy:ya, r:4.5, fill:c}, g); el('circle', {cx:xb, cy:yb, r:4.5, fill:c}, g);
+      var ta = txt(g, xa - 10, ya + 4, f[1], {'text-anchor':'end', 'font-size':10, fill:DK});
+      var tb = txt(g, xb + 10, yb + 4, f[1], {'text-anchor':'start', 'font-size':10, fill:DK});
+      el('rect', {x:0, y:Math.min(ya, yb) - 10, width:500, height:Math.abs(yb - ya) + 20, fill:'transparent'}, g);
+      g.addEventListener('click', function(){ pick(i); });
+      g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); pick(i); } });
+      return [g, ta, tb];
+    });
+    // rótulos longos: no lado esquerdo e direito; cortamos visualmente com tamanho pequeno
+    function pick(i){
+      lines.forEach(function(l, j){ l[0].style.opacity = j === i ? 1 : .35; });
+      var f = F[i], m = moved(f);
+      $('sl-panel').innerHTML = '<div class="tag">' + ord(f[7]) + ' → ' + ord(f[8]) + L(' lugar', ' place') + '</div><h3>' + f[1] + '</h3><p>' + L('Média ', 'Average ') + fmt(f[3], 2) + ' → <b>' + fmt(f[5], 2) + '</b>. ' + (m >= 3 ? L('Subiu ' + m + ' posições: o grupo deu mais peso a ela ao rever as respostas.', 'Rose ' + m + ' places: the group gave it more weight when revising.') : (m <= -3 ? L('Caiu ' + (-m) + ' posições: o grupo concordou menos ao rever as respostas.', 'Fell ' + (-m) + ' places: the group agreed less when revising.') : L('Quase não mudou de lugar.', 'Barely changed place.'))) + '</p>';
+    }
+    pick(6);
+  })();
+
+  /* ================= 08 · INESPERADO ================= */
+  (function(){
+    var O = [[L('Concordaram (6 ou mais)', 'Agreed (6 or more)'), 0], [L('Ficaram no meio (4 a 6)', 'Stayed in between (4 to 6)'), 1], [L('Discordaram (4 ou menos)', 'Disagreed (4 or less)'), 2]];
+    var box_ = $('in-opts'), svg = $('in-svg'), done = false;
+    var x0 = 30, w = 440;
+    function X(v){ return x0 + (v - 1) / 6 * w; }
+    function ruler(show){
+      svg.innerHTML = '';
+      el('rect', {x:X(1), y:54, width:X(4) - X(1), height:12, fill:'color-mix(in srgb, ' + MID + ' 35%, white)'}, svg);
+      el('rect', {x:X(4), y:54, width:X(6) - X(4), height:12, fill:'color-mix(in srgb, ' + NAVY + ' 18%, white)'}, svg);
+      el('rect', {x:X(6), y:54, width:X(7) - X(6), height:12, fill:'color-mix(in srgb, ' + RED + ' 22%, white)'}, svg);
+      for (var v = 1; v <= 7; v++){ txt(svg, X(v), 84, String(v), {'text-anchor':'middle', 'font-size':11, fill:'#64748b'}); }
+      if (!show){ txt(svg, x0 + w / 2, 108, L('A média aparece depois do palpite.', 'The average appears after your guess.'), {'text-anchor':'middle', 'font-size':12, fill:'#64748b'}); return; }
+      // média R2 e faixa de ± 1 desvio-padrão
+      var m = 3.66, sd = 1.518;
+      el('line', {x1:X(m - sd), x2:X(m + sd), y1:60, y2:60, stroke:RED, 'stroke-width':3, 'stroke-dasharray':'4 3'}, svg);
+      el('circle', {cx:X(m), cy:60, r:8, fill:RED, stroke:'#fff', 'stroke-width':2}, svg);
+      txt(svg, X(m), 36, L('média 3,66', 'average 3.66'), {'text-anchor':'middle', 'font-size':12, 'font-weight':700, fill:RED});
+      txt(svg, X(m), 108, L('tracejado: ± 1 desvio-padrão (1,52)', 'dashed: ± 1 standard deviation (1.52)'), {'text-anchor':'middle', 'font-size':11, fill:'#64748b'});
+    }
+    ruler(false);
+    O.forEach(function(o){
+      var b = document.createElement('button'); b.textContent = o[0]; b.setAttribute('aria-pressed', 'false');
+      b.addEventListener('click', function(){
+        press(box_, b); ruler(true);
+        $('in-panel').innerHTML = '<p>' + (o[1] === 2 ? L('<b>Isso mesmo.</b> ', '<b>That\'s right.</b> ') : L('<b>Não foi isso.</b> ', '<b>Not quite.</b> ')) + L('A média ficou em <b>3,67</b> na primeira rodada e <b>3,66</b> na segunda (de 7), uma das duas únicas frases do lado da discordância. Foi também a de opiniões mais divididas na primeira rodada (desvio-padrão 2,09, o maior).', 'The average was <b>3.67</b> in the first round and <b>3.66</b> in the second (out of 7), one of only two statements on the disagreement side. It was also the most divided in the first round (standard deviation 2.09, the largest).') + '</p><p>' + L('A outra: a ideia de que o uso da IoT vai <b>cair</b> por falta de confiança dos clientes teve a menor média, <b>3,17</b>. Ou seja, os especialistas esperam mais coisas conectadas, e não acham que o dinheiro vá bastar para protegê-las (leitura nossa).', 'The other: the idea that IoT use will <b>fall</b> for lack of customer trust had the lowest average, <b>3.17</b>. In other words, the experts expect more connected things, and do not think the money will be enough to protect them (our reading).') + '</p>';
+      });
+      box_.appendChild(b);
+    });
+  })();
+
+  /* ================= 09 · CRITÉRIOS ================= */
+  (function(){
+    var C = [
+      [L('Cibereducação', 'Cyber-education'), L('conscientização, cultura, preparo das pessoas', 'awareness, culture, preparing people'), 114],
+      [L('Ações de proteção', 'Protection actions'), L('criptografia de ponta a ponta, monitoramento, resposta rápida a incidentes, segurança adaptativa', 'end-to-end encryption, monitoring, fast incident response, adaptive security'), 105],
+      [L('Gestão tecnológica', 'Technology management'), L('infraestrutura, arquitetura, conexões (Wi-Fi, 5G, Bluetooth), integração e gestão de identidade', 'infrastructure, architecture, connections (Wi-Fi, 5G, Bluetooth), integration and identity management'), 91],
+      [L('Gestão de investimento', 'Investment management'), L('como investir em segurança digital', 'how to invest in cybersecurity'), 70],
+      [L('Ações institucionais', 'Institutional actions'), L('governo, leis, fiscalização', 'government, laws, oversight'), 55]
+    ];
+    var show = [3, 0, 4, 1, 2]; // ordem embaralhada dos botões
+    var scene = $('cr-scene'), st = makeStage(scene, 420, 160, {ay:'70%'});
+    var blocks = C.map(function(c, i){ var b = box({w:62, d:62, h:60, x:10 + i * 84, y:50, c:NAVY, top:String(c[2]), cls:'off'}); st.appendChild(b); flatLabel(st, (i + 1) + L('º', ''), 10 + i * 84, 118, 62, 'font-size:14px'); return b; });
+    function hide(){ blocks.forEach(function(b){ b.classList.add('off'); b.style.setProperty('--h', '60px'); b.style.setProperty('--c', NAVY); }); }
+    rotatable(scene, st, -20, 8);
+    var mine = [], ordBox = $('cr-ord');
+    var bs = show.map(function(ci){
+      var b = document.createElement('button');
+      b.innerHTML = '<span class="pos"></span><span>' + C[ci][0] + '<small>' + C[ci][1] + '</small></span>';
+      b.addEventListener('click', function(){ if (mine.indexOf(ci) >= 0 || mine.length === 5) return; mine.push(ci); b.classList.add('picked'); b.querySelector('.pos').textContent = mine.length; if (mine.length === 4){ var rest = [0, 1, 2, 3, 4].filter(function(x){ return mine.indexOf(x) < 0; })[0]; mine.push(rest); bs[show.indexOf(rest)].classList.add('picked'); bs[show.indexOf(rest)].querySelector('.pos').textContent = 5; } if (mine.length === 5) reveal(); });
+      ordBox.appendChild(b); return b;
+    });
+    function reveal(){
+      blocks.forEach(function(b, i){ b.classList.remove('off'); b.style.setProperty('--h', (C[i][2] * 1.4) + 'px'); b.style.setProperty('--c', i === 0 ? RED : NAVY); });
+      var same = mine.length === 5 ? mine.filter(function(c, i){ return c === i; }).length : null;
+      $('cr-panel').innerHTML = '<p>' + L('O grupo pôs <b>cibereducação</b> em 1º lugar (114 pontos), seguida de ações de proteção (105) e gestão tecnológica (91). Leis e fiscalização ficaram por último (55).', 'The group put <b>cyber-education</b> first (114 points), followed by protection actions (105) and technology management (91). Laws and oversight came last (55).') + '</p>' + (same !== null ? '<p>' + L('Sua ordem coincide com a do grupo em ', 'Your order matches the group\'s in ') + '<b>' + same + L(' de 5', ' of 5') + '</b>' + L(' posições.', ' positions.') + (mine[0] === 0 ? L(' Você também começou pela educação.', ' You also started with education.') : '') + '</p>' : '');
+    }
+    $('cr-skip').addEventListener('click', function(){ mine = []; bs.forEach(function(b){ b.classList.remove('picked'); b.querySelector('.pos').textContent = ''; }); reveal(); });
+    $('cr-reset').addEventListener('click', function(){ mine = []; bs.forEach(function(b){ b.classList.remove('picked'); b.querySelector('.pos').textContent = ''; }); hide(); $('cr-panel').innerHTML = '<p>' + L('Os blocos do grupo aparecem quando você terminar a sua ordem.', 'The group\'s blocks appear when you finish your order.') + '</p>'; });
+  })();
+
+  /* ================= 10 · MATRIZ ================= */
+  (function(){
+    var FA = [[L('Risco', 'Risk'), RED, 394, L('gestão de riscos, vulnerabilidades e garantias', 'risk management, vulnerabilities and guarantees')], [L('Tecnologia', 'Technology'), NAVY, 374, L('investir em tecnologia, infraestrutura, proteção e identidade', 'investing in technology, infrastructure, protection and identity')], [L('Gestão', 'Management'), '#5b74a6', 345, L('confiança do cliente e novos produtos', 'customer trust and new products')], [L('Estratégia', 'Strategy'), DK, 337, L('competitividade, mudança, inovação e agilidade', 'competitiveness, change, innovation and agility')]];
+    var CR = [[L('Cibereducação', 'Cyber-education'), [72, 75, 78, 65]], [L('Ações de proteção', 'Protection actions'), [96, 81, 66, 47]], [L('Gestão tecnológica', 'Technology management'), [83, 94, 49, 64]], [L('Gestão de investimento', 'Investment management'), [81, 59, 72, 78]], [L('Ações institucionais', 'Institutional actions'), [62, 65, 80, 83]]];
+    var scene = $('mx-scene'), st = makeStage(scene, 300, 330, {ay:'57%'});
+    var cells = [];
+    CR.forEach(function(r, ri){
+      cells.push(r[1].map(function(v, fi){ var b = box({w:44, d:40, h:v * 1.25, x:20 + fi * 70, y:14 + ri * 62, c:FA[fi][1]}); st.appendChild(b); return b; }));
+      flatLabel(st, r[0], -158, 24 + ri * 62, 168, 'font-size:12px; text-align:right');
+    });
+    FA.forEach(function(f, fi){ flatLabel(st, f[0], 8 + fi * 70, 326, 68, 'font-size:11px'); });
+    rotatable(scene, st, -30, 8);
+    $('mx-tot').innerHTML = FA.map(function(f, i){ return '<div style="--c:' + f[1] + '"><b>' + (i + 1) + 'º · ' + f[2] + '</b>' + f[0] + L(' (pontos somados)', ' (points added up)') + '</div>'; }).join('');
+    var chips = $('mx-chips');
+    var cb = CR.map(function(r, ri){ var b = document.createElement('button'); b.textContent = r[0]; b.setAttribute('aria-pressed', 'false'); b.addEventListener('click', function(){ press(chips, b); pick(ri); }); chips.appendChild(b); return b; });
+    var all = document.createElement('button'); all.textContent = L('Todas', 'All'); all.setAttribute('aria-pressed', 'true'); all.addEventListener('click', function(){ press(chips, all); pick(-1); }); chips.appendChild(all);
+    function pick(ri){
+      cells.forEach(function(row, r){ row.forEach(function(c, fi){ c.classList.toggle('dim', ri >= 0 && r !== ri); c.classList.toggle('active', ri >= 0 && r === ri && CR[r][1][fi] === Math.max.apply(null, CR[r][1])); }); });
+      if (ri < 0){
+        $('mx-panel').innerHTML = '<p>' + L('Somando as cinco frentes, <b>risco</b> fica em 1º (394 pontos) e <b>tecnologia</b> em 2º (374); gestão (345) e estratégia (337) vêm depois. Mas a ordem muda de frente para frente: escolha uma acima.', 'Adding the five fronts, <b>risk</b> comes 1st (394 points) and <b>technology</b> 2nd (374); management (345) and strategy (337) follow. But the order changes from front to front: choose one above.') + '</p>';
+        return;
+      }
+      var r = CR[ri], mx = Math.max.apply(null, r[1]), fi = r[1].indexOf(mx);
+      var srt = r[1].map(function(v, i){ return [v, i]; }).sort(function(a, b){ return b[0] - a[0]; });
+      $('mx-panel').innerHTML = '<div class="tag">' + r[0] + '</div><h3>' + L('Pesa mais: ', 'Weighs most: ') + FA[fi][0].toLowerCase() + ' (' + mx + ')</h3><p>' + srt.map(function(x){ return FA[x[1]][0] + ' ' + x[0]; }).join(' · ') + '</p><p style="font-size:.8rem; color:var(--muted)">' + FA[fi][0] + ': ' + FA[fi][3] + '.</p>';
+    }
+    pick(-1);
+  })();
+
+  /* ================= 11 · PRAZOS (ANP) ================= */
+  (function(){
+    var P = [
+      [L('A · operação', 'A · operations'), [0.34175, 0.15067, 0.26897, 0.23860], [0.35562, 0.29549, 0.22755, 0.12134], L('Pôs o <b>risco</b> à frente e quer agir <b>já</b>. Dentro de cada fator, destacou gestão de risco, arquitetura tecnológica, ações de credibilidade e competitividade. O autor liga a pressa ao trabalho operacional do especialista.', 'Put <b>risk</b> first and wants to act <b>now</b>. Within each factor, highlighted risk management, technology architecture, credibility actions and competitiveness. The author links the urgency to the expert\'s operational work.')],
+      [L('B · consultoria', 'B · consulting'), [0.17193, 0.10047, 0.38433, 0.34327], [0.26404, 0.34460, 0.27890, 0.11246], L('Pôs a <b>gestão</b> à frente e prefere agir <b>em três meses</b>. Na gestão, a cibereducação pesou mais da metade (0,54); destacou também gestão de risco, infraestrutura e competitividade.', 'Put <b>management</b> first and prefers to act <b>within three months</b>. Within management, cyber-education weighed more than half (0.54); also highlighted risk management, infrastructure and competitiveness.')],
+      [L('C · estratégia', 'C · strategy'), [0.22757, 0.25315, 0.28692, 0.23236], [0.13233, 0.16645, 0.23319, 0.46803], L('Também pôs a <b>gestão</b> à frente, com os fatores quase empatados, e olha para <b>um ano ou mais</b>. Destacou vulnerabilidades, arquitetura, cibereducação e ações institucionais (governo e leis).', 'Also put <b>management</b> first, with the factors nearly tied, and looks <b>one year or more</b> ahead. Highlighted vulnerabilities, architecture, cyber-education and institutional actions (government and laws).')]
+    ];
+    var FN = [L('Risco', 'Risk'), L('Tecnologia', 'Technology'), L('Gestão', 'Management'), L('Estratégia', 'Strategy')];
+    var TN = [L('imediato', 'immediate'), L('3 meses', '3 months'), L('6 meses', '6 months'), L('1 ano ou mais', '1 year or more')];
+    var svg = $('pz-svg');
+    segButtons($('pz-seg'), P.map(function(p){ return p[0]; }), function(i){ draw(i); });
+    function draw(i){
+      var p = P[i]; svg.innerHTML = '';
+      txt(svg, 10, 20, L('Peso de cada fator', 'Weight of each factor'), {'font-size':13, 'font-weight':700, fill:'#0f172a'});
+      var mf = Math.max.apply(null, p[1]);
+      p[1].forEach(function(v, k){
+        var y = 36 + k * 34;
+        txt(svg, 110, y + 16, FN[k], {'text-anchor':'end', 'font-size':12, fill:DK});
+        el('rect', {x:120, y:y, width:340, height:22, rx:4, fill:'#f1f5f9'}, svg);
+        el('rect', {x:120, y:y, width:v * 340 / 0.5, height:22, rx:4, fill:v === mf ? RED : NAVY}, svg);
+        txt(svg, 126 + v * 340 / 0.5, y + 16, fmt(v, 2), {'font-size':12, 'font-weight':700, fill:DK});
+      });
+      txt(svg, 10, 200, L('Quando agir', 'When to act'), {'font-size':13, 'font-weight':700, fill:'#0f172a'});
+      var x0 = 60, w = 400, base = 360;
+      el('line', {x1:x0 - 20, x2:x0 + w + 20, y1:base, y2:base, stroke:MID, 'stroke-width':2}, svg);
+      var mt = Math.max.apply(null, p[2]);
+      p[2].forEach(function(v, k){
+        var x = x0 + k * (w / 3), h = v * 260;
+        el('rect', {x:x - 22, y:base - h, width:44, height:h, rx:4, fill:v === mt ? RED : NAVY}, svg);
+        txt(svg, x, base - h - 6, fmt(v, 2), {'text-anchor':'middle', 'font-size':12, 'font-weight':700, fill:DK});
+        el('circle', {cx:x, cy:base, r:5, fill:'#fff', stroke:DK, 'stroke-width':2}, svg);
+        txt(svg, x, base + 22, TN[k], {'text-anchor':'middle', 'font-size':12, fill:DK});
+      });
+      $('pz-panel').innerHTML = '<div class="tag">' + L('Especialista ', 'Expert ') + p[0] + '</div><p>' + p[3] + '</p>';
+    }
+    draw(0);
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
