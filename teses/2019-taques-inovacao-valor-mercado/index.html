@@ -1,0 +1,997 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inovação e valor das empresas · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Fernando Henrique Taques (PPGA Mackenzie, 2019) sobre como medir a inovação nas empresas e se gasto em P&D, patentes e citações de patentes explicam o valor de mercado e o retorno das ações, com empresas de dezenas de países, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2019-taques-inovacao-valor-mercado/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2216%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>%25</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --pd:var(--navy);      /* P&D, entrada */
+    --pat:var(--red);      /* patentes */
+    --cit:#5b6f96;         /* citações */
+    --ns:#cbd5e1;
+  }
+  .note{font-size:.76rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:12px; line-height:1.45;}
+  .note b{color:var(--ink-2);}
+  .ilus{display:inline-block; font-size:.62rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:18px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.82rem; cursor:pointer; color:var(--ink-2); font-family:inherit;}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .ctrls{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:12px;}
+  .stats{display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.74rem; color:var(--muted); line-height:1.35; display:block;}
+  .stat.red b{color:var(--red);}
+  svg text{font-family:var(--sans);}
+  .svgbox{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+  .sw{display:inline-block; width:14px; height:10px; border-radius:2px; vertical-align:middle; margin-right:6px;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 4vw, 2.4rem);}
+  html[lang=en] #capa h1{font-size:clamp(1.9rem, 3.5vw, 2.2rem);}
+  #capa .ctas{margin-top:22px;}
+  .meta{display:grid; gap:2px; margin-top:14px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:36em; margin-left:auto; margin-right:auto;}
+  #hero-scene{perspective:2000px;}
+  .slab.glass > i{--face:color-mix(in srgb, var(--c) 8%, transparent); box-shadow:inset 0 0 0 1.5px color-mix(in srgb, var(--c) 60%, transparent);}
+  .slab.glass > .f-top{--face:color-mix(in srgb, var(--c) 4%, transparent);}
+
+  /* ---------- 02 · Réguas ---------- */
+  .chain{display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; position:relative;}
+  .chain button{position:relative; border:2px solid var(--border); background:var(--card); border-radius:14px; padding:10px 8px 9px; cursor:pointer; font-family:inherit; color:var(--ink-2); text-align:center; line-height:1.2;}
+  .chain button em{display:block; font-style:normal; font-size:.6rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--cc);}
+  .chain button b{display:block; font-family:var(--serif); font-size:.9rem; color:var(--ink); margin-top:3px;}
+  .chain button small{display:block; font-size:.66rem; color:var(--muted); margin-top:3px;}
+  .chain button[aria-pressed="true"]{border-color:var(--cc); box-shadow:0 0 0 3px color-mix(in srgb, var(--cc) 18%, transparent);}
+  .chain button:not(:last-child)::after{content:"→"; position:absolute; right:-9px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:.9rem; z-index:2;}
+  .chain button.used::before{content:"✓"; position:absolute; top:-8px; right:-6px; width:18px; height:18px; border-radius:50%; background:var(--ink); color:#fff; font-size:.66rem; line-height:18px;}
+  .pc-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px;}
+  .pc-grid div{font-size:.8rem; line-height:1.42;}
+  .pc-grid h4{font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; margin:0 0 3px;}
+  .pc-grid .pro h4{color:var(--navy);}
+  .pc-grid .con h4{color:var(--red);}
+
+  /* ---------- 03 · Amostra ---------- */
+  .cbars{display:grid; gap:5px;}
+  .cbars div{display:grid; grid-template-columns:110px 1fr 58px; gap:8px; align-items:center; font-size:.8rem;}
+  .cbars i{display:block; height:14px; border-radius:7px; background:var(--ns); transition:width .6s, background .3s;}
+  .cbars .on i{background:var(--red);}
+  .cbars .on b{color:var(--red);}
+  .cbars span{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink-2);}
+
+  /* ---------- 04 · Q de Tobin ---------- */
+  .qcalc input[type=range]{width:100%; accent-color:var(--red);}
+  .qcalc .big{font-family:var(--serif); font-size:2rem; font-weight:900; color:var(--red); line-height:1.1;}
+  .qline{position:relative; height:46px; margin-top:8px;}
+  .qline .tr{position:absolute; left:0; right:0; top:18px; height:6px; border-radius:3px; background:linear-gradient(90deg, #e2e8f0, #cbd5e1);}
+  .qline .mk{position:absolute; top:6px; width:2px; height:30px; background:var(--ink-2);}
+  .qline .mk span{position:absolute; top:31px; left:50%; transform:translateX(-50%); font-size:.62rem; color:var(--muted); white-space:nowrap;}
+  .qline .me{position:absolute; top:12px; width:18px; height:18px; margin-left:-9px; border-radius:50%; background:var(--red); border:3px solid #fff; box-shadow:0 0 0 1px var(--red); transition:left .2s;}
+  #samp-scene .face-label{font-size:12px;}
+  .sbtn{display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;}
+
+  /* ---------- 05 · Estoque ---------- */
+  #st-svg .flow{fill:var(--red);}
+  #st-svg .stk{fill:none; stroke:var(--navy); stroke-width:3;}
+  #st-svg .dot{fill:var(--navy);}
+  #st-svg .lb{font-size:11px; fill:#64748b;}
+  #st-svg .ax{stroke:#cbd5e1; stroke-width:1;}
+
+  /* ---------- 06 · Média ---------- */
+  .mt{display:grid; grid-template-columns:minmax(0, 1.6fr) 1fr 1fr; gap:4px; font-size:.8rem; align-items:stretch;}
+  .mt .h{font-size:.62rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); text-align:center; align-self:end; line-height:1.2;}
+  .mt .rl{display:flex; align-items:center; font-weight:600; color:var(--ink); line-height:1.2; padding:2px 0;}
+  .mt .rl.inv{color:var(--red);}
+  .mt .c{border-radius:8px; min-height:34px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; line-height:1.05;}
+  .mt .c b{font-family:var(--serif); font-size:.86rem;}
+  .mt .c small{font-size:.6rem; opacity:.9;}
+  .c.up{background:var(--navy); color:#fff;}
+  .c.dn{background:var(--red); color:#fff;}
+  .c.ns{background:repeating-linear-gradient(135deg, #f1f5f9 0 6px, #fff 6px 12px); color:#94a3b8; border:1px solid var(--border);}
+  .r2{margin-top:12px; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px;}
+  .r2 .tk{position:relative; height:16px; background:#f1f5f9; border-radius:8px; overflow:hidden; margin:6px 0 4px;}
+  .r2 .tk i{position:absolute; left:0; top:0; bottom:0; background:var(--ink); border-radius:8px; transition:width .6s;}
+  .r2 .sc{display:flex; justify-content:space-between; font-size:.64rem; color:var(--muted);}
+
+  /* ---------- 07 · Faixas ---------- */
+  #qr-svg .ax{stroke:#cbd5e1; stroke-width:1;}
+  #qr-svg .zero{stroke:#94a3b8; stroke-width:1.2; stroke-dasharray:4 3;}
+  #qr-svg .lb{font-size:11px; fill:#64748b;}
+  #qr-svg .tr{fill:none; stroke:var(--navy); stroke-width:3;}
+  #qr-svg .ta{fill:none; stroke:var(--red); stroke-width:3;}
+  #qr-svg .col{fill:transparent; cursor:pointer;}
+  #qr-svg .col.sel{fill:#f1f5f9;}
+  .lamps{display:grid; grid-template-columns:repeat(5, 1fr); gap:6px; margin-top:8px;}
+  .lamps button{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:6px 4px; font-family:inherit; cursor:pointer; font-size:.7rem; color:var(--muted); line-height:1.2;}
+  .lamps button b{display:block; font-family:var(--serif); font-size:.92rem; color:var(--ink);}
+  .lamps button.lit{background:var(--red); border-color:var(--red); color:#fff;}
+  .lamps button.lit b{color:#fff;}
+  .lamps button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink);}
+
+  /* ---------- 08 · Placar ---------- */
+  .sb{display:grid; grid-template-columns:minmax(0, 1.5fr) repeat(7, minmax(0, 1fr)); gap:3px; font-size:.74rem;}
+  .sb .h{font-size:.6rem; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); text-align:center; align-self:end; line-height:1.15; padding-bottom:2px;}
+  .sb .h.grp{grid-column:span 2; border-bottom:2px solid var(--ink-2); color:var(--ink-2); font-weight:700;}
+  .sb .h.grp2{grid-column:span 5; border-bottom:2px solid var(--ink-2); color:var(--ink-2); font-weight:700;}
+  .sb .rl{display:flex; align-items:center; gap:6px; font-weight:600; color:var(--ink); line-height:1.15; font-size:.74rem;}
+  .sb .rl i{flex:none; width:10px; height:10px; border-radius:3px; background:var(--rc);}
+  .sb .c{border-radius:6px; min-height:26px; transition:background .35s, opacity .35s; display:flex; align-items:center; justify-content:center; font-size:.66rem; font-weight:700;}
+  .sb .c.off{background:#f1f5f9; color:transparent;}
+  .sb .c.on{background:var(--rc); color:#fff;}
+  .sb .c.dim{opacity:.18;}
+  .ls{display:none;}
+  .tally{display:flex; align-items:baseline; gap:10px; margin-top:12px;}
+  .tally b{font-family:var(--serif); font-size:2.2rem; color:var(--red); line-height:1;}
+  .tally span{font-size:.84rem; color:var(--muted);}
+
+  /* ---------- 09 · Habilidade ---------- */
+  #hb-svg .rd{fill:var(--navy);}
+  #hb-svg .sl{fill:none; stroke:var(--red); stroke-width:3;}
+  #hb-svg .lb{font-size:11px; fill:#64748b;}
+  #hb-svg .ax{stroke:#cbd5e1; stroke-width:1;}
+  .hcalc input[type=range]{width:100%; accent-color:var(--red);}
+  .tagh{display:inline-block; font-size:.7rem; font-weight:700; border-radius:6px; padding:2px 8px;}
+  .tagh.lo{background:#fee2e2; color:#b91c1c;}
+  .tagh.mi{background:#f1f5f9; color:var(--ink-2);}
+  .tagh.hi{background:#dbeafe; color:var(--navy);}
+  .steps3{display:grid; gap:6px; margin-top:12px; counter-reset:s;}
+  .steps3 div{position:relative; padding:6px 10px 6px 36px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; line-height:1.4;}
+  .steps3 div::before{counter-increment:s; content:counter(s); position:absolute; left:9px; top:7px; width:19px; height:19px; border-radius:50%; background:var(--ink); color:#fff; font-size:.7rem; font-weight:700; text-align:center; line-height:19px;}
+
+  /* ---------- 10 · Escadas ---------- */
+  #stair-scene .face-label{font-size:11px; letter-spacing:.02em;}
+  .zplane{position:absolute; background:color-mix(in srgb, #94a3b8 22%, transparent); border:1px dashed #64748b; transform:translateZ(var(--zz)); pointer-events:none;}
+  .spread{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-top:10px;}
+  .spread b{font-family:var(--serif); font-size:1.6rem; color:var(--red);}
+  .qv{display:grid; grid-template-columns:repeat(5, 1fr); gap:4px; margin-top:8px; text-align:center; font-size:.72rem; color:var(--muted);}
+  .qv b{display:block; font-family:var(--serif); font-size:.86rem; color:var(--ink);}
+  .qv b.neg{color:var(--red);}
+  .warn{font-size:.74rem; font-weight:600; color:#92400e; background:#fef3c7; border-radius:8px; padding:6px 10px; margin-top:10px;}
+
+  /* ---------- 11 · Habilidade alta ---------- */
+  .g23{display:grid; grid-template-columns:minmax(0, 1.1fr) repeat(3, minmax(0, 1fr)); gap:5px; font-size:.78rem;}
+  .g23 .h{font-size:.62rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); text-align:center; align-self:end; line-height:1.2;}
+  .g23 .rl{display:flex; align-items:center; font-weight:600; color:var(--ink); line-height:1.2;}
+  .g23 .c{position:relative; height:74px; border-radius:10px; background:var(--card); border:1px solid var(--border); overflow:hidden;}
+  .g23 .c .zl{position:absolute; left:0; right:0; top:50%; border-top:1px dashed #94a3b8;}
+  .g23 .c .bar{position:absolute; left:30%; width:40%; border-radius:3px; transition:all .5s;}
+  .g23 .c .bar.p{background:var(--navy); bottom:50%;}
+  .g23 .c .bar.n{background:var(--red); top:50%;}
+  .g23 .c span{position:absolute; left:4px; right:4px; bottom:2px; text-align:center; font-family:var(--serif); font-weight:700; font-size:.8rem; color:var(--ink);}
+  .g23 .c span.top{bottom:auto; top:2px;}
+
+  /* ---------- 12 · Final ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:5px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:5px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.76rem; color:var(--ink-2); line-height:1.4;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+
+  @media (max-width:600px){
+    .chain{grid-template-columns:1fr 1fr; gap:10px;}
+    .chain button:nth-child(2)::after{display:none;}
+    .pc-grid{grid-template-columns:1fr;}
+    .cbars div{grid-template-columns:86px 1fr 50px; font-size:.74rem;}
+    .mt{font-size:.72rem;}
+    .sb{grid-template-columns:minmax(0, 1.25fr) repeat(7, minmax(0, 1fr)); gap:2px;}
+    .sb .rl{font-size:.62rem; gap:3px;}
+    .sb .rl i{width:7px; height:7px;}
+    .sb .h{font-size:.5rem;}
+    .lf{display:none;} .ls{display:inline;}
+    .g23 .c span{font-size:.6rem; left:1px; right:1px;}
+    .g23{grid-template-columns:minmax(0, .8fr) repeat(3, minmax(0, 1fr)); gap:4px;}
+    .g23 .c{height:64px;}
+    .g23 .c span{font-size:.7rem;}
+    .qv{font-size:.62rem;}
+    .qv b{font-size:.74rem;}
+  }
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2019-taques-inovacao-valor-mercado/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2019</div>
+      <h1 class="rv" style="--d:.1s">P&amp;D e patentes aparecem no valor da empresa, mas não em toda régua</h1>
+      <p class="sub rv" style="--d:.2s">Com 1.342 empresas de 57 países e três décadas de dados, a tese mediu a inovação de três jeitos (gasto em pesquisa e desenvolvimento, o P&amp;D, patentes e citações de patentes) e testou se ela explica quanto a bolsa paga pela empresa e quanto as ações rendem. P&amp;D e patentes apareceram em parte dos testes; citações, em nenhum.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Fernando Henrique Taques</span>
+        <span><b>Orientador:</b> Prof. Dr. Leonardo Fernando Cruz Basso</span>
+        <span><b>Coorientador:</b> Prof. Dr. Nelson Areal (Universidade do Minho)</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#reguas">Começar →</a>
+        <a class="btn ghost" href="#placar">Ver o placar</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="460x340" role="img" aria-label="Três copos de vidro do mesmo tamanho, um para cada régua de inovação. O de P&amp;D está cheio até 43%, o de patentes até 21% e o de citações está vazio: a parte dos testes em que cada régua apareceu com efeito claro no valor de mercado."></div></div>
+      <p class="cap-legend">Cada copo é o total de testes do capítulo 3 com aquela régua; a parte cheia, os testes em que ela teve efeito claro no valor de mercado: P&amp;D em 6 de 14, patentes em 6 de 28, citações em 0 de 14 (contagem nossa, tela 08). Arraste para girar.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-9"><a href="https://brasil.un.org/pt-br/sdgs/9" target="_blank" rel="noopener" title="ODS 9 · Indústria, inovação e infraestrutura: Testa se o gasto em pesquisa e as patentes das empresas aparecem no valor de mercado e no retorno das ações, e discute como medir a inovação."><b>9</b>Indústria, inovação e infraestrutura</a></li>
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Mostra em que medida a inovação das empresas aparece no desempenho financeiro delas."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · RÉGUAS -->
+<section class="slide" id="reguas" data-label="As réguas da inovação">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> Como medir · capítulo 2</div>
+      <h2 class="rv" style="--d:.1s">Inovar é uma corrente, e cada régua mede um elo</h2>
+      <p class="lede rv" style="--d:.15s">A empresa gasta em pesquisa, a pesquisa vira patente, a patente vira produto e o produto vira venda. O primeiro capítulo reuniu as medidas usadas pelos pesquisadores e mostrou que nenhuma pega a corrente inteira. Toque em cada elo.</p>
+      <div class="chain rv" style="--d:.2s" id="chain" role="group" aria-label="Elos da corrente da inovação"></div>
+      <p class="note rv" style="--d:.25s">✓ = régua usada nos testes da tese (capítulos 3 e 4). As medidas de saída não estavam nas bases de dados usadas, diz o autor.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel" id="chain-panel" aria-live="polite"></div>
+      <div class="ctrls" style="margin-top:14px">
+        <div class="seg" id="ind-seg" role="group" aria-label="Tipo de empresa">
+          <button data-m="0" aria-pressed="true">Na indústria</button>
+          <button data-m="1" aria-pressed="false">Nos serviços</button>
+        </div>
+      </div>
+      <div class="panel" id="ind-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · AMOSTRA -->
+<section class="slide" id="amostra" data-label="57 países">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> Os dados · capítulo 3</div>
+      <h2 class="rv" style="--d:.1s">Empresas de 57 países, mas quase metade das patentes é americana</h2>
+      <p class="lede rv" style="--d:.15s">O autor juntou duas bases: as patentes do Escritório Europeu de Patentes (que inclui patentes publicadas nos Estados Unidos) e os balanços e preços da Thomson Reuters, em dólares, de 1986 a 2016. Ter mais empresas não quer dizer ter mais patentes. Troque a régua e veja o Japão.</p>
+      <div class="stats rv" style="--d:.2s">
+        <div class="stat"><b>1.342</b><span>empresas com patentes e dados de bolsa (amostra A)</span></div>
+        <div class="stat red"><b>8.906</b><span>observações empresa-ano nos modelos da amostra A</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="ctrls">
+        <div class="seg" id="cty-seg" role="group" aria-label="Medida">
+          <button data-m="0" aria-pressed="true">% das empresas</button>
+          <button data-m="1" aria-pressed="false">% das patentes</button>
+        </div>
+      </div>
+      <div class="panel"><div class="cbars" id="cbars"></div></div>
+      <p class="note" id="cty-note"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · Q DE TOBIN E AMOSTRAS -->
+<section class="slide" id="regua-q" data-label="O Q de Tobin">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> O que se quer explicar · capítulo 3</div>
+      <h2 class="rv" style="--d:.1s">O alvo é quanto a bolsa paga por cada dólar do que a empresa tem</h2>
+      <p class="lede rv" style="--d:.15s">O Q de Tobin divide o valor de mercado da empresa pelo valor dos seus ativos. Acima de 1, a bolsa enxerga algo além do que está no balanço, como o que a empresa ainda vai ganhar. Mova o valor de mercado de uma empresa com 100 milhões em ativos.</p>
+      <div class="panel qcalc rv" style="--d:.2s">
+        <label for="q-rng" style="font-size:.82rem; color:var(--muted)">Valor de mercado (milhões de dólares): <b id="q-v" style="color:var(--ink)"></b></label>
+        <input type="range" id="q-rng" min="20" max="300" step="5" value="145">
+        <div style="display:flex; align-items:baseline; gap:10px"><span class="big" id="q-out"></span><span style="font-size:.82rem; color:var(--muted)" id="q-txt"></span></div>
+        <div class="qline" id="qline"><div class="tr"></div></div>
+      </div>
+      <p class="note rv" style="--d:.25s">Marcas na régua: 10%, metade e 75% das observações da amostra A (Tabela 3.5): 0,78, 1,45 e 2,44. A empresa do meio valia 1,45 vez o seu ativo. Nos modelos, o Q entrou em logaritmo.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="samp-scene" data-fit="440x300" role="img" aria-label="Três placas empilhadas, cada uma menor: amostra A com 1.342 empresas, B com 891 e C com 333; a área de cada placa segue o número de empresas."></div></div>
+      <div class="sbtn" id="samp-btns" role="group" aria-label="Amostras"></div>
+      <div class="panel" id="samp-panel" style="margin-top:10px" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · FLUXO E ESTOQUE -->
+<section class="slide" id="estoque" data-label="Fluxo e estoque">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Duas formas de contar · capítulo 3</div>
+      <h2 class="rv" style="--d:.1s">Conta a patente do ano passado ou tudo o que a empresa já aprendeu?</h2>
+      <p class="lede rv" style="--d:.15s">A tese mediu cada régua de dois jeitos. No fluxo, só o que veio no ano anterior. No estoque, tudo o que se acumulou, perdendo 15% de valor a cada ano, como uma máquina que envelhece. Os dois foram divididos pelo ativo, para não favorecer as gigantes. Escolha uma história.</p>
+      <div class="ctrls rv" style="--d:.2s">
+        <div class="seg" id="st-seg" role="group" aria-label="Histórias">
+          <button data-m="0" aria-pressed="true">Inova todo ano</button>
+          <button data-m="1" aria-pressed="false">Um grande salto</button>
+          <button data-m="2" aria-pressed="false">Parou de inovar</button>
+        </div>
+      </div>
+      <p class="note rv" style="--d:.25s" id="st-note"></p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="st-svg" class="svgbox" viewBox="0 0 520 300" role="img" aria-label="Gráfico com as patentes de cada ano em barras vermelhas e o estoque acumulado numa linha azul"></svg>
+      <div class="legend"><span><i class="sw" style="background:var(--red)"></i>patentes do ano (fluxo)</span><span><i class="sw" style="background:var(--navy); height:3px"></i>estoque, com 15% de desgaste ao ano</span><span class="ilus">ilustração</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · NA MÉDIA -->
+<section class="slide" id="media" data-label="Na média">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Resultado · dados em painel</div>
+      <h2 class="rv" style="--d:.1s">Na média, patentes pesaram numa amostra e P&amp;D na outra</h2>
+      <p class="lede rv" style="--d:.15s">O primeiro método compara cada empresa com ela mesma ao longo dos anos e dá um efeito médio. Azul é efeito claro para cima, vermelho para baixo, listrado é sem efeito claro. Troque a amostra.</p>
+      <div class="ctrls rv" style="--d:.2s">
+        <div class="seg" id="pm-seg" role="group" aria-label="Amostra">
+          <button data-m="0" aria-pressed="true">A · patentes</button>
+          <button data-m="1" aria-pressed="false">B · + P&amp;D</button>
+          <button data-m="2" aria-pressed="false">C · citações</button>
+        </div>
+      </div>
+      <div class="panel rv" style="--d:.25s" id="pm-text" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="mt" id="pm-grid"></div>
+      <div class="r2"><div style="font-size:.8rem; color:var(--ink-2)" id="r2-txt"></div><div class="tk"><i id="r2-bar"></i></div><div class="sc"><span>0%</span><span>50%</span><span>100%</span></div></div>
+      <p class="note">Tabelas 3.6(a), 3.8(a) e 3.10(a), modelos gerais. Efeito claro = significante a 10% ou menos (estrelas: *** a 1%, ** a 5%, * a 10%). Receita e ativo vêm dos modelos com a inovação do ano; nos de estoque, os sinais se repetem. Como o Q divide o valor de mercado pelo ativo, parte do sinal negativo do ativo já vem da própria conta (observação nossa).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · POR FAIXAS -->
+<section class="slide" id="faixas" data-label="Por faixas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Resultado · regressão por quantis</div>
+      <h2 class="rv" style="--d:.1s">Olhando faixa por faixa, a patente quase some</h2>
+      <p class="lede rv" style="--d:.15s">O segundo método, a novidade da tese, não olha só a média: estima o efeito separadamente para empresas com Q baixo, médio e alto (as faixas de 10%, 25%, metade, 75% e 99%). Na amostra A, a patente teve efeito claro em uma faixa só, e o peso do ativo, para baixo, foi mais de três vezes maior na faixa de 75% do que na de 10%. Toque nas faixas.</p>
+      <div class="ctrls rv" style="--d:.2s">
+        <div class="seg" id="qr-seg" role="group" aria-label="Forma de contar a patente">
+          <button data-m="0" aria-pressed="true">Patentes do ano</button>
+          <button data-m="1" aria-pressed="false">Estoque de patentes</button>
+        </div>
+      </div>
+      <div class="panel rv" style="--d:.25s" id="qr-panel" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="qr-svg" class="svgbox" viewBox="0 0 520 300" role="img" aria-label="Linhas do efeito da receita, em azul, e do ativo, em vermelho, nas faixas de Q de 10% a 75%; o efeito do ativo fica mais negativo nas faixas de Q mais alto"></svg>
+      <div class="legend"><span><i class="sw" style="background:var(--navy); height:3px"></i>receita (em log)</span><span><i class="sw" style="background:var(--red); height:3px"></i>ativo (em log)</span><span>ponto vazio = sem efeito claro</span></div>
+      <div class="lamps" id="lamps" role="group" aria-label="Efeito da patente por faixa"></div>
+      <p class="note">Tabela 3.7, amostra A (8.906 observações). As lâmpadas mostram a patente: acesa = efeito claro. Na faixa de 99%, nenhum efeito foi claro e os coeficientes saem da escala, por isso ela não entra nas linhas. A tese chama as faixas de empresas “menores” e “maiores”, mas elas ordenam o Q, não o tamanho (observação nossa).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · PLACAR -->
+<section class="slide" id="placar" data-label="O placar">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Placar · capítulo 3 inteiro</div>
+      <h2 class="rv" style="--d:.1s">Em 56 testes, a inovação acendeu 12 vezes</h2>
+      <p class="lede rv" style="--d:.15s">Juntando as três amostras, os dois métodos e as duas formas de contar, cada régua teve sua chance. P&amp;D acendeu nos efeitos médios e em duas faixas. As patentes, só na amostra A. As citações, nunca. Quando acendeu, o efeito foi sempre para cima. Filtre por régua.</p>
+      <div class="ctrls rv" style="--d:.2s">
+        <div class="seg" id="sb-seg" role="group" aria-label="Régua">
+          <button data-m="0" aria-pressed="true">Todas</button>
+          <button data-m="1" aria-pressed="false">P&amp;D</button>
+          <button data-m="2" aria-pressed="false">Patentes</button>
+          <button data-m="3" aria-pressed="false">Citações</button>
+        </div>
+      </div>
+      <div class="tally rv" style="--d:.25s"><b id="tally-n"></b><span id="tally-t"></span></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel"><div class="sb" id="sb"></div></div>
+      <p class="note">Contagem nossa nas Tabelas 3.6(a) a 3.11, modelos gerais (sem as interações por continente e indústria). Célula acesa = efeito claro (significante a 10% ou menos), com as estrelas da tese. Média = efeitos fixos e aleatórios; na amostra C a faixa mais alta é 96%, não 99%. A tese diz que as interações por indústria não tiveram efeito; as por continente trazem coeficientes muito grandes e uma soma que não fecha no texto, por isso ficaram de fora.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · HABILIDADE EM INOVAR -->
+<section class="slide" id="habilidade" data-label="Habilidade em inovar">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Outra pergunta · capítulo 4</div>
+      <h2 class="rv" style="--d:.1s">Gastar em pesquisa é uma coisa; transformar em vendas é outra</h2>
+      <p class="lede rv" style="--d:.15s">O último capítulo segue um método de Cohen, Diether e Malloy (2013): para cada empresa, mede o quanto o P&amp;D de 1 a 5 anos atrás acompanhou o crescimento das vendas. Essa é a “habilidade em inovar”. O autor fez o mesmo com patentes, o que era novo. Mova a habilidade de uma empresa inventada.</p>
+      <div class="steps3 rv" style="--d:.2s">
+        <div>Habilidade de cada empresa, com 8 anos de dados de cada vez, de 1992 a 2018.</div>
+        <div>Carteiras de ações: habilidade baixa ou alta (30% de baixo, 30% de cima) cruzada com P&amp;D baixo, médio ou alto, refeitas todo ano.</div>
+        <div>Retorno em excesso de cada carteira: o que rendeu acima da aplicação sem risco, descontando também o que tamanho, preço sobre patrimônio, tendência recente, lucratividade e investimento já explicam (modelos de 3, 4 e 5 fatores).</div>
+      </div>
+    </div>
+    <div class="rv hcalc" style="--d:.2s">
+      <svg id="hb-svg" class="svgbox" viewBox="0 0 520 280" role="img" aria-label="Gráfico com o gasto em P&amp;D de uma empresa inventada em barras azuis e as vendas em linha vermelha, que sobem mais quanto maior a habilidade escolhida"></svg>
+      <label for="hb-rng" style="font-size:.82rem; color:var(--muted); display:block; margin-top:10px">Quanto as vendas respondem ao P&amp;D de anos atrás</label>
+      <input type="range" id="hb-rng" min="0" max="10" step="1" value="6">
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; font-size:.84rem"><span id="hb-out"></span><span class="ilus">ilustração · números inventados</span></div>
+      <p class="note">Na amostra real, a habilidade em P&amp;D teve média 0,0824 e mediana 0,0530; a em patentes, média −0,0897 e mediana −0,0052 (Tabela 4.1). 312 meses e 18.318 observações nas regressões (Tabela 4.8).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · ESCADAS -->
+<section class="slide" id="escadas" data-label="Quem investe mais">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Resultado · retorno das ações</div>
+      <h2 class="rv" style="--d:.1s">As ações de quem tinha mais P&amp;D ou mais patentes renderam mais</h2>
+      <p class="lede rv" style="--d:.15s">O autor separou as empresas em cinco degraus, do menor ao maior P&amp;D (ou número de patentes), e mediu o retorno em excesso de cada degrau por mês. Os dois de baixo ficaram abaixo da aplicação sem risco; os de cima, acima. Troque a régua.</p>
+      <div class="ctrls rv" style="--d:.2s">
+        <div class="seg" id="es-seg" role="group" aria-label="Régua">
+          <button data-m="0" aria-pressed="true">P&amp;D</button>
+          <button data-m="1" aria-pressed="false">Patentes</button>
+        </div>
+        <div class="seg" id="es-w" role="group" aria-label="Peso das ações">
+          <button data-m="0" aria-pressed="true">Pesos iguais</button>
+          <button data-m="1" aria-pressed="false">Peso pelo valor</button>
+        </div>
+      </div>
+      <div class="spread rv" style="--d:.25s"><b id="es-sp"></b><span id="es-sp-t" style="font-size:.84rem; color:var(--muted)"></span></div>
+      <p class="warn rv" style="--d:.3s">Não é recomendação de investimento. Rendimento passado médio de carteiras não garante o futuro de nenhuma ação.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="stair-scene" data-fit="520x340" role="img" aria-label="Cinco blocos em fila, do menor ao maior P&amp;D; os dois primeiros descem abaixo de um plano tracejado, o zero, e os de cima sobem acima dele"></div></div>
+      <div class="qv" id="es-qv"></div>
+      <p class="note" id="es-note"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · O INESPERADO -->
+<section class="slide" id="inesperado" data-label="O inesperado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> O inesperado · capítulo 4</div>
+      <h2 class="rv" style="--d:.1s">Ser hábil em transformar P&amp;D em vendas quase não mudou o retorno</h2>
+      <p class="lede rv" style="--d:.15s">A aposta, vinda do estudo americano, era que o mercado demora a perceber quem sabe inovar, e que essas ações rendem mais. Entre as empresas de P&amp;D alto, as hábeis renderam só um pouco mais, sem diferença clara. Nas patentes, a diferença foi clara porque as pouco hábeis com muitas patentes foram mal.</p>
+      <div class="stats rv" style="--d:.2s">
+        <div class="stat red"><b>0 de 6</b><span>regressões em que a habilidade alta em P&amp;D teve efeito claro no retorno (Tabela 4.8)</span></div>
+        <div class="stat"><b>16,6% × 44,4%</b><span>das medidas de habilidade com efeito claro: nesta tese × no estudo americano, segundo o autor</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="ctrls">
+        <div class="seg" id="g23-seg" role="group" aria-label="Régua">
+          <button data-m="0" aria-pressed="true">P&amp;D</button>
+          <button data-m="1" aria-pressed="false">Patentes</button>
+        </div>
+      </div>
+      <div class="panel"><div class="g23" id="g23"></div></div>
+      <div class="panel" style="margin-top:10px" id="g23-txt" aria-live="polite"></div>
+      <p class="note">Retorno em excesso médio por mês, peso pelo valor (Tabelas 4.3 e 4.5), como impresso; a tese não informa a unidade. A tabela de pesos iguais do P&amp;D (4.2) repete nas colunas de habilidade alta os números da habilidade baixa, por isso usamos a de peso pelo valor.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e limites">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Na prática · limites · créditos</div>
+    <h2 class="rv" style="--d:.1s">Medir a inovação com mais de uma régua</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Gestores</h3><p>P&amp;D e patentes andaram com mais valor e mais retorno em parte dos testes. Para o autor, acompanhar o que se investe em inovar ajuda a decidir para onde levar os recursos, sem esperar efeito garantido.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Investidores</h3><p>O autor lê que o mercado não incorpora bem a informação pública sobre inovação. Os resultados são de carteiras médias do passado e não são recomendação de investimento.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ink-2)"><h3>Governos</h3><p>O autor vê nos achados apoio a políticas que estimulem e financiem a inovação nas empresas, e a olhar se ela é estratégia de longo prazo ou só reação a incentivos pontuais.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#5b6f96"><h3>Pesquisadores</h3><p>Usar réguas de entrada, meio e saída juntas, separar indústria e serviços e testar por faixas, não só pela média. O autor sugere também somar patentes do escritório americano e outras bases.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Poucas réguas.</b> Das medidas do capítulo 2, as bases só tinham P&amp;D, patentes e citações; as de saída ficaram de fora, reconhece o autor.</li>
+          <li><b>Andar junto não é causar.</b> Os modelos mostram associação, e explicam pouco do valor de mercado (cerca de 4% a 7% das diferenças de Q). <em>· observação nossa</em></li>
+          <li><b>Regras diferentes em cada país.</b> A contabilidade muda entre países e no tempo, e empresas europeias não são obrigadas a divulgar o P&amp;D. As citações do escritório europeu são poucas, porque quem as põe é o examinador.</li>
+          <li><b>Q simplificado e poucos controles.</b> O Q não usa o custo de reposição dos ativos, e faltam dívida, intensidade de capital e fatia de mercado, aponta o autor.</li>
+          <li><b>Tabelas para conferir.</b> A Tabela 4.2 repete colunas; a diferença das patentes na Tabela 4.7 (0,3849) foi refeita por nós como 0,0384; e a unidade dos retornos não é informada. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          TAQUES, Fernando Henrique. <em>Desempenho financeiro e atividade inovativa nas empresas.</em> Tese (Doutorado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2019. Orientador: Prof. Dr. Leonardo Fernando Cruz Basso. Coorientador: Prof. Dr. Nelson Areal.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Patentes do PATSTAT (Escritório Europeu de Patentes), dados contábeis e de mercado da Thomson Reuters DataStream e fatores de risco globais do site de Kenneth French. Doutorado em cotutela com a Universidade do Minho; apoio da CAPES e isenção do Instituto Presbiteriano Mackenzie. Não é recomendação de investimento. Esta versão simplifica a tese para o público em geral; as tabelas completas estão no texto original.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  function f(v, d){ var s = fmt(Math.abs(v), d === undefined ? 4 : d); return (v < 0 ? '−' : '') + s; }
+  function sgn(v, d){ return (v > 0 ? '+' : '') + f(v, d); }
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, a, txt){ var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); if (txt !== undefined) e.textContent = txt; return e; }
+  function seg(id, fn){
+    var g = $(id);
+    each(g.querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){
+        each(g.querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        fn(+b.dataset.m);
+      });
+    });
+  }
+  function stars(n){ return n ? new Array(n + 1).join('*') : ''; }
+
+  /* ================= DADOS DA TESE ================= */
+  // Contagem nossa (Tabelas 3.6a–3.11, modelos gerais): testes com efeito claro / total
+  var JARS = [
+    {n:'P&D', en:'R&D', k:6, t:14, c:'var(--navy)'},
+    {n:'Patentes', en:'Patents', k:6, t:28, c:'var(--red)'},
+    {n:'Citações', en:'Citations', k:0, t:14, c:'#5b6f96'}
+  ];
+
+  // Capítulo 2 (Tabela 2.3 e seção 2.4): elos da corrente
+  var CHAIN = [
+    {k:L('Entrada', 'Input'), n:'P&D', s:L('gasto em pesquisa', 'research spending'), c:'var(--navy)', used:true,
+      m:L('O esforço que a empresa faz para inovar.', 'The effort the firm puts into innovating.'),
+      pro:L('Mostra o esforço inovativo; quem gasta com sucesso num ano costuma gastar de novo no seguinte; dá para comparar empresas e setores.', 'Shows innovative effort; firms that spend successfully one year tend to spend again the next; firms and sectors can be compared.'),
+      con:L('Não revela se saiu um produto novo; tende a subestimar empresas pequenas e serviços, onde a pesquisa é menos formal; depende do que a empresa divulga.', 'Does not reveal whether a new product came out; tends to understate small firms and services, where research is less formal; depends on what the firm discloses.')},
+    {k:L('Intermediário', 'Intermediate'), n:L('Patente', 'Patent'), s:L('invenção registrada', 'registered invention'), c:'var(--red)', used:true,
+      m:L('A produção inovadora: a ideia que virou invenção protegida.', 'Innovative output: the idea that became a protected invention.'),
+      pro:L('Dado público e padronizado, com décadas de série; o examinador valida a invenção, o que reduz a subjetividade.', 'Public, standardized data, with decades of history; the examiner validates the invention, which reduces subjectivity.'),
+      con:L('Nem toda inovação é patenteável ou patenteada; patentes valem muito diferente umas das outras; concentram-se na indústria, na alta tecnologia e nas empresas grandes.', 'Not every innovation can be or is patented; patents differ greatly in value; they cluster in manufacturing, high tech and large firms.')},
+    {k:L('Intermediário', 'Intermediate'), n:L('Citação', 'Citation'), s:L('patente citada por outras', 'patent cited by others'), c:'#5b6f96', used:true,
+      m:L('A qualidade da invenção: quantas patentes posteriores se apoiam nela.', 'The quality of the invention: how many later patents build on it.'),
+      pro:L('Separa a patente importante da que ninguém usa; a tese contou as citações em até cinco anos.', 'Separates the important patent from the one nobody uses; the thesis counted citations within five years.'),
+      con:L('Exige conhecimento para interpretar; no escritório europeu as citações são poucas, porque quem as põe é o examinador, não o inventor.', 'Takes expertise to interpret; at the European office citations are few, because the examiner adds them, not the inventor.')},
+    {k:L('Saída', 'Output'), n:L('Venda nova', 'New sales'), s:L('produto novo no mercado', 'new product on the market'), c:'var(--ink-2)', used:false,
+      m:L('A inovação chegando ao cliente: vendas de produtos novos, anúncios, introdução de inovações.', 'Innovation reaching the customer: sales of new products, announcements, introduced innovations.'),
+      pro:L('Mostra o resultado no mercado e capta também serviços e inovações pequenas.', 'Shows the market result and also captures services and small innovations.'),
+      con:L('Depende de questionários ou de anúncios da própria empresa, sem lastro; difícil comparar entre países e ao longo do ciclo econômico.', 'Depends on surveys or the firm’s own announcements, with no backing; hard to compare across countries and over the business cycle.')}
+  ];
+  var IND = [
+    L('<h3>Na indústria</h3><p>A inovação costuma seguir uma trajetória: acumula conhecimento, passa pelo laboratório e vira patente. Produto e processo se separam bem. Por isso as réguas clássicas, P&amp;D e patentes, nasceram aqui.</p>',
+      '<h3>In manufacturing</h3><p>Innovation tends to follow a trajectory: it accumulates knowledge, goes through the lab and becomes a patent. Product and process are clearly separate. That is why the classic yardsticks, R&amp;D and patents, were born here.</p>'),
+    L('<h3>Nos serviços</h3><p>A inovação muitas vezes é invisível: uma solução nova para o cliente, um serviço personalizado, uma nova forma de organizar o trabalho. Protege-se mais com marcas do que com patentes, e a pesquisa é menos formal. Medir serviços com réguas de fábrica subestima o que eles inovam. A visão que o autor considera mais aceita junta as duas: as réguas da indústria mais as próprias dos serviços (Tabela 2.2).</p>',
+      '<h3>In services</h3><p>Innovation is often invisible: a new solution for the client, a tailored service, a new way of organizing work. It is protected more by trademarks than by patents, and research is less formal. Measuring services with factory yardsticks understates how much they innovate. The view the author considers most accepted combines both: manufacturing yardsticks plus those specific to services (Table 2.2).</p>')
+  ];
+
+  // Anexo 3.1 (empresas, amostra A, total 1.342) e Tabela 3.3 (% das patentes, amostra A)
+  var CTY = [
+    [L('Estados Unidos', 'United States'), 525, 44.37], [L('Japão', 'Japan'), 59, 11.46], [L('Taiwan', 'Taiwan'), 96, 7.95],
+    [L('França', 'France'), 71, 4.89], [L('Índia', 'India'), 90, 4.86], [L('Coreia do Sul', 'South Korea'), 54, 3.32],
+    [L('Reino Unido', 'United Kingdom'), 51, 3.10], [L('Canadá', 'Canada'), 61, 2.56], [L('Alemanha', 'Germany'), 36, 2.56], [L('Austrália', 'Australia'), 53, 2.44]
+  ];
+  var NFIRMS = 1342;
+
+  // Tabela 3.5 (amostra A): Q de Tobin por percentil
+  var QP = [[0.78, '10%'], [1.45, L('metade', 'half')], [2.44, '75%']];
+
+  // Tabela 3.2: amostras
+  var SAMP = [
+    {n:'A', f:1342, p:'1986–2016', v:L('Q de Tobin, ativo, receita e patentes publicadas', 'Tobin’s Q, assets, revenue and published patents'),
+      t:L('A amostra mais ampla: todas as empresas que tinham patentes e dados de bolsa.', 'The broadest sample: every firm with patents and stock market data.')},
+    {n:'B', f:891, p:'1986–2016', v:L('tudo da A + gasto em P&amp;D, ROI e EBITDA', 'everything in A + R&amp;D spending, ROI and EBITDA'),
+      t:L('Só as empresas que informavam o gasto em P&amp;D, o retorno sobre o investimento e o lucro operacional (EBITDA).', 'Only firms that reported R&amp;D spending, return on investment and operating profit (EBITDA).')},
+    {n:'C', f:333, p:'1990–2015', v:L('Q, ativo, receita e citações das patentes em cinco anos', 'Q, assets, revenue and patent citations within five years'),
+      t:L('Só as empresas com patentes citadas por outras. Poucas conseguem patentes relevantes a ponto de serem citadas, explica o autor.', 'Only firms whose patents were cited by others. Few manage patents relevant enough to be cited, the author explains.')}
+  ];
+
+  // Tabelas 3.6(a), 3.8(a), 3.10(a): [coef, estrelas] para [FE, RE]
+  var PAN = [
+    {r2:[0.0527, 0.0606], rows:[
+      {n:L('Patentes do ano anterior ÷ ativo', 'Previous-year patents ÷ assets'), inv:1, c:[[9.0153,3],[10.0208,3]]},
+      {n:L('Estoque de patentes ÷ ativo', 'Patent stock ÷ assets'), inv:1, c:[[1.8300,3],[2.0783,3]]},
+      {n:L('Receita (log)', 'Revenue (log)'), c:[[0.0428,3],[0.0224,3]]},
+      {n:L('Ativo (log)', 'Assets (log)'), c:[[-0.1380,3],[-0.1011,3]]}],
+      t:L('<h3>Amostra A · 1.342 empresas</h3><p>Patentes, contadas no ano ou acumuladas, andaram com Q mais alto, nos dois jeitos de comparar. Receita maior também; ativo maior, ao contrário, com Q mais baixo.</p>', '<h3>Sample A · 1,342 firms</h3><p>Patents, counted per year or accumulated, went with higher Q under both ways of comparing. Higher revenue too; larger assets, on the contrary, with lower Q.</p>')},
+    {r2:[0.0427, 0.0550], rows:[
+      {n:L('Patentes do ano anterior ÷ ativo', 'Previous-year patents ÷ assets'), inv:1, c:[[0.0079,0],[-0.0135,0]]},
+      {n:L('P&amp;D do ano anterior ÷ ativo', 'Previous-year R&amp;D ÷ assets'), inv:1, c:[[0.0738,3],[0.0947,3]]},
+      {n:L('Estoque de patentes ÷ ativo', 'Patent stock ÷ assets'), inv:1, c:[[0.0414,0],[-0.0069,0]]},
+      {n:L('Estoque de P&amp;D ÷ ativo', 'R&amp;D stock ÷ assets'), inv:1, c:[[0.0050,2],[0.0066,3]]},
+      {n:L('Receita (log)', 'Revenue (log)'), c:[[0.0900,3],[0.0632,3]]},
+      {n:L('Ativo (log)', 'Assets (log)'), c:[[-0.1886,3],[-0.1367,3]]},
+      {n:L('Retorno sobre o investimento', 'Return on investment'), c:[[0.0016,1],[0.0033,3]]},
+      {n:L('EBITDA ÷ receita', 'EBITDA ÷ revenue'), c:[[-0.0016,3],[-0.0025,3]]}],
+      t:L('<h3>Amostra B · 891 empresas</h3><p>Com o P&amp;D na conta, as patentes perderam o efeito, e o gasto em P&amp;D, do ano ou acumulado, passou a andar com Q mais alto. O autor atribui a diferença à amostra menor.</p>', '<h3>Sample B · 891 firms</h3><p>With R&amp;D in the model, patents lost their effect, and R&amp;D spending, yearly or accumulated, went with higher Q. The author attributes the difference to the smaller sample.</p>')},
+    {r2:[0.0591, 0.0718], rows:[
+      {n:L('Citações ÷ patentes, ano anterior', 'Citations ÷ patents, previous year'), inv:1, c:[[0.0362,0],[0.0192,0]]},
+      {n:L('Citações ÷ patentes, estoque', 'Citations ÷ patents, stock'), inv:1, c:[[-0.0263,0],[0.0199,0]]},
+      {n:L('Receita (log)', 'Revenue (log)'), c:[[0.1024,0],[-0.0101,0]]},
+      {n:L('Ativo (log)', 'Assets (log)'), c:[[-0.3586,3],[-0.0533,2]]}],
+      t:L('<h3>Amostra C · 333 empresas</h3><p>As citações, a régua de qualidade, não tiveram efeito claro em nenhum modelo; só o ativo apareceu. Com 472 observações, é a amostra menor, e o autor pede cautela.</p>', '<h3>Sample C · 333 firms</h3><p>Citations, the quality yardstick, had no clear effect in any model; only assets showed up. With 472 observations, it is the smallest sample, and the author urges caution.</p>')}
+  ];
+
+  // Tabela 3.7 (amostra A, quantis 10, 25, 50, 75, 99): [coef, estrelas]
+  var QTH = ['10%', '25%', L('metade', 'half'), '75%', '99%'];
+  var QR = [
+    {inv:[[6.3477,0],[3.6347,3],[8.6252,0],[3.9423,0],[52.4436,0]], tr:[[0.0404,0],[0.0536,3],[0.0638,3],[0.0591,3],[-9.5773,0]], ta:[[-0.0461,3],[-0.0582,3],[-0.1164,3],[-0.1757,3],[5.9830,0]]},
+    {inv:[[0.7083,3],[0.5708,0],[2.7319,0],[0.7100,0],[44.2303,0]], tr:[[0.0396,2],[0.0450,3],[0.0504,3],[0.0624,3],[-8.0837,0]], ta:[[-0.0547,3],[-0.0553,3],[-0.1021,3],[-0.1849,3],[6.1197,0]]}
+  ];
+
+  // Placar (Tabelas 3.6a, 3.7, 3.8a, 3.9, 3.10a, 3.11): estrelas em [FE, RE, q10, q25, q50, q75, q99/96]; 0 = sem efeito claro
+  var SB = [
+    {g:2, n:L('Patentes · A · ano', 'Patents · A · year'), sh:L('Pat. A ano', 'Pat. A yr'), s:[3,3,0,3,0,0,0]},
+    {g:2, n:L('Patentes · A · estoque', 'Patents · A · stock'), sh:L('Pat. A est.', 'Pat. A stock'), s:[3,3,3,0,0,0,0]},
+    {g:2, n:L('Patentes · B · ano', 'Patents · B · year'), sh:L('Pat. B ano', 'Pat. B yr'), s:[0,0,0,0,0,0,0]},
+    {g:2, n:L('Patentes · B · estoque', 'Patents · B · stock'), sh:L('Pat. B est.', 'Pat. B stock'), s:[0,0,0,0,0,0,0]},
+    {g:1, n:L('P&amp;D · B · ano', 'R&amp;D · B · year'), sh:L('P&amp;D B ano', 'R&amp;D B yr'), s:[3,3,1,0,0,0,0]},
+    {g:1, n:L('P&amp;D · B · estoque', 'R&amp;D · B · stock'), sh:L('P&amp;D B est.', 'R&amp;D B stock'), s:[2,3,0,0,0,3,0]},
+    {g:3, n:L('Citações · C · ano', 'Citations · C · year'), sh:L('Cit. C ano', 'Cit. C yr'), s:[0,0,0,0,0,0,0]},
+    {g:3, n:L('Citações · C · estoque', 'Citations · C · stock'), sh:L('Cit. C est.', 'Cit. C stock'), s:[0,0,0,0,0,0,0]}
+  ];
+  var GC = {1:'var(--navy)', 2:'var(--red)', 3:'#5b6f96'};
+
+  // Tabelas 4.6 e 4.7: retorno em excesso médio por mês, cinco degraus (baixo → alto); [pesos iguais, peso pelo valor]
+  var STAIR = [
+    {w:[{v:[-0.0151,-0.0143,-0.0046,0.0113,0.0062], sp:0.0213, st:3, tt:5.11}, {v:[-0.0154,-0.0168,-0.0049,0.0094,0.0052], sp:0.0205, st:3, tt:6.71}]},
+    {w:[{v:[-0.0239,-0.0246,0.0027,0.0146,0.0145], sp:0.0384, st:3, tt:9.64, fix:0.3849}, {v:[-0.0258,-0.0253,0.0007,0.0140,0.0133], sp:0.0391, st:3, tt:13.64}]}
+  ];
+
+  // Tabelas 4.3 e 4.5 (peso pelo valor): [habilidade baixa, alta] × [baixo, médio, alto]; spread = alto/alta − alto/baixa
+  var G23 = [
+    {lo:[[-0.0407,3],[-0.0309,3],[0.0126,3]], hi:[[-0.0151,3],[-0.0130,3],[0.0162,3]], sp:[0.0036,0,0.72],
+      t:L('<p><b>P&amp;D:</b> as duas carteiras de P&amp;D alto renderam acima da aplicação sem risco, e a de habilidade alta só um pouco mais (0,0162 × 0,0126). A diferença, 0,0036, não é clara (t = 0,72). Descontando os fatores de risco, ela só aparece no modelo de 5 fatores, a 10%.</p>', '<p><b>R&amp;D:</b> both high-R&amp;D portfolios returned above the risk-free rate, and the high-ability one only slightly more (0.0162 × 0.0126). The difference, 0.0036, is not clear (t = 0.72). Net of risk factors, it shows up only in the 5-factor model, at 10%.</p>')},
+    {lo:[[-0.0051,0],[-0.0041,0],[-0.0214,3]], hi:[[-0.0078,2],[0.0075,2],[0.0018,0]], sp:[0.0232,3,4.10],
+      t:L('<p><b>Patentes:</b> com muitas patentes, as empresas pouco hábeis em transformá-las em vendas renderam abaixo da aplicação sem risco (−0,0214), e as hábeis ficaram perto de zero (0,0018). A diferença, 0,0232, é clara (t = 4,10), mas vem mais do tombo das pouco hábeis do que de um ganho das hábeis.</p>', '<p><b>Patents:</b> with many patents, firms with little skill at turning them into sales returned below the risk-free rate (−0.0214), while the skilled ones stayed near zero (0.0018). The difference, 0.0232, is clear (t = 4.10), but it comes more from the low-skill firms’ drop than from a gain by the skilled ones.</p>')}
+  ];
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene');
+    var st = makeStage(sc, 330, 150, {ay:'64%', rx:'58deg'});
+    var H = 170;
+    JARS.forEach(function(j, i){
+      var x = 10 + i * 115;
+      if (j.k) st.appendChild(box({w:74, d:74, h:Math.round(H * j.k / j.t), x:x + 3, y:23, c:j.c, label:j.k + ' / ' + j.t}));
+      st.appendChild(box({w:80, d:80, h:H, x:x, y:20, c:j.c, cls:'glass'}));
+      flatLabel(st, (EN ? j.en : j.n) + ' · ' + Math.round(100 * j.k / j.t) + '%', x - 15, 112, 110, 'font-size:15px;');
+    });
+    rotatable(sc, st, -24, 14);
+  })();
+
+  /* ================= 02 · RÉGUAS ================= */
+  (function(){
+    var g = $('chain');
+    CHAIN.forEach(function(c, i){
+      var b = document.createElement('button');
+      b.style.setProperty('--cc', c.c); b.dataset.m = i; if (c.used) b.className = 'used';
+      b.innerHTML = '<em>' + c.k + '</em><b>' + c.n + '</b><small>' + c.s + '</small>';
+      b.addEventListener('click', function(){ show(i); });
+      g.appendChild(b);
+    });
+    function show(i){
+      var c = CHAIN[i];
+      $('chain-panel').innerHTML = '<h3>' + c.n + ' · ' + c.k.toLowerCase() + '</h3><p>' + c.m + '</p><div class="pc-grid"><div class="pro"><h4>' + L('Vantagem', 'Strength') + '</h4>' + c.pro + '</div><div class="con"><h4>' + L('Limite', 'Limitation') + '</h4>' + c.con + '</div></div>';
+      each(g.children, function(b){ b.setAttribute('aria-pressed', +b.dataset.m === i ? 'true' : 'false'); });
+    }
+    show(0);
+    seg('ind-seg', function(m){ $('ind-panel').innerHTML = IND[m]; });
+    $('ind-panel').innerHTML = IND[0];
+  })();
+
+  /* ================= 03 · AMOSTRA ================= */
+  (function(){
+    var box3 = $('cbars');
+    CTY.forEach(function(c){
+      var d = document.createElement('div');
+      if (c[0] === L('Japão', 'Japan')) d.className = 'on';
+      d.innerHTML = '<b>' + c[0] + '</b><i></i><span></span>';
+      box3.appendChild(d);
+    });
+    function draw(m){
+      var vals = CTY.map(function(c){ return m ? c[2] : 100 * c[1] / NFIRMS; });
+      each(box3.children, function(d, i){
+        d.querySelector('i').style.width = (vals[i] / 50 * 100) + '%';
+        d.querySelector('span').textContent = fmt(vals[i], m ? 2 : 1) + '%';
+      });
+      $('cty-note').innerHTML = m
+        ? L('Participação de cada país nas patentes da amostra A ao longo da série (Tabela 3.3). O Japão tem 4,4% das empresas e 11,46% das patentes.', 'Each country’s share of sample A patents over the period (Table 3.3). Japan has 4.4% of the firms and 11.46% of the patents.')
+        : L('Empresas de cada país na amostra A (Anexo 3.1); porcentagens e total de 57 países contados por nós. Os dez da tabela de patentes somam 1.096 das 1.342 empresas.', 'Firms from each country in sample A (Annex 3.1); percentages and the total of 57 countries counted by us. The ten countries in the patent table add up to 1,096 of the 1,342 firms.');
+    }
+    seg('cty-seg', draw); draw(0);
+  })();
+
+  /* ================= 04 · Q DE TOBIN E AMOSTRAS ================= */
+  (function(){
+    var rng = $('q-rng'), line = $('qline'), MAX = 3;
+    QP.forEach(function(p){
+      var m = document.createElement('div'); m.className = 'mk'; m.style.left = (p[0] / MAX * 100) + '%';
+      m.innerHTML = '<span>' + fmt(p[0], 2) + ' · ' + p[1] + '</span>'; line.appendChild(m);
+    });
+    var me = document.createElement('div'); me.className = 'me'; line.appendChild(me);
+    function upd(){
+      var v = +rng.value, q = v / 100;
+      $('q-v').textContent = v;
+      $('q-out').textContent = 'Q = ' + fmt(q, 2);
+      $('q-txt').textContent = q > 1 ? L('a bolsa paga mais do que o balanço mostra', 'the market pays more than the balance sheet shows') : (q < 1 ? L('a bolsa paga menos do que o balanço mostra', 'the market pays less than the balance sheet shows') : L('a bolsa paga o que o balanço mostra', 'the market pays what the balance sheet shows'));
+      me.style.left = Math.min(100, q / MAX * 100) + '%';
+    }
+    rng.addEventListener('input', upd); upd();
+
+    var sc = $('samp-scene');
+    var st = makeStage(sc, 300, 200, {ay:'60%', rx:'56deg'});
+    var W = 250, D = 170, slabs = [];
+    SAMP.forEach(function(s, i){
+      var r = Math.sqrt(s.f / SAMP[0].f), w = Math.round(W * r), d = Math.round(D * r);
+      var b = box({w:w, d:d, h:26, x:(300 - w) / 2, y:(200 - d) / 2, z:i * 30, c:i === 0 ? 'var(--navy)' : (i === 1 ? '#5b6f96' : 'var(--red)'), label:s.n + ' · ' + s.f.toLocaleString(EN ? 'en-US' : 'pt-BR')});
+      b.style.cursor = 'pointer';
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)) show(i); });
+      st.appendChild(b); slabs.push(b);
+      var btn = document.createElement('button'); btn.className = 'btn small ghost'; btn.textContent = L('Amostra ', 'Sample ') + s.n; btn.dataset.m = i;
+      btn.addEventListener('click', function(){ show(i); });
+      $('samp-btns').appendChild(btn);
+    });
+    function show(i){
+      var s = SAMP[i];
+      $('samp-panel').innerHTML = '<h3>' + L('Amostra ', 'Sample ') + s.n + ' · ' + s.f.toLocaleString(EN ? 'en-US' : 'pt-BR') + L(' empresas · ', ' firms · ') + s.p + '</h3><p><b>' + L('Variáveis: ', 'Variables: ') + '</b>' + s.v + '.</p><p>' + s.t + '</p>';
+      slabs.forEach(function(b, j){ b.classList.toggle('active', j === i); b.style.setProperty('--oz', j === i ? '14px' : '0px'); });
+      each($('samp-btns').children, function(b){ b.setAttribute('aria-pressed', +b.dataset.m === i ? 'true' : 'false'); b.classList.toggle('ghost', +b.dataset.m !== i); });
+    }
+    show(0);
+    rotatable(sc, st, -30, 10);
+  })();
+
+  /* ================= 05 · FLUXO E ESTOQUE ================= */
+  (function(){
+    var svg = $('st-svg');
+    var STORIES = [
+      [4,5,4,6,5,5,6,5,6,5],
+      [0,1,0,1,20,1,0,1,0,1],
+      [6,6,7,6,6,0,0,0,0,0]
+    ];
+    var NOTES = [
+      L('Quem patenteia todo ano vê o estoque crescer e se estabilizar: o desgaste de 15% passa a ser reposto pelas patentes novas.', 'A firm that patents every year sees its stock grow and level off: the 15% wear is replaced by new patents.'),
+      L('Um salto só aparece inteiro no fluxo daquele ano, mas no estoque continua pesando por vários anos, cada vez menos.', 'A single leap shows up in full only in that year’s flow, but in the stock it keeps weighing for several years, less and less.'),
+      L('Quem para de inovar zera o fluxo de uma vez, mas o estoque cai devagar: o conhecimento acumulado não some no dia seguinte.', 'A firm that stops innovating drops its flow to zero at once, but the stock declines slowly: accumulated knowledge does not vanish the next day.')
+    ];
+    var x0 = 46, y0 = 260, w = 450, h = 220, n = 10, bw = 26, maxv = 40;
+    function Y(v){ return y0 - v / maxv * h; }
+    function draw(m){
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      svg.appendChild(el('line', {x1:x0, y1:y0, x2:x0 + w, y2:y0, 'class':'ax'}));
+      [0, 10, 20, 30, 40].forEach(function(v){ svg.appendChild(el('text', {x:x0 - 8, y:Y(v) + 4, 'text-anchor':'end', 'class':'lb'}, v)); });
+      var p = STORIES[m], s = 0, pts = [];
+      p.forEach(function(v, i){
+        s = s * 0.85 + v;
+        var cx = x0 + (i + 0.5) * w / n;
+        if (v) svg.appendChild(el('rect', {x:cx - bw / 2, y:Y(v), width:bw, height:y0 - Y(v), rx:3, 'class':'flow'}));
+        pts.push([cx, Y(s)]);
+        svg.appendChild(el('text', {x:cx, y:y0 + 16, 'text-anchor':'middle', 'class':'lb'}, L('ano ', 'yr ') + (i + 1)));
+      });
+      svg.appendChild(el('polyline', {points:pts.map(function(q){ return q.join(','); }).join(' '), 'class':'stk'}));
+      pts.forEach(function(q){ svg.appendChild(el('circle', {cx:q[0], cy:q[1], r:4, 'class':'dot'})); });
+      svg.appendChild(el('text', {x:x0, y:22, 'class':'lb'}, L('patentes', 'patents')));
+      $('st-note').innerHTML = NOTES[m] + ' ' + L('Estoque de cada ano = 85% do estoque anterior + patentes do ano (fórmula da tese, taxa de 15%). Números inventados.', 'Each year’s stock = 85% of the previous stock + that year’s patents (the thesis’s formula, 15% rate). Made-up numbers.');
+    }
+    seg('st-seg', draw); draw(0);
+  })();
+
+  /* ================= 06 · NA MÉDIA ================= */
+  (function(){
+    function cell(c){
+      var v = c[0], s = c[1], cls = !s ? 'ns' : (v > 0 ? 'up' : 'dn');
+      return '<div class="c ' + cls + '">' + (s ? '<b>' + (v > 0 ? '+' : '−') + ' ' + stars(s) + '</b><small>' + f(v) + '</small>' : '<small>' + L('sem efeito claro', 'no clear effect') + '</small>') + '</div>';
+    }
+    function draw(m){
+      var P = PAN[m], h = '<div class="h"></div><div class="h">' + L('compara a empresa com ela mesma', 'compares the firm with itself') + '</div><div class="h">' + L('compara também entre empresas', 'also compares across firms') + '</div>';
+      P.rows.forEach(function(r){ h += '<div class="rl' + (r.inv ? ' inv' : '') + '">' + r.n + '</div>' + cell(r.c[0]) + cell(r.c[1]); });
+      $('pm-grid').innerHTML = h;
+      $('pm-text').innerHTML = P.t;
+      $('r2-txt').innerHTML = L('Quanto das diferenças de Q os modelos explicam: <b>', 'How much of the differences in Q the models explain: <b>') + fmt(100 * P.r2[0], 1) + '% ' + L('e', 'and') + ' ' + fmt(100 * P.r2[1], 1) + '%</b> (R²)';
+      $('r2-bar').style.width = (100 * P.r2[1]) + '%';
+    }
+    seg('pm-seg', draw); draw(0);
+  })();
+
+  /* ================= 07 · POR FAIXAS ================= */
+  (function(){
+    var svg = $('qr-svg'), mode = 0, sel = 1;
+    var x0 = 70, y0 = 30, w = 420, h = 220, lo = -0.2, hi = 0.08;
+    function X(i){ return x0 + (i + 0.5) * w / 4; }
+    function Y(v){ return y0 + (hi - v) / (hi - lo) * h; }
+    function draw(){
+      var D = QR[mode];
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      for (var i = 0; i < 4; i++){
+        var r = el('rect', {x:x0 + i * w / 4, y:y0 - 10, width:w / 4, height:h + 36, 'class':'col' + (i === sel ? ' sel' : '')});
+        (function(k){ r.addEventListener('click', function(){ sel = k; draw(); }); })(i);
+        svg.appendChild(r);
+      }
+      [-0.2, -0.15, -0.1, -0.05, 0, 0.05].forEach(function(v){
+        svg.appendChild(el('line', {x1:x0, y1:Y(v), x2:x0 + w, y2:Y(v), 'class':v === 0 ? 'zero' : 'ax'}));
+        svg.appendChild(el('text', {x:x0 - 8, y:Y(v) + 4, 'text-anchor':'end', 'class':'lb'}, (v > 0 ? '+' : '') + fmt(v, 2)));
+      });
+      for (i = 0; i < 4; i++) svg.appendChild(el('text', {x:X(i), y:y0 + h + 20, 'text-anchor':'middle', 'class':'lb', 'font-weight':i === sel ? 700 : 400}, L('faixa ', 'band ') + QTH[i]));
+      ['tr', 'ta'].forEach(function(k){
+        var pts = [];
+        for (var j = 0; j < 4; j++) pts.push(X(j) + ',' + Y(D[k][j][0]));
+        svg.appendChild(el('polyline', {points:pts.join(' '), 'class':k}));
+        for (j = 0; j < 4; j++) svg.appendChild(el('circle', {cx:X(j), cy:Y(D[k][j][0]), r:6, fill:D[k][j][1] ? (k === 'tr' ? 'var(--navy)' : 'var(--red)') : '#fff', stroke:k === 'tr' ? 'var(--navy)' : 'var(--red)', 'stroke-width':2.5}));
+      });
+      lamps(); panel();
+    }
+    function lamps(){
+      var g = $('lamps'), D = QR[mode];
+      g.innerHTML = '';
+      QTH.forEach(function(q, i){
+        var c = D.inv[i], b = document.createElement('button');
+        b.className = c[1] ? 'lit' : '';
+        b.setAttribute('aria-pressed', i === sel ? 'true' : 'false');
+        b.innerHTML = '<b>' + q + '</b>' + (c[1] ? L('patente: efeito ', 'patent: effect ') + stars(c[1]) : L('patente: sem efeito claro', 'patent: no clear effect'));
+        b.addEventListener('click', function(){ sel = i; draw(); });
+        g.appendChild(b);
+      });
+    }
+    function cl(c){ return c[1] ? f(c[0]) + ' ' + stars(c[1]) : f(c[0]) + ' (' + L('sem efeito claro', 'no clear effect') + ')'; }
+    function panel(){
+      var D = QR[mode];
+      var head = sel === 4 ? L('Faixa de 99%: as empresas de Q mais alto', '99% band: the highest-Q firms') : (L('Faixa de ', 'Band ') + QTH[sel] + (sel === 0 ? L(': Q baixo', ': low Q') : (sel === 3 ? L(': Q alto', ': high Q') : '')));
+      var txt = '<h3>' + head + '</h3><p>' + (mode ? L('Estoque de patentes ÷ ativo', 'Patent stock ÷ assets') : L('Patentes do ano anterior ÷ ativo', 'Previous-year patents ÷ assets')) + ': <b>' + cl(D.inv[sel]) + '</b><br>' +
+        L('Receita (log): ', 'Revenue (log): ') + cl(D.tr[sel]) + '<br>' + L('Ativo (log): ', 'Assets (log): ') + cl(D.ta[sel]) + '</p>';
+      if (sel === 4) txt += '<p>' + L('Aqui nada teve efeito claro, e os coeficientes ficam enormes e instáveis.', 'Here nothing had a clear effect, and the coefficients become huge and unstable.') + '</p>';
+      $('qr-panel').innerHTML = txt;
+    }
+    seg('qr-seg', function(m){ mode = m; draw(); });
+    draw();
+  })();
+
+  /* ================= 08 · PLACAR ================= */
+  (function(){
+    var g = $('sb'), filt = 0;
+    var cols = [L('efeitos fixos', 'fixed effects'), L('efeitos aleatórios', 'random effects'), '10%', '25%', L('metade', 'half'), '75%', '99%'];
+    var colsh = [L('fixos', 'fixed'), L('aleat.', 'rand.'), '10', '25', '50', '75', '99'];
+    function draw(){
+      var h = '<div class="h"></div><div class="h grp">' + L('na média', 'on average') + '</div><div class="h grp2">' + L('por faixa de Q', 'by Q band') + '</div><div class="h"></div>';
+      cols.forEach(function(c, i){ h += '<div class="h"><span class="lf">' + c + '</span><span class="ls">' + colsh[i] + '</span></div>'; });
+      var lit = 0, tot = 0;
+      SB.forEach(function(r){
+        var on = !filt || filt === r.g;
+        h += '<div class="rl" style="--rc:' + GC[r.g] + (on ? '' : '; opacity:.35') + '"><i></i><span class="lf">' + r.n + '</span><span class="ls">' + r.sh + '</span></div>';
+        r.s.forEach(function(s){
+          if (on){ tot++; if (s) lit++; }
+          h += '<div class="c ' + (s ? 'on' : 'off') + (on ? '' : ' dim') + '" style="--rc:' + GC[r.g] + '">' + (s ? stars(s) : '·') + '</div>';
+        });
+      });
+      g.innerHTML = h;
+      $('tally-n').textContent = lit + ' / ' + tot;
+      $('tally-t').textContent = L('testes com efeito claro, todos para cima', 'tests with a clear effect, all upward');
+    }
+    seg('sb-seg', function(m){ filt = m; draw(); });
+    draw();
+  })();
+
+  /* ================= 09 · HABILIDADE ================= */
+  (function(){
+    var svg = $('hb-svg'), rng = $('hb-rng');
+    var RD = [8, 10, 9, 12, 11, 13, 12, 14];
+    var x0 = 50, y0 = 240, w = 440, h = 190, n = 8;
+    function draw(){
+      var a = +rng.value / 10;
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      svg.appendChild(el('line', {x1:x0, y1:y0, x2:x0 + w, y2:y0, 'class':'ax'}));
+      var sales = 100, pts = [];
+      for (var i = 0; i < n; i++){
+        var cx = x0 + (i + 0.5) * w / n;
+        svg.appendChild(el('rect', {x:cx - 14, y:y0 - RD[i] * 4, width:28, height:RD[i] * 4, rx:3, 'class':'rd'}));
+        if (i > 0) sales = sales * (1 + 0.004 * a * (RD[i - 1] + (i > 1 ? RD[i - 2] : 0)));
+        pts.push([cx, y0 - 30 - (sales - 100) * 1.35]);
+        svg.appendChild(el('text', {x:cx, y:y0 + 16, 'text-anchor':'middle', 'class':'lb'}, L('ano ', 'yr ') + (i + 1)));
+      }
+      svg.appendChild(el('polyline', {points:pts.map(function(q){ return q.join(','); }).join(' '), 'class':'sl'}));
+      pts.forEach(function(q){ svg.appendChild(el('circle', {cx:q[0], cy:q[1], r:4, fill:'var(--red)'})); });
+      svg.appendChild(el('text', {x:x0, y:22, 'class':'lb'}, L('barras: P&D do ano · linha: vendas', 'bars: R&D of the year · line: sales')));
+      var cls = a <= 0.3 ? 'lo' : (a >= 0.7 ? 'hi' : 'mi');
+      var lab = {lo:L('habilidade baixa', 'low ability'), mi:L('habilidade média', 'medium ability'), hi:L('habilidade alta', 'high ability')}[cls];
+      $('hb-out').innerHTML = '<span class="tagh ' + cls + '">' + lab + '</span> ' + L('mesmo P&amp;D, vendas ', 'same R&amp;D, sales ') + (a ? L('crescem ', 'grow ') + fmt((sales / 100 - 1) * 100, 0) + L('% em 8 anos', '% in 8 years') : L('não respondem', 'do not respond'));
+    }
+    rng.addEventListener('input', draw); draw();
+  })();
+
+  /* ================= 10 · ESCADAS ================= */
+  (function(){
+    var sc = $('stair-scene'), mode = 0, wt = 0;
+    var st = makeStage(sc, 400, 120, {ay:'50%', rx:'72deg'});
+    var K = 4400;
+    var plane = document.createElement('div'); plane.className = 'zplane';
+    plane.style.cssText = 'left:-10px; top:-10px; width:420px; height:140px; --zz:0px;';
+    st.appendChild(plane);
+    var bars = [];
+    for (var i = 0; i < 5; i++){ var b = box({w:56, d:70, h:10, x:10 + i * 78, y:25, c:'var(--navy)'}); st.appendChild(b); bars.push(b); }
+    var lbl = [L('1 · menor', '1 · lowest'), '2', '3', '4', L('5 · maior', '5 · highest')];
+    for (i = 0; i < 5; i++) flatLabel(st, lbl[i], i * 78, 102, 76, 'font-size:14px;');
+    function draw(){
+      var D = STAIR[mode].w[wt];
+      D.v.forEach(function(v, i){
+        var hh = Math.max(2, Math.round(Math.abs(v) * K));
+        var b = bars[i];
+        b.style.setProperty('--h', hh + 'px');
+        b.style.setProperty('--z', (v < 0 ? -hh : 0) + 'px');
+        b.style.setProperty('--c', v < 0 ? 'var(--red)' : (mode ? '#5b6f96' : 'var(--navy)'));
+      });
+      $('es-qv').innerHTML = D.v.map(function(v, i){ return '<div><b class="' + (v < 0 ? 'neg' : '') + '">' + f(v) + '</b>' + lbl[i] + '</div>'; }).join('');
+      $('es-sp').textContent = '+' + fmt(D.sp, 4) + ' ' + stars(D.st);
+      $('es-sp-t').innerHTML = L('diferença por mês entre o degrau de cima e o de baixo (t = ', 'monthly difference between the top and bottom steps (t = ') + fmt(D.tt, 2) + ')';
+      $('es-note').innerHTML = (mode ? L('Tabela 4.7', 'Table 4.7') : L('Tabela 4.6', 'Table 4.6')) + L(': retorno em excesso médio por mês de cada degrau, como impresso (a tese não informa a unidade). Abaixo do plano tracejado = rendeu menos que a aplicação sem risco. “Pesos iguais” trata todas as ações igual; “peso pelo valor” dá mais peso às empresas maiores na bolsa.', ': average monthly excess return of each step, as printed (the thesis does not state the unit). Below the dashed plane = returned less than the risk-free rate. “Equal weights” treats every share the same; “value weights” gives more weight to firms with larger market value.') +
+        (D.fix ? L(' A tabela imprime a diferença como 0,3849; pelas colunas, ela é 0,0384 (conta nossa).', ' The table prints the difference as 0.3849; from the columns, it is 0.0384 (our calculation).') : '');
+    }
+    seg('es-seg', function(m){ mode = m; draw(); });
+    seg('es-w', function(m){ wt = m; draw(); });
+    draw();
+    rotatable(sc, st, -18, 10);
+  })();
+
+  /* ================= 11 · O INESPERADO ================= */
+  (function(){
+    var g = $('g23'), K = 900;
+    function cell(c){
+      var v = c[0], hpx = Math.min(36, Math.abs(v) * K);
+      return '<div class="c"><div class="zl"></div><div class="bar ' + (v >= 0 ? 'p' : 'n') + '" style="height:' + hpx + 'px"></div><span class="' + (v >= 0 ? '' : 'top') + '">' + f(v) + stars(c[1]) + '</span></div>';
+    }
+    function draw(m){
+      var D = G23[m], lv = m ? [L('poucas', 'few'), L('médias', 'medium'), L('muitas', 'many')] : [L('baixo', 'low'), L('médio', 'medium'), L('alto', 'high')];
+      var h = '<div class="h"></div>' + lv.map(function(x){ return '<div class="h">' + (m ? L('patentes ', 'patents ') : 'P&amp;D ') + x + '</div>'; }).join('');
+      h += '<div class="rl"><span class="lf">' + L('Habilidade baixa', 'Low ability') + '</span><span class="ls">' + L('Hab. baixa', 'Low abil.') + '</span></div>' + D.lo.map(cell).join('');
+      h += '<div class="rl"><span class="lf">' + L('Habilidade alta', 'High ability') + '</span><span class="ls">' + L('Hab. alta', 'High abil.') + '</span></div>' + D.hi.map(cell).join('');
+      g.innerHTML = h;
+      $('g23-txt').innerHTML = D.t;
+    }
+    seg('g23-seg', draw); draw(0);
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
