@@ -1,0 +1,889 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Credit ratings and corporate debt · PPGA Interativo</title>
+<meta name="description" content="The master’s dissertation by Daniel Porfírio de Castro Vieira (PPGA Mackenzie) on whether Brazilian firms’ credit ratings explain how much debt they take on, explained in 12 interactive screens.">
+<link rel="alternate" hreflang="pt-BR" href="../../../dissertacoes/2017-vieira-rating-credito-divida/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><path d=%22M7 22 L9 11 L13 16 L16 9 L19 16 L23 11 L25 22 Z%22 fill=%22white%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/motor.css">
+<link rel="stylesheet" href="../../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  :root{
+    --inv:var(--navy);     /* grau de investimento */
+    --spec:var(--red);     /* grau especulativo */
+    --dflt:#334155;        /* calote */
+    --debt:#b45309;        /* dívida */
+    --weak:#b45309;
+  }
+  .inv-t{color:var(--inv); font-weight:700;} .spec-t{color:var(--spec); font-weight:700;} .debt-t{color:var(--debt); font-weight:700;}
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .ill{display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--weak); border:1px solid color-mix(in srgb, var(--weak) 45%, white); border-radius:999px; padding:2px 9px; margin-bottom:6px;}
+  .sw{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 10px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-size:.8rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px 16px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:4px;}
+  .panel p{margin:0 0 6px; font-size:.86rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .ctrls{display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; margin:4px 0 10px;}
+  .zleg{display:flex; flex-wrap:wrap; justify-content:center; gap:4px 16px; font-size:.78rem; color:var(--ink-2); margin-top:2px;}
+  .range{width:100%; accent-color:var(--red);}
+  .sl{display:grid; gap:4px; margin:6px 0 8px;}
+  .sl label{font-size:.84rem; color:var(--ink-2);}
+  .sl label b{color:var(--ink);}
+  svg text{font-family:var(--sans);}
+  .slab.dim > i{opacity:.3;}
+  .slab .f-top .top-label{text-shadow:0 1px 2px rgb(15 23 42 / .35);}
+  .floor-label{font-size:11px;}
+  .floor-label.on{color:var(--red); font-weight:700;}
+  @media (max-width:600px){
+    #sc-svg text, #us-svg text, #nd-svg text, #sec-svg text{font-size:15px !important;}
+    #sc-svg text.s, #us-svg text.s, #nd-svg text.s, #sec-svg text.s{font-size:13px !important;}
+    #ts-svg text{font-size:21px !important;}
+  }
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(1.7rem, 2.8vw, 2.2rem);}
+  #capa .sub{font-size:1rem;}
+  .meta{display:grid; gap:2px; margin-top:16px; font-size:.86rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.76rem; color:var(--muted); margin-top:4px; text-align:center; line-height:1.4;}
+  #cap-read{text-align:center; font-size:.92rem; color:var(--ink-2); margin:4px 0 0; font-variant-numeric:tabular-nums; min-height:1.5em;}
+  #cap-read b{color:var(--ink);}
+  #hero-scene .slab{cursor:pointer;}
+
+  /* ---------- 02 · Escala ---------- */
+  #sc-svg{width:100%; display:block; max-width:420px; margin:0 auto; cursor:pointer;}
+  #sc-panel{margin-top:8px; min-height:132px;}
+  .eq{display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; margin-top:6px;}
+  .eq div{background:var(--bg-soft); border:1px solid var(--border); border-radius:9px; padding:5px 8px; font-size:.72rem; color:var(--muted); line-height:1.3;}
+  .eq b{display:block; font-size:.9rem; color:var(--ink);}
+
+  /* ---------- 03 · Degrau ---------- */
+  .notch-row{display:flex; flex-wrap:wrap; gap:5px; margin:6px 0 10px;}
+  .notch-row button{border:1px solid var(--border); background:var(--card); border-radius:9px; padding:7px 10px; font-size:.82rem; font-weight:700; cursor:pointer; color:var(--ink-2); min-width:52px;}
+  .notch-row button.i{border-bottom:3px solid var(--inv);} .notch-row button.s{border-bottom:3px solid var(--spec);}
+  .notch-row button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .dum{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:8px;}
+  .dum div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 10px; font-size:.74rem; color:var(--ink-2); line-height:1.3; text-align:center;}
+  .dum b{display:block; font-family:var(--serif); font-size:1.5rem; color:var(--neutral);}
+  .dum div.on{border-color:var(--ink);} .dum div.on b{color:var(--ink);}
+  #dg-panel{margin-top:10px; min-height:118px;}
+
+  /* ---------- 04 · Régua ---------- */
+  #nd-svg{width:100%; display:block;}
+  #nd-out{font-size:.9rem; color:var(--ink-2); margin-top:6px; min-height:3em;}
+  #nd-out b{color:var(--ink);}
+
+  /* ---------- 05 · Apostas ---------- */
+  .bets{display:grid; gap:9px;}
+  .bcard{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:9px 14px; border-left:5px solid var(--bc, var(--ink));}
+  .bcard h3{font-size:.93rem; margin-bottom:3px; color:var(--ink);}
+  .bcard p{font-size:.78rem; margin:0 0 6px; color:var(--ink-2); line-height:1.4;}
+  .bcard p b{color:var(--ink);}
+  .opts{display:flex; flex-wrap:wrap; gap:6px;}
+  .opts button{border:1px solid var(--border); background:var(--bg-soft); border-radius:9px; padding:6px 11px; font-size:.8rem; cursor:pointer; color:var(--ink-2); font-weight:600;}
+  .opts button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+
+  /* ---------- 06 · Amostra ---------- */
+  #sec-svg{width:100%; display:block;}
+  .facts{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:12px;}
+  .facts div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 11px; font-size:.74rem; color:var(--ink-2); line-height:1.3;}
+  .facts b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink);}
+  @media (max-width:600px){ .facts{grid-template-columns:1fr 1fr;} }
+
+  /* ---------- 07 · Nota e dívida ---------- */
+  #lv-svg{width:100%; display:block;}
+  #lv-out{font-size:.86rem; color:var(--ink-2); margin-top:6px; min-height:2.6em;}
+  #lv-out b{color:var(--ink);}
+
+  /* ---------- 08 · Brasil e EUA ---------- */
+  #us-svg{width:100%; display:block;}
+  #us-panel{margin-top:8px; min-height:104px;}
+
+  /* ---------- 09 · 36 testes ---------- */
+  #ts-svg{width:100%; display:block; cursor:pointer;}
+  #ts-panel{margin-top:8px; min-height:112px;}
+  .coin{display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; margin-top:10px; font-size:.84rem; color:var(--ink-2);}
+  .coin button{border:1px solid var(--ink); background:var(--ink); color:#fff; border-radius:999px; padding:7px 14px; font-size:.8rem; font-weight:600; cursor:pointer;}
+  .coin b{color:var(--ink);}
+  #coin-hist{display:flex; flex-wrap:wrap; gap:4px; margin-top:6px;}
+  #coin-hist span{display:inline-block; min-width:26px; text-align:center; font-size:.76rem; font-weight:700; border-radius:7px; padding:3px 6px; background:var(--bg-soft); border:1px solid var(--border); color:var(--ink-2);}
+
+  /* ---------- 10 · Placar ---------- */
+  .board{display:grid; gap:9px;}
+  .hrow{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:9px 14px; display:grid; grid-template-columns:1fr auto; gap:4px 14px; align-items:center; border-left:5px solid var(--neutral);}
+  .hrow h3{font-size:.93rem; margin:0; color:var(--ink);}
+  .hrow p{grid-column:1 / -1; font-size:.78rem; margin:0; color:var(--ink-2); line-height:1.4;}
+  .verd{font-size:.7rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; border-radius:999px; padding:4px 10px; white-space:nowrap; background:#e2e8f0; color:var(--muted);}
+  .mybet{font-size:.76rem; color:var(--muted);} .mybet b{color:var(--ink);}
+  .score{font-size:.86rem; color:var(--ink-2); margin-top:8px;} .score b{font-family:var(--serif); font-size:1.1rem; color:var(--ink);}
+
+  /* ---------- 11 · O que pesou ---------- */
+  #pw-panel{margin-top:8px; min-height:100px;}
+  .slab.miss > i{--face:color-mix(in srgb, #94a3b8 10%, transparent); box-shadow:inset 0 0 0 1px #cbd5e1;}
+
+  /* ---------- 12 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:10px;}
+  @media (min-width:760px){ .cards4{grid-template-columns:repeat(2, 1fr);} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:10px 13px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:3px; font-size:.76rem; line-height:1.4; color:var(--ink-2);}
+  .pcard em{font-style:normal; font-size:.7rem; color:var(--muted);}
+  .end{display:grid; grid-template-columns:1fr; gap:20px; margin-top:14px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:36px;} }
+  .end h3{font-size:1.04rem; margin-bottom:4px;}
+  .limits{display:grid; gap:5px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 11px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.77rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.78rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 13px; line-height:1.5; margin-top:6px;}
+  .cite b{color:var(--ink);}
+  .also{font-size:.78rem; margin-top:8px; color:var(--ink-2);}
+  .also a{color:var(--red); font-weight:600;}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-meta="../../../dissertacoes/2017-vieira-rating-credito-divida/meta.json">
+
+<header class="topbar">
+  <a class="brand" href="../../../en/"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../../dissertacoes/2017-vieira-rating-credito-divida/" hreflang="pt-BR" lang="pt-BR" title="Ler em português"><img class="lang-flag" src="../../../assets/bandeira-br.svg" width="17" height="12" alt="">PT</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Previous screen">↑</button>
+    <button class="nav-btn" id="next" aria-label="Next screen">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Screen navigation"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Start">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Master’s dissertation · PPGA Mackenzie · 2017</div>
+      <h1 class="rv" style="--d:.1s">Credit ratings barely explained how much debt Brazilian firms took on</h1>
+      <p class="sub rv" style="--d:.2s">Agencies such as S&amp;P give firms a grade, from AAA to D, on how likely they are to repay what they owe. Studies in the US say firms keep that grade in mind when they decide to borrow. The dissertation tested the idea on <strong>74 Brazilian firms</strong> from 2000 to 2016: of the 36 measures tied to the rating, only one passed the usual test, and none of the four hypotheses held. Explained in 12 screens.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Author:</b> Daniel Porfírio de Castro Vieira</span>
+        <span><b>Advisor:</b> Prof. Dr. Michele Nascimento Jucá</span>
+        <span><b>Program:</b> Graduate Program in Business Administration (PPGA) · Mackenzie Presbyterian University</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#escala">Start →</a>
+        <a class="btn ghost" href="#testes">Go straight to the result</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="520x300" role="img" aria-label="A staircase of 16 columns, one per credit rating, from A to D. Height is the number of balance sheets with that rating. The five investment-grade ratings, in blue, add up to 178 balance sheets; the eleven speculative or default ratings, in red, add up to 507. The tallest columns, BB, BB+ and BBB−, sit right next to the border between the two groups"></div></div>
+      <p id="cap-read" aria-live="polite"></p>
+      <div class="zleg"><span><span class="sw" style="background:var(--inv)"></span>investment grade</span><span><span class="sw" style="background:var(--spec)"></span>speculative grade</span><span><span class="sw" style="background:var(--dflt)"></span>default</span></div>
+      <div class="cap-legend">Annual balance sheets with each S&amp;P rating, 2000 to 2016 (Table 4). Tap a column; drag to rotate.</div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">Closest UN Sustainable Development Goals</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://sdgs.un.org/goals/goal8" target="_blank" rel="noopener" title="SDG 8 · Decent Work and Economic Growth: Shows whether Brazilian firms’ credit ratings weigh on their access to money from banks and capital markets."><b>8</b>Decent Work and Economic Growth</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">scroll<span></span></div>
+</section>
+
+<!-- 02 · ESCALA -->
+<section class="slide" id="escala" data-label="The rating">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> The topic</div>
+      <h2 class="rv" style="--d:.1s">A credit rating is a report card on how likely a firm is to repay what it owes</h2>
+      <p class="lede rv" style="--d:.15s">The three big agencies (S&amp;P, Fitch and Moody’s) use letters: AAA is minimal risk; D is debt already unpaid. From BBB up, a firm is <b class="inv-t">investment grade</b>; below it, <b class="spec-t">speculative grade</b>.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">The + or − sign says whether the firm sits at the top or the bottom of the letter. The border matters: in regulated markets, pension funds, insurers and banks are required to invest in investment-grade firms. Tap a letter.</p>
+      <p class="note rv" style="--d:.25s">Source: sections 1.1 and 2.1.5 and Chart 4 (matching the S&amp;P, Fitch and Moody’s scales). The dissertation uses S&amp;P’s long-term rating.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <svg id="sc-svg" viewBox="0 0 420 330" role="img" aria-label="A ten-step ladder, from AAA at the top to D at the bottom. The top four, AAA to BBB, are investment grade; BB to C, speculative grade; D is default"></svg>
+      <div class="panel" id="sc-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · DEGRAU -->
+<section class="slide" id="degrau" data-label="The idea">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> The theory</div>
+      <h2 class="rv" style="--d:.1s">A firm on the edge of moving up or down a notch would avoid taking on more debt</h2>
+      <p class="lede rv" style="--d:.15s">Changing rating changes the cost of money. So, according to studies of US firms (Kisgen, 2006), a firm with a + or − on its rating, close to changing notch, issues less debt: to avoid falling, or to manage to climb.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">The study tags each firm, each year, with three yes-or-no flags. Pick a rating and see how it enters the measure.</p>
+      <p class="note rv" style="--d:.25s">Source: sections 1.1, 2.1.5.6 to 2.1.5.8 and Table 3 (variables POM, PLUS and MINUS). The text for each rating is our illustration of the theory.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <span class="ill">Illustration of the theory</span>
+      <div class="notch-row" id="dg-row"></div>
+      <div class="dum" id="dg-dum"></div>
+      <div class="panel" id="dg-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · RÉGUA DA DÍVIDA -->
+<section class="slide" id="regua" data-label="The debt measure">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> What is measured</div>
+      <h2 class="rv" style="--d:.1s">The question is whether, in a given year, the firm leaned towards debt or towards owners’ money</h2>
+      <p class="lede rv" style="--d:.15s">The measure is net debt issuance: how much debenture debt grew, minus how much owners’ equity grew, over total assets. Positive: the firm leaned towards <b class="debt-t">debt</b>. Negative: towards equity.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">A debenture is a debt security that the firm sells to investors in the market. Move the two changes in a firm with R$ 100 of assets.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="sl"><label for="nd-d">Debenture debt changed: <b id="nd-dv"></b></label><input class="range" id="nd-d" type="range" min="-20" max="20" step="1" value="6"></div>
+      <div class="sl"><label for="nd-e">Owners’ equity changed: <b id="nd-ev"></b></label><input class="range" id="nd-e" type="range" min="-20" max="20" step="1" value="2"></div>
+      <svg id="nd-svg" viewBox="0 0 560 170" role="img" aria-label="A scale from −0.40 to +0.40 with the simulated firm’s net issuance, next to the averages for Brazilian firms (−0.04) and US firms (−0.01)"></svg>
+      <div id="nd-out" aria-live="polite"></div>
+      <p class="note">Source: Table 3 (formula) and Table 7 (averages: 674 Brazilian balance sheets; nearly 12,000 US ones, from Kemper and Rao, 2013). The simulated firm is illustrative. On average, Brazilian firms came out slightly negative: equity grew a little more than debt.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · APOSTAS -->
+<section class="slide" id="apostas" data-label="The bets">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> The hypotheses</div>
+      <h2 class="rv" style="--d:.1s">Four bets on when the rating would matter most</h2>
+      <p class="lede rv" style="--d:.15s">The dissertation repeated in Brazil the tests of a study of US firms (Kemper and Rao, 2013), which in turn revisited Kisgen’s. Each bet says in which firms the rating should move debt the most.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">Place a bet on each before moving on: the scoreboard is on screen 10.</p>
+      <p class="note rv" style="--d:.25s">Source: section 1.3, section 2.1.5.8 and Chart 6. Tobin’s Q: the firm’s market value over its assets; the higher it is, the more the market bets on its growth.</p>
+    </div>
+    <div class="bets rv" style="--d:.25s" id="bets"></div>
+  </div>
+</section>
+
+<!-- 06 · AMOSTRA -->
+<section class="slide" id="amostra" data-label="The sample">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Who was included</div>
+      <h2 class="rv" style="--d:.1s">74 firms rated by S&amp;P; a third of the balance sheets came from utilities</h2>
+      <p class="lede rv" style="--d:.15s">The study included non-financial firms listed on the Brazilian stock exchange (B3) that issued debentures and were rated by S&amp;P. Data came from the Capital IQ and Bloomberg databases.</p>
+      <div class="facts rv" style="--d:.2s">
+        <div><b>74</b>firms</div>
+        <div><b>685</b>annual balance sheets with a rating</div>
+        <div><b>17</b>years, 2000 to 2016</div>
+      </div>
+      <p class="note rv" style="--d:.25s">Source: section 3.1 and Table 4. Not every firm appears in every year (unbalanced panel). Sectors follow Bloomberg’s classification. 247 of the 685 balance sheets (36%) were on the two notches next to the border, BBB− and BB+ (our count).</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="ctrls" style="justify-content:center"><div class="seg" id="sec-seg"></div></div>
+      <svg id="sec-svg" viewBox="0 0 560 330" role="img" aria-label="Horizontal bars by sector: utilities lead with 228 balance sheets and 23 firms; then industrials, materials and consumer discretionary"></svg>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · NOTA E DÍVIDA -->
+<section class="slide" id="perfil" data-label="Rating and debt">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> First look</div>
+      <h2 class="rv" style="--d:.1s">Within investment grade, the lower the rating, the more debt; below the border, the pattern fades</h2>
+      <p class="lede rv" style="--d:.15s">The average of three firm characteristics by rating. Investment-grade firms owed less, earned more and were larger. In speculative grade, the averages jump from one notch to the next.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">Watch the ratings with few balance sheets (pale bars): an average of 1 to 7 balance sheets is fragile. Switch the characteristic.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="ctrls" style="justify-content:center"><div class="seg" id="lv-seg"></div></div>
+      <svg id="lv-svg" viewBox="0 0 560 290" role="img" aria-label="Sixteen bars, one per rating from A to D, with the average of the chosen characteristic; ratings with fewer than 10 balance sheets are shown pale"></svg>
+      <div id="lv-out" aria-live="polite"></div>
+      <p class="note">Source: Table 6 (averages by rating) and Table 4 (number of balance sheets). Leverage = debt ÷ (debt + equity); profitability = EBITDA ÷ assets; size = logarithm of sales. Averages only, with no statistical test. The CCC rating has no leverage value in the table.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · BRASIL E EUA -->
+<section class="slide" id="eua" data-label="Brazil and the US">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> The comparison</div>
+      <h2 class="rv" style="--d:.1s">Brazilian firms owed less than US firms: 21% of their capital, against 45%</h2>
+      <p class="lede rv" style="--d:.15s">The dissertation set Brazilian averages next to those of the US study it repeats. Profit and Tobin’s Q were similar; debt was not.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">The dissertation’s explanation: in the US there is a large market for selling debt securities; in Brazil, firms depend more on banks. Tap a measure.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <svg id="us-svg" viewBox="0 0 560 260" role="img" aria-label="Pairs of bars with the averages of six measures for Brazilian and US firms; the biggest gap is leverage, 0.21 against 0.45"></svg>
+      <div class="zleg"><span><span class="sw" style="background:var(--navy)"></span>Brazil (this dissertation)</span><span><span class="sw" style="background:#94a3b8"></span>US (Kemper and Rao, 2013)</span></div>
+      <div class="panel" id="us-panel" aria-live="polite"></div>
+      <p class="note">Source: Table 7 and section 4.2. Averages of 633 to 685 Brazilian balance sheets and 11,000 to 22,000 US ones. The explanations are the dissertation’s.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · 36 TESTES -->
+<section class="slide" id="testes" data-label="The result">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> The result</div>
+      <h2 class="rv" style="--d:.1s">Of the 36 measures tied to the rating, only one passed the usual bar</h2>
+      <p class="lede rv" style="--d:.15s">Across 18 regressions, the rating entered in 36 ways: having a + or −, having only +, having only −, alone or combined with the need for outside money, average market debt or growth prospects. Each square is one of them.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">At the usual bar (p below 0.05), one passed. Loosening it to 0.10, three more. But with 36 attempts, chance also hits a few: draw and see.</p>
+      <div class="coin rv" style="--d:.25s"><button id="coin-btn" type="button">Draw 36 tests with no effect at all</button><span id="coin-out" aria-live="polite"></span></div>
+      <div id="coin-hist" aria-hidden="true"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="ctrls" style="justify-content:center"><div class="seg" id="ts-seg"></div></div>
+      <svg id="ts-svg" viewBox="0 0 560 262" role="img" aria-label="36 squares in four groups, one per hypothesis. Only one, in the first hypothesis group, passes the 5% bar; three others pass only the 10% bar"></svg>
+      <div class="panel" id="ts-panel" aria-live="polite"></div>
+      <p class="note">Source: Tables 10 to 14 (p in brackets). Our count. The draw assumes 36 independent tests with no effect; it is our yardstick for chance, which the dissertation does not use.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · PLACAR -->
+<section class="slide" id="placar" data-label="The scoreboard">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> The scoreboard</div>
+      <h2 class="rv" style="--d:.1s">None of the four bets held, as in the study of US firms</h2>
+      <p class="lede rv" style="--d:.15s">The dissertation concludes that one cannot claim that credit ratings determine Brazilian firms’ debt. Kemper and Rao (2013) did not confirm any of the four in the US either.</p>
+      <div class="score rv" style="--d:.2s" id="pl-score"></div>
+      <p class="note rv" style="--d:.25s">Source: Table 15 and section 4.5. The explanations on each row are the dissertation’s.</p>
+    </div>
+    <div class="board rv" style="--d:.25s" id="pl-board" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- 11 · O QUE PESOU -->
+<section class="slide" id="pesou" data-label="What mattered">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> What mattered</div>
+      <h2 class="rv" style="--d:.1s">What went with debt was how indebted the firm already was, in all 18 models</h2>
+      <p class="lede rv" style="--d:.15s">Apart from the rating, leverage came out positive and clear in every model. Average market debt came out clear, but in the opposite direction to the one expected. Profit and size barely showed up.</p>
+      <div class="chips rv" style="--d:.2s" id="pw-chips"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="fit-wrap"><div class="scene draggable" id="pw-scene" data-fit="470x230" role="img" aria-label="A row of 18 blocks, one per model. For leverage, all 18 are tall and orange: positive and clear in every one. For other measures, most are flat and grey, and the models where the measure was not included are left empty"></div></div>
+      <div class="zleg"><span><span class="sw" style="background:var(--debt)"></span>more debt issuance</span><span><span class="sw" style="background:var(--navy)"></span>less issuance</span><span><span class="sw" style="background:#475569"></span>sign not readable</span><span><span class="sw" style="background:#cbd5e1"></span>no clear relation</span></div>
+      <div class="panel" id="pw-panel" aria-live="polite"></div>
+      <p class="note">Source: Tables 10 to 14. Height: tall if p &lt; 0.05, medium if p &lt; 0.10, flat otherwise. Our counts. Drag to rotate.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="In practice and credits">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> So what?</div>
+    <h2 class="rv" style="--d:.1s">In Brazil, the rating describes risk but did not seem to steer debt</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>For those who decide on debt</h3><ul><li>In the sample, being close to a rating change did not change how much a firm issued. <em>(screens 09 and 10)</em></li><li>The dissertation notes there are other ways to look after the rating: mergers, asset sales, operational cuts. <em>(dissertation)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>For lenders</h3><ul><li>Investment-grade firms owed less and earned more, on average. <em>(screen 07)</em></li><li>Three in four balance sheets were speculative grade, most of them in the BB letter, just below the border. <em>(screen 01)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.25s; --pc:#334155"><h3>For the Brazilian market</h3><ul><li>The bond market is small, and firms depend on banks to fill that role. <em>(dissertation)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#64748b"><h3>For researchers</h3><ul><li>Test operational measures (expenses, EV/EBITDA), net debt over EBITDA and the maturity of issues. <em>(dissertation)</em></li><li>Use other agencies’ ratings. <em>(dissertation)</em></li></ul></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>What this research does not say</h3>
+        <ul class="limits">
+          <li><b>One rating, one agency.</b> Only S&amp;P’s long-term rating; short-term ratings and other agencies were left out. <em>· according to the dissertation</em></li>
+          <li><b>Small groups.</b> Some tests used few balance sheets: 85 in the B letter, 70 in industrials and only 21 on the speculative side of the border. <em>· our observation</em></li>
+          <li><b>Many tests, one hit.</b> With 36 measures, one passing at 5% is what chance tends to produce. <em>· our reading</em></li>
+          <li><b>Similar measures.</b> Net issuance and leverage share similar components by construction, which helps explain the strong link between them. <em>· according to the dissertation</em></li>
+          <li><b>Not finding is not proving absence.</b> The lack of effect holds for this sample and these measures. <em>· our observation</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Credits</h3>
+        <div class="cite">
+          <b>How to cite</b><br>
+          VIEIRA, Daniel Porfírio de Castro. <em>Relação entre rating de crédito e estrutura de capital.</em> Master’s dissertation (Business Administration), Universidade Presbiteriana Mackenzie, São Paulo, 2017. Advisor: Prof. Dr. Michele Nascimento Jucá.
+        </div>
+        <p style="margin-top:8px; font-size:.76rem">Data from the Capital IQ and Bloomberg databases; ratings by S&amp;P. This version simplifies the work for a general audience.</p>
+        <p class="also">See also, by the same advisor: <a href="../../../en/dissertacoes/2018-silva-garantias-idade-divida/">Silva (2018)</a>, collateral, age and debt; and, on credit ratings, <a href="../../../en/teses/2026-oliveira-rating-credito-machine-learning/">Oliveira (2026)</a>.</p>
+        <div class="ctas" style="margin-top:10px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Read the full dissertation (in Portuguese)</a>
+          <a class="btn ghost" href="#capa">↑ Back to start</a>
+          <a class="btn ghost" href="../../../en/">More research</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, rotatable = M.rotatable, flatLabel = M.flatLabel;
+  var EN = M.lang === 'en';
+  function L(p, e){ return EN ? e : p; }
+  function sg(v, d){ var s = fmt(Math.abs(v), d === undefined ? 3 : d); return (v < 0 && Math.abs(v) >= Math.pow(10, -(d === undefined ? 3 : d)) / 2 ? '−' : '') + s; }
+  function segInit(el, items, cur, fn){
+    el.innerHTML = items.map(function(t, i){ return '<button data-v="' + i + '" aria-pressed="' + (i === cur) + '">' + t + '</button>'; }).join('');
+    each(el.children, function(b){ b.addEventListener('click', function(){ each(el.children, function(x){ x.setAttribute('aria-pressed', x === b); }); fn(+b.dataset.v); }); });
+  }
+  function nm(s){ return s.replace(/-$/, '−'); }
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // Tabela 4: balanços por nota (S&P) e grupo (i = investimento, s = especulativo, d = calote)
+  var NOTCH = [
+    ['A', 1, 'i'], ['A-', 7, 'i'], ['BBB+', 21, 'i'], ['BBB', 35, 'i'], ['BBB-', 114, 'i'],
+    ['BB+', 133, 's'], ['BB', 166, 's'], ['BB-', 110, 's'], ['B+', 62, 's'], ['B', 22, 's'], ['B-', 7, 's'],
+    ['CCC+', 1, 's'], ['CCC', 1, 's'], ['CCC-', 1, 's'], ['CC', 1, 's'], ['D', 3, 'd']
+  ];
+  // Tabela 6: médias por nota [alavancagem, rentabilidade, tamanho]; null = sem valor
+  var T6 = [[0.04,0.25,10.38],[0.10,0.20,11.26],[0.10,0.27,9.46],[0.17,0.18,9.24],[0.22,0.16,8.40],[0.26,0.14,8.42],[0.17,0.11,7.89],[0.24,0.12,7.76],[0.22,0.10,7.44],[0.20,0.06,6.91],[0.46,0.21,8.33],[0.01,0.10,3.80],[null,0.02,9.04],[0.14,0.06,5.57],[0.00,0.05,5.56],[0.09,0.10,8.40]];
+  // Tabela 4: setores [nome PT, nome EN, balanços, empresas]
+  var SEC = [
+    ['Utilitárias', 'Utilities', 228, 23], ['Indústria', 'Industrials', 101, 11], ['Materiais', 'Materials', 85, 8],
+    ['Consumo não essencial', 'Consumer discretionary', 81, 10], ['Consumo', 'Consumer staples', 52, 8], ['Energia', 'Energy', 51, 4],
+    ['Real estate', 'Real estate', 33, 5], ['Telecomunicações', 'Telecommunications', 24, 2], ['Saúde', 'Health care', 19, 2], ['Tecnologia', 'Technology', 11, 1]
+  ];
+  // Tabela 7: [chave, nome, Brasil, EUA]
+  var T7 = [
+    ['LEV', L('Alavancagem', 'Leverage'), 0.21, 0.45],
+    ['NETDISS', L('Emissão líquida', 'Net issuance'), -0.04, -0.01],
+    ['EFN', L('Necessidade de dinheiro de fora', 'Need for outside money'), -0.03, 0.05, L('Dinheiro de fora', 'Outside money')],
+    ['AVD', L('Dívida média no mercado', 'Average market debt'), 0.09, 0.08, L('Dívida no mercado', 'Market debt')],
+    ['PROF', L('Rentabilidade', 'Profitability'), 0.13, 0.14],
+    ['Q', L('Q de Tobin', 'Tobin’s Q'), 1.14, 1.10]
+  ];
+  // Tabelas 10–14: os 36 coeficientes ligados à nota [hipótese, tabela, modelo, variável, coeficiente, p, N]
+  var TS = [
+    ['H1','10','eq13','POM',-0.009,0.094,672], ['H1','10','eq13','EFNPOM',-0.027,0.057,672],
+    ['H1','10','eq14','PLUS',0.004,0.807,672], ['H1','10','eq14','EFNPLUS',0.020,0.756,672], ['H1','10','eq14','MINUS',-0.004,0.767,672], ['H1','10','eq14','EFNMINUS',0.026,0.833,672],
+    ['H1','10','eq15','POM',0.140,0.557,631], ['H1','10','eq15','AVDPOM',-0.105,0.605,631],
+    ['H1','10','eq16','PLUS',-0.011,0.741,631], ['H1','10','eq16','AVDPLUS',0.100,0.732,631], ['H1','10','eq16','MINUS',0.041,0.092,631], ['H1','10','eq16','AVDMINUS',-0.315,0.025,631],
+    ['H2','11','all17','POM',-0.002,0.846,672], ['H2','11','bb17','POM',-0.131,0.442,405], ['H2','11','b17','POM',0.154,0.783,85],
+    ['H2','11','all18','PLUS',0.001,0.911,672], ['H2','11','all18','MINUS',-0.059,0.728,672],
+    ['H2','11','bb18','PLUS',-0.006,0.727,405], ['H2','11','bb18','MINUS',-0.020,0.346,405],
+    ['H2','11','b18','PLUS',0.016,0.773,85], ['H2','11','b18','MINUS',-0.130,0.210,85],
+    ['H2','12','ind17','POM',-0.008,0.829,70], ['H2','12','ind18','PLUS',-0.415,0.410,70], ['H2','12','ind18','MINUS',0.541,0.636,70],
+    ['H3','13','inv17','POM',-0.055,0.699,111], ['H3','13','esp17','POM',-0.045,0.335,21],
+    ['H3','13','inv18','PLUS',0.044,0.332,111], ['H3','13','inv18','MINUS',0.299,0.688,111],
+    ['H3','13','esp18','PLUS',0.016,0.855,21], ['H3','13','esp18','MINUS',-0.048,0.486,21],
+    ['H4','14','eq19','POM',-0.014,0.923,672], ['H4','14','eq19','QPOM',-0.000,0.960,672],
+    ['H4','14','eq20','PLUS',0.009,0.605,672], ['H4','14','eq20','QPLUS',-0.007,0.666,672], ['H4','14','eq20','MINUS',-0.010,0.500,672], ['H4','14','eq20','QMINUS',0.062,0.754,672]
+  ];
+  var MODEL = {
+    eq13:L('Equação 13 (todas)', 'Equation 13 (all)'), eq14:L('Equação 14 (todas)', 'Equation 14 (all)'),
+    eq15:L('Equação 15 (todas)', 'Equation 15 (all)'), eq16:L('Equação 16 (todas)', 'Equation 16 (all)'),
+    all17:L('Equação 17, todas as notas', 'Equation 17, all ratings'), bb17:L('Equação 17, letra BB', 'Equation 17, BB letter'), b17:L('Equação 17, letra B', 'Equation 17, B letter'),
+    all18:L('Equação 18, todas as notas', 'Equation 18, all ratings'), bb18:L('Equação 18, letra BB', 'Equation 18, BB letter'), b18:L('Equação 18, letra B', 'Equation 18, B letter'),
+    ind17:L('Equação 17, indústria, letra BB', 'Equation 17, industrials, BB letter'), ind18:L('Equação 18, indústria, letra BB', 'Equation 18, industrials, BB letter'),
+    inv17:L('Equação 17, lado do investimento', 'Equation 17, investment side'), esp17:L('Equação 17, lado especulativo', 'Equation 17, speculative side'),
+    inv18:L('Equação 18, lado do investimento', 'Equation 18, investment side'), esp18:L('Equação 18, lado especulativo', 'Equation 18, speculative side'),
+    eq19:L('Equação 19 (todas)', 'Equation 19 (all)'), eq20:L('Equação 20 (todas)', 'Equation 20 (all)')
+  };
+  var VAR = {
+    POM:L('Tem + ou − na nota (está na beira de um degrau)', 'Has a + or − on the rating (on the edge of a notch)'),
+    PLUS:L('Tem + na nota (perto de subir)', 'Has a + on the rating (close to moving up)'),
+    MINUS:L('Tem − na nota (perto de cair)', 'Has a − on the rating (close to moving down)'),
+    EFNPOM:L('Beira do degrau × precisa de dinheiro de fora', 'Edge of a notch × needs outside money'),
+    EFNPLUS:L('Nota com + × precisa de dinheiro de fora', 'Rating with + × needs outside money'),
+    EFNMINUS:L('Nota com − × precisa de dinheiro de fora', 'Rating with − × needs outside money'),
+    AVDPOM:L('Beira do degrau × dívida média no mercado', 'Edge of a notch × average market debt'),
+    AVDPLUS:L('Nota com + × dívida média no mercado', 'Rating with + × average market debt'),
+    AVDMINUS:L('Nota com − × dívida média no mercado', 'Rating with − × average market debt'),
+    QPOM:L('Beira do degrau × chance de crescer', 'Edge of a notch × growth prospects'),
+    QPLUS:L('Nota com + × chance de crescer', 'Rating with + × growth prospects'),
+    QMINUS:L('Nota com − × chance de crescer', 'Rating with − × growth prospects')
+  };
+  var HN = {
+    H1:L('H1 · Quem depende de dinheiro de fora', 'H1 · Firms that rely on outside money'),
+    H2:L('H2 · De uma letra para outra', 'H2 · From one letter to another'),
+    H3:L('H3 · Na fronteira', 'H3 · At the border'),
+    H4:L('H4 · Quem pode crescer', 'H4 · Firms that can grow')
+  };
+  // 18 modelos (Tabelas 10–14) e os fatores fora da nota: [coeficiente, p] ou null quando o fator não entrou
+  var MODS = [
+    ['10', 'eq13'], ['10', 'eq14'], ['10', 'eq15'], ['10', 'eq16'],
+    ['11', 'all17'], ['11', 'bb17'], ['11', 'b17'], ['11', 'all18'], ['11', 'bb18'], ['11', 'b18'],
+    ['12', 'ind17'], ['12', 'ind18'],
+    ['13', 'inv17'], ['13', 'esp17'], ['13', 'inv18'], ['13', 'esp18'],
+    ['14', 'eq19'], ['14', 'eq20']
+  ];
+  var PW = {
+    LEV:[[0.040,0.000],[0.403,0.000],[0.598,0.000],[0.059,0.000],[0.402,0.000],[0.042,0.000],[0.490,0.001],[0.402,0.000],[0.042,0.000],[0.522,0.001],[0.714,0.001],[0.735,0.001],[0.204,0.000],[0.284,0.000],[0.011,0.000],[0.028,0.000],[0.040,0.000],[0.402,0.000]],
+    AVD:[null,null,[-0.698,0.011],[-0.670,0.012],null,null,null,null,null,null,null,null,null,null,null,null,null,null],
+    EFN:[[-0.964,0.060],[-0.089,0.080],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
+    Q:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,[0,0.000],[0,0.000]],
+    PROF:[[0.048,0.429],[0.548,0.038],[0.105,0.126],[0.115,0.104],[0.704,0.298],[0.978,0.414],[-0.192,0.531],[0.691,0.307],[0.070,0.590],[-0.050,0.898],[-0.642,0.167],[-0.570,0.256],[0.163,0.467],[0.265,0.110],[0.445,0.199],[0.274,0.210],[0.070,0.447],[0.071,0.434]],
+    SIZ:[[-0.003,0.649],[-0.033,0.608],[-0.003,0.0538],[-0.004,0.496],[-0.023,0.688],[0.002,0.836],[-0.010,0.280],[-0.002,0.689],[0.001,0.090],[-0.011,0.183],[-0.032,0.213],[-0.033,0.186],[-0.002,0.058],[0.007,0.154],[0.016,0.166],[0.006,0.251],[-0.002,0.700],[-0.002,0.676]]
+  };
+  var BET = {};
+  function grpColor(g){ return g === 'i' ? 'var(--inv)' : (g === 'd' ? 'var(--dflt)' : 'var(--spec)'); }
+  function grpName(g){ return g === 'i' ? L('grau de investimento', 'investment grade') : (g === 'd' ? L('calote', 'default') : L('grau especulativo', 'speculative grade')); }
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 520, 90, {ay:'64%'});
+    rotatable(sc, st, -18, 8);
+    var BW = 26, GAP = 6, K = 0.95, slabs = [], labs = [];
+    NOTCH.forEach(function(n, i){
+      var x = i * (BW + GAP) + (i >= 5 ? 8 : 0);
+      var b = box({w:BW, d:38, x:x, y:20, h:Math.max(n[1] * K, 2), c:grpColor(n[2])});
+      b.dataset.i = i; st.appendChild(b); slabs.push(b);
+      labs.push(flatLabel(st, nm(n[0]), x - 5, 64, BW + 10, 'text-align:center; font-size:10px; font-weight:600'));
+    });
+    // fronteira entre investimento e especulativo
+    st.appendChild(box({w:3, d:70, x:5 * (BW + GAP) + 1, y:8, h:170, c:'#cbd5e1', cls:'dim'}));
+    flatLabel(st, L('← investimento', '← investment'), 5 * (BW + GAP) - 112, 84, 108, 'text-align:right; color:var(--inv); font-weight:700; font-size:12px');
+    flatLabel(st, L('especulativo →', 'speculative →'), 5 * (BW + GAP) + 12, 84, 120, 'color:var(--red); font-weight:700; font-size:12px');
+    var read = $('cap-read');
+    function base(){ read.innerHTML = '<b>178</b>' + L(' balanços em grau de investimento (26%) · ', ' investment-grade balance sheets (26%) · ') + '<b>507</b>' + L(' em especulativo ou calote (74%)', ' speculative or default (74%)'); }
+    function pick(i){
+      slabs.forEach(function(s, k){ s.classList.toggle('active', k === i); });
+      labs.forEach(function(l, k){ l.classList.toggle('on', k === i); });
+      var n = NOTCH[i];
+      read.innerHTML = '<b>' + nm(n[0]) + '</b> · ' + grpName(n[2]) + ': <b>' + n[1] + '</b> ' + (n[1] === 1 ? L('balanço', 'balance sheet') : L('balanços', 'balance sheets')) + ' (' + fmt(100 * n[1] / 685, 1) + '%)';
+    }
+    sc.addEventListener('click', function(e){ if (M.wasDrag(sc)) return; var s = e.target.closest('.slab'); if (s && s.dataset.i) pick(+s.dataset.i); });
+    base();
+  })();
+
+  /* ================= 02 · ESCALA ================= */
+  (function(){
+    var CAT = [
+      ['AAA', 'AAA', 'Aaa', 'i', L('Alta capacidade de honrar dívidas. Risco mínimo de crédito.', 'High capacity to honour debts. Minimal credit risk.'), 0],
+      ['AA', 'AA', 'Aa', 'i', L('Boa capacidade de honrar dívidas. Risco baixo de crédito.', 'Good capacity to honour debts. Low credit risk.'), 0],
+      ['A', 'A', 'A', 'i', L('Capacidade de honrar dívidas, mas sensível a condições econômicas ruins.', 'Capacity to honour debts, but sensitive to bad economic conditions.'), 8],
+      ['BBB', 'BBB', 'Baa', 'i', L('Capacidade adequada; tempos ruins provavelmente reduziriam a capacidade de pagar.', 'Adequate capacity; bad times would probably reduce the ability to pay.'), 170],
+      ['BB', 'BB', 'Ba', 's', L('Há elementos especulativos e risco de crédito relevante.', 'There are speculative elements and significant credit risk.'), 409],
+      ['B', 'B', 'B', 's', L('Especulativo, com risco relevante, mas ainda com margem de segurança.', 'Speculative, with significant risk, but still with a safety margin.'), 91],
+      ['CCC', 'CCC', 'Caa', 's', L('Baixa qualidade de crédito, com alto risco.', 'Poor credit quality, with high risk.'), 3],
+      ['CC', 'CC', 'Ca', 's', L('Altamente especulativo; o calote é possível.', 'Highly speculative; default is possible.'), 1],
+      ['C', 'C', 'C', 's', L('Calote iminente ou em andamento.', 'Default imminent or under way.'), 0],
+      ['D', 'D / RD', '—', 'd', L('A dívida já deixou de ser paga.', 'The debt has already gone unpaid.'), 3]
+    ];
+    var svg = $('sc-svg'), cur = 3;
+    function draw(){
+      var h = '', y0 = 14, H = 29, XS = 112;
+      CAT.forEach(function(c, i){
+        var y = y0 + i * H, on = i === cur, w = 300 - i * 20, x = XS;
+        var col = grpColor(c[3]);
+        h += '<g data-i="' + i + '" style="cursor:pointer"><rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + (H - 4) + '" rx="5" fill="' + (on ? col : 'color-mix(in srgb, ' + col + ' 16%, white)') + '" stroke="' + col + '" stroke-width="' + (on ? 2 : 1) + '"/>';
+        h += '<text x="' + (x + 12) + '" y="' + (y + H / 2 + 3) + '" style="font-size:14px; font-weight:800; fill:' + (on ? '#fff' : col) + '">' + c[0] + '</text>';
+        if (i < 6 && i > 0) h += '<text x="' + (x + w - 10) + '" y="' + (y + H / 2 + 3) + '" text-anchor="end" class="s" style="font-size:11px; fill:' + (on ? '#fff' : 'var(--muted)') + '">' + c[0] + '+ · ' + c[0] + ' · ' + c[0] + '−</text>';
+        h += '</g>';
+      });
+      // chaves dos grupos
+      function brace(a, b, txt, col){ var ya = y0 + a * H, yb = y0 + (b + 1) * H - 4; h += '<path d="M' + (XS - 10) + ' ' + ya + ' h-8 v' + (yb - ya) + ' h8" fill="none" stroke="' + col + '" stroke-width="2"/><text x="' + (XS - 22) + '" y="' + ((ya + yb) / 2 + 4) + '" text-anchor="end" class="s" style="font-size:11px; font-weight:700; fill:' + col + '">' + txt + '</text>'; }
+      brace(0, 3, L('investimento', 'investment'), 'var(--inv)');
+      brace(4, 8, L('especulativo', 'speculative'), 'var(--spec)');
+      brace(9, 9, L('calote', 'default'), 'var(--dflt)');
+      h += '<line x1="' + (XS - 6) + '" y1="' + (y0 + 4 * H - 2) + '" x2="416" y2="' + (y0 + 4 * H - 2) + '" stroke="var(--red)" stroke-width="2" stroke-dasharray="5 4"/>';
+      h += '<text x="416" y="' + (y0 + 4 * H - 6) + '" text-anchor="end" class="s" style="font-size:11px; font-weight:700; fill:var(--red)">' + L('fronteira', 'border') + '</text>';
+      svg.innerHTML = h;
+      each(svg.querySelectorAll('g[data-i]'), function(g){ g.addEventListener('click', function(){ cur = +g.dataset.i; draw(); panel(); }); });
+    }
+    function panel(){
+      var c = CAT[cur];
+      $('sc-panel').innerHTML = '<div class="tag">' + grpName(c[3]) + '</div><h3>' + c[0] + '</h3><p>' + c[4] + '</p>' +
+        '<div class="eq"><div><b>' + c[0] + '</b>S&amp;P</div><div><b>' + c[1] + '</b>Fitch</div><div><b>' + c[2] + '</b>Moody’s</div></div>' +
+        '<p style="font-size:.78rem; margin-top:8px; color:var(--muted)">' + L('Na amostra: ', 'In the sample: ') + '<b style="color:var(--ink)">' + c[5] + '</b> ' + L('de 685 balanços nesta letra (soma nossa da Tabela 4).', 'of 685 balance sheets in this letter (our sum from Table 4).') + '</p>';
+    }
+    draw(); panel();
+  })();
+
+  /* ================= 03 · DEGRAU ================= */
+  (function(){
+    var SEL = ['BBB+', 'BBB', 'BBB-', 'BB+', 'BB', 'BB-'];
+    var TXT = {
+      'BBB+':L('No alto da letra BBB. Se melhorar um pouco, sobe para A−, e o dinheiro fica mais barato. A teoria espera que ela segure novas dívidas para tentar subir.', 'At the top of the BBB letter. A small improvement takes it up to A−, and money gets cheaper. Theory expects it to hold back new debt to try to climb.'),
+      'BBB':L('No meio da letra, sem sinal. Longe de mudar de letra: pela teoria, a nota pesa pouco na decisão de se endividar.', 'In the middle of the letter, with no sign. Far from changing letter: by the theory, the rating weighs little on the decision to borrow.'),
+      'BBB-':L('O último degrau do grau de investimento. Um passo para baixo e ela perde o grau de investimento, o que afasta parte dos investidores. É onde a teoria espera mais cuidado com novas dívidas.', 'The last notch of investment grade. One step down and it loses investment grade, which drives part of its investors away. This is where theory expects the most caution with new debt.'),
+      'BB+':L('O primeiro degrau do especulativo. Um passo para cima e a empresa entra no grau de investimento. A teoria espera que ela evite dívida nova para tentar subir.', 'The first notch of speculative grade. One step up and the firm enters investment grade. Theory expects it to avoid new debt to try to climb.'),
+      'BB':L('No meio da letra BB, sem sinal. Foi a nota mais comum na amostra: 166 balanços.', 'In the middle of the BB letter, with no sign. It was the most common rating in the sample: 166 balance sheets.'),
+      'BB-':L('No pé da letra BB. Um passo para baixo e cai para B+. A teoria espera que ela segure novas dívidas para não cair.', 'At the bottom of the BB letter. One step down and it falls to B+. Theory expects it to hold back new debt so as not to fall.')
+    };
+    var row = $('dg-row'), cur = 2;
+    row.innerHTML = SEL.map(function(s, i){ return '<button class="' + (i < 3 ? 'i' : 's') + '" data-v="' + i + '" aria-pressed="' + (i === cur) + '">' + nm(s) + '</button>'; }).join('');
+    function draw(){
+      var s = SEL[cur], plus = /\+$/.test(s), minus = /-$/.test(s), pom = plus || minus;
+      var D = [['POM', pom, L('tem + ou −', 'has + or −')], ['PLUS', plus, L('tem +', 'has +')], ['MINUS', minus, L('tem −', 'has −')]];
+      $('dg-dum').innerHTML = D.map(function(d){ return '<div class="' + (d[1] ? 'on' : '') + '"><b>' + (d[1] ? '1' : '0') + '</b>' + d[0] + '<br>' + d[2] + '</div>'; }).join('');
+      $('dg-panel').innerHTML = '<div class="tag">' + (cur < 3 ? L('grau de investimento', 'investment grade') : L('grau especulativo', 'speculative grade')) + '</div><h3>' + nm(s) + '</h3><p>' + TXT[s] + '</p>';
+    }
+    each(row.children, function(b){ b.addEventListener('click', function(){ each(row.children, function(x){ x.setAttribute('aria-pressed', x === b); }); cur = +b.dataset.v; draw(); }); });
+    draw();
+  })();
+
+  /* ================= 04 · RÉGUA DA DÍVIDA ================= */
+  (function(){
+    var rd = $('nd-d'), re = $('nd-e'), svg = $('nd-svg');
+    var X0 = 40, W = 480, MIN = -0.4, MAX = 0.4;
+    function ax(v){ return X0 + W * (v - MIN) / (MAX - MIN); }
+    function money(v){ return (v < 0 ? '−' : (v > 0 ? '+' : '')) + 'R$ ' + Math.abs(v); }
+    function draw(){
+      var d = +rd.value, e = +re.value, v = (d - e) / 100;
+      $('nd-dv').textContent = money(d); $('nd-ev').textContent = money(e);
+      var h = '', y = 92;
+      h += '<rect x="' + X0 + '" y="' + (y - 6) + '" width="' + (ax(0) - X0) + '" height="12" fill="color-mix(in srgb, var(--navy) 18%, white)"/>';
+      h += '<rect x="' + ax(0) + '" y="' + (y - 6) + '" width="' + (X0 + W - ax(0)) + '" height="12" fill="color-mix(in srgb, var(--debt) 22%, white)"/>';
+      [-0.4, -0.2, 0, 0.2, 0.4].forEach(function(t){
+        h += '<line x1="' + ax(t) + '" y1="' + (y + 8) + '" x2="' + ax(t) + '" y2="' + (y + 14) + '" stroke="#94a3b8"/><text x="' + ax(t) + '" y="' + (y + 28) + '" text-anchor="middle" class="s" style="font-size:12px; fill:var(--muted)">' + (t > 0 ? '+' : '') + sg(t, 2) + '</text>';
+      });
+      h += '<text x="' + X0 + '" y="' + (y + 48) + '" class="s" style="font-size:12px; fill:var(--navy); font-weight:700">' + L('← pendeu para os sócios', '← leaned to owners') + '</text>';
+      h += '<text x="' + (X0 + W) + '" y="' + (y + 48) + '" text-anchor="end" class="s" style="font-size:12px; fill:var(--debt); font-weight:700">' + L('pendeu para a dívida →', 'leaned to debt →') + '</text>';
+      // médias
+      [[-0.04, L('Brasil −0,04', 'Brazil −0.04'), 'var(--navy)', 1], [-0.01, L('EUA −0,01', 'US −0.01'), '#64748b', 0]].forEach(function(m){
+        var x = ax(m[0]), yy = m[3] ? y - 34 : y - 16;
+        h += '<line x1="' + x + '" y1="' + (yy + 4) + '" x2="' + x + '" y2="' + (y - 6) + '" stroke="' + m[2] + '" stroke-width="1.5"/><text x="' + x + '" y="' + yy + '" text-anchor="' + (m[3] ? 'end' : 'start') + '" class="s" style="font-size:11px; fill:' + m[2] + '; font-weight:700">' + m[1] + '</text>';
+      });
+      var vc = Math.max(MIN, Math.min(MAX, v));
+      h += '<circle cx="' + ax(vc) + '" cy="' + y + '" r="10" fill="var(--red)" stroke="#fff" stroke-width="3"/>';
+      h += '<text x="' + ax(vc) + '" y="' + (y - 50) + '" text-anchor="middle" style="font-size:15px; font-weight:800; fill:var(--red)">' + (v > 0 ? '+' : '') + sg(v, 2) + '</text>';
+      svg.innerHTML = h;
+      $('nd-out').innerHTML = L('Emissão líquida = (', 'Net issuance = (') + money(d) + ' − (' + money(e) + ')) ÷ R$ 100 = <b>' + (v > 0 ? '+' : '') + sg(v, 2) + '</b>. ' +
+        (v > 0 ? L('No ano, a empresa pendeu para a <b>dívida</b>.', 'In the year, the firm leaned towards <b>debt</b>.') : (v < 0 ? L('No ano, a empresa pendeu para o <b>capital dos sócios</b>.', 'In the year, the firm leaned towards <b>owners’ capital</b>.') : L('Dívida e patrimônio andaram juntos.', 'Debt and equity moved together.')));
+    }
+    rd.addEventListener('input', draw); re.addEventListener('input', draw); draw();
+  })();
+
+  /* ================= 05 · APOSTAS ================= */
+  (function(){
+    var CARDS = [
+      {k:'H1', c:'var(--red)', t:L('H1 · Quem depende de dinheiro de fora liga mais para a nota', 'H1 · Firms that rely on outside money care more about the rating'),
+       a:L('Medida de duas formas: a <b>necessidade de financiamento externo</b> (o caixa próprio não cobre o crescimento) e a <b>dívida média no mercado</b> nos últimos cinco anos.', 'Measured in two ways: the <b>need for external financing</b> (own cash does not cover growth) and <b>average market debt</b> over the past five years.')},
+      {k:'H2', c:'var(--navy)', t:L('H2 · O efeito da nota muda de uma letra para outra', 'H2 · The rating’s effect changes from one letter to another'),
+       a:L('Testada para todas as notas juntas, só na letra BB, só na letra B e no setor industrial.', 'Tested for all ratings together, for the BB letter alone, for the B letter alone and for industrials.')},
+      {k:'H3', c:'#334155', t:L('H3 · Na fronteira entre investimento e especulativo, a nota pesa mais', 'H3 · At the border between investment and speculative, the rating matters more'),
+       a:L('Perder o grau de investimento afasta investidores; a aposta é que quem está perto da fronteira mexe mais na dívida.', 'Losing investment grade drives investors away; the bet is that firms near the border adjust their debt more.')},
+      {k:'H4', c:'#64748b', t:L('H4 · Quem tem chance de crescer liga mais para a nota', 'H4 · Firms with growth prospects care more about the rating'),
+       a:L('Crescimento medido pelo <b>Q de Tobin</b>: quem tem projetos precisa de dinheiro e pensaria mais no custo de mudar de nota.', 'Growth measured by <b>Tobin’s Q</b>: firms with projects need money and would think more about the cost of a rating change.')}
+    ];
+    $('bets').innerHTML = CARDS.map(function(c){
+      return '<div class="bcard" style="--bc:' + c.c + '"><h3>' + c.t + '</h3><p>' + c.a + '</p>' +
+        '<div class="opts" data-k="' + c.k + '"><button data-v="sim" aria-pressed="false">' + L('Vai se confirmar', 'It will hold') + '</button><button data-v="nao" aria-pressed="false">' + L('Não vai', 'It will not') + '</button></div></div>';
+    }).join('');
+    each(document.querySelectorAll('#bets .opts'), function(g){
+      each(g.children, function(b){ b.addEventListener('click', function(){
+        each(g.children, function(x){ x.setAttribute('aria-pressed', x === b); });
+        BET[g.dataset.k] = b.dataset.v; drawBoard();
+      }); });
+    });
+  })();
+
+  /* ================= 06 · AMOSTRA ================= */
+  (function(){
+    var svg = $('sec-svg'), m = 0;
+    function draw(){
+      var idx = m === 0 ? 2 : 3, max = m === 0 ? 228 : 23, X0 = 200, W = 300, h = '';
+      SEC.forEach(function(s, i){
+        var y = 10 + i * 31, w = W * s[idx] / max;
+        h += '<text x="' + (X0 - 8) + '" y="' + (y + 17) + '" text-anchor="end" style="font-size:13px; fill:var(--ink-2)">' + (EN ? s[1] : s[0]) + '</text>';
+        h += '<rect x="' + X0 + '" y="' + (y + 4) + '" width="' + Math.max(w, 2) + '" height="20" rx="3" fill="' + (i === 0 ? 'var(--navy)' : 'color-mix(in srgb, var(--navy) 45%, white)') + '"/>';
+        h += '<text x="' + (X0 + w + 6) + '" y="' + (y + 19) + '" style="font-size:13px; font-weight:700; fill:var(--ink)">' + s[idx] + '</text>';
+      });
+      h += '<text x="' + X0 + '" y="326" class="s" style="font-size:12px; fill:var(--muted)">' + (m === 0 ? L('total: 685 balanços', 'total: 685 balance sheets') : L('total: 74 empresas', 'total: 74 firms')) + '</text>';
+      svg.innerHTML = h;
+    }
+    segInit($('sec-seg'), [L('Balanços', 'Balance sheets'), L('Empresas', 'Firms')], 0, function(v){ m = v; draw(); });
+    draw();
+  })();
+
+  /* ================= 07 · NOTA E DÍVIDA ================= */
+  (function(){
+    var svg = $('lv-svg'), m = 0;
+    var NMS = [L('Alavancagem', 'Leverage'), L('Rentabilidade', 'Profitability'), L('Tamanho', 'Size')];
+    var MX = [0.5, 0.3, 12], DEC = [2, 2, 2];
+    var OUT = [
+      L('De A (0,04) a BBB− (0,22), a alavancagem só sobe; contando só as notas com 10 balanços ou mais (BBB+, BBB e BBB−), vai de 0,10 a 0,22. Abaixo da fronteira, fica entre 0,17 e 0,26 nas notas com muitos balanços, sem escada.', 'From A (0.04) to BBB− (0.22), leverage only goes up; counting only ratings with 10 or more balance sheets (BBB+, BBB and BBB−), it goes from 0.10 to 0.22. Below the border, it stays between 0.17 and 0.26 in the ratings with many balance sheets, with no staircase.'),
+      L('A rentabilidade cai de 0,16–0,27 no grau de investimento para 0,06–0,14 nas notas BB e B, as que têm muitos balanços.', 'Profitability falls from 0.16–0.27 in investment grade to 0.06–0.14 in the BB and B ratings, the ones with many balance sheets.'),
+      L('O tamanho (logaritmo das vendas) vai de 8,4 a 11,3 no grau de investimento e de 6,9 a 8,4 nas notas BB e B.', 'Size (logarithm of sales) ranges from 8.4 to 11.3 in investment grade and from 6.9 to 8.4 in the BB and B ratings.')
+    ];
+    function draw(){
+      var X0 = 40, BW = 26, GAP = 4.5, H = 200, y0 = 225, h = '';
+      h += '<line x1="' + X0 + '" y1="' + y0 + '" x2="' + (X0 + 16 * (BW + GAP) + 6) + '" y2="' + y0 + '" stroke="#94a3b8"/>';
+      NOTCH.forEach(function(n, i){
+        var v = T6[i][m], x = X0 + i * (BW + GAP) + (i >= 5 ? 6 : 0), few = n[1] < 10, col = grpColor(n[2]);
+        if (v !== null){
+          var hh = H * v / MX[m];
+          h += '<rect x="' + x + '" y="' + (y0 - hh) + '" width="' + BW + '" height="' + Math.max(hh, 1.5) + '" rx="2" fill="' + (few ? 'color-mix(in srgb, ' + col + ' 22%, white)' : col) + '"' + (few ? ' stroke="' + col + '" stroke-dasharray="3 2"' : '') + '/>';
+          h += '<text x="' + (x + BW / 2) + '" y="' + (y0 - hh - 5) + '" text-anchor="middle" class="s" style="font-size:10px; fill:var(--ink-2)">' + fmt(v, m === 2 ? 1 : 2) + '</text>';
+        } else {
+          h += '<text x="' + (x + BW / 2) + '" y="' + (y0 - 6) + '" text-anchor="middle" class="s" style="font-size:10px; fill:var(--muted)">—</text>';
+        }
+        h += '<text x="' + (x + BW / 2) + '" y="' + (y0 + 15) + '" text-anchor="middle" class="s" style="font-size:10px; font-weight:700; fill:' + col + '">' + nm(n[0]) + '</text>';
+        h += '<text x="' + (x + BW / 2) + '" y="' + (y0 + 29) + '" text-anchor="middle" class="s" style="font-size:9px; fill:var(--muted)">' + n[1] + '</text>';
+      });
+      var xb = X0 + 5 * (BW + GAP) + 1;
+      h += '<line x1="' + xb + '" y1="14" x2="' + xb + '" y2="' + (y0 + 34) + '" stroke="var(--red)" stroke-dasharray="4 3"/>';
+      h += '<text x="' + (xb - 4) + '" y="16" text-anchor="end" class="s" style="font-size:11px; font-weight:700; fill:var(--inv)">' + L('investimento', 'investment') + '</text>';
+      h += '<text x="' + (xb + 4) + '" y="16" class="s" style="font-size:11px; font-weight:700; fill:var(--spec)">' + L('especulativo', 'speculative') + '</text>';
+      h += '<text x="' + X0 + '" y="282" class="s" style="font-size:11px; fill:var(--muted)">' + L('número abaixo da nota = balanços (Tabela 4)', 'number under each rating = balance sheets (Table 4)') + '</text>';
+      svg.innerHTML = h;
+      $('lv-out').innerHTML = '<b>' + NMS[m] + '.</b> ' + OUT[m];
+    }
+    segInit($('lv-seg'), NMS, 0, function(v){ m = v; draw(); });
+    draw();
+  })();
+
+  /* ================= 08 · BRASIL E EUA ================= */
+  (function(){
+    var svg = $('us-svg'), cur = 0;
+    var EXP = {
+      LEV:L('Dívida sobre dívida + patrimônio. Para a dissertação, o mercado brasileiro é pequeno, e as empresas americanas usam o mercado de capitais em quantidade e velocidade maiores.', 'Debt over debt + equity. For the dissertation, the Brazilian market is small, and US firms use capital markets in larger amounts and at higher speed.'),
+      NETDISS:L('Negativa nos dois países: na média, o patrimônio cresceu um pouco mais que a dívida.', 'Negative in both countries: on average, equity grew a little more than debt.'),
+      EFN:L('Negativa no Brasil, positiva nos EUA. A dissertação lê como “excesso de financiamento”: num mercado instável, as brasileiras guardam mais recursos do que precisam.', 'Negative in Brazil, positive in the US. The dissertation reads this as “excess financing”: in an unstable market, Brazilian firms keep more resources than they need.'),
+      AVD:L('Parecida nos dois países: segundo a dissertação, brasileiras e americanas acessam dívida no mercado em ritmo semelhante.', 'Similar in both countries: according to the dissertation, Brazilian and US firms tap market debt at a similar pace.'),
+      PROF:L('Ebitda sobre ativo: quase igual nos dois países.', 'EBITDA over assets: almost the same in both countries.'),
+      Q:L('Médias parecidas, mas a variação no Brasil é bem maior (desvio-padrão 6,40 contra 1,68): o mercado brasileiro é menor e oscila mais.', 'Similar averages, but variation in Brazil is much larger (standard deviation 6.40 against 1.68): the Brazilian market is smaller and swings more.')
+    };
+    function draw(){
+      var X0 = 210, W = 300, h = '';
+      h += '<line x1="' + (X0 + W / 2) + '" y1="4" x2="' + (X0 + W / 2) + '" y2="252" stroke="#cbd5e1"/>';
+      T7.forEach(function(r, i){
+        var y = 8 + i * 41, on = i === cur, sc = r[0] === 'Q' ? 1.3 : 0.5;
+        h += '<g data-i="' + i + '" style="cursor:pointer"><rect x="0" y="' + y + '" width="560" height="38" fill="' + (on ? 'var(--bg-soft)' : 'transparent') + '" rx="6"/>';
+        h += '<text x="' + (X0 - 10) + '" y="' + (y + 23) + '" text-anchor="end" style="font-size:13px; fill:' + (on ? 'var(--ink)' : 'var(--ink-2)') + '; font-weight:' + (on ? 700 : 400) + '">' + (r[4] || r[1]) + '</text>';
+        [[r[2], 'var(--navy)', 4], [r[3], '#94a3b8', 20]].forEach(function(b){
+          var w = (W / 2) * Math.abs(b[0]) / sc, x = b[0] < 0 ? X0 + W / 2 - w : X0 + W / 2;
+          h += '<rect x="' + x + '" y="' + (y + b[2]) + '" width="' + Math.max(w, 1.5) + '" height="13" rx="2" fill="' + b[1] + '"/>';
+          h += '<text x="' + (b[0] < 0 ? x - 4 : x + w + 4) + '" y="' + (y + b[2] + 11) + '" text-anchor="' + (b[0] < 0 ? 'end' : 'start') + '" class="s" style="font-size:11px; font-weight:700; fill:var(--ink-2)">' + sg(b[0], 2) + '</text>';
+        });
+        h += '</g>';
+      });
+      svg.innerHTML = h;
+      each(svg.querySelectorAll('g[data-i]'), function(g){ g.addEventListener('click', function(){ cur = +g.dataset.i; draw(); panel(); }); });
+    }
+    function panel(){
+      var r = T7[cur];
+      $('us-panel').innerHTML = '<div class="tag">' + L('Tabela 7', 'Table 7') + '</div><h3>' + r[1] + ': ' + sg(r[2], 2) + L(' no Brasil, ', ' in Brazil, ') + sg(r[3], 2) + L(' nos EUA', ' in the US') + '</h3><p>' + EXP[r[0]] + '</p>';
+    }
+    draw(); panel();
+  })();
+
+  /* ================= 09 · 36 TESTES ================= */
+  (function(){
+    var svg = $('ts-svg'), lim = 0, cur = 11;
+    var GR = [['H1', 0, 12, 6], ['H2', 12, 24, 6], ['H3', 24, 30, 6], ['H4', 30, 36, 6]];
+    var HS = {H1:L('H1 · dinheiro de fora', 'H1 · outside money'), H2:L('H2 · letra a letra', 'H2 · letter by letter'), H3:L('H3 · na fronteira', 'H3 · at the border'), H4:L('H4 · chance de crescer', 'H4 · growth prospects')};
+    function cls(t){ return t[5] < 0.05 ? 2 : (t[5] < 0.10 ? 1 : 0); }
+    function draw(){
+      var h = '', S = 34, G = 6;
+      GR.forEach(function(g, gi){
+        var col = gi % 2, rowg = Math.floor(gi / 2), x0 = 18 + col * 276, y0 = 18 + rowg * 122;
+        h += '<text x="' + x0 + '" y="' + y0 + '" style="font-size:13px; font-weight:700; fill:var(--ink-2)">' + HS[g[0]] + '</text>';
+        for (var k = g[1]; k < g[2]; k++){
+          var j = k - g[1], x = x0 + (j % g[3]) * (S + G), y = y0 + 10 + Math.floor(j / g[3]) * (S + G), t = TS[k], c = cls(t), on = k === cur;
+          var pass = c === 2 || (c === 1 && lim === 1);
+          var fill = pass ? (c === 2 ? 'var(--red)' : 'color-mix(in srgb, var(--red) 55%, white)') : (c === 1 ? 'url(#hatch)' : '#e2e8f0');
+          h += '<rect data-k="' + k + '" x="' + x + '" y="' + y + '" width="' + S + '" height="' + S + '" rx="6" fill="' + fill + '" stroke="' + (on ? 'var(--ink)' : '#fff') + '" stroke-width="' + (on ? 3 : 1) + '" style="cursor:pointer"/>';
+          if (pass) h += '<text x="' + (x + S / 2) + '" y="' + (y + S / 2 + 5) + '" text-anchor="middle" style="font-size:14px; font-weight:800; fill:#fff; pointer-events:none">✓</text>';
+        }
+      });
+      var n5 = TS.filter(function(t){ return t[5] < 0.05; }).length, n10 = TS.filter(function(t){ return t[5] < 0.10; }).length;
+      h = '<defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#e2e8f0"/><line x1="0" y1="0" x2="0" y2="6" stroke="#f0a1ae" stroke-width="3"/></pattern></defs>' + h;
+      h += '<text x="280" y="252" text-anchor="middle" style="font-size:14px; fill:var(--ink)"><tspan style="font-weight:800">' + (lim ? n10 : n5) + L(' de 36', ' of 36') + '</tspan>' + (lim ? L(' passam com p abaixo de 0,10', ' pass with p below 0.10') : L(' passam com p abaixo de 0,05', ' pass with p below 0.05')) + '</text>';
+      svg.innerHTML = h;
+      each(svg.querySelectorAll('rect[data-k]'), function(r){ r.addEventListener('click', function(){ cur = +r.dataset.k; draw(); panel(); }); });
+    }
+    function panel(){
+      var t = TS[cur], c = cls(t);
+      var verdict = c === 2 ? L('passou na régua de 5%', 'passed the 5% bar') : (c === 1 ? L('só passaria na régua de 10% (pista)', 'would pass only the 10% bar (a hint)') : L('sem relação clara', 'no clear relation'));
+      var extra = '';
+      if (t[3] === 'AVDMINUS') extra = '<p style="font-size:.78rem">' + L('Sinal negativo: empresas com − na nota e mais dívida no mercado emitiram menos dívida, na direção da teoria. A dissertação não comenta este número; isolado entre 36, pode ser acaso (leitura nossa).', 'Negative sign: firms with a − on the rating and more market debt issued less debt, in the theory’s direction. The dissertation does not comment on this number; alone among 36, it may be chance (our reading).') + '</p>';
+      $('ts-panel').innerHTML = '<div class="tag">' + HN[t[0]] + ' · ' + L('Tabela ', 'Table ') + t[1] + ' · ' + MODEL[t[2]] + '</div><h3>' + VAR[t[3]] + '</h3><p>' + L('Coeficiente ', 'Coefficient ') + '<b>' + sg(t[4]) + '</b> · p <b>' + fmt(t[5], 3) + '</b> · ' + t[6] + L(' balanços', ' balance sheets') + ' · <b>' + verdict + '</b></p>' + extra;
+    }
+    segInit($('ts-seg'), [L('Régua de 5%', '5% bar'), L('Régua de 10%', '10% bar')], 0, function(v){ lim = v; draw(); });
+    draw(); panel();
+    // régua do acaso: 36 testes sem efeito nenhum (p uniforme)
+    var hist = [];
+    $('coin-btn').addEventListener('click', function(){
+      var n = 0; for (var i = 0; i < 36; i++) if (Math.random() < 0.05) n++;
+      hist.push(n); if (hist.length > 14) hist.shift();
+      var avg = hist.reduce(function(a, b){ return a + b; }, 0) / hist.length;
+      $('coin-out').innerHTML = L('Neste sorteio, <b>', 'In this draw, <b>') + n + L('</b> de 36 passaram a 5% por puro acaso. Média dos sorteios: <b>', '</b> of 36 passed at 5% by pure chance. Average of the draws: <b>') + fmt(avg, 1) + L('</b> (o esperado é 1,8).', '</b> (expected: 1.8).');
+      $('coin-hist').innerHTML = hist.map(function(v){ return '<span>' + v + '</span>'; }).join('');
+    });
+  })();
+
+  /* ================= 10 · PLACAR ================= */
+  function drawBoard(){
+    var ROWS = [
+      ['H1', L('A necessidade de dinheiro de fora veio negativa (só a 10%) e a dívida média no mercado, negativa e clara: o contrário do esperado. Para a dissertação, quem já atua no mercado capta com facilidade e se preocupa menos com a nota.', 'The need for outside money came out negative (only at 10%) and average market debt negative and clear: the opposite of what was expected. For the dissertation, firms already active in the market raise money easily and worry less about the rating.')],
+      ['H2', L('Nenhum sinal da nota com efeito, em todas as notas, na letra BB, na letra B ou na indústria. A letra BBB não deu um modelo bem especificado e as outras tinham poucos dados.', 'No rating flag had an effect, across all ratings, in the BB letter, in the B letter or in industrials. The BBB letter did not produce a well-specified model and the others had too little data.')],
+      ['H3', L('Nem do lado do investimento nem do lado especulativo da fronteira os sinais da nota tiveram efeito.', 'Neither on the investment side nor on the speculative side of the border did the rating flags have an effect.')],
+      ['H4', L('O Q de Tobin teve efeito, mas sem relação com a nota. Para a dissertação, quem tem chance de crescer não se preocupa tanto com a nota atual.', 'Tobin’s Q had an effect, but unrelated to the rating. For the dissertation, firms with growth prospects do not worry much about their current rating.')]
+    ];
+    var right = 0, n = 0;
+    $('pl-board').innerHTML = ROWS.map(function(r){
+      var b = BET[r[0]], mb = '';
+      if (b){ n++; if (b === 'nao') right++; mb = '<span class="mybet">' + L('Sua aposta: ', 'Your bet: ') + '<b>' + (b === 'sim' ? L('vai se confirmar', 'it will hold') : L('não vai', 'it will not')) + '</b>' + (b === 'nao' ? ' ✓' : '') + '</span>'; }
+      return '<div class="hrow"><h3>' + HN[r[0]] + '</h3><span class="verd">' + L('Não comprovada', 'Not supported') + '</span><p>' + r[1] + '</p><p style="font-size:.72rem; color:var(--muted)">' + L('Nos EUA (Kemper e Rao, 2013): não comprovada.', 'In the US (Kemper and Rao, 2013): not supported.') + (mb ? ' · ' + mb : '') + '</p></div>';
+    }).join('');
+    $('pl-score').innerHTML = n ? L('Você acertou <b>', 'You got <b>') + right + L('</b> de ', '</b> of ') + n + L(' apostas.', ' bets right.') : L('Faça suas apostas na tela 05 para comparar.', 'Place your bets on screen 05 to compare.');
+  }
+  drawBoard();
+
+  /* ================= 11 · O QUE PESOU ================= */
+  (function(){
+    var sc = $('pw-scene'), st = makeStage(sc, 460, 90, {ay:'60%'});
+    rotatable(sc, st, -16, 8);
+    var BW = 20, GAP = 4.5, cells = [];
+    MODS.forEach(function(m, i){
+      var grp = ['10', '11', '12', '13', '14'].indexOf(m[0]);
+      var x = i * (BW + GAP) + grp * 8;
+      var b = box({w:BW, d:40, x:x, y:30, h:2, c:'#cbd5e1'});
+      st.appendChild(b); cells.push(b);
+    });
+    [['10', 0, 4], ['11', 4, 10], ['12', 10, 12], ['13', 12, 16], ['14', 16, 18]].forEach(function(g, gi){
+      var xa = g[1] * (BW + GAP) + gi * 8, xb = g[2] * (BW + GAP) + gi * 8 - GAP;
+      flatLabel(st, L('Tab. ', 'Tab. ') + g[0], xa - 4, 74, xb - xa + 8, 'text-align:center');
+    });
+    var K = ['LEV', 'AVD', 'EFN', 'Q', 'PROF', 'SIZ'];
+    var NAMES = {LEV:L('Alavancagem', 'Leverage'), AVD:L('Dívida média no mercado', 'Average market debt'), EFN:L('Necessidade de dinheiro de fora', 'Need for outside money'), Q:L('Chance de crescer (Q de Tobin)', 'Growth prospects (Tobin’s Q)'), PROF:L('Lucro (rentabilidade)', 'Profit (profitability)'), SIZ:L('Tamanho', 'Size')};
+    var TXT = {
+      LEV:L('Positiva e clara (p até 0,001) em <b>18 de 18</b> modelos: quem já devia mais emitiu mais dívida. A dissertação lê como sinal da teoria da hierarquia das fontes, e lembra que as duas medidas têm componentes parecidos por construção.', 'Positive and clear (p up to 0.001) in <b>18 of 18</b> models: firms that already owed more issued more debt. The dissertation reads this as a sign of pecking-order theory, and notes that the two measures share similar components by construction.'),
+      AVD:L('Entrou em 2 modelos, negativa e clara nos dois (−0,698 e −0,670; p 0,011 e 0,012). A aposta era o contrário: quem mais usou o mercado nos últimos cinco anos emitiu <b>menos</b> dívida no ano.', 'Included in 2 models, negative and clear in both (−0.698 and −0.670; p 0.011 and 0.012). The bet was the opposite: firms that used the market most in the past five years issued <b>less</b> debt in the year.'),
+      EFN:L('Entrou em 2 modelos, negativa só a 10% (−0,964 e −0,089; p 0,060 e 0,080). A aposta era positiva; a dissertação lê que quem precisa de dinheiro de fora não foi ao mercado de capitais.', 'Included in 2 models, negative only at 10% (−0.964 and −0.089; p 0.060 and 0.080). The bet was positive; the dissertation reads it as firms needing outside money not going to the capital market.'),
+      Q:L('Entrou em 2 modelos, clara nos dois (p 0,000). A tabela imprime o coeficiente como 0,000, então o tamanho e o sinal não aparecem; o texto da dissertação diz que o sinal é positivo.', 'Included in 2 models, clear in both (p 0.000). The table prints the coefficient as 0.000, so its size and sign do not show; the dissertation’s text says the sign is positive.'),
+      PROF:L('Clara em só <b>1 de 18</b> modelos (0,548; p 0,038).', 'Clear in only <b>1 of 18</b> models (0.548; p 0.038).'),
+      SIZ:L('Clara em <b>nenhum</b> dos 18 modelos; perto disso (p entre 0,05 e 0,10) em 3.', 'Clear in <b>none</b> of the 18 models; close (p between 0.05 and 0.10) in 3.')
+    };
+    function sel(i){
+      var k = K[i];
+      PW[k].forEach(function(v, m){
+        var b = cells[m];
+        b.classList.toggle('miss', !v);
+        if (!v){ b.style.setProperty('--h', '2px'); b.style.setProperty('--c', '#cbd5e1'); return; }
+        var p = v[1], hh = p < 0.05 ? 90 : (p < 0.10 ? 42 : 3);
+        var c = p >= 0.10 ? '#cbd5e1' : (k === 'Q' ? '#475569' : (v[0] > 0 ? 'var(--debt)' : 'var(--navy)'));
+        if (p >= 0.05 && p < 0.10) c = 'color-mix(in srgb, ' + c + ' 55%, white)';
+        b.style.setProperty('--h', hh + 'px'); b.style.setProperty('--c', c);
+      });
+      $('pw-panel').innerHTML = '<div class="tag">' + L('Tabelas 10 a 14 · fora da nota', 'Tables 10 to 14 · apart from the rating') + '</div><h3>' + NAMES[k] + '</h3><p>' + TXT[k] + '</p>';
+    }
+    var chips = $('pw-chips');
+    chips.innerHTML = K.map(function(k, i){ return '<button class="chip" data-v="' + i + '" aria-pressed="' + (i === 0) + '">' + NAMES[k] + '</button>'; }).join('');
+    each(chips.children, function(b){ b.addEventListener('click', function(){ each(chips.children, function(x){ x.setAttribute('aria-pressed', x === b); }); sel(+b.dataset.v); }); });
+    sel(0);
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
