@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How many dollar futures to stay protected? · PPGA Interativo</title>
+<meta name="description" content="Wagner Oliveira Monteiro’s doctoral thesis (PPGA Mackenzie, 2019) on the optimal hedge ratio in the Brazilian dollar futures market, explained in 10 interactive screens.">
+<link rel="alternate" hreflang="pt-BR" href="../../../teses/2019-monteiro-hedge-dolar-futuro/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2223%22 font-family=%22Georgia%22 font-size=%2218%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>P</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/motor.css">
+<link rel="stylesheet" href="../../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --spot:var(--navy);     /* dólar à vista / exposição */
+    --fut:var(--red);       /* dólar futuro / proteção */
+    --fix:var(--red);       /* regra fixa (MQO) */
+    --dyn:var(--navy);      /* modelos dinâmicos */
+    --gray:#94a3b8;
+  }
+  .note{font-size:.76rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:12px; line-height:1.45;}
+  .note b{color:var(--ink-2);}
+  .ilus{display:inline-block; font-size:.62rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.82rem; cursor:pointer; color:var(--ink-2); font-family:inherit;}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.74rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  svg text{font-family:var(--sans);}
+  .svgbox{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .warn{font-size:.76rem; color:var(--muted); margin-top:10px;}
+  .warn b{color:var(--red);}
+  .quote{font-family:var(--serif); font-size:1.02rem; color:var(--ink); border-left:4px solid var(--red); padding:4px 0 4px 14px; margin:14px 0 0;}
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:12px;}
+  .chips button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-family:inherit; font-size:.78rem; cursor:pointer; color:var(--ink-2);}
+  .chips button[aria-pressed="true"]{background:var(--red); border-color:var(--red); color:#fff;}
+  .chips button.used{border-color:var(--navy); color:var(--navy); font-weight:600;}
+  .chips button.used[aria-pressed="true"]{background:var(--navy); color:#fff;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(1.8rem, 3vw, 2.25rem);}
+  html[lang="en"] #capa h1{font-size:clamp(1.8rem, 2.9vw, 2.2rem);}
+  .meta{display:grid; gap:2px; margin-top:16px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:36em; margin-left:auto; margin-right:auto;}
+  #hero-scene{perspective:1600px;}
+  #hero-scene .slab.glass > i{--face:rgb(148 163 184 / .10); box-shadow:inset 0 0 0 1.5px rgb(100 116 139 / .75);}
+  #hero-scene .slab .f-front .face-label{font-size:18px; letter-spacing:0;}
+  .pick{display:flex; justify-content:center; gap:6px; flex-wrap:wrap; margin-top:6px;}
+  .pick button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:5px 11px; font-family:inherit; font-size:.76rem; cursor:pointer; color:var(--ink-2);}
+  .pick button[aria-pressed="true"]{border-color:var(--red); color:var(--red); font-weight:600;}
+  #hero-read{font-size:.82rem; color:var(--ink-2); text-align:center; min-height:2.6em; margin-top:6px;}
+
+  /* ---------- 02 · Risco ---------- */
+  .split{margin-top:12px;}
+  .split .bar{display:flex; height:28px; border-radius:8px; overflow:hidden; font-size:.72rem; font-weight:700; color:#fff;}
+  .split .bar i{display:flex; align-items:center; justify-content:center; font-style:normal; white-space:nowrap;}
+  .split .bar i.tr{background:var(--navy); flex:2;}
+  .split .bar i.te{background:var(--red); flex:1;}
+  .split .lab{display:flex; justify-content:space-between; font-size:.7rem; color:var(--muted); margin-top:4px; font-variant-numeric:tabular-nums;}
+  #fx-read{font-size:.8rem; color:var(--ink-2); min-height:1.5em; margin-top:8px; text-align:center;}
+
+  /* ---------- 03 · Proteção ---------- */
+  .slider{display:flex; align-items:center; gap:12px; margin-top:14px; font-size:.84rem; color:var(--muted);}
+  .slider input{flex:1; accent-color:var(--red);}
+  .slider b{font-family:var(--serif); font-size:1.5rem; color:var(--ink); min-width:3.2em; text-align:right;}
+  .meter{margin-top:12px;}
+  .meter .row{display:grid; grid-template-columns:120px 1fr 54px; gap:8px; align-items:center; font-size:.76rem; color:var(--ink-2); margin-top:6px;}
+  .meter .t{height:18px; background:#eef2f7; border-radius:5px; overflow:hidden;}
+  .meter .t i{display:block; height:100%; border-radius:5px; transition:width .3s;}
+  .meter .v{text-align:right; font-weight:700; font-variant-numeric:tabular-nums;}
+
+  /* ---------- 05 · Razão ---------- */
+  .ranges{display:grid; gap:7px; margin-top:6px;}
+  .ranges .r{display:grid; grid-template-columns:132px 1fr; gap:10px; align-items:center; font-size:.76rem; color:var(--ink-2); cursor:pointer; border-radius:8px; padding:3px 4px;}
+  .ranges .r:hover, .ranges .r.on{background:#f1f5f9;}
+  .ranges .nm{font-weight:600; line-height:1.2;}
+  .ranges .t{position:relative; height:22px;}
+  .ranges .t .band{position:absolute; top:6px; height:10px; border-radius:5px; background:color-mix(in srgb, var(--dyn) 30%, transparent);}
+  .ranges .t .mean{position:absolute; top:3px; width:4px; height:16px; margin-left:-2px; border-radius:2px; background:var(--dyn);}
+  .ranges .r.fix .band{background:color-mix(in srgb, var(--fix) 45%, transparent);}
+  .ranges .r.fix .mean{background:var(--fix);}
+  .ranges .one{position:absolute; top:-4px; bottom:-4px; border-left:1.5px dashed #94a3b8;}
+  .axis{position:relative; height:18px; margin-left:142px; font-size:.66rem; color:var(--muted); font-variant-numeric:tabular-nums;}
+  .axis span{position:absolute; transform:translateX(-50%);}
+  @media (max-width:520px){ .ranges .r{grid-template-columns:92px 1fr;} .axis{margin-left:102px;} }
+  #rat-panel{margin-top:12px; min-height:86px;}
+
+  /* ---------- 06 · Cardápio ---------- */
+  .menu{display:grid; grid-template-columns:96px repeat(9, minmax(0, 1fr)); gap:4px; font-variant-numeric:tabular-nums;}
+  .menu .h{font-size:.6rem; color:var(--muted); font-weight:600; text-align:center; align-self:end; line-height:1.15; word-break:break-word; cursor:pointer;}
+  .menu .h.on{color:var(--red);}
+  .menu .rh{font-size:.7rem; color:var(--ink-2); font-weight:600; align-self:center; line-height:1.2; cursor:pointer;}
+  .menu .rh.on{color:var(--red);}
+  .menu i{display:block; height:30px; border-radius:6px; background:var(--navy); transition:background .25s, opacity .25s;}
+  .menu i.no{background:repeating-linear-gradient(45deg, #f8fafc 0 5px, #eef2f7 5px 10px);}
+  .menu i.hl{background:var(--red);}
+  .menu i.dim{opacity:.28;}
+  .menu .one{grid-column:span 9; display:flex; gap:4px;}
+  .menu .one i{flex:1;}
+  @media (max-width:520px){ .menu{grid-template-columns:62px repeat(9, minmax(0, 1fr)); gap:2px;} .menu .h{font-size:.56rem; writing-mode:vertical-rl; transform:rotate(180deg); text-align:left; height:72px; justify-self:center; word-break:normal;} .menu .rh{font-size:.6rem;} .menu i{height:24px;} }
+  #menu-panel{margin-top:12px; min-height:92px;}
+  .count{font-family:var(--serif); font-size:2.4rem; color:var(--red); line-height:1; margin-right:8px;}
+
+  /* ---------- 07 · Resultado 3D ---------- */
+  #res-scene{perspective:1700px;}
+  #res-scene .slab{cursor:pointer;}
+  #res-scene .slab.sel > i{--face:var(--red);}
+  #res-scene .slab.sel .f-top{--face:color-mix(in srgb, var(--red) 70%, white);}
+  #res-scene .slab.fx > i{--face:var(--ink);}
+  #res-scene .slab.fx .f-top{--face:color-mix(in srgb, var(--ink) 60%, white);}
+  #res-panel{margin-top:12px; min-height:110px;}
+
+  /* ---------- 08 · O inesperado ---------- */
+  .rk{display:grid; gap:1px; margin-top:4px;}
+  .rk .r{display:grid; grid-template-columns:150px 1fr 56px; gap:8px; align-items:center; font-size:.64rem; line-height:1.05; height:13px;}
+  .rk .nm{color:var(--ink-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .rk .t{height:9px; position:relative; background:#f1f5f9; border-radius:3px;}
+  .rk .t i{position:absolute; left:0; top:0; bottom:0; border-radius:3px; background:var(--dyn); transition:width .5s;}
+  .rk .r.fix .t i{background:var(--fix);} .rk .r.fix .nm, .rk .r.fix .v{color:var(--red); font-weight:700;}
+  .rk .r.bk .t i{background:#5b6f96;}
+  .rk .v{text-align:right; font-variant-numeric:tabular-nums; color:var(--muted);}
+  .rk .r.gap{height:8px;}
+  @media (max-width:520px){ .rk .r{grid-template-columns:104px 1fr 48px;} .rk .nm{font-size:.62rem;} }
+  .scale-note{font-size:.7rem; color:var(--muted); margin-top:6px;}
+
+  /* ---------- 09 / 10 · Prática, limites, créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.8rem; line-height:1.45; color:var(--ink-2);}
+  .pcard p em{font-style:normal; font-size:.68rem; color:var(--muted);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:6px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.78rem; color:var(--ink-2); line-height:1.42;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+  .also{font-size:.8rem; margin-top:10px; color:var(--muted);}
+  .also a{color:var(--red); font-weight:600;}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-meta="../../../teses/2019-monteiro-hedge-dolar-futuro/meta.json">
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../../teses/2019-monteiro-hedge-dolar-futuro/" hreflang="pt-BR" lang="pt-BR" title="Ler em português"><img class="lang-flag" src="../../../assets/bandeira-br.svg" width="17" height="12" alt="">PT</a>
+    <span id="count">01 / 10</span>
+    <button class="nav-btn" id="prev" aria-label="Previous screen">↑</button>
+    <button class="nav-btn" id="next" aria-label="Next screen">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Screen navigation"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Start">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Doctoral thesis · PPGA Mackenzie · 2019</div>
+      <h1 class="rv" style="--d:.1s">Hedging the dollar with futures cuts about 86% of the swings, whether the math is simple or sophisticated</h1>
+      <p class="sub rv" style="--d:.2s">The thesis compared 49 combinations of models that recompute the hedge every day with the simplest fixed rule, using 17 years of spot and futures dollar prices on B3, the Brazilian exchange. Almost all of them removed the same share of risk. Explained in 10 screens.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Author:</b> Wagner Oliveira Monteiro</span>
+        <span><b>Advisor:</b> Prof. Dr. Leonardo Fernando Cruz Basso</span>
+        <span><b>Program:</b> Graduate Program in Business Administration (PPGA) · Mackenzie Presbyterian University</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#risco">Start →</a>
+        <a class="btn ghost" href="#protecao">Try the hedge</a>
+      </div>
+      <p class="warn rv" style="--d:.45s"><b>Not investment advice.</b> This page explains academic research; the thesis measures risk, not gains, and leaves out trading costs.</p>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="500x330" role="img" aria-label="A tall glass box, the dollar’s swings without a hedge; inside, a short red block, the risk left with the chosen hedge"></div></div>
+      <div class="pick" id="hero-pick" role="group" aria-label="Choose the hedge"></div>
+      <p id="hero-read" aria-live="polite"></p>
+      <p class="cap-legend">Glass: swings without a hedge (100%). Block: what is left with each choice, over the test days (2012 to 2017). Tables 24, 26 and 27. Drag to rotate.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">Closest UN Sustainable Development Goals</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://sdgs.un.org/goals/goal8" target="_blank" rel="noopener" title="SDG 8 · Decent Work and Economic Growth: Shows how the dollar futures market, a financial service open to companies, can remove most of the exchange-rate risk."><b>8</b>Decent Work and Economic Growth</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">scroll<span></span></div>
+</section>
+
+<!-- 02 · RISCO E DADOS -->
+<section class="slide" id="risco" data-label="17 years of dollar">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> The problem · Data</div>
+      <h2 class="rv" style="--d:.1s">In 17 years, the dollar ranged from about R$ 1.55 to over R$ 4, with many ups and downs</h2>
+      <p class="lede rv" style="--d:.15s">Anyone who will pay or receive dollars does not know what that will cost in reais. The author gathered 4,168 days of spot and futures dollar quotes on B3, from January 2001 to December 2017.</p>
+      <div class="stats rv" style="--d:.2s">
+        <div class="stat"><b>1.0%</b><span>swing on a typical day (standard deviation)</span></div>
+        <div class="stat"><b>−9.4%</b><span>the biggest one-day drop</span></div>
+        <div class="stat"><b>+8.9%</b><span>the biggest one-day rise</span></div>
+      </div>
+      <p class="note rv" style="--d:.25s">Daily changes in the spot dollar, Table 1. The thesis shows that extreme days are far more common than in a normal curve (kurtosis of 11.2, against 3 for the normal).</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg class="svgbox" id="fx-svg" viewBox="0 0 560 300" role="img" aria-label="Line of the dollar in reais from 2001 to 2017, with the learning part in blue and the test part in red"></svg>
+      <p id="fx-read" aria-live="polite"></p>
+      <div class="split">
+        <div class="bar"><i class="tr">2/3 · learn</i><i class="te">1/3 · test</i></div>
+        <div class="lab"><span>Jan 2001</span><span>May 29, 2012</span><span>Dec 2017</span></div>
+      </div>
+      <div class="ctas" style="margin-top:12px"><button class="btn small" id="fx-run" type="button">▶ Watch the day-by-day test</button></div>
+      <p class="note">The models learn from the first two thirds and, on each day of the last third, get one more day of data and compute the next day’s hedge. Line redrawn from Graph 1 (approximate values, ~).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · PROTEÇÃO -->
+<section class="slide" id="protecao" data-label="Try the hedge">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> The idea · Chapter 2</div>
+      <h2 class="rv" style="--d:.1s">Futures move in lockstep with today’s dollar, so they work as a counterweight</h2>
+      <p class="lede rv" style="--d:.15s">Someone with dollars to receive can take the opposite position in the futures market: if the dollar falls, they lose on one side and gain on the other. The thesis asks how much futures to use for each exposed dollar, the so-called hedge ratio.</p>
+      <div class="slider rv" style="--d:.2s">
+        <label for="h-in">Futures per US$ 1 exposed</label>
+        <input id="h-in" type="range" min="0" max="150" step="1" value="0">
+        <b id="h-out">0,00</b>
+      </div>
+      <div class="chips rv" id="h-pre" style="--d:.22s" role="group" aria-label="Shortcuts">
+        <button type="button" data-h="0">No hedge</button>
+        <button type="button" data-h="50">Half</button>
+        <button type="button" data-h="96">Lowest-risk ratio</button>
+        <button type="button" data-h="100">One for one</button>
+        <button type="button" data-h="150">Too much</button>
+      </div>
+      <div class="meter rv" style="--d:.25s">
+        <div class="row"><span>Risk left</span><div class="t"><i id="m-left" style="background:var(--navy)"></i></div><span class="v" id="m-left-v"></span></div>
+        <div class="row"><span>Risk removed</span><div class="t"><i id="m-cut" style="background:var(--red)"></i></div><span class="v" id="m-cut-v"></span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg class="svgbox" id="h-svg" viewBox="0 0 520 320" role="img" aria-label="U-shaped curve: the risk left falls as more futures are used, bottoms out near 0.96 and rises again"></svg>
+      <p class="note"><span class="ilus">Illustration</span> Our calculation with the thesis’s numbers: the daily swing of the spot dollar (1.01%) and of futures (0.97%), from Table 1, and a correlation of 0.93 between them, close to the averages in Tables 2 to 4 (0.92 to 0.96). The thesis redoes this every day with models; here it is fixed.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · O QUE É ÓTIMO -->
+<section class="slide" id="otimo" data-label="What “optimal” means">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Review · Chapter 2</div>
+      <h2 class="rv" style="--d:.1s">“Optimal” depends on the goal: the thesis reviews nine recipes and tests the lowest-swing one</h2>
+      <p class="lede rv" style="--d:.15s">Some recipes look only at risk; others also weigh return, or only losses. Tap a recipe to see what it aims for.</p>
+      <div class="chips rv" id="ot-chips" style="--d:.2s" role="group" aria-label="Hedge ratio recipes"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel" id="ot-panel" aria-live="polite"></div>
+      <p class="note">In blue, the recipe used in the tests: minimum variance, from Johnson (1960) and Ederington (1979). Each model is judged by how much it lowers the variance of the hedged portfolio compared with the unhedged one (section 4, equation 120).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · FIXA OU QUE MUDA -->
+<section class="slide" id="razao" data-label="Fixed or daily">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Out of sample · Tables 18 to 21</div>
+      <h2 class="rv" style="--d:.1s">The fixed rule barely moves; dynamic models change the dose every day</h2>
+      <p class="lede rv" style="--d:.15s">The simplest rule (ordinary least squares regression, OLS) uses a single ratio, recomputed with the accumulated data. Models in the GARCH family estimate each day how much the dollar and futures will swing and move together, and the ratio changes with that.</p>
+      <div class="panel rv" id="rat-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="axis" id="rat-axis"></div>
+      <div class="ranges" id="rat" role="group" aria-label="Hedge ratio ranges by model"></div>
+      <p class="note">Light band: lowest to highest daily value between 2012 and 2017; tick: the average. Dashed line: one for one. The fixed rule’s band was read from Graph 52 (~). Left out: the cDCC version with a t distribution, whose table repeats the DCC one, and the split of CCC by distribution, because the labels in Table 18 do not match Graph 53.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · CARDÁPIO -->
+<section class="slide" id="cardapio" data-label="49 combinations">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Method · Chapter 4</div>
+      <h2 class="rv" style="--d:.1s"><span class="count">49</span>model combinations competed against the fixed rule</h2>
+      <p class="lede rv" style="--d:.15s">Each combination joins three choices: how the two prices move together (the family), how each one swings (the equation) and what shape extreme days take (normal or t). Tap a row or a column.</p>
+      <div class="panel rv" id="menu-panel" style="--d:.2s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="menu" id="menu" role="group" aria-label="Combinations estimated: family by equation"></div>
+      <p class="note">Blue square: combination with results in the tables; striped: not estimated. The bottom row has the models that already build in how prices swing (BEKK and RiskMetrics) and the fixed rule (OLS). Our count from Tables 5 to 8.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · RESULTADO -->
+<section class="slide" id="resultado" data-label="86% almost everywhere">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Results · Tables 11 to 14 and 24 to 27</div>
+      <h2 class="rv" style="--d:.1s">Almost every combination cut about 86% of the risk; one failed in every version</h2>
+      <p class="lede rv" style="--d:.15s">Each tower is a combination; its height is the share of risk the hedge removed. Compare the days the models had already seen (in sample) with the test days (out of sample). Tap a tower.</p>
+      <div class="seg rv" id="res-seg" style="--d:.2s" role="group" aria-label="Period">
+        <button type="button" data-m="1" aria-pressed="true">Test days (2012–2017)</button>
+        <button type="button" data-m="0" aria-pressed="false">Learning days (2001–2012)</button>
+      </div>
+      <div class="panel rv" id="res-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="res-scene" data-fit="560x400" role="img" aria-label="3D grid of towers: four family rows by nine equations, plus a row with the fixed rule and the BEKK models; almost all at the same height and one column almost flat"></div></div>
+      <p class="note">Measure: 1 − variance with the hedge ÷ variance without it (the HE1 column in the tables; columns HE2_5 and HE2_10 are not defined in the text). Left out: DCC, whose reduction tables repeat the normal CCC ones, and RiskMetrics, whose rows repeat other models. The dark tower is the fixed rule (OLS); in sample, the table gives it the same value as RiskMetrics.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · O INESPERADO -->
+<section class="slide" id="inesperado" data-label="The fixed rule">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> The unexpected · Tables 24, 26 and 27</div>
+      <h2 class="rv" style="--d:.1s">On the test days, the fixed rule topped the table, by a tiny margin</h2>
+      <p class="lede rv" style="--d:.15s">The fixed rule cut 86.64% of the risk; the best dynamic combination, 86.55%. Between the first and the last of the 36 that worked, the gap is 0.65 point. Switch the scale to see that gap vanish when the ruler starts at zero.</p>
+      <div class="seg rv" id="rk-seg" style="--d:.2s" role="group" aria-label="Scale">
+        <button type="button" data-m="1" aria-pressed="true">Zoom: 85.8% to 86.8%</button>
+        <button type="button" data-m="0" aria-pressed="false">Full ruler: 0 to 100%</button>
+      </div>
+      <p class="quote rv" style="--d:.25s">On the learning days, the dynamic models were slightly ahead (up to 87.24%, against 87.08% for the fixed rule). On new days, the edge disappeared.</p>
+      <p class="note rv" style="--d:.3s">Our reading of the tables: the thesis’s conclusion says only that performance was similar across all models. The method describes a test to tell real differences from luck (the Model Confidence Set), but its results are not reported; so treat the order as a statistical tie.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="rk" id="rk" role="list" aria-label="Risk reduction on test days, highest to lowest"></div>
+      <p class="scale-note" id="rk-note"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · NA PRÁTICA -->
+<section class="slide" id="pratica" data-label="In practice">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">09</span> So what? · our reading of the results</div>
+    <h2 class="rv" style="--d:.1s">To cut dollar risk, most of the work is hedging at all; sophistication changes little</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--navy)"><h3>Corporate treasuries</h3><p>With the dollar between 2012 and 2017, hedging about 96 cents of futures per exposed dollar removed close to 86% of the swings, and the fixed rule did it as well as the models. <em>· our reading</em></p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--red)"><h3>Model builders</h3><p>Doing well on days already seen does not guarantee doing well on new days. And a model can break silently: one of the equations (FIGARCH with the BBM method) protected little or nothing in every version. <em>· our reading</em></p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ink-2)"><h3>Researchers</h3><p>The author suggests more multivariate models, other distributions, regime-switching models, other futures markets and rolling windows to check whether the result holds.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#5b6f96"><h3>Teachers and students</h3><p>A good example of why learning days and testing days must be kept apart: the ranking of models changed from one period to the other. <em>· our reading</em></p></div>
+    </div>
+    <p class="note rv" style="--d:.35s">The thesis has no practical-implications section; the three marked cards are our reading of the numbers. <b>Not investment advice.</b></p>
+  </div>
+</section>
+
+<!-- 10 · LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Limits and credits">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">10</span> Limits · credits</div>
+    <h2 class="rv" style="--d:.1s">A risk comparison, without costs and without a test of differences</h2>
+    <div class="end">
+      <div class="rv" style="--d:.2s">
+        <h3>What this research does not say</h3>
+        <ul class="limits">
+          <li><b>Risk, not profit.</b> The measure is how much the swings fell. There are no trading costs, margins, daily settlements or taxes, and less risk does not mean more money. <em>· our note</em></li>
+          <li><b>A tie without a test.</b> The test that would separate real differences from luck (MCS) is in the method but not in the results. <em>· our note</em></li>
+          <li><b>Tables with repeated rows.</b> The DCC reductions repeat the normal CCC ones, RiskMetrics rows repeat other models and one cDCC ratio table repeats the DCC one; we left those out. The abstract mentions data up to 2018; the data section and the graphs end in December 2017. <em>· our note</em></li>
+          <li><b>One market, one day ahead.</b> Only the commercial dollar on B3, with the most traded contract and a hedge for the next day. The author suggests testing other markets and rolling windows. <em>· according to the author</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.3s">
+        <h3>Credits</h3>
+        <div class="cite">
+          <b>How to cite</b><br>
+          MONTEIRO, Wagner Oliveira. <em>Taxa ótima de hedge no mercado futuro de dólar comercial brasileiro.</em> Doctoral thesis (Business Administration), Mackenzie Presbyterian University, São Paulo, 2019. Advisor: Prof. Dr. Leonardo Fernando Cruz Basso.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Approved on May 10, 2019. The thesis also reviews dozens of studies on hedge ratios and shows day-by-day graphs for each model. <b>Not investment advice.</b></p>
+        <p class="also">See also: <a href="../../../en/teses/2024-fukui-expected-shortfall-cambio/">When the exchange rate takes a plunge</a> (Fukui, 2024), by the same advisor, on risk on the exchange rate’s worst days.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Read the full thesis (in Portuguese)</a>
+          <a class="btn ghost" href="#capa">↑ Back to start</a>
+          <a class="btn ghost" href="../../">Other research</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  function pc(v, d){ return fmt(v, d === undefined ? 2 : d) + '%'; }
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, a, txt){ var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); if (txt !== undefined) e.textContent = txt; return e; }
+  function seg(id, fn){
+    var g = $(id);
+    each(g.querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){
+        each(g.querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        fn(+b.dataset.m);
+      });
+    });
+  }
+
+  /* ================= DADOS DA TESE ================= */
+  // Equações da variância (colunas das tabelas)
+  var EQ = ['APARCH', 'FIAPARCH BBM', 'FIAPARCH Chung', 'FIGARCH BBM', 'FIGARCH Chung', 'GARCH', 'GJR', 'HYGARCH', 'IGARCH'];
+  // Redução da variância, coluna HE1, em %: [dentro (T11, T13), fora (T24, T26)]
+  var FAM = [
+    {k:'CCC N', n:L('CCC normal', 'CCC normal'),
+     v:[[86.42,85.96,86.06,-7.79,86.74,86.94,86.36,86.60,87.09],[86.29,86.20,86.06,7.02,86.05,86.05,86.24,86.06,86.09]]},
+    {k:'CCC t', n:L('CCC t', 'CCC t'),
+     v:[[86.66,86.21,86.27,-8.55,86.88,87.13,86.57,86.74,87.24],[86.54,86.44,86.36,6.92,86.25,86.24,86.47,86.25,86.26]]},
+    {k:'cDCC N', n:L('cDCC normal', 'cDCC normal'),
+     v:[[86.24,85.84,85.97,-7.18,86.88,86.86,86.26,86.73,87.00],[86.38,86.28,86.17,7.20,86.21,86.20,86.35,86.18,86.23]]},
+    {k:'cDCC t', n:L('cDCC t', 'cDCC t'),
+     v:[[86.37,85.99,86.09,-7.56,86.70,86.93,86.37,86.57,87.04],[86.55,86.47,86.39,7.19,86.32,86.30,86.50,86.31,86.32]]}
+  ];
+  // Linha de baixo (T14 dentro, T27 fora); RiskMetrics fora (linhas repetidas)
+  var OTH = [
+    {k:'MQO', n:L('Regra fixa (MQO)', 'Fixed rule (OLS)'), fx:true, v:[87.08, 86.64]},
+    {k:'BEKK dN', n:L('BEKK diagonal normal', 'Diagonal BEKK normal'), v:[86.78, 86.25]},
+    {k:'BEKK dT', n:L('BEKK diagonal t', 'Diagonal BEKK t'), v:[86.75, 85.99]},
+    {k:'BEKK eN', n:L('BEKK escalar normal', 'Scalar BEKK normal'), v:[86.91, 86.24]}
+  ];
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), H = 230, W = 150;
+    var st = makeStage(sc, 260, 200, {ay:'74%', rx:'60deg'});
+    rotatable(sc, st, -30, 10);
+    var CH = [
+      {n:L('Sem proteção', 'No hedge'), left:100, d:L('Toda a oscilação do dólar fica com você.', 'You keep all of the dollar’s swings.')},
+      {n:L('Regra fixa (MQO)', 'Fixed rule (OLS)'), left:100 - 86.64, d:L('A regra mais simples cortou 86,64% da oscilação nos dias de teste.', 'The simplest rule cut 86.64% of the swings on the test days.')},
+      {n:L('Melhor modelo dinâmico', 'Best dynamic model'), left:100 - 86.55, d:L('cDCC com APARCH e distribuição t: 86,55%, quase o mesmo.', 'cDCC with APARCH and a t distribution: 86.55%, almost the same.')},
+      {n:L('Modelo que falhou', 'Model that failed'), left:100 - 7.20, d:L('FIGARCH (método BBM) com cDCC normal cortou só 7,20%.', 'FIGARCH (BBM method) with normal cDCC cut only 7.20%.')}
+    ];
+    var g = box({w:W, d:W, x:55, y:25, h:H, c:'#94a3b8', cls:'glass'});
+    var s = box({w:W - 30, d:W - 30, x:70, y:40, h:H, c:'var(--red)'});
+    st.appendChild(s); st.appendChild(g);
+    flatLabel(st, L('dólar exposto', 'exposed dollar'), 40, W + 40, W + 30, 'font-size:16px; font-family:var(--serif);');
+    var pick = $('hero-pick');
+    CH.forEach(function(c, k){
+      var bt = document.createElement('button'); bt.type = 'button'; bt.textContent = c.n; bt.setAttribute('aria-pressed', 'false');
+      bt.addEventListener('click', function(){ show(k); }); pick.appendChild(bt);
+    });
+    function show(k){
+      var c = CH[k];
+      s.style.setProperty('--h', Math.max(2, H * c.left / 100) + 'px');
+      s.querySelector('.f-front').innerHTML = '<span class="face-label">' + fmt(c.left, 1) + '%</span>';
+      each(pick.querySelectorAll('button'), function(x, i){ x.setAttribute('aria-pressed', i === k ? 'true' : 'false'); });
+      $('hero-read').innerHTML = '<b>' + c.n + '</b> · ' + L('sobra ', 'risk left: ') + '<b>' + fmt(c.left, 1) + '%</b>' + L(' do risco. ', '. ') + c.d;
+    }
+    show(1);
+  })();
+
+  /* ================= 02 · DÓLAR 2001–2017 ================= */
+  (function(){
+    // Pontos lidos do Gráfico 1 (aproximados): [ano decimal, R$ por US$]
+    var P = [[2001.0,1.95],[2001.75,2.80],[2002.0,2.35],[2002.3,2.30],[2002.8,3.92],[2003.0,3.55],[2003.4,2.90],[2003.9,2.92],[2004.4,3.20],[2005.0,2.70],[2005.5,2.40],[2006.0,2.25],[2006.5,2.20],[2007.0,2.12],[2007.5,1.92],[2008.0,1.75],[2008.6,1.57],[2008.95,2.45],[2009.3,2.30],[2009.8,1.73],[2010.5,1.80],[2011.0,1.67],[2011.55,1.55],[2011.9,1.85],[2012.4,2.05],[2013.0,2.05],[2013.6,2.40],[2014.0,2.35],[2014.3,2.22],[2014.9,2.65],[2015.25,3.20],[2015.5,3.10],[2015.75,4.15],[2016.0,4.05],[2016.3,3.60],[2016.6,3.20],[2017.0,3.15],[2017.5,3.25],[2018.0,3.30]];
+    var CUT = 2012.41, svg = $('fx-svg');
+    var X0 = 52, X1 = 540, Y0 = 262, Y1 = 22;
+    function x(t){ return X0 + (t - 2001) / 17 * (X1 - X0); }
+    function y(v){ return Y0 - (v - 1.4) / 3 * (Y0 - Y1); }
+    var prog = null;
+    function path(a){ return a.map(function(p, i){ return (i ? 'L' : 'M') + x(p[0]).toFixed(1) + ' ' + y(p[1]).toFixed(1); }).join(' '); }
+    function upTo(t){
+      var out = [];
+      for (var i = 0; i < P.length; i++){
+        if (P[i][0] <= t) out.push(P[i]);
+        else { var a = P[i - 1], b = P[i], f = (t - a[0]) / (b[0] - a[0]); out.push([t, a[1] + f * (b[1] - a[1])]); break; }
+      }
+      return out;
+    }
+    function draw(tEnd){
+      svg.innerHTML = '';
+      [1.5, 2, 2.5, 3, 3.5, 4].forEach(function(v){
+        svg.appendChild(el('line', {x1:X0, x2:X1, y1:y(v), y2:y(v), stroke:'#f1f5f9'}));
+        svg.appendChild(el('text', {x:X0 - 8, y:y(v) + 4, 'font-size':11, fill:'var(--muted)', 'text-anchor':'end'}, 'R$ ' + fmt(v, 1)));
+      });
+      [2001, 2005, 2009, 2013, 2017].forEach(function(t){ svg.appendChild(el('text', {x:x(t), y:284, 'font-size':11, fill:'var(--muted)', 'text-anchor':'middle'}, t)); });
+      svg.appendChild(el('rect', {x:x(CUT), y:Y1, width:X1 - x(CUT), height:Y0 - Y1, fill:'color-mix(in srgb, var(--red) 7%, transparent)'}));
+      svg.appendChild(el('line', {x1:x(CUT), x2:x(CUT), y1:Y1 - 6, y2:Y0, stroke:'var(--red)', 'stroke-dasharray':'4 3'}));
+      var learn = upTo(Math.min(tEnd, CUT));
+      svg.appendChild(el('path', {d:path(learn), fill:'none', stroke:'var(--navy)', 'stroke-width':2.2, 'stroke-linejoin':'round'}));
+      var rest = P.filter(function(p){ return p[0] >= CUT; });
+      rest.unshift(upTo(CUT).pop());
+      svg.appendChild(el('path', {d:path(rest), fill:'none', stroke:'#cbd5e1', 'stroke-width':2, 'stroke-linejoin':'round'}));
+      if (tEnd > CUT){
+        var tst = upTo(tEnd).filter(function(p){ return p[0] >= CUT; }); tst.unshift(upTo(CUT).pop());
+        svg.appendChild(el('path', {d:path(tst), fill:'none', stroke:'var(--red)', 'stroke-width':2.4, 'stroke-linejoin':'round'}));
+        var last = tst[tst.length - 1];
+        svg.appendChild(el('circle', {cx:x(last[0]), cy:y(last[1]), r:5, fill:'var(--red)', stroke:'#fff', 'stroke-width':2}));
+      }
+      svg.appendChild(el('text', {x:x(CUT) - 8, y:Y1 + 4, 'font-size':11, fill:'var(--navy)', 'text-anchor':'end', 'font-weight':700}, L('aprender', 'learn')));
+      svg.appendChild(el('text', {x:x(CUT) + 8, y:Y1 + 4, 'font-size':11, fill:'var(--red)', 'font-weight':700}, L('testar', 'test')));
+    }
+    function read(t){
+      var p = upTo(t).pop(), yr = Math.floor(t);
+      $('fx-read').innerHTML = (t > CUT ? L('Dia de teste em ', 'Test day in ') + yr + L(': o modelo já viu tudo até a véspera e calcula a proteção de amanhã.', ': the model has seen everything up to yesterday and computes tomorrow’s hedge.') : L('Período de aprendizado: 2001 a maio de 2012.', 'Learning period: 2001 to May 2012.')) + ' ~R$ ' + fmt(p[1], 2);
+    }
+    draw(CUT); read(CUT);
+    $('fx-run').addEventListener('click', function(){
+      if (prog) clearInterval(prog);
+      var t = CUT;
+      prog = setInterval(function(){
+        t += 0.06; if (t >= 2018){ t = 2018; clearInterval(prog); prog = null; }
+        draw(t); read(Math.min(t, 2017.99));
+      }, 40);
+    });
+    svg.addEventListener('click', function(e){
+      var r = svg.getBoundingClientRect(), t = 2001 + ((e.clientX - r.left) / r.width * 560 - X0) / (X1 - X0) * 17;
+      if (t < 2001 || t > 2018) return;
+      var p = upTo(t).pop();
+      $('fx-read').innerHTML = '~' + Math.floor(t) + ': R$ ' + fmt(p[1], 2) + L(' por dólar (lido do Gráfico 1)', ' per dollar (read from Graph 1)');
+    });
+  })();
+
+  /* ================= 03 · SIMULADOR DE PROTEÇÃO ================= */
+  (function(){
+    var sS = 1.0068, sF = 0.9707, rho = 0.93;          // Tabela 1 e média das correlações (ilustração)
+    var cov = rho * sS * sF;
+    function left(h){ return (sS * sS - 2 * h * cov + h * h * sF * sF) / (sS * sS) * 100; }
+    var hStar = cov / (sF * sF);
+    var svg = $('h-svg'), X0 = 56, X1 = 500, Y0 = 276, Y1 = 24;
+    function x(h){ return X0 + h / 1.5 * (X1 - X0); }
+    function y(v){ return Y0 - v / 110 * (Y0 - Y1); }
+    function base(){
+      svg.innerHTML = '';
+      [0, 25, 50, 75, 100].forEach(function(v){
+        svg.appendChild(el('line', {x1:X0, x2:X1, y1:y(v), y2:y(v), stroke:'#f1f5f9'}));
+        svg.appendChild(el('text', {x:X0 - 8, y:y(v) + 4, 'font-size':11, fill:'var(--muted)', 'text-anchor':'end'}, v + '%'));
+      });
+      [0, 0.5, 1, 1.5].forEach(function(h){ svg.appendChild(el('text', {x:x(h), y:296, 'font-size':11, fill:'var(--muted)', 'text-anchor':'middle'}, fmt(h, 1))); });
+      svg.appendChild(el('text', {x:(X0 + X1) / 2, y:314, 'font-size':11, fill:'var(--muted)', 'text-anchor':'middle'}, L('futuro por US$ 1 exposto (razão de hedge)', 'futures per US$ 1 exposed (hedge ratio)')));
+      svg.appendChild(el('text', {x:X0, y:14, 'font-size':11, fill:'var(--muted)'}, L('risco que sobra (variância, % do sem proteção)', 'risk left (variance, % of unhedged)')));
+      var d = '';
+      for (var i = 0; i <= 150; i++){ var h = i / 100; d += (i ? 'L' : 'M') + x(h).toFixed(1) + ' ' + y(left(h)).toFixed(1); }
+      svg.appendChild(el('path', {d:d, fill:'none', stroke:'var(--navy)', 'stroke-width':2.5}));
+      svg.appendChild(el('line', {x1:x(hStar), x2:x(hStar), y1:y(left(hStar)), y2:Y0, stroke:'var(--navy)', 'stroke-dasharray':'3 3'}));
+      svg.appendChild(el('text', {x:x(hStar) + 6, y:Y0 - 8, 'font-size':11, fill:'var(--navy)', 'font-weight':700}, L('menor risco ≈ ', 'lowest risk ≈ ') + fmt(hStar, 2)));
+    }
+    var dot, lab;
+    function set(i){
+      var h = i / 100, v = left(h);
+      $('h-in').value = i; $('h-out').textContent = fmt(h, 2);
+      if (dot) dot.remove(); if (lab) lab.remove();
+      dot = el('circle', {cx:x(h), cy:y(v), r:7, fill:'var(--red)', stroke:'#fff', 'stroke-width':2});
+      lab = el('text', {x:x(h) + (h > 1.2 ? -12 : 12), y:y(v) + (v > 95 ? 18 : -2), 'font-size':12, 'font-weight':700, fill:'var(--red)', 'text-anchor':h > 1.2 ? 'end' : 'start'}, fmt(v, 1) + '%');
+      svg.appendChild(dot); svg.appendChild(lab);
+      $('m-left').style.width = Math.min(100, v) + '%'; $('m-left-v').textContent = fmt(v, 1) + '%';
+      $('m-cut').style.width = Math.max(0, 100 - v) + '%'; $('m-cut-v').textContent = fmt(Math.max(0, 100 - v), 1) + '%';
+      each($('h-pre').querySelectorAll('button'), function(b){ b.setAttribute('aria-pressed', +b.dataset.h === i ? 'true' : 'false'); });
+    }
+    base(); set(0);
+    $('h-in').addEventListener('input', function(){ set(+this.value); });
+    each($('h-pre').querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ set(+b.dataset.h); }); });
+  })();
+
+  /* ================= 04 · RECEITAS DE "ÓTIMO" ================= */
+  (function(){
+    var R = [
+      {n:L('Variância mínima', 'Minimum variance'), u:true, s:L('Só o risco', 'Risk only'), d:L('Escolhe a dose que deixa a carteira protegida oscilando o mínimo possível. É a mais usada, de Johnson (1960), e a que a tese testa.', 'Picks the dose that leaves the hedged portfolio swinging as little as possible. It is the most used, from Johnson (1960), and the one the thesis tests.')},
+      {n:L('Média-variância', 'Mean-variance'), s:L('Risco e retorno', 'Risk and return'), d:L('Troca um pouco de risco por retorno esperado, conforme o quanto a pessoa detesta risco (Hsin e outros, 1994).', 'Trades some risk for expected return, depending on how much the person dislikes risk (Hsin et al., 1994).')},
+      {n:'Sharpe', s:L('Risco e retorno', 'Risk and return'), d:L('Busca o maior retorno extra por unidade de oscilação (Howard e D’Antonio, 1984).', 'Seeks the highest extra return per unit of swing (Howard and D’Antonio, 1984).')},
+      {n:L('Utilidade máxima', 'Maximum utility'), s:L('Satisfação esperada', 'Expected satisfaction'), d:L('Maximiza a satisfação esperada de quem se protege, sem supor que os retornos sigam a curva normal.', 'Maximizes the hedger’s expected satisfaction, without assuming returns follow the normal curve.')},
+      {n:L('Gini estendido (MEG)', 'Extended Gini (MEG)'), s:L('Outra régua de risco', 'Another risk ruler'), d:L('Mede o risco pelo coeficiente de Gini estendido, que olha a distribuição inteira e permite ajustar a aversão ao risco.', 'Measures risk with the extended Gini coefficient, which looks at the whole distribution and lets one tune risk aversion.')},
+      {n:L('Média-MEG', 'Mean-MEG'), s:L('Retorno e Gini', 'Return and Gini'), d:L('Junta o retorno esperado à régua do Gini estendido (Kolb e Okunev, 1993).', 'Combines expected return with the extended Gini ruler (Kolb and Okunev, 1993).')},
+      {n:L('Semivariância mínima', 'Minimum semivariance'), s:L('Só as perdas', 'Losses only'), d:L('Conta só os resultados abaixo de um alvo: oscilar para cima não incomoda.', 'Counts only results below a target: swinging upward is not a problem.')},
+      {n:L('Média-semivariância', 'Mean-semivariance'), s:L('Retorno e perdas', 'Return and losses'), d:L('Junta o retorno esperado à semivariância (Chen e outros, 2001).', 'Combines expected return with semivariance (Chen et al., 2001).')},
+      {n:L('VaR mínimo', 'Minimum VaR'), s:L('A perda num dia ruim', 'The loss on a bad day'), d:L('Escolhe a dose que reduz a perda de um dia ruim, com dada confiança, o value at risk (Hung e outros, 2006).', 'Picks the dose that lowers the loss on a bad day, at a given confidence, the value at risk (Hung et al., 2006).')}
+    ];
+    var box2 = $('ot-chips');
+    R.forEach(function(r, k){
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = r.n; if (r.u) b.className = 'used';
+      b.addEventListener('click', function(){ show(k); }); box2.appendChild(b);
+    });
+    function show(k){
+      var r = R[k];
+      each(box2.querySelectorAll('button'), function(b, i){ b.setAttribute('aria-pressed', i === k ? 'true' : 'false'); });
+      $('ot-panel').innerHTML = '<h3>' + r.n + '</h3><p style="font-size:.74rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted)">' + r.s + (r.u ? L(' · usada nos testes', ' · used in the tests') : '') + '</p><p>' + r.d + '</p>';
+    }
+    show(0);
+  })();
+
+  /* ================= 05 · FAIXAS DA RAZÃO DE HEDGE (fora da amostra) ================= */
+  (function(){
+    var RT = [
+      {n:L('Regra fixa (MQO)', 'Fixed rule (OLS)'), fx:true, lo:0.958, hi:0.967, m:0.963, mlab:L('~0,96', '~0.96'), d:L('Recalculada a cada dia com todos os dados acumulados, ficou entre ~0,958 e ~0,967 de 2012 a 2017 (Gráfico 52).', 'Recomputed each day with all accumulated data, it stayed between ~0.958 and ~0.967 from 2012 to 2017 (Graph 52).')},
+      {n:'CCC', lo:0.3893, hi:1.9813, m0:0.9217, m1:0.9449, d:L('As 18 versões da CCC tiveram médias de 0,92 a 0,94, mas em alguns dias pediram só 0,39 de futuro por dólar e, em outros, quase 2.', 'The 18 CCC versions averaged 0.92 to 0.94, but on some days they called for only 0.39 of futures per dollar and on others almost 2.')},
+      {n:L('DCC normal', 'DCC normal'), lo:0.6206, hi:1.4564, m0:0.9031, m1:0.9207, d:L('Médias de 0,90 a 0,92; dias entre 0,62 e 1,46 (Tabela 19).', 'Averages of 0.90 to 0.92; days between 0.62 and 1.46 (Table 19).')},
+      {n:L('cDCC normal', 'cDCC normal'), lo:0.6225, hi:1.4546, m0:0.9017, m1:0.9198, d:L('Médias de 0,90 a 0,92; dias entre 0,62 e 1,45 (Tabela 20).', 'Averages of 0.90 to 0.92; days between 0.62 and 1.45 (Table 20).')},
+      {n:L('BEKK diagonal normal', 'Diagonal BEKK normal'), lo:0.5982, hi:1.3970, m:0.9383, d:L('Média de 0,94; dias entre 0,60 e 1,40 (Tabela 21).', 'Average of 0.94; days between 0.60 and 1.40 (Table 21).')},
+      {n:L('BEKK diagonal t', 'Diagonal BEKK t'), lo:0.7189, hi:1.2471, m:0.9318, d:L('Média de 0,93; dias entre 0,72 e 1,25 (Tabela 21).', 'Average of 0.93; days between 0.72 and 1.25 (Table 21).')},
+      {n:L('BEKK escalar normal', 'Scalar BEKK normal'), lo:0.5735, hi:1.4177, m:0.9316, d:L('Média de 0,93; dias entre 0,57 e 1,42 (Tabela 21).', 'Average of 0.93; days between 0.57 and 1.42 (Table 21).')},
+      {n:'RiskMetrics', lo:0.7402, hi:1.1569, m:0.9136, d:L('A receita de mercado mais simples entre as dinâmicas: média de 0,91; dias entre 0,74 e 1,16 (Tabela 21).', 'The simplest market recipe among the dynamic ones: average of 0.91; days between 0.74 and 1.16 (Table 21).')}
+    ];
+    var A = 0.3, B = 2.05;
+    function p(v){ return (v - A) / (B - A) * 100; }
+    var ax = $('rat-axis');
+    [0.5, 1, 1.5, 2].forEach(function(v){ var s = document.createElement('span'); s.style.left = p(v) + '%'; s.textContent = fmt(v, 1); ax.appendChild(s); });
+    var wrap = $('rat');
+    RT.forEach(function(r, k){
+      var row = document.createElement('div'); row.className = 'r' + (r.fx ? ' fix' : ''); row.tabIndex = 0; row.setAttribute('role', 'button');
+      var means = r.m !== undefined ? '<i class="mean" style="left:' + p(r.m) + '%"></i>' : '<i class="mean" style="left:' + p(r.m0) + '%"></i><i class="mean" style="left:' + p(r.m1) + '%"></i>';
+      row.innerHTML = '<span class="nm">' + r.n + '</span><div class="t"><i class="one" style="left:' + p(1) + '%"></i><i class="band" style="left:' + p(r.lo) + '%; width:' + Math.max(1.2, p(r.hi) - p(r.lo)) + '%"></i>' + means + '</div>';
+      row.addEventListener('click', function(){ show(k); });
+      row.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(k); } });
+      wrap.appendChild(row);
+    });
+    function show(k){
+      var r = RT[k];
+      each(wrap.querySelectorAll('.r'), function(x, i){ x.classList.toggle('on', i === k); });
+      $('rat-panel').innerHTML = '<h3>' + r.n + '</h3><p>' + r.d + '</p>' + (k ? '<p style="font-size:.8rem; color:var(--muted)">' + L('Na média, todos os modelos chegam perto do mesmo lugar, um pouco abaixo de um para um. O que muda é o vaivém diário.', 'On average, all models land close to the same place, a little under one for one. What changes is the daily back-and-forth.') + '</p>' : '');
+    }
+    show(0);
+  })();
+
+  /* ================= 06 · CARDÁPIO DE COMBINAÇÕES ================= */
+  (function(){
+    var ROWS = [
+      {n:L('CCC normal', 'CCC normal'), f:'CCC', all:true},
+      {n:'CCC t', f:'CCC', all:true},
+      {n:L('DCC normal', 'DCC normal'), f:'DCC', all:true},
+      {n:'DCC t', f:'DCC', all:false},
+      {n:L('cDCC normal', 'cDCC normal'), f:'cDCC', all:true},
+      {n:'cDCC t', f:'cDCC', all:true}
+    ];
+    var FD = {
+      CCC:L('<b>CCC</b> (correlação condicional constante): cada preço oscila do seu jeito, mas o grau em que andam juntos é fixo.', '<b>CCC</b> (constant conditional correlation): each price swings its own way, but how closely they move together is fixed.'),
+      DCC:L('<b>DCC</b> (correlação condicional dinâmica): o grau em que os dois preços andam juntos também muda dia a dia. A tese não traz tabela da versão t.', '<b>DCC</b> (dynamic conditional correlation): how closely the two prices move together also changes day by day. The thesis has no table for the t version.'),
+      cDCC:L('<b>cDCC</b>: uma versão corrigida do DCC, que estima a correlação que muda de forma mais coerente.', '<b>cDCC</b>: a corrected version of DCC, which estimates the changing correlation more consistently.')
+    };
+    var ED = [
+      L('<b>APARCH</b>: notícia ruim pode pesar mais, e a régua da oscilação se ajusta aos dados.', '<b>APARCH</b>: bad news can weigh more, and the swing ruler adjusts to the data.'),
+      L('<b>FIAPARCH (BBM)</b>: o APARCH com memória longa: um choque se apaga devagar. BBM é um dos dois jeitos de estimar.', '<b>FIAPARCH (BBM)</b>: APARCH with long memory: a shock fades slowly. BBM is one of two ways to estimate it.'),
+      L('<b>FIAPARCH (Chung)</b>: o mesmo, pelo outro jeito de estimar.', '<b>FIAPARCH (Chung)</b>: the same, estimated the other way.'),
+      L('<b>FIGARCH (BBM)</b>: GARCH com memória longa. Foi a equação que falhou em todas as versões.', '<b>FIGARCH (BBM)</b>: GARCH with long memory. This was the equation that failed in every version.'),
+      L('<b>FIGARCH (Chung)</b>: memória longa pelo outro jeito de estimar; funcionou como as demais.', '<b>FIGARCH (Chung)</b>: long memory estimated the other way; it worked like the others.'),
+      L('<b>GARCH</b>: a oscilação de amanhã depende dos choques recentes e da oscilação de ontem (Bollerslev, 1986).', '<b>GARCH</b>: tomorrow’s swing depends on recent shocks and on yesterday’s swing (Bollerslev, 1986).'),
+      L('<b>GJR</b>: como o GARCH, mas notícia ruim pesa mais que notícia boa.', '<b>GJR</b>: like GARCH, but bad news weighs more than good news.'),
+      L('<b>HYGARCH</b>: um meio-termo entre memória curta e memória longa.', '<b>HYGARCH</b>: a middle ground between short and long memory.'),
+      L('<b>IGARCH</b>: um choque nunca se apaga de todo: a oscilação guarda memória permanente.', '<b>IGARCH</b>: a shock never fully fades: the swing keeps a permanent memory.')
+    ];
+    var OD = L('<b>BEKK</b> (diagonal e escalar) modela juntas as oscilações e o andar junto; <b>RiskMetrics</b> é a receita de mercado que pesa mais os dias recentes; a <b>regra fixa (MQO)</b> é uma regressão simples. Somando: 18 CCC + 9 DCC + 18 cDCC + 4 = 49 combinações dinâmicas, mais a regra fixa.', '<b>BEKK</b> (diagonal and scalar) models the swings and the co-movement together; <b>RiskMetrics</b> is the market recipe that weighs recent days more; the <b>fixed rule (OLS)</b> is a simple regression. In total: 18 CCC + 9 DCC + 18 cDCC + 4 = 49 dynamic combinations, plus the fixed rule.');
+    var g = $('menu'), cells = [];
+    g.appendChild(document.createElement('span'));
+    EQ.forEach(function(e, j){ var h = document.createElement('span'); h.className = 'h'; h.textContent = e; h.addEventListener('click', function(){ col(j); }); g.appendChild(h); });
+    ROWS.forEach(function(r, i){
+      var rh = document.createElement('span'); rh.className = 'rh'; rh.textContent = r.n; rh.addEventListener('click', function(){ row(i); }); g.appendChild(rh);
+      cells[i] = [];
+      EQ.forEach(function(e, j){ var c = document.createElement('i'); if (!r.all) c.className = 'no'; g.appendChild(c); cells[i][j] = c; });
+    });
+    var orh = document.createElement('span'); orh.className = 'rh'; orh.textContent = L('Outros', 'Others'); orh.addEventListener('click', other); g.appendChild(orh);
+    var one = document.createElement('div'); one.className = 'one';
+    var otherCells = [];
+    ['BEKK dN', 'BEKK dT', 'BEKK eN', 'RiskMetrics', 'MQO'].forEach(function(k, q){ var c = document.createElement('i'); c.title = k; if (q === 4) c.style.background = 'var(--ink)'; one.appendChild(c); otherCells.push(c); });
+    g.appendChild(one);
+    function clear(){ cells.forEach(function(r){ r.forEach(function(c){ c.classList.remove('hl', 'dim'); }); }); otherCells.forEach(function(c){ c.classList.remove('dim'); }); each(g.querySelectorAll('.h, .rh'), function(x){ x.classList.remove('on'); }); }
+    function row(i){
+      clear(); g.querySelectorAll('.rh')[i].classList.add('on');
+      cells.forEach(function(r, a){ r.forEach(function(c){ if (a !== i) c.classList.add('dim'); else if (!c.classList.contains('no')) c.classList.add('hl'); }); });
+      otherCells.forEach(function(c){ c.classList.add('dim'); });
+      var r = ROWS[i];
+      $('menu-panel').innerHTML = '<h3>' + r.n + '</h3><p>' + FD[r.f] + '</p><p style="font-size:.8rem; color:var(--muted)">' + (r.all ? L('Distribuição ', 'Distribution: ') + (r.n.indexOf(' t') > 0 ? L('t: aceita mais dias extremos que a normal.', 't, which allows more extreme days than the normal.') : L('normal.', 'normal.')) : L('Sem resultados na tese.', 'No results in the thesis.')) + '</p>';
+    }
+    function col(j){
+      clear(); g.querySelectorAll('.h')[j].classList.add('on');
+      cells.forEach(function(r){ r.forEach(function(c, b){ if (b !== j) c.classList.add('dim'); else if (!c.classList.contains('no')) c.classList.add('hl'); }); });
+      otherCells.forEach(function(c){ c.classList.add('dim'); });
+      $('menu-panel').innerHTML = '<h3>' + EQ[j] + '</h3><p>' + ED[j] + '</p>';
+    }
+    function other(){
+      clear(); orh.classList.add('on');
+      cells.forEach(function(r){ r.forEach(function(c){ c.classList.add('dim'); }); });
+      $('menu-panel').innerHTML = '<h3>' + L('Outros modelos', 'Other models') + '</h3><p>' + OD + '</p>';
+    }
+    row(0);
+  })();
+
+  /* ================= 07 · MATRIZ 3D DE RESULTADOS ================= */
+  (function(){
+    var sc = $('res-scene'), S = 34, G = 12, H = 90, per = 1, sel = null;
+    var W = 9 * (S + G), D = 5 * (S + G) + 20;
+    var st = makeStage(sc, W, D, {ay:'58%', rx:'34deg'});
+    rotatable(sc, st, -22, 7);
+    var towers = [];
+    function h(v){ return Math.max(2, Math.abs(v) / 100 * H); }
+    FAM.forEach(function(f, i){
+      EQ.forEach(function(e, j){
+        var t = box({w:S, d:S, x:j * (S + G), y:i * (S + G), h:h(f.v[1][j]), c:'var(--navy)'});
+        t.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick({f:i, e:j}); });
+        st.appendChild(t); towers.push({el:t, f:i, e:j});
+      });
+      flatLabel(st, f.k, -96, i * (S + G) + 8, 90, 'font-size:12px; text-align:right;');
+    });
+    OTH.forEach(function(o, q){
+      var t = box({w:S, d:S, x:q * 2 * (S + G), y:4 * (S + G) + 20, h:h(o.v[1]), c:o.fx ? 'var(--ink)' : '#5b6f96', cls:o.fx ? 'fx' : ''});
+      t.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick({o:q}); });
+      st.appendChild(t); towers.push({el:t, o:q});
+      flatLabel(st, o.k, q * 2 * (S + G) - 18, 4 * (S + G) + 20 + S + 6, S + 36, 'font-size:11px;');
+    });
+    EQ.forEach(function(e, j){ flatLabel(st, e.replace(' ', '\n'), j * (S + G) - 6, -38, S + 12, 'font-size:9px; white-space:pre-line;'); });
+    function val(t){ return t.o !== undefined ? OTH[t.o].v[per] : FAM[t.f].v[per][t.e]; }
+    function draw(){
+      towers.forEach(function(t){
+        var v = val(t);
+        t.el.style.setProperty('--h', h(v) + 'px');
+        t.el.style.setProperty('--z', (v < 0 ? -h(v) : 0) + 'px');
+        var isSel = sel && ((sel.o !== undefined && t.o === sel.o) || (sel.e !== undefined && t.e === sel.e && t.f !== undefined));
+        t.el.classList.toggle('sel', !!isSel);
+      });
+    }
+    function pick(s){
+      sel = s; draw();
+      var P = $('res-panel'), lbl = per ? L('nos dias de teste', 'on the test days') : L('nos dias de aprendizado', 'on the learning days');
+      if (s.o !== undefined){
+        var o = OTH[s.o];
+        P.innerHTML = '<h3>' + o.n + '</h3><p>' + L('Cortou ', 'Cut ') + '<b>' + pc(o.v[per]) + '</b>' + L(' do risco ', ' of the risk ') + lbl + '.</p>' + (o.fx ? '<p style="font-size:.8rem; color:var(--muted)">' + (per ? L('É o maior número da tabela de teste. Veja a próxima tela.', 'It is the highest number in the test table. See the next screen.') : L('Na tabela de aprendizado, o RiskMetrics aparece com o mesmo valor; uma das duas linhas pode estar repetida.', 'In the learning table, RiskMetrics shows the same value; one of the two rows may be repeated.')) + '</p>' : '');
+        return;
+      }
+      var vals = FAM.map(function(f){ return f.v[per][s.e]; });
+      var mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals);
+      P.innerHTML = '<h3>' + EQ[s.e] + ' · ' + FAM[s.f].n + ': ' + pc(FAM[s.f].v[per][s.e]) + '</h3><p>' + L('Nas quatro famílias, esta equação cortou de ', 'Across the four families, this equation cut ') + pc(mn) + L(' a ', ' to ') + pc(mx) + L(' do risco ', ' of the risk ') + lbl + '.</p>' +
+        (s.e === 3 ? '<p style="font-size:.8rem; color:var(--muted)">' + (per ? L('Quase nenhuma proteção: as outras ficaram perto de 86%. A tese não explica a falha.', 'Almost no protection: the others stayed close to 86%. The thesis does not explain the failure.') : L('Número negativo: com a proteção, a carteira oscilou mais do que sem ela. A tese não explica a falha.', 'A negative number: with the hedge, the portfolio swung more than without it. The thesis does not explain the failure.')) + '</p>' : '');
+    }
+    seg('res-seg', function(m){ per = m; if (sel) pick(sel); else draw(); });
+    draw(); pick({f:3, e:0});
+  })();
+
+  /* ================= 08 · RANKING COM ZOOM ================= */
+  (function(){
+    var all = [];
+    FAM.forEach(function(f){ EQ.forEach(function(e, j){ if (j !== 3) all.push({n:f.k + ' · ' + e, v:f.v[1][j]}); }); });
+    OTH.forEach(function(o){ all.push({n:o.n, v:o.v[1], fx:o.fx, bk:!o.fx}); });
+    all.sort(function(a, b){ return b.v - a.v; });
+    var fails = FAM.map(function(f){ return {n:f.k + ' · FIGARCH BBM', v:f.v[1][3]}; }).sort(function(a, b){ return b.v - a.v; });
+    var wrap = $('rk'), zoom = 1;
+    function draw(){
+      wrap.innerHTML = '';
+      var lo = zoom ? 85.8 : 0, hi = zoom ? 86.8 : 100;
+      function row(r, cls){
+        var d = document.createElement('div'); d.className = 'r' + (cls || '') + (r.fx ? ' fix' : '') + (r.bk ? ' bk' : ''); d.setAttribute('role', 'listitem');
+        var w = Math.max(0, Math.min(100, (r.v - lo) / (hi - lo) * 100));
+        d.innerHTML = '<span class="nm">' + r.n + '</span><span class="t"><i style="width:' + w + '%"></i></span><span class="v">' + pc(r.v) + '</span>';
+        wrap.appendChild(d);
+      }
+      all.forEach(function(r){ row(r); });
+      var gp = document.createElement('div'); gp.className = 'r gap'; wrap.appendChild(gp);
+      fails.forEach(function(r){ row(r); });
+      $('rk-note').textContent = zoom ? L('Com zoom, a régua vai de 85,8% a 86,8%: as diferenças parecem grandes, mas cabem em 1 ponto. As quatro de baixo (FIGARCH BBM) ficam fora da régua.', 'Zoomed in, the ruler runs from 85.8% to 86.8%: the gaps look large but fit inside 1 point. The four at the bottom (FIGARCH BBM) fall off the ruler.') : L('Na régua inteira, as 36 combinações que funcionaram ficam praticamente iguais; só as quatro FIGARCH BBM destoam.', 'On the full ruler, the 36 combinations that worked look practically identical; only the four FIGARCH BBM stand apart.');
+    }
+    seg('rk-seg', function(m){ zoom = m; draw(); });
+    draw();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
