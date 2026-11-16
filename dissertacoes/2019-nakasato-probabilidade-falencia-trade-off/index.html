@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dívida, nota de crédito e risco de quebrar · PPGA Interativo</title>
+<meta name="description" content="A dissertação de mestrado de Renato Hideki Nakasato (PPGA Mackenzie) sobre se a teoria do equilíbrio da dívida (trade-off) vale para 60 empresas brasileiras com nota de crédito, explicada em 11 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/dissertacoes/2019-nakasato-probabilidade-falencia-trade-off/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><path d=%22M7 22 L9 11 L13 16 L16 9 L19 16 L23 11 L25 22 Z%22 fill=%22white%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  :root{
+    --ok:var(--navy);      /* sentido previsto pela teoria */
+    --no:var(--red);       /* sentido contrário */
+    --ns:#cbd5e1;          /* sem efeito claro */
+    --weak:#b45309;
+  }
+  .ok-t{color:var(--ok); font-weight:700;} .no-t{color:var(--no); font-weight:700;} .ns-t{color:#64748b; font-weight:700;}
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .ill{display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--weak); border:1px solid color-mix(in srgb, var(--weak) 45%, white); border-radius:999px; padding:2px 9px; margin-bottom:6px;}
+  .sw{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 10px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-size:.8rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px 16px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1rem; margin-bottom:6px; color:var(--ink);}
+  .panel p{margin:0 0 6px; font-size:.86rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:18px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .zleg{display:flex; flex-wrap:wrap; justify-content:center; gap:4px 16px; font-size:.78rem; color:var(--ink-2); margin-top:2px;}
+  .range{width:100%; accent-color:var(--red);}
+  .sl{display:grid; gap:2px; margin:4px 0 6px;}
+  .sl label{font-size:.84rem; color:var(--ink-2);}
+  .sl label b{color:var(--ink);}
+  svg text{font-family:var(--sans);}
+  .slab.dim > i{opacity:.4;}
+  .facts{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:12px;}
+  .facts div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 11px; font-size:.74rem; color:var(--ink-2); line-height:1.3;}
+  .facts b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink);}
+  @media (max-width:600px){
+    .facts{grid-template-columns:1fr 1fr;}
+    #to-svg text, #fn-svg text, #th-svg text, #ro-svg text, #tx-svg text{font-size:16px !important;}
+    #to-svg text.s, #fn-svg text.s, #th-svg text.s, #ro-svg text.s, #tx-svg text.s{font-size:14px !important;}
+  }
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(1.7rem, 2.6vw, 2.1rem);}
+  #capa .sub{font-size:1rem;}
+  .meta{display:grid; gap:2px; margin-top:16px; font-size:.86rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.76rem; color:var(--muted); margin-top:4px; text-align:center; line-height:1.4;}
+  #cap-read{text-align:center; font-size:.92rem; color:var(--ink-2); margin:4px 0 0; min-height:2.9em;}
+  #cap-read b{color:var(--ink);}
+
+  /* ---------- 02 · Teoria ---------- */
+  #to-svg{width:100%; display:block;}
+  #to-read{font-size:.9rem; color:var(--ink-2); margin:6px 0 0; min-height:2.8em;}
+  #to-read b{color:var(--ink);}
+
+  /* ---------- 03 · Nota ---------- */
+  #th-svg{width:100%; display:block; max-width:520px; margin:0 auto;}
+  #th-svg .band{cursor:pointer;}
+  #th-svg .band:focus{outline:none;}
+  #th-svg .band:focus rect.bg{stroke:var(--ink); stroke-width:2;}
+  #th-panel{margin-top:8px; min-height:104px;}
+
+  /* ---------- 04 · Dois espelhos ---------- */
+  .hyp{display:grid; gap:8px; margin-top:12px;}
+  .hcard{background:var(--card); border:1px solid var(--border); border-left:5px solid var(--hc, var(--ink)); border-radius:12px; padding:9px 13px; font-size:.82rem; color:var(--ink-2); line-height:1.4;}
+  .hcard b{color:var(--ink);}
+  #tr-panel{min-height:190px;}
+  .mir{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;}
+  .mir div{border:1px solid var(--border); border-radius:10px; padding:8px 10px; font-size:.8rem; color:var(--ink-2); background:#f8fafc;}
+  .mir b{display:block; font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:2px;}
+  .mir .arw{font-size:1.15rem; font-weight:800; color:var(--ink);}
+
+  /* ---------- 05 · Amostra ---------- */
+  #fn-svg{width:100%; display:block;}
+
+  /* ---------- 06 e 07 · Resultados ---------- */
+  .rs{display:grid; gap:4px; margin-top:4px;}
+  .rrow{display:grid; grid-template-columns:minmax(0,1.25fr) minmax(0,2fr); gap:10px; align-items:center; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:5px 10px; cursor:pointer; text-align:left; font:inherit; color:inherit; width:100%;}
+  .rrow:hover{border-color:var(--ink);}
+  .rrow[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--ink);}
+  .rrow .nm{font-size:.82rem; color:var(--ink); font-weight:600; line-height:1.2;}
+  .rrow .nm small{display:block; font-weight:400; font-size:.68rem; color:var(--muted);}
+  .rrow svg{width:100%; height:26px; display:block;}
+  .rs.hide .rrow.ns{display:none;}
+  .rhead{display:grid; grid-template-columns:minmax(0,1.25fr) minmax(0,2fr); gap:10px; font-size:.68rem; color:var(--muted); padding:0 10px; text-transform:uppercase; letter-spacing:.06em;}
+  .rhead span:last-child{display:flex; justify-content:space-between; gap:6px;}
+  .rhead span span{white-space:nowrap;}
+  @media (max-width:600px){ .rhead{font-size:.58rem; letter-spacing:.02em;} }
+  .rpanel{margin-top:10px; min-height:118px;}
+  .rleg{display:flex; flex-wrap:wrap; gap:4px 14px; font-size:.74rem; color:var(--ink-2); margin:8px 0 0;}
+  .rleg i{display:inline-block; width:18px; height:8px; border-radius:4px; vertical-align:0; margin-right:5px;}
+  .tg{margin-top:8px;}
+
+  /* ---------- 08 · Placar ---------- */
+  .bins{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; margin-top:6px;}
+  .bin{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:10px; border-top:6px solid var(--bc);}
+  .bin h3{font-size:.86rem; color:var(--ink); margin-bottom:2px; line-height:1.25;}
+  .bin .big{font-family:var(--serif); font-weight:900; font-size:2rem; color:var(--bc); line-height:1.1;}
+  .tiles{display:flex; flex-wrap:wrap; gap:4px; margin-top:6px;}
+  .tile{border:0; border-radius:7px; padding:5px 7px; font-size:.7rem; cursor:pointer; background:color-mix(in srgb, var(--bc) 14%, white); color:var(--ink); line-height:1.15; text-align:left;}
+  .tile small{display:block; color:var(--muted); font-size:.62rem;}
+  .tile[aria-pressed="true"]{background:var(--bc); color:#fff;}
+  .tile[aria-pressed="true"] small{color:#fff;}
+  .bin.nsb .tile[aria-pressed="true"]{background:#64748b;}
+  #pl-panel{margin-top:10px; min-height:70px;}
+  .author{background:#fff7ed; border:1px solid #fed7aa; border-radius:12px; padding:9px 13px; font-size:.82rem; color:var(--ink-2); line-height:1.45; margin-top:10px;}
+  .author b{color:var(--ink);}
+  @media (max-width:760px){ .bins{grid-template-columns:1fr;} }
+
+  /* ---------- 09 · Oscilação ---------- */
+  #ro-svg{width:100%; display:block;}
+  .two{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;}
+  .two div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:9px 12px; font-size:.78rem; color:var(--ink-2); line-height:1.35; border-top:5px solid var(--tc);}
+  .two b{display:block; color:var(--ink); font-size:.88rem; margin-bottom:2px;}
+
+  /* ---------- 10 · Imposto ---------- */
+  #tx-svg{width:100%; display:block;}
+  #tx-panel{margin-top:8px; min-height:84px;}
+
+  /* ---------- 11 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:10px;}
+  @media (min-width:760px){ .cards4{grid-template-columns:repeat(2, 1fr);} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:10px 13px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:3px; font-size:.76rem; line-height:1.4; color:var(--ink-2);}
+  .pcard em{font-style:normal; font-size:.7rem; color:var(--muted);}
+  .end{display:grid; grid-template-columns:1fr; gap:20px; margin-top:14px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:36px;} }
+  .end h3{font-size:1.04rem; margin-bottom:4px;}
+  .limits{display:grid; gap:5px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 11px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.77rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.78rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 13px; line-height:1.5; margin-top:6px;}
+  .cite b{color:var(--ink);}
+  .also{font-size:.78rem; margin-top:8px; color:var(--ink-2);}
+  .also a{color:var(--red); font-weight:600;}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/dissertacoes/2019-nakasato-probabilidade-falencia-trade-off/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 11</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Dissertação de mestrado · PPGA Mackenzie · 2019</div>
+      <h1 class="rv" style="--d:.1s">Nas empresas brasileiras com nota de crédito, a teoria do equilíbrio da dívida passou em parte do teste</h1>
+      <p class="sub rv" style="--d:.2s">Dívida poupa imposto, mas aumenta o risco de quebrar. A teoria do <i>trade-off</i> diz que cada empresa busca o ponto de equilíbrio entre os dois. Com <strong>60 empresas brasileiras</strong> com nota de crédito, de 2010 a 2017, a dissertação testa nove traços das empresas em dois espelhos: <strong>quanto devem</strong> e <strong>que nota recebem</strong>. O autor conclui que a teoria vale; nas tabelas, <strong>3 dos 18 testes</strong> saíram no sentido previsto, 3 ao contrário e 12 sem efeito claro.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Renato Hideki Nakasato</span>
+        <span><b>Orientador:</b> Prof. Dr. Eli Hadad Junior</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#teoria">Começar →</a>
+        <a class="btn ghost" href="#placar">Ir direto ao placar</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="460x250" role="img" aria-label="Grade de 18 blocos: nove traços das empresas em duas fileiras, a da dívida e a da nota de crédito. Três blocos azuis saíram no sentido previsto pela teoria (tamanho e pesquisa na dívida, oscilação do resultado na nota), três vermelhos ao contrário (oscilação do resultado na dívida, valor de mercado e pesquisa na nota) e doze cinzentos e baixos, sem efeito claro"></div></div>
+      <p id="cap-read" aria-live="off"></p>
+      <div class="zleg"><span><span class="sw" style="background:var(--ok)"></span>como a teoria prevê</span><span><span class="sw" style="background:var(--no)"></span>ao contrário</span><span><span class="sw" style="background:var(--ns)"></span>sem efeito claro</span></div>
+      <div class="cap-legend">Fileira da frente: dívida (Tabela 6). De trás: nota de crédito (Tabela 7). Bloco alto = p &lt; 0,05; médio = p &lt; 0,10. Contagem nossa. Arraste para girar.</div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Testa se as grandes empresas brasileiras escolhem quanto dever pesando imposto poupado e risco de quebrar, tema de como as empresas se financiam."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · A TEORIA -->
+<section class="slide" id="teoria" data-label="A teoria">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> A teoria</div>
+      <h2 class="rv" style="--d:.1s">Dever compensa até o risco de quebrar pesar mais que o imposto poupado</h2>
+      <p class="lede rv" style="--d:.15s">Os juros da dívida são abatidos do lucro antes do imposto: quanto mais a empresa deve, <b class="ok-t">menos imposto</b> paga. Mas dívida demais aperta o caixa e aproxima a <b class="no-t">falência</b>, que custa caro (advogados, clientes e fornecedores que se afastam, juros mais altos).</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">A teoria do equilíbrio estático (<i>trade-off</i>) diz que existe um ponto ótimo de dívida, onde o próximo real de imposto poupado é anulado pelo próximo real de custo esperado de falência. Mova a dívida.</p>
+      <div class="sl rv" style="--d:.25s">
+        <label for="to-r">Dívida da empresa: <b id="to-v"></b></label>
+        <input class="range" id="to-r" type="range" min="0" max="100" step="1" value="15">
+      </div>
+      <p id="to-read" aria-live="polite"></p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <span class="ill">Ilustração da teoria, números inventados</span>
+      <svg id="to-svg" viewBox="0 0 560 310" role="img" aria-label="Três curvas conforme a dívida sobe de 0 a 100: o imposto poupado sobe em linha reta, o custo esperado de falência sobe cada vez mais rápido e o valor da empresa sobe, chega a um pico perto de 36 e depois cai"></svg>
+      <p class="note">Fonte: seção 2.1.2 e Figura 1 da dissertação (Brealey, Myers e Allen, 2013). As curvas só desenham a ideia; a dissertação não calcula o ponto ótimo de nenhuma empresa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · A NOTA DE CRÉDITO -->
+<section class="slide" id="nota" data-label="A nota de crédito">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> O termômetro</div>
+      <h2 class="rv" style="--d:.1s">A nota de crédito faz o papel de termômetro do risco de quebrar</h2>
+      <p class="lede rv" style="--d:.15s">Ninguém sabe de antemão a chance de uma empresa falir. A dissertação usa a nota de crédito dada pela S&amp;P (o <i>rating</i>, de AAA a D) como medida dessa chance, dada de fora, pelo mercado.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">As notas foram agrupadas em três faixas: quanto maior o número, pior a nota e maior o risco. Toque em cada faixa.</p>
+      <div class="facts rv" style="--d:.25s">
+        <div><b>3</b>faixas de nota no modelo</div>
+        <div><b>0</b>empresas da amostra na faixa 3 (perto do calote)</div>
+        <div><b>S&amp;P</b>agência das notas, via Bloomberg</div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <svg id="th-svg" viewBox="0 0 520 300" role="group" aria-label="Termômetro com três faixas de nota de crédito; cada faixa é um botão"></svg>
+      <div class="panel" id="th-panel" aria-live="polite"></div>
+      <p class="note">Fonte: Quadro 2 (escalas global e nacional da S&amp;P agrupadas pelo autor) e seção 4.1. A faixa 1 reúne de AAA a BB− na escala global.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · DOIS ESPELHOS -->
+<section class="slide" id="espelhos" data-label="Dois espelhos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> As perguntas</div>
+      <h2 class="rv" style="--d:.1s">Os mesmos nove traços, testados em dois espelhos: a dívida e a nota</h2>
+      <p class="lede rv" style="--d:.15s">Se a teoria vale, quem tem mais a ganhar em imposto e menos a perder numa falência deve dever mais e, ao escolher dever mais, aceitar uma nota pior.</p>
+      <div class="hyp rv" style="--d:.2s">
+        <div class="hcard" style="--hc:var(--ok)"><b>H1</b> · Quanto maior o benefício do imposto, maior a dívida e a chance de falência.</div>
+        <div class="hcard" style="--hc:var(--no)"><b>H2</b> · Quanto menor o custo de uma falência, maior a dívida e a chance de falência.</div>
+      </div>
+      <p class="rv" style="--d:.25s; font-size:.84rem; margin-top:10px">Um diferencial: a dívida <b>não</b> entra no modelo da nota. Para o autor, ao escolher quanto dever a empresa já escolhe a nota que vai ter.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="chips" id="tr-chips" role="group" aria-label="Traços das empresas"></div>
+      <div class="panel" id="tr-panel" aria-live="polite"></div>
+      <p class="note">Fonte: seção 2.1.3, Quadros 1 e 3 e coluna “sinal esperado” das Tabelas 6 e 7.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · AMOSTRA -->
+<section class="slide" id="amostra" data-label="As empresas">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Como a pesquisa olhou</div>
+      <h2 class="rv" style="--d:.1s">De 219 empresas brasileiras com nota, ficaram 60, acompanhadas por oito anos</h2>
+      <p class="lede rv" style="--d:.15s">O ponto de partida foram todas as companhias brasileiras com nota da S&amp;P entre 2010 e 2017. Saíram os bancos e outras financeiras, que têm outra lógica de dívida, e as empresas cuja nota não mudou no período ou sem dados.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">Com os dados de cada empresa ano a ano (Capital IQ), o autor rodou duas regressões: uma explica <b>quanto a empresa deve</b> (dívida ÷ dívida mais patrimônio); a outra, uma regressão logística, explica <b>em que faixa de nota</b> ela está.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <svg id="fn-svg" viewBox="0 0 560 270" role="img" aria-label="Barras: 219 companhias com nota; menos 66 financeiras; menos 93 sem mudança de nota ou sem dados; restam 60 empresas"></svg>
+      <div class="facts">
+        <div><b>60</b>empresas não financeiras</div>
+        <div><b>8</b>anos, de 2010 a 2017</div>
+        <div><b>480</b>observações empresa-ano</div>
+      </div>
+      <p class="note">Fonte: Tabela 3 e seções 3.6 e 4.1. A dívida tem 420 observações e o valor de mercado, 415, por falta de dados.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · ESPELHO DA DÍVIDA -->
+<section class="slide" id="divida" data-label="Espelho da dívida">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Espelho 1 · quanto devem</div>
+      <h2 class="rv" style="--d:.1s">Empresas maiores e que gastavam menos com pesquisa deviam mais, como a teoria prevê</h2>
+      <p class="lede rv" style="--d:.15s">Dos nove traços, três tiveram efeito claro sobre a dívida. Tamanho e pesquisa e desenvolvimento foram no sentido previsto. A oscilação do resultado foi <b class="no-t">ao contrário</b>: quem tinha o lucro mais instável devia mais.</p>
+      <p class="rv" style="--d:.2s; font-size:.86rem">Os outros seis, inclusive a alíquota de imposto, não se distinguiram do acaso. O modelo explica 23% das diferenças de dívida entre as empresas (R² 0,23).</p>
+      <div class="panel rpanel rv" style="--d:.25s" id="dv-panel" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="rhead"><span>Traço</span><span><span>← menos dívida</span><span>mais dívida →</span></span></div>
+      <div class="rs" id="dv-rs"></div>
+      <div class="rleg"><span><i style="background:var(--ok)"></i>como previsto</span><span><i style="background:var(--no)"></i>ao contrário</span><span><i style="background:transparent; border:2px dashed #94a3b8"></i>o que a teoria esperava</span><span><i style="background:var(--ns)"></i>sem efeito claro</span></div>
+      <button class="chip tg" id="dv-tg" aria-pressed="false">Esconder os sem efeito claro</button>
+      <p class="note">Fonte: Tabela 6 (regressão com dados em painel, erros robustos; 9 traços). Cheio = p &lt; 0,05; claro = p &lt; 0,10. A página mostra só o sentido: os traços têm escalas diferentes e os coeficientes não se comparam.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · ESPELHO DA NOTA -->
+<section class="slide" id="nota-res" data-label="Espelho da nota">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Espelho 2 · que nota recebem</div>
+      <h2 class="rv" style="--d:.1s">Na nota, três traços pesaram, e dois deles ao contrário do previsto</h2>
+      <p class="lede rv" style="--d:.15s">Empresas com resultado mais instável tinham nota pior, como a teoria prevê. Mas as que valiam mais na bolsa do que no balanço e as que gastavam mais com pesquisa tinham nota <b>melhor</b>, quando a dissertação esperava nota pior.</p>
+      <p class="rv" style="--d:.2s; font-size:.86rem">Tamanho e ativos fixos, que a teoria liga a uma nota melhor, não tiveram efeito claro na nota.</p>
+      <div class="panel rpanel rv" style="--d:.25s" id="nt-panel" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="rhead"><span>Traço</span><span><span>← nota melhor</span><span>nota pior →</span></span></div>
+      <div class="rs" id="nt-rs"></div>
+      <div class="rleg"><span><i style="background:var(--ok)"></i>como previsto</span><span><i style="background:var(--no)"></i>ao contrário</span><span><i style="background:transparent; border:2px dashed #94a3b8"></i>o que a teoria esperava</span><span><i style="background:var(--ns)"></i>sem efeito claro</span></div>
+      <button class="chip tg" id="nt-tg" aria-pressed="false">Esconder os sem efeito claro</button>
+      <p class="note">Fonte: Tabela 7 (regressão logística de efeitos aleatórios; nota em três faixas, maior = pior). Cheio = p &lt; 0,05; claro = p &lt; 0,10. A página mostra só o sentido.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · PLACAR -->
+<section class="slide" id="placar" data-label="O placar">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">08</span> A descoberta</div>
+    <h2 class="rv" style="--d:.1s">Dos 18 testes, 3 saíram como a teoria previa, 3 ao contrário e 12 sem efeito claro</h2>
+    <p class="lede rv" style="--d:.15s; max-width:860px">Nove traços × dois espelhos = 18 testes. Toque em cada ficha para ver o que ela diz.</p>
+    <div class="bins rv" style="--d:.2s" id="pl-bins"></div>
+    <div class="panel rv" style="--d:.25s" id="pl-panel" aria-live="polite"></div>
+    <div class="author rv" style="--d:.3s"><b>Leitura do autor.</b> A dissertação conclui que H1 e H2 se confirmam: a dívida seria a alavanca com que a empresa escolhe a chance de falência que aceita, e empresas maiores, com mais ativos fixos e resultado mais estável teriam menos risco de quebrar. Ela reconhece que a teoria falha em valor de mercado, despesas, pesquisa e idade. A contagem acima é nossa, feita sobre as Tabelas 6 e 7 com o corte de 10% usado pela dissertação.</div>
+  </div>
+</section>
+
+<!-- 09 · OSCILAÇÃO -->
+<section class="slide" id="oscilacao" data-label="O inesperado">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> O inesperado</div>
+      <h2 class="rv" style="--d:.1s">Quem tinha o lucro mais instável devia mais, e a nota percebia o risco</h2>
+      <p class="lede rv" style="--d:.15s">A oscilação do resultado (o quanto o lucro operacional variou nos últimos cinco anos) teve efeito claro nos dois espelhos (o outro traço assim foi pesquisa e desenvolvimento). Pela teoria, quem tem caixa instável corre mais risco e deveria dever <b>menos</b>. Nas 60 empresas, devia <b>mais</b>.</p>
+      <p class="rv" style="--d:.2s; font-size:.86rem">A dissertação lembra estudos que já tinham visto isso: empresas com custo de falência mais alto acabam com estruturas de dívida mais arriscadas. Troque a empresa.</p>
+      <div class="seg rv" style="--d:.25s" id="ro-seg" role="group" aria-label="Tipo de empresa"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <span class="ill">Empresas inventadas; setas só com o sentido</span>
+      <svg id="ro-svg" viewBox="0 0 560 250" role="img" aria-label="Lucro operacional de uma empresa inventada em cinco anos, estável ou instável, com setas para a dívida e para a nota"></svg>
+      <div class="two">
+        <div style="--tc:var(--no)"><b>Dívida: mais alta</b>ao contrário da teoria · p 0,003 · correlação de 0,84 entre oscilação e dívida</div>
+        <div style="--tc:var(--ok)"><b>Nota: pior</b>como a teoria prevê · p 0,093 (efeito mais fraco, só a 10%)</div>
+      </div>
+      <p class="note">Fonte: Tabelas 5, 6 e 7 e seção 1.1. Oscilação = desvio padrão do lucro operacional dos últimos 5 anos ÷ ativo total. Correlação não diz o que causa o quê: a dívida também pode tornar o lucro mais instável (observação nossa).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · IMPOSTO -->
+<section class="slide" id="imposto" data-label="O imposto">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> O que não apareceu</div>
+      <h2 class="rv" style="--d:.1s">O imposto, peça central da teoria, não fez diferença em nenhum dos dois espelhos</h2>
+      <p class="lede rv" style="--d:.15s">A medida mais direta do ganho com a dívida é a alíquota que a empresa paga de fato: imposto de renda e contribuição social ÷ lucro antes do imposto. Na média, as 60 empresas pagavam <b>21%</b>, abaixo do teto de 34%.</p>
+      <p class="rv" style="--d:.2s; font-size:.86rem">Pela teoria, quem paga alíquota maior ganha mais abatendo juros e deveria dever mais. Nas duas regressões, a alíquota não se distinguiu do acaso. Veja cada espelho.</p>
+      <div class="seg rv" style="--d:.25s" id="tx-seg" role="group" aria-label="Espelho"></div>
+      <div class="panel rv" style="--d:.3s" id="tx-panel" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <svg id="tx-svg" viewBox="0 0 560 230" role="img" aria-label="Régua de 0% a 34%: a alíquota efetiva média das empresas, 21,4%, fica abaixo do teto de 34% (15% de imposto de renda, 10% de adicional e 9% de contribuição social)"></svg>
+      <p class="note">Fonte: Tabela 4 (alíquota efetiva média 0,2138), seção 4.1 (teto de 34%), Tabelas 6 e 7. A dissertação aponta como limite não ter estudado os juros sobre capital próprio, outro abatimento de imposto brasileiro que compete com a dívida.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> E daí?</div>
+    <h2 class="rv" style="--d:.1s">O tamanho e a estabilidade do lucro contam; o imposto, nestes dados, não apareceu</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--ok)"><h3>Para diretores financeiros</h3><ul><li>Empresas maiores deviam mais; as que investiam mais em pesquisa, menos. <em>(tela 06)</em></li><li>Lucro instável veio junto com nota pior. <em>(tela 09)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--no)"><h3>Para quem dá crédito</h3><ul><li>Empresas de lucro instável deviam mais, não menos: o risco se acumula onde a teoria não espera. <em>(tela 09)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.25s; --pc:#334155"><h3>Para quem cuida dos impostos</h3><ul><li>A alíquota efetiva não explicou nem a dívida nem a nota. <em>(tela 10)</em></li><li>Os juros sobre capital próprio ficaram de fora. <em>(dissertação)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#64748b"><h3>Para quem pesquisa</h3><ul><li>Ampliar a amostra em empresas e anos, incluir outras agências de nota, empresas de capital fechado e outros países. <em>(dissertação)</em></li></ul></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Poucas empresas.</b> No Brasil, poucas empresas têm nota de crédito; com 60, efeitos pequenos podem passar despercebidos. <em>· segundo a dissertação</em></li>
+          <li><b>Nota em três faixas.</b> Nenhuma empresa estava perto do calote, então o modelo da nota compara, na prática, as duas faixas de cima. <em>· observação nossa</em></li>
+          <li><b>Associação, não causa.</b> As regressões mostram o que anda junto; não dizem se a dívida veio antes do risco ou depois. <em>· observação nossa</em></li>
+          <li><b>Só o sentido.</b> A dissertação não traduz os coeficientes em tamanho de efeito; a página também não. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          NAKASATO, Renato Hideki. <em>A probabilidade de falência é consistente com a teoria de trade-off?</em> Dissertação (Mestrado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2019. Orientador: Prof. Dr. Eli Hadad Junior.
+        </div>
+        <p style="margin-top:8px; font-size:.76rem">Banca: Eli Hadad Junior (Mackenzie), Wilson Toshiro Nakamura (Mackenzie) e Edison de Simoni (FECAP). Notas da S&amp;P via Bloomberg; demais dados da Capital IQ; regressões no Stata 13. Esta versão simplifica o trabalho para o público em geral.</p>
+        <p class="also">Leia também, do mesmo orientador e do mesmo ano: <a href="../../dissertacoes/2019-ricca-beneficio-fiscal-falencia/">Ricca (2019)</a>, quanto as empresas poderiam dever antes de a nota cair.</p>
+        <div class="ctas" style="margin-top:10px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a dissertação completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, rotatable = M.rotatable, flatLabel = M.flatLabel;
+  var EN = M.lang === 'en';
+  function L(p, e){ return EN ? e : p; }
+  function sg(v, d){ return (v < 0 ? '−' : '+') + fmt(Math.abs(v), d); }
+  function pv(p){ return fmt(p, 3); }
+  function segInit(el, items, cur, fn){
+    el.innerHTML = items.map(function(t, i){ return '<button data-v="' + i + '" aria-pressed="' + (i === cur) + '">' + t + '</button>'; }).join('');
+    each(el.children, function(b){ b.addEventListener('click', function(){ each(el.children, function(x){ x.setAttribute('aria-pressed', x === b); }); fn(+b.dataset.v); }); });
+  }
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // Tabelas 6 (dívida) e 7 (nota; maior = pior): [sinal esperado, coeficiente, p]
+  var TR = [
+    {k:'TAM', nm:L('Tamanho', 'Size'), ms:L('logaritmo da receita líquida', 'log of net revenue'),
+     why:L('Empresas grandes têm mais garantias e são mais diversificadas: falir custaria menos a elas.', 'Large companies have more collateral and are more diversified: failing would cost them less.'),
+     d:[1, 0.0356841, 0.003], r:[-1, 1.899848, 0.202]},
+    {k:'TANG', nm:L('Ativos fixos', 'Fixed assets'), ms:L('imobilizado ÷ ativo total', 'property, plant and equipment ÷ total assets'),
+     why:L('Máquinas e prédios servem de garantia e reduzem o custo de uma falência.', 'Machines and buildings serve as collateral and reduce the cost of a bankruptcy.'),
+     d:[1, -0.0286014, 0.528], r:[-1, -7.531278, 0.214]},
+    {k:'VMC', nm:L('Valor de mercado', 'Market value'), ms:L('valor de mercado ÷ contábil (Q de Tobin ajustado)', 'market ÷ book value (adjusted Tobin\'s Q)'),
+     why:L('Empresas com muitas oportunidades de crescer perdem mais numa falência e preferem vender ações.', 'Companies with many growth opportunities lose more in bankruptcy and prefer to issue shares.'),
+     d:[-1, 0.0184314, 0.702], r:[1, -2.334193, 0.023]},
+    {k:'PD', nm:L('Pesquisa e desenvolvimento', 'Research and development'), ms:L('gastos com P&D ÷ log da receita', 'R&D spending ÷ log of revenue'),
+     why:L('Quem investe em pesquisa tem ativos intangíveis, que valem pouco numa falência.', 'Those who invest in research have intangible assets, which are worth little in bankruptcy.'),
+     d:[-1, -0.0007566, 0.038], r:[1, -0.0861729, 0.073]},
+    {k:'DOP', nm:L('Despesas operacionais', 'Operating expenses'), ms:L('despesas de vendas, gerais e administrativas ÷ receita', 'selling, general and administrative expenses ÷ revenue'),
+     why:L('Produtos exclusivos, com despesas altas, perdem mais numa falência.', 'Exclusive products, with high expenses, lose more in bankruptcy.'),
+     d:[-1, 0.0107823, 0.325], r:[1, -0.3821267, 0.965]},
+    {k:'REN', nm:L('Rentabilidade', 'Profitability'), ms:L('lucro operacional ÷ ativo total', 'operating profit ÷ total assets'),
+     why:L('Mais lucro dá mais imposto para abater com juros.', 'More profit means more tax to offset with interest.'),
+     d:[1, 0.7430264, 0.328], r:[-1, -6.240336, 0.442]},
+    {k:'ROP', nm:L('Oscilação do resultado', 'Swings in results'), ms:L('desvio padrão do lucro operacional em 5 anos ÷ ativo', 'standard deviation of operating profit over 5 years ÷ assets'),
+     why:L('Caixa instável aumenta a chance de não pagar a dívida.', 'Unstable cash raises the chance of not repaying the debt.'),
+     d:[-1, 2.746825, 0.003], r:[1, 63.10621, 0.093]},
+    {k:'IR', nm:L('Alíquota de imposto', 'Tax rate'), ms:L('imposto de renda e contribuição pagos ÷ lucro antes do imposto', 'income tax and social contribution paid ÷ profit before tax'),
+     why:L('É a medida direta do ganho: quem paga mais imposto economiza mais com juros.', 'It is the direct measure of the gain: whoever pays more tax saves more with interest.'),
+     d:[1, -0.0041875, 0.528], r:[-1, 1.237426, 0.210]},
+    {k:'IDA', nm:L('Idade', 'Age'), ms:L('logaritmo da idade da empresa', 'log of the company\'s age'),
+     why:L('Empresas maduras geram caixa próprio e precisam de menos dívida.', 'Mature companies generate their own cash and need less debt.'),
+     d:[-1, -0.0208273, 0.286], r:[1, 1.847595, 0.446]}
+  ];
+  function cls(t){ var s = t[1] > 0 ? 1 : -1; if (t[2] >= 0.10) return 'ns'; return s === t[0] ? 'ok' : 'no'; }
+  function strong(t){ return t[2] < 0.05; }
+  var COL = {ok:'var(--ok)', no:'var(--no)', ns:'var(--ns)'};
+  var WORD = {ok:L('como a teoria prevê', 'as the theory predicts'), no:L('ao contrário da teoria', 'the opposite of the theory'), ns:L('sem efeito claro (p ≥ 0,10)', 'no clear effect (p ≥ 0.10)')};
+  var MIR = [L('dívida', 'debt'), L('nota', 'rating')];
+  function dirTxt(m, s){ return m === 0 ? (s > 0 ? L('mais dívida', 'more debt') : L('menos dívida', 'less debt')) : (s > 0 ? L('nota pior', 'worse rating') : L('nota melhor', 'better rating')); }
+  // Tabela 3
+  var FN = [[L('Companhias com nota da S&P, 2010–2017', 'Companies with an S&P rating, 2010–2017'), 219], [L('− financeiras', '− financial firms'), 66], [L('− nota sem mudança ou sem dados', '− no rating change or missing data'), 93], [L('Amostra final', 'Final sample'), 60]];
+  var IRMEAN = 0.2138388, IRTOP = 0.34;
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 420, 120, {ay:'64%'});
+    rotatable(sc, st, -24, 8);
+    var cols = [];
+    TR.forEach(function(t, i){
+      [t.d, t.r].forEach(function(m, j){
+        var c = cls(m), h = c === 'ns' ? 4 : (strong(m) ? 56 : 32);
+        var b = box({w:36, d:34, x:6 + i * 46, y:j === 0 ? 70 : 24, h:h, c:COL[c]});
+        st.appendChild(b); cols.push([b, i]);
+      });
+      flatLabel(st, t.k === 'PD' ? 'P&D' : t.k === 'TANG' ? L('ATIV', 'FIX') : t.k === 'VMC' ? L('MERC', 'MKT') : t.k === 'IR' ? L('IMP', 'TAX') : t.k === 'IDA' ? L('IDADE', 'AGE') : t.k === 'TAM' ? L('TAM', 'SIZE') : t.k === 'REN' ? L('LUCRO', 'PROF') : t.k === 'DOP' ? L('DESP', 'EXP') : L('OSC', 'SWING'), 6 + i * 46 - 6, 108, 48, 'font-size:10px; text-align:center; font-weight:700;');
+    });
+    flatLabel(st, L('dívida', 'debt'), -70, 76, 66, 'font-size:11px; text-align:right;');
+    flatLabel(st, L('nota', 'rating'), -70, 30, 66, 'font-size:11px; text-align:right;');
+    var read = $('cap-read'), cur = -1;
+    function set(i){
+      if (i === cur) return; cur = i;
+      cols.forEach(function(p){ p[0].classList.toggle('dim', p[1] !== i); });
+      var t = TR[i], a = cls(t.d), b = cls(t.r);
+      read.innerHTML = '<b>' + t.nm + '</b>: ' + MIR[0] + ' <span class="' + a + '-t">' + (a === 'ns' ? L('sem efeito claro', 'no clear effect') : dirTxt(0, t.d[1])) + '</span> · ' + MIR[1] + ' <span class="' + b + '-t">' + (b === 'ns' ? L('sem efeito claro', 'no clear effect') : dirTxt(1, t.r[1])) + '</span>';
+    }
+    var order = [0, 3, 6, 2, 7];
+    if (M.reduce){ set(6); return; }
+    var vis = false;
+    new IntersectionObserver(function(es){ vis = es[0].isIntersecting; }).observe(sc);
+    set(0);
+    M.onTick(function(t){ if (vis) set(order[Math.floor(t / 3.2) % order.length]); });
+  })();
+
+  /* ================= 02 · TEORIA ================= */
+  (function(){
+    var svg = $('to-svg'), r = $('to-r'), X0 = 60, W = 470, Y0 = 30, H = 210;
+    function B(d){ return 0.34 * d; }                 // imposto poupado (ilustrativo)
+    function C(d){ return 0.0047 * d * d; }           // custo esperado de falência (ilustrativo)
+    function V(d){ return B(d) - C(d); }
+    var DOPT = 0.34 / (2 * 0.0047);
+    function ax(d){ return X0 + W * d / 100; }
+    function ay(v){ return Y0 + H * (50 - v) / 65; }
+    function path(f){ var s = ''; for (var d = 0; d <= 100; d += 2){ var v = Math.max(Math.min(f(d), 50), -15); s += (d ? 'L' : 'M') + ax(d).toFixed(1) + ' ' + ay(v).toFixed(1); } return s; }
+    function draw(){
+      var d = +r.value, h = '';
+      for (var v = -10; v <= 50; v += 10){ h += '<line x1="' + X0 + '" y1="' + ay(v) + '" x2="' + (X0 + W) + '" y2="' + ay(v) + '" stroke="' + (v === 0 ? 'var(--ink)' : '#e2e8f0') + '"/>'; }
+      h += '<text x="' + X0 + '" y="16" class="s" style="font-size:12px; fill:var(--muted)">' + L('ganho ou custo (em % do valor sem dívida)', 'gain or cost (as % of value with no debt)') + '</text>';
+      h += '<text x="' + (X0 + W) + '" y="' + (Y0 + H + 20) + '" text-anchor="end" class="s" style="font-size:12px; fill:var(--muted)">' + L('dívida →', 'debt →') + '</text>';
+      h += '<line x1="' + ax(DOPT) + '" y1="' + Y0 + '" x2="' + ax(DOPT) + '" y2="' + (Y0 + H) + '" stroke="var(--ink)" stroke-dasharray="4 3"/>';
+      h += '<text x="' + (ax(DOPT) + 6) + '" y="' + (Y0 + 12) + '" class="s" style="font-size:12px; font-weight:700; fill:var(--ink)">' + L('ponto ótimo', 'optimal point') + '</text>';
+      h += '<path d="' + path(B) + '" fill="none" stroke="var(--ok)" stroke-width="3"/>';
+      h += '<path d="' + path(C) + '" fill="none" stroke="var(--no)" stroke-width="3"/>';
+      h += '<path d="' + path(V) + '" fill="none" stroke="#334155" stroke-width="3" stroke-dasharray="7 4"/>';
+      h += '<text x="' + (ax(100) - 4) + '" y="' + (ay(34) + 20) + '" text-anchor="end" style="font-size:12px; font-weight:700; fill:var(--ok)">' + L('imposto poupado', 'tax saved') + '</text>';
+      h += '<text x="' + (ax(86) - 8) + '" y="' + (ay(37)) + '" text-anchor="end" style="font-size:12px; font-weight:700; fill:var(--no)">' + L('custo de falência', 'bankruptcy cost') + '</text>';
+      h += '<text x="' + ax(50) + '" y="' + ay(-7) + '" style="font-size:12px; font-weight:700; fill:#334155">' + L('saldo para a empresa', 'net for the company') + '</text>';
+      h += '<line x1="' + ax(d) + '" y1="' + Y0 + '" x2="' + ax(d) + '" y2="' + (Y0 + H) + '" stroke="var(--red)" stroke-width="2"/>';
+      h += '<circle cx="' + ax(d) + '" cy="' + ay(Math.max(V(d), -15)) + '" r="6" fill="#334155" stroke="#fff" stroke-width="2"/>';
+      svg.innerHTML = h;
+      $('to-v').textContent = d;
+      var gap = d - DOPT, msg;
+      if (Math.abs(gap) < 4) msg = L('<b>Perto do ponto ótimo:</b> o próximo real de imposto poupado empata com o custo extra de risco.', '<b>Near the optimal point:</b> the next real of tax saved breaks even with the extra cost of risk.');
+      else if (gap < 0) msg = L('<b>Abaixo do ótimo:</b> dever um pouco mais ainda aumentaria o valor da empresa.', '<b>Below the optimum:</b> owing a bit more would still raise the company\'s value.');
+      else msg = L('<b>Acima do ótimo:</b> o risco de quebrar já come mais do que o imposto poupa.', '<b>Above the optimum:</b> the risk of failing already eats more than the tax saves.');
+      $('to-read').innerHTML = msg + ' ' + L('Saldo: ', 'Net: ') + '<b>' + (V(d) < 0 ? '−' : '+') + fmt(Math.abs(V(d)), 1) + '</b>.';
+    }
+    r.addEventListener('input', draw); draw();
+  })();
+
+  /* ================= 03 · NOTA ================= */
+  (function(){
+    var svg = $('th-svg'), panel = $('th-panel');
+    var BANDS = [
+      {n:1, g:'AAA … BB−', b:'brAAA … brA−', c:'#1f3b73', t:L('As mais seguras', 'The safest'), m:L('Da capacidade alta de pagar (AAA a BBB, grau de investimento) às pouco vulneráveis no curto prazo, mas sensíveis a crises (BB).', 'From a high capacity to pay (AAA to BBB, investment grade) to those not very vulnerable in the short run but sensitive to crises (BB).')},
+      {n:2, g:'B+ … CCC−', b:'brA− … brCCC−', c:'#b45309', t:L('Vulneráveis', 'Vulnerable'), m:L('Ainda pagam, mas dependem de condições favoráveis de negócios e da economia para honrar a dívida.', 'They still pay, but depend on favorable business and economic conditions to honor their debt.')},
+      {n:3, g:'CC · C · D', b:'brCC · brC · D', c:'hsl(348 94% 47%)', t:L('Perto do calote ou em calote', 'Near default or in default'), m:L('Altamente vulneráveis, em recuperação judicial ou sem pagar. Nenhuma das 60 empresas esteve nesta faixa entre 2010 e 2017.', 'Highly vulnerable, under judicial reorganization or not paying. None of the 60 companies was in this band between 2010 and 2017.')}
+    ];
+    var h = '<rect x="70" y="20" width="44" height="236" rx="22" fill="#f1f5f9" stroke="#cbd5e1"/><circle cx="92" cy="268" r="26" fill="hsl(348 94% 47%)"/>';
+    BANDS.forEach(function(b, i){
+      var y = 28 + i * 76;
+      h += '<g class="band" tabindex="0" role="button" data-i="' + i + '" aria-label="' + L('Faixa ', 'Band ') + b.n + ': ' + b.t + '">';
+      h += '<rect class="bg" x="132" y="' + y + '" width="370" height="68" rx="12" fill="#fff" stroke="#e2e8f0"/>';
+      h += '<rect x="78" y="' + (y + 2) + '" width="28" height="64" rx="8" fill="' + b.c + '" opacity="' + (0.35 + i * 0.3) + '"/>';
+      h += '<text x="150" y="' + (y + 28) + '" style="font-size:22px; font-weight:800; fill:' + b.c + '">' + b.n + '</text>';
+      h += '<text x="182" y="' + (y + 27) + '" style="font-size:15px; font-weight:700; fill:var(--ink)">' + b.t + '</text>';
+      h += '<text x="182" y="' + (y + 50) + '" class="s" style="font-size:12px; fill:var(--muted)">' + L('global ', 'global ') + b.g + ' · ' + L('nacional ', 'national ') + b.b + '</text>';
+      h += '</g>';
+    });
+    h += '<text x="40" y="34" text-anchor="middle" class="s" style="font-size:11px; fill:var(--muted)">' + L('menor', 'lower') + '</text><text x="40" y="48" text-anchor="middle" class="s" style="font-size:11px; fill:var(--muted)">' + L('risco', 'risk') + '</text>';
+    h += '<text x="40" y="238" text-anchor="middle" class="s" style="font-size:11px; fill:var(--muted)">' + L('maior', 'higher') + '</text><text x="40" y="252" text-anchor="middle" class="s" style="font-size:11px; fill:var(--muted)">' + L('risco', 'risk') + '</text>';
+    svg.innerHTML = h;
+    function set(i){
+      var b = BANDS[i];
+      each(svg.querySelectorAll('.band'), function(g){ g.querySelector('rect.bg').setAttribute('stroke', +g.dataset.i === i ? b.c : '#e2e8f0'); g.querySelector('rect.bg').setAttribute('stroke-width', +g.dataset.i === i ? 2.5 : 1); });
+      panel.innerHTML = '<h3>' + L('Faixa ', 'Band ') + b.n + ' · ' + b.t + '</h3><p>' + b.m + '</p>';
+    }
+    each(svg.querySelectorAll('.band'), function(g){
+      g.addEventListener('click', function(){ set(+g.dataset.i); });
+      g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); set(+g.dataset.i); } });
+    });
+    set(0);
+  })();
+
+  /* ================= 04 · DOIS ESPELHOS ================= */
+  (function(){
+    var chips = $('tr-chips'), panel = $('tr-panel');
+    function arw(m, s){ return (s > 0 ? '↑ ' : '↓ ') + dirTxt(m, s); }
+    function set(i){
+      var t = TR[i];
+      panel.innerHTML = '<h3>' + t.nm + '</h3><p><b>' + L('Como mede: ', 'How it is measured: ') + '</b>' + t.ms + '.</p><p><b>' + L('Por que importa: ', 'Why it matters: ') + '</b>' + t.why + '</p>' +
+        '<div class="mir"><div><b>' + L('Espelho 1 · dívida', 'Mirror 1 · debt') + '</b>' + L('mais ', 'more ') + t.nm.toLowerCase() + ' → <span class="arw">' + arw(0, t.d[0]) + '</span></div><div><b>' + L('Espelho 2 · nota', 'Mirror 2 · rating') + '</b>' + L('mais ', 'more ') + t.nm.toLowerCase() + ' → <span class="arw">' + arw(1, t.r[0]) + '</span></div></div>' +
+        '<p style="margin-top:8px; font-size:.76rem; color:var(--muted)">' + L('O que a dissertação esperava, antes dos dados.', 'What the dissertation expected, before the data.') + '</p>';
+    }
+    chips.innerHTML = TR.map(function(t, i){ return '<button class="chip" data-v="' + i + '" aria-pressed="' + (i === 0) + '">' + t.nm + '</button>'; }).join('');
+    each(chips.children, function(b){ b.addEventListener('click', function(){ each(chips.children, function(x){ x.setAttribute('aria-pressed', x === b); }); set(+b.dataset.v); }); });
+    set(0);
+  })();
+
+  /* ================= 05 · AMOSTRA ================= */
+  (function(){
+    var svg = $('fn-svg'), h = '', X0 = 20, W = 520, rowH = 58;
+    var left = 0;
+    FN.forEach(function(f, i){
+      var y = 12 + i * rowH, w, x;
+      if (i === 0){ x = X0; w = W; }
+      else if (i < 3){ x = X0 + W * (219 - left - f[1]) / 219; w = W * f[1] / 219; }
+      else { x = X0; w = W * f[1] / 219; }
+      var fill = i === 0 ? '#94a3b8' : i < 3 ? '#e2e8f0' : 'hsl(348 94% 47%)';
+      h += '<rect x="' + x.toFixed(1) + '" y="' + (y + 18) + '" width="' + w.toFixed(1) + '" height="26" rx="5" fill="' + fill + '"/>';
+      h += '<text x="' + X0 + '" y="' + (y + 12) + '" style="font-size:13px; font-weight:600; fill:var(--ink)">' + f[0] + '</text>';
+      var lx = i === 3 ? x + w + 8 : (i === 0 ? x + w - 8 : x + w / 2), anc = i === 3 ? 'start' : (i === 0 ? 'end' : 'middle');
+      h += '<text x="' + lx.toFixed(1) + '" y="' + (y + 36) + '" text-anchor="' + anc + '" style="font-size:14px; font-weight:800; fill:' + (i === 0 ? '#fff' : 'var(--ink)') + '">' + (i > 0 && i < 3 ? '−' : '') + f[1] + '</text>';
+      if (i > 0 && i < 3) left += f[1];
+    });
+    svg.innerHTML = h;
+  })();
+
+  /* ================= 06 e 07 · ESPELHOS ================= */
+  function mirror(rsId, panelId, tgId, m){
+    var rs = $(rsId), panel = $(panelId), tg = $(tgId);
+    function bar(t){
+      var c = cls(t), s = t[1] > 0 ? 1 : -1, e = t[0], h = '<svg viewBox="0 0 200 26" preserveAspectRatio="none" aria-hidden="true">';
+      h += '<line x1="100" y1="2" x2="100" y2="24" stroke="#94a3b8"/>';
+      h += '<rect x="' + (e > 0 ? 100 : 20) + '" y="5" width="80" height="16" rx="8" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 3"/>';
+      if (c === 'ns') h += '<circle cx="100" cy="13" r="5" fill="#cbd5e1"/>';
+      else h += '<rect x="' + (s > 0 ? 100 : 20) + '" y="7" width="80" height="12" rx="6" fill="' + COL[c] + '" opacity="' + (strong(t) ? 1 : 0.5) + '"/>';
+      return h + '</svg>';
+    }
+    rs.innerHTML = TR.map(function(t, i){
+      var x = m === 0 ? t.d : t.r, c = cls(x);
+      return '<button class="rrow ' + c + '" data-i="' + i + '" aria-pressed="false"><span class="nm">' + t.nm + '<small>' + (c === 'ns' ? L('sem efeito claro', 'no clear effect') : (c === 'ok' ? L('como previsto', 'as predicted') : L('ao contrário', 'opposite'))) + '</small></span>' + bar(x) + '</button>';
+    }).join('');
+    function set(i){
+      var t = TR[i], x = m === 0 ? t.d : t.r, c = cls(x);
+      each(rs.children, function(b){ b.setAttribute('aria-pressed', +b.dataset.i === i); });
+      panel.innerHTML = '<h3>' + t.nm + ' · <span class="' + c + '-t">' + WORD[c] + '</span></h3>' +
+        '<p>' + L('A teoria esperava: mais ', 'The theory expected: more ') + t.nm.toLowerCase() + ' → <b>' + dirTxt(m, x[0]) + '</b>. ' +
+        (c === 'ns' ? L('Nos dados, o sinal foi de ', 'In the data, the sign pointed to ') + '<b>' + dirTxt(m, x[1]) + '</b>' + L(', mas sem força para descartar o acaso.', ', but not strongly enough to rule out chance.') :
+          L('Nos dados: ', 'In the data: ') + '<b>' + dirTxt(m, x[1]) + '</b>.') + '</p>' +
+        '<p style="font-size:.78rem; color:var(--muted)">' + L('Coeficiente ', 'Coefficient ') + sg(x[1], Math.abs(x[1]) < 0.01 ? 7 : Math.abs(x[1]) < 1 ? 4 : 2) + ' · p ' + pv(x[2]) + ' · ' + t.ms + '</p>';
+    }
+    each(rs.children, function(b){ b.addEventListener('click', function(){ set(+b.dataset.i); }); });
+    tg.addEventListener('click', function(){ var on = tg.getAttribute('aria-pressed') !== 'true'; tg.setAttribute('aria-pressed', on); rs.classList.toggle('hide', on); });
+    set(m === 0 ? 0 : 2);
+  }
+  mirror('dv-rs', 'dv-panel', 'dv-tg', 0);
+  mirror('nt-rs', 'nt-panel', 'nt-tg', 1);
+
+  /* ================= 08 · PLACAR ================= */
+  (function(){
+    var bins = $('pl-bins'), panel = $('pl-panel'), G = {ok:[], no:[], ns:[]};
+    TR.forEach(function(t, i){ [t.d, t.r].forEach(function(x, m){ G[cls(x)].push([i, m]); }); });
+    var HD = {ok:L('Como a teoria previa', 'As the theory predicted'), no:L('Ao contrário', 'The opposite way'), ns:L('Sem efeito claro', 'No clear effect')};
+    var BC = {ok:'var(--ok)', no:'var(--no)', ns:'#94a3b8'};
+    bins.innerHTML = ['ok', 'no', 'ns'].map(function(k){
+      return '<div class="bin' + (k === 'ns' ? ' nsb' : '') + '" style="--bc:' + BC[k] + '"><div class="big">' + G[k].length + '</div><h3>' + HD[k] + '</h3><div class="tiles">' +
+        G[k].map(function(p){ var t = TR[p[0]]; return '<button class="tile" data-i="' + p[0] + '" data-m="' + p[1] + '" aria-pressed="false">' + t.nm + '<small>' + MIR[p[1]] + '</small></button>'; }).join('') + '</div></div>';
+    }).join('');
+    var tiles = bins.querySelectorAll('.tile');
+    function set(i, m){
+      var t = TR[i], x = m === 0 ? t.d : t.r, c = cls(x);
+      each(tiles, function(b){ b.setAttribute('aria-pressed', +b.dataset.i === i && +b.dataset.m === m); });
+      panel.innerHTML = '<p><b>' + t.nm + ' × ' + MIR[m] + '</b>: ' + L('esperado ', 'expected ') + dirTxt(m, x[0]) + '; ' + L('nos dados, ', 'in the data, ') + (c === 'ns' ? L('sem efeito claro', 'no clear effect') : dirTxt(m, x[1])) + ' (p ' + pv(x[2]) + ', ' + (m === 0 ? L('Tabela 6', 'Table 6') : L('Tabela 7', 'Table 7')) + ').</p>';
+    }
+    each(tiles, function(b){ b.addEventListener('click', function(){ set(+b.dataset.i, +b.dataset.m); }); });
+    set(6, 0);
+  })();
+
+  /* ================= 09 · OSCILAÇÃO ================= */
+  (function(){
+    var svg = $('ro-svg'), cur = 1;
+    var PTS = [[50, 52, 49, 51, 50], [50, 78, 24, 70, 30]];
+    function draw(){
+      var p = PTS[cur], X0 = 50, W = 300, Y0 = 30, H = 170, h = '';
+      function ax(i){ return X0 + W * i / 4; } function ay(v){ return Y0 + H * (100 - v) / 100; }
+      h += '<line x1="' + X0 + '" y1="' + ay(0) + '" x2="' + (X0 + W) + '" y2="' + ay(0) + '" stroke="var(--ink)"/>';
+      h += '<text x="' + X0 + '" y="16" class="s" style="font-size:12px; fill:var(--muted)">' + L('lucro operacional, 5 anos', 'operating profit, 5 years') + '</text>';
+      h += '<line x1="' + X0 + '" y1="' + ay(50) + '" x2="' + (X0 + W) + '" y2="' + ay(50) + '" stroke="#cbd5e1" stroke-dasharray="4 3"/>';
+      h += '<path d="' + p.map(function(v, i){ return (i ? 'L' : 'M') + ax(i) + ' ' + ay(v); }).join('') + '" fill="none" stroke="#334155" stroke-width="3"/>';
+      p.forEach(function(v, i){ h += '<circle cx="' + ax(i) + '" cy="' + ay(v) + '" r="5" fill="#334155"/><text x="' + ax(i) + '" y="' + (ay(0) + 18) + '" text-anchor="middle" class="s" style="font-size:11px; fill:var(--muted)">' + L('ano ', 'yr ') + (i + 1) + '</text>'; });
+      var up = cur === 1;
+      // setas: dívida e nota
+      function arrow(x, lab, col, on){
+        var len = on ? 60 : 0, base = 140;
+        var s = '<text x="' + x + '" y="' + (base + 50) + '" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--ink)">' + lab + '</text>';
+        if (on) s += '<line x1="' + x + '" y1="' + base + '" x2="' + x + '" y2="' + (base - len) + '" stroke="' + col + '" stroke-width="8" stroke-linecap="round"/><path d="M' + (x - 14) + ' ' + (base - len + 6) + ' L' + x + ' ' + (base - len - 14) + ' L' + (x + 14) + ' ' + (base - len + 6) + ' Z" fill="' + col + '"/>';
+        else s += '<circle cx="' + x + '" cy="' + base + '" r="7" fill="#cbd5e1"/>';
+        return s;
+      }
+      h += arrow(420, L('dívida', 'debt'), 'var(--no)', up);
+      h += arrow(505, L('risco na nota', 'rating risk'), 'var(--ok)', up);
+      h += '<text x="462" y="' + (up ? 40 : 110) + '" text-anchor="middle" class="s" style="font-size:11px; fill:var(--muted)">' + (up ? L('comparada à estável', 'compared to the stable one') : L('ponto de comparação', 'reference point')) + '</text>';
+      svg.innerHTML = h;
+    }
+    segInit($('ro-seg'), [L('Empresa de lucro estável', 'Stable-profit company'), L('Empresa de lucro instável', 'Unstable-profit company')], cur, function(v){ cur = v; draw(); });
+    draw();
+  })();
+
+  /* ================= 10 · IMPOSTO ================= */
+  (function(){
+    var svg = $('tx-svg'), panel = $('tx-panel'), X0 = 30, W = 500;
+    function ax(v){ return X0 + W * v / 0.34; }
+    var h = '';
+    var parts = [[0, 0.15, L('IR 15%', 'Income tax 15%')], [0.15, 0.25, L('adicional 10%', 'surcharge 10%')], [0.25, 0.34, L('CSLL 9%', 'social contr. 9%')]];
+    parts.forEach(function(p, i){ h += '<rect x="' + ax(p[0]) + '" y="110" width="' + (ax(p[1]) - ax(p[0]) - 2) + '" height="34" rx="6" fill="' + ['#e2e8f0', '#cbd5e1', '#94a3b8'][i] + '"/><text x="' + ((ax(p[0]) + ax(p[1])) / 2) + '" y="132" text-anchor="middle" class="s" style="font-size:12px; fill:var(--ink)">' + p[2] + '</text>'; });
+    h += '<line x1="' + ax(IRMEAN) + '" y1="64" x2="' + ax(IRMEAN) + '" y2="96" stroke="var(--red)" stroke-width="3"/><path d="M' + (ax(IRMEAN) - 9) + ' 96 L' + (ax(IRMEAN) + 9) + ' 96 L' + ax(IRMEAN) + ' 108 Z" fill="var(--red)"/><line x1="' + ax(IRMEAN) + '" y1="146" x2="' + ax(IRMEAN) + '" y2="158" stroke="var(--red)" stroke-width="3"/>';
+    h += '<text x="' + ax(IRMEAN) + '" y="40" text-anchor="middle" style="font-size:24px; font-weight:800; fill:var(--red)">' + fmt(IRMEAN * 100, 1) + '%</text>';
+    h += '<text x="' + ax(IRMEAN) + '" y="58" text-anchor="middle" class="s" style="font-size:12px; fill:var(--ink-2)">' + L('alíquota efetiva média', 'average effective rate') + '</text>';
+    h += '<text x="' + ax(0.34) + '" y="178" text-anchor="end" style="font-size:14px; font-weight:700; fill:var(--ink)">' + L('teto 34%', 'ceiling 34%') + '</text>';
+    h += '<text x="' + X0 + '" y="178" style="font-size:12px; fill:var(--muted)">0%</text>';
+    h += '<text x="' + X0 + '" y="210" class="s" style="font-size:12px; fill:var(--muted)">' + L('teto da tributação do lucro no Brasil (seção 4.1)', 'ceiling of profit taxation in Brazil (section 4.1)') + '</text>';
+    svg.innerHTML = h;
+    var t = TR[7];
+    segInit($('tx-seg'), [L('Espelho da dívida', 'Debt mirror'), L('Espelho da nota', 'Rating mirror')], 0, set);
+    function set(m){
+      var x = m === 0 ? t.d : t.r;
+      panel.innerHTML = '<p><b>' + L('Esperado: ', 'Expected: ') + '</b>' + L('alíquota maior → ', 'higher rate → ') + dirTxt(m, x[0]) + '.</p><p><b>' + L('Nos dados: ', 'In the data: ') + '</b>' + L('o sinal apontou para ', 'the sign pointed to ') + dirTxt(m, x[1]) + ', ' + L('com p ', 'with p ') + pv(x[2]) + L(': não se distingue do acaso.', ': it cannot be told apart from chance.') + '</p>';
+    }
+    set(0);
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
