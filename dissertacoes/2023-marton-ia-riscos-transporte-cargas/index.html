@@ -1,0 +1,884 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Na estrada, a IA ainda é a regra “se, então” · PPGA Interativo</title>
+<meta name="description" content="A dissertação de mestrado de Fabio Marton (PPGA Mackenzie) ouviu seis profissionais do transporte rodoviário de cargas: a inteligência artificial em uso contra roubos é feita de regras “se, então”, que padronizam e aceleram a resposta; prever o risco ainda é expectativa. Explicada em 13 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/dissertacoes/2023-marton-ia-riscos-transporte-cargas/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2221%22 font-family=%22Georgia%22 font-size=%2212%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>SE</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  :root{
+    --rule:var(--navy);   /* sistemas especialistas: a regra "se, então" */
+    --net:var(--red);     /* redes neurais / o que ainda não existe / risco */
+    --mid:#334155;
+    --weak:#b45309;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .rule-t{color:var(--rule); font-weight:700;} .net-t{color:var(--net); font-weight:700;}
+  .ill{display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--weak); border:1px solid color-mix(in srgb, var(--weak) 45%, white); border-radius:999px; padding:2px 9px; margin-bottom:6px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 18px; box-shadow:var(--shadow);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.9rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.82rem; cursor:pointer; color:var(--ink-2); font-family:var(--sans);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .quote{font-family:var(--serif); font-size:.88rem; line-height:1.55; color:var(--ink); border-left:3px solid var(--qc, var(--red)); padding:4px 0 4px 14px; margin:10px 0;}
+  .quote small{display:block; font-family:var(--sans); font-size:.72rem; color:var(--muted); margin-top:4px;}
+  .msg{font-size:.86rem; color:var(--ink-2); min-height:2.6em;}
+  .stats{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:10px; margin-top:6px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-size:.76rem; color:var(--ink-2); line-height:1.35;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.4rem; color:var(--ink); line-height:1.15; margin-bottom:2px;}
+  @media (max-width:520px){ .stats{grid-template-columns:repeat(2, minmax(0, 1fr));} }
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin:8px 0;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-size:.8rem; cursor:pointer; color:var(--ink-2); font-family:var(--sans);}
+  .chip[aria-pressed="true"]{background:var(--ink); border-color:var(--ink); color:#fff;}
+  .chip.r[aria-pressed="true"]{background:var(--red); border-color:var(--red);}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(1.65rem, 2.5vw, 2.1rem); margin-bottom:16px;}
+  #capa .sub{font-size:clamp(1rem, 1.4vw, 1.08rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{display:flex; gap:8px 16px; justify-content:center; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:6px;}
+  #truck .f-top span, #truck .face-label{font-size:24px; font-weight:700; color:#fff; letter-spacing:.04em;}
+  #truck .road{position:absolute; left:-40px; top:118px; width:600px; height:56px; background:#e2e8f0; border-radius:4px;}
+  #truck .road i{position:absolute; top:26px; width:44px; height:4px; background:#fff;}
+
+  /* ---------- 02 · Roubos ---------- */
+  .yrs{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:12px; align-items:end; height:210px; margin:10px 0 4px; padding:0 4px; border-bottom:2px solid var(--neutral);}
+  .yrs .col{display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%;}
+  .yrs .col b{font-size:.8rem; color:var(--ink); font-variant-numeric:tabular-nums; margin-bottom:4px; text-align:center;}
+  .yrs .col i{display:block; width:70%; max-width:70px; border-radius:6px 6px 0 0; transition:height .7s cubic-bezier(.2,.8,.2,1), background .3s;}
+  .yr-l{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:12px; font-size:.78rem; color:var(--muted); text-align:center; padding:0 4px;}
+  .drop{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+  .drop div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-size:.78rem; color:var(--ink-2);}
+  .drop b{display:block; font-family:var(--serif); font-size:1.5rem; line-height:1.1;}
+
+  /* ---------- 03 · Ferramentas ---------- */
+  .trip{position:relative; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; margin-top:8px;}
+  .trip .ph{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px; }
+  .trip .ph h4{font-family:var(--sans); font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin:0 0 6px;}
+  .trip .ph button{display:block; width:100%; text-align:left; border:1px solid var(--border); background:#f8fafc; border-radius:8px; padding:7px 9px; margin:5px 0; font-size:.8rem; color:var(--ink); cursor:pointer; font-family:var(--sans);}
+  .trip .ph button[aria-pressed="true"]{background:var(--navy); border-color:var(--navy); color:#fff;}
+  .tool-out{margin-top:12px;}
+  .tool-out .tags{display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;}
+  .tool-out .tags span{font-size:.7rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; border-radius:999px; padding:3px 9px; background:#eef2f7; color:var(--ink-2);}
+  .tool-out .tags span.on{background:var(--red); color:#fff;}
+  @media (max-width:600px){ .trip{grid-template-columns:1fr;} }
+
+  /* ---------- 04 · Regra ---------- */
+  .builder{display:grid; gap:10px;}
+  .builder .lab{font-family:var(--serif); font-weight:900; font-size:1.05rem; color:var(--rule); margin-right:6px;}
+  .builder .opts{display:flex; flex-wrap:wrap; gap:6px; margin-top:4px;}
+  .rulecard{border:2px solid var(--rule); border-radius:14px; padding:14px 16px; background:color-mix(in srgb, var(--rule) 5%, white); font-size:.92rem; line-height:1.5; min-height:5.2em;}
+  .rulecard b.k{font-family:var(--serif); color:var(--rule); font-weight:900;}
+  .rulecard.net{border-color:var(--net); background:color-mix(in srgb, var(--net) 5%, white);}
+  .rulecard.net b.k{color:var(--net);}
+
+  /* ---------- 05 · Quem ---------- */
+  .people{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px;}
+  .people button{border:1px solid var(--border); background:var(--card); border-radius:14px; padding:12px 10px; cursor:pointer; text-align:left; font-family:var(--sans); color:var(--ink-2); font-size:.76rem; line-height:1.35; box-shadow:var(--shadow);}
+  .people button b{display:block; font-family:var(--serif); font-size:1.15rem; color:var(--ink);}
+  .people button .g{display:inline-block; margin-top:4px; font-size:.66rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--grp);}
+  .people button[aria-pressed="true"]{border-color:var(--grp); box-shadow:0 0 0 2px var(--grp) inset;}
+  .funnel{display:grid; gap:6px; margin-top:12px;}
+  .funnel div{display:flex; align-items:center; gap:10px; font-size:.82rem; color:var(--ink-2);}
+  .funnel i{display:block; height:26px; border-radius:6px; background:var(--navy);}
+  .funnel b{font-family:var(--serif); font-size:1.05rem; color:var(--ink); min-width:44px; text-align:right;}
+
+  /* ---------- 06 · Atores ---------- */
+  #actors svg{width:100%; height:auto; display:block;}
+  .swipe-hint{display:none; font-size:.74rem; color:var(--muted); margin-top:4px;}
+  @media (max-width:600px){ #actors{overflow-x:auto; -webkit-overflow-scrolling:touch;} #actors svg{min-width:600px;} .swipe-hint{display:block;} }
+  #actors .node rect{fill:#fff; stroke:var(--neutral); stroke-width:2; transition:stroke .2s, fill .2s;}
+  #actors .node text{font-family:var(--sans); font-size:13px; font-weight:600; fill:var(--ink);}
+  #actors .node{cursor:pointer;}
+  #actors .node.on rect{stroke:var(--navy); fill:color-mix(in srgb, var(--navy) 8%, white);}
+  #actors .edge path{fill:none; stroke:#94a3b8; stroke-width:2; transition:stroke .2s, stroke-width .2s;}
+  #actors .edge text{font-family:var(--sans); font-size:11px; fill:var(--muted); paint-order:stroke; stroke:#fff; stroke-width:4px; stroke-linejoin:round;}
+  #actors .edge.hot path{stroke:var(--red); stroke-width:3.5;}
+  #actors .edge.hot text{fill:var(--red); font-weight:700;}
+  #actors .edge.rules path{stroke-dasharray:5 5;}
+
+  /* ---------- 07 · Achado ---------- */
+  .who6{display:grid; grid-template-columns:150px repeat(6, minmax(0,1fr)); gap:5px; align-items:center; font-size:.76rem; color:var(--ink-2);}
+  .who6 .h{font-weight:700; text-align:center; color:var(--ink); cursor:pointer; border:1px solid var(--border); border-radius:8px; padding:4px 0; background:var(--card); font-family:var(--sans); font-size:.76rem;}
+  .who6 .h[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .who6 .c{height:30px; border-radius:7px; background:#f1f5f9;}
+  .who6 .c.n{background:var(--rule);} .who6 .c.r{background:var(--net);} .who6 .c.g{background:#64748b;}
+  @media (max-width:520px){ .who6{grid-template-columns:96px repeat(6, minmax(0,1fr)); font-size:.7rem;} }
+
+  /* ---------- 08 · Mapa ---------- */
+  #map-scene .slab.dim > i{opacity:.18;}
+  #map-scene .slab{cursor:pointer;}
+  #map-scene .slab.sel{--c:var(--red) !important;}
+  #map-scene .f-top span{font-size:11px; font-weight:700; color:#fff;}
+  .us-out{min-height:4.6em;}
+
+  /* ---------- 09 · Benefícios ---------- */
+  .bars .row{display:grid; grid-template-columns:minmax(0,1fr) 120px 22px; gap:8px; align-items:center; font-size:.8rem; color:var(--ink-2); margin:5px 0;}
+  .bars .bar{display:grid; grid-template-columns:repeat(6, 1fr); gap:2px;}
+  .bars .bar i{height:14px; border-radius:3px; background:#e2e8f0;}
+  .bars .bar i.on{background:var(--navy);}
+  .bars b{text-align:right; color:var(--ink);}
+  .team{display:flex; flex-wrap:wrap; gap:4px; min-height:96px; align-content:flex-start; margin:10px 0 6px;}
+  .team svg{width:20px; height:24px; transition:opacity .4s, transform .4s;}
+  .team svg.out{opacity:.12; transform:scale(.85);}
+  .team svg.maybe{opacity:.45;}
+
+  /* ---------- 10 · Social ---------- */
+  .soc{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; margin-top:8px;}
+  .soc button{text-align:left; border:1px solid var(--border); border-radius:14px; background:var(--card); padding:12px 14px; cursor:pointer; font-family:var(--sans); box-shadow:var(--shadow); color:var(--ink-2); font-size:.8rem;}
+  .soc button b{display:block; font-family:var(--serif); font-size:1rem; color:var(--ink); margin-bottom:2px;}
+  .soc button[aria-pressed="true"]{border-color:var(--red); box-shadow:0 0 0 2px var(--red) inset;}
+  @media (max-width:520px){ .soc{grid-template-columns:1fr;} }
+
+  /* ---------- 11 · Barreiras ---------- */
+  #bar-scene .slab{cursor:pointer;}
+  #bar-scene .slab.sel{--c:var(--red) !important;}
+  #bar-scene .face-label{font-size:16px; color:#fff; font-weight:700;}
+
+  /* ---------- 12 · Futuro ---------- */
+  .roads svg{width:100%; height:auto; display:block;}
+  .roads .rt{fill:none; stroke-width:14; stroke-linecap:round; transition:stroke .3s;}
+  .roads .rt.a{stroke:#cbd5e1;} .roads .rt.b{stroke:#cbd5e1;}
+  .roads .rt.on{stroke:var(--navy);}
+  .roads text{font-family:var(--sans); font-size:15px; fill:var(--ink-2);}
+  .roads .ic{font-size:15px;}
+
+  /* ---------- 13 · Créditos ---------- */
+  .pcards{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px; margin-top:8px;}
+  .pcards div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-size:.76rem; color:var(--ink-2); line-height:1.4;}
+  .pcards b{display:block; color:var(--ink); font-size:.82rem; margin-bottom:3px;}
+  .pcards em{font-style:normal; color:var(--weak); font-size:.68rem; font-weight:700;}
+  @media (max-width:700px){ .pcards{grid-template-columns:1fr;} }
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:12px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.04rem; margin-bottom:4px;}
+  .limits{display:grid; gap:5px; margin:8px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.78rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.72rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.5; margin-top:8px;}
+  .cite b{color:var(--ink);}
+  .also{font-size:.8rem; margin-top:10px;}
+</style>
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/dissertacoes/2023-marton-ia-riscos-transporte-cargas/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 13</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Dissertação de mestrado · PPGA Mackenzie · 2023</div>
+      <h1 class="rv" style="--d:.1s">Contra o roubo de cargas, a inteligência artificial que já funciona é a regra “se acontecer isto, faça aquilo”</h1>
+      <p class="sub rv" style="--d:.2s">A dissertação ouviu <strong>seis profissionais com 17 a 21 anos no ramo</strong>. Todos descrevem sistemas de <strong class="rule-t">regras escritas por especialistas</strong>, que padronizam e aceleram a resposta a uma suspeita de roubo. Uma IA que <strong class="net-t">aprende sozinha e prevê o risco</strong> ninguém mostrou em uso: é o que eles esperam do futuro.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Fabio Marton</span>
+        <span><b>Orientador:</b> Prof. Dr. Gilberto Perez</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#roubos">Começar →</a>
+        <a class="btn ghost" href="#regra">Montar uma regra</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="truck" data-fit="540x300" role="img" aria-label="Um caminhão de carga em 3D numa estrada, com “SE → ENTÃO” escrito no teto do baú e uma sirene vermelha na cabine: a regra que vigia a viagem"></div></div>
+      <div class="cap-legend">
+        <span><i class="dot" style="background:var(--rule)"></i>Regra “se, então” (em uso)</span>
+        <span><i class="dot" style="background:var(--net)"></i>O alerta que a regra dispara</span>
+        <span>Arraste para girar</span>
+      </div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-9"><a href="https://brasil.un.org/pt-br/sdgs/9" target="_blank" rel="noopener" title="ODS 9 · Indústria, inovação e infraestrutura: Mostra que tecnologia já se usa contra o roubo de cargas no Brasil, regras programadas, e o que trava o salto para uma IA que prevê riscos."><b>9</b>Indústria, inovação e infraestrutura</a></li>
+          <li class="ods-16"><a href="https://brasil.un.org/pt-br/sdgs/16" target="_blank" rel="noopener" title="ODS 16 · Paz, justiça e instituições eficazes: Trata do combate ao roubo de cargas feito por quadrilhas e de como os dados das empresas privadas poderiam ajudar a segurança pública."><b>16</b>Paz, justiça e instituições eficazes</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · ROUBOS -->
+<section class="slide" id="roubos" data-label="O problema">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O problema</div>
+      <h2 class="rv" style="--d:.1s">Os roubos de carga caíram um terço, mas o prejuízo caiu bem menos</h2>
+      <p class="rv" style="--d:.15s">O Brasil depende do caminhão: cerca de 65% das cargas andam por rodovias, e só 12,4% delas são pavimentadas. Somam-se roubos e acidentes. É por isso que seguradoras exigem, e um setor inteiro vende, “gerenciamento de riscos” para cada viagem.</p>
+      <div class="stats rv" style="--d:.2s">
+        <div class="stat"><b>65%</b>das cargas do país foram pelo modal rodoviário em 2021 (CNT)</div>
+        <div class="stat"><b>570.029</b>acidentes com caminhão de 2007 a 2018: 33,1% de todos os acidentes</div>
+        <div class="stat"><b>1.900+</b>empresas de gerenciamento de riscos e rastreamento, com 50 mil empregos</div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel">
+        <div class="tag">Roubos de carga no Brasil · 2018 a 2021</div>
+        <div class="seg" id="theft-seg" role="group" aria-label="Escolher a medida"></div>
+        <div class="yrs" id="theft-bars"></div>
+        <div class="yr-l"><span>2018</span><span>2019</span><span>2020</span><span>2021</span></div>
+        <div class="drop">
+          <div><b style="color:var(--navy)">−35%</b>ocorrências de 2018 a 2021</div>
+          <div><b style="color:var(--red)">−14%</b>prejuízo no mesmo período</div>
+        </div>
+        <p class="msg" id="theft-msg" aria-live="polite" style="margin-top:10px"></p>
+      </div>
+      <p class="note">Tabelas 4 e 5 da dissertação (NTC &amp; Logística). Valores em reais da época, sem correção pela inflação. O prejuízo por roubo é conta nossa (prejuízo ÷ ocorrências).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · FERRAMENTAS -->
+<section class="slide" id="ferramentas" data-label="A caixa de ferramentas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> Como se protege uma carga</div>
+      <h2 class="rv" style="--d:.1s">Antes, durante e depois da viagem, cada ferramenta tenta tirar uma chance do ladrão</h2>
+      <p class="rv" style="--d:.15s">“Gerenciar riscos” no transporte é juntar medidas para que a carga chegue no lugar, no prazo e inteira. Umas diminuem a <strong>chance</strong> de o roubo acontecer; outras diminuem o <strong>estrago</strong> quando ele acontece. O rastreamento, o mais usado no Brasil, chegou em 1992, porque a segurança pública não dava conta do problema.</p>
+      <p class="note rv" style="--d:.2s">Ferramentas descritas no capítulo 2 da dissertação. A divisão em antes, durante e depois da viagem e as etiquetas de chance e estrago são nossas, a partir dessas descrições.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="trip" id="trip"></div>
+      <div class="panel tool-out" id="tool-out" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · REGRA -->
+<section class="slide" id="regra" data-label="Monte uma regra">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Duas ideias de IA</div>
+      <h2 class="rv" style="--d:.1s">Uma IA segue regras escritas por gente; a outra aprende padrões sozinha</h2>
+      <p class="rv" style="--d:.15s">Desde os anos 1950, a inteligência artificial seguiu dois caminhos. Os <strong class="rule-t">sistemas especialistas</strong> usam regras lógicas, “se isto, então aquilo”, ditadas por especialistas do assunto; funcionam bem, mas ficam pesados quando as possibilidades se multiplicam. As <strong class="net-t">redes neurais</strong> imitam o cérebro: em vez de regras, recebem muitos dados e reconhecem padrões por conta própria.</p>
+      <div class="quote rv" style="--d:.2s; --qc:var(--rule)">[...] configurar um PGR é botar um especialista para entender que tipo de coisas vão acontecer a partir de determinadas situações, e aí o mapa de situações, ele é amplo, tem hoje mais de 400 situações possíveis para você configurar [...]<small>E02</small></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <span class="ill">Exemplo ilustrativo</span>
+      <div class="panel builder">
+        <div><span class="lab">SE</span><span style="font-size:.84rem">o caminhão…</span><div class="opts" id="if-opts"></div></div>
+        <div><span class="lab">ENTÃO</span><span style="font-size:.84rem">o sistema…</span><div class="opts" id="then-opts"></div></div>
+        <div class="rulecard" id="rulecard" aria-live="polite"></div>
+        <div class="seg" id="ai-seg" role="group" aria-label="Tipo de IA"></div>
+      </div>
+      <p class="note">Gatilhos e respostas tirados das falas dos entrevistados e do capítulo 2 (cerca eletrônica, paradas previstas, sensor de basculamento; bloquear o motor, sirene, mensagem ao motorista, pronta resposta). A combinação é sua, não um caso da pesquisa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · QUEM -->
+<section class="slide" id="quem" data-label="Quem foi ouvido">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Como a pesquisa olhou</div>
+      <h2 class="rv" style="--d:.1s">Seis profissionais, de quatro pontas do negócio, contaram como a IA entra no dia a dia</h2>
+      <p class="rv" style="--d:.15s">O autor fez entrevistas face a face, com um roteiro de perguntas, com quem cuida da segurança da carga: seguro, indústria que embarca a mercadoria, empresas que fazem rastreadores e software, e gerenciadoras de riscos. Depois leu as transcrições e agrupou os trechos por sentido, até chegar a cinco temas.</p>
+      <div class="funnel rv" style="--d:.2s" aria-label="De 403 trechos a 5 temas">
+        <div><b>403</b><i style="width:100%"></i></div>
+        <div><b>22</b><i style="width:42%"></i><span>ideias (unidades de significado)</span></div>
+        <div><b>5</b><i style="width:16%; background:var(--red)"></i><span>temas (categorias)</span></div>
+      </div>
+      <p class="note">403 trechos das falas (unidades de registro). Ninguém é identificado: só os códigos E01 a E06 da dissertação.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="people" id="people" role="group" aria-label="Os seis entrevistados"></div>
+      <div class="panel" style="margin-top:12px"><p class="msg" id="people-msg" aria-live="polite"></p></div>
+      <p class="note">Grupos montados por nós a partir da caracterização dos entrevistados (Quadro 3).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · ATORES -->
+<section class="slide" id="atores" data-label="Quem faz o quê">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Tema 2 · Atores</div>
+      <h2 class="rv" style="--d:.1s">Cinco atores dividem a segurança de uma carga, e o seguro dita as regras</h2>
+      <p class="rv" style="--d:.15s">A indústria contrata a transportadora; a transportadora instala rastreadores; a gerenciadora de riscos vigia a viagem com o software do fabricante. As regras desse plano de segurança nascem da apólice: a seguradora as cria junto com a gerenciadora, para que o risco fique aceitável. Toque num ator ou escolha quem contratou o seguro.</p>
+      <div class="seg rv" style="--d:.2s" id="ins-seg" role="group" aria-label="Quem contratou o seguro"></div>
+      <div class="panel rv" style="--d:.25s; margin-top:12px"><p class="msg" id="actor-msg" aria-live="polite"></p></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div id="actors"></div>
+      <p class="swipe-hint">↔ Arraste o diagrama para o lado</p>
+      <p class="note">Redesenho da Figura 11 da dissertação. O autor lembra que é o modelo que apareceu nas entrevistas: há casos em que a indústria tem frota própria ou a transportadora faz a própria gestão de riscos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · ACHADO -->
+<section class="slide" id="achado" data-label="O que se usa">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Tema 1 · Que IA é essa</div>
+      <h2 class="rv" style="--d:.1s">Os seis descrevem regras “se, então”; ninguém mostrou uma rede neural funcionando</h2>
+      <p class="rv" style="--d:.15s">Todos falaram de <strong class="rule-t">sistemas especialistas</strong>. Quatro disseram com todas as letras que <strong class="net-t">redes neurais</strong> não estão em uso; os outros dois não citaram nenhuma. No seguro, o preço do risco ainda sai da experiência de quem analisa, sem IA. Toque num código para ler a fala.</p>
+      <div class="quote rv" style="--d:.2s; --qc:var(--mid)">Então assim, a inteligência artificial quando bem usada ela vai desaparecer, o comportamento é que vai ficar visível.<small>E02</small></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel">
+        <div class="who6" id="who6"></div>
+        <div id="c1-quote" aria-live="polite" style="margin-top:10px"></div>
+      </div>
+      <p class="note">Quadro 4 da dissertação, categoria C1 (unidades de significado US1, US2 e US3). Célula preenchida = o tema apareceu na fala daquela pessoa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · MAPA -->
+<section class="slide" id="mapa" data-label="As 22 ideias">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> O mapa das entrevistas</div>
+      <h2 class="rv" style="--d:.1s">22 ideias em cinco temas: quanto mais alta a torre, mais gente tocou no assunto</h2>
+      <p class="rv" style="--d:.15s">Cada torre é uma ideia que apareceu nas entrevistas; a altura é o número de entrevistados que falaram dela, de 2 a 6. Escolha um tema e toque numa torre.</p>
+      <div class="seg rv" style="--d:.2s" id="cat-seg" role="group" aria-label="Escolher o tema"></div>
+      <div class="panel rv us-out" style="--d:.25s; margin-top:12px"><p class="msg" id="us-msg" aria-live="polite"></p></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="map-scene" data-fit="560x330" role="img" aria-label="22 torres em cinco fileiras, uma fileira por tema; a altura de cada torre é o número de entrevistados que citaram a ideia"></div></div>
+      <p class="note">Quadro 4 da dissertação. Arraste para girar. Nomes das ideias encurtados por nós.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · BENEFÍCIOS -->
+<section class="slide" id="beneficios" data-label="O que melhora">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Tema 3 · Benefícios</div>
+      <h2 class="rv" style="--d:.1s">As regras filtram os alertas, e a central faz mais com menos gente</h2>
+      <p class="rv" style="--d:.15s">Com regras, o sistema separa o que é rotina do que parece roubo e só chama o operador quando é preciso. Os entrevistados citam resposta mais rápida, processos padronizados e ganho financeiro, sobretudo na folha de pagamento, o maior custo das gerenciadoras.</p>
+      <div class="bars rv" style="--d:.2s" id="ben-bars" aria-label="Benefícios citados, de 6 entrevistados"></div>
+      <p class="note">Categoria C3 do Quadro 4: quantos dos 6 entrevistados citaram cada benefício.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel">
+        <div class="tag">Uma equipe de monitoramento, segundo um entrevistado</div>
+        <div class="seg" id="team-seg" role="group" aria-label="Antes ou depois das regras"></div>
+        <div class="team" id="team" aria-hidden="true"></div>
+        <p class="msg" id="team-msg" aria-live="polite"></p>
+      </div>
+      <div class="quote" style="--qc:var(--rule)">[...] a gerenciadora de riscos hoje certamente iria amargar vários prejuízos financeiros e não os tem, porque consegue reduzir a folha de pagamento que é a principal linha de custos do nosso negócio [...] e esse número se torna viável porque existe sistema especialista [...]<small>E04</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · SOCIAL -->
+<section class="slide" id="social" data-label="Além da empresa">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> O que surpreende</div>
+      <h2 class="rv" style="--d:.1s">Cinco dos seis veem o maior ganho fora da empresa: na estrada, na farmácia, na rua</h2>
+      <p class="rv" style="--d:.15s">Perguntados sobre benefícios, os entrevistados falaram de vidas e de saúde pública. Um acidente evitado não fecha a estrada nem lota o hospital; um remédio roubado não volta mal guardado para a prateleira; uma quadrilha descoberta é crime a menos. Para o autor, as empresas guardam informações que poderiam ajudar a segurança pública.</p>
+      <p class="note rv" style="--d:.2s">Unidade de significado US20 (impacto social positivo): E01 a E05.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="soc" id="soc" role="group" aria-label="Ganhos para a sociedade"></div>
+      <div id="soc-quote" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · BARREIRAS -->
+<section class="slide" id="barreiras" data-label="O que trava">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> Tema 4 · Barreiras</div>
+      <h2 class="rv" style="--d:.1s">O freio não é a tecnologia: é um mercado fechado, que anda a passos curtos</h2>
+      <p class="rv" style="--d:.15s">As empresas do ramo se conhecem e usam planos de segurança parecidos. Não há formação específica para quem trabalha com gerenciamento de riscos, e a cultura vem do mundo militar e do seguro. Para piorar, acrescenta-se tecnologia nova sem tirar proveito da que já está instalada. Toque em cada barreira.</p>
+      <div class="panel rv" style="--d:.2s"><div id="bar-quote" aria-live="polite"></div></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="bar-scene" data-fit="520x300" role="img" aria-label="Três barreiras 3D atravessando uma estrada; a altura é o número de entrevistados que citou cada uma: conservadorismo 3, falta de formação 3, aproveitamento marginal 2"></div></div>
+      <p class="note">Categoria C4 do Quadro 4 (US16, US17, US18). Altura = número de entrevistados.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · FUTURO -->
+<section class="slide" id="futuro" data-label="O que esperam">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">12</span> Tema 5 · Expectativas</div>
+      <h2 class="rv" style="--d:.1s">O próximo passo que eles pedem: prever o risco e olhar a cadeia inteira</h2>
+      <p class="rv" style="--d:.15s">Os entrevistados querem sair do “só se, então” e ter uma IA que aprenda com o histórico para escolher rotas, antecipar volumes e regiões de risco. Querem também ligar o sistema de segurança ao de logística, para cuidar de acidentes e falta de produto, não só de roubo. Escolha a estrada para ver o dilema.</p>
+      <div class="bars rv" style="--d:.2s" id="fut-bars"></div>
+      <p class="note">Categoria C5 do Quadro 4: quantos dos 6 citaram cada expectativa.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <span class="ill">Dilema contado por um entrevistado (sem números)</span>
+      <div class="panel roads">
+        <div class="seg" id="road-seg" role="group" aria-label="Escolher a estrada"></div>
+        <div id="road-svg"></div>
+        <p class="msg" id="road-msg" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 · CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Prática, limites e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">13</span> E daí?</div>
+    <h2 class="rv" style="--d:.1s">A IA contra o roubo de cargas já é rotina, só que ainda é a das regras</h2>
+    <div class="pcards rv" style="--d:.12s">
+      <div><b>Gerenciadoras e empresas de tecnologia</b>As expectativas dos entrevistados (prever riscos, integrar segurança e logística) servem, para o autor, de mapa para quem quer investir no ramo.</div>
+      <div><b>Seguradoras</b>No cálculo do seguro, dois entrevistados dizem que ainda não há IA, só a experiência do analista. O autor sugere uma pesquisa própria sobre esse lado. <em>Leitura nossa:</em> é onde o histórico de sinistros poderia render mais.</div>
+      <div><b>Poder público</b>O autor vê nos dados das empresas privadas um apoio possível à segurança pública no combate ao roubo de cargas, por meio de parcerias.</div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.15s">
+        <h3>O que a pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Seis vozes.</b> Seis entrevistados, de uma região, não falam pelo Brasil inteiro com todas as suas diferenças. <em>(autor)</em></li>
+          <li><b>O lado de quem presta o serviço.</b> A pesquisa olhou para quem oferece gerenciamento de riscos e tecnologia, não para o cálculo dos seguros. <em>(autor)</em></li>
+          <li><b>Relatos, não medições.</b> Ganhos como “de 30 ou 40 pessoas para seis” são contados pelos entrevistados; a dissertação não mediu o efeito da IA sobre roubos ou custos. <em>(observação nossa)</em></li>
+          <li><b>O que é “IA”.</b> Regras “se, então” entram como IA porque assim as classificam a literatura usada e os próprios entrevistados; há quem só chame de IA o que aprende sozinho. <em>(observação nossa)</em></li>
+        </ul>
+        <p class="note">Próximos passos sugeridos pelo autor: grupos de foco ou a técnica Delphi com especialistas, e estudos com números que meçam e relacionem os temas encontrados.</p>
+      </div>
+      <div class="rv" style="--d:.25s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          MARTON, Fabio. <em>Os reflexos do uso da inteligência artificial na gestão de riscos no transporte rodoviário de cargas.</em> Dissertação (Mestrado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2023. Orientador: Prof. Dr. Gilberto Perez.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Dissertação aprovada em 1º de fevereiro de 2023. Pesquisa qualitativa com seis entrevistas e análise de conteúdo. Esta versão simplifica o trabalho para o público em geral; os entrevistados aparecem só pelos códigos da dissertação.</p>
+        <p class="also">Leia também, do mesmo orientador: <a href="../../teses/2025-billig-contratos-inteligentes-logistica/">contrato inteligente no transporte de cargas</a> e <a href="../../dissertacoes/2026-garcia-ia-gestao-educacional/">a IA na gestão da escola</a></p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a dissertação completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(p, e){ return EN ? e : p; }
+  function press(group, btn){ each(group.querySelectorAll('button'), function(b){ b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); }); }
+  function mk(tag, cls, html){ var e = document.createElement(tag); if (cls) e.className = cls; if (html !== undefined) e.innerHTML = html; return e; }
+  function n0(v){ return EN ? v.toLocaleString('en-US') : v.toLocaleString('pt-BR'); }
+  var TR = EN ? ' · translated by us' : '';
+  function quote(q, who, c){ return '<div class="quote" style="--qc:' + (c || 'var(--red)') + '">“' + q + '”<small>' + who + TR + '</small></div>'; }
+  var NAVY = '#1f3b73', RED = '#e80734', GRAY = '#94a3b8', INK = '#334155';
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // Tabela 4 (ocorrências) e Tabela 5 (prejuízo, R$ milhões), Brasil
+  var THEFT = [22183, 18382, 14159, 14434];
+  var LOSS = [1473.13, 1398.08, 1251.87, 1269.61];
+  var ALL = ['E01','E02','E03','E04','E05','E06'];
+  // Quadro 4: unidades de significado por categoria (quem citou)
+  var CATS = [
+    {k:'C1', n:L('Que IA é usada', 'Which AI is used'), us:[
+      ['US1', L('Não usa IA (no seguro)', 'No AI used (in insurance)'), ['E01','E05']],
+      ['US2', L('Sistemas especialistas presentes', 'Expert systems present'), ALL],
+      ['US3', L('Redes neurais ausentes', 'Neural networks absent'), ['E02','E03','E04','E05']]]},
+    {k:'C2', n:L('Atores', 'Players'), us:[
+      ['US4', L('Plano de gerenciamento de riscos (regras do seguro)', 'Risk management plan (insurance rules)'), ['E01','E03','E04','E05']],
+      ['US6', L('Quem contrata', 'Who hires'), ['E01','E03','E04','E05','E06']],
+      ['US7', L('Contratados de tecnologia', 'Technology suppliers'), ALL],
+      ['US8', L('Contratados de serviços', 'Service providers'), ALL]]},
+    {k:'C3', n:L('Benefícios', 'Benefits'), us:[
+      ['US10', L('Padronização de processos', 'Standardised processes'), ['E01','E02','E03','E04','E06']],
+      ['US11', L('Resposta mais rápida', 'Faster response'), ['E02','E03','E04','E05','E06']],
+      ['US12', L('Ganho financeiro', 'Financial gains'), ALL],
+      ['US14', L('Mais capacidade de análise', 'More analytical capacity'), ['E01','E02','E03','E05','E06']],
+      ['US15', L('Predição de riscos', 'Risk prediction'), ['E02','E03','E04','E06']],
+      ['US20', L('Impacto social positivo', 'Positive social impact'), ['E01','E02','E03','E04','E05']],
+      ['US21', L('Operação mais eficiente', 'More efficient operation'), ['E01','E02','E03']],
+      ['US5', L('Padrões tirados dos roubos já ocorridos', 'Patterns drawn from past thefts'), ['E01','E02','E03','E04','E05']],
+      ['US9', L('IA essencial no gerenciamento de riscos', 'AI essential to risk management'), ['E02','E03','E04','E06']]]},
+    {k:'C4', n:L('Barreiras', 'Barriers'), us:[
+      ['US16', L('Conservadorismo do mercado', 'Market conservatism'), ['E02','E03','E04']],
+      ['US17', L('Falta de formação específica', 'No specific training'), ['E01','E04','E05']],
+      ['US18', L('Aproveitamento marginal do que já existe', 'Underuse of what already exists'), ['E01','E06']]]},
+    {k:'C5', n:L('Expectativas', 'Expectations'), us:[
+      ['US13', L('Integração entre áreas', 'Integration across areas'), ['E01','E04','E05','E06']],
+      ['US19', L('Mais serviços de prevenção', 'More prevention services'), ALL],
+      ['US22', L('Perspectivas de futuro', 'Outlook for the future'), ['E01','E02','E03','E05','E06']]]}
+  ];
+
+  /* ---------- 01 · Capa: caminhão 3D ---------- */
+  (function(){
+    var sc = $('truck'), st = makeStage(sc, 420, 170, {ay:'66%', rx:'60deg'});
+    var road = mk('div', 'road'); for (var i = 0; i < 6; i++){ var d = mk('i'); d.style.left = (20 + i * 100) + 'px'; road.appendChild(d); }
+    st.appendChild(road);
+    // rodas (pequenas caixas escuras)
+    [40, 110, 230, 300].forEach(function(x){ st.appendChild(box({w:30, d:12, h:22, x:x, y:54, c:'#0f172a'})); st.appendChild(box({w:30, d:12, h:22, x:x, y:118, c:'#0f172a'})); });
+    st.appendChild(box({w:260, d:72, h:110, x:20, y:56, z:18, c:NAVY, top:L('SE → ENTÃO', 'IF → THEN'), label:''}));
+    st.appendChild(box({w:70, d:72, h:78, x:290, y:56, z:18, c:INK}));
+    st.appendChild(box({w:20, d:20, h:18, x:315, y:82, z:96, c:RED}));
+    rotatable(sc, st, -28, 12);
+  })();
+
+  /* ---------- 02 · Roubos ---------- */
+  (function(){
+    var bars = $('theft-bars'), seg = $('theft-seg'), cols = [];
+    THEFT.forEach(function(){ var c = mk('div', 'col', '<b></b><i></i>'); bars.appendChild(c); cols.push(c); });
+    var MODES = [
+      {n:L('Ocorrências', 'Occurrences'), v:THEFT, c:NAVY, f:function(v){ return n0(v); },
+       m:L('De 22.183 roubos em 2018 para 14.434 em 2021: <b>um terço a menos</b>. A dissertação lembra que 2020 e 2021 tiveram a economia freada pela covid.', 'From 22,183 thefts in 2018 to 14,434 in 2021: <b>a third fewer</b>. The dissertation notes that 2020 and 2021 had an economy slowed by covid.')},
+      {n:L('Prejuízo', 'Losses'), v:LOSS, c:RED, f:function(v){ return L('R$ ', 'R$') + fmt(v / 1000, 2) + L(' bi', 'bn'); },
+       m:L('O prejuízo foi de R$ 1,47 bilhão para R$ 1,27 bilhão: <b>só 14% a menos</b>. Quase todo ele (R$ 993 milhões em 2021) está no Sudeste.', 'Losses went from R$1.47 billion to R$1.27 billion: <b>only 14% less</b>. Almost all of it (R$993 million in 2021) is in the Southeast.')},
+      {n:L('Prejuízo por roubo', 'Loss per theft'), v:LOSS.map(function(v, i){ return v * 1e6 / THEFT[i]; }), c:INK, f:function(v){ return L('R$ ', 'R$') + Math.round(v / 1000) + L(' mil', 'k'); },
+       m:L('Conta nossa: cada roubo custou em média cerca de R$ 66 mil em 2018 e R$ 88 mil em 2021. Menos roubos, mas de cargas mais caras.', 'Our calculation: each theft cost about R$66k on average in 2018 and R$88k in 2021. Fewer thefts, but of more expensive loads.')}
+    ];
+    function show(md, btn){
+      press(seg, btn);
+      var max = Math.max.apply(null, md.v);
+      cols.forEach(function(c, i){ var b = c.querySelector('i'); b.style.height = Math.round(md.v[i] / max * 170) + 'px'; b.style.background = md.c; c.querySelector('b').textContent = md.f(md.v[i]); });
+      $('theft-msg').innerHTML = md.m;
+    }
+    MODES.forEach(function(md){ var b = mk('button', '', md.n); b.addEventListener('click', function(){ show(md, b); }); seg.appendChild(b); });
+    show(MODES[0], seg.children[0]);
+  })();
+
+  /* ---------- 03 · Ferramentas ---------- */
+  (function(){
+    var CH = L('Diminui a chance', 'Lowers the chance'), DM = L('Diminui o estrago', 'Lowers the damage');
+    var PH = [
+      {h:L('Antes da viagem', 'Before the trip'), t:[
+        {n:L('Pesquisa do motorista', 'Driver screening'), e:[CH], d:L('Checa antecedentes, quantas vezes a pessoa já foi vítima de roubo ou acidente, pontos na carteira e o histórico do caminhão, para não contratar quem traz risco.', 'Checks records, how many times the person has been a victim of theft or accidents, licence points and the truck\'s history, to avoid hiring someone who brings risk.')},
+        {n:L('Análise de rotas', 'Route analysis'), e:[CH], d:L('Estuda o caminho: asfalto, postos, lugares para comer e descansar. Define a rota e as paradas antes de sair.', 'Studies the way: pavement, fuel stations, places to eat and rest. Sets the route and the stops before leaving.')},
+        {n:L('Segredo da carga', 'Keeping it secret'), e:[CH], d:L('Processos para que informações sobre carga e trajeto não vazem para quadrilhas especializadas.', 'Processes so that information about the load and the route does not leak to specialised gangs.')}]},
+      {h:L('Durante', 'During'), t:[
+        {n:L('Rastreamento', 'Tracking'), e:[CH, DM], d:L('Sensores e GPS mostram onde está o caminhão e como ele se comporta. Uma central pode bloquear o motor, acionar sirene e luzes e chamar ajuda.', 'Sensors and GPS show where the truck is and how it behaves. A control room can block the engine, set off the siren and lights and call for help.')},
+        {n:L('Escolta armada', 'Armed escort'), e:[CH, DM], d:L('Vigilantes num carro próprio acompanham cargas caras ou zonas perigosas, num trecho ou na viagem toda.', 'Guards in their own car follow expensive loads or dangerous areas, for a stretch or the whole trip.')},
+        {n:L('Pronta resposta', 'Rapid response'), e:[DM], d:L('Equipes vão conferir no local um alerta de alta chance de roubo, para saber se é crime ou alarme falso.', 'Teams go to check on site an alert with a high chance of theft, to find out whether it is a crime or a false alarm.')}]},
+      {h:L('Se o roubo acontece', 'If the theft happens'), t:[
+        {n:L('Isca na carga', 'Hidden locator'), e:[DM], d:L('Um localizador pequeno, disfarçado numa caixa ou embalagem, ajuda a achar e recuperar a carga roubada.', 'A small locator, disguised in a box or package, helps find and recover the stolen load.')},
+        {n:L('Investigação', 'Investigation'), e:[DM, CH], d:L('Identifica quem participou do roubo para ajudar a polícia; o histórico ensina o jeito de agir das quadrilhas.', 'Identifies who took part in the theft to help the police; the history teaches how gangs operate.')}]}
+    ];
+    var trip = $('trip'), out = $('tool-out'), all = [];
+    function show(t, btn){
+      all.forEach(function(b){ b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+      out.innerHTML = '<p><b>' + t.n + '.</b> ' + t.d + '</p><div class="tags">' + [CH, DM].map(function(x){ return '<span class="' + (t.e.indexOf(x) >= 0 ? 'on' : '') + '">' + x + '</span>'; }).join('') + '</div>';
+    }
+    PH.forEach(function(p){
+      var ph = mk('div', 'ph', '<h4>' + p.h + '</h4>');
+      p.t.forEach(function(t){ var b = mk('button', '', t.n); b.addEventListener('click', function(){ show(t, b); }); ph.appendChild(b); all.push(b); });
+      trip.appendChild(ph);
+    });
+    show(PH[1].t[0], all[3]);
+  })();
+
+  /* ---------- 04 · Monte uma regra ---------- */
+  (function(){
+    var IF = [
+      L('sai da cerca eletrônica da rota', 'leaves the route\'s electronic fence'),
+      L('para fora dos pontos previstos', 'stops outside the planned points'),
+      L('é basculado no local de um roubo recente', 'is tipped at the site of a recent theft'),
+      L('passa do tempo previsto de viagem', 'runs past the planned travel time')
+    ];
+    var THEN = [
+      L('bloqueia o motor', 'blocks the engine'),
+      L('aciona a sirene', 'sets off the siren'),
+      L('pergunta ao motorista se algo aconteceu', 'asks the driver if something happened'),
+      L('chama a pronta resposta', 'calls the rapid response team')
+    ];
+    var sel = {i:0, t:2, net:false};
+    function draw(){
+      var rc = $('rulecard');
+      rc.classList.toggle('net', sel.net);
+      if (!sel.net){
+        rc.innerHTML = '<b class="k">' + L('SE', 'IF') + '</b> ' + L('o caminhão ', 'the truck ') + IF[sel.i] + ', <b class="k">' + L('ENTÃO', 'THEN') + '</b> ' + L('o sistema ', 'the system ') + THEN[sel.t] + '.<br><span style="font-size:.8rem;color:var(--muted)">' + L('Uma regra entre centenas: alguém do ramo precisou escrevê-la. É isso que os seis entrevistados descrevem.', 'One rule among hundreds: someone in the field had to write it. This is what all six interviewees describe.') + '</span>';
+      } else {
+        rc.innerHTML = '<b class="k">' + L('REDE NEURAL', 'NEURAL NETWORK') + '</b> ' + L('aprenderia com o histórico de roubos (lugar, horário, tipo de carga, jeito de agir das quadrilhas) quais combinações costumam terminar em sinistro, sem que alguém escreva a regra.', 'would learn from the history of thefts (place, time, type of load, how gangs operate) which combinations tend to end in a loss, without anyone writing the rule.') + '<br><span style="font-size:.8rem;color:var(--muted)">' + L('Ninguém mostrou isso em uso. “Dizem que fazem, mas nada de prático”, contou um entrevistado.', 'Nobody showed this in use. “They say they do it, but nothing practical”, one interviewee said.') + '</span>';
+      }
+    }
+    function opts(id, list, key){
+      var box2 = $(id);
+      list.forEach(function(t, i){
+        var b = mk('button', 'chip', t);
+        b.setAttribute('aria-pressed', sel[key] === i ? 'true' : 'false');
+        b.addEventListener('click', function(){ sel[key] = i; sel.net = false; each(box2.children, function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); press($('ai-seg'), $('ai-seg').children[0]); draw(); });
+        box2.appendChild(b);
+      });
+    }
+    opts('if-opts', IF, 'i'); opts('then-opts', THEN, 't');
+    var seg = $('ai-seg');
+    [[L('Sistema especialista (em uso)', 'Expert system (in use)'), false], [L('Rede neural (expectativa)', 'Neural network (expectation)'), true]].forEach(function(o){
+      var b = mk('button', '', o[0]); b.addEventListener('click', function(){ press(seg, b); sel.net = o[1]; draw(); }); seg.appendChild(b);
+    });
+    press(seg, seg.children[0]);
+    draw();
+  })();
+
+  /* ---------- 05 · Quem ---------- */
+  (function(){
+    var G = {
+      tec:{n:L('Tecnologia', 'Technology'), c:NAVY},
+      gr:{n:L('Gerenciamento de riscos', 'Risk management'), c:INK},
+      seg:{n:L('Seguros', 'Insurance'), c:RED},
+      ind:{n:L('Indústria', 'Industry'), c:'#b45309'}
+    };
+    var P = [
+      {e:'E01', g:'gr', y:21, d:L('Microempresa de software, regulação de sinistros e consultoria em gerenciamento de riscos. 21 anos no ramo.', 'Micro-company in software, claims adjustment and risk management consulting. 21 years in the field.')},
+      {e:'E02', g:'tec', y:18, d:L('Comanda uma empresa de pequeno porte que vende plataforma de monitoramento de cargas. 18 anos no ramo.', 'Runs a small company that sells a cargo monitoring platform. 18 years in the field.')},
+      {e:'E03', g:'tec', y:17, d:L('Área de produtos e inovação de uma grande fabricante de rastreadores e telemetria. 17 anos no ramo.', 'Products and innovation at a large maker of trackers and telematics. 17 years in the field.')},
+      {e:'E04', g:'gr', y:20, d:L('Inteligência em segurança de carga numa grande empresa de monitoramento e consultoria em riscos. 20 anos no ramo.', 'Cargo security intelligence at a large monitoring and risk consulting company. 20 years in the field.')},
+      {e:'E05', g:'seg', y:19, d:L('Executivo de uma grande seguradora, na área de serviços de gerenciamento de riscos no transporte. 19 anos no ramo.', 'Executive at a large insurer, in transport risk management services. 19 years in the field.')},
+      {e:'E06', g:'ind', y:18, d:L('Segurança empresarial de uma grande indústria que contrata esses serviços. 18 anos no ramo.', 'Corporate security at a large manufacturer that hires these services. 18 years in the field.')}
+    ];
+    var box2 = $('people');
+    P.forEach(function(p){
+      var b = mk('button', '', '<b>' + p.e + '</b>' + p.y + L(' anos no ramo', ' years in the field') + '<br><span class="g">' + G[p.g].n + '</span>');
+      b.style.setProperty('--grp', G[p.g].c);
+      b.addEventListener('click', function(){ press(box2, b); $('people-msg').innerHTML = '<b>' + p.e + ' · ' + G[p.g].n + '.</b> ' + p.d; });
+      box2.appendChild(b);
+    });
+    $('people-msg').innerHTML = L('Toque num código. Juntos, os seis somam 113 anos de experiência no ramo (conta nossa), em empresas que vão da microempresa à grande indústria.', 'Tap a code. Together, the six add up to 113 years of experience in the field (our sum), at companies ranging from a micro-company to a large manufacturer.');
+  })();
+
+  /* ---------- 06 · Atores ---------- */
+  (function(){
+    var N = {
+      seg:{x:20, y:158, n:L('Seguradora', 'Insurer'), d:L('<b>Seguradora.</b> Vende o seguro da carga, por corretoras, à indústria ou à transportadora. Junto com a gerenciadora, cria as regras do plano de gerenciamento de riscos que tornam o risco aceitável.', '<b>Insurer.</b> Sells cargo insurance, through brokers, to the industry or the carrier. Together with the risk management firm, it writes the rules of the risk management plan that make the risk acceptable.')},
+      ind:{x:225, y:20, n:L('Indústria', 'Industry'), d:L('<b>Indústria (o “embarcador”).</b> Dona da mercadoria. Contrata a transportadora e, quando o seguro é dela, a gestão de riscos; costuma cuidar disso pela área de transportes, logística ou seguros.', '<b>Industry (the “shipper”).</b> Owns the goods. Hires the carrier and, when the insurance is its own, the risk management; it usually handles this through its transport, logistics or insurance department.')},
+      tra:{x:225, y:296, n:L('Transportadora', 'Carrier'), d:L('<b>Transportadora.</b> Leva a carga. Contrata rastreadores para os caminhões e aplica as regras exigidas pela apólice ou pelo embarcador: cadastro, rastreador, localizador ou escolta.', '<b>Carrier.</b> Moves the load. Hires trackers for its trucks and applies the rules required by the policy or the shipper: registration, tracker, locator or escort.')},
+      ger:{x:440, y:100, n:L('Gerenciadora de riscos', 'Risk management firm'), d:L('<b>Gerenciadora de riscos.</b> Vigia as viagens com o software de monitoramento, aplica as regras e dá consultoria. As regras de negócio do cliente são traduzidas para a máquina.', '<b>Risk management firm.</b> Watches the trips with the monitoring software, applies the rules and gives advice. The client\'s business rules are translated for the machine.')},
+      fab:{x:440, y:236, n:L('Fabricante de rastreador', 'Tracker maker'), d:L('<b>Fabricante de hardware e software.</b> Faz rastreadores, sensores e a plataforma de monitoramento que a gerenciadora usa.', '<b>Hardware and software maker.</b> Makes the trackers, sensors and monitoring platform that the risk management firm uses.')}
+    };
+    var W = 150, H = 44;
+    function c(k){ return {x:N[k].x + W / 2, y:N[k].y + H / 2}; }
+    var E = [
+      {id:'si', p:'M95,158 V42 H223', t:L('seguro (por corretoras)', 'insurance (via brokers)'), tx:101, ty:104, a:['seg','ind'], ins:'ind'},
+      {id:'st', p:'M95,202 V318 H223', t:L('seguro (por corretoras)', 'insurance (via brokers)'), tx:101, ty:262, a:['seg','tra'], ins:'tra'},
+      {id:'it', p:'M300,64 V294', t:L('contrata o transporte', 'hires the carrier'), tx:294, ty:236, anc:'end', a:['ind','tra']},
+      {id:'ig', p:'M375,42 H515 V98', t:L('embarque com seguro da indústria', 'shipment insured by industry'), tx:382, ty:34, a:['ind','ger'], ins:'ind'},
+      {id:'tg', p:'M375,306 H414 V136 H438', t:L('seguro da transportadora', 'insured by the carrier'), tx:408, ty:272, anc:'end', a:['tra','ger'], ins:'tra'},
+      {id:'tf', p:'M375,330 H515 V282', t:L('contrata rastreadores', 'hires trackers'), tx:384, ty:350, a:['tra','fab']},
+      {id:'fg', p:'M515,236 V146', t:L('fornece o software', 'supplies the software'), tx:522, ty:196, a:['fab','ger']},
+      {id:'rules', p:'M170,176 C260,176 360,124 438,122', t:L('criam juntas as regras', 'write the rules together'), tx:176, ty:196, a:['seg','ger'], rules:true}
+    ];
+    var s = '<svg viewBox="0 0 650 362" role="img" aria-label="' + L('Diagrama dos cinco atores: seguradora, indústria, transportadora, gerenciadora de riscos e fabricante de rastreador, com as relações entre eles', 'Diagram of the five players: insurer, industry, carrier, risk management firm and tracker maker, with the links between them') + '"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker></defs>';
+    E.forEach(function(e){ s += '<g class="edge' + (e.rules ? ' rules' : '') + '" data-e="' + e.id + '"><path d="' + e.p + '" marker-end="url(#ar)"/><text x="' + e.tx + '" y="' + e.ty + '"' + (e.anc ? ' text-anchor="' + e.anc + '"' : '') + '>' + e.t + '</text></g>'; });
+    Object.keys(N).forEach(function(k){ var n = N[k]; s += '<g class="node" data-n="' + k + '" tabindex="0" role="button"><rect x="' + n.x + '" y="' + n.y + '" width="' + W + '" height="' + H + '" rx="10"/><text x="' + (n.x + W / 2) + '" y="' + (n.y + 27) + '" text-anchor="middle">' + n.n + '</text></g>'; });
+    s += '</svg>';
+    $('actors').innerHTML = s;
+    var nodes = $('actors').querySelectorAll('.node'), edges = $('actors').querySelectorAll('.edge');
+    function clear(){ each(nodes, function(n){ n.classList.remove('on'); }); each(edges, function(e){ e.classList.remove('hot'); }); }
+    function pick(k){
+      clear(); press($('ins-seg'), null);
+      $('actors').querySelector('[data-n="' + k + '"]').classList.add('on');
+      E.forEach(function(e){ if (e.a.indexOf(k) >= 0) $('actors').querySelector('[data-e="' + e.id + '"]').classList.add('hot'); });
+      $('actor-msg').innerHTML = N[k].d;
+    }
+    each(nodes, function(n){ n.addEventListener('click', function(){ pick(n.dataset.n); }); n.addEventListener('keydown', function(ev){ if (ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); pick(n.dataset.n); } }); });
+    var seg = $('ins-seg');
+    [['ind', L('Seguro da indústria', 'Insured by industry')], ['tra', L('Seguro da transportadora', 'Insured by the carrier')]].forEach(function(o){
+      var b = mk('button', '', o[1]);
+      b.addEventListener('click', function(){
+        clear(); press(seg, b);
+        E.forEach(function(e){ if (e.ins === o[0] || e.rules) $('actors').querySelector('[data-e="' + e.id + '"]').classList.add('hot'); });
+        ['seg', o[0], 'ger'].forEach(function(k){ $('actors').querySelector('[data-n="' + k + '"]').classList.add('on'); });
+        $('actor-msg').innerHTML = o[0] === 'ind'
+          ? L('Quando a <b>indústria</b> contrata o seguro, o embarque segue para a gerenciadora com as regras da apólice dela. As regras foram escritas pela seguradora junto com a gerenciadora.', 'When the <b>industry</b> buys the insurance, the shipment goes to the risk management firm with the rules of its policy. The rules were written by the insurer together with the risk management firm.')
+          : L('Quando a <b>transportadora</b> contrata o seguro, é ela que leva o embarque à gerenciadora e aplica as regras: “por força da apólice”, como disse um entrevistado.', 'When the <b>carrier</b> buys the insurance, it is the carrier that takes the shipment to the risk management firm and applies the rules: “because the policy requires it”, as one interviewee put it.');
+      });
+      seg.appendChild(b);
+    });
+    pick('ger');
+  })();
+
+  /* ---------- 07 · Achado C1 ---------- */
+  (function(){
+    var Q = {
+      E01:L('[...] a gente já está tendo alguns outros tipos de incrementos e talvez mais ligados a sistemas especialistas [...]', '[...] we are already getting some other kinds of increments, perhaps more linked to expert systems [...]'),
+      E02:L('[...] você com um sistema especialista pode fazer a mesma coisa sem a bagagem da retroalimentação das variáveis [...]', '[...] with an expert system you can do the same thing without the baggage of feeding the variables back [...]'),
+      E03:L('Hoje em grande parte da área [...] ele é muito focado no primeiro modelo que é: “se e então”, é aquele modelinho tradicional [...]', 'Today in most of the field [...] it is very focused on the first model, which is “if and then”, that traditional little model [...]'),
+      E04:L('Do que eu já vi no mercado funcionando, eu só vejo sistemas especialistas, todos sistemas especialistas [...]', 'Of what I have seen working in the market, I only see expert systems, all expert systems [...]'),
+      E05:L('Nenhum, a única inteligência que existe é o fator humano analista para poder interpretar [...]', 'None, the only intelligence there is is the human analyst, to interpret [...]'),
+      E06:L('[...] o sistema me pergunta: você tem caminhão? [...] se você tem caminhão, então quantos anos tem seu caminhão? de alguma maneira esse “se, então” existe [...]', '[...] the system asks me: do you have a truck? [...] if you have a truck, then how old is your truck? in some way this “if, then” exists [...]')
+    };
+    var CTX = {E05:L(' (sobre o cálculo do seguro)', ' (on insurance pricing)')};
+    var ROWS = [
+      {n:L('Sistemas especialistas', 'Expert systems'), w:ALL, c:'n'},
+      {n:L('Redes neurais: “não há”', 'Neural networks: “none”'), w:['E02','E03','E04','E05'], c:'r'},
+      {n:L('Seguro sem IA', 'Insurance without AI'), w:['E01','E05'], c:'g'}
+    ];
+    var g = $('who6');
+    g.appendChild(mk('span', '', ''));
+    var heads = [];
+    ALL.forEach(function(e){ var b = mk('button', 'h', e); b.addEventListener('click', function(){ heads.forEach(function(h){ h.setAttribute('aria-pressed', h === b ? 'true' : 'false'); }); $('c1-quote').innerHTML = quote(Q[e], e + (CTX[e] || ''), e === 'E05' ? '#64748b' : 'var(--rule)'); }); g.appendChild(b); heads.push(b); });
+    ROWS.forEach(function(r){
+      g.appendChild(mk('span', '', r.n + ' <b>' + r.w.length + '/6</b>'));
+      ALL.forEach(function(e){ g.appendChild(mk('i', 'c' + (r.w.indexOf(e) >= 0 ? ' ' + r.c : ''))); });
+    });
+    heads[3].click();
+  })();
+
+  /* ---------- 08 · Mapa das 22 ideias ---------- */
+  (function(){
+    var sc = $('map-scene'), st = makeStage(sc, 470, 300, {ay:'64%', rx:'58deg'}), towers = [];
+    var COL = [NAVY, INK, RED, '#b45309', '#475569'];
+    CATS.forEach(function(cat, r){
+      cat.us.forEach(function(u, i){
+        var t = box({w:36, d:36, h:u[2].length * 24, x:i * 50, y:r * 60, c:COL[r], top:String(u[2].length)});
+        t.dataset.cat = r; t.dataset.i = i;
+        t.addEventListener('click', function(){ if (M.wasDrag(sc)) return; pickUs(r, i); });
+        st.appendChild(t); towers.push(t);
+      });
+      flatLabel(st, cat.k, -48, r * 60 + 8, 40, 'text-align:right; font-weight:700;');
+    });
+    rotatable(sc, st, -22, 8);
+    var seg = $('cat-seg'), cur = -1;
+    function pickUs(r, i){
+      cur = r; press(seg, seg.children[r + 1]);
+      towers.forEach(function(t){ t.classList.toggle('dim', +t.dataset.cat !== r); t.classList.toggle('sel', +t.dataset.cat === r && +t.dataset.i === i); });
+      var u = CATS[r].us[i];
+      $('us-msg').innerHTML = '<b>' + CATS[r].k + ' · ' + CATS[r].n + '</b><br><b>' + u[0] + ' · ' + u[1] + '</b>: ' + u[2].length + L(' de 6 entrevistados (', ' of 6 interviewees (') + u[2].join(', ') + ').';
+    }
+    function pickCat(r, b){
+      cur = r; press(seg, b);
+      towers.forEach(function(t){ t.classList.toggle('dim', r >= 0 && +t.dataset.cat !== r); t.classList.remove('sel'); });
+      if (r < 0){ $('us-msg').innerHTML = L('22 ideias, 5 temas. As torres mais altas (6 de 6) são: sistemas especialistas presentes, contratados de tecnologia e de serviços, ganho financeiro e mais serviços de prevenção.', '22 ideas, 5 themes. The tallest towers (6 of 6) are: expert systems present, technology and service suppliers, financial gains and more prevention services.'); return; }
+      $('us-msg').innerHTML = '<b>' + CATS[r].k + ' · ' + CATS[r].n + '</b>: ' + CATS[r].us.map(function(u){ return u[1] + ' (' + u[2].length + ')'; }).join('; ') + '.';
+    }
+    var b0 = mk('button', '', L('Todos', 'All')); b0.addEventListener('click', function(){ pickCat(-1, b0); });
+    CATS.forEach(function(cat, r){ var b = mk('button', '', cat.n); b.addEventListener('click', function(){ pickCat(r, b); }); seg.appendChild(b); });
+    seg.insertBefore(b0, seg.firstChild);
+    // índices dos botões: 0 = Todos, 1..5 = categorias
+    pickCat(-1, b0);
+  })();
+
+  /* ---------- 09 · Benefícios ---------- */
+  (function(){
+    function bars(id, list){
+      var el = $(id);
+      list.slice().sort(function(a, b){ return b[2].length - a[2].length; }).forEach(function(u){
+        var k = u[2].length, cells = '';
+        for (var i = 0; i < 6; i++) cells += '<i class="' + (i < k ? 'on' : '') + '"></i>';
+        el.appendChild(mk('div', 'row', '<span>' + u[1] + '</span><div class="bar">' + cells + '</div><b>' + k + '</b>'));
+      });
+    }
+    bars('ben-bars', CATS[2].us);
+    bars('fut-bars', CATS[4].us);
+    var team = $('team'), seg = $('team-seg'), icons = [];
+    var P = '<svg viewBox="0 0 20 24"><circle cx="10" cy="6" r="5" fill="' + NAVY + '"/><path d="M1,24 C1,15 19,15 19,24 Z" fill="' + NAVY + '"/></svg>';
+    for (var i = 0; i < 40; i++){ var w = mk('span', '', P); team.appendChild(w.firstChild); }
+    icons = team.querySelectorAll('svg');
+    function show(after, b){
+      press(seg, b);
+      each(icons, function(ic, i){ ic.classList.toggle('out', after && i >= 6); ic.classList.toggle('maybe', !after && i >= 30); });
+      $('team-msg').innerHTML = after
+        ? L('<b>6 pessoas</b> depois que o cliente pôs regras no sistema. As regras “filtram bastante o que está ocorrendo em campo” e só sobe para a equipe o que precisa de avaliação.', '<b>6 people</b> after the client put rules into the system. The rules “filter a lot of what is happening in the field” and only what needs assessment goes up to the team.')
+        : L('<b>30 a 40 pessoas</b> numa equipe de monitoramento antes das regras (as 10 mais claras marcam a faixa de 30 a 40).', '<b>30 to 40 people</b> in a monitoring team before the rules (the 10 lighter ones mark the 30-to-40 range).');
+    }
+    [[false, L('Antes', 'Before')], [true, L('Com as regras', 'With the rules')]].forEach(function(o){ var b = mk('button', '', o[1]); b.addEventListener('click', function(){ show(o[0], b); }); seg.appendChild(b); });
+    show(false, seg.children[0]);
+  })();
+
+  /* ---------- 10 · Social ---------- */
+  (function(){
+    var S = [
+      {t:L('Vidas na estrada', 'Lives on the road'), s:'E01', q:L('[...] quando não acontece o acidente, a gente está falando de um impacto social muito grande em decorrência daquele indivíduo ali não paralisar uma via, não ser hospitalizado e se ele for hospitalizado, não morrer [...]', '[...] when the accident does not happen, we are talking about a very large social impact, because that person does not block a road, is not hospitalised and, if hospitalised, does not die [...]')},
+      {t:L('Saúde pública', 'Public health'), s:'E04', q:L('[...] quando a gente fala que eu vou evitar um roubo de carga, de remédio ou evitar roubo de carga de defensivo agrícola, é uma questão de saúde pública [...]', '[...] when we say I am going to prevent a theft of a load of medicine or of pesticides, it is a matter of public health [...]')},
+      {t:L('Menos crime na rua', 'Less crime in the street'), s:'E03', q:L('[...] quando a gente consegue mitigar ou eliminar estas ações de roubo de carga e do próprio veículo, o maior ganho é para a população, não é para o dono da carga [...]', '[...] when we manage to reduce or eliminate these thefts of cargo and of the vehicle itself, the biggest gain is for the population, not for the owner of the load [...]')},
+      {t:L('O valor da vida', 'The value of life'), s:'E02', q:L('[...] a gente está num país em que a vida vale muito pouco ainda, mas se tu parares para pensar que o impacto social de uma inteligência artificial numa cadeia de transporte, foco em risco, ela é nítida [...]', '[...] we are in a country where life is still worth very little, but if you stop to think about it, the social impact of artificial intelligence in a transport chain, focused on risk, is clear [...]')}
+    ];
+    var box2 = $('soc');
+    S.forEach(function(x){
+      var b = mk('button', '', '<b>' + x.t + '</b>' + x.s);
+      b.addEventListener('click', function(){ press(box2, b); $('soc-quote').innerHTML = quote(x.q, x.s); });
+      box2.appendChild(b);
+    });
+    box2.children[1].click();
+  })();
+
+  /* ---------- 11 · Barreiras ---------- */
+  (function(){
+    var sc = $('bar-scene'), st = makeStage(sc, 400, 160, {ay:'66%', rx:'60deg'});
+    var road = mk('div', 'road'); road.style.cssText = 'position:absolute;left:-30px;top:40px;width:460px;height:80px;background:#e2e8f0;border-radius:4px;';
+    st.appendChild(road);
+    var B = [
+      {u:CATS[3].us[0], s:'E03', q:L('Eu vejo que o mercado que ele é bem conservador, e um mercado que ele é muito fechado também, porque [...] as gerenciadoras de risco todas se conhecem [...] ele evolui a passes curtos [...]', 'I see that the market is quite conservative, and a very closed market too, because [...] the risk management firms all know each other [...] it evolves in short steps [...]')},
+      {u:CATS[3].us[1], s:'E04', q:L('[...] são as pessoas que sempre fizeram isso como eu, que não têm experiência em outros mercados que utilizam Inteligência Artificial [...] a gente tem uma cultura ainda bastante limitada em crenças voltadas ainda lá atrás, a formação militar e a formação securitária.', '[...] it is the people who have always done this, like me, who have no experience in other markets that use Artificial Intelligence [...] we have a culture still quite limited by old beliefs, military training and insurance training.')},
+      {u:CATS[3].us[2], s:'E01', q:L('[...] no afã de resolver o problema, de ser prestativo, de ser mais eficiente, a gente vai jogando mais tecnologia [...] e talvez a gente não potencialize, a gente não maximize o potencial de todas as ferramentas que já estão aplicadas [...]', '[...] in the rush to solve the problem, to be helpful, to be more efficient, we keep throwing more technology at it [...] and perhaps we do not make the most of, do not maximise the potential of, all the tools already in place [...]')}
+    ];
+    var bl = [];
+    B.forEach(function(b, i){
+      var k = b.u[2].length;
+      var s2 = box({w:100, d:22, h:k * 34, x:10 + i * 135, y:68, c:i === 2 ? INK : NAVY, label:k + L(' de 6', ' of 6')});
+      s2.addEventListener('click', function(){ if (M.wasDrag(sc)) return; pick(i); });
+      st.appendChild(s2); bl.push(s2);
+      flatLabel(st, b.u[1], i * 135 - 10, 104, 140, 'font-size:11px;');
+    });
+    rotatable(sc, st, -18, 8);
+    function pick(i){
+      bl.forEach(function(x, j){ x.classList.toggle('sel', j === i); });
+      var b = B[i];
+      $('bar-quote').innerHTML = '<b>' + b.u[1] + '</b> · ' + b.u[2].length + L(' de 6 (', ' of 6 (') + b.u[2].join(', ') + ')' + quote(b.q, b.s, 'var(--red)');
+    }
+    pick(0);
+  })();
+
+  /* ---------- 12 · Estrada ---------- */
+  (function(){
+    $('road-svg').innerHTML = '<svg viewBox="0 0 420 210" role="img" aria-label="' + L('Duas estradas entre a origem e o destino: a de cima, mais curta, com mais roubos e acidentes; a de baixo, mais longa, com menos roubos', 'Two roads between origin and destination: the upper one, shorter, with more thefts and accidents; the lower one, longer, with fewer thefts') + '">'
+      + '<path class="rt a" id="rt-a" d="M40,100 C120,40 300,40 380,100"/>'
+      + '<path class="rt b" id="rt-b" d="M40,100 C90,190 330,190 380,100"/>'
+      + '<circle cx="40" cy="100" r="12" fill="' + NAVY + '"/><circle cx="380" cy="100" r="12" fill="' + RED + '"/>'
+      + '<text x="40" y="76" text-anchor="middle">' + L('Origem', 'Origin') + '</text><text x="380" y="76" text-anchor="middle">' + L('Destino', 'Destination') + '</text>'
+      + '<text x="210" y="28" text-anchor="middle">' + L('A · mais curta, mais roubos e acidentes', 'A · shorter, more thefts and accidents') + '</text>'
+      + '<text x="210" y="204" text-anchor="middle">' + L('B · mais combustível, menos roubos', 'B · more fuel, fewer thefts') + '</text>'
+      + '</svg>';
+    var seg = $('road-seg');
+    var R = [
+      ['a', L('Estrada A', 'Road A'), L('<b>A</b> economiza combustível, mas o índice de roubo e de acidentes é bem maior. Hoje essa escolha sai de regras fixas e da experiência de quem planeja.', '<b>A</b> saves fuel, but the theft and accident rates are much higher. Today this choice comes from fixed rules and the planner\'s experience.')],
+      ['b', L('Estrada B', 'Road B'), L('<b>B</b> gasta mais combustível, mas o roubo é bem menor. Pesar as duas coisas a cada viagem é o que um entrevistado espera de uma rede neural: “como é que eu vou fazer isso sem usar a rede neural?”', '<b>B</b> burns more fuel, but theft is much lower. Weighing both things on every trip is what one interviewee expects from a neural network: “how am I going to do this without using the neural network?”')]
+    ];
+    R.forEach(function(r){
+      var b = mk('button', '', r[1]);
+      b.addEventListener('click', function(){ press(seg, b); $('rt-a').classList.toggle('on', r[0] === 'a'); $('rt-b').classList.toggle('on', r[0] === 'b'); $('road-msg').innerHTML = r[2] + '<br><span style="font-size:.78rem;color:var(--muted)">E03' + (EN ? ', translated by us' : '') + L('. Sem valores: a dissertação não mede custos nem índices de rota.', '. No figures: the dissertation does not measure route costs or rates.') + '</span>'; });
+      seg.appendChild(b);
+    });
+    seg.children[0].click();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
