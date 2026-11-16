@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Debt, taxes and the risk of failing · PPGA Interativo</title>
+<meta name="description" content="The master's dissertation by Leandro Telles Ricca (PPGA Mackenzie) on whether Brazilian companies leave unused the tax saving that interest on debt provides, compared with the cost of getting closer to bankruptcy, explained in 11 interactive screens.">
+<link rel="alternate" hreflang="pt-BR" href="../../../dissertacoes/2019-ricca-beneficio-fiscal-falencia/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><path d=%22M7 22 L9 11 L13 16 L16 9 L19 16 L23 11 L25 22 Z%22 fill=%22white%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/motor.css">
+<link rel="stylesheet" href="../../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  :root{
+    --tax:var(--navy);     /* imposto poupado (benefício fiscal) */
+    --risk:var(--red);     /* custo de falência / dívida */
+    --weak:#b45309;
+  }
+  .tax-t{color:var(--tax); font-weight:700;} .risk-t{color:var(--risk); font-weight:700;}
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .ill{display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--weak); border:1px solid color-mix(in srgb, var(--weak) 45%, white); border-radius:999px; padding:2px 9px; margin-bottom:6px;}
+  .sw{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 10px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-size:.8rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px 16px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1rem; margin-bottom:6px; color:var(--ink);}
+  .panel p{margin:0 0 6px; font-size:.86rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:18px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .ctrls{display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; margin:4px 0 10px;}
+  .zleg{display:flex; flex-wrap:wrap; justify-content:center; gap:4px 16px; font-size:.78rem; color:var(--ink-2); margin-top:2px;}
+  .range{width:100%; accent-color:var(--red);}
+  .sl{display:grid; gap:2px; margin:4px 0 6px;}
+  .sl label{font-size:.84rem; color:var(--ink-2);}
+  .sl label b{color:var(--ink);}
+  .btn-s{border:1px solid var(--ink); background:var(--card); color:var(--ink); border-radius:999px; padding:7px 14px; font-size:.8rem; font-weight:600; cursor:pointer;}
+  .btn-s:hover{background:var(--ink); color:#fff;}
+  svg text{font-family:var(--sans);}
+  .slab.dim > i{opacity:.3;}
+  .slab .f-top .top-label{text-shadow:0 1px 2px rgb(15 23 42 / .35);}
+  .out3{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:8px;}
+  .out3 div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 11px; font-size:.74rem; color:var(--ink-2); line-height:1.3; border-top:4px solid var(--ink);}
+  .out3 div.t{border-top-color:var(--tax);} .out3 div.r{border-top-color:var(--risk);}
+  .out3 b{display:block; font-family:var(--serif); font-size:1.2rem; color:var(--ink);}
+  @media (max-width:600px){
+    .out3{grid-template-columns:1fr 1fr;}
+    #rs-svg text{font-size:15px !important;}
+    #rs-svg text.big{font-size:26px !important;}
+    #kk-svg text, #wf-svg text, #rt-svg text, #bl-svg text, #rg-svg text, #h2-svg text{font-size:16px !important;}
+    #kk-svg text.s, #wf-svg text.s, #rt-svg text.s, #bl-svg text.s, #rg-svg text.s, #h2-svg text.s{font-size:14px !important;}
+  }
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(1.7rem, 2.6vw, 2.1rem);}
+  #capa .sub{font-size:1rem;}
+  .meta{display:grid; gap:2px; margin-top:16px; font-size:.86rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.76rem; color:var(--muted); margin-top:4px; text-align:center; line-height:1.4;}
+  #cap-read{text-align:center; font-size:.92rem; color:var(--ink-2); margin:4px 0 0; min-height:1.5em;}
+  #cap-read b{color:var(--ink);}
+
+  /* ---------- 02 · Juros e imposto ---------- */
+  #kk-svg{width:100%; display:block;}
+
+  /* ---------- 03 · Nota de crédito ---------- */
+  #rt-panel{margin-top:8px; min-height:92px;}
+
+  /* ---------- 04 · Amostra ---------- */
+  #wf-svg{width:100%; display:block;}
+  .facts{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:12px;}
+  .facts div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 11px; font-size:.74rem; color:var(--ink-2); line-height:1.3;}
+  .facts b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink);}
+  .qs{display:grid; gap:8px; margin-top:12px;}
+  .qcard{background:var(--card); border:1px solid var(--border); border-left:5px solid var(--qc, var(--ink)); border-radius:12px; padding:9px 13px; font-size:.82rem; color:var(--ink-2); line-height:1.4;}
+  .qcard b{color:var(--ink);}
+
+  /* ---------- 05 · Simulador da nota ---------- */
+  #rg-svg{width:100%; display:block;}
+  #rg-read{font-size:.9rem; color:var(--ink-2); margin:6px 0 0; min-height:2.8em;}
+  #rg-read b{color:var(--ink);}
+
+  /* ---------- 06 · Balança ---------- */
+  #bl-svg{width:100%; display:block; max-width:540px; margin:0 auto;}
+
+  /* ---------- 07 · Réguas ---------- */
+  #rs-svg{width:100%; display:block;}
+
+  /* ---------- 08 · Folga ---------- */
+  #fg-panel{margin-top:8px; min-height:96px;}
+
+  /* ---------- 09 · Outros atalhos ---------- */
+  #h2-svg{width:100%; display:block;}
+  #h2-panel{margin-top:8px; min-height:100px;}
+
+  /* ---------- 10 · Bastidores ---------- */
+  .tw{display:grid; gap:8px;}
+  .trow{display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:8px; align-items:stretch;}
+  .trow > div{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:7px 10px; font-size:.78rem; color:var(--ink-2); line-height:1.3;}
+  .trow.h > div{background:transparent; border:0; font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; font-weight:700; color:var(--muted); padding:0 4px;}
+  .trow .nm b{color:var(--ink); display:block; font-size:.86rem;}
+  .sgn{font-weight:800; font-size:1rem; display:block;}
+  .sgn.up{color:var(--risk);} .sgn.dn{color:var(--tax);} .sgn.ns{color:#94a3b8;}
+  .trow .flip{box-shadow:inset 0 0 0 2px var(--weak);}
+
+  /* ---------- 11 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:10px;}
+  @media (min-width:760px){ .cards4{grid-template-columns:repeat(2, 1fr);} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:10px 13px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:3px; font-size:.76rem; line-height:1.4; color:var(--ink-2);}
+  .pcard em{font-style:normal; font-size:.7rem; color:var(--muted);}
+  .end{display:grid; grid-template-columns:1fr; gap:20px; margin-top:14px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:36px;} }
+  .end h3{font-size:1.04rem; margin-bottom:4px;}
+  .limits{display:grid; gap:5px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 11px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.77rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.78rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 13px; line-height:1.5; margin-top:6px;}
+  .cite b{color:var(--ink);}
+  .also{font-size:.78rem; margin-top:8px; color:var(--ink-2);}
+  .also a{color:var(--red); font-weight:600;}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-meta="../../../dissertacoes/2019-ricca-beneficio-fiscal-falencia/meta.json">
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../../dissertacoes/2019-ricca-beneficio-fiscal-falencia/" hreflang="pt-BR" lang="pt-BR" title="Ler em português"><img class="lang-flag" src="../../../assets/bandeira-br.svg" width="17" height="12" alt="">PT</a>
+    <span id="count">01 / 11</span>
+    <button class="nav-btn" id="prev" aria-label="Previous screen">↑</button>
+    <button class="nav-btn" id="next" aria-label="Next screen">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Screen navigation"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Start">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Master's dissertation · PPGA Mackenzie · 2019</div>
+      <h1 class="rv" style="--d:.1s">By the dissertation's math, Brazilian companies could carry more debt: the tax saved would outweigh the risk of failing</h1>
+      <p class="sub rv" style="--d:.2s">Interest on debt reduces taxes. But too much debt lowers the credit rating and brings bankruptcy closer. With <strong>38 Brazilian listed companies</strong>, from 2010 to 2018, the dissertation calculates that the average firm would have to more than double its debt to lose one notch in its rating, and that the tax saved would be worth <strong>23.5%</strong> of the firm's value, against a <strong>2.0%</strong> expected cost of bankruptcy. With the yardsticks of two foreign studies, that slack shrinks a lot.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Author:</b> Leandro Telles Ricca</span>
+        <span><b>Advisor:</b> Prof. Dr. Eli Hadad Junior</span>
+        <span><b>Program:</b> Graduate Program in Business Administration (PPGA) · Mackenzie Presbyterian University</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#juros">Start →</a>
+        <a class="btn ghost" href="#balanca">Go straight to the finding</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="440x250" role="img" aria-label="Three pairs of columns, one per yardstick. In each pair, the blue column is the tax saved and the red one the expected cost of bankruptcy, as % of firm value. With the dissertation's yardstick, 23.5 against 2.0; with Molina's, 4.6 against 1.4; with Clemente-Almendros and Mira's, 3.3 against 4.3"></div></div>
+      <p id="cap-read" aria-live="off"></p>
+      <div class="zleg"><span><span class="sw" style="background:var(--tax)"></span>tax saved</span><span><span class="sw" style="background:var(--risk)"></span>expected bankruptcy cost</span></div>
+      <div class="cap-legend">As % of firm value, if debt rose until the credit rating dropped one notch (Tables 13, 15 and 16). Drag to rotate.</div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">Closest UN Sustainable Development Goals</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://sdgs.un.org/goals/goal8" target="_blank" rel="noopener" title="SDG 8 · Decent Work and Economic Growth: Measures whether large Brazilian companies use as much debt as the tax saving and the risk of bankruptcy would justify, a question about how companies are financed."><b>8</b>Decent Work and Economic Growth</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">scroll<span></span></div>
+</section>
+
+<!-- 02 · JUROS E IMPOSTO -->
+<section class="slide" id="juros" data-label="Interest cuts taxes">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> The tax saving</div>
+      <h2 class="rv" style="--d:.1s">Every real of interest cuts taxes, but only until interest swallows the profit</h2>
+      <p class="lede rv" style="--d:.15s">In Brazil, a company taxed on actual profit deducts interest on its debt before computing taxes. At the top rate of <b>34%</b> (15% income tax + 10% surcharge + 9% social contribution), every R$ 1 of interest saves up to R$ 0.34 of <b class="tax-t">tax</b>.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">Once interest exceeds operating profit, there is no profit left to deduct from. The dissertation uses the yardstick <b>operating profit ÷ interest</b> (the <i>kink</i>): above 1, the firm still has room for more debt and is called <b>conservative</b>; below 1, <b>aggressive</b>. Move the interest.</p>
+      <div class="sl rv" style="--d:.25s">
+        <label for="kk-r">Interest paid in the year: <b id="kk-v"></b></label>
+        <input class="range" id="kk-r" type="range" min="0" max="200" step="0.1" value="35">
+      </div>
+      <button class="btn-s rv" style="--d:.3s" id="kk-avg">See the average slack of the 38 firms</button>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <span class="ill">Made-up company, operating profit of R$ 100 million</span>
+      <svg id="kk-svg" viewBox="0 0 560 300" role="img" aria-label="Curve of tax saved as interest goes from 0 to 200 million: it rises in a straight line to 34 million when interest reaches 100 million, the size of the profit, and then stays flat"></svg>
+      <div class="out3" id="kk-out" aria-live="polite"></div>
+      <p class="note">Source: sections 2.7 to 2.9 and Figure 2 (Graham, 2000, cited in the dissertation); average slack of 4.28 in Table 6. The made-up company's math ignores the 25% band for profits up to R$ 240 thousand a year and losses from previous years.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · NOTA DE CRÉDITO -->
+<section class="slide" id="nota" data-label="The credit rating">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> The other side</div>
+      <h2 class="rv" style="--d:.1s">Firms that owed more had worse credit ratings</h2>
+      <p class="lede rv" style="--d:.15s">The credit rating (from AAA, the best, down to C) tells how much the market trusts the firm to pay. Each notch down raises the chance of default and makes credit costlier: that is the <b class="risk-t">risk of failing</b> side.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">Among the 38 firms, from 2010 to 2018, half of the yearly ratings were BB. Average debt rises at each notch, from 24% of assets for A-rated firms to 64% for CCC. Tap a notch.</p>
+      <div class="chips rv" style="--d:.25s" id="rt-chips"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="fit-wrap"><div class="scene draggable" id="rt-scene" data-fit="460x270" role="img" aria-label="A six-step staircase, from rating A to CC. Each step's height is average debt over assets: 24%, 34%, 40%, 51%, 64% and 58%"></div></div>
+      <div class="panel" id="rt-panel" aria-live="polite"></div>
+      <p class="note">Source: Table 7 and Chart 1 (S&amp;P ratings via Bloomberg; 342 yearly ratings). Debt = short- plus long-term financial debt ÷ total assets. Height shows average debt, not the number of firms. CCC and CC have few ratings (6 and 3). Drag to rotate.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · AMOSTRA E PERGUNTAS -->
+<section class="slide" id="amostra" data-label="The questions">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Two questions</div>
+      <h2 class="rv" style="--d:.1s">Why don't companies use all the tax saving that debt could give?</h2>
+      <div class="qs rv" style="--d:.15s">
+        <div class="qcard" style="--qc:var(--risk)"><b>Hypothesis 1 · risk</b><br>If the firm took on more debt, would the tax saved exceed the expected cost of getting closer to bankruptcy? If so, it is being conservative.</div>
+        <div class="qcard" style="--qc:var(--tax)"><b>Hypothesis 2 · other shortcuts</b><br>Does the firm skip the debt tax saving because it already cuts taxes in other ways, such as accumulated losses?</div>
+      </div>
+      <div class="facts rv" style="--d:.2s">
+        <div><b>38</b>non-financial firms with a credit rating every year</div>
+        <div><b>342</b>yearly balance sheets (38 × 9 years)</div>
+        <div><b>2010–2018</b>data from Capital IQ (S&amp;P) and Bloomberg</div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <svg id="wf-svg" viewBox="0 0 560 330" role="img" aria-label="Waterfall bars from the 685 assets listed on the exchange to the 38 sample firms, removing 133 firms with more than one share class, 127 foreign firms, 111 financial firms, 50 real-estate funds, 129 without financial data and 97 without a credit rating for the whole period"></svg>
+      <p class="note">Source: Tables 3 and 4. Sectors: consumer 13 (homebuilding, food, retail, cosmetics), infrastructure 9 (power and sanitation), materials 6, industrials 5, energy 2, real estate 2 and pharmaceutical 1. Requiring a credit rating in every year leaves only large firms.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · SIMULADOR DA NOTA -->
+<section class="slide" id="simulador" data-label="How far until the rating drops">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> The test, step 1</div>
+      <h2 class="rv" style="--d:.1s">To lose one notch in its rating, the average firm would have to more than double its debt</h2>
+      <p class="lede rv" style="--d:.15s">The dissertation estimated how the credit rating responds to debt, profit and size. More <b class="risk-t">debt</b> pulls the rating down; more profit and larger size push it up. The average firm sat at BB.</p>
+      <div class="sl rv" style="--d:.2s"><label for="rg-lev">Debt, as % of assets: <b id="rg-lev-v"></b></label><input class="range" id="rg-lev" type="range" min="2" max="99" step="1" value="41"></div>
+      <div class="sl rv" style="--d:.2s"><label for="rg-prof">Operating profit (EBITDA), as % of assets: <b id="rg-prof-v"></b></label><input class="range" id="rg-prof" type="range" min="-190" max="470" step="1" value="95"></div>
+      <div class="sl rv" style="--d:.2s"><label for="rg-size">Size (log of assets): <b id="rg-size-v"></b></label><input class="range" id="rg-size" type="range" min="665" max="1371" step="1" value="961"></div>
+      <div class="ctrls rv" style="--d:.25s"><button class="btn-s" id="rg-test">Run the dissertation's test</button><button class="btn-s" id="rg-reset">Back to the average firm</button></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <svg id="rg-svg" viewBox="0 0 560 220" role="img" aria-label="A horizontal ruler split into the rating bands CC, CCC, B, BB, BBB and A, with a marker showing the simulated firm's score"></svg>
+      <p id="rg-read" aria-live="polite"></p>
+      <p class="note">Source: Table 11 (an <i>ordered probit</i> model, estimated jointly with the debt equation) and Table 13. Fixed assets at the average. The ruler shows the band the score falls into, as the dissertation does in its test; the model actually gives a probability for each rating. At the average, debt has to go from 41% to 96% of assets (2.36 times) for the rating to fall from BB to B.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · BALANÇA -->
+<section class="slide" id="balanca" data-label="The finding">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> The test, step 2 · the finding</div>
+      <h2 class="rv" style="--d:.1s">At every tax rate tested, the tax saved beat the cost of the risk</h2>
+      <p class="lede rv" style="--d:.15s">If average debt rose from R$ 18.9 billion to R$ 44.7 billion, at a 34% tax rate the <b class="tax-t">tax saved</b> would be worth 23.5% of firm value. On the other side, falling from BB to B raises the 10-year chance of default by 12 points; since bankruptcy costs 10% to 23% of value, the <b class="risk-t">expected cost</b> rises by only 2.0%.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">That is why the dissertation concludes that the firms are <b>conservative</b>: they leave tax savings on the table. Change the tax rate used in the math.</p>
+      <div class="ctrls rv" style="--d:.25s"><div class="seg" id="bl-seg"></div></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <svg id="bl-svg" viewBox="0 0 540 330" role="img" aria-label="A scale with the tax saved on one pan and the expected bankruptcy cost on the other, as % of firm value; the tax pan is heavier at every rate"></svg>
+      <div class="out3" id="bl-out" aria-live="polite"></div>
+      <p class="note">Source: Table 13 and section 4.4. The balance for each rate is the dissertation's; the tax saved at the lower rates is our calculation (balance + 2.0). The math assumes perpetual debt and a fully used deduction (Graham, 2000); the chance of default comes from S&amp;P (2018) and the cost of bankruptcy from Andrade and Kaplan (1998), with US firms.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · RÉGUAS -->
+<section class="slide" id="reguas" data-label="Other yardsticks">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> The unexpected</div>
+      <h2 class="rv" style="--d:.1s">With the yardsticks of two foreign studies, the slack shrinks or vanishes</h2>
+      <p class="lede rv" style="--d:.15s">The rating model was estimated with only 38 firms. The dissertation redid the math with the models of Molina (2005, 3,048 firms) and Clemente-Almendros and Mira (2018, 88 firms). In them, the rating drops much sooner: with debt at 52% or 48% of assets, not 96%.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">Less extra debt means less tax saved. Pick a yardstick and move the cost of bankruptcy: with Clemente-Almendros and Mira's, the balance changes sign.</p>
+      <div class="ctrls rv" style="--d:.25s"><div class="seg" id="rs-seg"></div></div>
+      <div class="sl rv" style="--d:.25s"><label for="rs-c">How much value the firm loses if it fails: <b id="rs-c-v"></b></label><input class="range" id="rs-c" type="range" min="100" max="230" step="1" value="165"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <span class="ill">Our calculation with Tables 13, 15 and 16</span>
+      <svg id="rs-svg" viewBox="0 0 560 300" role="img" aria-label="At the top, a ruler of debt over assets, from 0% to 100%, with average debt at 41% and the point where the rating drops under the chosen yardstick. Below, two bars: tax saved and expected bankruptcy cost, and the balance"></svg>
+      <div class="out3" id="rs-out" aria-live="polite"></div>
+      <p class="note">Expected cost = rise in the 10-year chance of default (11.99, 8.78 and 18.66 points, S&amp;P 2018) × loss in bankruptcy (10% to 23%, Andrade and Kaplan, 1998). Balances printed in the dissertation, with the average cost: 21.5%, 3.2% and −1.1% (the last with a cost of 4.3%, at the top of the range). In the conclusion, Clemente-Almendros and Mira's yardstick gives −1.1% to 0.8%.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · FOLGA POR FAIXA -->
+<section class="slide" id="folga" data-label="Little slack, little gain">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Firm by firm</div>
+      <h2 class="rv" style="--d:.1s">For firms with the least slack, the gain from owing more was the smallest</h2>
+      <p class="lede rv" style="--d:.15s">The dissertation split the firms by the operating profit ÷ interest yardstick. Those averaging below 1.2 already owed 63% of assets: owing more until the rating fell would yield a balance of only 1.0% of value. Among those with slack above 3, the balance would be 41.5%.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">In every band, the estimated rating was BB. Tap a band or switch the basis of the math.</p>
+      <div class="ctrls rv" style="--d:.25s"><div class="seg" id="fg-seg"></div></div>
+      <div class="chips rv" style="--d:.25s" id="fg-chips"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="fit-wrap"><div class="scene draggable" id="fg-scene" data-fit="460x270" role="img" aria-label="Five columns, one per slack band (operating profit ÷ interest), with the balance between tax saved and bankruptcy cost as % of value: 1.0, 25.3, 14.8, 17.1 and 41.5 using each firm's average"></div></div>
+      <div class="panel" id="fg-panel" aria-live="polite"></div>
+      <p class="note">Source: Table 14 (34% tax rate; 2.0% bankruptcy cost in every band). Height is the balance as % of firm value. The per-year math uses each of the 342 balance sheets; the per-firm math, the average of each of the 38. Drag to rotate.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · OUTROS ATALHOS -->
+<section class="slide" id="atalhos" data-label="Other shortcuts">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Hypothesis 2</div>
+      <h2 class="rv" style="--d:.1s">Firms with accumulated losses to deduct from taxes left more slack in their debt</h2>
+      <p class="lede rv" style="--d:.15s">Losses from previous years also reduce taxes. Firms with such a balance showed a profit ÷ interest yardstick 2.5 points higher, in all three models. For the dissertation, this confirms hypothesis 2: other tax shortcuts take away part of the advantage of borrowing.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">The other two shortcuts tested went the opposite way: deferred taxes above operating profit and higher depreciation went with <b>less</b> slack. Tap each factor.</p>
+      <div class="chips rv" style="--d:.25s" id="h2-chips"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <svg id="h2-svg" viewBox="0 0 560 280" role="img" aria-label="Horizontal bars with each factor's effect on the operating profit ÷ interest yardstick: to the right, more slack; to the left, less"></svg>
+      <div class="panel" id="h2-panel" aria-live="polite"></div>
+      <p class="note">Source: Table 17 (Tobit model, 342 observations, three versions with different tax rates; we show the 1st, and the 3rd when only it was significant). The model explains about 3% of the variation in slack. Expected signs come from Chart 3.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · BASTIDORES -->
+<section class="slide" id="bastidores" data-label="Debt and rating together">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Behind the scenes</div>
+      <h2 class="rv" style="--d:.1s">Estimating debt and rating at the same time changed two results</h2>
+      <p class="lede rv" style="--d:.15s">Debt moves the rating, and the rating moves debt. That is why the dissertation estimated both together (simultaneous equations) and compared with the usual model, which looks only at debt.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">Size flipped sign and profit lost its effect. Business risk and fixed assets stayed the same in both. The orange outlines mark the changes.</p>
+      <p class="note rv" style="--d:.25s">Source: Table 10 (simultaneous equations, two-stage least squares) and Table 18, Appendix A (fixed-effects panel with Driscoll-Kraay errors). Model with the trichotomous tax rate (0%, 17% or 34%) and, for profit, the majority of the three models. They explain 11% to 17% of the variation in debt.</p>
+    </div>
+    <div class="tw rv" style="--d:.25s" id="tw"></div>
+  </div>
+</section>
+
+<!-- 11 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="In practice and credits">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> So what?</div>
+    <h2 class="rv" style="--d:.1s">There may be room for more debt, but the answer depends on the yardstick</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--tax)"><h3>For finance directors</h3><ul><li>On average, operating profit covered interest 4.3 times: there was profit left to deduct more interest from. <em>(screen 02)</em></li><li>Firms already working near 1 would gain little from more debt. <em>(screen 08)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--risk)"><h3>For lenders</h3><ul><li>More debt came with a worse rating; more profit and larger size, with a better one. <em>(screen 05)</em></li><li>Riskier firms borrowed less. <em>(screen 10)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.25s; --pc:#334155"><h3>For tax managers</h3><ul><li>Accumulated losses went with more slack in debt: the interest deduction matters less when another deduction already exists. <em>(screen 09)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#64748b"><h3>For researchers</h3><ul><li>Measure the cost of bankruptcy and the chance of default by rating in Brazil, and compute the marginal tax rate with Graham's method. <em>(dissertation)</em></li><li>Include interest on equity (JSCP), another Brazilian tax deduction. <em>(dissertation)</em></li></ul></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>What this research does not say</h3>
+        <ul class="limits">
+          <li><b>Only 38 firms, all large.</b> Requiring a rating every year left few firms; for the dissertation, this may have overstated the debt needed to lower the rating and, with it, the gain. <em>· per the dissertation</em></li>
+          <li><b>Outside parameters.</b> The cost of bankruptcy comes from US firms and the chance of default from global S&amp;P tables; in Brazil, bankruptcy may cost more. <em>· per the dissertation</em></li>
+          <li><b>The yardstick changes the answer.</b> With other studies' models, the balance falls close to zero or turns negative. <em>· screen 07</em></li>
+          <li><b>Simplified math.</b> It assumes perpetual debt, a fully used deduction and the rating by score band; it is not a recommendation of how much any firm should owe. <em>· our note</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Credits</h3>
+        <div class="cite">
+          <b>How to cite</b><br>
+          RICCA, Leandro Telles. <em>Benefício fiscal da dívida e custo de falência: uma análise do nível de conservadorismo das empresas brasileiras.</em> Master's dissertation (Business Administration), Universidade Presbiteriana Mackenzie, São Paulo, 2019. Advisor: Prof. Dr. Eli Hadad Junior.
+        </div>
+        <p style="margin-top:8px; font-size:.76rem">Committee: Eli Hadad Junior (Mackenzie), Wilson Toshiro Nakamura (Mackenzie) and Edison Simoni da Silva (FECAP). Data from Capital IQ (S&amp;P) and Bloomberg; regressions in Stata 15. This version simplifies the work for a general audience.</p>
+        <p class="also">Also read, by the same advisor: <a href="../../dissertacoes/2019-savelli-governanca-divida-desempenho/">Savelli (2019)</a>, who runs the company and its debt; <a href="../../dissertacoes/2019-sales-swap-cambial-volatilidade/">Sales (2019)</a>, swap auctions and the dollar.</p>
+        <div class="ctas" style="margin-top:10px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Read the full dissertation (in Portuguese)</a>
+          <a class="btn ghost" href="#capa">↑ Back to start</a>
+          <a class="btn ghost" href="../../">More research</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, rotatable = M.rotatable, flatLabel = M.flatLabel;
+  var EN = M.lang === 'en';
+  function L(p, e){ return EN ? e : p; }
+  function sg(v, d, plus){ var s = fmt(Math.abs(v), d); return (v < 0 && Math.abs(v) >= Math.pow(10, -d) / 2 ? '−' : (plus && v > 0 ? '+' : '')) + s; }
+  function pct(v, d){ return fmt(v, d === undefined ? 1 : d) + '%'; }
+  function segInit(el, items, cur, fn){
+    el.innerHTML = items.map(function(t, i){ return '<button data-v="' + i + '" aria-pressed="' + (i === cur) + '">' + t + '</button>'; }).join('');
+    each(el.children, function(b){ b.addEventListener('click', function(){ each(el.children, function(x){ x.setAttribute('aria-pressed', x === b); }); fn(+b.dataset.v); }); });
+  }
+  function chipsInit(el, items, cur, fn){
+    el.innerHTML = items.map(function(t, i){ return '<button class="chip" data-v="' + i + '" aria-pressed="' + (i === cur) + '">' + t + '</button>'; }).join('');
+    each(el.children, function(b){ b.addEventListener('click', function(){ each(el.children, function(x){ x.setAttribute('aria-pressed', x === b); }); fn(+b.dataset.v); }); });
+  }
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // Tabela 6: médias
+  var MEAN = {LEV:0.4070, PROF:0.0954, SIZE:9.6149, TANG:0.2533, KINK:4.2799};
+  // Tabela 11: ordered probit (escala da Tabela 6: maior = melhor nota) e cutpoints
+  var B11 = {LEV:-2.1356, PROF:6.6738, SIZE:0.2989, TANG:-0.0157};
+  var CUT = [5.5660, 3.3173, 1.4537, 0.1053, -0.3930];   // acima de cada um: A, BBB, BB, B, CCC; abaixo do último: CC
+  var RNAME = ['A', 'BBB', 'BB', 'B', 'CCC', 'CC'];
+  // Tabela 7: notas anuais [nota, observações, dívida média]
+  var T7 = [['A', 3, 0.2405], ['BBB', 100, 0.3366], ['BB', 178, 0.3974], ['B', 52, 0.5064], ['CCC', 6, 0.6382], ['CC', 3, 0.5792]];
+  // Tabela 3
+  var WF = [
+    [L('Ativos na bolsa', 'Listed assets'), 685, 0],
+    [L('Mais de uma classe de ações', 'More than one share class'), 133, 1],
+    [L('Estrangeiras (BDR)', 'Foreign (BDR)'), 127, 1],
+    [L('Financeiras', 'Financial'), 111, 1],
+    [L('Fundos imobiliários', 'Real-estate funds'), 50, 1],
+    [L('Sem dados financeiros', 'No financial data'), 129, 1],
+    [L('Sem nota de crédito no período', 'No rating for the period'), 97, 1],
+    [L('Amostra final', 'Final sample'), 38, 2]
+  ];
+  // Tabela 13 e texto da seção 4.4: saldo (benefício − custo) por alíquota; custo 1,98
+  var RATES = [
+    [L('34% (máxima)', '34% (top rate)'), 21.54],
+    [L('~29% (marginal antes dos juros)', '~29% (marginal, before interest)'), 17.73],
+    [L('18,8% (efetiva)', '18.8% (effective)'), 11.04],
+    [L('16,6% (tricotômica)', '16.6% (trichotomous)'), 9.51]
+  ];
+  var COST13 = 1.98;
+  // Tabelas 13, 15 e 16: réguas
+  var RULERS = [
+    {nm:L('Esta dissertação', 'This dissertation'), sh:L('dissertação', 'dissertation'), n:L('38 empresas', '38 firms'), lev:0.9604, from:'BB', to:'B', dp:11.99, ben:23.52, net:21.54},
+    {nm:'Molina (2005)', sh:'Molina', n:L('3.048 empresas', '3,048 firms'), lev:0.5160, from:'BBB', to:'BB', dp:8.78, ben:4.633, net:3.184, cost:1.449},
+    {nm:L('Clemente-Almendros e Mira (2018)', 'Clemente-Almendros and Mira (2018)'), sh:L('C.-Almendros e Mira', 'C.-Almendros & Mira'), n:L('88 empresas', '88 firms'), lev:0.4839, from:null, to:null, dp:18.66, ben:3.271, net:-1.057, cost:4.328}
+  ];
+  // Tabela 14: faixas de kink; [LEV, novo kink, nova LEV, benefício, saldo]
+  var BANDS = ['0–1,2', '1,2–1,6', '1,6–2,0', '2,0–3,0', '> 3,0'];
+  if (EN) BANDS = ['0–1.2', '1.2–1.6', '1.6–2.0', '2.0–3.0', '> 3.0'];
+  var T14 = [
+    [[0.514, 0.347, 0.794, 23.5, 21.5], [0.438, 0.676, 0.904, 61.7, 59.7], [0.416, 0.762, 0.997, 50.1, 48.1], [0.421, 1.038, 1.004, 55.1, 53.1], [0.300, 2.746, 1.084, 52.0, 50.1]],
+    [[0.631, 0.697, 0.705, 3.0, 1.0], [0.460, 0.615, 1.044, 27.2, 25.3], [0.334, 0.671, 0.794, 16.8, 14.8], [0.446, 1.110, 0.973, 19.1, 17.1], [0.290, 2.365, 1.056, 43.5, 41.5]]
+  ];
+  // Tabela 17: [coeficiente, estrelas, modelo mostrado, sinal esperado]
+  var T17 = [
+    {k:'NOL', nm:L('Prejuízos acumulados', 'Accumulated losses'), c:2.5382, st:3, m:1, exp:'+',
+     ex:L('Ter prejuízos de anos anteriores para abater (sim ou não).', 'Having losses from previous years to deduct (yes or no).'),
+     rd:L('Com prejuízos acumulados, a régua lucro ÷ juros vinha 2,5 pontos mais alta (2,5 a 3,6 nos três modelos, a 1%). Para a dissertação, quem já tem esse abatimento precisa menos dos juros para pagar menos imposto.', 'With accumulated losses, the profit ÷ interest yardstick came out 2.5 points higher (2.5 to 3.6 across the three models, at 1%). For the dissertation, firms that already have this deduction need interest less to pay less tax.')},
+    {k:'NDT', nm:L('Impostos diferidos altos', 'High deferred taxes'), c:-4.5979, st:3, m:1, exp:'−',
+     ex:L('Créditos de impostos diferidos, líquidos, maiores que o lucro operacional (sim ou não).', 'Net deferred tax assets larger than operating profit (yes or no).'),
+     rd:L('Com esses créditos acima do lucro, a régua vinha 4,6 pontos mais baixa (3,7 a 4,9 nos três modelos, a 1%): menos folga. O sinal negativo é o que o Quadro 3 esperava; a dissertação lê o fator, com os prejuízos, como outro atalho para reduzir o imposto.', 'With these assets above profit, the yardstick came out 4.6 points lower (3.7 to 4.9 across the three models, at 1%): less slack. The negative sign is what Chart 3 expected; the dissertation reads the factor, together with losses, as another shortcut to cut taxes.')},
+    {k:'NDTS', nm:L('Depreciação e amortização', 'Depreciation and amortization'), c:-39.6833, st:1, m:3, exp:'−',
+     ex:L('Depreciação + amortização ÷ ativo: um desconto de imposto que não depende da dívida.', 'Depreciation + amortization ÷ assets: a tax deduction that does not depend on debt.'),
+     rd:L('Só no 3º modelo e só a 10%: 1 ponto a mais de depreciação sobre o ativo veio com a régua 0,4 ponto mais baixa. Uma pista, no sentido que o Quadro 3 esperava.', 'Only in the 3rd model and only at 10%: 1 more point of depreciation over assets came with the yardstick 0.4 point lower. A hint, in the direction Chart 3 expected.')},
+    {k:'PROF', nm:L('Lucro', 'Profit'), c:18.4286, st:2, m:1, exp:'±',
+     ex:L('Lucro operacional (Ebitda) ÷ ativo.', 'Operating profit (EBITDA) ÷ assets.'),
+     rd:L('10 pontos a mais de lucro sobre o ativo vieram com a régua 1,8 ponto mais alta (a 5%): quem lucra mais não aproveita para dever mais.', '10 more points of profit over assets came with the yardstick 1.8 points higher (at 5%): more profitable firms do not use it to owe more.')},
+    {k:'LEV', nm:L('Dívida', 'Debt'), c:-17.3158, st:3, m:1, exp:'−',
+     ex:L('Dívida financeira ÷ ativo.', 'Financial debt ÷ assets.'),
+     rd:L('10 pontos a mais de dívida sobre o ativo vieram com a régua 1,7 ponto mais baixa (a 1%). Esperado: mais dívida, mais juros.', '10 more points of debt over assets came with the yardstick 1.7 points lower (at 1%). Expected: more debt, more interest.')}
+  ];
+  // Tabelas 10 e 18: [fator, explicação, simultâneas, painel] com [sinal, estrelas]
+  var TW = [
+    [L('Lucro', 'Profit'), L('Ebitda ÷ ativo', 'EBITDA ÷ assets'), [1, 0], [-1, 1], L('em 2 de 3 modelos', 'in 2 of 3 models')],
+    [L('Tamanho', 'Size'), L('logaritmo do ativo', 'log of assets'), [-1, 3], [1, 3], ''],
+    [L('Bens fixos', 'Fixed assets'), L('imobilizado ÷ ativo', 'fixed assets ÷ assets'), [1, 2], [1, 2], ''],
+    [L('Risco do negócio', 'Business risk'), L('beta desalavancado', 'unlevered beta'), [-1, 3], [-1, 3], ''],
+    [L('Alíquota tricotômica', 'Trichotomous tax rate'), L('0%, 17% ou 34%', '0%, 17% or 34%'), [-1, 3], [-1, 3], '']
+  ];
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 360, 110, {ay:'66%'});
+    rotatable(sc, st, -22, 8);
+    var S = 6, cols = [], x0 = 10;
+    RULERS.forEach(function(r, i){
+      var x = x0 + i * 122, cost = r.cost !== undefined ? r.cost : COST13;
+      var a = box({w:42, d:46, x:x, y:30, h:Math.max(r.ben * S, 2), c:'var(--tax)', top:fmt(r.ben, 1)});
+      var b = box({w:42, d:46, x:x + 48, y:30, h:Math.max(cost * S, 2), c:'var(--risk)', top:fmt(cost, 1)});
+      st.appendChild(a); st.appendChild(b); cols.push([a, b]);
+      flatLabel(st, r.sh, x - 8, 84, 106, 'font-size:12px; text-align:center;');
+    });
+    var read = $('cap-read'), cur = -1;
+    function set(i){
+      if (i === cur) return; cur = i;
+      cols.forEach(function(p, j){ p.forEach(function(b){ b.classList.toggle('dim', j !== i); }); });
+      var r = RULERS[i], cost = r.cost !== undefined ? r.cost : COST13;
+      read.innerHTML = '<b>' + r.nm + '</b>: ' + L('imposto poupado ', 'tax saved ') + '<b>' + pct(r.ben) + '</b> × ' + L('custo ', 'cost ') + '<b>' + pct(cost) + '</b>';
+    }
+    if (M.reduce){ set(0); return; }
+    var vis = false;
+    new IntersectionObserver(function(es){ vis = es[0].isIntersecting; }).observe(sc);
+    set(0);
+    M.onTick(function(t){ if (vis) set(Math.floor(t / 3.2) % 3); });
+  })();
+
+  /* ================= 02 · JUROS E IMPOSTO ================= */
+  (function(){
+    var svg = $('kk-svg'), r = $('kk-r'), EB = 100, T = 0.34;
+    var X0 = 56, W = 480, Y0 = 26, H = 210;
+    function ax(j){ return X0 + W * j / 200; }
+    function ay(v){ return Y0 + H * (40 - v) / 40; }
+    function draw(){
+      var j = +r.value, sav = T * Math.min(j, EB), h = '';
+      for (var v = 0; v <= 40; v += 10){ h += '<line x1="' + X0 + '" y1="' + ay(v) + '" x2="' + (X0 + W) + '" y2="' + ay(v) + '" stroke="' + (v === 0 ? 'var(--ink)' : '#e2e8f0') + '"/><text x="' + (X0 - 8) + '" y="' + (ay(v) + 4) + '" text-anchor="end" class="s" style="font-size:11px; fill:var(--muted)">' + v + '</text>'; }
+      [0, 50, 100, 150, 200].forEach(function(t){ h += '<text x="' + ax(t) + '" y="' + (Y0 + H + 18) + '" text-anchor="middle" class="s" style="font-size:11px; fill:var(--muted)">' + t + '</text>'; });
+      h += '<text x="' + (X0 + W) + '" y="' + (Y0 + H + 36) + '" text-anchor="end" class="s" style="font-size:12px; fill:var(--muted)">' + L('juros pagos (R$ milhões)', 'interest paid (R$ million)') + '</text>';
+      h += '<text x="' + X0 + '" y="14" class="s" style="font-size:12px; fill:var(--muted)">' + L('imposto poupado (R$ milhões)', 'tax saved (R$ million)') + '</text>';
+      h += '<rect x="' + X0 + '" y="' + Y0 + '" width="' + (ax(100) - X0) + '" height="' + H + '" fill="color-mix(in srgb, var(--tax) 6%, white)"/>';
+      h += '<rect x="' + ax(100) + '" y="' + Y0 + '" width="' + (ax(200) - ax(100)) + '" height="' + H + '" fill="color-mix(in srgb, var(--risk) 6%, white)"/>';
+      h += '<text x="' + ax(50) + '" y="' + (Y0 + 16) + '" text-anchor="middle" style="font-size:12px; font-weight:700; fill:var(--tax)">' + L('folga acima de 1: conservadora', 'slack above 1: conservative') + '</text>';
+      h += '<text x="' + ax(150) + '" y="' + (Y0 + 16) + '" text-anchor="middle" style="font-size:12px; font-weight:700; fill:var(--risk)">' + L('abaixo de 1: agressiva', 'below 1: aggressive') + '</text>';
+      h += '<line x1="' + ax(100) + '" y1="' + Y0 + '" x2="' + ax(100) + '" y2="' + (Y0 + H) + '" stroke="var(--ink)" stroke-dasharray="4 3"/>';
+      h += '<text x="' + (ax(100) + 5) + '" y="' + ay(22) + '" class="s" style="font-size:11px; fill:var(--ink)">' + L('juros = lucro (folga 1)', 'interest = profit (slack 1)') + '</text>';
+      h += '<path d="M' + ax(0) + ' ' + ay(0) + ' L' + ax(100) + ' ' + ay(34) + ' L' + ax(200) + ' ' + ay(34) + '" stroke="var(--tax)" stroke-width="4" fill="none"/>';
+      var ja = EB / MEAN.KINK;
+      h += '<line x1="' + ax(ja) + '" y1="' + (Y0 + H) + '" x2="' + ax(ja) + '" y2="' + (Y0 + H - 10) + '" stroke="var(--weak)" stroke-width="2"/><text x="' + ax(ja) + '" y="' + (Y0 + H - 14) + '" text-anchor="middle" class="s" style="font-size:11px; font-weight:700; fill:var(--weak)">' + L('média 4,28', 'average 4.28') + '</text>';
+      h += '<circle cx="' + ax(j) + '" cy="' + ay(sav) + '" r="8" fill="var(--red)" stroke="#fff" stroke-width="2"/>';
+      svg.innerHTML = h;
+      $('kk-v').textContent = 'R$ ' + fmt(j, j % 1 ? 1 : 0) + L(' milhões', ' million');
+      var k = j > 0 ? EB / j : Infinity;
+      var lost = T * Math.max(EB - j, 0), waste = Math.max(j - EB, 0);
+      $('kk-out').innerHTML =
+        '<div><b>' + (isFinite(k) ? fmt(k, 2) : '∞') + '</b>' + L('folga: lucro ÷ juros', 'slack: profit ÷ interest') + '</div>' +
+        '<div class="t"><b>R$ ' + fmt(sav, 1) + '</b>' + L('milhões de imposto poupado', 'million of tax saved') + '</div>' +
+        (waste > 0 ? '<div class="r"><b>R$ ' + fmt(waste, 0) + '</b>' + L('milhões de juros que não abatem nada', 'million of interest that deducts nothing') + '</div>'
+                   : '<div class="r"><b>R$ ' + fmt(lost, 1) + '</b>' + L('milhões de desconto ainda possível', 'million of saving still possible') + '</div>');
+    }
+    r.addEventListener('input', draw);
+    $('kk-avg').addEventListener('click', function(){ r.value = (EB / MEAN.KINK).toFixed(1); draw(); });
+    draw();
+  })();
+
+  /* ================= 03 · NOTA DE CRÉDITO ================= */
+  (function(){
+    var sc = $('rt-scene'), st = makeStage(sc, 380, 120, {ay:'64%'});
+    rotatable(sc, st, -20, 7);
+    var S = 230, bx = [];
+    T7.forEach(function(t, i){
+      var b = box({w:56, d:70, x:i * 62, y:26, h:t[2] * S, c:i < 3 ? 'color-mix(in srgb, var(--risk) ' + (40 + i * 20) + '%, white)' : 'var(--risk)', top:t[0]});
+      st.appendChild(b); bx.push(b);
+    });
+    flatLabel(st, L('nota melhor', 'better rating'), 0, 100, 120, 'font-size:12px;');
+    flatLabel(st, L('nota pior →', 'worse rating →'), 250, 100, 120, 'font-size:12px; text-align:right;');
+    function sel(i){
+      bx.forEach(function(b, j){ b.classList.toggle('active', j === i); });
+      var t = T7[i];
+      $('rt-panel').innerHTML = '<h3>' + L('Nota ', 'Rating ') + t[0] + '</h3><p><b>' + t[1] + '</b> ' + L('das 342 notas anuais', 'of the 342 yearly ratings') + ' (' + pct(t[1] / 342 * 100, 0) + '). ' +
+        L('Dívida média: ', 'Average debt: ') + '<b>' + pct(t[2] * 100, 0) + L(' do ativo', ' of assets') + '</b>.</p>' +
+        (t[0] === 'BBB' ? '<p>' + L('Dívida média 15% menor que a das empresas BB.', 'Average debt 15% lower than BB firms.') + '</p>' : '') +
+        (t[0] === 'B' ? '<p>' + L('Dívida média 27% maior que a das empresas BB.', 'Average debt 27% higher than BB firms.') + '</p>' : '') +
+        (t[0] === 'BB' ? '<p>' + L('É a nota da empresa média da amostra.', 'This is the average sample firm\'s rating.') + '</p>' : '') +
+        (t[1] < 10 ? '<p style="color:var(--muted)">' + L('Poucas notas: leia com cautela.', 'Few ratings: read with caution.') + '</p>' : '');
+    }
+    chipsInit($('rt-chips'), T7.map(function(t){ return t[0]; }), 2, sel);
+    sel(2);
+  })();
+
+  /* ================= 04 · AMOSTRA ================= */
+  (function(){
+    var svg = $('wf-svg'), X0 = 250, W = 270, rowH = 36, h = '', left = 685;
+    function sx(v){ return W * v / 685; }
+    WF.forEach(function(w, i){
+      var y = 10 + i * rowH, x, wd, col;
+      if (w[2] === 0){ x = X0; wd = sx(w[1]); col = '#334155'; }
+      else if (w[2] === 1){ left -= w[1]; x = X0 + sx(left); wd = sx(w[1]); col = '#cbd5e1'; }
+      else { x = X0; wd = sx(w[1]); col = 'var(--red)'; }
+      h += '<text x="' + (X0 - 10) + '" y="' + (y + 20) + '" text-anchor="end" class="s" style="font-size:12px; fill:var(--ink-2)">' + w[0] + '</text>';
+      h += '<rect x="' + x + '" y="' + (y + 6) + '" width="' + Math.max(wd, 2) + '" height="' + (rowH - 12) + '" rx="3" fill="' + col + '"/>';
+      var lx = w[2] === 1 ? x - 6 : x + wd + 6;
+      h += '<text x="' + lx + '" y="' + (y + 22) + '" text-anchor="' + (w[2] === 1 ? 'end' : 'start') + '" style="font-size:13px; font-weight:700; fill:var(--ink)">' + (w[2] === 1 ? '−' : '') + w[1] + '</text>';
+    });
+    svg.innerHTML = h;
+  })();
+
+  /* ================= 05 · SIMULADOR DA NOTA ================= */
+  (function(){
+    var svg = $('rg-svg'), rl = $('rg-lev'), rp = $('rg-prof'), rs = $('rg-size');
+    var MIN = -1.5, MAX = 7, X0 = 20, W = 520;
+    function ax(v){ return X0 + W * (Math.min(Math.max(v, MIN), MAX) - MIN) / (MAX - MIN); }
+    function score(lev, prof, size){ return B11.LEV * lev + B11.PROF * prof + B11.SIZE * size + B11.TANG * MEAN.TANG; }
+    function band(s){ for (var i = 0; i < CUT.length; i++){ if (s > CUT[i]) return i; } return 5; }
+    var base = score(MEAN.LEV, MEAN.PROF, MEAN.SIZE);
+    var levCut = (score(0, MEAN.PROF, MEAN.SIZE) - CUT[2]) / -B11.LEV;
+    var anim = null;
+    function draw(){
+      var lev = +rl.value / 100, prof = +rp.value / 1000, size = +rs.value / 100;
+      var s = score(lev, prof, size), b = band(s), h = '';
+      var edges = [MAX].concat(CUT).concat([MIN]);
+      for (var i = 0; i < 6; i++){
+        var x1 = ax(edges[i + 1]), x2 = ax(edges[i]);
+        var fill = i === b ? 'var(--ink)' : (i <= 2 ? 'color-mix(in srgb, var(--navy) ' + (24 - i * 5) + '%, white)' : 'color-mix(in srgb, var(--red) ' + (10 + (i - 3) * 5) + '%, white)');
+        h += '<rect x="' + x1 + '" y="70" width="' + (x2 - x1 - 2) + '" height="56" rx="6" fill="' + fill + '"/>';
+        h += '<text x="' + ((x1 + x2) / 2) + '" y="104" text-anchor="middle" style="font-size:' + (x2 - x1 < 40 ? 11 : 15) + 'px; font-weight:800; fill:' + (i === b ? '#fff' : 'var(--ink-2)') + '">' + RNAME[i] + '</text>';
+      }
+      h += '<text x="' + ax(MAX) + '" y="150" text-anchor="end" class="s" style="font-size:11px; fill:var(--muted)">' + L('nota melhor →', 'better rating →') + '</text>';
+      h += '<text x="' + ax(MIN) + '" y="150" class="s" style="font-size:11px; fill:var(--muted)">' + L('← nota pior', '← worse rating') + '</text>';
+      h += '<line x1="' + ax(base) + '" y1="62" x2="' + ax(base) + '" y2="134" stroke="var(--weak)" stroke-width="2" stroke-dasharray="4 3"/><text x="' + ax(base) + '" y="176" text-anchor="middle" class="s" style="font-size:11px; font-weight:700; fill:var(--weak)">' + L('empresa média', 'average firm') + '</text>';
+      h += '<path d="M' + ax(s) + ' 64 l-9 -16 h18 z" fill="var(--ink)"/>';
+      h += '<text x="' + Math.min(Math.max(ax(s), 60), 500) + '" y="34" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--ink)">' + L('escore ', 'score ') + fmt(s, 2) + '</text>';
+      svg.innerHTML = h;
+      $('rg-lev-v').textContent = pct(lev * 100, 0);
+      $('rg-prof-v').textContent = pct(prof * 100, 1);
+      $('rg-size-v').textContent = fmt(size, 2);
+      $('rg-read').innerHTML = L('Nota pela faixa do escore: ', 'Rating by score band: ') + '<b>' + RNAME[b] + '</b>. ' +
+        L('Com lucro e tamanho na média, a nota cai de BB para B quando a dívida passa de ', 'With profit and size at the average, the rating falls from BB to B when debt passes ') + '<b>' + pct(levCut * 100, 0) + L(' do ativo', ' of assets') + '</b> (' + L('hoje: ', 'today: ') + pct(MEAN.LEV * 100, 0) + ').';
+    }
+    function stop(){ if (anim){ cancelAnimationFrame(anim); anim = null; } }
+    [rl, rp, rs].forEach(function(x){ x.addEventListener('input', function(){ stop(); draw(); }); });
+    $('rg-reset').addEventListener('click', function(){ stop(); rl.value = 41; rp.value = 95; rs.value = 961; draw(); });
+    $('rg-test').addEventListener('click', function(){
+      stop(); rp.value = 95; rs.value = 961;
+      var a = 41, z = Math.ceil(levCut * 100);
+      if (M.reduce){ rl.value = z; draw(); return; }
+      var t0 = null;
+      function step(ts){ if (!t0) t0 = ts; var u = Math.min((ts - t0) / 1800, 1); rl.value = Math.round(a + (z - a) * u); draw(); if (u < 1) anim = requestAnimationFrame(step); else anim = null; }
+      anim = requestAnimationFrame(step);
+    });
+    draw();
+  })();
+
+  /* ================= 06 · BALANÇA ================= */
+  (function(){
+    var svg = $('bl-svg'), cur = 0;
+    function draw(){
+      var net = RATES[cur][1], ben = net + COST13, cost = COST13;
+      var ang = -Math.min((ben - cost) / 24 * 14, 14);
+      var cx = 270, cy = 92, arm = 170, h = '';
+      h += '<path d="M' + (cx - 60) + ' 312 L' + (cx + 60) + ' 312 L' + cx + ' 282 Z" fill="#334155"/><rect x="' + (cx - 5) + '" y="' + cy + '" width="10" height="194" fill="#334155"/>';
+      var rad = ang * Math.PI / 180, lx = cx - arm * Math.cos(rad), rx = cx + arm * Math.cos(rad);
+      var ly = cy - arm * Math.sin(rad), ry = cy + arm * Math.sin(rad);
+      h += '<line x1="' + lx + '" y1="' + ly + '" x2="' + rx + '" y2="' + ry + '" stroke="#334155" stroke-width="7" stroke-linecap="round"/><circle cx="' + cx + '" cy="' + cy + '" r="9" fill="#334155"/>';
+      function pan(x, y, val, col, lab){
+        var bh = Math.max(val * 5, 4), s = '';
+        s += '<line x1="' + x + '" y1="' + y + '" x2="' + (x - 46) + '" y2="' + (y + 54) + '" stroke="#94a3b8" stroke-width="1.5"/><line x1="' + x + '" y1="' + y + '" x2="' + (x + 46) + '" y2="' + (y + 54) + '" stroke="#94a3b8" stroke-width="1.5"/>';
+        s += '<rect x="' + (x - 34) + '" y="' + (y + 54 - bh) + '" width="68" height="' + bh + '" rx="4" fill="' + col + '"/>';
+        s += '<path d="M' + (x - 58) + ' ' + (y + 54) + ' Q' + x + ' ' + (y + 74) + ' ' + (x + 58) + ' ' + (y + 54) + ' Z" fill="#475569"/>';
+        s += '<text x="' + x + '" y="' + (y + 98) + '" text-anchor="middle" style="font-size:20px; font-weight:800; fill:' + col + '">' + pct(val) + '</text>';
+        s += '<text x="' + x + '" y="' + (y + 116) + '" text-anchor="middle" class="s" style="font-size:12px; fill:var(--ink-2)">' + lab + '</text>';
+        return s;
+      }
+      h += pan(lx, ly, ben, 'var(--tax)', L('imposto poupado', 'tax saved'));
+      h += pan(rx, ry, cost, 'var(--risk)', L('custo esperado de falência', 'expected bankruptcy cost'));
+      svg.innerHTML = h;
+      $('bl-out').innerHTML =
+        '<div class="t"><b>' + pct(ben) + '</b>' + L('imposto poupado', 'tax saved') + (cur ? L(' (conta nossa)', ' (our calculation)') : '') + '</div>' +
+        '<div class="r"><b>' + pct(cost) + '</b>' + L('custo esperado de falência', 'expected bankruptcy cost') + '</div>' +
+        '<div><b>' + sg(net, 1, true) + '%</b>' + L('saldo, em % do valor da empresa', 'balance, as % of firm value') + '</div>';
+    }
+    segInit($('bl-seg'), RATES.map(function(r){ return r[0]; }), 0, function(v){ cur = v; draw(); });
+    draw();
+  })();
+
+  /* ================= 07 · RÉGUAS ================= */
+  (function(){
+    var svg = $('rs-svg'), rc = $('rs-c'), cur = 0;
+    function draw(){
+      var r = RULERS[cur], c = +rc.value / 10, cost = r.dp * c / 100, net = r.ben - cost, h = '';
+      var X0 = 30, W = 500;
+      function lx(v){ return X0 + W * v; }
+      h += '<text x="' + X0 + '" y="18" class="s" style="font-size:12px; fill:var(--muted)">' + L('dívida sobre o ativo', 'debt over assets') + '</text>';
+      h += '<rect x="' + X0 + '" y="30" width="' + W + '" height="18" rx="9" fill="#e2e8f0"/>';
+      h += '<rect x="' + lx(0.407) + '" y="30" width="' + (lx(r.lev) - lx(0.407)) + '" height="18" fill="color-mix(in srgb, var(--risk) 45%, white)"/>';
+      h += '<rect x="' + X0 + '" y="30" width="' + (lx(0.407) - X0) + '" height="18" rx="9" fill="#334155"/>';
+      [0, 0.25, 0.5, 0.75, 1].forEach(function(t){ h += '<text x="' + lx(t) + '" y="64" text-anchor="middle" class="s" style="font-size:11px; fill:var(--muted)">' + (t * 100) + '%</text>'; });
+      h += '<line x1="' + lx(r.lev) + '" y1="24" x2="' + lx(r.lev) + '" y2="54" stroke="var(--risk)" stroke-width="3"/>';
+      h += '<text x="' + Math.min(lx(r.lev), 470) + '" y="84" text-anchor="middle" style="font-size:12px; font-weight:700; fill:var(--risk)">' + L('nota cai em ', 'rating drops at ') + pct(r.lev * 100, 0) + '</text>';
+      h += '<text x="' + lx(0.2) + '" y="84" text-anchor="middle" style="font-size:12px; font-weight:700; fill:#334155">' + L('hoje: 41%', 'today: 41%') + '</text>';
+      var B0 = 150, BW = 300, MX = 25;
+      function bw(v){ return BW * Math.max(v, 0) / MX; }
+      function bar(y, v, col, lab){
+        return '<text x="' + (B0 - 10) + '" y="' + (y + 21) + '" text-anchor="end" class="s" style="font-size:12px; fill:var(--ink-2)">' + lab + '</text>' +
+          '<rect x="' + B0 + '" y="' + (y + 6) + '" width="' + Math.max(bw(v), 2) + '" height="24" rx="4" fill="' + col + '"/>' +
+          '<text x="' + (B0 + Math.max(bw(v), 2) + 8) + '" y="' + (y + 24) + '" style="font-size:15px; font-weight:800; fill:var(--ink)">' + pct(v, 1) + '</text>';
+      }
+      h += bar(110, r.ben, 'var(--tax)', L('imposto poupado', 'tax saved'));
+      h += bar(150, cost, 'var(--risk)', L('custo de falência', 'bankruptcy cost'));
+      h += '<line x1="' + B0 + '" y1="200" x2="' + (B0 + BW) + '" y2="200" stroke="#e2e8f0"/>';
+      h += '<text x="' + (B0 - 10) + '" y="232" text-anchor="end" class="s" style="font-size:12px; fill:var(--ink-2)">' + L('saldo', 'balance') + '</text>';
+      h += '<text x="' + B0 + '" y="236" class="big" style="font-size:26px; font-weight:800; font-family:var(--serif); fill:' + (net >= 0 ? 'var(--tax)' : 'var(--risk)') + '">' + sg(net, 1, true) + '%</text>';
+      h += '<text x="' + B0 + '" y="262" class="s" style="font-size:12px; fill:var(--muted)">' + (net >= 0 ? L('conservadora: o imposto poupado vence', 'conservative: tax saved wins') : L('o risco vence: não compensa dever mais', 'risk wins: owing more does not pay')) + '</text>';
+      h += '<text x="' + B0 + '" y="286" class="s" style="font-size:11px; fill:var(--muted)">' + L('saldo impresso na dissertação: ', 'balance printed in the dissertation: ') + sg(r.net, 1, true) + '%</text>';
+      svg.innerHTML = h;
+      $('rs-c-v').textContent = pct(c, 1);
+      $('rs-out').innerHTML =
+        '<div><b>' + r.n + '</b>' + L('na amostra que estimou o modelo da nota', 'in the sample that estimated the rating model') + '</div>' +
+        '<div class="r"><b>+' + fmt(r.dp, 1) + '</b>' + L('pontos na chance de calote em 10 anos', 'points in the 10-year chance of default') + '</div>' +
+        '<div class="t"><b>' + pct((r.lev / MEAN.LEV - 1) * 100, 0) + '</b>' + L('de dívida a mais até a nota cair', 'more debt until the rating drops') + '</div>';
+    }
+    segInit($('rs-seg'), RULERS.map(function(r){ return r.nm; }), 0, function(v){ cur = v; draw(); });
+    rc.addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 08 · FOLGA ================= */
+  (function(){
+    var sc = $('fg-scene'), st = makeStage(sc, 380, 110, {ay:'66%'});
+    rotatable(sc, st, -20, 7);
+    var bx = [], basis = 1, cur = 0, S = 2.6;
+    BANDS.forEach(function(b, i){
+      var c = box({w:58, d:58, x:i * 72 + 10, y:30, h:4, c:'color-mix(in srgb, var(--tax) ' + (55 + i * 11) + '%, white)', top:''});
+      st.appendChild(c); bx.push(c);
+      flatLabel(st, b, i * 72 + 4, 94, 70, 'font-size:12px; text-align:center;');
+    });
+    function draw(){
+      var T = T14[basis];
+      bx.forEach(function(b, i){
+        b.style.setProperty('--h', Math.max(T[i][4] * S, 3) + 'px');
+        b.querySelector('.f-top').innerHTML = '<span class="top-label">' + fmt(T[i][4], 1) + '</span>';
+        b.classList.toggle('active', i === cur);
+      });
+      var t = T[cur];
+      $('fg-panel').innerHTML = '<h3>' + L('Folga (lucro ÷ juros) entre ', 'Slack (profit ÷ interest) between ') + BANDS[cur].replace('> ', L('acima de ', 'above ')) + '</h3>' +
+        '<p>' + L('Dívida de ', 'Debt of ') + '<b>' + pct(t[0] * 100, 0) + '</b>' + L(' do ativo; para a nota cair de BB para B, iria a ', ' of assets; for the rating to fall from BB to B, it would go to ') + '<b>' + pct(t[2] * 100, 0) + '</b>' + L(', e a folga cairia para ', ', and slack would fall to ') + '<b>' + fmt(t[1], 2) + '</b>.</p>' +
+        '<p>' + L('Imposto poupado ', 'Tax saved ') + '<b>' + pct(t[3]) + '</b> − ' + L('custo ', 'cost ') + '<b>' + pct(2.0) + '</b> = ' + L('saldo ', 'balance ') + '<b>' + pct(t[4]) + '</b>' + L(' do valor da empresa.', ' of firm value.') + '</p>' +
+        (t[2] > 1 ? '<p style="color:var(--muted)">' + L('Dívida acima de 100% do ativo: a conta extrapola o que se vê nas empresas.', 'Debt above 100% of assets: the math goes beyond what firms actually show.') + '</p>' : '');
+    }
+    segInit($('fg-seg'), [L('Por ano (342)', 'Per year (342)'), L('Por empresa (38)', 'Per firm (38)')], 1, function(v){ basis = v; draw(); });
+    chipsInit($('fg-chips'), BANDS, 0, function(v){ cur = v; draw(); });
+    draw();
+  })();
+
+  /* ================= 09 · OUTROS ATALHOS ================= */
+  (function(){
+    var svg = $('h2-svg'), cur = 0;
+    // efeito mostrado: dummies pelo coeficiente; contínuas por 10 pontos (PROF, LEV) ou 1 ponto (NDTS)
+    var EFF = T17.map(function(f){ return f.k === 'NDTS' ? f.c / 100 : (f.k === 'PROF' || f.k === 'LEV' ? f.c / 10 : f.c); });
+    var UNIT = [L('ter ou não', 'yes or no'), L('ter ou não', 'yes or no'), L('+1 ponto', '+1 point'), L('+10 pontos', '+10 points'), L('+10 pontos', '+10 points')];
+    function draw(){
+      var X0 = 390, W = 120, rowH = 46, h = '';
+      h += '<line x1="' + X0 + '" y1="6" x2="' + X0 + '" y2="' + (T17.length * rowH + 4) + '" stroke="var(--ink)"/>';
+      h += '<text x="' + (X0 + 6) + '" y="' + (T17.length * rowH + 22) + '" class="s" style="font-size:11px; fill:var(--tax)">' + L('mais folga →', 'more slack →') + '</text>';
+      h += '<text x="' + (X0 - 6) + '" y="' + (T17.length * rowH + 22) + '" text-anchor="end" class="s" style="font-size:11px; fill:var(--risk)">' + L('← menos folga', '← less slack') + '</text>';
+      T17.forEach(function(f, i){
+        var y = 6 + i * rowH, e = EFF[i], w = W * Math.min(Math.abs(e), 5) / 5;
+        var col = f.st >= 2 ? (e > 0 ? 'var(--tax)' : 'var(--risk)') : (e > 0 ? 'color-mix(in srgb, var(--tax) 40%, white)' : 'color-mix(in srgb, var(--risk) 40%, white)');
+        h += '<g data-i="' + i + '" style="cursor:pointer">';
+        h += '<rect x="0" y="' + y + '" width="560" height="' + (rowH - 4) + '" rx="8" fill="' + (i === cur ? '#f1f5f9' : 'transparent') + '"/>';
+        h += '<text x="10" y="' + (y + 18) + '" style="font-size:13px; font-weight:700; fill:var(--ink)">' + f.nm + '</text>';
+        h += '<text x="10" y="' + (y + 34) + '" class="s" style="font-size:11px; fill:var(--muted)">' + UNIT[i] + '</text>';
+        h += '<rect x="' + (e > 0 ? X0 : X0 - w) + '" y="' + (y + 10) + '" width="' + Math.max(w, 2) + '" height="22" rx="4" fill="' + col + '"/>';
+        h += '<text x="' + (e > 0 ? X0 + w + 6 : X0 - w - 6) + '" y="' + (y + 26) + '" text-anchor="' + (e > 0 ? 'start' : 'end') + '" style="font-size:13px; font-weight:800; fill:var(--ink)">' + sg(e, 1, true) + '</text>';
+        h += '<text x="550" y="' + (y + 26) + '" text-anchor="end" class="s" style="font-size:11px; fill:var(--muted)">' + ['', '10%', '5%', '1%'][f.st] + '</text>';
+        h += '</g>';
+      });
+      svg.innerHTML = h;
+      each(svg.querySelectorAll('g[data-i]'), function(g){ g.addEventListener('click', function(){ sel(+g.dataset.i); }); });
+      var f = T17[cur];
+      $('h2-panel').innerHTML = '<h3>' + f.nm + '</h3><p style="color:var(--muted); font-size:.8rem">' + f.ex + L(' Sinal esperado: ', ' Expected sign: ') + f.exp + '</p><p>' + f.rd + '</p>';
+    }
+    function sel(i){ cur = i; each($('h2-chips').children, function(x, j){ x.setAttribute('aria-pressed', +x.dataset.v === i); }); draw(); }
+    chipsInit($('h2-chips'), T17.map(function(f){ return f.nm; }), 0, function(v){ cur = v; draw(); });
+    draw();
+  })();
+
+  /* ================= 10 · BASTIDORES ================= */
+  (function(){
+    function cell(s){
+      var cls = s[1] === 0 ? 'ns' : (s[0] > 0 ? 'up' : 'dn');
+      var txt = s[1] === 0 ? L('sem efeito claro', 'no clear effect') : (s[0] > 0 ? L('mais dívida', 'more debt') : L('menos dívida', 'less debt'));
+      return '<span class="sgn ' + cls + '">' + (s[1] === 0 ? '○' : (s[0] > 0 ? '▲' : '▼')) + '</span>' + txt;
+    }
+    var h = '<div class="trow h"><div>' + L('Fator', 'Factor') + '</div><div>' + L('Dívida e nota juntas', 'Debt and rating together') + '</div><div>' + L('Só a dívida (painel)', 'Debt only (panel)') + '</div></div>';
+    TW.forEach(function(t){
+      var flip = t[2][0] !== t[3][0] || (t[2][1] === 0) !== (t[3][1] === 0);
+      h += '<div class="trow"><div class="nm"><b>' + t[0] + '</b>' + t[1] + '</div><div class="' + (flip ? 'flip' : '') + '">' + cell(t[2]) + '</div><div class="' + (flip ? 'flip' : '') + '">' + cell(t[3]) + (t[4] ? ' <span style="color:var(--muted); font-size:.7rem">(' + t[4] + ')</span>' : '') + '</div></div>';
+    });
+    $('tw').innerHTML = h;
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
