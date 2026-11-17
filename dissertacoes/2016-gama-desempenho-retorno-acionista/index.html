@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucro, crescimento, caixa e o retorno das ações · PPGA Interativo</title>
+<meta name="description" content="A dissertação de mestrado de Fernando Alves Gama (PPGA Mackenzie) sobre quanto a rentabilidade, o crescimento e a liquidez de 609 empresas americanas explicam do retorno aos acionistas, de 2011 a 2014, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/dissertacoes/2016-gama-desempenho-retorno-acionista/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><path d=%22M7 24 L13 17 L17 20 L25 9%22 stroke=%22white%22 stroke-width=%223%22 fill=%22none%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  :root{
+    --rent:var(--red);     /* rentabilidade */
+    --gro:var(--navy);     /* crescimento */
+    --liq:#475569;         /* liquidez */
+    --fat:#94a3b8;         /* faturamento (tamanho) */
+  }
+  .rent-t{color:var(--rent); font-weight:700;} .gro-t{color:var(--gro); font-weight:700;} .liq-t{color:var(--liq); font-weight:700;}
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .ill{display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#b45309; border:1px solid color-mix(in srgb, #b45309 45%, white); border-radius:999px; padding:2px 9px; margin-bottom:6px;}
+  .warn{font-size:.76rem; font-weight:600; color:var(--ink-2); background:#fff7ed; border:1px solid #fed7aa; border-radius:10px; padding:6px 11px; margin-top:10px;}
+  .sw{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .sw.hatch{background:repeating-linear-gradient(45deg, #cbd5e1 0 3px, #fff 3px 6px) !important; border:1px solid #94a3b8;}
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 10px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-size:.8rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px 16px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:4px;}
+  .panel p{margin:0 0 6px; font-size:.86rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .panel ul{margin:4px 0 0; padding-left:18px; font-size:.82rem; color:var(--ink-2); display:grid; gap:2px;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .ctrls{display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; justify-content:center; margin:4px 0 10px;}
+  .zleg{display:flex; flex-wrap:wrap; justify-content:center; gap:4px 16px; font-size:.78rem; color:var(--ink-2); margin-top:2px;}
+  .range{width:100%; accent-color:var(--red);}
+  svg text{font-family:var(--sans);}
+  .slab.dim > i{opacity:.28;}
+  .slab .f-top .top-label{text-shadow:0 1px 2px rgb(15 23 42 / .35);}
+  .floor-label{font-size:12px;}
+  .floor-label.on{color:var(--red); font-weight:700;}
+  .facts{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:12px;}
+  .facts div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 11px; font-size:.74rem; color:var(--ink-2); line-height:1.3;}
+  .facts b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink);}
+  @media (max-width:600px){
+    .facts{grid-template-columns:1fr 1fr;}
+    #yr-svg text, #r2-svg text, #ct-svg text, #lg-svg text, #fn-svg text{font-size:17px !important;}
+    #yr-svg text.s, #r2-svg text.s, #ct-svg text.s, #lg-svg text.s, #fn-svg text.s{font-size:15px !important;}
+    #md-svg text:not(.ind){font-size:15px !important;}
+    #lg-svg text.pl, #r2-svg text.ux{display:none;}
+  }
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(1.7rem, 2.8vw, 2.25rem);}
+  #capa .sub{font-size:1rem;}
+  .meta{display:grid; gap:2px; margin-top:16px; font-size:.86rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.76rem; color:var(--muted); margin-top:4px; text-align:center; line-height:1.4;}
+  #cap-read{text-align:center; font-size:.92rem; color:var(--ink-2); margin:4px 0 0; font-variant-numeric:tabular-nums; min-height:1.5em;}
+  #cap-read b{color:var(--ink);}
+  #hero-scene .slab{cursor:pointer;}
+  .slab.fog > i{--face:color-mix(in srgb, #cbd5e1 30%, white);}
+
+  /* ---------- 02 · Três perguntas ---------- */
+  .qcards{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-bottom:10px;}
+  .qcard{border:1px solid var(--border); background:var(--card); border-radius:12px; padding:10px 10px 8px; cursor:pointer; text-align:left; border-top:5px solid var(--qc); transition:all .2s;}
+  .qcard b{display:block; font-family:var(--serif); font-size:.98rem; color:var(--ink);}
+  .qcard span{display:block; font-size:.74rem; color:var(--muted); line-height:1.3;}
+  .qcard[aria-pressed="true"]{background:color-mix(in srgb, var(--qc) 9%, white); border-color:var(--qc);}
+  .vdcard{border:1px dashed var(--ink-2); border-radius:12px; padding:8px 12px; font-size:.8rem; color:var(--ink-2); cursor:pointer; background:var(--card); width:100%; text-align:left;}
+  .vdcard[aria-pressed="true"]{background:#f1f5f9; border-style:solid;}
+  #pq-panel{margin-top:10px; min-height:190px;}
+  .ilist{display:grid; gap:4px; margin-top:6px;}
+  .ilist div{display:grid; grid-template-columns:34px 1fr; gap:8px; font-size:.8rem; color:var(--ink-2); line-height:1.35;}
+  .ilist code{font-family:var(--sans); font-weight:700; font-size:.72rem; color:#fff; background:var(--qc, var(--ink)); border-radius:6px; text-align:center; padding:2px 0; height:fit-content;}
+  @media (max-width:600px){ .qcards{grid-template-columns:1fr;} }
+
+  /* ---------- 03 · Amostra ---------- */
+  #fn-svg{width:100%; display:block; max-width:520px; margin:0 auto;}
+
+  /* ---------- 04 · Quatro anos ---------- */
+  #yr-svg{width:100%; display:block;}
+  #yr-out{font-size:.86rem; color:var(--ink-2); margin-top:6px; min-height:2.6em;}
+  #yr-out b{color:var(--ink);}
+
+  /* ---------- 05 · Modelo ---------- */
+  #md-svg{width:100%; display:block;}
+  #md-svg .pil{cursor:pointer;}
+  #md-panel{margin-top:8px; min-height:150px;}
+  .qa{display:grid; grid-template-columns:repeat(2, 1fr); gap:6px; margin-top:6px;}
+  .qa div{background:var(--bg-soft); border:1px solid var(--border); border-radius:9px; padding:5px 8px; font-size:.72rem; color:var(--muted); line-height:1.3;}
+  .qa b{display:block; font-size:.95rem; color:var(--ink);}
+  .qa .ok b::after{content:" ✓"; color:#15803d;} .qa .no b::after{content:" ✗"; color:var(--red);}
+
+  /* ---------- 06 · Pesos ---------- */
+  #pw-scene .slab{cursor:pointer;}
+  #pw-panel{margin-top:8px; min-height:104px;}
+
+  /* ---------- 07 · Quem lidera ---------- */
+  .lrows{display:grid; gap:8px;}
+  .lrow{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 12px; display:grid; grid-template-columns:52px 1fr; gap:4px 10px; align-items:center;}
+  .lrow .y{font-family:var(--serif); font-weight:700; font-size:1.05rem; color:var(--ink);}
+  .lrow .opts{display:flex; flex-wrap:wrap; gap:6px;}
+  .lrow .opts button{border:1px solid var(--border); background:var(--bg-soft); border-radius:9px; padding:6px 10px; font-size:.78rem; cursor:pointer; color:var(--ink-2); font-weight:600;}
+  .lrow .opts button.right{background:var(--ok-c, #15803d); border-color:var(--ok-c, #15803d); color:#fff;}
+  .lrow .opts button.wrong{background:#fee2e2; border-color:#fca5a5; color:#991b1b; text-decoration:line-through;}
+  .lrow .res{grid-column:1 / -1; font-size:.76rem; color:var(--ink-2); min-height:0;}
+  .lrow .res .bar{display:grid; grid-template-columns:96px 1fr 40px; align-items:center; gap:6px; margin-top:2px;}
+  .lrow .res .bar i{display:block; height:9px; border-radius:4px;}
+  .lrow .res .bar span{font-variant-numeric:tabular-nums; text-align:right;}
+  #ld-score{font-size:.9rem; color:var(--ink-2); margin-top:8px;}
+  #ld-score b{font-family:var(--serif); font-size:1.1rem; color:var(--ink);}
+
+  /* ---------- 08 · Quanto explica ---------- */
+  #r2-svg{width:100%; display:block;}
+  .guess{display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; margin:6px 0 8px;}
+  .guess label{font-size:.86rem; color:var(--ink-2);}
+  .guess label b{color:var(--ink); font-size:1rem;}
+  .guess input{flex:1 1 180px;}
+  .guess button, .gobtn{border:1px solid var(--ink); background:var(--ink); color:#fff; border-radius:999px; padding:7px 14px; font-size:.8rem; font-weight:600; cursor:pointer;}
+  #r2-out{font-size:.88rem; color:var(--ink-2); min-height:2.8em; margin-top:4px;}
+  #r2-out b{color:var(--ink);}
+
+  /* ---------- 09 · Tamanho, 10 · Ano seguinte ---------- */
+  #ct-svg, #lg-svg{width:100%; display:block;}
+  #ct-out, #lg-out{font-size:.86rem; color:var(--ink-2); margin-top:6px; min-height:2.8em;}
+  #ct-out b, #lg-out b{color:var(--ink);}
+
+  /* ---------- 11 · Mapa ---------- */
+  .hmap{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;}
+  .hdim{border:1px solid var(--border); background:var(--card); border-radius:12px; padding:9px 10px; cursor:pointer; text-align:left; border-top:5px solid var(--hc); transition:all .2s; min-height:84px;}
+  .hdim b{display:block; font-family:var(--serif); font-size:.95rem; color:var(--ink);}
+  .hdim span{display:block; font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; font-weight:700; color:var(--hc); margin-top:2px;}
+  .hdim small{display:block; font-size:.72rem; color:var(--muted); margin-top:4px; line-height:1.3;}
+  .hdim.off{--hc:#cbd5e1; background:var(--bg-soft);}
+  .hdim.off span{color:var(--muted);}
+  .hdim[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink); }
+  .hroot{text-align:center; font-family:var(--serif); font-weight:700; color:var(--ink); border:2px solid var(--ink); border-radius:10px; padding:6px 10px; width:max-content; margin:0 auto 8px; font-size:.92rem;}
+  #hm-panel{margin-top:10px; min-height:110px;}
+  @media (max-width:600px){ .hmap{grid-template-columns:1fr 1fr;} }
+
+  /* ---------- 12 · Na prática, limites e créditos ---------- */
+  .cards3{display:grid; grid-template-columns:1fr; gap:10px; margin-top:10px;}
+  @media (min-width:860px){ .cards3{grid-template-columns:repeat(3, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:10px 13px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:3px; font-size:.76rem; line-height:1.4; color:var(--ink-2);}
+  .pcard em{font-style:normal; font-size:.7rem; color:var(--muted);}
+  .end{display:grid; grid-template-columns:1fr; gap:20px; margin-top:14px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:36px;} }
+  .end h3{font-size:1.04rem; margin-bottom:4px;}
+  .limits{display:grid; gap:5px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 11px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.77rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.78rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 13px; line-height:1.5; margin-top:6px;}
+  .cite b{color:var(--ink);}
+  .also{font-size:.78rem; margin-top:8px; color:var(--ink-2);}
+  .also a{color:var(--red); font-weight:600;}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/dissertacoes/2016-gama-desempenho-retorno-acionista/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Dissertação de mestrado · PPGA Mackenzie · 2016</div>
+      <h1 class="rv" style="--d:.1s">Lucro, crescimento e caixa explicaram só uma fatia do que as ações renderam</h1>
+      <p class="sub rv" style="--d:.2s">Empresas que lucram mais, crescem mais e têm mais caixa dão mais retorno a quem tem as ações delas? A dissertação testou a pergunta em <strong>609 empresas americanas</strong>, de 2011 a 2014. Os três andaram junto com o retorno, mas juntos explicaram de <strong>8% a 13%</strong> dele, e o que mais pesou mudou de um ano para o outro. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Fernando Alves Gama</span>
+        <span><b>Orientador:</b> Prof. Dr. Denis Forte</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#perguntas">Começar →</a>
+        <a class="btn ghost" href="#quanto">Ir direto ao resultado</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="440x300" role="img" aria-label="Quatro colunas, uma por ano de 2011 a 2014, cada uma do tamanho de todo o sobe e desce das ações. A parte de baixo, vermelha, é o que lucro, crescimento e caixa explicaram: 12,4%, 9,8%, 8,1% e 12,9%. O resto da coluna, cinza-claro, ficou sem explicação"></div></div>
+      <p id="cap-read" aria-live="polite"></p>
+      <div class="zleg"><span><span class="sw" style="background:var(--red)"></span>explicado pelos três</span><span><span class="sw" style="background:#e2e8f0; border:1px solid #cbd5e1"></span>sem explicação no modelo</span></div>
+      <div class="cap-legend">Quanto do retorno das ações os três explicaram em cada ano (Tabela 3). Toque numa coluna; arraste para girar.</div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Testa quanto lucro, crescimento e caixa ajudam a explicar o retorno das empresas, base para medir o desempenho econômico delas."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · TRÊS PERGUNTAS -->
+<section class="slide" id="perguntas" data-label="Três perguntas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> A ideia</div>
+      <h2 class="rv" style="--d:.1s">Três perguntas sobre uma empresa: lucra, cresce, tem caixa?</h2>
+      <p class="lede rv" style="--d:.15s">Estudos anteriores mostraram que <b class="rent-t">rentabilidade</b>, <b class="gro-t">crescimento</b> e <b class="liq-t">liquidez</b> são três lados diferentes do desempenho de uma empresa, e que as empresas que vão bem nos três rendem mais aos acionistas, nos EUA, na Índia, na Austrália e na Turquia.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">A dissertação pergunta quanto esses três explicam do retorno ao acionista. Cada um é medido por várias contas tiradas do balanço e do resultado. Toque num cartão para ver as contas.</p>
+      <p class="note rv" style="--d:.25s">Fonte: seções 2 e 3.1 e Tabela 1. Estudos citados pela dissertação: Hamann et al. (2013), Türel, Türel e Needles (2012) e Hofer e Carton (2006). As traduções das contas são nossas.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="qcards" id="pq-cards"></div>
+      <button class="vdcard" id="pq-vd" type="button" aria-pressed="false"><b>E o retorno ao acionista?</b> Toque para ver como ele foi medido.</button>
+      <div class="panel" id="pq-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · AMOSTRA -->
+<section class="slide" id="amostra" data-label="A amostra">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> Quem entrou</div>
+      <h2 class="rv" style="--d:.1s">De 6.579 empresas americanas, 609 tinham todas as contas nos quatro anos</h2>
+      <p class="lede rv" style="--d:.15s">Os balanços e resultados vieram da base Compustat, de 2011 a 2014. Só ficaram as empresas com os 15 números da pesquisa em todos os anos, para comparar sempre o mesmo grupo.</p>
+      <div class="facts rv" style="--d:.2s">
+        <div><b>609</b>empresas com ações nos EUA</div>
+        <div><b>15</b>números por empresa e ano</div>
+        <div><b>4</b>anos, de 2011 a 2014</div>
+      </div>
+      <p class="note rv" style="--d:.25s">Fonte: resumo, seção 3.2 e Tabelas 7 a 10 (609 observações por ano). Os percentuais e o total de empresas-ano são contas nossas. A dissertação lembra que o corte pode dificultar generalizar os resultados.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <svg id="fn-svg" viewBox="0 0 520 300" role="img" aria-label="Um funil: 6.579 empresas na base; 609 com os 15 números nos quatro anos, 9,3% do total; 2.436 empresas-ano analisadas"></svg>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · QUATRO ANOS -->
+<section class="slide" id="anos" data-label="Os quatro anos">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> O retrato</div>
+      <h2 class="rv" style="--d:.1s">Os anos não foram iguais: em 2013 a ação média subiu 37%; em 2011, quase nada</h2>
+      <p class="lede rv" style="--d:.15s">Antes de juntar as peças, vale olhar as médias das 609 empresas a cada ano. O retorno das ações oscilou muito; o lucro sobre o ativo e o crescimento das vendas caíram aos poucos.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">Troque a medida.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="ctrls"><div class="seg" id="yr-seg"></div></div>
+      <svg id="yr-svg" viewBox="0 0 560 260" role="img" aria-label="Quatro barras, uma por ano, com a média da medida escolhida. Para o retorno das ações: 1,5% em 2011, 15,2% em 2012, 37,1% em 2013 e 4,8% em 2014"></svg>
+      <div id="yr-out" aria-live="polite"></div>
+      <p class="note">Fonte: Tabelas 7 a 10 (estatística descritiva, 609 empresas por ano). Médias simples, que valores extremos puxam: o retorno de 2013 vai de −83% a +273%.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · O MODELO -->
+<section class="slide" id="modelo" data-label="O modelo">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Como a pesquisa olhou</div>
+      <h2 class="rv" style="--d:.1s">O modelo junta as contas em três pilares e dá um peso a cada um</h2>
+      <p class="lede rv" style="--d:.15s">A técnica, chamada de equações estruturais, faz duas coisas ao mesmo tempo: vê quanto cada conta anda junto com o seu pilar (a carga, de 0 a 1) e quanto cada pilar pesa no retorno das ações (o peso).</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">Um modelo por ano. Linha grossa: peso ou carga maior; tracejada: peso que não passou no teste. Toque num pilar para ver as cargas e a nota de qualidade dele.</p>
+      <p class="note rv" style="--d:.25s">Fonte: Figura 2 (diagramas do SmartPLS), Tabela 3 e Tabela 4. O teste é o da dissertação: reamostragem (bootstrap) com 1.000 sorteios e valor-t acima de 1,96.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="ctrls"><div class="seg" id="md-seg"></div></div>
+      <svg id="md-svg" viewBox="0 0 560 330" role="img" aria-label="Diagrama: 13 contas à esquerda ligadas a três pilares, rentabilidade, crescimento e liquidez, que apontam para o retorno ao acionista à direita. A espessura das linhas mostra cargas e pesos do ano escolhido"></svg>
+      <div class="panel" id="md-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · PESOS -->
+<section class="slide" id="pesos" data-label="Os pesos">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> O que encontrou</div>
+      <h2 class="rv" style="--d:.1s">Os três puxaram o retorno para cima, mas só o crescimento passou no teste nos quatro anos</h2>
+      <p class="lede rv" style="--d:.15s">Os 12 pesos (3 pilares × 4 anos) saíram positivos. Oito passaram no teste da dissertação. A rentabilidade sumiu em 2012 e 2013; a liquidez, em 2011 e 2013.</p>
+      <div class="chips rv" style="--d:.2s" id="pw-chips"></div>
+      <p class="note rv" style="--d:.25s">Fonte: Tabela 3 e Tabela 11 (valores-t do bootstrap). Peso padronizado (β): quanto o retorno anda, em desvios-padrão, quando o pilar anda um desvio-padrão. Contagem nossa.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="fit-wrap"><div class="scene draggable" id="pw-scene" data-fit="640x300" role="img" aria-label="Doze blocos em quatro grupos, um por ano, com um bloco por pilar. A altura é o peso. Os blocos claros não passaram no teste: rentabilidade em 2012 e 2013, liquidez em 2011 e 2013. Os maiores são liquidez em 2012 (0,29) e rentabilidade em 2011 (0,28)"></div></div>
+      <div class="zleg"><span><span class="sw" style="background:var(--rent)"></span>rentabilidade</span><span><span class="sw" style="background:var(--gro)"></span>crescimento</span><span><span class="sw" style="background:var(--liq)"></span>liquidez</span><span><span class="sw" style="background:#e2e8f0"></span>claro: não passou no teste</span></div>
+      <div class="panel" id="pw-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · QUEM LIDERA -->
+<section class="slide" id="lider" data-label="Quem lidera">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> O inesperado</div>
+      <h2 class="rv" style="--d:.1s">O pilar que mais pesou mudou de um ano para o outro</h2>
+      <p class="lede rv" style="--d:.15s">Se lucro, crescimento e caixa fossem uma receita fixa de retorno, o mesmo ingrediente lideraria todo ano. Não foi o que aconteceu.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">Aposte, ano a ano, em qual pilar pesou mais.</p>
+      <div id="ld-score" class="rv" style="--d:.25s" aria-live="polite"></div>
+      <p class="note rv" style="--d:.3s">Fonte: Tabela 3 (o maior β de cada ano). Barras listradas: pesos que não passaram no teste. Leitura nossa: em 2014 os três pesos ficaram próximos (0,20, 0,17 e 0,15), e a dissertação não testa se um é maior que o outro.</p>
+    </div>
+    <div class="lrows rv" style="--d:.25s" id="ld-rows"></div>
+  </div>
+</section>
+
+<!-- 08 · QUANTO EXPLICA -->
+<section class="slide" id="quanto" data-label="Quanto explica">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> A descoberta</div>
+      <h2 class="rv" style="--d:.1s">Juntos, os três explicaram de 8% a 13% do retorno: o resto ficou com outras coisas</h2>
+      <p class="lede rv" style="--d:.15s">O R² diz quanto do sobe e desce do retorno, de uma empresa para outra, o modelo consegue acompanhar. Para a dissertação, os três pilares têm uma relação pequena com o retorno: um modelo com só três dimensões deixa de fora variáveis importantes.</p>
+      <div class="warn rv" style="--d:.2s">Esta pesquisa não é recomendação de investimento: ela descreve o passado de 609 empresas, sem simular compra e venda de ações.</div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="guess"><label for="r2-in">Seu palpite para quanto os três explicam: <b id="r2-gv">50%</b></label><input class="range" id="r2-in" type="range" min="0" max="100" step="1" value="50"><button id="r2-go" type="button">Ver a resposta</button></div>
+      <svg id="r2-svg" viewBox="0 0 560 250" role="img" aria-label="Quatro barras de 0% a 100%, uma por ano. A parte vermelha é o que os três explicaram: 12,4% em 2011, 9,8% em 2012, 8,1% em 2013 e 12,9% em 2014"></svg>
+      <div id="r2-out" aria-live="polite"></div>
+      <p class="note">Fonte: Tabela 3 (R² do retorno ao acionista). A introdução fala em 10% a 14% e a conclusão em 8% a 12%; seguimos a tabela.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · TAMANHO -->
+<section class="slide" id="tamanho" data-label="O tamanho">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Primeira prova</div>
+      <h2 class="rv" style="--d:.1s">Levar o tamanho da empresa em conta quase não mudou o quadro</h2>
+      <p class="lede rv" style="--d:.15s">Empresas grandes poderiam render diferente das pequenas. A dissertação pôs o faturamento no modelo, como medida de tamanho, para ver se os pilares mantinham o peso.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">Ligue e desligue o faturamento. O R² subiu no máximo meio ponto, e os pesos quase não se mexeram.</p>
+      <p class="note rv" style="--d:.25s">Fonte: Tabela 3 (sem faturamento), Tabelas 12 e 13 e Figura 4 (com faturamento). Mostramos 2012 a 2014: no modelo com faturamento, a coluna de 2011 repete exatamente a de 2014 (mesmas cargas e pesos), então não há resultado próprio de 2011.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="ctrls"><div class="seg" id="ct-seg"></div></div>
+      <svg id="ct-svg" viewBox="0 0 560 290" role="img" aria-label="Três grupos de barras, 2012, 2013 e 2014, com os pesos de rentabilidade, crescimento e liquidez, e, quando ligado, o do faturamento. Os pesos quase não mudam; o faturamento sai perto de zero em 2012, negativo em 2013 (−0,08) e positivo em 2014 (+0,08)"></svg>
+      <div class="zleg"><span><span class="sw" style="background:var(--rent)"></span>rentabilidade</span><span><span class="sw" style="background:var(--gro)"></span>crescimento</span><span><span class="sw" style="background:var(--liq)"></span>liquidez</span><span><span class="sw" style="background:var(--fat)"></span>faturamento</span><span><span class="sw hatch"></span>não passou no teste</span></div>
+      <div id="ct-out" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · ANO SEGUINTE -->
+<section class="slide" id="seguinte" data-label="O ano seguinte">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Segunda prova</div>
+      <h2 class="rv" style="--d:.1s">Os números de um ano não anteciparam o retorno do ano seguinte</h2>
+      <p class="lede rv" style="--d:.15s">Talvez o mercado demorasse a reagir: o lucro de 2011 apareceria no retorno de 2012. A dissertação testou e não achou relação estável. O R² caiu e os pesos trocaram de sinal de um ano para o outro.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">Compare o retorno de cada ano explicado pelos números do mesmo ano e pelos do ano anterior.</p>
+      <p class="note rv" style="--d:.25s">Fonte: Tabela 3 (mesmo ano) e Tabela 14 (ano anterior, modelo com faturamento). A Tabela 14 não traz os valores-t, então mostramos só o sinal e o tamanho dos pesos. Para a dissertação, o que move o retorno de um ano está nos números daquele mesmo ano.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="ctrls"><div class="seg" id="lg-seg"></div></div>
+      <svg id="lg-svg" viewBox="0 0 560 300" role="img" aria-label="Três quadros, retorno de 2012, 2013 e 2014. Com os números do mesmo ano, as três setas apontam para cima e o R² é 9,8%, 8,1% e 12,9%. Com os do ano anterior, as setas mudam de sentido de um quadro para outro e o R² cai para 6,3%, 3,9% e 3,2%"></svg>
+      <div class="zleg"><span><span class="sw" style="background:var(--rent)"></span>rentabilidade</span><span><span class="sw" style="background:var(--gro)"></span>crescimento</span><span><span class="sw" style="background:var(--liq)"></span>liquidez</span></div>
+      <div id="lg-out" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · O QUE FICOU DE FORA -->
+<section class="slide" id="fora" data-label="O que ficou de fora">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> O resto da história</div>
+      <h2 class="rv" style="--d:.1s">O mapa de onde a pesquisa partiu tem seis dimensões; o modelo usou três</h2>
+      <p class="lede rv" style="--d:.15s">Hofer e Carton reuniram as medidas de desempenho financeiro usadas pelos pesquisadores. A dissertação escolheu um modelo enxuto, e já esperava deixar coisas relevantes de fora; o R² baixo confirmou.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">Toque numa dimensão para ver as medidas do mapa.</p>
+      <p class="note rv" style="--d:.25s">Fonte: Figura 10 (Hofer e Carton, 2004) e seções 2.2 e 4. O tamanho entrou só como controle, pelo faturamento (tela 09).</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="hroot">Desempenho financeiro</div>
+      <div class="hmap" id="hm-grid"></div>
+      <div class="panel" id="hm-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> E daí?</div>
+    <h2 class="rv" style="--d:.1s">Lucro, crescimento e caixa contam, mas não contam a história toda</h2>
+    <div class="cards3">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Para quem gere empresas</h3><ul><li>Os três pilares andaram junto com o retorno, e o crescimento esteve presente nos quatro anos. <em>(tela 06)</em></li><li>Nenhum indicador sozinho resume o valor gerado ao acionista; a dissertação defende medir o desempenho em várias dimensões ao mesmo tempo. <em>(dissertação)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Para quem investe</h3><ul><li>O retorno das ações depende muito das expectativas sobre o futuro, não só dos números do balanço. <em>(dissertação)</em></li><li>Os números de um ano não anteciparam o retorno do seguinte nesta amostra. <em>(tela 10)</em></li><li>Não é recomendação de investimento.</li></ul></div>
+      <div class="pcard rv" style="--d:.25s; --pc:#334155"><h3>Para quem pesquisa</h3><ul><li>Ampliar o modelo com outras medidas financeiras e com variáveis estratégicas e operacionais. <em>(dissertação)</em></li><li>Comparar o modelo de três pilares com o modelo completo de Hofer e Carton. <em>(dissertação)</em></li></ul></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Só três dimensões.</b> Eficiência, alavancagem e outras medidas ficaram de fora. <em>· segundo a dissertação</em></li>
+          <li><b>Só empresas com ações nos EUA e com dados completos.</b> 609 de 6.579; não vale automaticamente para empresas fechadas nem para outros países. <em>· segundo a dissertação</em></li>
+          <li><b>Retorno é expectativa.</b> O retorno das ações reflete o que os investidores esperam do futuro. <em>· segundo a dissertação</em></li>
+          <li><b>Algumas contas quase não acompanharam o pilar.</b> O crescimento do caixa operacional teve cargas de 0,05 a 0,45; o retorno sobre o capital investido ficou perto de zero em 2011 e 2012; e a liquidez de 2014 não atingiu a confiabilidade mínima. <em>· Figura 2 e Tabela 4; leitura nossa</em></li>
+          <li><b>Andar junto não é causar.</b> Os pesos mostram associação no mesmo ano, não que o lucro cause o retorno. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          GAMA, Fernando Alves. <em>Análise de um modelo de avaliação de desempenho econômico-financeiro na visão dos acionistas no mercado americano entre 2011 e 2014.</em> Dissertação (Mestrado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2016. Orientador: Prof. Dr. Denis Forte.
+        </div>
+        <p style="margin-top:8px; font-size:.76rem">Dados da base Compustat; modelos rodados no SmartPLS. A pesquisa teve apoio do Sebrae, segundo os agradecimentos. Esta versão simplifica o trabalho para o público em geral e não é recomendação de investimento.</p>
+        <p class="also">Leia também, do mesmo orientador: <a href="../../teses/2018-vasconcelos-intangiveis-valor-europa/">Vasconcelos (2018)</a>, intangíveis e valor de mercado; e, sobre rentabilidade e retorno, <a href="../../teses/2025-iorio-capital-de-giro/">Iorio (2025)</a>.</p>
+        <div class="ctas" style="margin-top:10px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a dissertação completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, rotatable = M.rotatable, flatLabel = M.flatLabel;
+  var EN = M.lang === 'en';
+  function L(p, e){ return EN ? e : p; }
+  function sg(v, d){ d = d === undefined ? 2 : d; var s = fmt(Math.abs(v), d); return (v < 0 && Math.abs(v) >= Math.pow(10, -d) / 2 ? '−' : (v > 0 ? '+' : '')) + s; }
+  function segInit(el, items, cur, fn){
+    el.innerHTML = items.map(function(t, i){ return '<button type="button" data-v="' + i + '" aria-pressed="' + (i === cur) + '">' + t + '</button>'; }).join('');
+    each(el.children, function(b){ b.addEventListener('click', function(){ each(el.children, function(x){ x.setAttribute('aria-pressed', x === b); }); fn(+b.dataset.v); }); });
+  }
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  var YRS = [2011, 2012, 2013, 2014];
+  var PIL = [
+    {k:'R', n:L('Rentabilidade', 'Profitability'), sn:L('Rentab.', 'Profit.'), c:'var(--rent)', q:L('Lucra?', 'Profitable?')},
+    {k:'C', n:L('Crescimento', 'Growth'), sn:L('Cresc.', 'Growth'), c:'var(--gro)', q:L('Cresce?', 'Growing?')},
+    {k:'L', n:L('Liquidez', 'Liquidity'), sn:L('Liquidez', 'Liquid.'), c:'var(--liq)', q:L('Tem caixa?', 'Cash?')}
+  ];
+  // Tabela 3: β padronizado e valor-t (Tabela 11), por ano 2011–2014; R² (%) do retorno
+  var B = {R:[0.28, 0.01, 0.03, 0.20], C:[0.12, 0.09, 0.24, 0.15], L:[0.07, 0.29, 0.12, 0.17]};
+  var T = {R:[4.86, 0.11, 0.38, 5.46], C:[2.93, 2.74, 4.69, 3.93], L:[1.04, 5.02, 1.77, 3.40]};
+  var R2 = [12.4, 9.8, 8.1, 12.9];
+  // Figura 2: cargas por ano [P1..P7], [G1..G3], [L1..L3]
+  var LOAD = {
+    R:[[0.952,0.911,0.942,0.059,0.738,0.832,0.672],[0.969,0.955,0.964,-0.001,0.779,0.277,0.472],[0.939,0.895,0.940,0.290,0.814,0.470,0.468],[0.955,0.875,0.944,0.833,0.826,0.705,0.664]],
+    C:[[0.831,0.779,0.699],[0.897,0.949,0.913],[0.868,0.798,0.491],[0.797,0.871,0.832]],
+    L:[[0.873,0.798,0.185],[0.724,0.736,0.454],[0.624,0.941,0.045],[0.139,0.995,0.134]]
+  };
+  // Tabela 4: AVE e confiabilidade composta
+  var AVE = {C:[0.60,0.85,0.54,0.70], L:[0.74,0.65,0.64,0.51], R:[0.62,0.53,0.54,0.70]};
+  var CR  = {C:[0.81,0.94,0.77,0.87], L:[0.85,0.79,0.77,0.57], R:[0.91,0.85,0.88,0.94]};
+  // Tabela 1: contas de cada pilar [código, nome curto, explicação]
+  var IND = {
+    R:[['P1','ROA',L('Lucro sobre o ativo', 'Profit on assets')],['P2','ROE',L('Lucro sobre o patrimônio dos sócios', 'Profit on shareholders’ equity')],['P3','ROI',L('Retorno sobre o investimento', 'Return on investment')],['P4','ROIC',L('Lucro operacional depois do imposto, sobre o capital investido', 'Operating profit after tax, on invested capital')],['P5',L('Ebitda/cap.', 'EBITDA/cap.'),L('Geração de caixa da operação (Ebitda) sobre o capital investido', 'Operating cash generation (EBITDA) on invested capital')],['P6',L('Lucro/vendas', 'Profit/sales'),L('Lucro líquido sobre as vendas', 'Net income on sales')],['P7',L('Margem op.', 'Op. margin'),L('Lucro operacional (Ebit) sobre as vendas', 'Operating profit (EBIT) on sales')]],
+    C:[['G1',L('Δ ativos', 'Δ assets'),L('Quanto o ativo total cresceu no ano', 'How much total assets grew in the year')],['G2',L('Δ vendas', 'Δ sales'),L('Quanto as vendas cresceram', 'How much sales grew')],['G3',L('Δ empregados', 'Δ employees'),L('Quanto o número de empregados cresceu', 'How much headcount grew')]],
+    L:[['L1',L('Caixa op./PL', 'Op. cash/eq.'),L('Caixa gerado pela operação sobre o patrimônio', 'Cash from operations on equity')],['L2',L('Caixa livre/PL', 'Free cash/eq.'),L('Fluxo de caixa livre sobre o patrimônio', 'Free cash flow on equity')],['L3',L('Δ caixa op.', 'Δ op. cash'),L('Quanto o caixa da operação cresceu', 'How much operating cash flow grew')]]
+  };
+  // Tabelas 7 a 10: médias das 609 empresas (%)
+  var DESC = [
+    {n:L('Retorno da ação', 'Share return'), v:[1.5, 15.2, 37.1, 4.8], d:1},
+    {n:L('Lucro sobre o ativo (ROA)', 'Return on assets (ROA)'), v:[4.7, 4.1, 3.8, 3.4], d:1},
+    {n:L('Crescimento das vendas', 'Sales growth'), v:[15.9, 6.7, 5.4, 7.2], d:1},
+    {n:L('Crescimento dos empregados', 'Headcount growth'), v:[9.6, 7.4, 6.3, 5.1], d:1}
+  ];
+  // Tabelas 12 e 13 (com faturamento), 2012–2014: β, t; F = faturamento
+  var CB = {R:[0.003, 0.046, 0.181], C:[0.089, 0.231, 0.156], L:[0.289, 0.124, 0.165], F:[0.014, -0.083, 0.075]};
+  var CT = {R:[0.06, 0.70, 4.69], C:[2.59, 4.53, 3.89], L:[4.92, 1.92, 3.39], F:[0.36, 2.86, 2.04]};
+  var CR2 = [9.8, 8.7, 13.4];
+  // Tabela 14: números do ano anterior → retorno de 2012, 2013, 2014 (sem valor-t)
+  var LB = {R:[-0.125, -0.165, 0.023], C:[-0.027, 0.078, -0.033], L:[0.211, -0.028, 0.110]};
+  var LR2 = [6.3, 3.9, 3.2];
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 400, 80, {ay:'62%'});
+    rotatable(sc, st, -20, 8);
+    var K = 1.9, BW = 64, GAP = 40, cols = [];
+    YRS.forEach(function(y, i){
+      var x = i * (BW + GAP), hR = R2[i] * K, hU = (100 - R2[i]) * K;
+      var a = box({w:BW, d:44, x:x, y:16, h:hR, c:'var(--red)', label:fmt(R2[i], 1) + '%'});
+      var b = box({w:BW, d:44, x:x, y:16, z:hR, h:hU, c:'#e2e8f0', cls:'fog'});
+      a.dataset.i = i; b.dataset.i = i;
+      st.appendChild(a); st.appendChild(b); cols.push([a, b]);
+      flatLabel(st, String(y), x - 6, 66, BW + 12, 'text-align:center; font-weight:700; font-size:13px');
+    });
+    var read = $('cap-read');
+    function pick(i){
+      cols.forEach(function(c, k){ c[0].classList.toggle('active', k === i); });
+      read.innerHTML = '<b>' + YRS[i] + '</b> · ' + L('os três explicaram <b>', 'the three explained <b>') + fmt(R2[i], 1) + '%</b>' + L(' do retorno; <b>', ' of the return; <b>') + fmt(100 - R2[i], 1) + '%</b>' + L(' ficaram sem explicação', ' was left unexplained');
+    }
+    sc.addEventListener('click', function(e){ if (M.wasDrag(sc)) return; var s = e.target.closest('.slab'); if (s && s.dataset.i) pick(+s.dataset.i); });
+    read.innerHTML = L('Em cada ano, de <b>8,1%</b> a <b>12,9%</b> explicados; o resto, não', 'Each year, <b>8.1%</b> to <b>12.9%</b> explained; the rest, not');
+  })();
+
+  /* ================= 02 · TRÊS PERGUNTAS ================= */
+  (function(){
+    var cards = $('pq-cards'), vd = $('pq-vd'), panel = $('pq-panel');
+    var SUB = {R:L('7 contas de lucro', '7 profit figures'), C:L('3 contas de crescimento', '3 growth figures'), L:L('3 contas de caixa', '3 cash figures')};
+    var TXT = {
+      R:L('Quanto a empresa ganha sobre o que tem, o que investiu ou o que vendeu.', 'How much the company earns on what it owns, what it invested or what it sold.'),
+      C:L('Quanto a empresa ficou maior de um ano para o outro.', 'How much bigger the company got from one year to the next.'),
+      L:L('Quanto caixa a operação gera para honrar as contas e investir.', 'How much cash operations generate to pay bills and invest.')
+    };
+    cards.innerHTML = PIL.map(function(p, i){ return '<button type="button" class="qcard" data-i="' + i + '" style="--qc:' + p.c + '" aria-pressed="' + (i === 0) + '"><b>' + p.q + '</b><span>' + p.n + ' · ' + SUB[p.k] + '</span></button>'; }).join('');
+    function show(i){
+      each(cards.children, function(b){ b.setAttribute('aria-pressed', +b.dataset.i === i); });
+      vd.setAttribute('aria-pressed', i < 0);
+      if (i < 0){
+        panel.style.removeProperty('--qc');
+        panel.innerHTML = '<div class="tag">' + L('O que se quer explicar', 'What is to be explained') + '</div><h3>' + L('Retorno ao acionista (TSR)', 'Total shareholder return (TSR)') + '</h3><p>' + L('Quanto o preço da ação subiu ou caiu no ano. É o número que o modelo tenta explicar com os três pilares.', 'How much the share price rose or fell in the year. It is the number the model tries to explain with the three pillars.') + '</p><p style="font-size:.78rem">' + L('Na média das 609 empresas, foi de 1,5% em 2011 a 37,1% em 2013 (tela 04). A dissertação chama a medida de retorno total ao acionista ajustado ao mercado; pela fórmula da Tabela 1, ela usa só o preço da ação.', 'Across the 609 companies, it averaged from 1.5% in 2011 to 37.1% in 2013 (screen 04). The dissertation calls the measure market-adjusted total shareholder return; by the formula in Table 1, it uses only the share price.') + '</p>';
+        return;
+      }
+      var p = PIL[i];
+      panel.style.setProperty('--qc', p.c);
+      panel.innerHTML = '<div class="tag">' + p.n + '</div><h3>' + TXT[p.k] + '</h3><div class="ilist">' + IND[p.k].map(function(r){ return '<div><code>' + r[0] + '</code><span><b>' + r[1] + '</b> · ' + r[2] + '</span></div>'; }).join('') + '</div>';
+    }
+    each(cards.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    vd.addEventListener('click', function(){ show(-1); });
+    show(0);
+  })();
+
+  /* ================= 03 · AMOSTRA ================= */
+  (function(){
+    var svg = $('fn-svg');
+    var ST = [
+      [6579, L('empresas americanas na base Compustat', 'US companies in the Compustat database'), 500, '#cbd5e1', 'var(--ink)'],
+      [609, L('com os 15 números nos quatro anos (9,3%)', 'with the 15 figures in all four years (9.3%)'), 330, 'var(--navy)', '#fff'],
+      [2436, L('empresas-ano analisadas (609 × 4)', 'company-years analysed (609 × 4)'), 330, 'var(--red)', '#fff']
+    ];
+    var h = '', y = 14, H = 64;
+    ST.forEach(function(s, i){
+      var w = s[2], x = (520 - w) / 2;
+      if (i === 1){ var pw = ST[0][2], px = (520 - pw) / 2; h += '<path d="M' + px + ' ' + (y - 18) + ' L' + (px + pw) + ' ' + (y - 18) + ' L' + (x + w) + ' ' + y + ' L' + x + ' ' + y + ' Z" fill="#e2e8f0"/>'; }
+      if (i === 2){ h += '<text x="260" y="' + (y - 4) + '" text-anchor="middle" class="s" style="font-size:12px; fill:var(--muted)">' + L('cada empresa, uma vez por ano', 'each company, once a year') + '</text>'; y += 10; }
+      h += '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + H + '" rx="10" fill="' + s[3] + '"/>';
+      h += '<text x="260" y="' + (y + 30) + '" text-anchor="middle" style="font-family:var(--serif); font-size:24px; font-weight:900; fill:' + s[4] + '">' + s[0].toLocaleString(EN ? 'en-US' : 'pt-BR') + '</text>';
+      h += '<text x="260" y="' + (y + 50) + '" text-anchor="middle" class="s" style="font-size:12.5px; fill:' + s[4] + '">' + s[1] + '</text>';
+      y += H + 26;
+    });
+    svg.innerHTML = h;
+  })();
+
+  /* ================= 04 · QUATRO ANOS ================= */
+  (function(){
+    var svg = $('yr-svg'), out = $('yr-out');
+    function draw(m){
+      var D = DESC[m], mx = Math.max.apply(null, D.v), K = 170 / (m === 0 ? 40 : 20), h = '', base = 214;
+      h += '<line x1="40" y1="' + base + '" x2="540" y2="' + base + '" stroke="#94a3b8"/>';
+      D.v.forEach(function(v, i){
+        var x = 70 + i * 120, hh = v * K, top = mx === v;
+        h += '<rect x="' + x + '" y="' + (base - hh) + '" width="76" height="' + hh + '" rx="5" fill="' + (top ? 'var(--red)' : 'var(--navy)') + '"/>';
+        h += '<text x="' + (x + 38) + '" y="' + (base - hh - 8) + '" text-anchor="middle" style="font-size:15px; font-weight:800; fill:var(--ink)">' + fmt(v, D.d) + '%</text>';
+        h += '<text x="' + (x + 38) + '" y="' + (base + 20) + '" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--ink-2)">' + YRS[i] + '</text>';
+      });
+      h += '<text x="40" y="18" class="s" style="font-size:12px; fill:var(--muted)">' + L('média das 609 empresas · ', 'average of the 609 companies · ') + D.n + '</text>';
+      svg.innerHTML = h;
+      var TX = [
+        L('Retorno médio da ação: <b>1,5%</b> em 2011, <b>15,2%</b> em 2012, <b>37,1%</b> em 2013 e <b>4,8%</b> em 2014. É esse sobe e desce que o modelo tenta explicar.', 'Average share return: <b>1.5%</b> in 2011, <b>15.2%</b> in 2012, <b>37.1%</b> in 2013 and <b>4.8%</b> in 2014. These ups and downs are what the model tries to explain.'),
+        L('O lucro sobre o ativo caiu um pouco a cada ano, de <b>4,7%</b> para <b>3,4%</b>, enquanto as ações iam e voltavam.', 'Return on assets fell a little every year, from <b>4.7%</b> to <b>3.4%</b>, while the shares went up and down.'),
+        L('As vendas cresceram <b>15,9%</b> em 2011 e de <b>5%</b> a <b>7%</b> nos anos seguintes.', 'Sales grew <b>15.9%</b> in 2011 and <b>5%</b> to <b>7%</b> in the following years.'),
+        L('O número de empregados cresceu cada vez menos: de <b>9,6%</b> para <b>5,1%</b>.', 'Headcount grew less and less: from <b>9.6%</b> to <b>5.1%</b>.')
+      ];
+      out.innerHTML = TX[m];
+    }
+    segInit($('yr-seg'), DESC.map(function(d){ return d.n; }), 0, draw);
+    draw(0);
+  })();
+
+  /* ================= 05 · MODELO ================= */
+  (function(){
+    var svg = $('md-svg'), panel = $('md-panel'), yi = 0, pi = 2;
+    var PY = {R:84, C:200, L:278}, PX = 262, TX = 486, TY = 186;
+    function iy(k, j){ return k === 'R' ? 16 + j * 22 : (k === 'C' ? 178 + j * 22 : 256 + j * 22); }
+    function draw(){
+      var h = '';
+      PIL.forEach(function(p, pk){
+        var k = p.k;
+        IND[k].forEach(function(r, j){
+          var y = iy(k, j), ld = LOAD[k][yi][j], a = Math.abs(ld), weak = a < 0.5;
+          h += '<line x1="112" y1="' + (y + 8) + '" x2="' + (PX - 28) + '" y2="' + PY[k] + '" stroke="' + (weak ? '#94a3b8' : p.c) + '" stroke-width="' + (0.6 + a * 3) + '" opacity="' + (weak ? 0.75 : 0.5) + '"' + (weak ? ' stroke-dasharray="3 3"' : '') + '/>';
+          h += '<rect x="4" y="' + y + '" width="108" height="17" rx="4" fill="' + (weak ? '#f1f5f9' : 'color-mix(in srgb, ' + p.c + ' 12%, white)') + '" stroke="' + (weak ? '#cbd5e1' : p.c) + '"/>';
+          h += '<text class="ind" x="10" y="' + (y + 12.5) + '" style="font-size:10.5px; fill:var(--ink-2)"><tspan style="font-weight:700">' + r[0] + '</tspan> ' + r[1] + '</text>';
+        });
+        var b = B[k][yi], t = T[k][yi], ok = t > 1.96;
+        h += '<line x1="' + (PX + 28) + '" y1="' + PY[k] + '" x2="' + (TX - 40) + '" y2="' + TY + '" stroke="' + p.c + '" stroke-width="' + (1.5 + b * 34) + '"' + (ok ? '' : ' stroke-dasharray="6 5" opacity=".55"') + ' stroke-linecap="round"/>';
+        var mx = (PX + 28 + TX - 40) / 2, my = (PY[k] + TY) / 2;
+        h += '<text x="' + (mx + (k === 'R' ? 22 : (k === 'L' ? 10 : 0))) + '" y="' + (my + (k === 'L' ? 22 : -12)) + '" text-anchor="middle" style="font-size:13px; font-weight:800; paint-order:stroke; stroke:#fff; stroke-width:5px; fill:' + p.c + '">β ' + fmt(b, 2) + (ok ? '' : ' (n.s.)') + '</text>';
+        h += '<g class="pil" data-k="' + pk + '"><circle cx="' + PX + '" cy="' + PY[k] + '" r="28" fill="' + p.c + '" stroke="' + (pk === pi ? 'var(--ink)' : '#fff') + '" stroke-width="' + (pk === pi ? 4 : 2) + '"/><text x="' + PX + '" y="' + (PY[k] + 4) + '" text-anchor="middle" class="s" style="font-size:10.5px; font-weight:700; fill:#fff">' + p.sn + '</text></g>';
+      });
+      h += '<circle cx="' + TX + '" cy="' + TY + '" r="40" fill="var(--ink)"/><text x="' + TX + '" y="' + (TY - 4) + '" text-anchor="middle" class="s" style="font-size:11px; font-weight:700; fill:#fff">' + L('Retorno', 'Return') + '</text><text x="' + TX + '" y="' + (TY + 12) + '" text-anchor="middle" style="font-size:13px; font-weight:800; fill:#fff">R² ' + fmt(R2[yi], 1) + '%</text>';
+      svg.innerHTML = h;
+      each(svg.querySelectorAll('.pil'), function(g){ g.addEventListener('click', function(){ pi = +g.dataset.k; draw(); }); });
+      var p = PIL[pi], k = p.k, ave = AVE[k][yi], cr = CR[k][yi];
+      var weak = IND[k].filter(function(r, j){ return Math.abs(LOAD[k][yi][j]) < 0.5; }).map(function(r, j){ return r[0]; });
+      panel.innerHTML = '<div class="tag">' + p.n + ' · ' + YRS[yi] + '</div>' +
+        '<p>' + L('Cargas: ', 'Loadings: ') + IND[k].map(function(r, j){ var v = LOAD[k][yi][j]; return '<b' + (Math.abs(v) < 0.5 ? ' style="color:var(--muted)"' : '') + '>' + r[0] + ' ' + sg(v, 2).replace('+', '') + '</b>'; }).join(' · ') + '</p>' +
+        '<div class="qa"><div class="' + (ave > 0.5 ? 'ok' : 'no') + '"><b>' + fmt(ave, 2) + '</b>' + L('variância média extraída (mínimo 0,5)', 'average variance extracted (minimum 0.5)') + '</div><div class="' + (cr > 0.7 ? 'ok' : 'no') + '"><b>' + fmt(cr, 2) + '</b>' + L('confiabilidade composta (mínimo 0,7)', 'composite reliability (minimum 0.7)') + '</div></div>' +
+        (weak.length ? '<p style="font-size:.76rem; margin-top:6px">' + L('Tracejadas: cargas abaixo de 0,5, contas que quase não acompanham o pilar neste ano (corte nosso, para leitura).', 'Dashed: loadings below 0.5, figures that barely track the pillar this year (our cut-off, for reading).') + '</p>' : '');
+    }
+    segInit($('md-seg'), YRS.map(String), 0, function(v){ yi = v; draw(); });
+    draw();
+  })();
+
+  /* ================= 06 · PESOS ================= */
+  (function(){
+    var sc = $('pw-scene'), st = makeStage(sc, 650, 70, {ay:'70%'});
+    rotatable(sc, st, -12, 7);
+    var BW = 42, SP = 4, GW = 3 * (BW + SP), GAP = 38, K = 540, cells = [];
+    YRS.forEach(function(y, i){
+      PIL.forEach(function(p, r){
+        var b = B[p.k][i], ok = T[p.k][i] > 1.96;
+        var s = box({w:BW, d:40, x:i * (GW + GAP) + r * (BW + SP), y:10, h:Math.max(b * K, 3), c:p.c, cls:ok ? '' : 'dim', label:fmt(b, 2)});
+        s.dataset.r = r; s.dataset.i = i; st.appendChild(s); cells.push(s);
+      });
+      flatLabel(st, String(y), i * (GW + GAP) - 6, 58, GW + 12, 'text-align:center; font-weight:700; font-size:16px');
+    });
+    var panel = $('pw-panel'), filt = -1;
+    function info(r, i){
+      var p = PIL[r], b = B[p.k][i], t = T[p.k][i], ok = t > 1.96;
+      cells.forEach(function(c){ c.classList.toggle('active', +c.dataset.r === r && +c.dataset.i === i); });
+      panel.innerHTML = '<div class="tag">' + p.n + ' · ' + YRS[i] + '</div><h3>β ' + fmt(b, 2) + ' · t ' + fmt(t, 2) + '</h3><p>' + (ok ? L('Passou no teste (t acima de 1,96): neste ano, empresas com mais ', 'Passed the test (t above 1.96): this year, companies with more ') + p.n.toLowerCase() + L(' tiveram, em média, retorno maior.', ' had, on average, a higher return.') : L('Não passou no teste (t abaixo de 1,96): neste ano não dá para dizer que ', 'Did not pass the test (t below 1.96): this year one cannot say that ') + p.n.toLowerCase() + L(' andou junto com o retorno.', ' went along with the return.')) + '</p>';
+    }
+    function filter(f){
+      filt = f;
+      cells.forEach(function(c){ var r = +c.dataset.r, on = f < 0 || r === f; c.style.setProperty('--c', on ? PIL[r].c : '#e2e8f0'); });
+      if (f < 0) panel.innerHTML = '<div class="tag">' + L('Placar dos 12 pesos', 'Score of the 12 weights') + '</div><h3>' + L('8 de 12 passaram no teste', '8 of 12 passed the test') + '</h3><p>' + L('Crescimento: 4 de 4 · Liquidez: 2 de 4 (2012, 2014) · Rentabilidade: 2 de 4 (2011, 2014). Toque num bloco.', 'Growth: 4 of 4 · Liquidity: 2 of 4 (2012, 2014) · Profitability: 2 of 4 (2011, 2014). Tap a block.') + '</p>';
+      else { var k = PIL[f].k, n = T[k].filter(function(t){ return t > 1.96; }).length; panel.innerHTML = '<div class="tag">' + PIL[f].n + '</div><h3>' + n + L(' de 4 anos passaram no teste', ' of 4 years passed the test') + '</h3><p>β: ' + B[k].map(function(b, i){ return YRS[i] + ' <b>' + fmt(b, 2) + '</b>'; }).join(' · ') + '</p>'; }
+    }
+    var chips = $('pw-chips');
+    var CH = [L('Todos', 'All')].concat(PIL.map(function(p){ return p.n; }));
+    chips.innerHTML = CH.map(function(t, i){ return '<button type="button" class="chip" data-v="' + (i - 1) + '" aria-pressed="' + (i === 0) + '">' + t + '</button>'; }).join('');
+    each(chips.children, function(b){ b.addEventListener('click', function(){ each(chips.children, function(x){ x.setAttribute('aria-pressed', x === b); }); filter(+b.dataset.v); }); });
+    sc.addEventListener('click', function(e){ if (M.wasDrag(sc)) return; var s = e.target.closest('.slab'); if (s && s.dataset.r) info(+s.dataset.r, +s.dataset.i); });
+    filter(-1);
+  })();
+
+  /* ================= 07 · QUEM LIDERA ================= */
+  (function(){
+    var rows = $('ld-rows'), score = $('ld-score'), done = 0, hits = 0;
+    function lead(i){ var best = 0; PIL.forEach(function(p, r){ if (B[p.k][i] > B[PIL[best].k][i]) best = r; }); return best; }
+    rows.innerHTML = YRS.map(function(y, i){
+      return '<div class="lrow" data-i="' + i + '"><span class="y">' + y + '</span><div class="opts">' + PIL.map(function(p, r){ return '<button type="button" data-r="' + r + '">' + p.n + '</button>'; }).join('') + '</div><div class="res"></div></div>';
+    }).join('');
+    each(rows.querySelectorAll('.lrow'), function(row){
+      var i = +row.dataset.i, ans = lead(i), used = false;
+      each(row.querySelectorAll('button'), function(b){
+        b.addEventListener('click', function(){
+          if (used) return; used = true; done++;
+          var r = +b.dataset.r; if (r === ans) hits++;
+          each(row.querySelectorAll('button'), function(x){ var xr = +x.dataset.r; if (xr === ans){ x.classList.add('right'); x.style.setProperty('--ok-c', PIL[ans].c); } else if (xr === r) x.classList.add('wrong'); });
+          row.querySelector('.res').innerHTML = PIL.map(function(p){ var v = B[p.k][i], ok = T[p.k][i] > 1.96; return '<div class="bar"><span style="text-align:left">' + p.n + '</span><i style="width:' + (v / 0.30 * 100) + '%; background:' + (ok ? p.c : 'repeating-linear-gradient(45deg, #cbd5e1 0 3px, #fff 3px 6px)') + '"></i><span>' + fmt(v, 2) + '</span></div>'; }).join('');
+          upd();
+        });
+      });
+    });
+    function upd(){
+      score.innerHTML = done < 4 ? L('Respondidos: <b>', 'Answered: <b>') + done + L('</b> de 4', '</b> of 4') : L('Você acertou <b>', 'You got <b>') + hits + L('</b> de 4. Três pilares diferentes lideraram: rentabilidade em 2011 e 2014, liquidez em 2012 e crescimento em 2013.', '</b> of 4 right. Three different pillars led: profitability in 2011 and 2014, liquidity in 2012 and growth in 2013.');
+    }
+    upd();
+  })();
+
+  /* ================= 08 · QUANTO EXPLICA ================= */
+  (function(){
+    var svg = $('r2-svg'), inp = $('r2-in'), gv = $('r2-gv'), out = $('r2-out'), shown = false;
+    function draw(){
+      var g = +inp.value, h = '', X0 = 70, W = 460;
+      h += '<text x="' + X0 + '" y="14" class="s" style="font-size:11px; fill:var(--muted)">0%</text><text x="' + (X0 + W) + '" y="14" text-anchor="end" class="s" style="font-size:11px; fill:var(--muted)">100%</text>';
+      YRS.forEach(function(y, i){
+        var yy = 26 + i * 52;
+        h += '<text x="' + (X0 - 10) + '" y="' + (yy + 22) + '" text-anchor="end" style="font-size:14px; font-weight:700; fill:var(--ink)">' + y + '</text>';
+        h += '<rect x="' + X0 + '" y="' + yy + '" width="' + W + '" height="34" rx="6" fill="#e2e8f0"/>';
+        if (shown){
+          h += '<rect x="' + X0 + '" y="' + yy + '" width="' + (W * R2[i] / 100) + '" height="34" rx="6" fill="var(--red)"/>';
+          h += '<text x="' + (X0 + W * R2[i] / 100 + 8) + '" y="' + (yy + 22) + '" style="font-size:15px; font-weight:800; fill:var(--red)">' + fmt(R2[i], 1) + '%</text>';
+          h += '<text x="' + (X0 + W - 10) + '" y="' + (yy + 22) + '" text-anchor="end" class="s ux" style="font-size:12px; fill:var(--muted)">' + L('sem explicação: ', 'unexplained: ') + fmt(100 - R2[i], 1) + '%</text>';
+        }
+      });
+      var gx = X0 + W * g / 100;
+      h += '<line x1="' + gx + '" y1="20" x2="' + gx + '" y2="232" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 4"/><text x="' + gx + '" y="246" text-anchor="middle" class="s" style="font-size:12px; font-weight:700; fill:var(--ink)">' + L('seu palpite ', 'your guess ') + g + '%</text>';
+      svg.innerHTML = h;
+      gv.textContent = g + '%';
+    }
+    inp.addEventListener('input', function(){ draw(); });
+    $('r2-go').addEventListener('click', function(){
+      shown = true; draw();
+      var g = +inp.value;
+      out.innerHTML = (g > 13 ? L('Seu palpite (', 'Your guess (') + g + L('%) ficou acima: ', '%) was above: ') : (g < 8 ? L('Seu palpite (', 'Your guess (') + g + L('%) ficou abaixo: ', '%) was below: ') : L('Na mosca: ', 'Spot on: '))) + L('os três explicaram de <b>8,1%</b> a <b>12,9%</b> do retorno. Em todos os anos, <b>mais de 87%</b> do sobe e desce das ações ficou por conta de outras coisas.', 'the three explained <b>8.1%</b> to <b>12.9%</b> of the return. In every year, <b>over 87%</b> of the ups and downs of the shares was down to other things.');
+    });
+    draw();
+  })();
+
+  /* ================= 09 · TAMANHO ================= */
+  (function(){
+    var svg = $('ct-svg'), out = $('ct-out'), on = 1;
+    var KEYS = ['R', 'C', 'L', 'F'], COL = {R:'var(--rent)', C:'var(--gro)', L:'var(--liq)', F:'var(--fat)'};
+    function draw(){
+      var h = '', base = 190, K = 420;
+      h += '<defs><pattern id="ct-h" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#fff"/><rect width="3" height="6" fill="#cbd5e1"/></pattern></defs>';
+      h += '<line x1="20" y1="' + base + '" x2="545" y2="' + base + '" stroke="#94a3b8"/>';
+      [0, 1, 2].forEach(function(i){
+        var gx = 34 + i * 176, yrI = i + 1;
+        KEYS.forEach(function(k, j){
+          if (k === 'F' && !on) return;
+          var b = on ? CB[k][i] : B[k][yrI], t = on ? CT[k][i] : T[k][yrI], ok = t > 1.96, x = gx + j * 36, hh = Math.abs(b) * K;
+          var y = b >= 0 ? base - hh : base;
+          h += '<rect x="' + x + '" y="' + y + '" width="30" height="' + Math.max(hh, 1.5) + '" rx="3" fill="' + (ok ? COL[k] : 'url(#ct-h)') + '" stroke="' + COL[k] + '" stroke-width="' + (ok ? 0 : 1.5) + '"/>';
+          h += '<text x="' + (x + 15) + '" y="' + (b >= 0 ? y - 5 : y + hh + 14) + '" text-anchor="middle" class="s" style="font-size:11px; font-weight:700; fill:var(--ink-2)">' + sg(b, 2).replace('+', '') + '</text>';
+        });
+        h += '<text x="' + (gx + 66) + '" y="' + (base + 56) + '" text-anchor="middle" style="font-size:14px; font-weight:800; fill:var(--ink)">' + YRS[yrI] + '</text>';
+        h += '<text x="' + (gx + 66) + '" y="' + (base + 76) + '" text-anchor="middle" class="s" style="font-size:12px; fill:var(--ink-2)">R² ' + fmt(on ? CR2[i] : R2[yrI], 1) + '%</text>';
+      });
+      svg.innerHTML = h;
+      out.innerHTML = on ? L('Com o faturamento: R² de <b>9,8%</b>, <b>8,7%</b> e <b>13,4%</b>. O tamanho só passou no teste em 2013, com sinal negativo (−0,08), e em 2014, positivo (+0,08), no limite (t 2,04).', 'With revenue: R² of <b>9.8%</b>, <b>8.7%</b> and <b>13.4%</b>. Size only passed the test in 2013, with a negative sign (−0.08), and in 2014, positive (+0.08), at the limit (t 2.04).') : L('Sem o faturamento: R² de <b>9,8%</b>, <b>8,1%</b> e <b>12,9%</b>. Ligue o faturamento e compare os pesos.', 'Without revenue: R² of <b>9.8%</b>, <b>8.1%</b> and <b>12.9%</b>. Switch revenue on and compare the weights.');
+    }
+    segInit($('ct-seg'), [L('Sem faturamento', 'Without revenue'), L('Com faturamento', 'With revenue')], 1, function(v){ on = v; draw(); });
+    draw();
+  })();
+
+  /* ================= 10 · ANO SEGUINTE ================= */
+  (function(){
+    var svg = $('lg-svg'), out = $('lg-out'), lag = 1;
+    function arrow(x, y, v, c){
+      var len = 14 + Math.abs(v) * 220, up = v >= 0, y2 = up ? y - len : y + len;
+      return '<line x1="' + x + '" y1="' + y + '" x2="' + x + '" y2="' + (up ? y2 + 8 : y2 - 8) + '" stroke="' + c + '" stroke-width="7" stroke-linecap="round"/><path d="M' + (x - 10) + ' ' + (up ? y2 + 10 : y2 - 10) + ' L' + x + ' ' + y2 + ' L' + (x + 10) + ' ' + (up ? y2 + 10 : y2 - 10) + ' Z" fill="' + c + '"/>' +
+        '<text x="' + x + '" y="' + (up ? y2 - 6 : y2 + 16) + '" text-anchor="middle" class="s" style="font-size:11px; font-weight:700; fill:var(--ink-2)">' + sg(v, 2) + '</text>';
+    }
+    function draw(){
+      var h = '', mid = 150;
+      [0, 1, 2].forEach(function(i){
+        var gx = 16 + i * 180;
+        h += '<rect x="' + gx + '" y="8" width="168" height="282" rx="12" fill="#fff" stroke="var(--border)"/>';
+        h += '<text x="' + (gx + 84) + '" y="30" text-anchor="middle" style="font-size:13px; font-weight:800; fill:var(--ink)">' + L('Retorno de ', 'Return in ') + YRS[i + 1] + '</text>';
+        h += '<text x="' + (gx + 84) + '" y="46" text-anchor="middle" class="s" style="font-size:11px; fill:var(--muted)">' + L('números de ', 'figures from ') + YRS[lag ? i : i + 1] + '</text>';
+        h += '<line x1="' + (gx + 12) + '" y1="' + mid + '" x2="' + (gx + 156) + '" y2="' + mid + '" stroke="#cbd5e1"/>';
+        PIL.forEach(function(p, r){
+          var v = lag ? LB[p.k][i] : B[p.k][i + 1];
+          h += arrow(gx + 38 + r * 46, mid, v, p.c);
+          h += '<text x="' + (gx + 38 + r * 46) + '" y="248" text-anchor="middle" class="s pl" style="font-size:10.5px; font-weight:700; fill:' + p.c + '">' + p.sn + '</text>';
+        });
+        h += '<text x="' + (gx + 84) + '" y="276" text-anchor="middle" style="font-size:14px; font-weight:800; fill:' + (lag ? 'var(--red)' : 'var(--ink)') + '">R² ' + fmt(lag ? LR2[i] : R2[i + 1], 1) + '%</text>';
+      });
+      svg.innerHTML = h;
+      out.innerHTML = lag ? L('Com os números do ano anterior, o R² caiu para <b>6,3%</b>, <b>3,9%</b> e <b>3,2%</b>, e cada pilar trocou de sinal pelo menos uma vez: a rentabilidade, por exemplo, veio negativa para 2012 e 2013 e positiva para 2014.', 'With the previous year’s figures, R² fell to <b>6.3%</b>, <b>3.9%</b> and <b>3.2%</b>, and every pillar switched sign at least once: profitability, for example, came out negative for 2012 and 2013 and positive for 2014.') : L('Com os números do mesmo ano, os três pesos são positivos nos três anos e o R² fica entre <b>8,1%</b> e <b>12,9%</b>.', 'With the same year’s figures, all three weights are positive in all three years and R² stays between <b>8.1%</b> and <b>12.9%</b>.');
+    }
+    segInit($('lg-seg'), [L('Números do mesmo ano', 'Same year’s figures'), L('Números do ano anterior', 'Previous year’s figures')], 1, function(v){ lag = v; draw(); });
+    draw();
+  })();
+
+  /* ================= 11 · O QUE FICOU DE FORA ================= */
+  (function(){
+    var grid = $('hm-grid'), panel = $('hm-panel');
+    var DIM = [
+      {n:L('Rentabilidade', 'Profitability'), s:'use', c:'var(--rent)', m:['ROA', 'ROE', 'ROI', 'ROS', 'ROIC', 'EBITDA']},
+      {n:L('Crescimento', 'Growth'), s:'use', c:'var(--gro)', m:[L('Δ empregados', 'Δ employees'), L('Δ vendas', 'Δ sales'), L('Δ ativos', 'Δ assets'), L('Δ folha de pagamentos', 'Δ payroll'), L('Δ despesas', 'Δ expenses')]},
+      {n:L('Liquidez', 'Liquidity'), s:'use', c:'var(--liq)', m:[L('Liquidez corrente', 'Current ratio'), L('Z de Altman', 'Altman’s Z'), L('Fluxo de caixa livre', 'Free cash flow'), L('Fluxo de caixa operacional', 'Operating cash flow')]},
+      {n:L('Tamanho', 'Size'), s:'ctrl', c:'var(--fat)', m:[L('Empregados', 'Employees'), L('Vendas', 'Sales'), L('Ativos', 'Assets')]},
+      {n:L('Eficiência', 'Efficiency'), s:'off', m:[L('Vendas por m²', 'Sales per m²'), L('Vendas por empregado', 'Sales per employee'), L('Giro do ativo', 'Asset turnover'), L('Ativo fixo imobilizado', 'Fixed assets')]},
+      {n:L('Alavancagem', 'Leverage'), s:'off', m:[L('Dívida sobre capital', 'Debt to capital'), L('Dívida sobre ativos', 'Debt to assets'), L('Custo médio do capital (WACC)', 'Weighted average cost of capital (WACC)')]}
+    ];
+    var ST = {use:L('no modelo', 'in the model'), ctrl:L('só controle', 'control only'), off:L('ficou de fora', 'left out')};
+    grid.innerHTML = DIM.map(function(d, i){ return '<button type="button" class="hdim' + (d.s === 'off' ? ' off' : '') + '" data-i="' + i + '" style="--hc:' + (d.c || '#cbd5e1') + '" aria-pressed="' + (i === 4) + '"><b>' + d.n + '</b><span>' + ST[d.s] + '</span><small>' + d.m.length + L(' medidas no mapa', ' measures on the map') + '</small></button>'; }).join('');
+    var TX = {
+      use:L('A dissertação usou esta dimensão como um dos três pilares, com contas próprias da base Compustat (tela 02).', 'The dissertation used this dimension as one of the three pillars, with its own figures from the Compustat database (screen 02).'),
+      ctrl:L('Entrou só como controle, pelo faturamento, para ver se os pilares mantinham o peso (tela 09).', 'It came in only as a control, through revenue, to see whether the pillars kept their weight (screen 09).'),
+      off:L('Ficou de fora do modelo. Para a dissertação, dimensões como esta podem explicar parte do retorno que os três pilares não explicaram.', 'It was left out of the model. For the dissertation, dimensions like this one may explain part of the return the three pillars did not.')
+    };
+    function show(i){
+      each(grid.children, function(b){ b.setAttribute('aria-pressed', +b.dataset.i === i); });
+      var d = DIM[i];
+      panel.innerHTML = '<div class="tag">' + d.n + ' · ' + ST[d.s] + '</div><p>' + TX[d.s] + '</p><p style="font-size:.8rem">' + L('Medidas no mapa de Hofer e Carton: ', 'Measures on Hofer and Carton’s map: ') + '<b>' + d.m.join(' · ') + '</b></p>';
+    }
+    each(grid.children, function(b){ b.addEventListener('click', function(){ show(+b.dataset.i); }); });
+    show(4);
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
