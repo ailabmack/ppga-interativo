@@ -1,0 +1,864 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quanto o dólar mexe com as empresas · PPGA Interativo</title>
+<meta name="description" content="A dissertação de mestrado de Caio Canuto Martins Brandão (PPGA Mackenzie) sobre quanto as variações do dólar mexem com o valor de 540 empresas de seis países latino-americanos, medido com cinco réguas estatísticas, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/dissertacoes/2019-brandao-exposicao-cambial/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><path d=%22M4 20 Q10 8 16 16 T28 12%22 stroke=%22white%22 stroke-width=%223%22 fill=%22none%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  :root{
+    --fix:var(--navy);     /* réguas de forma fixa (paramétricas) */
+    --free:var(--red);     /* régua livre (não paramétrica) */
+    --weak:#b45309;
+  }
+  .fix-t{color:var(--fix); font-weight:700;} .free-t{color:var(--free); font-weight:700;}
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .note.warn{border-left-color:var(--weak);}
+  .ill{display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--weak); border:1px solid color-mix(in srgb, var(--weak) 45%, white); border-radius:999px; padding:2px 9px; margin-bottom:6px;}
+  .sw{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 10px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-size:.8rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px 16px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1rem; margin-bottom:6px; color:var(--ink);}
+  .panel p{margin:0 0 6px; font-size:.86rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:18px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .ctrls{display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; margin:4px 0 10px;}
+  .zleg{display:flex; flex-wrap:wrap; justify-content:center; gap:4px 16px; font-size:.78rem; color:var(--ink-2); margin-top:2px;}
+  .range{width:100%; accent-color:var(--red);}
+  .sl{display:grid; gap:2px; margin:4px 0 6px;}
+  .sl label{font-size:.84rem; color:var(--ink-2);}
+  .sl label b{color:var(--ink);}
+  .btn-s{border:1px solid var(--ink); background:var(--card); color:var(--ink); border-radius:999px; padding:7px 14px; font-size:.8rem; font-weight:600; cursor:pointer;}
+  .btn-s:hover{background:var(--ink); color:#fff;}
+  .btn-s[disabled]{opacity:.45; cursor:default; background:var(--card); color:var(--ink);}
+  svg text{font-family:var(--sans);}
+  .slab.dim > i{opacity:.25;}
+  .slab .f-top .top-label{text-shadow:0 1px 2px rgb(15 23 42 / .35);}
+  .guess{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0;}
+  .guess button{border:1px solid var(--border); background:var(--card); border-radius:12px; padding:9px 14px; font-size:.86rem; cursor:pointer; color:var(--ink);}
+  .guess button:hover{border-color:var(--ink);}
+  .guess button.right{border-color:var(--free); box-shadow:inset 0 0 0 2px var(--free);}
+  .guess button.wrong{opacity:.55;}
+  .reveal{display:none;} .reveal.on{display:block;}
+  @media (max-width:600px){
+    #rg-svg text, #hl-svg text{font-size:15px !important;} #ds-svg text{font-size:19px !important;}
+    #rg-svg text.s, #hl-svg text.s, #ds-svg text.s{font-size:13px !important;}
+  }
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(1.7rem, 2.6vw, 2.15rem);}
+  #capa .sub{font-size:1rem;}
+  .meta{display:grid; gap:2px; margin-top:16px; font-size:.86rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.76rem; color:var(--muted); margin-top:4px; text-align:center; line-height:1.4;}
+  #cap-read{text-align:center; font-size:.92rem; color:var(--ink-2); margin:4px 0 0; min-height:1.5em;}
+  #cap-read b{color:var(--ink);}
+
+  /* ---------- 02 · Exposição ---------- */
+  .def{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px;}
+  .def div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:9px 12px; font-size:.8rem; color:var(--ink-2); line-height:1.4;}
+  .def b{display:block; color:var(--ink); font-size:.9rem; margin-bottom:2px;}
+  .firms{display:grid; gap:10px; margin-top:10px;}
+  .frow{display:grid; grid-template-columns:110px 1fr 70px; gap:10px; align-items:center; font-size:.84rem; color:var(--ink-2);}
+  .frow b{color:var(--ink); display:block;}
+  .frow small{font-size:.72rem; color:var(--muted);}
+  .ftrack{position:relative; height:26px; background:#f1f5f9; border-radius:6px;}
+  .ftrack::after{content:""; position:absolute; left:50%; top:-3px; bottom:-3px; width:2px; background:var(--ink);}
+  .fbar{position:absolute; top:4px; bottom:4px; border-radius:4px; transition:all .25s;}
+  .fval{font-family:var(--serif); font-weight:700; color:var(--ink); text-align:right;}
+  #ex-read{font-size:.88rem; color:var(--ink-2); margin-top:10px; min-height:2.6em;}
+
+  /* ---------- 03 · Enigma ---------- */
+  .shields{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:6px;}
+  .shield{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:10px 11px; font-size:.76rem; color:var(--ink-2); line-height:1.35; cursor:pointer; text-align:left; transition:all .2s;}
+  .shield b{display:block; color:var(--ink); font-size:.86rem; margin-bottom:3px;}
+  .shield .ic{font-size:1.3rem; display:block; margin-bottom:2px; color:var(--fix);}
+  .shield[aria-pressed="true"]{border-color:var(--fix); box-shadow:inset 0 0 0 2px var(--fix);}
+  .meter{margin-top:14px;}
+  .meter .lab{display:flex; justify-content:space-between; font-size:.8rem; color:var(--ink-2); margin-bottom:4px;}
+  .meter .trk{height:30px; background:#f1f5f9; border-radius:8px; overflow:hidden; position:relative;}
+  .meter .bar{height:100%; background:var(--free); width:100%; transition:width .6s; border-radius:8px;}
+  .meter .bar span{position:absolute; left:10px; top:5px; color:#fff; font-weight:700; font-size:.86rem;}
+  #en-read{font-size:.86rem; color:var(--ink-2); margin-top:8px; min-height:2.6em;}
+
+  /* ---------- 04 · Revisão ---------- */
+  .fun{display:grid; gap:7px; margin-top:8px;}
+  .fstep{display:grid; grid-template-columns:1fr; gap:3px; cursor:pointer; background:none; border:0; padding:0; text-align:left;}
+  .fstep .fb{height:30px; border-radius:7px; background:color-mix(in srgb, var(--fix) 75%, white); display:flex; align-items:center; padding:0 10px; color:#fff; font-weight:700; font-size:.86rem; min-width:62px; transition:background .2s;}
+  .fstep.last .fb{background:var(--free);}
+  .fstep[aria-pressed="true"] .fb{box-shadow:0 0 0 3px color-mix(in srgb, var(--ink) 35%, white);}
+  .fstep .ft{font-size:.76rem; color:var(--ink-2);}
+  #fn-read{margin-top:10px; min-height:3.2em;}
+  .sq73{display:grid; grid-template-columns:repeat(15, 1fr); gap:3px; max-width:330px; margin-top:8px;}
+  .sq73 i{aspect-ratio:1; border-radius:2px; background:#cbd5e1;}
+  .sq73 i.on{background:var(--free);}
+
+  /* ---------- 05 · Países ---------- */
+  #ps-grid{display:flex; flex-wrap:wrap; gap:3px; margin-top:8px;}
+  #ps-grid i{width:11px; height:11px; border-radius:2px; background:var(--fix);}
+  #ps-grid i.out{background:transparent; box-shadow:inset 0 0 0 1.5px var(--free);}
+  .pfacts{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:10px;}
+  .pfacts div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 11px; font-size:.74rem; color:var(--ink-2); line-height:1.3;}
+  .pfacts b{display:block; font-family:var(--serif); font-size:1.2rem; color:var(--ink);}
+
+  /* ---------- 06 · Réguas ---------- */
+  #rg-svg{width:100%; display:block;}
+  #rg-read{font-size:.86rem; color:var(--ink-2); margin:6px 0 0; min-height:3.6em;}
+  #rg-read b{color:var(--ink);}
+
+  /* ---------- 07 · Resultado ---------- */
+  #sk-read{font-size:.9rem; color:var(--ink-2); margin-top:8px; min-height:2.8em;}
+  .tbl{width:100%; min-width:420px; border-collapse:collapse; font-size:.76rem; margin-top:10px;}
+  .tbl th, .tbl td{padding:4px 6px; text-align:right; border-bottom:1px solid var(--border);}
+  .tbl th:first-child, .tbl td:first-child{text-align:left;}
+  .tbl th{font-size:.68rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted);}
+  .tbl td.hi{color:var(--free); font-weight:700;}
+  .tbl tr.sel td{background:color-mix(in srgb, var(--fix) 7%, white);}
+
+  /* ---------- 08 · Antes ---------- */
+  #hl-svg{width:100%; display:block;}
+
+  /* ---------- 09 · Choque ---------- */
+  .brs{display:grid; gap:8px; margin-top:10px;}
+  .brow{display:grid; grid-template-columns:118px 1fr 74px; gap:10px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .brow b{color:var(--ink);}
+  .btrack{position:relative; height:24px; background:#f1f5f9; border-radius:6px;}
+  .btrack::after{content:""; position:absolute; left:50%; top:-3px; bottom:-3px; width:2px; background:var(--ink);}
+  .bbar{position:absolute; top:4px; bottom:4px; border-radius:4px; transition:all .25s;}
+  .bval{font-family:var(--serif); font-weight:700; color:var(--ink); text-align:right; font-size:.92rem;}
+  .bscale{display:grid; grid-template-columns:118px 1fr 74px; gap:10px; font-size:.68rem; color:var(--muted);}
+  .bscale span{display:flex; justify-content:space-between;}
+  #ch-read{font-size:.88rem; color:var(--ink-2); margin-top:10px; min-height:2.8em;}
+
+  /* ---------- 10 · Sinais ---------- */
+  .sgrid{display:grid; grid-template-columns:1.1fr 1fr 1fr; gap:6px; margin-top:8px;}
+  .sgrid > div{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:6px 10px; font-size:.8rem; color:var(--ink-2); display:flex; align-items:center; gap:8px; min-height:42px;}
+  .sgrid > div.h{background:transparent; border:0; font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; font-weight:700; color:var(--muted); min-height:0; padding:0 4px;}
+  .sgrid .cn{font-weight:700; color:var(--ink);}
+  .arr{font-size:1.2rem; font-weight:800; width:1.1em; text-align:center;}
+  .arr.up{color:var(--free);} .arr.dn{color:var(--fix);}
+  .sgrid .hid{color:#94a3b8;}
+
+  /* ---------- 11 · Empresas ---------- */
+  #ds-svg{width:100%; display:block;}
+  #ds-read{font-size:.88rem; color:var(--ink-2); margin-top:6px; min-height:2.8em;}
+  #ds-read b{color:var(--ink);}
+
+  /* ---------- 12 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:10px;}
+  @media (min-width:760px){ .cards4{grid-template-columns:repeat(2, 1fr);} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:10px 13px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:3px; font-size:.76rem; line-height:1.4; color:var(--ink-2);}
+  .pcard em{font-style:normal; font-size:.7rem; color:var(--muted);}
+  .end{display:grid; grid-template-columns:1fr; gap:20px; margin-top:14px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:36px;} }
+  .end h3{font-size:1.04rem; margin-bottom:4px;}
+  .limits{display:grid; gap:5px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 11px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.77rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.78rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 13px; line-height:1.5; margin-top:6px;}
+  .cite b{color:var(--ink);}
+  .also{font-size:.78rem; margin-top:8px; color:var(--ink-2);}
+  .also a{color:var(--red); font-weight:600;}
+  @media (max-width:600px){
+    .def, .shields, .pfacts{grid-template-columns:1fr;}
+    .frow, .brow, .bscale{grid-template-columns:86px 1fr 60px; gap:8px;}
+    .sgrid{grid-template-columns:1fr 1fr 1fr;}
+  }
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/dissertacoes/2019-brandao-exposicao-cambial/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Dissertação de mestrado · PPGA Mackenzie · 2019</div>
+      <h1 class="rv" style="--d:.1s">Com a régua livre, quase todas as empresas de seis países latino-americanos parecem sentir o dólar, mas de leve</h1>
+      <p class="sub rv" style="--d:.2s">Quando o dólar sobe ou desce, o preço das ações de uma empresa vai junto? A dissertação mede isso de cinco jeitos em <strong>540 empresas</strong> da Argentina, Brasil, Chile, Colômbia, México e Peru, de 2000 a 2018. As réguas de forma fixa (retas e curvas) acham o efeito em <strong>11% a 51%</strong> das empresas, conforme o país; a régua livre, em <strong>mais de 90%</strong>, com choques bem menores.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Caio Canuto Martins Brandão</span>
+        <span><b>Orientador:</b> Prof. Dr. Leonardo Fernando Cruz Basso</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#exposicao">Começar →</a>
+        <a class="btn ghost" href="#resultado">Ir direto ao resultado</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="460x260" role="img" aria-label="Seis pares de colunas, um por país. Em cada par, a coluna azul é a porcentagem de empresas com exposição ao dólar pela régua reta e a vermelha, pela régua livre: Argentina 12,5 contra 98,2; Brasil 40,3 contra 91,9; Chile 22,8 contra 98,3; Colômbia 16,2 contra 100; México 50,8 contra 95,4; Peru 12,2 contra 98,8"></div></div>
+      <p id="cap-read" aria-live="off"></p>
+      <div class="zleg"><span><span class="sw" style="background:var(--fix)"></span>régua reta (linear)</span><span><span class="sw" style="background:var(--free)"></span>régua livre (não paramétrica)</span></div>
+      <div class="cap-legend">% de empresas com exposição ao dólar, ao nível de 1% (Tabela 9). Arraste para girar.</div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-17"><a href="https://brasil.un.org/pt-br/sdgs/17" target="_blank" rel="noopener" title="ODS 17 · Parcerias e meios de implementação: Mede quanto as oscilações do câmbio, sinal de instabilidade macroeconômica, mexem com o valor das empresas de seis países latino-americanos."><b>17</b>Parcerias e meios de implementação</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · EXPOSIÇÃO -->
+<section class="slide" id="exposicao" data-label="O que se mede">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O que se mede</div>
+      <h2 class="rv" style="--d:.1s">Exposição é quanto a ação se mexe quando o dólar se mexe</h2>
+      <p class="lede rv" style="--d:.2s">Uma exportadora vende em dólar: dólar caro, mais reais no caixa. Uma importadora compra em dólar: dólar caro, custo maior. O mercado sabe disso e o preço da ação reage. A pesquisa mede essa reação com um número, o coeficiente de exposição.</p>
+      <div class="def rv" style="--d:.3s">
+        <div><b>Risco cambial</b>É da moeda: o sobe e desce do câmbio que ninguém previu.</div>
+        <div><b>Exposição cambial</b>É da empresa: quanto o valor dela muda com esse sobe e desce (Adler e Dumas, 1984).</div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="panel">
+        <span class="ill">Ilustração · empresas inventadas</span>
+        <div class="sl"><label for="ex-r">O dólar no mês: <b id="ex-v">+10%</b></label><input class="range" id="ex-r" type="range" min="-20" max="20" step="1" value="10"></div>
+        <div class="firms" id="ex-firms"></div>
+        <p id="ex-read"></p>
+      </div>
+      <div class="note">Na leitura da dissertação, coeficiente <b>positivo</b> quer dizer que a ação tende a subir quando o dólar sobe; <b>negativo</b>, que tende a cair. Coeficiente 0,5: dólar 10% mais caro, ação 5% acima do que o mercado como um todo explicaria.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · ENIGMA -->
+<section class="slide" id="enigma" data-label="O enigma">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> O enigma</div>
+      <h2 class="rv" style="--d:.1s">Na teoria o dólar pesa; nos dados, custava a aparecer</h2>
+      <p class="lede rv" style="--d:.2s">Em 1990, um estudo com 287 multinacionais dos EUA mal achou exposição ao câmbio. Pesquisadores chamaram isso de enigma. Uma explicação, lembrada na dissertação: as empresas se protegem, e a proteção apaga o efeito nos números.</p>
+      <p class="rv" style="--d:.3s; font-size:.86rem">Toque nos três escudos que um estudo com 1.150 empresas de 16 países (Bartram, Brown e Minton, 2010) identificou.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="shields" id="en-sh"></div>
+      <div class="meter">
+        <div class="lab"><span>Exposição que sobra para aparecer nos dados</span><span id="en-pct">100%</span></div>
+        <div class="trk"><div class="bar" id="en-bar"><span id="en-bt"></span></div></div>
+      </div>
+      <p id="en-read"></p>
+      <div class="note">Números do estudo de Bartram, Brown e Minton (2010), citados na dissertação: as três proteções juntas reduzem a exposição em 70% na média; repasse e proteção operacional, 10% a 15%; derivativos e dívida em moeda estrangeira, cerca de 40%. As partes não somam o total, por isso a barra só mostra as três juntas.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · REVISÃO -->
+<section class="slide" id="revisao" data-label="De onde veio a pergunta">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Apêndice A · 73 artigos</div>
+      <h2 class="rv" style="--d:.1s">De quase 14 mil artigos sobre proteção cambial, sobrou a pergunta: como medir a exposição?</h2>
+      <p class="lede rv" style="--d:.2s">Antes dos testes, o autor vasculhou três bases de artigos de 2008 a 2018. Leu 73 por inteiro. Exposição cambial era o tema central de 18 deles, e os estudos não concordavam sobre como medi-la.</p>
+      <div class="rv" style="--d:.3s">
+        <div class="sq73" id="sq73" role="img" aria-label="73 quadradinhos, 18 em vermelho: os artigos com exposição cambial como tema central"></div>
+        <p style="font-size:.76rem; color:var(--muted); margin-top:4px">Cada quadradinho é um dos 73 artigos lidos; em vermelho, os 18 sobre exposição cambial (Tabela 13).</p>
+      </div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="fun" id="fun"></div>
+      <div class="panel" id="fn-read"></div>
+      <div class="note">Comprimento das barras em escala logarítmica (cada degrau de escala multiplica por 10), para caber de 13.952 a 73.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · PAÍSES -->
+<section class="slide" id="paises" data-label="Seis países">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> 2000 a 2018 · Capital IQ</div>
+      <h2 class="rv" style="--d:.1s">Seis países, 18 anos de pregões, cada dia contado</h2>
+      <p class="lede rv" style="--d:.2s">Para cada empresa não financeira de capital aberto, três números por dia: quanto a ação variou, quanto variou o índice da bolsa e quanto variou o câmbio da moeda local contra o dólar.</p>
+      <p class="rv" style="--d:.3s; font-size:.86rem">Empresas em que algum modelo de curva não chegou a uma resposta saíram da amostra, para que as cinco réguas medissem as mesmas empresas.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="chips" id="ps-chips"></div>
+      <div class="panel">
+        <h3 id="ps-h"></h3>
+        <div id="ps-grid" role="img"></div>
+        <div class="zleg" style="justify-content:flex-start; margin-top:6px"><span><span class="sw" style="background:var(--fix)"></span>na amostra final</span><span><span class="sw" style="box-shadow:inset 0 0 0 1.5px var(--free)"></span>fora (modelo sem resposta)</span></div>
+        <div class="pfacts" id="ps-facts"></div>
+        <p id="ps-note" style="font-size:.82rem; margin-top:8px"></p>
+      </div>
+      <div class="note">Amostras das Tabelas 3 a 8. Soma das amostras finais: 540 empresas (conta nossa; a Tabela 9 usa 539).</div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · RÉGUAS -->
+<section class="slide" id="reguas" data-label="Cinco réguas">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> O método</div>
+      <h2 class="rv" style="--d:.1s">A mesma nuvem de pontos, cinco jeitos de traçar a relação</h2>
+      <p class="lede rv" style="--d:.2s">Cada ponto é um dia: o câmbio variou tanto, a ação (descontado o mercado) variou tanto. As réguas fixas impõem uma forma: reta, curva, ou uma reta por faixa de variação. A régua livre ajusta uma retinha em cada trecho, olhando só os dias vizinhos.</p>
+      <p class="rv" style="--d:.3s; font-size:.86rem">A novidade da dissertação, em relação ao estudo de Aysun e Guldi (2011) que ela segue: deixar os dados escolherem a largura dessa vizinhança, testando cada largura em dias deixados de fora (validação cruzada).</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <span class="ill">Ilustração · dados inventados</span>
+      <div class="ctrls"><div class="seg" id="rg-seg"></div></div>
+      <svg id="rg-svg" viewBox="0 0 560 300" role="img" aria-label="Nuvem de pontos inventada com a linha da régua escolhida"></svg>
+      <div id="rg-np" style="display:none">
+        <div class="sl"><label for="rg-h">Largura da vizinhança: <b id="rg-hv"></b></label><input class="range" id="rg-h" type="range" min="0" max="40" step="1" value="20"></div>
+        <button class="btn-s" id="rg-cv">Deixar os dados escolherem (validação cruzada)</button>
+      </div>
+      <p id="rg-read"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · RESULTADO -->
+<section class="slide" id="resultado" data-label="Quantas sentem o dólar">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Tabela 9 · nível de 1%</div>
+      <h2 class="rv" style="--d:.1s">As quatro réguas fixas quase concordam; a livre salta para mais de 90% em todos os países</h2>
+      <p class="lede rv" style="--d:.2s">Uma empresa conta como exposta quando o teste rejeita a hipótese de que o dólar não mexe com o valor dela, com margem de erro de 1%.</p>
+      <div class="ctrls rv" style="--d:.3s"><div class="seg" id="sk-seg"></div></div>
+      <p id="sk-read" class="rv" style="--d:.3s"></p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="fit-wrap"><div class="scene draggable" id="sk-scene" data-fit="480x340" role="img" aria-label="Grade 3D de 30 colunas: seis países por cinco réguas, altura igual à porcentagem de empresas expostas. A fileira da régua livre, ao fundo, tem todas as colunas acima de 90%."></div></div>
+      <div class="cap-legend">Arraste para girar. A fileira do fundo é a régua livre.</div>
+      <div style="overflow-x:auto"><table class="tbl" id="sk-tbl"></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · ANTES -->
+<section class="slide" id="antes" data-label="Aqui e lá">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Comparação com Aysun e Guldi (2011)</div>
+      <h2 class="rv" style="--d:.1s">Com as mesmas réguas, o estudo original achava bem menos empresas expostas</h2>
+      <p class="lede rv" style="--d:.2s">Aysun e Guldi estudaram 2.584 empresas de seis países, de 1995 a 2006. Três países se repetem aqui: Brasil, Chile e México. Palpite: quantas empresas brasileiras a régua livre achou expostas naquele estudo?</p>
+      <div class="guess rv" style="--d:.3s" id="hl-g">
+        <button data-v="0">Cerca de 17%</button>
+        <button data-v="1">Cerca de 50%</button>
+        <button data-v="2">Cerca de 92%</button>
+      </div>
+      <div class="reveal" id="hl-why">
+        <div class="panel"><p id="hl-msg"></p><p>Para o autor, duas razões possíveis: o período estudado aqui teve câmbio muito mais volátil, com a moeda desses países perdendo valor, e a janela escolhida pelos dados deixa a régua livre mais sensível. A dissertação não testa qual pesa mais.</p></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="ctrls"><div class="seg" id="hl-seg"></div></div>
+      <svg id="hl-svg" viewBox="0 0 560 330" role="img" aria-label="Halteres por país: porcentagem de empresas expostas no estudo de Aysun e Guldi e nesta dissertação"></svg>
+      <div class="zleg"><span><span class="sw" style="background:#fff; box-shadow:inset 0 0 0 2px var(--ink)"></span>Aysun e Guldi, 1995–2006 (Tabela 2)</span><span><span class="sw" style="background:var(--ink)"></span>esta dissertação, 2000–2018 (Tabela 9)</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · CHOQUE -->
+<section class="slide" id="choque" data-label="O tamanho do choque">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Tabelas 10 e 11</div>
+      <h2 class="rv" style="--d:.1s">A régua livre vê mais empresas expostas, mas com choques bem menores</h2>
+      <p class="lede rv" style="--d:.2s">Escolha um país e mova o dólar. As barras mostram quanto a ação da empresa média se moveria, pelo coeficiente médio de cada régua.</p>
+      <div class="note warn rv" style="--d:.3s"><b>Conta ilustrativa nossa:</b> coeficiente médio × variação do dólar. A dissertação mostra os coeficientes, não esta conta. Não é previsão nem recomendação de investimento.</div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="chips" id="ch-chips"></div>
+      <div class="ctrls"><div class="seg" id="ch-seg"></div></div>
+      <div class="sl"><label for="ch-r">O dólar: <b id="ch-v"></b></label><input class="range" id="ch-r" type="range" min="-20" max="20" step="1" value="10"></div>
+      <div class="brs" id="ch-bars"></div>
+      <div class="bscale"><span></span><span><i>−12%</i><i>0</i><i>+12%</i></span><span></span></div>
+      <p id="ch-read"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · SINAIS -->
+<section class="slide" id="sinais" data-label="O inesperado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> O inesperado</div>
+      <h2 class="rv" style="--d:.1s">O sentido do efeito, para cima ou para baixo, também depende da régua</h2>
+      <p class="lede rv" style="--d:.2s">Pela régua reta, na média, as ações do Chile, do México e do Peru caem quando o dólar sobe. E pela régua livre?</p>
+      <div class="guess rv" style="--d:.3s" id="sg-g">
+        <button data-v="0">Continuam caindo</button>
+        <button data-v="1">Passam a subir</button>
+        <button data-v="2">Metade de cada</button>
+      </div>
+      <div class="reveal" id="sg-why">
+        <div class="panel"><p id="sg-msg"></p><p><b>Leitura do autor:</b> as economias da região exportam muito, e a moeda local mais fraca aumenta o que as exportadoras recebem (relatórios da OCDE e do BID citados na dissertação). A dissertação não separa exportadoras e importadoras para testar isso.</p></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="sgrid" id="sg-grid"></div>
+      <div class="note">Coeficientes médios com sinal (Tabela 10). Na régua livre, o México fica em 0,0001: positivo, mas praticamente zero.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · EMPRESAS -->
+<section class="slide" id="empresas" data-label="Empresa por empresa">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> Apêndices B a G</div>
+      <h2 class="rv" style="--d:.1s">Empresa por empresa, a régua livre aperta os choques perto de zero</h2>
+      <p class="lede rv" style="--d:.2s">Cada ponto é uma empresa, com o coeficiente que a dissertação imprimiu no apêndice. Em vermelho, as que contam como expostas a 1%.</p>
+      <div class="note warn rv" style="--d:.3s"><b>O que conferimos:</b> nas quatro réguas fixas, o teste de cada empresa sai de dividir o coeficiente pelo erro-padrão impresso. Na régua livre, os valores de teste impressos (por exemplo, 7,91 ou 7,48 trilhões) não saem dessa divisão, e o texto não explica o teste usado. Feita a divisão, só 21 das 538 empresas passariam a 1%. Escolha “conta nossa” para ver.</div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="chips" id="ds-chips"></div>
+      <div class="ctrls"><div class="seg" id="ds-seg"></div></div>
+      <svg id="ds-svg" viewBox="0 0 600 240" role="img" aria-label="Duas faixas de pontos, uma por régua, com o coeficiente de cada empresa do país escolhido"></svg>
+      <div class="cap-legend">Coeficiente de exposição de cada empresa; valores além de ±1 ficam encostados na borda, com a contagem ao lado. Passe o mouse num ponto para ver o código da ação. Contagens feitas no apêndice; no Brasil diferem em 1 ou 2 empresas das Tabelas 4 e 9.</div>
+      <p id="ds-read"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> E daí?</div>
+    <h2 class="rv" style="--d:.1s">Antes de decidir como se proteger do dólar, vale saber que a régua muda a resposta</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--fix)"><h3>Para quem cuida do caixa</h3><ul><li>A exposição é o ponto de partida para escolher proteções: derivativos, dívida em moeda estrangeira, exportar e importar. <em>(dissertação)</em></li><li>Medir com mais de uma régua antes de decidir. <em>(leitura nossa)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--free)"><h3>Para quem investe</h3><ul><li>Pelas réguas fixas, o sinal médio muda de país para país; pela livre, é positivo e pequeno em todos. <em>(telas 09 e 10)</em></li><li>Médias de 2000 a 2018 não dizem o que cada ação fará. Não é recomendação de investimento. <em>(observação nossa)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.25s; --pc:#334155"><h3>Para quem pesquisa</h3><ul><li>Usar a medida para buscar o que causa a exposição: uso de derivativos, vendas no exterior, dívida em moeda estrangeira, grau de internacionalização. <em>(dissertação)</em></li><li>Estudar quem controla a empresa e as crises em mercados emergentes. <em>(dissertação)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#64748b"><h3>Para quem ensina métodos</h3><ul><li>Mesmos dados, cinco réguas, respostas diferentes: um exemplo de como a forma do modelo muda a conclusão. <em>(leitura nossa)</em></li><li>Conferir se cada teste impresso sai dos números ao lado. <em>(tela 11)</em></li></ul></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Sem um juiz entre as réguas.</b> Critérios usuais para escolher entre modelos (Akaike, Bayes) não foram aplicados à régua livre. <em>· segundo a dissertação</em></li>
+          <li><b>Poucas bolsas na região.</b> Há poucos mercados de capitais desenvolvidos na América Latina, e as amostras são pequenas; no Peru, o índice usado tem 3 empresas. <em>· segundo a dissertação</em></li>
+          <li><b>Pouco com que comparar.</b> Poucos estudos publicam o grau de exposição, e a volatilidade do câmbio ano a ano não foi medida. <em>· segundo a dissertação</em></li>
+          <li><b>O teste da régua livre.</b> Os valores de teste impressos não saem do coeficiente e do erro-padrão; pela divisão, 21 de 538 empresas passariam a 1%. <em>· conta nossa, tela 11</em></li>
+          <li><b>Relação, não causa.</b> O coeficiente mostra que ação e dólar andam juntos; não diz por quê nem separa exportadoras de importadoras. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          BRANDÃO, Caio Canuto Martins. <em>Exposição cambial: um estudo não paramétrico.</em> Dissertação (Mestrado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2019. Orientador: Prof. Dr. Leonardo Fernando Cruz Basso.
+        </div>
+        <p style="margin-top:8px; font-size:.76rem">Dados da Capital IQ (S&amp;P), janeiro de 2000 a maio de 2018; modelos no R. Esta versão simplifica o trabalho para o público em geral.</p>
+        <p class="also">Leia também, do mesmo orientador: <a href="../../teses/2019-monteiro-hedge-dolar-futuro/">Monteiro (2019)</a>, proteger-se do dólar no mercado futuro; <a href="../../teses/2020-costa-redes-neurais-cambio/">Costa (2020)</a>, redes neurais para prever o câmbio.</p>
+        <div class="ctas" style="margin-top:10px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a dissertação completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, rotatable = M.rotatable, flatLabel = M.flatLabel;
+  var EN = M.lang === 'en';
+  function L(p, e){ return EN ? e : p; }
+  function sg(v, d, plus){ var s = fmt(Math.abs(v), d); var z = Math.abs(v) < Math.pow(10, -d) / 2; return (v < 0 && !z ? '−' : (plus && v > 0 && !z ? '+' : '')) + s; }
+  function dd(v){ return Math.abs(v) < 0.1 && v !== 0 ? 3 : 2; }
+  function pct(v, d){ return fmt(v, d === undefined ? 1 : d) + '%'; }
+  function segInit(el, items, cur, fn){
+    el.innerHTML = items.map(function(t, i){ return '<button data-v="' + i + '" aria-pressed="' + (i === cur) + '">' + t + '</button>'; }).join('');
+    each(el.children, function(b){ b.addEventListener('click', function(){ each(el.children, function(x){ x.setAttribute('aria-pressed', x === b); }); fn(+b.dataset.v); }); });
+  }
+  function chipsInit(el, items, cur, fn){
+    el.innerHTML = items.map(function(t, i){ return '<button class="chip" data-v="' + i + '" aria-pressed="' + (i === cur) + '">' + t + '</button>'; }).join('');
+    each(el.children, function(b){ b.addEventListener('click', function(){ each(el.children, function(x){ x.setAttribute('aria-pressed', x === b); }); fn(+b.dataset.v); }); });
+  }
+  function rng(seed){ var s = seed; return function(){ s = (s * 1664525 + 1013904223) % 4294967296; return s / 4294967296; }; }
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  var CK = ['AR', 'BR', 'CL', 'CO', 'MX', 'PE'];
+  var CN = EN ? ['Argentina', 'Brazil', 'Chile', 'Colombia', 'Mexico', 'Peru'] : ['Argentina', 'Brasil', 'Chile', 'Colômbia', 'México', 'Peru'];
+  var MOD = [L('Reta (linear)', 'Line (linear)'), L('Curva quadrática', 'Quadratic curve'), L('Curva cúbica', 'Cubic curve'), L('Por faixas', 'By ranges'), L('Livre', 'Free-form')];
+  var MODS = [L('Reta', 'Line'), L('Quadrática', 'Quadratic'), L('Cúbica', 'Cubic'), L('Por faixas', 'By ranges'), L('Livre', 'Free-form')];
+  // Tabela 9: % de empresas expostas a 1% [linear, quadrática, cúbica, parcialmente paramétrico, não paramétrico]
+  var T9 = [[12.50, 14.29, 12.50, 10.71, 98.21], [40.32, 40.86, 36.56, 39.78, 91.94], [22.81, 22.81, 22.81, 22.81, 98.25], [16.22, 16.22, 16.22, 16.22, 100.00], [50.77, 50.77, 50.77, 50.77, 95.38], [12.20, 12.20, 12.20, 12.20, 98.78]];
+  // Tabela 10: coeficiente médio com sinal (Peru cúbica: −0,2636 da Tabela 8; a Tabela 10 repete o valor da Tabela 11)
+  var T10 = [[0.3264, 0.3344, 0.3525, 0.0728, 0.0636], [0.0008, 0.0028, 0.0026, 0.0087, 0.1376], [-0.0307, -0.0318, -0.0304, -0.0307, 0.0271], [0.1003, 0.1011, 0.1003, 0.1003, 0.0299], [-0.0520, -0.0351, -0.0520, -0.0520, 0.0001], [-0.2635, -0.2620, -0.2636, -0.2992, 0.0082]];
+  // Tabela 11: coeficiente médio em módulo
+  var T11 = [[0.4133, 0.3556, 0.3773, 0.5436, 0.0543], [0.2689, 0.2721, 0.2670, 0.2635, 0.1377], [0.2300, 0.2285, 0.2297, 0.2300, 0.0272], [0.2355, 0.2363, 0.2355, 0.2355, 0.0300], [0.4682, 0.4696, 0.4682, 0.4682, 0.0002], [0.4438, 0.4436, 0.4437, 0.4747, 0.0082]];
+  // Tabelas 3 a 8: [inicial, final, índice, nota]
+  var SAMP = [
+    [57, 56, 'MERVAL', L('O peso argentino perdeu metade do valor frente ao dólar em 2018.', 'The Argentine peso lost half its value against the dollar in 2018.')],
+    [240, 186, 'IBOVESPA', L('Em setembro de 2018, o dólar chegou ao maior valor da história em reais. O Brasil teve mais modelos sem resposta: 54 empresas saíram (22,5%).', 'In September 2018, the dollar hit its highest level ever in reais. Brazil had the most models without an answer: 54 companies were dropped (22.5%).')],
+    [134, 114, 'IGPA', L('Para a dissertação, historicamente a economia mais sadia da região; em 2018, o peso também perdia valor.', 'For the dissertation, historically the healthiest economy in the region; in 2018, the peso was also losing value.')],
+    [40, 37, 'IGBC', L('O câmbio a partir de 2015 reflete, para a dissertação, as dificuldades competitivas do país.', 'The exchange rate from 2015 on reflects, for the dissertation, the country’s competitive difficulties.')],
+    [80, 65, 'FTSE', L('O peso mexicano, como os vizinhos, vinha perdendo valor.', 'The Mexican peso, like its neighbors, had been losing value.')],
+    [87, 82, 'MSCI', L('O sol peruano teve o comportamento mais regular do período. O índice usado tem só 3 empresas, que somam 85% do valor da Bolsa de Lima.', 'The Peruvian sol was the most stable currency of the period. The index used has only 3 companies, which make up 85% of the value of the Lima Stock Exchange.')]
+  ];
+  // Tabela 2 (Aysun e Guldi, 2011): [linear, não linear, parcialmente paramétrico, não paramétrico]
+  var AG = {1:[2.0, 2.7, 3.3, 16.9], 2:[5.1, 2.1, 3.8, 28.5], 4:[6.1, 3.5, 8.1, 18.7]};
+  // Apêndices B a G (amostra final): [código, coef. linear, linear exposta a 1%, coef. livre, livre exposta a 1% (p impresso), livre |coef ÷ erro-padrão| > 2,576 (conta nossa)]
+  var FIRMS = {"AR":[["ALUA",0.191,0,0.3895,1,0],["AUSO",4.561,0,0.3669,1,0],["ESME",1.952,0,0.1132,1,0],["BOLT",0.077,0,0.0004,1,0],["CGPA2",-0.037,0,0.0003,1,0],["CAPX",0.157,1,0.0004,1,0],["CAPU",0.031,0,0.0004,1,0],["CARC",0.097,0,0.0001,1,0],["CADO",0.066,1,0.0003,1,0],["CELU",-0.031,0,0.0003,1,0],["CEPU",0.033,0,0.0005,1,0],["COLO",0.026,0,0.0003,1,0],["TRAN",-0.068,0,0.0004,1,0],["CTIO",4.049,0,0.2742,1,0],["CRES",0.057,0,0.0004,1,0],["DGCU2",-0.088,1,0.0003,1,0],["DYCA",0.047,0,0.0003,1,0],["EMDE",0.285,0,0.0154,1,0],["EDN",2.009,0,0.00023,1,0],["CECO2",-0.028,0,0.0001,1,0],["FIPL",0.207,1,0.0003,1,0],["FERR",-0.016,0,0.0002,1,0],["GARO",-0.037,0,0.0002,1,0],["GBAN",0.031,0,0.0003,1,0],["GRIM",-0.025,0,0.0004,1,0],["GCLA",1.595,0,0.3845,1,0],["OEST",-0.056,0,0.0002,1,0],["HAVA",0.321,0,0.0725,1,0],["HARG",-0.047,0,0.0003,1,0],["HULI",-0.038,0,0.0005,1,0],["ROSE",0.017,0,0.0003,1,0],["INAG",0.189,0,0.0437,1,0],["INVJ",1.18,0,0.2391,1,0],["IRSA",0.037,0,0.0003,1,0],["LEDE",0.152,1,0.0003,1,0],["LONG",0.033,0,0.0002,1,0],["MERA",0.512,0,0.0353,1,0],["MVIA",-0.023,0,-0.0001,1,0],["METR",-0.019,0,0.0003,1,0],["MIRG",0.01,0,0.0005,1,0],["MOLI",0.006,0,0.0002,1,0],["MORI",0.038,0,0.0002,1,0],["PAMP",-0.022,0,0.0003,1,0],["PSUR",-1.689,0,0.4279,1,0],["POLL",0.062,0,-0.0001,1,0],["RIGO",0.002,0,0.0006,1,0],["PATY",-0.034,0,0.0001,1,0],["SAMI",0.153,1,0.0005,1,0],["PATA",-0.046,1,0.0004,1,0],["TXAR",-0.024,0,0.0004,1,0],["TGLT",1.002,0,0.1453,1,0],["TGNO4",1.154,0,0.4653,1,0],["TGSU2",-0.04,0,0.0003,1,0],["INDU",-0.013,0,0.0003,1,0],["YPFD",-0.009,0,0.0002,1,0]],"BR":[["ALPA4",-0.25,1,0.0008,1,0],["CBEE3",-0.2,1,-3.43e-06,0,0],["ANIM3",0.37,0,0.2365,1,0],["ARCZ6",-0.18,1,-0.0001,1,0],["ATOM3",-0.32,1,-0.0008,1,0],["AZEV4",0.06,0,0.0003,1,0],["BTOW3",0.07,0,0.5588,1,1],["BDLL4",-0.15,1,-0.0001,1,0],["BTTL3",-0.1,0,-0.0005,1,0],["BALM4",0.02,0,0.0002,1,0],["BMKS3",0.02,0,0.0002,1,0],["BIOM3",-0.02,0,0.0005,1,0],["BOBR4",-0.27,1,-0.0001,0,0],["BRML3",0.32,0,0.5746,1,1],["BRAP3",-0.35,1,0.0003,1,0],["BRKM5",-0.28,1,0.0004,1,0],["BRFS3",-0.21,0,0.4669,1,1],["CAMB4",-0.15,0,0.0005,1,0],["CCRO3",-0.32,1,0.0007,1,0],["RANI3",-0.1,0,0.247,1,1],["ELET6",-0.36,1,0.0006,1,0],["CLSC4",-0.2,1,-0.0001,0,0],["CESP6",0.09,0,0.1269,1,0],["HGTX3",-0.31,1,0.6155,1,1],["PCAR4",-0.34,1,0.0002,1,0],["CASN3",-0.35,0,0.003,1,0],["GPAR3",1.09,1,0.0071,1,0],["FESA4",-0.35,1,0.0007,1,0],["CEDO4",0.73,0,0.128,1,0],["CGAS5",-0.18,1,0.0006,1,0],["SBSP3",-0.35,1,0.0003,1,0],["CSMG3",0.39,0,0.6332,1,1],["SAPR4",-0.29,1,0.0003,1,0],["CTNM4",-0.17,1,-0.0002,1,0],["CEGR3",-0.04,0,0.001,1,0],["CEBR5",-0.09,0,0.0002,1,0],["CMIG4",-0.37,1,0.0001,0,0],["CEPE5",-0.09,1,0.0001,1,0],["COCE5",-0.16,1,0.0004,1,0],["ENMA3",0.1,0,0.2743,1,0],["CSRN3",-0.04,0,0.0003,1,0],["EEEL3",0.09,0,-4.11e-06,0,0],["HBTS5",-0.23,1,0.0006,1,0],["MSPA3",0.0,0,0.0007,1,0],["CPLE6",-0.36,1,0.0001,0,0],["CSNA3",-0.47,1,0.0001,0,0],["CTSA4",-0.06,0,0.0007,1,0],["CEEB3",-0.09,0,0.0004,1,0],["TEND3",0.26,0,0.16,1,0],["CORR4",-0.01,0,0.0008,1,0],["CRDE3",0.29,0,0.4581,1,0],["CREM3",-0.15,1,-0.0001,1,0],["CRPG5",-0.09,0,0.0007,1,0],["CARD3",0.81,0,0.583,1,0],["TRPL4",-0.2,1,0.0005,1,0],["CVCB3",0.39,0,0.2315,1,0],["CYRE3",0.13,0,0.6606,1,1],["DASA3",0.36,0,0.623,1,0],["PNVL4",0.06,0,0.0008,1,0],["DIRR3",0.34,0,0.4234,1,0],["DOHL4",-0.02,0,0.0004,1,0],["DTCY3",-0.37,1,-0.0005,1,0],["DTEX3",0.61,0,0.5432,1,0],["ECOR3",0.03,0,0.4253,1,1],["EALT4",-0.03,0,0.0006,1,0],["ELEK4",-0.11,0,0.0001,1,0],["EKTR4",-0.11,0,-0.0001,1,0],["LIPR3",-0.11,1,0.0004,1,0],["EMBR3",-0.05,0,0.0003,1,0],["EMAE4",-0.14,1,0.0008,1,0],["ECPR4",-0.04,0,0.1939,1,0],["ENGI3",0.48,0,0.4884,1,0],["ENEV3",0.12,0,0.0007,1,0],["EGIE3",-0.21,1,0.5193,1,1],["EQTL3",0.44,0,0.4994,1,0],["ESTC3",0.43,0,-0.0003,1,0],["ETER3",-0.25,1,4.07e-05,1,0],["EUCA4",-0.12,1,0.5699,1,1],["FHER3",0.46,0,0.0002,1,0],["FBMC4",-0.06,0,0.4637,1,1],["FIBR3",0.17,0,0.4319,1,1],["FRAS3",0.0,0,0.6227,0,1],["GGBR4",-0.43,1,0.7205,1,1],["GOLL4",0.08,0,-0.0003,1,0],["GPCP3",-0.37,1,0.0007,1,0],["CGRA4",-0.12,1,0.6823,1,1],["HAGA4",-0.42,1,0.0018,1,0],["HETA4",-0.23,1,0.0002,1,0],["HOOT4",-0.19,1,0.0007,1,0],["IGBR3",-0.15,0,-0.0003,1,0],["IGTA3",0.48,0,0.576,1,1],["JBDU4",1.08,0,0.1873,1,0],["INEP4",-0.13,0,-0.0007,1,0],["MEAL3",0.19,0,0.3551,1,0],["MYPK3",-0.34,1,0.0007,1,0],["ITEC3",-0.13,0,-0.0006,1,0],["JPSA3",-0.33,0,0.0001,0,0],["JFEN3",-0.21,1,0.0001,0,0],["JOPA4",-0.1,1,0.0006,1,0],["CTKA4",-0.07,0,-0.0004,1,0],["KEPL3",-0.29,1,-0.001,1,0],["KLBN4",-0.18,1,0.0003,1,0],["LIGT3",0.06,0,0.6385,1,1],["LINX3",0.3,0,0.2743,1,0],["LOGN3",0.45,0,0.537,1,0],["LAME4",-0.45,1,0.0009,1,0],["LREN3",-0.45,1,0.0009,1,0],["LPSB3",0.44,0,0.5718,1,0],["MGLU3",0.07,0,0.3617,1,0],["LEVE3",-0.06,0,0.0007,1,0],["MGEL4",-0.29,1,0.0,0,0],["ESTR4",-0.34,1,0.0,0,0],["POMO4",-0.36,1,0.0006,1,0],["MRFG3",0.42,0,0.5499,1,0],["AMAR3",0.41,0,0.5415,1,0],["MEND5",-0.12,0,-0.0002,1,0],["MTIG4",-0.08,0,-0.0009,1,0],["GOAU4",-0.43,1,0.0002,0,0],["RSUL4",0.24,0,0.02,1,0],["MTSA4",-0.06,0,0.0005,1,0],["MILS3",0.84,0,0.4137,1,0],["BEEF3",0.15,0,0.5472,1,0],["MNPR3",-0.22,0,0.0001,1,0],["MRSA3",0.0,0,-0.0005,1,0],["MULT3",0.01,0,0.5621,1,1],["MNDL3",-0.21,1,0.0005,1,0],["NAFG4",-0.04,0,0.0005,1,0],["NORD3",-0.06,0,0.0001,1,0],["NUTR3",0.0,0,0.1086,1,0],["OIBR4",-0.29,1,-0.0008,1,0],["OGXP3",0.02,0,0.386,1,0],["OSXB3",0.33,0,0.325,1,0],["OFSA3",1.55,0,0.1633,1,0],["PATI4",0.64,0,0.1026,1,0],["PMAM3",-0.37,1,-0.0003,1,0],["PTBL3",-0.18,1,0.0005,1,0],["PDGR3",0.1,0,0.5422,1,0],["BRDT3",-0.04,0,0.0013,1,0],["PETR4",-0.58,1,0.0003,1,0],["PTNT4",-0.11,0,0.0005,1,0],["PLAS3",-0.18,1,-0.001,1,0],["QGEP3",0.26,0,0.3747,1,0],["RADL3",0.8,0,0.4866,1,0],["RAPT4",-0.42,1,0.0007,1,0],["RCSL4",-0.23,0,-0.0009,1,0],["REDE3",-0.21,1,0.0004,1,0],["RPMG3",-0.1,0,-0.0002,1,0],["GEPA4",-0.05,0,0.0004,1,0],["RDNI3",0.28,0,0.5397,1,0],["RSID3",-0.59,1,-0.0006,1,0],["SNSY5",-0.15,0,0.0003,1,0],["STBP3",0.84,0,0.0843,1,0],["SCAR3",-0.16,0,0.0004,1,0],["AHEB6",-0.22,1,0.0006,1,0],["SLED4",-0.28,1,-0.0002,1,0],["SHUL4",-0.14,1,0.0009,1,0],["SNSL3",0.91,0,0.2514,1,0],["SEER3",0.61,0,0.2514,1,0],["APTI4",0.02,0,0.0002,1,0],["SEDU3",1.95,0,0.1588,1,0],["SOND5",-0.07,0,0.0002,1,0],["SPRI5",-0.07,0,-0.0002,1,0],["FJTA4",-0.26,1,0.0,0,0],["TOYB4",1.06,0,0.1352,1,0],["TEKA4",-0.28,1,-0.0004,1,0],["TKNO4",-0.01,0,0.0004,1,0],["TELB4",-0.32,0,0.0003,1,0],["VIVT4",-0.15,1,4.48e-05,0,0],["TESA3",0.24,0,0.5098,1,0],["TXRX4",-0.06,0,-0.0004,1,0],["TIMP3",-0.26,1,0.0003,1,0],["TOTS3",0.22,0,0.6288,1,1],["LUXM4",0.1,0,0.0009,1,0],["TPIS3",0.26,0,0.5129,1,0],["TUPY3",-0.08,0,0.0005,1,0],["UGPA3",-0.17,1,0.0005,1,0],["UNIP6",-0.22,1,0.0006,1,0],["USIM5",-0.59,1,0.0002,0,0],["VALE3",-0.33,1,0.0006,1,0],["VVAR3",-0.18,1,0.0003,1,0],["VIVR3",0.05,0,0.4179,1,0],["VULC3",0.85,0,0.2742,1,0],["WEGE3",-0.16,1,0.001,1,0],["MWET4",-0.35,0,0.0022,1,0],["WHRL4",-0.25,1,0.0004,1,0],["WLMM4",-0.06,0,0.0006,1,0]],"CL":[["AESGENER",-0.101,1,4.07e-05,1,0],["AGUNSA",-0.028,0,0.0002,1,0],["ANASAC",-0.043,1,0.0001,1,0],["AGUAS",-0.063,1,0.0001,1,0],["ALMENDRAL",-0.085,0,-0.0001,1,0],["ANDACOR",0.018,0,0.0002,1,0],["ANTARCHILE",-0.12,1,0.0002,1,0],["BANMEDICA",-0.055,1,0.0002,1,0],["BESALCO",-0.098,1,0.0002,1,0],["COLO",0.309,0,0.3836,1,0],["BLUMAR",0.005,0,0.0001,1,0],["CAP",-0.245,1,0.0002,1,0],["CAROZZI",1.596,0,0.0073,1,0],["POLPAICO",-0.012,0,4.47e-05,1,0],["CEMENTOS",-0.018,0,0.0001,1,0],["CENCOSUD",0.982,0,0.7332,1,1],["CINTAC",0.075,1,-0.0002,1,0],["LASCONDES",-0.007,0,0.0002,1,0],["POLO",-0.041,0,0.0001,1,0],["HIPICO",-0.179,0,0.0003,1,0],["EMBONOR",-0.015,0,0.0001,1,0],["COLBUN",-0.07,1,0.0001,1,0],["COPEVAL",0.616,0,0.0254,1,0],["CCU",-0.055,1,0.0001,1,0],["FOSFOROS",-0.004,0,0.0001,1,0],["LITORAL",-0.008,0,0.0002,1,0],["ELECMETAL",-0.026,0,0.0002,1,0],["VOLCAN",-0.013,0,0.0001,1,0],["INTEROCEAN",0.023,0,0.0,0,0],["VAPORES",-0.137,1,-0.0001,1,0],["CIC",0.007,0,-0.0001,1,0],["CVA",-0.056,0,0.0003,1,0],["CRISTALES",-0.028,0,0.0001,1,0],["DUNCANFOX",-0.033,0,0.0002,1,0],["PUNTILLA",-1.422,0,0.0111,1,0],["ANDINA",-0.05,0,0.0001,1,0],["MOLLER",-0.13,0,0.0626,1,0],["ELECDA",-0.019,0,2.77e-05,1,0],["EMELARI",-0.009,0,3.56e-05,1,0],["ELIQSA",-0.025,0,0.0001,1,0],["PEHUENCHE",-0.068,1,0.0002,1,0],["ENTEL",-0.128,1,0.0001,1,0],["EPERVA",0.008,0,0.0001,1,0],["HORNOS",-0.006,0,-0.0001,1,0],["CMPC",-0.117,1,0.0001,1,0],["COPEC",-0.132,1,0.0001,1,0],["GASCO",-0.032,0,0.0,1,0],["IANSA",-0.095,1,-0.0001,1,0],["NUEVAPOLAR",-0.135,0,-0.0002,1,0],["ENAEX",-0.041,1,0.0002,1,0],["ENELAM",-0.11,1,-3.19e-05,1,0],["ENELDXCH",-3.368,0,0.1002,1,0],["ENELGXCH",-0.086,1,0.0001,1,0],["EDELPA",-0.006,0,2.39e-05,1,0],["FEPASA",-0.004,0,0.0006,1,0],["VICONTO",-0.004,0,0.0001,1,0],["GRANADILLA",0.007,0,1.78e-05,1,0],["NAVIERA",0.074,0,0.0002,1,0],["HIPERMARC",-0.12,0,-0.0002,1,0],["HF",1.914,0,0.1055,1,0],["INFODEMA",0.052,0,0.0,0,0],["INGEVEC",-3.485,0,0.0873,1,0],["ESTACIONAM",0.003,0,0.0001,1,0],["CLUBCAMPO",-0.019,0,0.0001,1,0],["CRAIGHOUSE",-0.003,0,-5.99e-06,1,0],["ISANPA",-0.385,0,0.0135,1,0],["SIXTERRA",0.041,0,3.05e-05,1,0],["INDISA",4.12,0,0.2987,1,0],["INTASA",-1.689,0,0.0175,1,0],["IACSA",0.014,0,-0.0001,1,0],["SIEMEL",-0.007,0,0.0001,1,0],["INVEXANS",-0.14,1,-0.0003,1,0],["IPAL",-0.008,0,0.0002,1,0],["LTM",-0.151,1,0.0002,1,0],["MARBELLACC",0.024,0,-0.0001,1,0],["MELON",-0.092,0,-0.0004,1,0],["MINERA",0.001,0,0.0002,1,0],["MOLYMET",-0.019,0,0.0002,1,0],["NAVARINO",0.007,0,0.0001,1,0],["NIBSA",-0.292,0,0.0043,1,0],["PACIFICO",0.008,0,0.0003,1,0],["PARAUCO",-0.108,1,0.0002,1,0],["IQUIQUE",-0.02,0,2.62e-05,1,0],["FROWARD",-0.034,0,0.0003,1,0],["COUNTRY",-0.025,0,0.0,1,0],["VENTANAS",-0.171,0,0.0,1,0],["PUERTO",0.002,0,0.0001,1,0],["QUILICURA",0.003,0,0.0001,1,0],["QUINENCO",-0.058,1,0.0001,1,0],["SPORTFRAN",-0.022,0,0.0001,1,0],["FALABELLA",-0.125,1,0.0002,1,0],["SALFACORP",1.026,0,0.6271,1,0],["SANTANA",0.005,0,0.0002,1,0],["SCHWAGER",-0.022,0,-2.29e-05,1,0],["SIPSA",-0.06,0,3.51e-05,1,0],["SOFRUCO",-0.003,0,0.0001,1,0],["GOLF",-0.019,0,0.0001,1,0],["SANTARITA",-0.016,0,0.0001,1,0],["CAMPOS",0.019,0,-2.43e-05,1,0],["HIPODROMOA",-0.011,0,4.85e-05,1,0],["INMOBVINA",0.048,0,0.0003,1,0],["COLOSO",0.013,0,0.0001,1,0],["PUCOBRE",-0.052,1,0.0002,1,0],["SONDA",0.298,0,0.5906,1,1],["SOPROCAL",-0.001,0,-3.25e-05,1,0],["SOQUICOM",-0.072,1,0.0001,1,0],["UNIONGOLF",0.031,0,0.0165,1,0],["CLUBUNION",-0.033,0,0.0001,1,0],["SPORTING",0.013,0,0.0001,1,0],["CONCHATORO",0.001,0,0.0001,1,0],["VSPT",-0.002,0,0.0,1,0],["EMILIANA",-0.013,0,-0.0001,1,0],["WATTS",-0.014,0,0.0002,1,0],["ZOFRI",-0.043,0,0.0002,1,0]],"CO":[["PAZRIO",-0.117,0,0.00037,1,0],["AGROCHAL",-0.002,0,3e-05,1,0],["DESCAUCANO",0.035,0,0.00018,1,0],["EXITO",-0.251,1,0.00015,1,0],["CARACOLTV",0.015,0,8e-05,1,0],["CARTON",-0.02,0,0.00012,1,0],["CELSIA",-0.244,1,0.00034,1,0],["CEMARGOS",-0.261,1,0.0002,1,0],["MARLY",-0.002,0,0.00019,1,0],["COLTEJER",-0.041,0,-0.00046,1,0],["SANFELIPE",0.049,0,0.00045,1,0],["ELECTULUA",0.022,0,0.00114,1,0],["EMPAQUES",-0.018,0,0.00166,1,0],["CONCIVILES",0.047,0,0.00023,1,0],["CONCONCRET",-0.214,0,0.00019,1,0],["COOMEVAEPS",-0.064,0,-0.00021,1,0],["CORFERIAS",-0.087,0,0.00038,1,0],["ECOPETROL",0.132,0,0.5791,1,0],["EPSA",-0.25,0,0.00184,1,0],["FABRICATO",-0.105,0,-0.00013,1,0],["GASNATURAL",0.025,0,0.00022,1,0],["EEB",4.334,0,0.4005,1,0],["GRUPOARGOS",-0.244,1,0.00026,1,0],["NUTRESA",-0.158,1,0.00028,1,0],["ORBIS",0.012,0,9e-05,1,0],["ESTRA",-0.011,0,3e-05,1,0],["INCASTILLA",0.006,0,3e-05,1,0],["ISA",-0.212,1,0.00027,1,0],["INESA",0.002,0,9e-05,1,0],["INVENSA",0.002,0,0.00012,1,0],["TITAN",-0.064,0,0.00011,1,0],["MAYAGUEZ",0.044,0,0.00023,1,0],["MINEROS",-0.058,0,0.00021,1,0],["TERPEL",1.289,0,0.08822,1,0],["FAMILIA",0.03,0,0.0002,1,0],["VALSIMESA",-0.011,0,0.00015,1,0]],"MX":[["ACCELSA",0.01,0,8.41e-05,1,0],["ALPEK",0.96,0,9.6e-06,1,0],["ALSEA",-0.15,1,0.0003231,1,0],["AMX",-0.05,0,0.0001999,1,0],["AC",-0.1,1,0.000169,1,0],["CPO",0.85,0,-6.48e-05,1,0],["PAPPEL",1.07,0,8.16e-05,1,0],["CEMEX",-1.05,1,1.37e-05,0,0],["CMR",-0.07,0,9.13e-05,1,0],["AUTLAN",-0.52,1,0.0002723,1,0],["ARA",-0.88,1,5.94e-05,0,0],["VOLAR",1.81,0,-3.25e-05,1,0],["CONVER",-2.1,0,-0.0006508,1,0],["GEO",-0.93,1,4.66e-05,1,0],["CIE",-0.31,1,0.0003555,1,0],["CMOCTEZ",-0.14,1,0.0002696,1,0],["FRAGUA",-0.08,1,0.0002458,1,0],["CYDSASA",-0.11,0,-0.0004781,1,0],["DINE",2.6,0,0.0001988,1,0],["LIVEPOL",-0.31,1,4.42e-05,1,0],["BEVIDES",-0.05,0,0.0002424,1,0],["FEMSA",-0.46,1,-6.71e-05,1,0],["COLLADO",0.04,0,4.51e-05,1,0],["LAB",0.37,0,0.0003618,1,0],["GRUMA",-0.26,1,0.0003002,1,0],["CIDMEGA",0.05,0,-1.17e-05,1,0],["GAP",0.26,0,0.0002711,1,0],["ASUR",0.01,0,0.0002689,1,0],["BAFAR",0.0,0,0.0001709,1,0],["BIMBO",-0.52,1,0.0001475,1,0],["GCARSO",-0.85,1,0.0002608,1,0],["GCC",0.05,0,1.48e-05,1,0],["GIGANTE",-0.03,0,0.0002259,1,0],["HERDEZ",-0.09,1,6.36e-05,1,0],["GISSA",-0.22,1,5.1e-05,1,0],["KUO",-0.26,1,-3.6e-05,1,0],["LALA",0.13,0,0.0001747,1,0],["GMD",-0.16,1,0.0002436,1,0],["GMEXICO",-0.02,0,7.55e-05,1,0],["MINSA",-0.03,0,0.0002007,1,0],["GPH",-0.04,0,-0.0003161,1,0],["POCHTEC",-0.48,1,0.000189,1,0],["POSADAS",-0.12,1,1.42e-05,1,0],["TLEVISA",-0.48,1,0.0004122,1,0],["VASCONI",-0.01,0,-0.0001922,1,0],["HIMEXSA",-0.08,0,1.27e-05,1,0],["HCITY",0.99,0,0.000152,1,0],["IDEAL",0.01,0,0.000152,1,0],["ICH",-0.54,1,0.0002297,1,0],["PE_OLES",-0.77,1,0.0002614,1,0],["CERAMIC",1.89,0,0.0001696,1,0],["KIMBER",-0.55,1,8.56e-05,1,0],["MEDICA",0.0,0,0.0001979,1,0],["MEGA",0.88,0,5.89e-05,1,0],["MEXCHEM",-0.77,1,0.0004017,1,0],["MFRISCO",0.74,0,-0.0001537,1,0],["OHLMEX",0.82,0,3.83e-05,1,0],["CULTIBA",-0.12,1,0.0001762,1,0],["SORIANA",-0.57,1,8.5e-05,1,0],["PINFRA",-0.58,1,0.0004167,1,0],["RASSINI",-0.26,1,9.23e-05,1,0],["SARE",-0.21,1,-0.0004318,1,0],["AZTECA",-0.52,1,-5.8e-05,0,0],["VITRO",-0.56,1,0.0001859,1,0],["WALMEX",-0.49,1,0.0002164,1,0]],"PE":[["PARAMOC1",0.011,0,4.29e-05,1,0],["PUCALAC1",0.059,0,-0.0001,1,0],["LAREDOC1",0.008,0,0.0002,1,0],["SNJACIC1",0.03,0,0.0001,1,0],["AGROKAC1",-1.18,0,0.0018,1,0],["ALICORC1",-0.089,0,0.0002,1,0],["BAYERI1",-0.024,0,0.0002,1,0],["CARTAVC1",0.005,0,0.0002,1,0],["CASAGRC1",-0.06,0,0.0001,1,0],["CHUCARC1",0.062,0,0.0001,1,0],["CPACASC1",-0.056,0,0.0001,1,0],["SNJUANC1",-0.023,0,0.0003,1,0],["GOODYEI1",-0.013,0,0.0001,1,0],["PODERC1",-2.0,0,0.0977,1,0],["MOROCOI1",0.056,0,2.68e-05,1,0],["LUISAI1",-0.15,1,0.0003,1,0],["UNITEXI1",-0.066,0,6.84e-06,1,0],["CONCESI1",2.283,0,0.0296,1,0],["CORAREI1",-0.066,0,0.0002,1,0],["CERAMII1",0.061,0,0.0001,1,0],["COCESUC1",0.085,0,0.0,1,0],["COFIINC1",-1.575,0,0.0062,1,0],["CORLINI1",0.082,0,0.0003,1,0],["CRETEXI1",-0.072,0,0.0001,1,0],["ESUREBC1",-0.056,0,0.0001,1,0],["ANDAHUC1",0.057,0,1.69e-05,1,0],["ASJUANC1",0.025,0,-5.69e-06,1,0],["SINTUC1",0.005,0,8.78e-06,0,0],["POMALCC1",-0.019,0,-2.59e-05,1,0],["TUMANC1",0.068,0,-0.0001,1,0],["INGENIC1",-0.001,0,0.0001,1,0],["HIDRA2C1",-0.096,0,0.0002,1,0],["SIDERC1",-0.087,0,0.0001,1,0],["ENDISPC1",-0.065,0,-4.35e-06,1,0],["ENGEPEC1",-0.066,0,0.0001,1,0],["EGEPIBC1",2.224,0,0.0903,1,0],["ENPACII1",-2.467,0,0.0086,1,0],["ENGIEC1",0.575,0,0.2615,1,0],["EXSAI1",-0.015,0,0.0001,1,0],["ETNAI1",0.02,0,0.0002,1,0],["ETERNII1",-0.121,0,-2.43e-05,1,0],["FERREYC1",-0.125,1,0.0002,1,0],["FILAMEI1",0.011,0,2.88e-05,1,0],["FERREYC1",-0.125,1,0.0002,1,0],["GRAMONC1",-0.101,0,0.0002,1,0],["FUTURAI1",1.179,0,0.0354,1,0],["HIDROSI1",-0.004,0,2.39e-05,1,0],["PIURAC1",-0.098,0,-0.0002,1,0],["INDECOI1",-0.042,0,0.0002,1,0],["ENVASEI1",-0.049,0,0.0002,1,0],["IIDEI1",-0.688,0,0.0019,1,0],["IEQSAI1",0.303,1,0.0001,1,0],["INTINDI1",-1.199,0,0.0063,1,0],["INVCENC1",-0.023,0,0.0003,1,0],["INTURSC1",-0.157,1,-0.0001,1,0],["GLORIAI1",-0.003,0,0.0002,1,0],["LUSURC1",-0.069,1,0.0001,1,0],["CAUCHOI1",-0.017,0,2.65e-05,1,0],["RECORDI1",-0.098,0,0.0002,1,0],["MEPSAI1",0.053,0,0.0002,1,0],["MICHEI1",-0.013,0,0.0003,1,0],["MODIANI1",0.044,0,0.0004,1,0],["MINSURI1",-0.149,1,0.0001,1,0],["NEGOCIC1",0.022,0,0.0002,1,0],["ATACOAC1",-0.032,0,0.0001,1,0],["NEXAPEC1",-0.068,0,0.0002,1,0],["PHTBC1",0.046,0,-0.0001,1,0],["PERUBAI1",-0.14,1,0.0001,1,0],["EXALMC1",-7.498,0,0.051,1,0],["QUIMPAI1",-0.05,0,0.0003,1,0],["SAGAC1",-7.722,1,0.0676,1,0],["SHPC1",0.02,0,0.0003,1,0],["SIAMI1",-0.003,0,0.0001,1,0],["CVERDEC1",-0.165,0,0.0002,1,0],["MINCORI1",-0.159,0,0.0003,1,0],["BROCALC1",-0.243,1,0.0,1,0],["TELEFBC1",-0.113,0,-0.0001,1,0],["TRADIC1",-1.152,0,0.0032,1,0],["UNACEMC1",-0.077,0,1.94e-05,1,0],["ELCOMEI1",-0.071,0,0.0002,1,0],["BACKUSI1",-0.046,0,0.0002,1,0],["VOLCABC1",-0.132,0,0.0001,1,0]]};
+
+  var COLS = ['var(--fix)', 'color-mix(in srgb, var(--fix) 78%, white)', 'color-mix(in srgb, var(--fix) 62%, white)', 'color-mix(in srgb, var(--fix) 46%, white)', 'var(--free)'];
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 420, 90, {ay:'66%'});
+    rotatable(sc, st, -20, 8);
+    var S = 1.45, cols = [];
+    CK.forEach(function(k, i){
+      var x = 4 + i * 70;
+      var a = box({w:28, d:34, x:x, y:22, h:Math.max(T9[i][0] * S, 2), c:'var(--fix)', top:fmt(T9[i][0], 0)});
+      var b = box({w:28, d:34, x:x + 31, y:22, h:Math.max(T9[i][4] * S, 2), c:'var(--free)', top:fmt(T9[i][4], 0)});
+      st.appendChild(a); st.appendChild(b); cols.push([a, b]);
+      flatLabel(st, CN[i], x - 6, 64, 72, 'font-size:11px; text-align:center;');
+    });
+    var read = $('cap-read'), cur = -1;
+    function set(i){
+      if (i === cur) return; cur = i;
+      cols.forEach(function(p, j){ p.forEach(function(b){ b.classList.toggle('dim', j !== i); }); });
+      read.innerHTML = '<b>' + CN[i] + '</b>: ' + L('reta ', 'line ') + '<b>' + pct(T9[i][0]) + '</b> · ' + L('livre ', 'free-form ') + '<b>' + pct(T9[i][4]) + '</b>';
+    }
+    if (M.reduce){ set(1); return; }
+    var vis = false;
+    new IntersectionObserver(function(es){ vis = es[0].isIntersecting; }).observe(sc);
+    set(0);
+    M.onTick(function(t){ if (vis) set(Math.floor(t / 2.6) % 6); });
+  })();
+
+  /* ================= 02 · EXPOSIÇÃO ================= */
+  (function(){
+    var F = [
+      [L('Exportadora', 'Exporter'), L('vende em dólar', 'sells in dollars'), 0.5],
+      [L('Neutra', 'Neutral'), L('tudo em moeda local', 'all in local currency'), 0],
+      [L('Importadora', 'Importer'), L('compra em dólar', 'buys in dollars'), -0.5]
+    ];
+    var box2 = $('ex-firms'), r = $('ex-r');
+    box2.innerHTML = F.map(function(f, i){ return '<div class="frow"><div><b>' + f[0] + '</b><small>' + f[1] + ' · ' + L('coef. ', 'coef. ') + sg(f[2], 1, true) + '</small></div><div class="ftrack"><div class="fbar" id="ex-b' + i + '"></div></div><div class="fval" id="ex-t' + i + '"></div></div>'; }).join('');
+    function draw(){
+      var d = +r.value;
+      $('ex-v').textContent = (d > 0 ? '+' : (d < 0 ? '−' : '')) + Math.abs(d) + '%';
+      F.forEach(function(f, i){
+        var v = f[2] * d, w = Math.abs(v) / 10 * 50, b = $('ex-b' + i);
+        b.style.width = w + '%'; b.style.left = (v >= 0 ? 50 : 50 - w) + '%';
+        b.style.background = v >= 0 ? 'var(--free)' : 'var(--fix)';
+        $('ex-t' + i).textContent = sg(v, 0, true) + '%';
+      });
+      $('ex-read').innerHTML = d === 0 ? L('Dólar parado: nenhuma das três se mexe por causa dele.', 'Dollar unchanged: none of the three moves because of it.') :
+        L('Dólar ', 'Dollar ') + (d > 0 ? '+' : '−') + Math.abs(d) + '%: ' + L('a exportadora vai a ', 'the exporter goes to ') + '<b>' + sg(0.5 * d, 0, true) + '%</b>, ' + L('a importadora a ', 'the importer to ') + '<b>' + sg(-0.5 * d, 0, true) + '%</b>. ' + L('O coeficiente é essa sensibilidade.', 'The coefficient is that sensitivity.');
+    }
+    r.addEventListener('input', draw); draw();
+  })();
+
+  /* ================= 03 · ENIGMA ================= */
+  (function(){
+    var S = [
+      ['⇄', L('Repasse', 'Pass-through'), L('Passar o custo do dólar para clientes e fornecedores.', 'Passing the cost of the dollar on to customers and suppliers.')],
+      ['⚙', L('Proteção operacional', 'Operational hedge'), L('Produzir, vender e comprar em vários países, equilibrando entradas e saídas em dólar.', 'Producing, selling and buying in several countries, balancing dollar inflows and outflows.')],
+      ['🛡', L('Proteção financeira', 'Financial hedge'), L('Derivativos e dívida em moeda estrangeira.', 'Derivatives and foreign-currency debt.')]
+    ];
+    var el = $('en-sh'), on = [false, false, false];
+    el.innerHTML = S.map(function(s, i){ return '<button class="shield" data-i="' + i + '" aria-pressed="false"><b>' + s[1] + '</b>' + s[2] + '</button>'; }).join('');
+    function draw(){
+      var n = on.filter(Boolean).length, all = n === 3;
+      var v = all ? 30 : 100;
+      $('en-bar').style.width = v + '%'; $('en-pct').textContent = (all ? '30%' : (n ? '?' : '100%'));
+      $('en-bt').textContent = all ? '30' : '';
+      $('en-read').innerHTML = n === 0 ? L('Sem proteção, o efeito do dólar aparece inteiro no valor da empresa. Ligue os escudos.', 'Without protection, the full effect of the dollar shows in the firm value. Switch on the shields.') :
+        all ? L('Com as três, sobra em média <b>30%</b> da exposição (−70%). Por isso medir a exposição com dados de mercado é difícil: boa parte já foi neutralizada.', 'With all three, on average <b>30%</b> of the exposure is left (−70%). That is why measuring exposure with market data is hard: much of it has already been neutralized.') :
+        L('Cada escudo reduz um pouco; o estudo só dá o total das três juntas. Ligue as três.', 'Each shield cuts a bit; the study only gives the total for all three together. Switch on all three.');
+    }
+    each(el.children, function(b){ b.addEventListener('click', function(){ var i = +b.dataset.i; on[i] = !on[i]; b.setAttribute('aria-pressed', on[i]); draw(); }); });
+    draw();
+  })();
+
+  /* ================= 04 · REVISÃO ================= */
+  (function(){
+    var F = [
+      [13952, L('artigos achados', 'articles found'), L('Web of Science (8.193), Science Direct (3.676) e Proquest (2.083), com as palavras câmbio e hedge, de 2008 a 2018.', 'Web of Science (8,193), Science Direct (3,676) and Proquest (2,083), with the words currency and hedge, from 2008 to 2018.')],
+      [13394, L('sem repetidos', 'without duplicates'), L('558 artigos apareciam em mais de uma base.', '558 articles appeared in more than one database.')],
+      [129, L('no tema', 'on topic'), L('Pela leitura de título, resumo e palavras-chave, só ficaram os que juntam câmbio e proteção; 99% saíram (muitos sobre previsão de câmbio ou proteção de commodities e juros).', 'Reading titles, abstracts and keywords, only those combining currency and hedging stayed; 99% were dropped (many on exchange-rate forecasting or commodity and interest-rate hedging).')],
+      [81, L('com citações', 'with citations'), L('Pelo menos uma citação por ano desde a publicação.', 'At least one citation per year since publication.')],
+      [73, L('lidos por inteiro', 'read in full'), L('Oito saíram depois da leitura completa. Nos 73, os temas mais comuns: comportamento de proteção (19), incentivos ao uso de derivativos (18) e exposição cambial (18).', 'Eight were dropped after full reading. Among the 73, the most common topics: hedging behavior (19), incentives for derivatives use (18) and exchange-rate exposure (18).')]
+    ];
+    var el = $('fun'), mx = Math.log10(13952), mn = Math.log10(30);
+    el.innerHTML = F.map(function(f, i){ var w = 18 + 82 * (Math.log10(f[0]) - mn) / (mx - mn); return '<button class="fstep' + (i === F.length - 1 ? ' last' : '') + '" data-i="' + i + '" aria-pressed="false"><span class="fb" style="width:' + w + '%">' + fmt(f[0], 0).replace(/(\d)(?=(\d{3})+(?!\d))/g, EN ? '$1,' : '$1.') + '</span><span class="ft">' + f[1] + '</span></button>'; }).join('');
+    function set(i){
+      each(el.children, function(b, j){ b.setAttribute('aria-pressed', j === i); });
+      $('fn-read').innerHTML = '<p><b>' + F[i][1].charAt(0).toUpperCase() + F[i][1].slice(1) + ':</b> ' + F[i][2] + '</p>';
+    }
+    each(el.children, function(b){ b.addEventListener('click', function(){ set(+b.dataset.i); }); });
+    set(4);
+    var h = ''; for (var i = 0; i < 73; i++) h += '<i' + (i < 18 ? ' class="on"' : '') + '></i>';
+    $('sq73').innerHTML = h;
+  })();
+
+  /* ================= 05 · PAÍSES ================= */
+  (function(){
+    function set(i){
+      var s = SAMP[i], h = '';
+      for (var j = 0; j < s[0]; j++) h += '<i' + (j >= s[1] ? ' class="out"' : '') + '></i>';
+      $('ps-grid').innerHTML = h;
+      $('ps-grid').setAttribute('aria-label', CN[i] + ': ' + s[0] + L(' empresas na amostra inicial, ', ' companies in the initial sample, ') + s[1] + L(' na final', ' in the final one'));
+      $('ps-h').textContent = CN[i];
+      $('ps-facts').innerHTML = '<div><b>' + s[0] + '</b>' + L('empresas no início', 'companies at the start') + '</div><div><b>' + s[1] + '</b>' + L('na amostra final', 'in the final sample') + '</div><div><b>' + s[2] + '</b>' + L('índice da bolsa usado', 'stock index used') + '</div>';
+      $('ps-note').textContent = s[3];
+    }
+    chipsInit($('ps-chips'), CN, 1, set); set(1);
+  })();
+
+  /* ================= 06 · RÉGUAS (ilustração) ================= */
+  (function(){
+    var R = rng(7), N = 170, X = [], Y = [];
+    function nrm(){ var s = 0; for (var k = 0; k < 6; k++) s += R(); return (s - 3) / Math.sqrt(0.5); }
+    function f0(x){ return 0.06 * x + 0.6 * Math.tanh(1.8 * x); }
+    for (var i = 0; i < N; i++){ var x = Math.max(-2.9, Math.min(2.9, nrm() * 0.95)); X.push(x); Y.push(f0(x) + nrm() * 0.32); }
+    var sdx = Math.sqrt(X.reduce(function(a, x){ return a + x * x; }, 0) / N);
+    function solve(A, b){ var n = b.length; for (var c = 0; c < n; c++){ var p = c; for (var r = c + 1; r < n; r++) if (Math.abs(A[r][c]) > Math.abs(A[p][c])) p = r; var t = A[c]; A[c] = A[p]; A[p] = t; t = b[c]; b[c] = b[p]; b[p] = t; for (var r2 = c + 1; r2 < n; r2++){ var m = A[r2][c] / A[c][c]; for (var k = c; k < n; k++) A[r2][k] -= m * A[c][k]; b[r2] -= m * b[c]; } } var x = new Array(n); for (var r3 = n - 1; r3 >= 0; r3--){ var s = b[r3]; for (var k2 = r3 + 1; k2 < n; k2++) s -= A[r3][k2] * x[k2]; x[r3] = s / A[r3][r3]; } return x; }
+    function poly(deg, xs, ys){ var n = deg + 1, A = [], b = []; for (var a = 0; a < n; a++){ A.push(new Array(n).fill(0)); b.push(0); } xs.forEach(function(x, i){ for (var a = 0; a < n; a++){ b[a] += Math.pow(x, a) * ys[i]; for (var c = 0; c < n; c++) A[a][c] += Math.pow(x, a + c); } }); var co = solve(A, b); return function(x){ var s = 0; for (var a = 0; a < n; a++) s += co[a] * Math.pow(x, a); return s; }; }
+    var fLin = poly(1, X, Y), fQ = poly(2, X, Y), fC = poly(3, X, Y);
+    var c1 = -0.5 * sdx, c2 = 0.5 * sdx;
+    function band(lo, hi){ var xs = [], ys = []; X.forEach(function(x, i){ if (x >= lo && x < hi){ xs.push(x); ys.push(Y[i]); } }); return poly(1, xs, ys); }
+    var B = [band(-9, c1), band(c1, c2), band(c2, 9)];
+    function fPP(x){ return x < c1 ? B[0](x) : (x < c2 ? B[1](x) : B[2](x)); }
+    function loc(x0, h, skip){ var s0 = 0, s1 = 0, s2 = 0, t0 = 0, t1 = 0; for (var i = 0; i < N; i++){ if (i === skip) continue; var u = (X[i] - x0) / h, w = Math.exp(-0.5 * u * u), dx = X[i] - x0; s0 += w; s1 += w * dx; s2 += w * dx * dx; t0 += w * Y[i]; t1 += w * dx * Y[i]; } var det = s0 * s2 - s1 * s1; return det > 1e-12 ? (s2 * t0 - s1 * t1) / det : t0 / s0; }
+    function hOf(v){ return 0.08 * Math.pow(3 / 0.08, v / 40); }
+    function cvErr(h){ var e = 0; for (var i = 0; i < N; i++){ var d = Y[i] - loc(X[i], h, i); e += d * d; } return e / N; }
+    var bestV = 0, bestE = 1e9; for (var v = 0; v <= 40; v++){ var e = cvErr(hOf(v)); if (e < bestE){ bestE = e; bestV = v; } }
+    var svg = $('rg-svg'), X0 = 50, W = 490, Y0 = 14, H = 250;
+    function ax(x){ return X0 + W * (x + 3) / 6; }
+    function ay(y){ return Y0 + H * (1.4 - y) / 2.8; }
+    var mode = 0, hv = 20;
+    var TXT = [
+      L('<b>Reta:</b> uma inclinação só para todos os dias. É a régua clássica (Adler e Dumas, 1984; Jorion, 1990).', '<b>Line:</b> a single slope for every day. It is the classic yardstick (Adler and Dumas, 1984; Jorion, 1990).'),
+      L('<b>Curvas:</b> a relação pode dobrar. A dissertação testa uma quadrática e uma cúbica, sempre com a mesma forma para todas as empresas e todo o período.', '<b>Curves:</b> the relationship can bend. The dissertation tests a quadratic and a cubic one, always with the same shape for every company and the whole period.'),
+      L('<b>Por faixas:</b> uma reta para quedas fortes do dólar, outra para variações pequenas (até meio desvio-padrão) e outra para altas fortes. As faixas são marcadas no gráfico.', '<b>By ranges:</b> one line for big drops in the dollar, another for small moves (up to half a standard deviation) and another for big rises. The ranges are marked on the chart.'),
+      L('<b>Livre:</b> em cada ponto, uma retinha ajustada com mais peso nos dias vizinhos. Janela estreita segue o ruído; larga vira quase uma reta.', '<b>Free-form:</b> at each point, a little line fitted with more weight on neighboring days. A narrow window follows the noise; a wide one becomes almost a straight line.')
+    ];
+    function draw(){
+      var h = '<defs><clipPath id="rg-clip"><rect x="' + X0 + '" y="' + Y0 + '" width="' + W + '" height="' + H + '"/></clipPath></defs>';
+      for (var g = -1; g <= 1.0001; g += 0.5){ h += '<line x1="' + X0 + '" y1="' + ay(g) + '" x2="' + (X0 + W) + '" y2="' + ay(g) + '" stroke="' + (g === 0 ? '#94a3b8' : '#eef2f6') + '"/>'; }
+      for (var gx = -3; gx <= 3; gx++){ h += '<line x1="' + ax(gx) + '" y1="' + Y0 + '" x2="' + ax(gx) + '" y2="' + (Y0 + H) + '" stroke="' + (gx === 0 ? '#94a3b8' : '#eef2f6') + '"/><text class="s" x="' + ax(gx) + '" y="' + (Y0 + H + 16) + '" text-anchor="middle" style="font-size:11px; fill:var(--muted)">' + (gx > 0 ? '+' : (gx < 0 ? '−' : '')) + Math.abs(gx) + '%</text>'; }
+      h += '<text class="s" x="' + (X0 + W) + '" y="' + (Y0 + H + 32) + '" text-anchor="end" style="font-size:11px; fill:var(--muted)">' + L('variação do dólar no dia', 'daily change in the dollar') + '</text>';
+      h += '<text class="s" x="' + (X0 + 4) + '" y="' + (Y0 + 10) + '" style="font-size:11px; fill:var(--muted)">' + L('ação, descontado o mercado', 'share, net of the market') + '</text>';
+      if (mode === 2){ h += '<rect x="' + ax(c1) + '" y="' + Y0 + '" width="' + (ax(c2) - ax(c1)) + '" height="' + H + '" fill="color-mix(in srgb, var(--fix) 7%, white)"/>'; }
+      X.forEach(function(x, i){ h += '<circle cx="' + ax(x).toFixed(1) + '" cy="' + ay(Y[i]).toFixed(1) + '" r="3" fill="#94a3b8" fill-opacity=".55"/>'; });
+      var fns = mode === 0 ? [fLin] : mode === 1 ? [fQ, fC] : mode === 2 ? [fPP] : [function(x){ return loc(x, hOf(hv), -1); }];
+      fns.forEach(function(fn, k){
+        var d = '', prevBand = null;
+        for (var x = -2.9; x <= 2.9001; x += 0.05){
+          var bnd = x < c1 ? 0 : (x < c2 ? 1 : 2);
+          var cmd = (d === '' || (mode === 2 && bnd !== prevBand)) ? 'M' : 'L'; prevBand = bnd;
+          d += cmd + ax(x).toFixed(1) + ' ' + ay(fn(x)).toFixed(1) + ' ';
+        }
+        h += '<path clip-path="url(#rg-clip)" d="' + d + '" fill="none" stroke="' + (mode === 3 ? 'var(--free)' : 'var(--fix)') + '" stroke-width="3"' + (k === 1 ? ' stroke-dasharray="7 5"' : '') + '/>';
+      });
+      if (mode === 1){ h += '<text class="s" x="' + (X0 + W - 4) + '" y="' + (Y0 + H - 8) + '" text-anchor="end" style="font-size:11px; fill:var(--fix)">' + L('cheia: quadrática · tracejada: cúbica', 'solid: quadratic · dashed: cubic') + '</text>'; }
+      svg.innerHTML = h;
+      $('rg-np').style.display = mode === 3 ? 'block' : 'none';
+      var extra = '';
+      if (mode === 3){
+        $('rg-hv').textContent = fmt(hOf(hv), 2) + L(' ponto de câmbio', ' currency points');
+        extra = hv === bestV ? L(' <b>Esta é a largura que a validação cruzada escolhe nestes dados:</b> a que melhor prevê os dias deixados de fora.', ' <b>This is the width cross-validation picks for these data:</b> the one that best predicts the days left out.') : '';
+      }
+      $('rg-read').innerHTML = TXT[mode] + extra;
+    }
+    segInit($('rg-seg'), [L('Reta', 'Line'), L('Curvas', 'Curves'), L('Por faixas', 'By ranges'), L('Livre', 'Free-form')], 0, function(v){ mode = v; draw(); });
+    $('rg-h').addEventListener('input', function(){ hv = +this.value; draw(); });
+    $('rg-cv').addEventListener('click', function(){ hv = bestV; $('rg-h').value = bestV; draw(); });
+    draw();
+  })();
+
+  /* ================= 07 · RESULTADO (grade 3D) ================= */
+  (function(){
+    var sc = $('sk-scene'), st = makeStage(sc, 396, 250, {ay:'64%'});
+    rotatable(sc, st, -24, 7);
+    var S = 1.35, cells = [];
+    for (var m = 4; m >= 0; m--){
+      var row = 4 - m;   // livre ao fundo (y pequeno)
+      CK.forEach(function(k, i){
+        var v = T9[i][m];
+        var b = box({w:40, d:30, x:8 + i * 64, y:12 + row * 46, h:Math.max(v * S, 2), c:COLS[m], top:m === 4 || m === 0 ? fmt(v, 0) : ''});
+        b.dataset.m = m; st.appendChild(b); cells.push(b);
+      });
+      flatLabel(st, MODS[m], -122, 14 + row * 46, 118, 'font-size:14px; font-weight:600; text-align:right;');
+    }
+    CK.forEach(function(k, i){ flatLabel(st, CN[i], i * 64 - 6, 244, 84, 'font-size:13px; font-weight:600; text-align:center;'); });
+    var tb = '<tr><th>' + L('País', 'Country') + '</th>' + MODS.map(function(m){ return '<th>' + m + '</th>'; }).join('') + '</tr>';
+    CK.forEach(function(k, i){ tb += '<tr><td>' + CN[i] + '</td>' + T9[i].map(function(v, m){ return '<td' + (m === 4 ? ' class="hi"' : '') + '>' + fmt(v, 1) + '</td>'; }).join('') + '</tr>'; });
+    $('sk-tbl').innerHTML = tb;
+    var RD = [
+      L('<b>Reta:</b> de 12% (Peru, Argentina) a 51% (México) das empresas expostas.', '<b>Line:</b> from 12% (Peru, Argentina) to 51% (Mexico) of companies exposed.'),
+      L('<b>Quadrática:</b> praticamente os mesmos números da reta; no Brasil, 40,9%.', '<b>Quadratic:</b> practically the same numbers as the line; in Brazil, 40.9%.'),
+      L('<b>Cúbica:</b> idem; no Brasil, um pouco menos, 36,6%.', '<b>Cubic:</b> the same; in Brazil, slightly less, 36.6%.'),
+      L('<b>Por faixas:</b> idem; na Argentina, um pouco menos, 10,7%.', '<b>By ranges:</b> the same; in Argentina, slightly less, 10.7%.'),
+      L('<b>Livre:</b> de 91,9% (Brasil) a 100% (Colômbia). Para o autor, a régua livre “beira a totalidade”.', '<b>Free-form:</b> from 91.9% (Brazil) to 100% (Colombia). For the author, the free-form yardstick “borders on the totality”.')
+    ];
+    function set(m){
+      cells.forEach(function(b){ b.classList.toggle('dim', m >= 0 && +b.dataset.m !== m); });
+      $('sk-read').innerHTML = m < 0 ? L('Escolha uma régua para destacar a fileira.', 'Pick a yardstick to highlight its row.') : RD[m];
+    }
+    segInit($('sk-seg'), MODS.concat([L('Todas', 'All')]), 5, function(v){ set(v === 5 ? -1 : v); });
+    set(-1);
+  })();
+
+  /* ================= 08 · ANTES (halteres) ================= */
+  (function(){
+    var svg = $('hl-svg'), mode = 2, shown = false;
+    var X0 = 120, W = 400;
+    function ax(v){ return X0 + W * v / 100; }
+    var ROWS = [1, 2, 4];
+    function draw(){
+      var h = '';
+      for (var g = 0; g <= 100; g += 25){ h += '<line x1="' + ax(g) + '" y1="20" x2="' + ax(g) + '" y2="300" stroke="#eef2f6"/><text class="s" x="' + ax(g) + '" y="318" text-anchor="middle" style="font-size:11px; fill:var(--muted)">' + g + '%</text>'; }
+      var y = 34;
+      ROWS.forEach(function(ci){
+        h += '<text x="8" y="' + (y + 4) + '" style="font-size:13px; font-weight:700; fill:var(--ink)">' + CN[ci] + '</text>';
+        [[0, 0, 0], [1, 4, 3]].forEach(function(p, k){
+          var show = mode === 2 || mode === k;
+          var a = AG[ci][p[2]], b = T9[ci][p[1]], col = k ? 'var(--free)' : 'var(--fix)', yy = y + k * 34;
+          var hideA = !shown && k === 1 && ci === 1;
+          h += '<g opacity="' + (show ? 1 : 0.15) + '">';
+          h += '<text class="s" x="8" y="' + (yy + 20) + '" style="font-size:11px; fill:var(--muted)">' + (k ? L('régua livre', 'free-form') : L('régua reta', 'line')) + '</text>';
+          if (!hideA) h += '<line x1="' + ax(a) + '" y1="' + (yy + 16) + '" x2="' + ax(b) + '" y2="' + (yy + 16) + '" stroke="' + col + '" stroke-width="4" opacity=".45"/>';
+          if (!hideA) h += '<circle cx="' + ax(a) + '" cy="' + (yy + 16) + '" r="7" fill="#fff" stroke="' + col + '" stroke-width="2.5"/>';
+          h += '<circle cx="' + ax(b) + '" cy="' + (yy + 16) + '" r="7" fill="' + col + '"/>';
+          if (!hideA) h += '<text class="s" x="' + (ax(a) - (b > a ? 10 : -10)) + '" y="' + (yy + 4) + '" text-anchor="' + (b > a ? 'end' : 'start') + '" style="font-size:11px; fill:var(--muted)">' + pct(a) + '</text>';
+          else h += '<text x="' + ax(50) + '" y="' + (yy + 21) + '" text-anchor="middle" style="font-size:12px; font-weight:700; fill:var(--muted)">' + L('? palpite: e no estudo original?', '? guess: and in the original study?') + '</text>';
+          h += '<text x="' + (ax(b) + (b > 90 ? -10 : 10)) + '" y="' + (yy + 4) + '" text-anchor="' + (b > 90 ? 'end' : 'start') + '" style="font-size:12px; font-weight:700; fill:' + col + '">' + pct(b) + '</text>';
+          h += '</g>';
+        });
+        y += 96;
+      });
+      svg.innerHTML = h;
+    }
+    segInit($('hl-seg'), [L('Régua reta', 'Line'), L('Régua livre', 'Free-form'), L('As duas', 'Both')], 2, function(v){ mode = v; draw(); });
+    var g = $('hl-g');
+    each(g.children, function(b){ b.addEventListener('click', function(){
+      each(g.children, function(x){ x.classList.toggle('right', x.dataset.v === '0'); x.classList.toggle('wrong', x.dataset.v !== '0'); });
+      $('hl-msg').innerHTML = (b.dataset.v === '0' ? L('<b>Isso.</b> ', '<b>Right.</b> ') : L('<b>Era bem menos:</b> ', '<b>It was much less:</b> ')) + L('16,9% no Brasil de 1995–2006. Aqui, 91,9%. Na régua reta, 2,0% lá e 40,3% aqui.', '16.9% in Brazil in 1995–2006. Here, 91.9%. With the straight line, 2.0% there and 40.3% here.');
+      $('hl-why').classList.add('on'); shown = true; draw();
+    }); });
+    draw();
+  })();
+
+  /* ================= 09 · CHOQUE ================= */
+  (function(){
+    var ci = 1, mode = 1, r = $('ch-r'), MAX = 12;
+    $('ch-bars').innerHTML = MOD.map(function(m, i){ return '<div class="brow"><div><b>' + MODS[i] + '</b></div><div class="btrack"><div class="bbar" id="ch-b' + i + '"></div></div><div class="bval" id="ch-t' + i + '"></div></div>'; }).join('');
+    function draw(){
+      var d = +r.value, T = mode ? T11 : T10;
+      $('ch-v').textContent = (d > 0 ? '+' : (d < 0 ? '−' : '')) + Math.abs(d) + '%';
+      for (var i = 0; i < 5; i++){
+        var c = T[ci][i], v = c * d, w = Math.min(Math.abs(v), MAX) / MAX * 50, b = $('ch-b' + i);
+        b.style.width = w + '%'; b.style.left = (v >= 0 ? 50 : 50 - w) + '%';
+        b.style.background = i === 4 ? 'var(--free)' : COLS[i];
+        $('ch-t' + i).textContent = (mode && d !== 0 ? '± ' + fmt(Math.abs(v), dd(v)) : sg(v, dd(v), true)) + '%';
+      }
+      var a = T[ci][0] * d, bb = T[ci][4] * d;
+      $('ch-read').innerHTML = d === 0 ? L('Mova o dólar.', 'Move the dollar.') : '<b>' + CN[ci] + '</b>, ' + L('dólar ', 'dollar ') + (d > 0 ? '+' : '−') + Math.abs(d) + '%: ' +
+        (mode ? L('a ação típica se move cerca de ', 'the typical share moves about ') + '<b>' + fmt(Math.abs(a), 1) + '%</b>' + L(' pela reta e ', ' by the line and ') + '<b>' + fmt(Math.abs(bb), dd(bb)) + '%</b>' + L(' pela régua livre (sem olhar o sentido).', ' by the free-form yardstick (ignoring direction).') :
+         L('pela média com sinal, ', 'by the signed average, ') + '<b>' + sg(a, 2, true) + '%</b>' + L(' na reta e ', ' with the line and ') + '<b>' + sg(bb, dd(bb), true) + '%</b>' + L(' na régua livre.', ' with the free-form yardstick.'));
+    }
+    chipsInit($('ch-chips'), CN, 1, function(v){ ci = v; draw(); });
+    segInit($('ch-seg'), [L('Tamanho típico, sem sinal (Tab. 11)', 'Typical size, unsigned (Table 11)'), L('Média com sinal (Tab. 10)', 'Signed average (Table 10)')], 0, function(v){ mode = 1 - v; draw(); });
+    r.addEventListener('input', draw); draw();
+  })();
+
+  /* ================= 10 · SINAIS ================= */
+  (function(){
+    var shown = false;
+    function draw(){
+      var h = '<div class="h">' + L('País', 'Country') + '</div><div class="h">' + L('Régua reta', 'Line') + '</div><div class="h">' + L('Régua livre', 'Free-form') + '</div>';
+      CK.forEach(function(k, i){
+        var a = T10[i][0], b = T10[i][4];
+        function cell(v, hid){ if (hid) return '<div><span class="arr hid">?</span><span class="hid">' + L('palpite primeiro', 'guess first') + '</span></div>'; return '<div><span class="arr ' + (v > 0 ? 'up' : 'dn') + '">' + (v > 0 ? '▲' : '▼') + '</span>' + sg(v, 4, true) + '</div>'; }
+        h += '<div class="cn">' + CN[i] + '</div>' + cell(a, false) + cell(b, !shown);
+      });
+      $('sg-grid').innerHTML = h;
+    }
+    var g = $('sg-g');
+    each(g.children, function(b){ b.addEventListener('click', function(){
+      each(g.children, function(x){ x.classList.toggle('right', x.dataset.v === '1'); x.classList.toggle('wrong', x.dataset.v !== '1'); });
+      $('sg-msg').innerHTML = (b.dataset.v === '1' ? L('<b>Isso.</b> ', '<b>Right.</b> ') : L('<b>Na verdade, passam a subir.</b> ', '<b>Actually, they start rising.</b> ')) + L('Na régua livre, a média é positiva nos seis países, ainda que pequena.', 'With the free-form yardstick, the average is positive in all six countries, though small.');
+      $('sg-why').classList.add('on'); shown = true; draw();
+    }); });
+    draw();
+  })();
+
+  /* ================= 11 · EMPRESAS ================= */
+  (function(){
+    var svg = $('ds-svg'), ci = 1, test = 0;
+    var X0 = 40, W = 520, LIM = 1;
+    function ax(v){ return X0 + W * (Math.max(-LIM, Math.min(LIM, v)) + LIM) / (2 * LIM); }
+    var JIT = {}; CK.forEach(function(k){ var R = rng(k.charCodeAt(0) * 31 + k.charCodeAt(1)); JIT[k] = FIRMS[k].map(function(){ return [R() - 0.5, R() - 0.5]; }); });
+    function draw(){
+      var k = CK[ci], F = FIRMS[k], h = '';
+      for (var g = -1; g <= 1.0001; g += 0.5){ h += '<line x1="' + ax(g) + '" y1="22" x2="' + ax(g) + '" y2="212" stroke="' + (g === 0 ? '#94a3b8' : '#eef2f6') + '"/><text class="s" x="' + ax(g) + '" y="230" text-anchor="middle" style="font-size:11px; fill:var(--muted)">' + sg(g, 1, true) + '</text>'; }
+      var rows = [[L('Régua reta', 'Line'), 1, 2, 70, 'var(--fix)'], [L('Régua livre', 'Free-form'), 3, test ? 5 : 4, 160, 'var(--free)']];
+      var cnt = [];
+      rows.forEach(function(rw, ri){
+        h += '<text x="' + X0 + '" y="' + (rw[3] - 38) + '" style="font-size:12px; font-weight:700; fill:' + rw[4] + '">' + rw[0] + '</text>';
+        var n = 0, outL = 0, outR = 0;
+        F.forEach(function(f, j){
+          var v = f[rw[1]], ex = f[rw[2]] === 1; if (ex) n++;
+          if (v < -LIM) outL++; if (v > LIM) outR++;
+          var cy = rw[3] + JIT[k][j][ri] * 46;
+          h += '<circle cx="' + ax(v).toFixed(1) + '" cy="' + cy.toFixed(1) + '" r="4" fill="' + (ex ? rw[4] : '#fff') + '" stroke="' + (ex ? rw[4] : '#94a3b8') + '" stroke-width="1.3" fill-opacity="' + (ex ? 0.85 : 1) + '"><title>' + f[0] + ': ' + sg(v, 4, true) + '</title></circle>';
+        });
+        if (outL) h += '<text class="s" x="' + (X0 - 4) + '" y="' + (rw[3] + 30) + '" style="font-size:10px; fill:var(--muted)">◀ ' + outL + '</text>';
+        if (outR) h += '<text class="s" x="' + (X0 + W + 4) + '" y="' + (rw[3] + 30) + '" text-anchor="end" style="font-size:10px; fill:var(--muted)">' + outR + ' ▶</text>';
+        cnt.push(n);
+      });
+      svg.innerHTML = h;
+      $('ds-read').innerHTML = '<b>' + CN[ci] + '</b>, ' + F.length + L(' empresas. Expostas a 1%: ', ' companies. Exposed at 1%: ') + '<b class="fix-t">' + cnt[0] + '</b>' + L(' pela reta; ', ' by the line; ') + '<b class="free-t">' + cnt[1] + '</b>' + L(' pela régua livre', ' by the free-form yardstick') + (test ? L(', dividindo coeficiente por erro-padrão (conta nossa).', ', dividing coefficient by standard error (our arithmetic).') : L(', pelo teste impresso na dissertação.', ', by the test printed in the dissertation.'));
+    }
+    chipsInit($('ds-chips'), CN, 1, function(v){ ci = v; draw(); });
+    segInit($('ds-seg'), [L('Teste da dissertação', 'Dissertation test'), L('Coeficiente ÷ erro-padrão (conta nossa)', 'Coefficient ÷ standard error (our arithmetic)')], 0, function(v){ test = v; draw(); });
+    draw();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
