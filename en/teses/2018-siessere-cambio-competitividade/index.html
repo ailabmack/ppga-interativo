@@ -1,0 +1,835 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Do exchange rates, wages and national wealth move together? · PPGA Interativo</title>
+<meta name="description" content="The doctoral thesis of Arthur Tornatore Siessere (PPGA Mackenzie and University of Beira Interior, 2018) in three essays: prices and income in Brazil and the US from 1948 to 2016, exchange rates and wages in Brazil from 1999 to 2015, and what went along with growth in 21 European Union countries, explained in 12 interactive screens.">
+<link rel="alternate" hreflang="pt-BR" href="../../../teses/2018-siessere-cambio-competitividade/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><circle cx=%2210%22 cy=%2216%22 r=%225%22 fill=%22white%22/><circle cx=%2222%22 cy=%2216%22 r=%225%22 fill=%22white%22/><path d=%22M14 16h4%22 stroke=%22white%22 stroke-width=%222%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/motor.css">
+<link rel="stylesheet" href="../../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  @property --z{syntax:'<length>'; inherits:false; initial-value:0px;}
+  :root{
+    --ppc:var(--red);     /* preço relativo / câmbio real (ensaio 1) e câmbio (ensaio 2) */
+    --bal:var(--navy);    /* distância de renda (ensaio 1) e salários (ensaio 2) */
+    --ch:var(--navy);     /* capital humano */
+    --ce:#5b6f96;         /* capital estrutural (patentes) */
+    --cr:var(--red);      /* capital relacional (investimento estrangeiro) */
+    --au:#334155;         /* austeridade */
+    --ns:#cbd5e1;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .ilus{display:inline-block; font-size:.64rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 13px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.75rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px;}
+  .chips button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .chips button:hover{border-color:var(--ink);}
+  .chips button[aria-pressed="true"]{border-color:var(--ink); background:var(--ink); color:#fff;}
+  .row-tools{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:12px;}
+  .sv{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .sv text{font-family:var(--sans);}
+  .lg{display:flex; justify-content:center; gap:6px 14px; flex-wrap:wrap; font-size:.74rem; color:var(--muted); margin-top:4px;}
+  .scene .floor-label{font-size:12px; color:var(--muted); font-weight:600;}
+  .scene .slab{transition:--h .6s cubic-bezier(.2,.8,.2,1), --z .6s cubic-bezier(.2,.8,.2,1), transform .5s;}
+  .scene{perspective:2200px;}
+  .slab.plate > i{--face:rgb(232 7 52 / .10); box-shadow:inset 0 0 0 1px rgb(232 7 52 / .55);}
+  .slab.plate .f-front, .slab.plate .f-back, .slab.plate .f-left, .slab.plate .f-right{--face:rgb(232 7 52 / .25);}
+  .slab.dim > i{opacity:.18;}
+  .slab.zero > i{--face:rgb(148 163 184 / .14); box-shadow:inset 0 0 0 1px rgb(100 116 139 / .5);}
+  input[type=range]{width:100%; accent-color:var(--red);}
+  .rlab{display:flex; justify-content:space-between; font-size:.8rem; color:var(--ink-2); margin-top:10px;}
+  .rlab b{color:var(--ink);}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 3.5vw, 2.45rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.86rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.77rem; color:var(--muted); text-align:center; margin-top:6px; max-width:36em; margin-left:auto; margin-right:auto;}
+  #hero-line{font-family:var(--serif); text-align:center; font-size:1rem; color:var(--ink); margin-bottom:2px; min-height:2.4em; display:flex; align-items:center; justify-content:center;}
+  #hero-line b{color:var(--red); font-size:1.25rem; margin-right:8px;}
+
+  /* ---------- 02 · Cesta ---------- */
+  .basket{display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; margin-top:14px;}
+  @media (min-width:560px){ .basket{grid-template-columns:repeat(4, 1fr);} }
+  .item{border:1px solid var(--border); background:var(--card); border-radius:12px; padding:10px 8px; text-align:center; cursor:pointer; font-size:.8rem; color:var(--ink-2); transition:background .3s, border-color .3s, color .3s; min-height:76px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;}
+  .item svg{width:30px; height:30px;}
+  .item.t{background:color-mix(in srgb, var(--navy) 10%, white); border-color:var(--navy); color:var(--navy);}
+  .item.n{background:color-mix(in srgb, var(--red) 9%, white); border-color:var(--red); color:var(--red);}
+  .item small{font-size:.66rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase;}
+  .two{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+  .two .panel{padding:12px 14px;}
+  .two .panel p{font-size:.8rem;}
+  @media (max-width:520px){ .two{grid-template-columns:1fr;} }
+
+  /* ---------- 03 · Três ensaios ---------- */
+  #tl svg{cursor:pointer;}
+  .band{transition:opacity .3s;}
+  .band.dim{opacity:.28;}
+
+  /* ---------- 04 · Linhas ---------- */
+  #ln-read{font-size:.86rem; color:var(--ink-2); margin-top:8px; min-height:2.8em;}
+  #ln-read b{color:var(--ink);}
+
+  /* ---------- 05 · Memória ---------- */
+  #mm-scene .face-label{font-size:15px; letter-spacing:0; text-transform:none;}
+  .votes{display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; font-size:.76rem; color:var(--muted); align-items:center;}
+  .votes span{border:1px solid var(--border); border-radius:8px; padding:3px 8px; background:var(--card);}
+  .votes span.on{border-color:var(--ink); color:var(--ink); font-weight:700;}
+
+  /* ---------- 06 · Elástico ---------- */
+  #el-scene .face-label{font-size:12px; letter-spacing:0; text-transform:none;}
+
+  /* ---------- 07 · Abertura ---------- */
+  #ab-scene .face-label{font-size:10px; letter-spacing:0; text-transform:none; writing-mode:vertical-rl; transform:rotate(180deg);}
+  .guess{display:grid; gap:6px; margin-top:12px;}
+  .guess button{border:1px solid var(--border); background:var(--card); border-radius:12px; padding:9px 12px; text-align:left; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .guess button:hover{border-color:var(--ink);}
+  .guess button.right{border-color:var(--navy); background:color-mix(in srgb, var(--navy) 10%, white); color:var(--navy); font-weight:600;}
+  .guess button.wrong{opacity:.55;}
+
+  /* ---------- 08 · Salário × câmbio ---------- */
+  .hide{display:none !important;}
+
+  /* ---------- 09 · Três capitais ---------- */
+  #cap-scene .slab{cursor:pointer;}
+  #cap-scene .face-label{font-size:11px; letter-spacing:.04em;}
+
+  /* ---------- 10 · Placar ---------- */
+  .hz{display:inline-block; font-size:.7rem; font-weight:700; background:#e9eef4; color:var(--ink-2); border-radius:6px; padding:2px 7px; margin-left:6px;}
+
+  /* ---------- 11 · Simulador ---------- */
+  #sim-scene .face-label{font-size:16px; letter-spacing:0; text-transform:none;}
+  .tog{display:flex; align-items:center; gap:8px; margin-top:12px; font-size:.86rem; color:var(--ink-2); cursor:pointer;}
+  .tog input{width:18px; height:18px; accent-color:var(--au);}
+  #sim-out{font-family:var(--serif); font-size:1.5rem; color:var(--ink); margin-top:6px;}
+  #sim-parts{font-size:.8rem; color:var(--muted); margin-top:4px; line-height:1.5;}
+
+  /* ---------- 12 · Prática e limites ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.77rem; color:var(--ink-2); line-height:1.42;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-meta="../../../teses/2018-siessere-cambio-competitividade/meta.json">
+
+<header class="topbar">
+  <a class="brand" href="../../../"><span class="sq">PPGA</span><span>PPGA<br>Interactive</span></a>
+  <div class="counter">
+    <a class="lang" href="../../../teses/2018-siessere-cambio-competitividade/" hreflang="pt-BR" lang="pt-BR" title="Ler em português"><img class="lang-flag" src="../../../assets/bandeira-br.svg" width="17" height="12" alt="">PT</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Previous screen">↑</button>
+    <button class="nav-btn" id="next" aria-label="Next screen">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Screen navigation"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Start">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Doctoral thesis · PPGA Mackenzie · 2018</div>
+      <h1 class="rv" style="--d:.1s">Do exchange rates, wages and national wealth really move together?</h1>
+      <p class="sub rv" style="--d:.2s">Three essays test three textbook ideas: prices in Brazil and the US meet again over time (1948 to 2016); the exchange rate moves Brazilian wages (1999 to 2015); and “intellectual capital” makes European countries grow (2007 to 2016). In 12 screens.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Author:</b> Arthur Tornatore Siessere</span>
+        <span><b>Advisor:</b> Prof. Dr. Leonardo Fernando Cruz Basso</span>
+        <span><b>Co-advising:</b> Prof. Dr. João Leitão (University of Beira Interior, Portugal)</span>
+        <span><b>Program:</b> Graduate Program in Business Administration (PPGA) · Mackenzie Presbyterian University, double degree with the University of Beira Interior (Portugal)</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#cesta">Start →</a>
+        <a class="btn ghost" href="#memoria">Skip to the results</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div id="hero-line" aria-live="off"></div>
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="560x320" role="img" aria-label="Three groups of 3D columns, one per essay: Brazil × US relative price and income gap changing year by year from 1948 to 2016; Brazil’s trade openness from 1990 to 2015; and the strength of evidence for three kinds of capital in European countries, with a plate at the significance line"></div></div>
+      <div class="lg"><span><i class="dot" style="background:var(--ppc)"></i>relative price (real exchange rate)</span><span><i class="dot" style="background:var(--bal)"></i>US ÷ Brazil income gap</span><span><i class="dot" style="background:var(--ce)"></i>trade openness</span></div>
+      <p class="cap-legend">Chart 1.2 and Table 2.1 (chart values read by us, approximate) and Table 3.7 (random effects): on the right, each column’s height is the strength of evidence; the plate marks the 5% threshold.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">Closest UN Sustainable Development Goals</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://sdgs.un.org/goals/goal8" target="_blank" rel="noopener" title="SDG 8 · Decent Work and Economic Growth: Tests what went along with GDP-per-person growth in 21 European countries (foreign investment yes, patents no) and whether the exchange rate moved wages in Brazil."><b>8</b>Decent Work and Economic Growth</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">scroll<span></span></div>
+</section>
+
+<!-- 02 · CESTA -->
+<section class="slide" id="cesta" data-label="What crosses the border">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> The starting ideas · section 1.2</div>
+      <h2 class="rv" style="--d:.1s">Not everything a country produces crosses the border</h2>
+      <p class="lede rv" style="--d:.15s">The <b>law of one price</b> says the same basket of goods, converted into the same currency, should cost the same in two countries; the exchange rate would adjust to make it so (<b>purchasing power parity</b>). Balassa and Samuelson pointed out a hole: part of what we buy does not travel. Tap the items and separate what can be sold across countries from what stays where it is made.</p>
+      <div class="basket rv" id="basket" style="--d:.2s"></div>
+      <p class="note rv" style="--d:.25s"><span class="ilus">Our examples</span> The thesis defines tradables as manufactured goods and raw materials and non-tradables as labor-intensive services (section 1.2.4); the items above are our illustrations of the two categories.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel" id="bk-panel" aria-live="polite"></div>
+      <div class="two">
+        <div class="panel"><div class="tag" style="color:var(--navy)">Travels (tradable)</div><p>Factories and farms gain productivity fast with technology, and the price tends to equalize on the world market.</p></div>
+        <div class="panel"><div class="tag" style="color:var(--red)">Does not travel</div><p>Services gain productivity slowly. In a rich country, high factory wages pull up the wages (and prices) of these services.</p></div>
+      </div>
+      <p class="note">This is the <b>Balassa-Samuelson effect</b>: richer countries tend to have higher prices because they are relatively more productive in what is sold across countries (section 1.2.4). The first essay tests whether, between Brazil and the US, the income gap and the price gap move together in the long run.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · TRÊS ENSAIOS -->
+<section class="slide" id="ensaios" data-label="Three essays">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> How the thesis looked · Opening remarks</div>
+      <h2 class="rv" style="--d:.1s">Three places, three periods and the same care with time</h2>
+      <p class="lede rv" style="--d:.15s">The first two essays follow series over time and ask whether two measures are tied to each other in the long run. The third compares 21 European countries over ten years. Tap each band on the timeline.</p>
+      <div class="stats rv" style="--d:.2s">
+        <div class="stat"><b>1948–2016</b><span>Brazil × US, one data point per year</span></div>
+        <div class="stat"><b>68 quarters</b><span>Brazil, 1999 to 2015</span></div>
+        <div class="stat"><b>210</b><span>observations: 21 countries × 10 years</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div id="tl"></div>
+      <div class="panel" id="tl-panel" style="margin-top:10px" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · LINHAS -->
+<section class="slide" id="linhas" data-label="Brazil × US since 1948">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Essay 1 · Charts 1.1 and 1.2</div>
+      <h2 class="rv" style="--d:.1s">The income gap shrank until 1980 and then stalled</h2>
+      <p class="lede rv" style="--d:.15s">In 1949, output per person in the US was about six times Brazil’s; by around 1980, about three and a half times, and from then on it stayed between three and a half and four. The essay compares this gap with the <b>real exchange rate</b>, which says how far one country’s prices, converted into the other’s currency, drift from the other country’s prices. Switch the chart and drag the year.</p>
+      <div class="seg rv" id="ln-seg" style="--d:.2s" role="group" aria-label="Chart">
+        <button data-k="pib" aria-pressed="true">Output per person</button>
+        <button data-k="ppc" aria-pressed="false">Relative price × income</button>
+      </div>
+      <div class="rlab rv" style="--d:.25s"><span>1948</span><b id="ln-yr">1980</b><span>2016</span></div>
+      <input class="rv" style="--d:.25s" type="range" id="ln-range" min="1948" max="2016" value="1980" aria-label="Year">
+      <p id="ln-read" aria-live="polite"></p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div id="ln-chart"></div>
+      <div class="lg" id="ln-lg"></div>
+      <p class="note">Values <b>read by us</b> from the thesis’s Charts 1.1 and 1.2, approximate. In Chart 1.2, both series are “aligned by the mean” (chart units, no currency): the relative price combines the real/dollar exchange rate and price indices (CPI in the US; IGPC then INPC in Brazil), and income is the ratio of US to Brazilian GDP per person (sections 1.5 and 1.6).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · MEMÓRIA -->
+<section class="slide" id="memoria" data-label="Three years of memory">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Essay 1 · Tables 1.2, 1.4 and 1.5</div>
+      <h2 class="rv" style="--d:.1s">The long-run link only shows up when the model remembers three years</h2>
+      <p class="lede rv" style="--d:.15s">The Johansen test asks whether two wandering series are held together by an invisible “rubber band.” The answer depends on how many past years the model takes into account. The statistical criteria disagreed: three asked for three years, two asked for one. Pick the memory.</p>
+      <div class="seg rv" id="mm-seg" style="--d:.2s" role="group" aria-label="Years of memory"></div>
+      <div class="votes rv" id="mm-votes" style="--d:.22s"></div>
+      <div class="panel rv" id="mm-panel" style="--d:.25s; margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="mm-scene" data-fit="460x380" role="img" aria-label="Three 3D columns with the Johansen test statistic for 1, 2 and 3 years of memory (11.6; 13.7; 18.6) and a red plate at the 15.41 critical value; only the 3-year column goes through the plate"></div></div>
+      <p class="note">Trace statistic for “no link” (rank 0) and the 5% critical value (15.41), Table 1.5. With three years, the next test (at most one link) stays below the threshold (3.12 vs 3.76): there is exactly one link. The thesis also tested predictions from one series to the other (Granger, Table 1.2) with 2, 4 and 5 years: none passed 5% (smallest p = 0.12).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · ELÁSTICO -->
+<section class="slide" id="elastico" data-label="The rubber band">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Essay 1 · error-correction model (Appendix A)</div>
+      <h2 class="rv" style="--d:.1s">When the relative price drifts from equilibrium, about 40% of the gap closes the next year</h2>
+      <p class="lede rv" style="--d:.15s">With three years of memory, the thesis estimated an error-correction model. The relative price’s adjustment coefficient was −0.41 and highly significant. In plain words: each year, the relative price gives back about 41% of whatever is off the equilibrium line. Choose the size of the initial push and watch the rubber band pull back.</p>
+      <div class="rlab rv" style="--d:.2s"><span>small push</span><b id="el-v">40</b><span>big push</span></div>
+      <input class="rv" style="--d:.2s" type="range" id="el-range" min="10" max="60" step="5" value="40" aria-label="Size of the initial gap">
+      <div class="panel rv" id="el-panel" style="--d:.25s; margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="el-scene" data-fit="480x300" role="img" aria-label="Seven 3D columns, from the shock year to six years later, each 41% shorter than the one before"></div></div>
+      <div class="lg"><span>left to right: the shock year and the six years after</span></div>
+      <p class="note"><span class="ilus">Illustration</span> Our calculation with the adjustment coefficient (−0.4126; z = −4.51; Appendix A), assuming nothing else changes. Two cautions from the model output itself: the weight of income inside the equilibrium relation is not statistically clear (p = 0.25), and the author points to non-normal residuals and autocorrelation (section 1.7). Read it as a clue, not a rule.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · ABERTURA -->
+<section class="slide" id="abertura" data-label="Brazil opens up">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Essay 2 · Table 2.1 and section 2.2</div>
+      <h2 class="rv" style="--d:.1s">After 1999, trade with the world weighed more in Brazil’s economy</h2>
+      <p class="lede rv" style="--d:.15s">Exports plus imports were 16% of GDP in 1998 and reached 30% in 2004. With a floating exchange rate from 1999 on, the thesis asks whether exchange rates and wages began to move together. Textbooks disagree on who pulls whom. Before the result, make your guess.</p>
+      <div class="guess rv" id="guess" style="--d:.2s"></div>
+      <p class="note rv" style="--d:.25s">The three models in section 2.2: in Canitrot and Rozenwurgel (1986) and in Carlin and Soskice (1990), the exchange rate pulls the real wage; in Rocha (1997), the wage pulls the exchange rate.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="ab-scene" data-fit="560x330" role="img" aria-label="Row of 26 3D columns with Brazil’s trade openness from 1990 to 2015, from 15% to 30% of GDP; the years from 1999 on in red"></div></div>
+      <div class="lg"><span><i class="dot" style="background:var(--ce)"></i>up to 1998</span><span><i class="dot" style="background:var(--red)"></i>essay period (1999 onward)</span><span>left to right: 1990 to 2015</span></div>
+      <p class="note">Trade openness = (exports + imports) ÷ GDP, World Bank (Table 2.1). Tap a column to read the year. <b id="ab-read"></b></p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · SALÁRIO × CÂMBIO -->
+<section class="slide" id="salario" data-label="Wages and the exchange rate">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Essay 2 · Tables 2.5 and 2.8</div>
+      <h2 class="rv" style="--d:.1s">Exchange rates and wages were not tied to each other</h2>
+      <p class="lede rv" style="--d:.15s">In the rubber-band test, the statistic was 6.48, far below the 15.41 threshold: no long-run link between the real exchange rate and industrial wages from 1999 to 2015. The thesis also tested whether one’s past helps predict the other, with 2 to 5 quarters of memory. Switch the direction and see where each test lands.</p>
+      <div class="seg rv" id="gr-seg" style="--d:.2s" role="group" aria-label="Direction">
+        <button data-k="cs" aria-pressed="true">Exchange rate → wage</button>
+        <button data-k="sc" aria-pressed="false">Wage → exchange rate</button>
+      </div>
+      <div class="panel rv" id="gr-panel" style="--d:.25s; margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div id="gr-chart"></div>
+      <div class="lg"><span><i class="dot" style="background:var(--ink)"></i>F test (small sample)</span><span><i class="dot" style="background:#94a3b8"></i>chi-square version (large sample)</span></div>
+      <p class="note">Granger causality (Table 2.5 and Appendix B): the further left, the stronger the clue that one series’ past helps predict the other. “Helping predict” is not the same as causing (our note). Johansen with 2 quarters (what four of the five criteria asked for): 6.48; with 3: 6.59; threshold 15.41.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · TRÊS CAPITAIS -->
+<section class="slide" id="capitais" data-label="Three kinds of capital">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Essay 3 · Tables 3.1 and 3.2 and Figure 3.3</div>
+      <h2 class="rv" style="--d:.1s">A country’s wealth also rests on what you cannot touch</h2>
+      <p class="lede rv" style="--d:.15s">The third essay uses the idea of nations’ <b>intellectual capital</b>: people and what they know, knowledge stored in patents, and relations with the rest of the world. It tests whether each one went along with GDP-per-person growth in 21 European Union countries, 2007 to 2016, with the austerity years (2011 and 2012) set apart. Tap each pillar.</p>
+      <div class="chips rv" id="cap-chips" style="--d:.2s"></div>
+      <div class="panel rv" id="cap-panel" style="--d:.25s; margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="cap-scene" data-fit="460x380" role="img" aria-label="A growth slab resting on three pillars: human capital, structural capital (patents) and relational capital (foreign investment), with a gray austerity block beside it"></div></div>
+      <p class="note">2007–2016 means from the Stata output (Appendix C). The thesis does not list which 21 countries. “Innovation and sophistication” (World Economic Forum score, mean 4.72, from 3.36 to 5.86) comes in later, as a possible booster of each pillar.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · PLACAR -->
+<section class="slide" id="placar" data-label="What went along with growth">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Essay 3 · Tables 3.7 to 3.10 and 3.12</div>
+      <h2 class="rv" style="--d:.1s">Foreign investment went along with growth in every estimate; patents, in none</h2>
+      <p class="lede rv" style="--d:.15s">The thesis ran the same calculation four ways. Relational capital (foreign direct investment) passed in all four; structural capital (patents) in none; human capital depends on the method. Austerity came with about 1 percentage point less growth per person in three of the four. Switch the method.</p>
+      <div class="seg rv" id="pl-seg" style="--d:.2s" role="group" aria-label="Method"></div>
+      <div class="seg rv" id="pl-mod" style="--d:.22s; margin-top:8px" role="group" aria-label="Model">
+        <button data-k="0" aria-pressed="true">Each pillar alone</button>
+        <button data-k="1" aria-pressed="false">Pillar × innovation and sophistication</button>
+      </div>
+      <div class="panel rv" id="pl-panel" style="--d:.25s; margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div id="pl-chart"></div>
+      <p class="note">t statistic of each coefficient (Appendix C, same as Tables 3.7 to 3.10): the bar crosses the dashed lines when it is significant at 10%, 5% and 1%. In the innovation-and-sophistication model, each pillar is replaced by the product pillar × innovation score, one at a time (Tables 3.8 to 3.10).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · SIMULADOR -->
+<section class="slide" id="simulador" data-label="Simulator">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> Essay 3 · Table 3.7, random effects</div>
+      <h2 class="rv" style="--d:.1s">Build a European country and see the growth the model associates with it</h2>
+      <p class="lede rv" style="--d:.15s">The Hausman test pointed to the random-effects model. In it, each extra percentage point of foreign investment over GDP came with about 0.14 point more growth per person; one tenth more on the human-capital index, with 0.18 point; and the austerity years, with about 1.06 points less. Move the controls.</p>
+      <div class="rlab rv" style="--d:.2s"><span>Foreign investment ÷ GDP</span><b id="s-fdi"></b></div>
+      <input class="rv" style="--d:.2s" type="range" id="r-fdi" min="1" max="40" step="1" value="7" aria-label="Foreign investment over GDP, in %">
+      <div class="rlab rv" style="--d:.22s"><span>Human-capital index</span><b id="s-hci"></b></div>
+      <input class="rv" style="--d:.22s" type="range" id="r-hci" min="2.3" max="3.7" step="0.01" value="3.27" aria-label="Human-capital index">
+      <label class="tog rv" style="--d:.24s"><input type="checkbox" id="r-aus"> Austerity year (2011 or 2012)</label>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="sim-scene" data-fit="440x300" role="img" aria-label="Two 3D columns: growth of the average country (1.1% a year) and of the country built with the controls"></div></div>
+      <div class="lg"><span><i class="dot" style="background:#94a3b8"></i>average country (left)</span><span><i class="dot" style="background:var(--cr)"></i>your country (right)</span><span>below the plate: negative growth</span></div>
+      <div class="panel" style="margin-top:6px" aria-live="polite">
+        <div class="tag">GDP-per-person growth, as associated by the model</div>
+        <div id="sim-out"></div>
+        <div id="sim-parts"></div>
+      </div>
+      <p class="note"><span class="ilus">Illustrative simulation</span> Our calculation: the 1.13% yearly mean (Appendix C) plus the Table 3.7 coefficients (random effects: 14.13 for foreign investment as a fraction of GDP, 1.807 for human capital, −1.056 for austerity) from the sample means (6.9% and 3.27). Patents are left out because they were not significant. The model explains about 13% of the growth differences (overall R² 0.13): most comes from other things. An association, not a promise.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · CRÉDITOS -->
+<section class="slide" id="creditos" data-label="In practice and limits">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> In practice · limits · credits</div>
+    <h2 class="rv" style="--d:.1s">Textbook links show up weaker and more conditional in the data</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Anyone comparing prices across countries</h3><p>Between Brazil and the US, parity does not hold year to year. Our reading: the gap tends to close gradually (about 40% a year in the model), and the result changes with the memory chosen.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Economic policy in Brazil</h3><p>From 1999 to 2015, the real exchange rate and industrial wages were not tied. Our reading: moving the exchange rate did not bring, in these data, a stable effect on wages.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ce)"><h3>European governments</h3><p>Attracting foreign investment went along with more growth per person, and the austerity years with about 1 point less. For the author, as countries develop, intellectual capital matters more and more.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#94a3b8"><h3>Researchers</h3><p>Next steps suggested by the author: quarterly or monthly data, other countries, tradable and non-tradable sectors separately, employment and productivity, other competitiveness factors and European regions.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>What this research does not say</h3>
+        <ul class="limits">
+          <li><b>Relation, not cause.</b> Granger tests say whether one series’ past helps predict the other; the clue that wages lead the exchange rate only shows up with 5 quarters (p = 0.06 in the F test) and vanishes with 2, 3 or 4. <em>· our note</em></li>
+          <li><b>Results sensitive to memory.</b> In the first essay, the long-run link shows up with three years and not with one or two; the model has non-normal residuals and autocorrelation. <em>· according to the author</em></li>
+          <li><b>Annual data and spliced indices.</b> The plan was to use quarterly data, but there were no reliable series; the Brazilian price index joins the IGPC (until 1979) and the INPC. <em>· according to the author</em></li>
+          <li><b>The innovation boost is not isolated.</b> In the innovation-and-sophistication models, the product replaces the pillar, without the pillar and the innovation score alongside; the test does not separate the pillar’s effect from the combination’s. The dynamic panel has instruments rejected by the Sargan test. <em>· our note and Table 3.12</em></li>
+          <li><b>21 countries, 10 years.</b> The plan was a larger group and a longer period; the lack of reliable data narrowed the sample, and the thesis does not say which countries were included. <em>· according to the author</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Credits</h3>
+        <div class="cite">
+          <b>How to cite</b><br>
+          SIESSERE, Arthur Tornatore. <em>Ensaios sobre câmbio e competitividade.</em> Doctoral thesis (Business Administration), Mackenzie Presbyterian University, São Paulo, 2018. Advisor: Prof. Dr. Leonardo Fernando Cruz Basso.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Thesis in three essays, double degree with the University of Beira Interior (Covilhã, Portugal). Data from FRED, IPEA, the Central Bank of Brazil, the IMF, IBGE, the World Bank, the Penn World Table, WIPO, UNCTAD and the World Economic Forum. This version simplifies the work for the general public; the formulas and full tables are in the original text.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Read the full thesis (in Portuguese)</a>
+          <a class="btn ghost" href="#capa">↑ Back to the start</a>
+          <a class="btn ghost" href="../../../">More research</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt, reduce = M.reduce;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  function pressed(wrap, attr, val){ each(wrap.children, function(b){ b.setAttribute('aria-pressed', String(b.dataset[attr] === String(val))); }); }
+  function sgn(v, d){ return (v < 0 ? '−' : '+') + fmt(Math.abs(v), d); }
+  function th(n){ return EN ? String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+  var SVGNS = 'http://www.w3.org/2000/svg';
+
+  /* ================= DADOS DA TESE ================= */
+  // Gráfico 1.1 (lido por nós, aproximado): PIB por pessoa, US$, 1948–2016
+  var Y0 = 1948;
+  var US = [13300,13300,13500,14700,15300,16000,15500,16000,16300,16500,15800,16700,17200,16700,17500,18000,19000,19700,21000,21700,22200,22700,23000,23200,23700,25200,25200,24400,25700,26200,26900,28200,28700,28700,28000,28000,30000,31000,31900,32900,33700,34900,35900,34900,35500,35900,37200,37900,38400,39400,40900,42700,43700,44400,44600,44900,46200,47400,48600,48900,49200,47400,47200,47600,48400,48900,49200,50400,50900];
+  var BR = [2100,2150,2250,2350,2400,2400,2550,2700,2700,2800,3000,3200,3400,3550,3700,3650,3650,3650,3800,3800,4100,4350,4650,4950,5400,6000,6300,6550,7000,7250,7400,7800,8250,7950,7650,7300,7500,7850,8250,8450,8350,8450,8000,7950,7850,8000,8350,8550,8700,8750,8650,8550,8700,8650,8750,8750,9100,9300,9600,10000,10450,10450,10950,11150,11250,11400,12150,12550,12900];
+  // Gráfico 1.2 (lido por nós, aproximado): preço relativo (PPC) e distância de renda (BAL), unidades do gráfico
+  var PPC = [196,204,216,228,257,122,94,118,147,127,97,93,109,101,98,118,86,95,132,142,124,124,124,126,130,136,138,135,135,138,140,110,116,109,103,73,64,64,69,69,69,85,93,82,84,80,109,119,116,111,102,77,69,62,48,57,66,77,85,104,88,109,124,116,110,101,93,74,88];
+  var BAL = [158,152,148,160,166,172,162,160,164,158,140,135,128,114,116,126,138,152,164,170,162,158,137,119,93,78,54,31,19,12,12,12,-16,10,12,36,54,46,35,32,54,69,107,103,116,112,104,98,104,112,143,175,186,194,192,196,194,201,198,171,149,123,88,78,90,84,42,30,10];
+  // Tabela 1.5: traço (rank 0) por nº de defasagens; valor crítico 5% = 15,41; Tabela 1.4: critérios
+  var JOH1 = [{k:1, t:11.6242, r1:0.6010}, {k:2, t:13.7046, r1:1.6820}, {k:3, t:18.5524, r1:3.1190}];
+  var CRIT = 15.41, CRIT1 = 3.76;
+  var VOTES = {1:['HQIC','SBIC'], 2:[], 3:['LR','FPE','AIC']};
+  // Apêndice A: coeficiente de ajuste do VEC (D_PPC, _ce1)
+  var ALPHA = -0.4126;
+  // Tabela 2.1: grau de abertura (%), 1990–2015
+  var AB = [15,17,19,20,19,17,16,17,16,21,23,27,28,28,30,27,26,25,27,22,23,24,25,26,25,27];
+  // Tabela 2.5 / Apêndice B: p de Granger [F, qui-quadrado] por defasagem (2–5 trimestres)
+  var GR = {
+    cs:[[0.8952,0.887],[0.9798,0.976],[0.9208,0.899],[0.9848,0.978]],
+    sc:[[0.0747,0.053],[0.1574,0.109],[0.2380,0.157],[0.0584,0.016]]
+  };
+  // Apêndice C: estatística t (e coeficiente) por método; ordem: CH, CE, CR, austeridade
+  var MET = ['ols', 'ef', 'ea', 'din'];
+  var T0 = {
+    ols:[[1.786591,3.29],[1.718758,0.72],[13.28008,2.26],[-1.054709,-2.29]],
+    ef:[[1.916446,0.38],[1.74515,1.22],[36.97871,4.23],[-1.063291,-2.00]],
+    ea:[[1.806913,2.39],[1.633961,1.14],[14.12966,4.17],[-1.056366,-1.96]],
+    din:[[25.33261,3.95],[1.675825,1.08],[28.41297,2.51],[-0.8516064,-1.60]]
+  };
+  // Tabelas 3.8–3.10: t do produto pilar × inovação, um modelo por pilar
+  var T1 = {ols:[1.88,0.75,2.24], ef:[3.47,1.34,4.41], ea:[1.56,1.12,4.11], din:[4.06,1.89,0.45]};
+  // Hausman (Tabela 3.12): efeitos aleatórios nos modelos 1, 3, 4; efeitos fixos no 2
+  var MEAN = {pib:1.129518, hci:3.274718, fdi:0.0691476};
+  var EA = {fdi:14.12966, hci:1.806913, aus:-1.056366};
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 540, 220, {ay:'66%', rx:'58deg'});
+    rotatable(sc, st, -14, 6);
+    var bp = box({w:40, d:40, x:40, y:110, h:60, c:'var(--ppc)'}), bb = box({w:40, d:40, x:92, y:110, h:60, c:'var(--bal)'});
+    var ba = box({w:46, d:46, x:228, y:106, h:60, c:'var(--ce)'});
+    st.appendChild(bp); st.appendChild(bb); st.appendChild(ba);
+    var tc = [[2.39,'var(--ch)'],[1.14,'var(--ce)'],[4.17,'var(--cr)']];
+    tc.forEach(function(t, i){ st.appendChild(box({w:30, d:30, x:372 + i * 42, y:114, h:t[0] * 30, c:t[1]})); });
+    st.appendChild(box({w:150, d:60, x:362, y:100, z:1.96 * 30, h:1, c:'var(--red)', cls:'plate'}));
+    flatLabel(st, L('Brasil × EUA','Brazil × US'), 20, 168, 130, 'font-size:12px');
+    flatLabel(st, L('Brasil','Brazil'), 196, 168, 110, 'font-size:12px');
+    flatLabel(st, L('União Europeia','European Union'), 352, 168, 170, 'font-size:12px');
+    var line = $('hero-line'), last = -1;
+    function show(i){
+      var yr = Y0 + i;
+      bp.style.setProperty('--h', Math.max(3, PPC[i] * 0.55) + 'px');
+      bb.style.setProperty('--h', Math.max(3, BAL[i] * 0.55) + 'px');
+      var a = yr >= 1990 && yr <= 2015 ? AB[yr - 1990] : null;
+      ba.style.setProperty('--h', (a ? a * 4 : 3) + 'px');
+      ba.classList.toggle('off', !a);
+      line.innerHTML = '<b>' + yr + '</b>' + (a ? L('abertura comercial do Brasil: ' + a + '% do PIB', 'Brazil’s trade openness: ' + a + '% of GDP') : L('preço relativo e renda, Brasil × EUA', 'relative price and income, Brazil × US'));
+    }
+    show(32);
+    if (!reduce) M.onTick(function(t){ var i = Math.floor(t / 0.7) % PPC.length; if (i !== last){ last = i; show(i); } });
+  })();
+
+  /* ================= 02 · CESTA ================= */
+  (function(){
+    var IC = {
+      phone:'<rect x="9" y="3" width="14" height="26" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="25" r="1.4" fill="currentColor"/>',
+      steel:'<path d="M4 22h24l-4-8H8z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 14l3-6h10l3 6" fill="none" stroke="currentColor" stroke-width="2"/>',
+      soy:'<path d="M16 29V10" stroke="currentColor" stroke-width="2"/><ellipse cx="11" cy="12" rx="4" ry="6" fill="none" stroke="currentColor" stroke-width="2"/><ellipse cx="21" cy="17" rx="4" ry="6" fill="none" stroke="currentColor" stroke-width="2"/>',
+      car:'<path d="M4 20l3-7h18l3 7v5H4z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="10" cy="25" r="2.5" fill="currentColor"/><circle cx="22" cy="25" r="2.5" fill="currentColor"/>',
+      hair:'<circle cx="9" cy="23" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="23" cy="23" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 20L24 4M20 20L8 4" stroke="currentColor" stroke-width="2"/>',
+      rent:'<path d="M5 15L16 5l11 10v13H5z" fill="none" stroke="currentColor" stroke-width="2"/><rect x="13" y="19" width="6" height="9" fill="currentColor"/>',
+      class:'<rect x="4" y="5" width="24" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 28l6-8 6 8" stroke="currentColor" stroke-width="2" fill="none"/>',
+      meal:'<circle cx="16" cy="17" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 6v20M28 6v20" stroke="currentColor" stroke-width="2"/>'
+    };
+    var IT = [
+      ['phone', L('Celular','Phone'), 't'], ['hair', L('Corte de cabelo','Haircut'), 'n'], ['steel', L('Aço','Steel'), 't'], ['rent', L('Aluguel','Rent'), 'n'],
+      ['soy', L('Soja','Soybeans'), 't'], ['class', L('Aula particular','Private lesson'), 'n'], ['car', L('Carro','Car'), 't'], ['meal', L('Refeição no restaurante','Restaurant meal'), 'n']
+    ];
+    var done = 0, wrap = $('basket');
+    wrap.innerHTML = IT.map(function(t, i){ return '<button class="item" data-i="' + i + '"><svg viewBox="0 0 32 32" aria-hidden="true">' + IC[t[0]] + '</svg>' + t[1] + '<small></small></button>'; }).join('');
+    function panel(){
+      var p = $('bk-panel');
+      if (done < IT.length) p.innerHTML = '<div class="tag">' + L('Separados: ','Sorted: ') + done + ' / ' + IT.length + '</div><p>' + L('Pergunta para cada item: dá para produzir num país e vender no outro?','Question for each item: can it be made in one country and sold in the other?') + '</p>';
+      else p.innerHTML = '<div class="tag">' + L('Pronto','Done') + '</div><h3>' + L('Metade da cesta não viaja','Half of the basket does not travel') + '</h3><p>' + L('Se o corte de cabelo não cruza a fronteira, nada obriga o preço dele a ser igual nos dois países. Por isso a paridade “pura” raramente aparece nos dados, e a renda de cada país entra na conta.','If a haircut does not cross the border, nothing forces its price to be equal in both countries. That is why “pure” parity rarely shows up in the data, and each country’s income enters the picture.') + '</p>';
+    }
+    each(wrap.children, function(b){
+      b.addEventListener('click', function(){
+        if (b.classList.contains('t') || b.classList.contains('n')) return;
+        var t = IT[+b.dataset.i]; b.classList.add(t[2]); done++;
+        b.querySelector('small').textContent = t[2] === 't' ? L('viaja','travels') : L('não viaja','stays');
+        panel();
+      });
+    });
+    panel();
+  })();
+
+  /* ================= 03 · TRÊS ENSAIOS ================= */
+  (function(){
+    var W = 560, H = 230, x0 = 30, x1 = 540, a = 1945, b = 2018;
+    function X(y){ return x0 + (y - a) / (b - a) * (x1 - x0); }
+    var E = [
+      {y0:1948, y1:2016, c:'var(--red)', n:L('Ensaio 1 · Brasil × EUA','Essay 1 · Brazil × US'), s:L('anual, 1948–2016','annual, 1948–2016'),
+       h:L('Os preços dos dois países se reencontram com o tempo?','Do the two countries’ prices meet again over time?'),
+       p:L('Compara o câmbio real com a distância de renda por pessoa (efeito Balassa-Samuelson). Testa se as séries são estáveis, quantos anos de memória usar, se uma ajuda a prever a outra e se andam presas no longo prazo (Johansen e modelo de correção de erros).','Compares the real exchange rate with the per-person income gap (Balassa-Samuelson effect). Tests whether the series are stable, how many years of memory to use, whether one helps predict the other and whether they are tied in the long run (Johansen and an error-correction model).')},
+      {y0:1999, y1:2015, c:'var(--navy)', n:L('Ensaio 2 · Brasil','Essay 2 · Brazil'), s:L('trimestral, 1999–2015','quarterly, 1999–2015'),
+       h:L('O câmbio mexe com os salários depois da abertura?','Does the exchange rate move wages after trade opening?'),
+       p:L('Usa o câmbio efetivo real do IPEA (24 parceiros comerciais) e a folha de pagamento da indústria (IBGE), com os mesmos testes de séries no tempo. Começa em 1999, quando o câmbio passou a flutuar e o comércio ganhou peso.','Uses IPEA’s real effective exchange rate (24 trading partners) and the industrial payroll (IBGE), with the same time-series tests. It starts in 1999, when the exchange rate began to float and trade gained weight.')},
+      {y0:2007, y1:2016, c:'var(--ce)', n:L('Ensaio 3 · União Europeia','Essay 3 · European Union'), s:L('21 países, 2007–2016','21 countries, 2007–2016'),
+       h:L('O capital intelectual acompanha o crescimento dos países?','Does intellectual capital go along with countries’ growth?'),
+       p:L('Painel de 21 países por 10 anos (210 observações): crescimento do PIB por pessoa explicado por capital humano, patentes e investimento estrangeiro, com os anos de austeridade à parte, estimado de quatro jeitos.','Panel of 21 countries over 10 years (210 observations): GDP-per-person growth explained by human capital, patents and foreign investment, with the austerity years set apart, estimated four ways.')}
+    ];
+    var s = '<svg class="sv" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + L('Linha do tempo de 1948 a 2016 com as três faixas dos ensaios','Timeline from 1948 to 2016 with the three essay bands') + '">';
+    [1950, 1960, 1970, 1980, 1990, 2000, 2010].forEach(function(y){ s += '<line x1="' + X(y) + '" x2="' + X(y) + '" y1="28" y2="196" stroke="#e2e8f0"/><text x="' + X(y) + '" y="214" font-size="13" text-anchor="middle" fill="#64748b">' + y + '</text>'; });
+    E.forEach(function(e, i){
+      var y = 40 + i * 54;
+      s += '<g class="band" data-i="' + i + '"><rect x="' + X(e.y0) + '" y="' + y + '" width="' + (X(e.y1 + 1) - X(e.y0)) + '" height="38" rx="8" fill="' + e.c + '"/>';
+      s += '<text x="' + (i ? X(e.y0) - 6 : X(e.y0) + 10) + '" y="' + (y + 16) + '" font-size="14" font-weight="700" text-anchor="' + (i ? 'end' : 'start') + '" fill="' + (i ? '#0f172a' : '#fff') + '">' + e.n + '</text>';
+      s += '<text x="' + (i ? X(e.y0) - 6 : X(e.y0) + 10) + '" y="' + (y + 32) + '" font-size="13" text-anchor="' + (i ? 'end' : 'start') + '" fill="' + (i ? '#64748b' : '#fff') + '">' + e.s + '</text></g>';
+    });
+    $('tl').innerHTML = s + '</svg>';
+    var bands = document.querySelectorAll('#tl .band');
+    function pick(i){
+      each(bands, function(g){ g.classList.toggle('dim', +g.dataset.i !== i); });
+      var e = E[i];
+      $('tl-panel').innerHTML = '<div class="tag" style="color:' + e.c + '">' + e.n + ' · ' + e.s + '</div><h3>' + e.h + '</h3><p>' + e.p + '</p>';
+    }
+    each(bands, function(g){ g.addEventListener('click', function(){ pick(+g.dataset.i); }); });
+    pick(0);
+  })();
+
+  /* ================= 04 · LINHAS ================= */
+  (function(){
+    var mode = 'pib', W = 560, H = 330, x0 = 62, x1 = 540, top = 20, bot = 290;
+    function X(i){ return x0 + i / (US.length - 1) * (x1 - x0); }
+    function draw(){
+      var yr = +$('ln-range').value, i = yr - Y0, s = '<svg class="sv" viewBox="0 0 ' + W + ' ' + H + '">';
+      var lo, hi, A, B, ca, cb, ticks;
+      if (mode === 'pib'){ lo = 0; hi = 55000; A = US; B = BR; ca = 'var(--navy)'; cb = 'var(--red)'; ticks = [0, 10000, 20000, 30000, 40000, 50000]; }
+      else { lo = -40; hi = 280; A = BAL; B = PPC; ca = 'var(--bal)'; cb = 'var(--ppc)'; ticks = [0, 100, 200]; }
+      function Y(v){ return bot - (v - lo) / (hi - lo) * (bot - top); }
+      ticks.forEach(function(t){ s += '<line x1="' + x0 + '" x2="' + x1 + '" y1="' + Y(t) + '" y2="' + Y(t) + '" stroke="#e2e8f0"/><text x="' + (x0 - 6) + '" y="' + (Y(t) + 4) + '" font-size="13" text-anchor="end" fill="#64748b">' + (mode === 'pib' ? (t / 1000) + (EN ? 'k' : ' mil') : t) + '</text>'; });
+      [1950, 1960, 1970, 1980, 1990, 2000, 2010].forEach(function(y){ s += '<text x="' + X(y - Y0) + '" y="' + (bot + 18) + '" font-size="13" text-anchor="middle" fill="#64748b">' + y + '</text>'; });
+      function path(arr){ return arr.map(function(v, j){ return (j ? 'L' : 'M') + X(j).toFixed(1) + ' ' + Y(v).toFixed(1); }).join(''); }
+      s += '<path d="' + path(A) + '" fill="none" stroke="' + ca + '" stroke-width="2.6"/><path d="' + path(B) + '" fill="none" stroke="' + cb + '" stroke-width="2.6"/>';
+      s += '<line x1="' + X(i) + '" x2="' + X(i) + '" y1="' + top + '" y2="' + bot + '" stroke="#0f172a" stroke-dasharray="3 3"/>';
+      s += '<circle cx="' + X(i) + '" cy="' + Y(A[i]) + '" r="5" fill="' + ca + '"/><circle cx="' + X(i) + '" cy="' + Y(B[i]) + '" r="5" fill="' + cb + '"/>';
+      $('ln-chart').innerHTML = s + '</svg>';
+      $('ln-yr').textContent = yr;
+      if (mode === 'pib'){
+        $('ln-lg').innerHTML = '<span><i class="dot" style="background:var(--navy)"></i>' + L('EUA','US') + '</span><span><i class="dot" style="background:var(--red)"></i>' + L('Brasil','Brazil') + '</span><span>' + L('US$ por pessoa','US$ per person') + '</span>';
+        $('ln-read').innerHTML = '<b>' + yr + '</b> · ' + L('EUA ~', 'US ~') + 'US$ ' + th(US[i]) + ' · ' + L('Brasil ~','Brazil ~') + 'US$ ' + th(BR[i]) + ' · ' + L('o americano médio produzia cerca de <b>', 'the average American produced about <b>') + fmt(US[i] / BR[i], 1) + L(' vezes</b> o brasileiro médio.', ' times</b> the average Brazilian.');
+      } else {
+        $('ln-lg').innerHTML = '<span><i class="dot" style="background:var(--ppc)"></i>' + L('preço relativo (câmbio real)','relative price (real exchange rate)') + '</span><span><i class="dot" style="background:var(--bal)"></i>' + L('distância de renda EUA ÷ Brasil','US ÷ Brazil income gap') + '</span>';
+        $('ln-read').innerHTML = '<b>' + yr + '</b> · ' + L('preço relativo ~','relative price ~') + PPC[i] + ' · ' + L('renda ~','income ~') + BAL[i] + ' · ' + L('As duas linhas sobem e descem em épocas diferentes: na década de 1970 a distância de renda despenca e o preço quase não se mexe; nos anos 2000, o contrário. Ano a ano, não andam juntas.', 'The two lines rise and fall at different times: in the 1970s the income gap plunges and price barely moves; in the 2000s, the reverse. Year to year, they do not move together.');
+      }
+    }
+    each($('ln-seg').children, function(b){ b.addEventListener('click', function(){ mode = b.dataset.k; pressed($('ln-seg'), 'k', mode); draw(); }); });
+    $('ln-range').addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 05 · MEMÓRIA ================= */
+  (function(){
+    var sc = $('mm-scene'), st = makeStage(sc, 300, 160, {ay:'76%', rx:'62deg'}), k = 3, S = 11;
+    rotatable(sc, st, -18, 6);
+    var cols = JOH1.map(function(j, i){
+      var b = box({w:56, d:56, x:30 + i * 90, y:52, h:j.t * S, c:'var(--ppc)', label:fmt(j.t, 1)});
+      st.appendChild(b); flatLabel(st, j.k + (j.k > 1 ? L(' anos',' years') : L(' ano',' year')), 18 + i * 90, 116, 80, 'font-size:16px'); return b;
+    });
+    st.appendChild(box({w:290, d:110, x:5, y:25, z:CRIT * S, h:1, c:'var(--red)', cls:'plate'}));
+    flatLabel(st, L('limite 15,41','threshold 15.41'), 200, 0, 100, 'font-size:11px; color:var(--red)');
+    $('mm-seg').innerHTML = JOH1.map(function(j){ return '<button data-k="' + j.k + '">' + j.k + (j.k > 1 ? L(' anos',' years') : L(' ano',' year')) + '</button>'; }).join('');
+    function draw(){
+      pressed($('mm-seg'), 'k', k);
+      cols.forEach(function(c, i){ c.classList.toggle('dim', JOH1[i].k !== k); });
+      $('mm-votes').innerHTML = L('Critérios que pediram esta memória:','Criteria that asked for this memory:') + ['LR','FPE','AIC','HQIC','SBIC'].map(function(c){ return '<span class="' + (VOTES[k].indexOf(c) >= 0 ? 'on' : '') + '">' + c + '</span>'; }).join('');
+      var j = JOH1[k - 1], ok = j.t > CRIT;
+      $('mm-panel').innerHTML = '<div class="tag" style="color:' + (ok ? 'var(--red)' : 'var(--muted)') + '">' + (ok ? L('Há ligação de longo prazo','There is a long-run link') : L('Sem ligação de longo prazo','No long-run link')) + '</div><p>' +
+        L('Estatística ', 'Statistic ') + fmt(j.t, 2) + (ok ? L(' acima', ' above') : L(' abaixo', ' below')) + L(' do limite de 15,41.', ' the 15.41 threshold.') + ' ' +
+        (ok ? L('Com três anos de memória, o teste acha exatamente uma ligação entre preço relativo e distância de renda (o teste seguinte fica em 3,12, abaixo de 3,76). É com esse modelo que a tese conclui que há causalidade de longo prazo.','With three years of memory, the test finds exactly one link between relative price and the income gap (the next test sits at 3.12, below 3.76). This is the model on which the thesis concludes there is long-run causality.')
+            : L('Com essa memória, as duas séries vagueiam soltas: não há um elástico entre elas.','With this memory, the two series wander loose: there is no rubber band between them.')) + '</p>';
+    }
+    each($('mm-seg').children, function(b){ b.addEventListener('click', function(){ k = +b.dataset.k; draw(); }); });
+    draw();
+  })();
+
+  /* ================= 06 · ELÁSTICO ================= */
+  (function(){
+    var sc = $('el-scene'), st = makeStage(sc, 440, 120, {ay:'74%', rx:'62deg'}), N = 7, S = 3;
+    rotatable(sc, st, -10, 5);
+    var cols = [];
+    for (var i = 0; i < N; i++){
+      var b = box({w:44, d:44, x:8 + i * 62, y:40, h:30, c:i ? 'color-mix(in srgb, var(--ppc) ' + (100 - i * 9) + '%, white)' : 'var(--ppc)'});
+      st.appendChild(b); cols.push(b);
+      flatLabel(st, i ? '+' + i : L('choque','shock'), i * 62, 92, 60, 'font-size:11px');
+    }
+    function draw(){
+      var v = +$('el-range').value; $('el-v').textContent = v;
+      var r = 1 + ALPHA, val;
+      cols.forEach(function(c, t){ val = v * Math.pow(r, t); c.style.setProperty('--h', Math.max(2, val * S) + 'px'); c.querySelector('.f-front').innerHTML = val >= 6 ? '<span class="face-label">' + fmt(val, 0) + '</span>' : ''; });
+      var after3 = v * Math.pow(r, 3);
+      $('el-panel').innerHTML = '<div class="tag">' + L('Leitura','Reading') + '</div><p>' + L('Um afastamento de ', 'A gap of ') + v + L(' pontos vira cerca de ', ' points becomes about ') + fmt(v * r, 0) + L(' no ano seguinte e ', ' the following year and ') + fmt(after3, 0) + L(' três anos depois. Metade do caminho de volta leva perto de ', ' three years later. Half the way back takes about ') + fmt(Math.log(0.5) / Math.log(r), 1) + L(' anos.', ' years.') + '</p>';
+    }
+    $('el-range').addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 07 · ABERTURA + PALPITE ================= */
+  (function(){
+    var sc = $('ab-scene'), st = makeStage(sc, 540, 90, {ay:'72%', rx:'60deg'}), S = 6.4;
+    rotatable(sc, st, -6, 4);
+    var cols = AB.map(function(v, i){
+      var b = box({w:16, d:24, x:4 + i * 20.5, y:34, h:v * S, c:i >= 9 ? 'var(--red)' : 'var(--ce)'});
+      b.style.cursor = 'pointer'; st.appendChild(b);
+      b.addEventListener('click', function(){ if (M.wasDrag(sc)) return; $('ab-read').textContent = (1990 + i) + ': ' + v + L('% do PIB.', '% of GDP.'); cols.forEach(function(c){ c.classList.remove('active'); }); b.classList.add('active'); });
+      return b;
+    });
+    [1990, 1999, 2004, 2015].forEach(function(y){ flatLabel(st, String(y), (y - 1990) * 20.5 - 8, 66, 34, 'font-size:11px'); });
+    var G = [L('O câmbio puxa os salários','The exchange rate pulls wages'), L('Os salários puxam o câmbio','Wages pull the exchange rate'), L('Nenhum puxa o outro de forma firme','Neither pulls the other firmly')];
+    var ans = false;
+    $('guess').innerHTML = G.map(function(g, i){ return '<button data-i="' + i + '">' + g + '</button>'; }).join('');
+    each($('guess').children, function(b){
+      b.addEventListener('click', function(){
+        if (ans) return; ans = true;
+        each($('guess').children, function(x){ x.classList.add(+x.dataset.i === 2 ? 'right' : 'wrong'); });
+        try { localStorage.setItem('siessere-palpite', b.dataset.i); } catch(e){}
+        renderGuess(+b.dataset.i);
+      });
+    });
+    window.__siessereGuess = function(){ var g = null; try { g = localStorage.getItem('siessere-palpite'); } catch(e){} return g; };
+  })();
+  function renderGuess(i){
+    var msg = [L('Não foi o que os dados mostraram: com 2 a 5 trimestres de memória, o passado do câmbio não ajudou a prever os salários (p sempre acima de 0,89).','Not what the data showed: with 2 to 5 quarters of memory, the exchange rate’s past did not help predict wages (p always above 0.89).'),
+               L('Em parte: só com 5 trimestres de memória o passado dos salários ajuda a prever o câmbio, e mesmo assim a 10% no teste F (p = 0,06).','Partly: only with 5 quarters of memory does the wages’ past help predict the exchange rate, and even then at 10% in the F test (p = 0.06).'),
+               L('É o que os dados mostraram: nenhuma ligação de longo prazo e, no curto prazo, só uma pista fraca, num sentido e numa memória.','That is what the data showed: no long-run link and, in the short run, only a weak clue, in one direction and at one memory.')][i];
+    var el = $('gr-guess'); if (el) el.innerHTML = '<b>' + L('Seu palpite: ','Your guess: ') + '</b>' + msg;
+  }
+
+  /* ================= 08 · SALÁRIO × CÂMBIO ================= */
+  (function(){
+    var dir = 'cs';
+    function draw(){
+      var W = 560, H = 300, x0 = 130, x1 = 540, s = '<svg class="sv" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + L('Valores p dos testes de Granger por memória, numa régua de 0 a 1 com linhas em 0,05 e 0,10','Granger test p-values by memory, on a 0 to 1 scale with lines at 0.05 and 0.10') + '">';
+      function X(p){ return x0 + Math.sqrt(p) * (x1 - x0); }
+      [0, 0.05, 0.1, 0.25, 0.5, 1].forEach(function(p, j){
+        var hl = p === 0.05 || p === 0.1;
+        s += '<line x1="' + X(p) + '" x2="' + X(p) + '" y1="30" y2="250" stroke="' + (hl ? 'var(--red)' : '#e2e8f0') + '"' + (hl ? ' stroke-dasharray="4 3"' : '') + '/>';
+        s += '<text x="' + X(p) + '" y="270" font-size="13" text-anchor="middle" fill="' + (hl ? 'var(--red)' : '#64748b') + '">' + ['0', fmt(0.05, 2), fmt(0.1, 1), fmt(0.25, 2), fmt(0.5, 1), '1'][j] + '</text>';
+      });
+      s += '<text x="' + x0 + '" y="20" font-size="13" fill="var(--red)">' + L('pista forte ←','strong clue ←') + '</text><text x="' + x1 + '" y="20" font-size="13" text-anchor="end" fill="#64748b">' + L('→ sem pista','→ no clue') + '</text>';
+      GR[dir].forEach(function(r, i){
+        var y = 60 + i * 52;
+        s += '<text x="' + (x0 - 12) + '" y="' + (y + 4) + '" font-size="15" text-anchor="end" fill="#0f172a" font-weight="600">' + (i + 2) + L(' trimestres',' quarters') + '</text>';
+        s += '<line x1="' + X(r[0]) + '" x2="' + X(r[1]) + '" y1="' + y + '" y2="' + y + '" stroke="#cbd5e1" stroke-width="3"/>';
+        s += '<circle cx="' + X(r[1]) + '" cy="' + y + '" r="6" fill="#94a3b8"/><circle cx="' + X(r[0]) + '" cy="' + y + '" r="8" fill="#0f172a"/>';
+        s += '<text x="' + X(r[0]) + '" y="' + (y - 13) + '" font-size="14" text-anchor="middle" fill="#0f172a">' + fmt(r[0], 2) + '</text>';
+      });
+      s += '<text x="' + ((x0 + x1) / 2) + '" y="290" font-size="12" text-anchor="middle" fill="#64748b">' + L('valor p (escala de raiz quadrada, para abrir o trecho perto de zero)','p-value (square-root scale, to open up the stretch near zero)') + '</text>';
+      $('gr-chart').innerHTML = s + '</svg>';
+      pressed($('gr-seg'), 'k', dir);
+      $('gr-panel').innerHTML = (dir === 'cs'
+        ? '<div class="tag">' + L('Câmbio → salário','Exchange rate → wage') + '</div><p>' + L('Nenhuma pista: com qualquer memória, o p fica acima de 0,89. O passado do câmbio não ajudou a prever os salários da indústria.','No clue: with any memory, p stays above 0.89. The exchange rate’s past did not help predict industrial wages.') + '</p>'
+        : '<div class="tag" style="color:var(--red)">' + L('Salário → câmbio','Wage → exchange rate') + '</div><p>' + L('Pistas fracas. Com 2 e 5 trimestres, o teste F fica entre 5% e 10% (0,075 e 0,058); só a versão de amostra grande passa de 5% com 5 trimestres (0,016). Com 3 e 4, nada. A tese lê isso como “os salários causam variações no câmbio”; aqui, como uma pista que depende da memória.','Weak clues. With 2 and 5 quarters, the F test falls between 5% and 10% (0.075 and 0.058); only the large-sample version passes 5% with 5 quarters (0.016). With 3 and 4, nothing. The thesis reads this as “wages cause changes in the exchange rate”; here, as a clue that depends on memory.') + '</p>')
+        + '<p id="gr-guess" style="font-size:.8rem; color:var(--muted)"></p>';
+      var g = window.__siessereGuess && window.__siessereGuess(); if (g !== null && g !== undefined) renderGuess(+g);
+    }
+    each($('gr-seg').children, function(b){ b.addEventListener('click', function(){ dir = b.dataset.k; draw(); }); });
+    draw();
+  })();
+
+  /* ================= 09 · TRÊS CAPITAIS ================= */
+  (function(){
+    var sc = $('cap-scene'), st = makeStage(sc, 300, 200, {ay:'78%', rx:'60deg'});
+    rotatable(sc, st, -28, 6);
+    var P = [
+      {k:'ch', c:'var(--ch)', n:L('Humano','Human'), t:L('Capital humano','Human capital'), m:L('Índice de capital humano da Penn World Table, que a tese usa para o conhecimento e a educação da população. Média 3,27, de 2,28 a 3,73. Quase não muda dentro de um país em dez anos (desvio de 0,04 contra 0,33 entre países).','Penn World Table human-capital index, which the thesis uses for the population’s knowledge and education. Mean 3.27, from 2.28 to 3.73. It barely changes within a country over ten years (deviation of 0.04 vs 0.33 across countries).')},
+      {k:'ce', c:'var(--ce)', n:L('Estrutural','Structural'), t:L('Capital estrutural','Structural capital'), m:L('Conhecimento guardado em processos e invenções, medido pelo logaritmo do número de patentes sobre o PIB (WIPO).','Knowledge stored in processes and inventions, measured by the log of patents over GDP (WIPO).')},
+      {k:'cr', c:'var(--cr)', n:L('Relacional','Relational'), t:L('Capital relacional','Relational capital'), m:L('A rede do país com o exterior, medida pelo investimento estrangeiro direto que entra, sobre o PIB (UNCTAD). Média 6,9%, de 0,9% a 40,9%.','The country’s network with the outside world, measured by incoming foreign direct investment over GDP (UNCTAD). Mean 6.9%, from 0.9% to 40.9%.')},
+      {k:'au', c:'var(--au)', n:L('Austeridade','Austerity'), t:L('Austeridade (2011 e 2012)','Austerity (2011 and 2012)'), m:L('Os anos de cortes mais duros nos gastos públicos da União Europeia depois da crise de 2008 entram como um marcador “sim ou não”.','The years of the harshest public-spending cuts in the European Union after the 2008 crisis enter as a “yes or no” marker.')}
+    ];
+    var bx = [];
+    P.slice(0, 3).forEach(function(p, i){ var b = box({w:44, d:44, x:28 + i * 82, y:70, h:120, c:p.c, label:p.n}); b.dataset.i = i; st.appendChild(b); bx.push(b); });
+    var slab = box({w:250, d:80, x:20, y:52, z:120, h:22, c:'#e2e8f0', top:L('crescimento','growth')});
+    slab.querySelector('.top-label').style.color = 'var(--ink)'; st.appendChild(slab);
+    var au = box({w:40, d:40, x:250, y:150, h:40, c:'var(--au)'}); au.dataset.i = 3; st.appendChild(au); bx.push(au);
+    $('cap-chips').innerHTML = P.map(function(p, i){ return '<button data-i="' + i + '"><i class="dot" style="background:' + p.c + '"></i>' + p.t + '</button>'; }).join('');
+    function pick(i){
+      pressed($('cap-chips'), 'i', i);
+      bx.forEach(function(b){ b.classList.toggle('active', +b.dataset.i === i); });
+      var p = P[i];
+      $('cap-panel').innerHTML = '<div class="tag" style="color:' + p.c + '">' + p.t + '</div><p>' + p.m + '</p><p style="font-size:.8rem; color:var(--muted)">' + L('Chegada: crescimento do PIB por pessoa (Banco Mundial), média de 1,13% ao ano, de −9,1% a +26,3%.','Outcome: GDP-per-person growth (World Bank), mean 1.13% a year, from −9.1% to +26.3%.') + '</p>';
+    }
+    bx.forEach(function(b){ b.style.cursor = 'pointer'; b.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick(+b.dataset.i); }); });
+    each($('cap-chips').children, function(b){ b.addEventListener('click', function(){ pick(+b.dataset.i); }); });
+    pick(2);
+  })();
+
+  /* ================= 10 · PLACAR ================= */
+  (function(){
+    var met = 'ea', mod = 0;
+    var MN = {ols:L('Mínimos quadrados','Ordinary least squares'), ef:L('Efeitos fixos','Fixed effects'), ea:L('Efeitos aleatórios','Random effects'), din:L('Painel dinâmico','Dynamic panel')};
+    var MD = {
+      ols:L('Junta todos os países e anos numa conta só.','Pools all countries and years into one calculation.'),
+      ef:L('Compara cada país com ele mesmo ao longo do tempo. Por isso o capital humano, que quase não muda dentro de um país em dez anos, some aqui.','Compares each country with itself over time. That is why human capital, which barely changes within a country in ten years, vanishes here.'),
+      ea:L('Usa as diferenças entre países e dentro de cada um. É o método que o teste de Hausman indicou para este modelo.','Uses differences across and within countries. It is the method the Hausman test pointed to for this model.'),
+      din:L('Leva em conta o crescimento do ano anterior. O teste de Sargan rejeitou os instrumentos usados, então pese menos este resultado.','Takes the previous year’s growth into account. The Sargan test rejected the instruments used, so weigh this result less.')
+    };
+    var MD1 = {
+      ols:L('Junta todos os países e anos numa conta só; cada barra vem de um modelo diferente (um pilar combinado com a nota de inovação de cada vez).','Pools all countries and years; each bar comes from a different model (one pillar combined with the innovation score at a time).'),
+      ef:L('Compara cada país com ele mesmo. O teste de Hausman indicou este método para o modelo do capital humano combinado com a inovação.','Compares each country with itself. The Hausman test pointed to this method for the model of human capital combined with innovation.'),
+      ea:L('Usa as diferenças entre países e dentro de cada um. O teste de Hausman indicou este método para os modelos das patentes e do investimento estrangeiro combinados com a inovação.','Uses differences across and within countries. The Hausman test pointed to this method for the models of patents and of foreign investment combined with innovation.'),
+      din:MD.din
+    };
+    $('pl-seg').innerHTML = MET.map(function(m){ return '<button data-k="' + m + '">' + MN[m] + '</button>'; }).join('');
+    var RN = [[L('Capital humano','Human capital'),'var(--ch)'], [L('Patentes (estrutural)','Patents (structural)'),'var(--ce)'], [L('Investimento estrangeiro (relacional)','Foreign investment (relational)'),'var(--cr)'], [L('Austeridade 2011–2012','Austerity 2011–2012'),'var(--au)']];
+    function stars(t){ t = Math.abs(t); return t >= 2.576 ? 3 : t >= 1.96 ? 2 : t >= 1.645 ? 1 : 0; }
+    function draw(){
+      pressed($('pl-seg'), 'k', met); pressed($('pl-mod'), 'k', mod);
+      var rows = mod ? T1[met].map(function(t, i){ return [RN[i][0] + ' × ' + L('inovação','innovation'), RN[i][1], t]; }) : T0[met].map(function(c, i){ return [RN[i][0], RN[i][1], c[1]]; });
+      var W = 560, H = 64 + rows.length * 60, x0 = 215, x1 = 540, lo = -3, hi = 5.6;
+      function X(t){ return x0 + (Math.max(lo, Math.min(hi, t)) - lo) / (hi - lo) * (x1 - x0); }
+      var s = '<svg class="sv" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + L('Barras com a estatística t de cada pilar no método escolhido','Bars with each pillar’s t statistic in the chosen method') + '">';
+      [-2.576, -1.96, -1.645, 1.645, 1.96, 2.576].forEach(function(v){ s += '<line x1="' + X(v) + '" x2="' + X(v) + '" y1="30" y2="' + (H - 24) + '" stroke="var(--red)" stroke-opacity="' + (Math.abs(v) > 2.5 ? .9 : Math.abs(v) > 1.9 ? .6 : .35) + '" stroke-dasharray="4 3"/>'; });
+      s += '<line x1="' + X(0) + '" x2="' + X(0) + '" y1="22" y2="' + (H - 22) + '" stroke="#0f172a"/>';
+      ['10%', '5%', '1%'].forEach(function(l, j){ s += '<text x="' + X([1.645, 1.96, 2.576][j]) + '" y="' + (j === 1 ? 24 : 12) + '" font-size="12" text-anchor="middle" fill="var(--red)">' + l + '</text>'; });
+      rows.forEach(function(r, i){
+        var y = 52 + i * 60, t = r[2], st = stars(t), w = Math.abs(X(t) - X(0));
+        var nm = r[0].split(' ('), nm2 = nm[1] ? '(' + nm[1] : ''; if (!nm2 && nm[0].indexOf(' × ') > 0){ var q = nm[0].split(' × '); nm = [q[0]]; nm2 = '× ' + q[1]; } s += '<text x="8" y="' + (nm2 ? y - 3 : y + 5) + '" font-size="15" fill="#0f172a" font-weight="600">' + nm[0] + (nm2 ? '<tspan x="8" dy="17" font-size="13" font-weight="400" fill="#64748b">' + nm2 + '</tspan>' : '') + '</text>';
+        s += '<rect x="' + Math.min(X(0), X(t)) + '" y="' + (y - 12) + '" width="' + w + '" height="24" rx="5" fill="' + (st ? r[1] : '#cbd5e1') + '"/>';
+        s += '<text x="' + (t >= 0 ? X(t) + 6 : X(t) - 6) + '" y="' + (y + 5) + '" font-size="14" text-anchor="' + (t >= 0 ? 'start' : 'end') + '" fill="#0f172a">' + fmt(t, 2) + (st ? ' ' + new Array(st + 1).join('★') : '') + '</text>';
+      });
+      $('pl-chart').innerHTML = s + '</svg>';
+      var extra = '';
+      if (!mod){
+        var a = T0[met][3];
+        extra = '<p>' + L('Austeridade: ', 'Austerity: ') + sgn(a[0], 2) + L(' ponto percentual no crescimento por pessoa', ' percentage point in growth per person') + (stars(a[1]) ? '' : L(' (sem significância aqui)', ' (not significant here)')) + '.</p>';
+      } else {
+        extra = '<p>' + L('Com a nota de inovação e sofisticação, o investimento estrangeiro continua passando em três métodos e o capital humano em três; patentes, só no painel dinâmico e a 10%. A tese conclui que não dá para afirmar um reforço sobre o capital intelectual como um todo.','With the innovation and sophistication score, foreign investment still passes in three methods and human capital in three; patents, only in the dynamic panel and at 10%. The thesis concludes that a boost to intellectual capital as a whole cannot be claimed.') + '</p>';
+      }
+      var md = mod ? MD1[met] : MD[met];
+      $('pl-panel').innerHTML = '<div class="tag">' + MN[met] + (met === 'ea' && !mod ? '<span class="hz">' + L('indicado pelo Hausman','Hausman’s pick') + '</span>' : '') + '</div><p>' + md + '</p>' + extra;
+    }
+    each($('pl-seg').children, function(b){ b.addEventListener('click', function(){ met = b.dataset.k; draw(); }); });
+    each($('pl-mod').children, function(b){ b.addEventListener('click', function(){ mod = +b.dataset.k; draw(); }); });
+    draw();
+  })();
+
+  /* ================= 11 · SIMULADOR ================= */
+  (function(){
+    var sc = $('sim-scene'), st = makeStage(sc, 280, 120, {ay:'76%', rx:'62deg'}), S = 40, Z = 60;
+    rotatable(sc, st, -16, 5);
+    st.appendChild(box({w:260, d:100, x:10, y:10, z:Z, h:1, c:'#94a3b8', cls:'zero'}));
+    var base = box({w:60, d:60, x:40, y:30, z:Z, h:MEAN.pib * S, c:'#94a3b8', label:fmt(MEAN.pib, 1) + '%'});
+    var mine = box({w:60, d:60, x:170, y:30, z:Z, h:40, c:'var(--cr)'});
+    st.appendChild(base); st.appendChild(mine);
+    flatLabel(st, L('país médio','average country'), 20, 100, 100, 'font-size:12px');
+    flatLabel(st, L('o seu país','your country'), 150, 100, 100, 'font-size:12px');
+    function draw(){
+      var f = +$('r-fdi').value / 100, h = +$('r-hci').value, a = $('r-aus').checked ? 1 : 0;
+      var pf = EA.fdi * (f - MEAN.fdi), ph = EA.hci * (h - MEAN.hci), pa = EA.aus * a, g = MEAN.pib + pf + ph + pa;
+      $('s-fdi').textContent = Math.round(f * 100) + '%'; $('s-hci').textContent = fmt(h, 2);
+      var hh = Math.abs(g) * S;
+      mine.style.setProperty('--h', Math.max(2, hh) + 'px');
+      mine.style.setProperty('--z', (g >= 0 ? Z : Z - hh) + 'px');
+      mine.style.setProperty('--c', g >= 0 ? 'var(--cr)' : 'var(--au)');
+      mine.querySelector('.f-front').innerHTML = hh >= 22 ? '<span class="face-label">' + fmt(g, 1) + '%</span>' : '';
+      $('sim-out').textContent = (g < 0 ? '−' : '') + fmt(Math.abs(g), 1) + L('% ao ano', '% a year');
+      $('sim-parts').innerHTML = L('País médio ', 'Average country ') + fmt(MEAN.pib, 2) + '% · ' + L('investimento estrangeiro ', 'foreign investment ') + sgn(pf, 2) + ' · ' + L('capital humano ', 'human capital ') + sgn(ph, 2) + (a ? ' · ' + L('austeridade ', 'austerity ') + sgn(pa, 2) : '') + L(' (pontos percentuais)', ' (percentage points)');
+    }
+    ['r-fdi', 'r-hci'].forEach(function(id){ $(id).addEventListener('input', draw); });
+    $('r-aus').addEventListener('change', draw);
+    draw();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
