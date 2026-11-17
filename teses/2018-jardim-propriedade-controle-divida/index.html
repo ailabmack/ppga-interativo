@@ -1,0 +1,964 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quem manda na empresa muda quanto ela deve? · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de José Renato de Paula Souza Jardim (PPGA Mackenzie, 2018) sobre como o tipo e o tamanho do maior acionista se relacionam com a dívida de 128 empresas abertas brasileiras de 2010 a 2016, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2018-jardim-propriedade-controle-divida/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><path d=%22M12 9a4 4 0 1 1 0 .1zM8 26v-6a4 4 0 0 1 8 0v6zM21 12a3 3 0 1 1 0 .1zM18 26v-5a3 3 0 0 1 6 0v5z%22 fill=%22white%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  @property --z{syntax:'<length>'; inherits:false; initial-value:0px;}
+  :root{
+    --pos:var(--navy);    /* a dívida sobe */
+    --neg:var(--red);     /* a dívida cai */
+    --ns:#cbd5e1;         /* sem efeito claro */
+    --fam:var(--red);     /* família */
+    --out:var(--navy);    /* sócios de fora: governo, estrangeiros */
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .ilus{display:inline-block; font-size:.64rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 13px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.75rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px;}
+  .chips button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-size:.78rem; cursor:pointer; color:var(--ink-2);}
+  .chips button:hover{border-color:var(--ink);}
+  .chips button[aria-pressed="true"]{border-color:var(--ink); background:var(--ink); color:#fff;}
+  .row-tools{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:12px;}
+  .sv{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .sv text{font-family:var(--sans);}
+  .lg{display:flex; justify-content:center; gap:6px 14px; flex-wrap:wrap; font-size:.74rem; color:var(--muted); margin-top:4px;}
+  .badge{display:inline-block; border-radius:6px; padding:1px 8px; font-size:.74rem; font-weight:700; color:#fff;}
+  .badge.p{background:var(--pos);} .badge.n{background:var(--neg);} .badge.z{background:var(--ns); color:var(--ink-2);}
+  .scene .floor-label{font-size:12px; color:var(--muted); font-weight:600;}
+  .scene .slab{transition:--h .6s cubic-bezier(.2,.8,.2,1), --z .6s cubic-bezier(.2,.8,.2,1), transform .5s;}
+  .scene .slab.dim > i{opacity:.12;}
+  .scene{perspective:2200px;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 3.6vw, 2.5rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.86rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.77rem; color:var(--muted); text-align:center; margin-top:6px; max-width:36em; margin-left:auto; margin-right:auto;}
+  #hero-line{font-family:var(--serif); text-align:center; font-size:1rem; color:var(--ink); margin-bottom:2px; min-height:3.2em; display:flex; align-items:center; justify-content:center;}
+  #hero-line b{color:var(--red);}
+
+  /* ---------- 02 · Dono ---------- */
+  #tw-scene .slab{cursor:pointer;}
+  #tw-scene .slab.sel > i{box-shadow:inset 0 0 0 2px var(--ink);}
+  #tw-scene .face-label{font-size:17px; font-weight:700; color:#fff;}
+  #tw-panel{margin-top:10px; min-height:5.4em;}
+  .yr{margin-top:12px;}
+
+  /* ---------- 03 · Cadeia ---------- */
+  .holders{display:flex; height:70px; border-radius:12px; overflow:hidden; margin-top:14px; border:1px solid var(--border); background:var(--card);}
+  .holders div{display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; font-size:.76rem; line-height:1.25; color:var(--ink-2); background:#eef2f7; border-right:2px solid #fff; transition:background .45s, color .45s; padding:0 4px; min-width:0;}
+  .holders div:last-child{border-right:0;}
+  .holders div b{font-family:var(--serif); font-size:1.05rem; color:inherit;}
+  .holders div.on{background:var(--red); color:#fff;}
+  .holders div.gov{background:var(--navy); color:#fff;}
+  .ctrl{display:flex; align-items:center; gap:12px; margin-top:12px; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px; box-shadow:var(--shadow);}
+  .ctrl .pct{font-family:var(--serif); font-weight:900; font-size:1.8rem; color:var(--red); min-width:3.2em; text-align:center;}
+  .ctrl .who{font-size:.86rem; color:var(--ink-2);}
+  .ctrl .who b{display:block; color:var(--ink); font-size:.95rem;}
+  .rules{display:grid; gap:7px; margin-top:12px;}
+  .rules div{background:var(--card); border:1px solid var(--border); border-radius:11px; padding:8px 12px; font-size:.8rem; color:var(--ink-2); line-height:1.4; border-left:4px solid var(--rc, var(--ink));}
+  .rules b{color:var(--ink);}
+  #ch-panel{margin-top:12px; min-height:4.4em;}
+
+  /* ---------- 04 · Cortes ---------- */
+  .ctl{margin-top:12px;}
+  .ctl label{display:flex; justify-content:space-between; font-size:.86rem; font-weight:600; color:var(--ink);}
+  .ctl label span{font-variant-numeric:tabular-nums; color:var(--red); font-family:var(--serif); font-size:1.2rem;}
+  .ctl input{width:100%; accent-color:var(--red);}
+  .ctl small{display:block; font-size:.72rem; color:var(--muted);}
+  .cuts{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+  .cut{border:2px dashed var(--border); border-radius:12px; padding:10px 12px; transition:all .35s; background:var(--card);}
+  .cut b{display:block; font-family:var(--serif); font-size:1.05rem; color:var(--muted);}
+  .cut span{font-size:.76rem; color:var(--muted); line-height:1.35; display:block;}
+  .cut.on{border-style:solid; border-color:var(--ink); box-shadow:var(--shadow);}
+  .cut.on b{color:var(--ink);}
+  .cut.on.c50{border-color:var(--red);} .cut.on.c50 b{color:var(--red);}
+  .rights{list-style:none; margin:0; padding:0; display:grid; gap:6px;}
+  .rights li{display:grid; grid-template-columns:54px 1fr; gap:10px; align-items:center; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:7px 12px; font-size:.8rem; color:var(--muted); line-height:1.35; transition:all .35s; opacity:.55;}
+  .rights li b{font-family:var(--serif); font-size:1rem; color:var(--muted); text-align:center;}
+  .rights li.on{opacity:1; color:var(--ink-2); border-color:var(--ink-2); box-shadow:var(--shadow);}
+  .rights li.on b{color:var(--red);}
+  .rights li small{display:block; font-size:.68rem; color:var(--muted);}
+  .rights li.ctrl50{border-style:dashed;}
+  .rights li.ctrl50.on{border-color:var(--red); border-style:solid; background:#fff7f8;}
+
+  /* ---------- 05 · Réguas ---------- */
+  #rg-scene .slab{cursor:pointer;}
+  #rg-scene .slab.sel{--oz:16px;}
+  #rg-scene .slab.sel > i{box-shadow:inset 0 0 0 2px var(--ink);}
+  #rg-scene .top-label{font-size:15px; font-weight:700; color:#fff; text-align:center; line-height:1.2; padding:0 4px;}
+  #rg-scene .slab.lt .top-label{color:var(--ink);}
+  #rg-panel{margin-top:10px; min-height:8.6em;}
+  .frac{display:inline-grid; text-align:center; vertical-align:middle; font-size:.82rem; margin:4px 0 6px;}
+  .frac span:first-child{border-bottom:1.5px solid var(--ink-2); padding:0 6px 2px;}
+  .frac span:last-child{padding:2px 6px 0;}
+
+  /* ---------- 06 · Apostas ---------- */
+  .hyps{display:grid; gap:7px; margin-top:10px;}
+  .hyp{display:grid; grid-template-columns:44px 1fr; gap:8px; align-items:start; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:7px 12px; box-shadow:var(--shadow); border-left:5px solid var(--hc, var(--border));}
+  .hyp .hn{font-family:var(--serif); font-weight:900; font-size:1.05rem; color:var(--ink);}
+  .hyp .q{font-size:.84rem; color:var(--ink); font-weight:600; line-height:1.35;}
+  .hyp .opts{display:flex; flex-wrap:wrap; gap:6px; margin-top:5px;}
+  .hyp .opts button{border:1px solid var(--border); background:var(--card); border-radius:8px; padding:4px 10px; font-size:.78rem; font-weight:600; cursor:pointer; color:var(--ink);}
+  .hyp .opts button:hover{border-color:var(--ink);}
+  .hyp .res{display:none; font-size:.76rem; color:var(--ink-2); margin-top:3px; line-height:1.42;}
+  .hyp .res b{color:var(--ink);}
+  .hyp.done .opts{display:none;}
+  .hyp.done .res{display:block;}
+  #hyp-score{font-size:.9rem; color:var(--ink-2); margin-top:10px; min-height:1.5em;}
+  .tally{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 16px 12px; box-shadow:var(--shadow);}
+  .tally h3{font-size:.95rem; margin-bottom:2px;}
+  .tally .sub{font-size:.76rem; color:var(--muted); margin-bottom:6px;}
+  .tl{display:grid; grid-template-columns:150px 1fr; gap:10px; align-items:center; padding:6px 0; border-top:1px solid #f1f5f9; font-size:.8rem; color:var(--ink-2);}
+  .tl small{display:block; font-size:.68rem; color:var(--muted);}
+  .tbar{display:flex; height:24px; border-radius:6px; overflow:hidden; background:#f1f5f9; transition:opacity .4s;}
+  .tbar i{display:flex; align-items:center; justify-content:center; font-style:normal; font-size:.74rem; font-weight:700; color:#fff; transition:flex-grow .6s; min-width:0; overflow:hidden;}
+  .tbar i.p{background:var(--pos);} .tbar i.n{background:var(--neg);} .tbar i.z{background:var(--ns); color:var(--ink-2);}
+  .tbar.off{opacity:.15;}
+  .tbar i.exp{box-shadow:inset 0 0 0 3px #fbbf24;}
+  @media (max-width:600px){ .tl{grid-template-columns:104px 1fr; gap:6px; font-size:.74rem;} }
+
+  /* ---------- 07 · Mosaico ---------- */
+  #mx-scene .slab{cursor:pointer;}
+  #mx-scene .slab.sel{--oz:14px;}
+  #mx-scene .slab.sel > i{box-shadow:inset 0 0 0 2px var(--ink);}
+  #mx-panel{margin-top:10px; min-height:7.4em;}
+
+  /* ---------- 08 · Concentração ---------- */
+  #ct-panel{margin-top:12px; min-height:6em;}
+  #ct-svg .ml{font-size:11.5px; fill:#334155;} #ct-svg .vl{font-size:12px; font-weight:700; fill:#0f172a;}
+  #ct-svg .th{font-size:10px; fill:#64748b;}
+  @media (max-width:600px){ #ct-svg .ml{font-size:18px;} #ct-svg .vl{font-size:17px;} #ct-svg .tt{font-size:17px !important;} #ct-svg .th{font-size:14px;} }
+
+  /* ---------- 09 · Família ---------- */
+  .big2{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+  .big2 div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 13px; border-top:5px solid var(--bc); transition:opacity .4s;}
+  .big2 div.off{opacity:.4;}
+  .big2 b{display:block; font-family:var(--serif); font-size:1.7rem; color:var(--ink); line-height:1.1;}
+  .big2 span{font-size:.76rem; color:var(--ink-2); display:block; line-height:1.35;}
+  #fm-panel{margin-top:10px; min-height:5em;}
+
+  /* ---------- 10 · Sócios de fora ---------- */
+  #fo-scene .slab{cursor:pointer;}
+  #fo-scene .slab.col > i{box-shadow:inset 0 0 0 2px #fbbf24;}
+  #fo-panel{margin-top:10px; min-height:6.4em;}
+
+  /* ---------- 11 · Inesperado ---------- */
+  .guess{display:grid; gap:6px; margin-top:8px;}
+  .guess button{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:8px 12px; font-size:.84rem; font-weight:600; cursor:pointer; color:var(--ink); text-align:left;}
+  .guess button:hover{border-color:var(--ink);}
+  .guess button.right{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .guess button.wrong{opacity:.45;}
+  #guess-msg{font-size:.86rem; color:var(--ink-2); margin-top:8px; min-height:2.8em;}
+  #ie-wrap{transition:opacity .5s;}
+  #ie-wrap.hide{opacity:.15; pointer-events:none;}
+  .mrow{display:grid; grid-template-columns:190px 1fr 26px; gap:8px; align-items:center; padding:5px 0; border-top:1px solid #f1f5f9; font-size:.78rem; color:var(--ink-2);}
+  .mrow .bars{display:flex; gap:2px; height:22px;}
+  .mrow .bars i{flex:0 0 calc((100% - 16px) / 9); border-radius:3px; background:#eef2f7;}
+  .mrow .bars i.p{background:var(--pos);} .mrow .bars i.n{background:var(--neg);}
+  .mrow b{font-family:var(--serif); text-align:right; color:var(--ink);}
+  .mrow.hl{background:#fff7f8;}
+  @media (max-width:600px){ .mrow{grid-template-columns:118px 1fr 22px; font-size:.72rem;} }
+
+  /* ---------- 12 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.77rem; color:var(--ink-2); line-height:1.42;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2018-jardim-propriedade-controle-divida/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2018</div>
+      <h1 class="rv" style="--d:.1s">Quem manda na empresa muda quanto ela deve?</h1>
+      <p class="sub rv" style="--d:.2s">A tese seguiu 128 empresas abertas brasileiras de 2010 a 2016, descobriu quem é o dono de verdade de cada uma e testou se uma família, o governo, o BNDES, fundos de pensão ou estrangeiros entre os sócios andam junto com mais ou menos dívida. Em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> José Renato de Paula Souza Jardim</span>
+        <span><b>Orientador:</b> Prof. Dr. Wilson Toshiro Nakamura</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#dono">Começar →</a>
+        <a class="btn ghost" href="#apostas">Ir direto ao resultado</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div id="hero-line" aria-live="off"></div>
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="560x330" role="img" aria-label="Grade 3D de 9 tipos de dono por 8 medidas de dívida; azul quando a dívida sobe, vermelho quando cai, cinza sem efeito claro; uma linha acende de cada vez"></div></div>
+      <div class="lg"><span><i class="dot" style="background:var(--pos)"></i>a dívida sobe</span><span><i class="dot" style="background:var(--neg)"></i>a dívida cai</span><span><i class="dot" style="background:var(--ns)"></i>sem efeito claro</span></div>
+      <p class="cap-legend">Tabelas 6 a 14 da tese. Cada linha é um tipo de dono, cada coluna uma régua da dívida; a altura é a força da evidência.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Mostra como o tipo de dono (família, governo, BNDES, fundos de pensão, estrangeiros) se relaciona com o uso de crédito pelas empresas abertas brasileiras."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · DONO -->
+<section class="slide" id="dono" data-label="Quase sempre há um dono">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O ponto de partida · Tabelas 2 e 3</div>
+      <h2 class="rv" style="--d:.1s">Na bolsa brasileira, quase toda empresa tem um dono, e quase sempre é uma família</h2>
+      <p class="lede rv" style="--d:.15s">Em muitos livros de finanças, a empresa aberta é de milhares de pequenos acionistas. No Brasil, não: o maior acionista detém, em média, perto de dois terços dos votos. A torre mostra quem é esse maior acionista nas 128 empresas. Troque o ano e toque nas camadas.</p>
+      <div class="stats rv" style="--d:.2s">
+        <div class="stat"><b id="st-v"></b><span>dos votos com o maior acionista, em média</span></div>
+        <div class="stat"><b id="st-f"></b><span>das empresas têm uma família como maior acionista</span></div>
+        <div class="stat"><b>128</b><span>empresas não financeiras, metade delas indústrias</span></div>
+      </div>
+      <div class="seg yr rv" id="tw-seg" style="--d:.25s" role="group" aria-label="Ano"></div>
+      <div class="panel rv" id="tw-panel" style="--d:.3s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="tw-scene" data-fit="440x420" role="img" aria-label="Torre 3D com uma camada por tipo de maior acionista; a altura de cada camada é a parte das empresas, que soma 100%"></div></div>
+      <p class="note">Tabela 2 (categorias do maior acionista, % das 128 empresas) e Tabela 3 (votos do maior acionista: mínimo de 5% a 7% e máximo de 100% em todos os anos). "Acordo" é um grupo de acionistas que se comprometeu a votar junto; "fundo estrangeiro" é a categoria do capital estrangeiro. Indústrias: 52% das empresas em 2016 (Quadro 13).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · CADEIA -->
+<section class="slide" id="cadeia" data-label="O dono de verdade">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> Como a pesquisa olhou · Quadro 4</div>
+      <h2 class="rv" style="--d:.1s">Para achar o dono de verdade, é preciso juntar quem vota junto</h2>
+      <p class="lede rv" style="--d:.15s">Muitas vezes quem aparece como acionista é outra empresa, que tem seus próprios donos. O autor leu os formulários que as empresas entregam à CVM e seguiu cada cadeia até o fim: o "maior acionista último". Veja quatro exemplos da tese.</p>
+      <div class="seg rv" id="ch-seg" style="--d:.2s" role="group" aria-label="Exemplo"></div>
+      <div class="rules rv" style="--d:.25s">
+        <div style="--rc:var(--red)"><b>Família conta como um só acionista.</b> Parentes, segundo a premissa da tese, têm os mesmos interesses e decidem juntos.</div>
+        <div style="--rc:var(--navy)"><b>Governo também conta como um só.</b> Órgãos públicos, bancos públicos e de fomento e fundos de previdência de estatais são somados.</div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="holders" id="ch-bar" aria-hidden="true"></div>
+      <div class="ctrl" aria-live="polite"><div class="pct" id="ch-pct"></div><div class="who" id="ch-who"></div></div>
+      <div class="panel" id="ch-panel" aria-live="polite"></div>
+      <p class="note">Exemplos do Quadro 4 (baseado em Aldrighi e Mazzer Neto, 2005 e 2007); os nomes são fictícios. As caixas em destaque são as que o quadro soma no controlador. O quadro tem um quinto exemplo, com o governo, que deixamos de fora porque soma ao governo um acionista não identificado.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · CORTES -->
+<section class="slide" id="cortes" data-label="10% e 50%">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Como a pesquisa olhou · Quadros 9 e 11</div>
+      <h2 class="rv" style="--d:.1s">Com 10% dos votos, o sócio já tem voz; com mais de 50%, tem o comando</h2>
+      <p class="lede rv" style="--d:.15s">A tese não mediu o dono por uma escala contínua: dividiu as empresas em dois cortes. Acima de 10% dos votos, a lei das S.A. já dá ao acionista poderes de fiscalizar; acima de 50%, ele manda. Arraste e veja o que cada fatia de votos garante.</p>
+      <div class="ctl rv" style="--d:.2s"><label>Votos de um acionista <span id="cu-v"></span></label><input type="range" id="cu-r" min="0" max="100" step="1" value="12" aria-label="Parte das ações com direito a voto"><small>acionista inventado; os direitos vêm da Lei 6.404/76, como resumidos na tese</small></div>
+      <div class="cuts rv" style="--d:.25s">
+        <div class="cut" id="cu10"><b>Corte de 10%</b><span>usado para o maior acionista, família, estrangeiros, governo, BNDES e fundos de pensão</span></div>
+        <div class="cut c50" id="cu50"><b>Corte de 50%</b><span>usado para o maior acionista, os três maiores juntos e a família</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <ul class="rights" id="cu-list"></ul>
+      <p class="note">Quadro 9 (extraído de Barros, 2015), resumido; os de 5% contam sobre o capital total ou sobre ações votantes, conforme o artigo. O corte de 10% segue La Porta e coautores (1999); o de 50% segue Chapelle e Szafarz (2005), Aldrighi (2014) e Barros (2015). Na tese, cada corte vira uma variável "sim ou não" (Quadro 11).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · RÉGUAS -->
+<section class="slide" id="reguas" data-label="Oito réguas da dívida">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Como a pesquisa olhou · Quadro 6</div>
+      <h2 class="rv" style="--d:.1s">A dívida foi medida de oito jeitos, incluindo a régua que os bancos usam</h2>
+      <p class="lede rv" style="--d:.15s">Dever muito depende de "comparado com o quê": com o que a empresa tem, com o dinheiro dos sócios, com o caixa que ela gera. Cada régua teve seu próprio modelo, com cada empresa comparada com ela mesma ao longo dos anos. Toque numa régua.</p>
+      <div class="panel rv" id="rg-panel" style="--d:.2s" aria-live="polite"></div>
+      <div class="stats rv" style="--d:.25s">
+        <div class="stat"><b>896</b><span>observações empresa-ano (128 × 7 anos)</span></div>
+        <div class="stat"><b>544 a 803</b><span>observações usadas, conforme a régua</span></div>
+        <div class="stat"><b>5 controles</b><span>tamanho, lucro, crescimento, risco e ativos fixos</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="rg-scene" data-fit="560x330" role="img" aria-label="Oito placas 3D, uma por medida de dívida, em quatro grupos: valor da dívida de longo prazo, dívida sobre o ativo, dívida de longo prazo sobre o patrimônio e dívida líquida"></div></div>
+      <p class="note">Quadro 6 e Tabelas 6 a 14 (observações). "Contábil" usa os valores do balanço; "mercado" usa o valor na bolsa. Dívida líquida = dívida menos o caixa. Das 256 empresas não financeiras listadas, 128 ficaram de fora por falta de dados (Quadro 3). Modelos de efeitos fixos com erros robustos, escolhidos pelo teste de Hausman.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · APOSTAS -->
+<section class="slide" id="apostas" data-label="As hipóteses">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> O resultado · faça sua aposta</div>
+      <h2 class="rv" style="--d:.1s">Seis apostas sobre o dono e a dívida</h2>
+      <p class="lede rv" style="--d:.15s">A tese partiu de seis hipóteses. Para cada tipo de dono, aposte: com ele na empresa, a dívida sobe, cai ou não muda?</p>
+      <div class="hyps rv" id="hyps" style="--d:.2s"></div>
+      <div id="hyp-score" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="tally">
+        <h3>O placar das 8 réguas</h3>
+        <div class="sub" id="tally-sub"></div>
+        <div id="tally"></div>
+        <div class="row-tools">
+          <div class="seg" id="rig-seg" role="group" aria-label="Rigor">
+            <button data-r="10" aria-pressed="true">Rigor da tese (10%)</button>
+            <button data-r="5" aria-pressed="false">Mais rigor (5%)</button>
+          </div>
+        </div>
+      </div>
+      <p class="note">Contagem nossa a partir das estrelas das Tabelas 6 a 14. Cada barra se acende quando você aposta na hipótese correspondente; o contorno amarelo marca a direção que a hipótese previa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · MOSAICO -->
+<section class="slide" id="mosaico" data-label="O mosaico">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> O resultado em detalhe</div>
+      <h2 class="rv" style="--d:.1s">O vermelho fica com os donos que mandam; o azul, com os sócios de fora</h2>
+      <p class="lede rv" style="--d:.15s">São 72 resultados: 9 tipos de dono × 8 réguas. Quando um dono só ou uma família passa de 50% dos votos, a dívida cai; quando governo, BNDES, fundos de pensão ou estrangeiros passam de 10%, ela sobe. Filtre e toque num bloco.</p>
+      <div class="chips rv" id="mx-chips" style="--d:.2s" role="group" aria-label="Filtrar tipo de dono"></div>
+      <div class="row-tools rv" style="--d:.22s">
+        <div class="seg" id="mx-rig" role="group" aria-label="Rigor">
+          <button data-r="10" aria-pressed="true">10%</button>
+          <button data-r="5" aria-pressed="false">5%</button>
+        </div>
+      </div>
+      <div class="panel rv" id="mx-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="mx-scene" data-fit="620x420" role="img" aria-label="Mosaico 3D de 72 blocos: 9 linhas de tipos de dono por 8 colunas de medidas de dívida"></div></div>
+      <div class="lg"><span><i class="dot" style="background:var(--pos)"></i>a dívida sobe</span><span><i class="dot" style="background:var(--neg)"></i>a dívida cai</span><span><i class="dot" style="background:var(--ns)"></i>sem efeito claro</span><span>altura: 10%, 5%, 1%</span></div>
+      <p class="note">Tabelas 6 a 14. Mostramos só a direção e a força da evidência: as réguas têm escalas diferentes, e as médias de algumas delas na Tabela 4 são difíceis de ler (a dívida sobre o ativo a mercado tem média 1,00), então o tamanho dos coeficientes não é comparável.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · CONCENTRAÇÃO -->
+<section class="slide" id="concentracao" data-label="Dono forte × dono absoluto">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> A descoberta · hipótese 1</div>
+      <h2 class="rv" style="--d:.1s">Um dono com voz anda com mais dívida; um dono absoluto, com menos</h2>
+      <p class="lede rv" style="--d:.15s">A hipótese era de que concentrar os votos reduziria a dívida. Com o corte de 50%, foi o que apareceu, em 6 das 8 réguas. Com o corte de 10%, o sinal se inverteu. Para o autor, a concentração ajuda a tomar crédito até certo ponto; o excesso atrapalha. Troque o corte.</p>
+      <div class="seg rv" id="ct-seg" style="--d:.2s" role="group" aria-label="Corte">
+        <button data-k="m10" aria-pressed="true">Maior acionista > 10%</button>
+        <button data-k="m50" aria-pressed="false">Maior acionista > 50%</button>
+        <button data-k="m3" aria-pressed="false">3 maiores > 50%</button>
+      </div>
+      <div class="panel rv" id="ct-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="ct-svg" class="sv" viewBox="0 0 560 360" role="img" aria-label="Barras para cima e para baixo da estatística t do corte escolhido nas oito réguas da dívida, com linhas de 10%, 5% e 1%"></svg>
+      <div class="lg"><span><i class="dot" style="background:var(--pos)"></i>a dívida sobe</span><span><i class="dot" style="background:var(--neg)"></i>a dívida cai</span><span><i class="dot" style="background:var(--ns)"></i>sem efeito claro</span></div>
+      <p class="note">Tabelas 6, 7 e 8. A barra é a estatística t, que mede a força da evidência, não o tamanho do efeito; passar das linhas tracejadas equivale a 10%, 5% e 1% de significância. Com os três maiores, quase todas as empresas passam de 50%, segundo o autor.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · FAMÍLIA -->
+<section class="slide" id="familia" data-label="A família">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> A descoberta · hipótese 2</div>
+      <h2 class="rv" style="--d:.1s">Quanto mais a família manda, em mais réguas a dívida cai</h2>
+      <p class="lede rv" style="--d:.15s">Com mais de 10% dos votos nas mãos de uma família, a dívida caiu em 3 réguas. Com mais de 50%, em 5. Para o autor, a família tem aversão a perder o controle, e dívida traz credores que cobram regras e prestação de contas. Troque o corte.</p>
+      <div class="seg rv" id="fm-seg" style="--d:.2s" role="group" aria-label="Corte">
+        <button data-k="f10" aria-pressed="true">Família > 10%</button>
+        <button data-k="f50" aria-pressed="false">Família > 50%</button>
+      </div>
+      <div class="big2 rv" style="--d:.22s">
+        <div id="fm-b10" style="--bc:#f08aa0"><b>3 / 8</b><span>réguas em que a dívida cai, família acima de 10%</span></div>
+        <div id="fm-b50" style="--bc:var(--red)"><b>5 / 8</b><span>réguas em que a dívida cai, família acima de 50%</span></div>
+      </div>
+      <div class="panel rv" id="fm-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="fm-scene" data-fit="580x320" role="img" aria-label="Duas fileiras de 8 blocos, família acima de 10% e acima de 50%; blocos vermelhos e altos são réguas em que a dívida cai"></div></div>
+      <div class="lg"><span><i class="dot" style="background:var(--neg)"></i>a dívida cai</span><span><i class="dot" style="background:var(--ns)"></i>sem efeito claro (10%)</span><span>altura: 10%, 5%, 1%</span></div>
+      <p class="note">Tabelas 9 e 10. Nenhuma régua mostrou a dívida subindo com a família. A explicação da aversão à perda de controle é do autor, apoiado na literatura; a tese não a testa diretamente.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · SÓCIOS DE FORA -->
+<section class="slide" id="fora" data-label="Governo e estrangeiros">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> A descoberta · hipóteses 3 e 4</div>
+      <h2 class="rv" style="--d:.1s">Com governo, BNDES, fundos de pensão ou estrangeiros entre os sócios, a dívida sobe</h2>
+      <p class="lede rv" style="--d:.15s">Quando um desses sócios tem mais de 10% dos votos, nenhuma régua mostrou a dívida caindo com clareza. O governo aparece em 5 réguas, o BNDES em 4, os fundos de pensão em 3 e os estrangeiros em 2. Escolha um sócio.</p>
+      <div class="chips rv" id="fo-chips" style="--d:.2s" role="group" aria-label="Sócio"></div>
+      <div class="row-tools rv" style="--d:.22s"><button class="btn ghost" id="fo-col" type="button" aria-pressed="false" style="padding:7px 14px; font-size:.82rem">Mostrar a régua em comum</button></div>
+      <div class="panel rv" id="fo-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="fo-scene" data-fit="600x360" role="img" aria-label="Quatro fileiras de 8 blocos: estrangeiros, governo, BNDES e fundos de pensão acima de 10%; blocos azuis e altos são réguas em que a dívida sobe"></div></div>
+      <div class="lg"><span><i class="dot" style="background:var(--pos)"></i>a dívida sobe</span><span><i class="dot" style="background:var(--ns)"></i>sem efeito claro (10%)</span><span>altura: 10%, 5%, 1%</span></div>
+      <p class="note">Tabelas 11 a 14. Na tese, "governo" soma BNDES e fundos de pensão (nota da Tabela 4), e a participação do governo e a dos fundos andam quase juntas (correlação de 0,93, Tabela 5); por isso os dois nunca entram no mesmo modelo. As explicações de cada painel são do autor.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · O INESPERADO -->
+<section class="slide" id="inesperado" data-label="O inesperado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> O inesperado</div>
+      <h2 class="rv" style="--d:.1s">A régua dos bancos foi das que menos reagiram ao tipo de dono</h2>
+      <p class="lede rv" style="--d:.15s">A dívida líquida dividida pelo Ebitda (o caixa da operação) é a medida que bancos mais põem nos contratos de empréstimo, diz a tese. Um palpite: entre as oito réguas, qual mudou com mais tipos de dono?</p>
+      <div class="guess rv" id="guess" style="--d:.2s"></div>
+      <div id="guess-msg" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div id="ie-wrap" class="hide">
+        <div class="tally">
+          <h3>Quantos dos 9 tipos de dono mexeram em cada régua</h3>
+          <div class="sub">um quadrado por tipo de dono com efeito a 10%</div>
+          <div id="ie-rows"></div>
+        </div>
+        <div class="lg"><span><i class="dot" style="background:var(--pos)"></i>a dívida sobe</span><span><i class="dot" style="background:var(--neg)"></i>a dívida cai</span></div>
+      </div>
+      <p class="note">Contagem nossa nas Tabelas 6 a 14. A dívida de longo prazo sobre o patrimônio a mercado é a única régua em que todos os quatro sócios de fora aparecem. A tese não discute por que as réguas reagem tão diferente; com a dívida líquida sobre o Ebitda, o autor lê o efeito da família e dos três maiores como cuidado com as cláusulas dos contratos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e limites">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Na prática · limites · créditos</div>
+    <h2 class="rv" style="--d:.1s">Antes de olhar a dívida, vale olhar quem manda</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Empresas familiares</h3><p>Para o autor, a aversão a perder o controle leva a família a financiar a operação com o próprio caixa. Leitura nossa: vale saber quanto essa escolha custa em crescimento que deixa de acontecer.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Bancos e credores</h3><p>O autor lê a presença de estrangeiros como sinal de melhor governança para quem empresta, e o governo como fonte de dívida mais barata. O tipo de dono é uma pista a mais na análise de crédito.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ink-2)"><h3>Política pública</h3><p>Empresas com BNDES ou fundos de estatais entre os sócios aparecem com mais dívida de longo prazo. Para o autor, o governo pode baratear a dívida, o que torna a alavancagem atraente.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#5b6f96"><h3>Pesquisadores</h3><p>Próximos passos sugeridos: comparar com países do Mercosul, da América Latina e da Europa e usar métodos que tratem a causa e o efeito (painel dinâmico, equações simultâneas, variáveis instrumentais).</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Relação, não causa.</b> Pode ser o dono que muda a dívida ou a dívida que atrai certo tipo de dono; o autor sugere métodos para separar as duas coisas em estudos futuros. <em>· segundo o autor</em></li>
+          <li><b>Só direção, não tamanho.</b> As réguas têm escalas diferentes e algumas médias da Tabela 4 são difíceis de ler, por isso a página mostra o sentido e a força da evidência. <em>· observação nossa</em></li>
+          <li><b>Muitos testes.</b> Com 72 resultados a 10%, uns 7 sairiam "significativos" por acaso. Saíram 32 (25 a 5%): bem mais que o acaso, mas cada bloco isolado pede cautela. <em>· contagem nossa</em></li>
+          <li><b>O corte de 10%.</b> A tese não diz quantas empresas ficam abaixo de cada corte. Como o maior acionista tem em média 63% dos votos, o grupo abaixo de 10% tende a ser pequeno, e o resultado "concentração ajuda" se apoia nele. <em>· observação nossa</em></li>
+          <li><b>Brasil, 2010 a 2016.</b> Só empresas abertas e não financeiras; metade da amostra original ficou de fora por falta de dados. <em>· segundo a tese</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          JARDIM, José Renato de Paula Souza. <em>A influência da estrutura de propriedade e controle sobre a estrutura de capital: um estudo empírico no mercado acionário brasileiro de 2010 a 2016.</em> Tese (Doutorado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2018. Orientador: Prof. Dr. Wilson Toshiro Nakamura.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Dados dos formulários de referência da CVM e da base S&amp;P Capital IQ. Esta versão simplifica o trabalho para o público em geral; as fórmulas e as tabelas completas estão no texto original.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  function sgn(v, d){ var r = fmt(Math.abs(v), d); return (v === 0 ? '' : v < 0 ? '−' : '+') + r; }
+  function pressed(wrap, attr, val){ each(wrap.children, function(b){ b.setAttribute('aria-pressed', String(b.dataset[attr] === String(val))); }); }
+  var COL = {p:'var(--pos)', n:'var(--neg)', z:'var(--ns)'};
+
+  /* ================= DADOS DA TESE ================= */
+  // Tabelas 6 a 14: [coeficiente da variável "sim ou não", estatística t, estrelas] por régua.
+  var MS = ['divlp', 'endc', 'endm', 'dplc', 'dplm', 'divle', 'divlplc', 'divlplm'];
+  var OBS = [803, 794, 544, 731, 736, 591, 653, 736];
+  var O = [
+    {k:'m10', g:'conc', tab:6, exp:'n', d:[[1.704,10.69,3],[.202,2.70,3],[.997,1.80,1],[.120,.26,0],[.106,1.47,0],[.212,.16,0],[.116,.22,0],[.133,1.49,0]]},
+    {k:'m50', g:'conc', tab:7, exp:'n', d:[[-.471,-2.72,3],[-.025,-2.00,2],[-.124,-.98,0],[-.216,-3.19,3],[-.030,-2.82,3],[-.149,-1.19,0],[-.210,-3.06,3],[-.027,-2.31,2]]},
+    {k:'m3', g:'conc', tab:8, exp:'n', d:[[.263,1.64,0],[-.015,-.97,0],[-.160,-.94,0],[-.052,-.56,0],[-.013,-.93,0],[-.371,-2.29,2],[-.024,-.27,0],[.014,.89,0]]},
+    {k:'f10', g:'fam', tab:9, exp:'n', d:[[-.284,-1.43,0],[-.008,-.56,0],[-.036,-.14,0],[-.184,-1.91,1],[-.016,-1.31,0],[-.259,-1.68,1],[-.197,-1.99,2],[-.020,-1.35,0]]},
+    {k:'f50', g:'fam', tab:10, exp:'n', d:[[-.853,-5.52,3],[-.008,-.60,0],[.140,.94,0],[-.139,-2.12,2],[-.042,-3.82,3],[-.246,-1.84,1],[-.079,-1.15,0],[-.024,-1.95,1]]},
+    {k:'est', g:'out', tab:11, exp:'p', d:[[-.043,-.24,0],[0,.03,0],[.061,.65,0],[-.056,-.78,0],[.027,2.24,2],[.194,1.37,0],[0,.01,0],[.033,2.53,2]]},
+    {k:'gov', g:'out', tab:12, exp:'p', d:[[1.017,3.66,3],[.029,1.95,1],[.620,3.33,3],[.123,1.37,0],[.078,5.98,3],[-.023,-.14,0],[-.083,-.93,0],[.041,2.48,2]]},
+    {k:'bnd', g:'out', tab:13, exp:'p', d:[[2.455,3.57,3],[.015,.54,0],[.381,1.71,1],[.199,1.05,0],[.089,3.81,3],[.441,1.64,0],[.073,.37,0],[.125,5.27,3]]},
+    {k:'fp', g:'out', tab:14, exp:'p', d:[[.026,.09,0],[.035,2.23,2],[-.123,-.57,0],[.067,.70,0],[.070,4.79,3],[-.017,-.10,0],[.185,2.07,2],[.026,1.43,0]]}
+  ];
+  var OBY = {}; O.forEach(function(o){ OBY[o.k] = o; });
+  // Tabela 2 (% das 128 empresas por categoria do maior acionista) e Tabela 3 (média de votos do maior acionista)
+  var YEARS = [2010, 2011, 2012, 2013, 2014, 2015, 2016];
+  var CAT = [
+    {k:'fam', c:'var(--red)', v:[61,59,63,66,65,65,65]},
+    {k:'aco', c:'var(--navy)', v:[14,14,14,13,13,15,16]},
+    {k:'est', c:'#5b6f96', v:[5,6,6,6,7,7,7]},
+    {k:'flo', c:'#94a3b8', v:[5,5,5,4,4,4,5]},
+    {k:'fpe', c:'#334155', v:[4,4,4,4,5,4,3]},
+    {k:'fin', c:'#cbd5e1', v:[6,5,3,3,3,3,2]},
+    {k:'sta', c:'#f08aa0', v:[5,6,4,4,3,3,2]}
+  ];
+  var VOT = [63.13, 62.82, 63.14, 63.22, 63.05, 64.56, 64.37];
+
+  var ONAME = {
+    m10:L('Maior acionista > 10%','Largest shareholder > 10%'), m50:L('Maior acionista > 50%','Largest shareholder > 50%'), m3:L('3 maiores > 50%','Top 3 > 50%'),
+    f10:L('Família > 10%','Family > 10%'), f50:L('Família > 50%','Family > 50%'),
+    est:L('Estrangeiros > 10%','Foreign investors > 10%'), gov:L('Governo > 10%','Government > 10%'), bnd:L('BNDES > 10%','BNDES > 10%'), fp:L('Fundos de pensão > 10%','Pension funds > 10%')
+  };
+  var OSH = {m10:L('maior > 10%','largest > 10%'), m50:L('maior > 50%','largest > 50%'), m3:L('3 maiores > 50%','top 3 > 50%'), f10:L('família > 10%','family > 10%'), f50:L('família > 50%','family > 50%'), est:L('estrangeiros','foreign'), gov:L('governo','government'), bnd:'BNDES', fp:L('fundos de pensão','pension funds')};
+  var MNAME = [
+    L('Dívida de longo prazo','Long-term debt'), L('Dívida ÷ ativo (contábil)','Debt ÷ assets (book)'), L('Dívida ÷ ativo (mercado)','Debt ÷ assets (market)'),
+    L('Longo prazo ÷ patrimônio (contábil)','Long-term ÷ equity (book)'), L('Longo prazo ÷ patrimônio (mercado)','Long-term ÷ equity (market)'),
+    L('Dívida líquida ÷ Ebitda','Net debt ÷ EBITDA'), L('Dívida líquida ÷ patrimônio (contábil)','Net debt ÷ equity (book)'), L('Dívida líquida ÷ patrimônio (mercado)','Net debt ÷ equity (market)')
+  ];
+  var MSH = [L('LP','LT'), L('D/A cont.','D/A book'), L('D/A merc.','D/A mkt'), L('LP/PL cont.','LT/E book'), L('LP/PL merc.','LT/E mkt'), L('DL/Ebitda','ND/EBITDA'), L('DL/PL cont.','ND/E book'), L('DL/PL merc.','ND/E mkt')];
+  function kind(c, rig){ var need = rig === 5 ? 2 : 1; return c[2] >= need ? (c[0] > 0 ? 'p' : 'n') : 'z'; }
+  function count(o, rig){ var r = {p:0, n:0, z:0}; o.d.forEach(function(c){ r[kind(c, rig)]++; }); return r; }
+  function starTxt(s){ return s ? new Array(s + 1).join('★') + ' (' + ['', '10%', '5%', '1%'][s] + ')' : L('sem significância','not significant'); }
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 520, 300, {ay:'62%', rx:'50deg'});
+    rotatable(sc, st, -5, 4);
+    var rows = [], tw = 40, td = 22, gx = 6, gy = 8, x0 = 112, y0 = 26;
+    O.forEach(function(o, r){
+      var y = y0 + r * (td + gy) + (r >= 3 ? 8 : 0) + (r >= 5 ? 8 : 0);
+      flatLabel(st, OSH[o.k], 0, y + 3, x0 - 8, 'text-align:right; font-size:12px');
+      var row = [];
+      o.d.forEach(function(c, j){
+        var k = kind(c, 10), b = box({w:tw, d:td, x:x0 + j * (tw + gx), y:y, h:k === 'z' ? 3 : 6 + c[2] * 9, c:COL[k]});
+        st.appendChild(b); row.push(b);
+      });
+      rows.push(row);
+    });
+    MSH.forEach(function(m, j){ flatLabel(st, m, x0 + j * (tw + gx) - 6, 4, tw + 12, 'text-align:center; font-size:9px'); });
+    var LINE = {
+      m10:L('Maior acionista acima de 10% dos votos · a dívida <b>sobe</b> em 3 de 8 réguas','Largest shareholder above 10% of votes · debt <b>goes up</b> in 3 of 8 yardsticks'),
+      m50:L('Maior acionista acima de 50% · a dívida <b>cai</b> em 6 de 8 réguas','Largest shareholder above 50% · debt <b>goes down</b> in 6 of 8 yardsticks'),
+      m3:L('Três maiores acima de 50% · a dívida <b>cai</b> em 1 de 8 réguas','Top three above 50% · debt <b>goes down</b> in 1 of 8 yardsticks'),
+      f10:L('Família acima de 10% · a dívida <b>cai</b> em 3 de 8 réguas','Family above 10% · debt <b>goes down</b> in 3 of 8 yardsticks'),
+      f50:L('Família acima de 50% · a dívida <b>cai</b> em 5 de 8 réguas','Family above 50% · debt <b>goes down</b> in 5 of 8 yardsticks'),
+      est:L('Estrangeiros acima de 10% · a dívida <b>sobe</b> em 2 de 8 réguas','Foreign investors above 10% · debt <b>goes up</b> in 2 of 8 yardsticks'),
+      gov:L('Governo acima de 10% · a dívida <b>sobe</b> em 5 de 8 réguas','Government above 10% · debt <b>goes up</b> in 5 of 8 yardsticks'),
+      bnd:L('BNDES acima de 10% · a dívida <b>sobe</b> em 4 de 8 réguas','BNDES above 10% · debt <b>goes up</b> in 4 of 8 yardsticks'),
+      fp:L('Fundos de pensão acima de 10% · a dívida <b>sobe</b> em 3 de 8 réguas','Pension funds above 10% · debt <b>goes up</b> in 3 of 8 yardsticks')
+    };
+    var last = -1;
+    function show(i){
+      if (i === last) return; last = i;
+      rows.forEach(function(row, r){ row.forEach(function(b){ b.classList.toggle('dim', r !== i); }); });
+      $('hero-line').innerHTML = '<span>' + LINE[O[i].k] + '</span>';
+    }
+    if (reduce){ rows.forEach(function(row){ row.forEach(function(b){ b.classList.remove('dim'); }); }); $('hero-line').innerHTML = '<span>' + LINE.f50 + '</span>'; }
+    else M.onTick(function(t){ show(Math.floor(t / 2.2) % O.length); });
+  })();
+
+  /* ================= 02 · DONO ================= */
+  (function(){
+    var CN = {fam:L('Família','Family'), aco:L('Acordo de acionistas','Shareholder agreement'), est:L('Fundo estrangeiro','Foreign fund'), flo:L('Ações pulverizadas (free float)','Dispersed shares (free float)'), fpe:L('Fundo de pensão','Pension fund'), fin:L('Fundo de investimento','Investment fund'), sta:L('Estatal','State')};
+    var CD = {
+      fam:L('Uma família, contada como um só acionista, é a maior dona.','A family, counted as one shareholder, is the largest owner.'),
+      aco:L('O maior bloco é um grupo de acionistas que assinou um acordo para votar junto.','The largest block is a group of shareholders who signed an agreement to vote together.'),
+      est:L('O maior acionista é capital de fora do Brasil.','The largest shareholder is capital from outside Brazil.'),
+      flo:L('Nenhum acionista se destaca: as ações estão espalhadas no mercado.','No shareholder stands out: the shares are spread across the market.'),
+      fpe:L('O maior acionista é um fundo de pensão.','The largest shareholder is a pension fund.'),
+      fin:L('O maior acionista é um fundo de investimento brasileiro.','The largest shareholder is a Brazilian investment fund.'),
+      sta:L('O maior acionista é o Estado.','The largest shareholder is the state.')
+    };
+    var sc = $('tw-scene'), st = makeStage(sc, 300, 220, {ay:'82%', rx:'60deg'});
+    rotatable(sc, st, -24, 8);
+    var K = 2.7, yi = 6, sel = 'fam', slabs = [];
+    CAT.forEach(function(c){
+      var b = box({w:180, d:150, x:60, y:30, h:10, z:0, c:c.c});
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)) { sel = c.k; draw(); } });
+      st.appendChild(b); slabs.push(b);
+    });
+    var cap = box({w:180, d:150, x:60, y:30, h:1, z:270, c:'#e2e8f0'}); st.appendChild(cap);
+    $('tw-seg').innerHTML = YEARS.map(function(y, i){ return '<button data-i="' + i + '" aria-pressed="' + (i === yi) + '">' + y + '</button>'; }).join('');
+    each($('tw-seg').children, function(b){ b.addEventListener('click', function(){ yi = +b.dataset.i; draw(); }); });
+    function draw(){
+      pressed($('tw-seg'), 'i', yi);
+      var z = 0;
+      CAT.forEach(function(c, i){
+        var v = c.v[yi], b = slabs[i];
+        b.style.setProperty('--z', z + 'px'); b.style.setProperty('--h', (v * K - 1) + 'px');
+        b.querySelector('.f-front').innerHTML = v >= 6 ? '<span class="face-label">' + v + '%</span>' : '';
+        b.classList.toggle('sel', c.k === sel);
+        z += v * K;
+      });
+      var c = CAT.filter(function(x){ return x.k === sel; })[0], v = c.v[yi];
+      $('tw-panel').innerHTML = '<div class="tag">' + YEARS[yi] + '</div><h3><span class="dot" style="background:' + c.c + '"></span>' + CN[sel] + ' · ' + v + '%</h3><p>' + CD[sel] + ' ' + L('Isso vale para ' + Math.round(v * 1.28) + ' das 128 empresas (conta nossa, aproximada).', 'That applies to ' + Math.round(v * 1.28) + ' of the 128 companies (our approximate count).') + '</p>';
+      $('st-v').textContent = fmt(VOT[yi], 0) + '%';
+      $('st-f').textContent = CAT[0].v[yi] + '%';
+    }
+    draw();
+  })();
+
+  /* ================= 03 · CADEIA ================= */
+  (function(){
+    var SC = [
+      {h:[['A',40],['B',30],['C',25],['D',5]], on:[0], pct:40, who:L('Acionista A, sozinho','Shareholder A, alone'),
+       t:L('O caso mais simples: ninguém se junta, e o maior acionista é o controlador, com 40%.','The simplest case: no one joins forces, and the largest shareholder is the controller, with 40%.')},
+      {h:[['A',40],['B',30],['C',25],['D',5]], on:[1,2], pct:55, who:L('B e C, juntos','B and C, together'),
+       t:L('Os mesmos números, mas B e C votam em bloco. Juntos, somam 55% e passam A. O quadro não diz o motivo; um acordo de acionistas é uma das situações que o método considera.','The same numbers, but B and C vote as a block. Together they reach 55% and overtake A. The chart does not say why; a shareholder agreement is one of the situations the method considers.')},
+      {h:[['José Santos',40],['BNDES',30],['João Santos',25],[L('Gov. estadual','State gov.'),5]], on:[0,2], gov:[1,3], pct:65, who:L('Família Santos','The Santos family'),
+       t:L('José e João são da mesma família e contam como um acionista só: 40% + 25% = 65%. BNDES e governo estadual também seriam somados como governo (35%), mas ficam atrás.','José and João belong to the same family and count as a single shareholder: 40% + 25% = 65%. BNDES and the state government would also be added up as government (35%), but they come second.')},
+      {h:[['José Santos',40],['BNDES',30],['João Santos',25],[L('Gov. estadual','State gov.'),5]], on:[0,1], pct:70, who:L('José Santos e BNDES, em bloco','José Santos and BNDES, as a block'),
+       t:L('Os mesmos sócios, mas agora o bloco que manda junta José Santos e o BNDES: 70%. Mudar quem vota com quem muda o dono de verdade.','The same shareholders, but now the controlling block joins José Santos and BNDES: 70%. Changing who votes with whom changes the real owner.')}
+    ];
+    var NUM = [1, 2, 4, 5];
+    $('ch-seg').innerHTML = SC.map(function(s, i){ return '<button data-i="' + i + '" aria-pressed="' + (i === 0) + '">' + L('Exemplo ','Example ') + NUM[i] + '</button>'; }).join('');
+    function draw(i){
+      pressed($('ch-seg'), 'i', i);
+      var s = SC[i];
+      $('ch-bar').innerHTML = s.h.map(function(h, j){ var cls = s.on.indexOf(j) >= 0 ? 'on' : (s.gov && s.gov.indexOf(j) >= 0 ? 'gov' : ''); return '<div class="' + cls + '" style="flex:' + h[1] + '">' + (h[1] >= 10 ? '<span>' + h[0] + '</span>' : '') + '<b>' + h[1] + '%</b></div>'; }).join('');
+      $('ch-pct').textContent = s.pct + '%';
+      $('ch-who').innerHTML = '<b>' + L('Controlador: ','Controller: ') + s.who + '</b>' + L('maior acionista último','ultimate largest shareholder');
+      $('ch-panel').innerHTML = '<p>' + s.t + '</p>';
+    }
+    each($('ch-seg').children, function(b){ b.addEventListener('click', function(){ draw(+b.dataset.i); }); });
+    draw(0);
+  })();
+
+  /* ================= 04 · CORTES ================= */
+  (function(){
+    var R = [
+      [5, L('Pedir para ver os livros contábeis da empresa','Ask to see the company’s accounting books'), L('art. 105 · 5% do capital total','art. 105 · 5% of total capital')],
+      [5, L('Pedir informações aos administradores e propor ação contra eles por prejuízos','Request information from managers and sue them for damages'), L('arts. 157 e 159 · 5% do capital total','arts. 157 and 159 · 5% of total capital')],
+      [10, L('Pedir a instalação do conselho fiscal e eleger um de seus membros','Request a supervisory board and elect one of its members'), L('art. 161 · 10% das ações com voto','art. 161 · 10% of voting shares')],
+      [10, L('Pedir o voto múltiplo na eleição do conselho de administração','Request cumulative voting for the board of directors'), L('art. 141 · 10% das ações com voto','art. 141 · 10% of voting shares')],
+      [15, L('Eleger e destituir um membro do conselho de administração em votação separada','Elect and remove a board member in a separate vote'), L('art. 141, \u00a7 4º · 15% das ações com voto','art. 141, \u00a7 4 · 15% of voting shares')],
+      [50, L('Mais da metade dos votos: decidir sozinho nas assembleias (o critério de controle da tese)','More than half the votes: decide alone at shareholder meetings (the thesis’s control criterion)'), L('critério da literatura, não um artigo da lei','criterion from the literature, not an article of the law'), 1]
+    ];
+    $('cu-list').innerHTML = R.map(function(r){ return '<li class="' + (r[3] ? 'ctrl50' : '') + '" data-v="' + r[0] + '"><b>' + (r[3] ? '> ' : '') + r[0] + '%</b><span>' + r[1] + '<small>' + r[2] + '</small></span></li>'; }).join('');
+    function draw(v){
+      $('cu-v').textContent = v + '%';
+      each($('cu-list').children, function(li){ var t = +li.dataset.v; li.classList.toggle('on', t === 50 ? v > 50 : v >= t); });
+      $('cu10').classList.toggle('on', v > 10);
+      $('cu50').classList.toggle('on', v > 50);
+    }
+    $('cu-r').addEventListener('input', function(){ draw(+this.value); });
+    draw(12);
+  })();
+
+  /* ================= 05 · RÉGUAS ================= */
+  (function(){
+    var G = [L('valor','value'), L('sobre o ativo','over assets'), L('longo prazo sobre o patrimônio','long-term over equity'), L('dívida líquida','net debt')];
+    var Q = [
+      {g:0, num:L('dívidas com prazo acima de 1 ano','debts due in more than 1 year'), den:'', d:L('O tamanho da dívida de longo prazo, sem dividir por nada.','The size of long-term debt, not divided by anything.')},
+      {g:1, num:L('dívidas totais','total debt'), den:L('ativo total (balanço)','total assets (balance sheet)'), d:L('Quanto do que a empresa tem foi pago com dívida.','How much of what the company owns was paid for with debt.')},
+      {g:1, num:L('dívidas totais','total debt'), den:L('ativo total (a mercado)','total assets (market value)'), d:L('A mesma ideia, com o valor que a bolsa dá à empresa.','The same idea, using the value the market gives the company.')},
+      {g:2, num:L('dívidas acima de 1 ano','debts due after 1 year'), den:L('patrimônio líquido (balanço)','equity (balance sheet)'), d:L('Dívida de longo prazo para cada real dos sócios.','Long-term debt for each real of the shareholders’ money.')},
+      {g:2, num:L('dívidas acima de 1 ano','debts due after 1 year'), den:L('patrimônio líquido (a mercado)','equity (market value)'), d:L('A mesma ideia, com o valor das ações na bolsa.','The same idea, using the shares’ stock-market value.')},
+      {g:3, num:L('dívida − caixa','debt − cash'), den:'Ebitda', d:L('Quantos anos de caixa da operação pagariam a dívida. É a medida mais usada em cláusulas de contratos de empréstimo, segundo a tese.','How many years of operating cash would pay off the debt. It is the measure most used in loan-contract clauses, according to the thesis.')},
+      {g:3, num:L('dívida − caixa','debt − cash'), den:L('patrimônio líquido (balanço)','equity (balance sheet)'), d:L('Dívida já descontado o caixa, para cada real dos sócios.','Debt net of cash, for each real of the shareholders’ money.')},
+      {g:3, num:L('dívida − caixa','debt − cash'), den:L('patrimônio líquido (a mercado)','equity (market value)'), d:L('A mesma ideia, com o valor das ações na bolsa.','The same idea, using the shares’ stock-market value.')}
+    ];
+    var CG = ['#334155', 'var(--navy)', '#5b6f96', 'var(--red)'];
+    var sc = $('rg-scene'), st = makeStage(sc, 520, 280, {ay:'64%', rx:'50deg'});
+    rotatable(sc, st, -6, 4);
+    var POS = [[0,1],[1,0],[1,1],[2,0],[2,1],[3,0],[3,1],[3,2]];
+    var slabs = [];
+    Q.forEach(function(q, i){
+      var p = POS[i], b = box({w:104, d:62, x:20 + p[0] * 126, y:30 + p[1] * 76, h:18 + (p[0] === 0 ? 10 : 0), c:CG[q.g], top:MSH[i]});
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)) pick(i); });
+      st.appendChild(b); slabs.push(b);
+    });
+    var GS = [L('valor','value'), L('÷ ativo','÷ assets'), L('LP ÷ patrimônio','LT ÷ equity'), L('dívida líquida','net debt')];
+    GS.forEach(function(g, j){ flatLabel(st, g, 14 + j * 126, 262, 116, 'text-align:center; font-size:13px'); });
+    function pick(i){
+      var q = Q[i];
+      slabs.forEach(function(b, j){ b.classList.toggle('sel', j === i); });
+      $('rg-panel').innerHTML = '<div class="tag">' + G[q.g] + ' · ' + OBS[i] + L(' observações',' observations') + '</div><h3>' + MNAME[i] + '</h3>' +
+        (q.den ? '<div class="frac"><span>' + q.num + '</span><span>' + q.den + '</span></div>' : '<p><b>' + q.num + '</b></p>') + '<p>' + q.d + '</p>';
+    }
+    pick(5);
+  })();
+
+  /* ================= 06 · APOSTAS ================= */
+  var RIG = 10, tallyDraw;
+  (function(){
+    var H = [
+      {n:'H1', ks:['m10','m50','m3'], q:L('Votos concentrados num dono só (ou nos três maiores)','Votes concentrated in a single owner (or the top three)'), ok:2,
+       r:L('<b>Depende do corte.</b> A tese previa queda. Acima de 50%, a dívida caiu em 6 réguas; acima de 10%, subiu em 3.','<b>It depends on the cut-off.</b> The thesis predicted a fall. Above 50%, debt fell in 6 yardsticks; above 10%, it rose in 3.')},
+      {n:'H2', ks:['f10','f50'], q:L('Uma família entre os donos','A family among the owners'), ok:1,
+       r:L('<b>Cai.</b> Em 3 réguas com o corte de 10% e em 5 com o de 50%. Nenhuma mostrou alta.','<b>Goes down.</b> In 3 yardsticks at the 10% cut-off and in 5 at 50%. None showed a rise.')},
+      {n:'H3', ks:['est'], q:L('Investidores estrangeiros','Foreign investors'), ok:0,
+       r:L('<b>Sobe</b>, mas só em 2 réguas, as duas que comparam a dívida com o valor das ações na bolsa.','<b>Goes up</b>, but in only 2 yardsticks, both comparing debt with the stock-market value of the shares.')},
+      {n:'H4', ks:['gov'], q:L('O governo','The government'), ok:0, r:L('<b>Sobe</b>, em 5 réguas.','<b>Goes up</b>, in 5 yardsticks.')},
+      {n:'H4a', ks:['bnd'], q:L('O BNDES','BNDES'), ok:0, r:L('<b>Sobe</b>, em 4 réguas, incluindo a dívida de longo prazo.','<b>Goes up</b>, in 4 yardsticks, including long-term debt.')},
+      {n:'H4b', ks:['fp'], q:L('Fundos de pensão','Pension funds'), ok:0, r:L('<b>Sobe</b>, em 3 réguas.','<b>Goes up</b>, in 3 yardsticks.')}
+    ];
+    var OPTS = [L('Sobe','Goes up'), L('Cai','Goes down'), L('Depende','It depends')];
+    var hits = 0, done = 0, open = {};
+    $('hyps').innerHTML = H.map(function(h, i){
+      return '<div class="hyp" id="hy' + i + '"><div class="hn">' + h.n + '</div><div><div class="q">' + h.q + '</div>' +
+        '<div class="opts">' + OPTS.map(function(o, j){ return '<button data-j="' + j + '">' + o + '</button>'; }).join('') + '</div><div class="res">' + h.r + '</div></div></div>';
+    }).join('');
+    H.forEach(function(h, i){
+      each($('hy' + i).querySelectorAll('.opts button'), function(b){
+        b.addEventListener('click', function(){
+          var el = $('hy' + i); if (el.classList.contains('done')) return;
+          var ok = +b.dataset.j === h.ok; if (ok) hits++; done++;
+          el.classList.add('done'); el.style.setProperty('--hc', ok ? 'var(--navy)' : 'var(--red)');
+          el.querySelector('.res').insertAdjacentHTML('afterbegin', ok ? L('Você acertou. ','You got it. ') : L('Não foi bem assim. ','Not quite. '));
+          h.ks.forEach(function(k){ open[k] = 1; });
+          tallyDraw();
+          $('hyp-score').textContent = done < H.length ? L('Apostas: ','Bets: ') + done + ' / ' + H.length : L('Você acertou ','You got ') + hits + L(' de 6. A família, o governo, o BNDES, os fundos e os estrangeiros foram na direção prevista; a concentração, só com o corte de 50%.',' of 6 right. Families, government, BNDES, pension funds and foreign investors went in the predicted direction; concentration did so only at the 50% cut-off.');
+        });
+      });
+    });
+    tallyDraw = function(){
+      pressed($('rig-seg'), 'r', RIG);
+      $('tally-sub').textContent = L('cada barra: 8 réguas; limite de ','each bar: 8 yardsticks; threshold ') + RIG + '%';
+      $('tally').innerHTML = O.map(function(o){
+        var c = count(o, RIG), e = o.exp;
+        function seg(k, lab){ return '<i class="' + k + (k === e ? ' exp' : '') + '" style="flex-grow:' + c[k] + '" title="' + lab + ': ' + c[k] + '">' + (c[k] ? c[k] : '') + '</i>'; }
+        return '<div class="tl"><div>' + ONAME[o.k] + '<small>' + L('previsto: ','predicted: ') + (e === 'p' ? L('sobe','up') : L('cai','down')) + '</small></div>' +
+          '<div class="tbar' + (open[o.k] ? '' : ' off') + '">' + seg('p', L('sobe','up')) + seg('n', L('cai','down')) + seg('z', L('sem efeito claro','no clear effect')) + '</div></div>';
+      }).join('');
+    };
+    each($('rig-seg').children, function(b){ b.addEventListener('click', function(){ RIG = +b.dataset.r; tallyDraw(); }); });
+    tallyDraw();
+  })();
+
+  /* ================= 07 · MOSAICO ================= */
+  (function(){
+    var sc = $('mx-scene'), st = makeStage(sc, 600, 360, {ay:'58%', rx:'46deg'});
+    rotatable(sc, st, -4, 3);
+    var rig = 10, filt = 'all', sel = null, cells = [];
+    var tw = 50, td = 28, gx = 6, gy = 6, x0 = 128, y0 = 30;
+    O.forEach(function(o, r){
+      var y = y0 + r * (td + gy) + (r >= 3 ? 10 : 0) + (r >= 5 ? 10 : 0);
+      flatLabel(st, OSH[o.k], 0, y + 6, x0 - 8, 'text-align:right; font-size:12px');
+      o.d.forEach(function(c, j){
+        var b = box({w:tw, d:td, x:x0 + j * (tw + gx), y:y, h:3, c:'var(--ns)'});
+        var cell = {el:b, o:o, j:j, c:c};
+        b.addEventListener('click', function(){ if (!M.wasDrag(sc)) { sel = cell; draw(); } });
+        st.appendChild(b); cells.push(cell);
+      });
+    });
+    MSH.forEach(function(m, j){ flatLabel(st, m, x0 + j * (tw + gx) - 6, 6, tw + 12, 'text-align:center; font-size:10px'); });
+    var GN = {all:L('Todos','All'), conc:L('Concentração','Concentration'), fam:L('Família','Family'), out:L('Sócios de fora','Outside shareholders')};
+    $('mx-chips').innerHTML = ['all', 'conc', 'fam', 'out'].map(function(g){ return '<button data-f="' + g + '" aria-pressed="' + (g === 'all') + '">' + GN[g] + '</button>'; }).join('');
+    function draw(){
+      pressed($('mx-chips'), 'f', filt); pressed($('mx-rig'), 'r', rig);
+      cells.forEach(function(x){
+        var k = kind(x.c, rig);
+        x.el.style.setProperty('--c', COL[k]);
+        x.el.style.setProperty('--h', (k === 'z' ? 3 : 6 + x.c[2] * 9) + 'px');
+        x.el.classList.toggle('dim', filt !== 'all' && x.o.g !== filt);
+        x.el.classList.toggle('sel', x === sel);
+      });
+      if (sel) pick(sel); else summary();
+    }
+    function summary(){
+      var tot = {p:0, n:0, z:0}, n = 0;
+      O.forEach(function(o){ if (filt !== 'all' && o.g !== filt) return; var c = count(o, rig); tot.p += c.p; tot.n += c.n; tot.z += c.z; n += 8; });
+      $('mx-panel').innerHTML = '<div class="tag">' + GN[filt] + ' · ' + n + L(' resultados · limite ',' results · threshold ') + rig + '%</div>' +
+        '<p><span class="badge p">' + tot.p + '</span> ' + L('a dívida sobe','debt goes up') + ' · <span class="badge n">' + tot.n + '</span> ' + L('a dívida cai','debt goes down') + ' · <span class="badge z">' + tot.z + '</span> ' + L('sem efeito claro','no clear effect') + '</p>' +
+        '<p>' + L('Toque num bloco para ver o coeficiente, a estatística t e a tabela de onde ele vem.','Tap a block to see the coefficient, the t statistic and the table it comes from.') + '</p>';
+    }
+    function pick(x){
+      var k = kind(x.c, rig), e = x.o.exp;
+      var v = k === 'z' ? L('Sem efeito claro neste limite.','No clear effect at this threshold.') : (k === e ? L('Na direção que a hipótese previa.','In the direction the hypothesis predicted.') : L('Na direção contrária à hipótese.','Opposite to the direction the hypothesis predicted.'));
+      $('mx-panel').innerHTML = '<div class="tag">' + L('Tabela ','Table ') + x.o.tab + ' · ' + OBS[x.j] + L(' observações',' observations') + '</div>' +
+        '<h3>' + ONAME[x.o.k] + ' → ' + MNAME[x.j] + '</h3>' +
+        '<p><span class="badge ' + k + '">' + sgn(x.c[0], 3) + '</span> &nbsp;t = ' + sgn(x.c[1], 2) + ' · ' + starTxt(x.c[2]) + '. ' + v + '</p>';
+    }
+    each($('mx-chips').children, function(b){ b.addEventListener('click', function(){ filt = b.dataset.f; if (sel && filt !== 'all' && sel.o.g !== filt) sel = null; draw(); }); });
+    each($('mx-rig').children, function(b){ b.addEventListener('click', function(){ rig = +b.dataset.r; draw(); }); });
+    draw();
+  })();
+
+  /* ================= 08 · CONCENTRAÇÃO ================= */
+  (function(){
+    var svg = $('ct-svg'), ym = 178, K = 20, x0 = 36, step = 60;
+    var TXT = {
+      m10:L('<h3>Acima de 10%: a dívida sobe</h3><p>Em 3 réguas (dívida de longo prazo e dívida sobre o ativo, contábil e a mercado), no sentido contrário ao que a hipótese previa. O autor lê como "a concentração favorece a dívida até certo ponto".</p>','<h3>Above 10%: debt goes up</h3><p>In 3 yardsticks (long-term debt and debt over assets, book and market), opposite to what the hypothesis predicted. The author reads it as "concentration favors debt up to a point".</p>'),
+      m50:L('<h3>Acima de 50%: a dívida cai</h3><p>Em 6 das 8 réguas, como a hipótese previa. Para o autor, poder demais nas mãos de um dono afasta credores, que temem decisões contra os minoritários e contra eles próprios.</p>','<h3>Above 50%: debt goes down</h3><p>In 6 of the 8 yardsticks, as the hypothesis predicted. For the author, too much power in one owner’s hands keeps lenders away, as they fear decisions against minority shareholders and against themselves.</p>'),
+      m3:L('<h3>Os três maiores acima de 50%: quase nada</h3><p>Só a dívida líquida sobre o Ebitda caiu. O autor lê como cuidado para não ferir as cláusulas dos contratos de empréstimo e não perder o controle.</p>','<h3>Top three above 50%: almost nothing</h3><p>Only net debt over EBITDA fell. The author reads it as caution not to breach loan-contract clauses and not to lose control.</p>')
+    };
+    var CTL = EN ? [['LT',''],['D/A','book'],['D/A','mkt'],['LT/E','book'],['LT/E','mkt'],['ND/','EBITDA'],['ND/E','book'],['ND/E','mkt']] : [['LP',''],['D/A','cont.'],['D/A','merc.'],['LP/PL','cont.'],['LP/PL','merc.'],['DL/','Ebitda'],['DL/PL','cont.'],['DL/PL','merc.']];
+    function Y(t){ return ym - Math.max(-6.2, Math.min(6.2, t)) * K; }
+    function draw(k){
+      pressed($('ct-seg'), 'k', k);
+      var o = OBY[k], h = '', g = '';
+      [[1.645,'10%'],[1.96,'5%'],[2.576,'1%']].forEach(function(l){
+        [1, -1].forEach(function(s){ g += '<line x1="' + x0 + '" y1="' + Y(s * l[0]) + '" x2="' + (x0 + 8 * step) + '" y2="' + Y(s * l[0]) + '" stroke="#475569" stroke-opacity=".7" stroke-dasharray="4 4"/>'; });
+        g += '<text class="th" x="' + (x0 + 8 * step + 4) + '" y="' + (Y(l[0]) + 4 + (l[1] === '5%' ? 3 : l[1] === '10%' ? 8 : -4)) + '">' + l[1] + '</text>';
+      });
+      h += '<line x1="' + x0 + '" y1="' + ym + '" x2="' + (x0 + 8 * step) + '" y2="' + ym + '" stroke="#334155"/>';
+      o.d.forEach(function(c, j){
+        var kk = kind(c, 10), cx = x0 + j * step + step / 2, t = c[1], y = Y(t), up = t > 0;
+        var col = COL[kk];
+        h += '<rect x="' + (cx - 20) + '" y="' + Math.min(y, ym) + '" width="40" height="' + Math.max(1, Math.abs(y - ym)) + '" rx="4" style="fill:' + col + '"/>';
+        h += '<text class="vl" x="' + cx + '" y="' + (up ? y - 7 : y + 17) + '" text-anchor="middle">' + (Math.abs(t) > 6.2 ? '▲' : '') + fmt(t, 1) + '</text>';
+        var parts = CTL[j];
+        h += '<text class="ml" x="' + cx + '" y="330" text-anchor="middle"><tspan x="' + cx + '">' + parts[0] + '</tspan>' + (parts[1] ? '<tspan x="' + cx + '" dy="1.15em">' + parts[1] + '</tspan>' : '') + '</text>';
+      });
+      h += g + '<text class="tt" x="' + x0 + '" y="22" style="font-size:12px; font-weight:700; fill:#0f172a">' + L('estatística t · ','t statistic · ') + ONAME[k] + '</text>';
+      svg.innerHTML = h;
+      $('ct-panel').innerHTML = TXT[k];
+    }
+    each($('ct-seg').children, function(b){ b.addEventListener('click', function(){ draw(b.dataset.k); }); });
+    draw('m10');
+  })();
+
+  /* ================= 09 · FAMÍLIA ================= */
+  (function(){
+    var sc = $('fm-scene'), st = makeStage(sc, 540, 220, {ay:'60%', rx:'44deg'});
+    rotatable(sc, st, -3, 3);
+    var rows = {}, tw = 50, gx = 6, x0 = 110;
+    ['f10', 'f50'].forEach(function(k, r){
+      flatLabel(st, OSH[k], 0, 40 + r * 90 + 14, x0 - 8, 'text-align:right; font-size:13px');
+      rows[k] = OBY[k].d.map(function(c, j){
+        var kk = kind(c, 10), b = box({w:tw, d:50, x:x0 + j * (tw + gx), y:40 + r * 90, h:kk === 'z' ? 3 : 10 + c[2] * 16, c:COL[kk]});
+        st.appendChild(b); return b;
+      });
+    });
+    MSH.forEach(function(m, j){ flatLabel(st, m, x0 + j * (tw + gx) - 6, 12, tw + 12, 'text-align:center; font-size:9.5px'); });
+    var TXT = {
+      f10:L('<p><b>Família acima de 10%:</b> a dívida cai na dívida líquida sobre o patrimônio contábil (5%), na dívida de longo prazo sobre o patrimônio contábil e na dívida líquida sobre o Ebitda (as duas a 10%). Segundo o autor, a família prefere usar o próprio caixa para financiar a operação.</p>','<p><b>Family above 10%:</b> debt falls in net debt over book equity (5%), long-term debt over book equity and net debt over EBITDA (both at 10%). According to the author, families prefer to use their own cash to fund operations.</p>'),
+      f50:L('<p><b>Família acima de 50%:</b> a dívida cai em 5 réguas, com mais força na dívida de longo prazo e na dívida de longo prazo sobre o patrimônio a mercado (1%). Para o autor, quanto mais concentrada a família, maior a barreira para contratar financiamento.</p>','<p><b>Family above 50%:</b> debt falls in 5 yardsticks, most strongly in long-term debt and long-term debt over market equity (1%). For the author, the more concentrated the family, the higher the barrier to taking on financing.</p>')
+    };
+    function draw(k){
+      pressed($('fm-seg'), 'k', k);
+      Object.keys(rows).forEach(function(r){ rows[r].forEach(function(b){ b.classList.toggle('dim', r !== k); }); });
+      $('fm-b10').classList.toggle('off', k !== 'f10'); $('fm-b50').classList.toggle('off', k !== 'f50');
+      $('fm-panel').innerHTML = TXT[k];
+    }
+    each($('fm-seg').children, function(b){ b.addEventListener('click', function(){ draw(b.dataset.k); }); });
+    draw('f10');
+  })();
+
+  /* ================= 10 · SÓCIOS DE FORA ================= */
+  (function(){
+    var K = ['est', 'gov', 'bnd', 'fp'];
+    var sc = $('fo-scene'), st = makeStage(sc, 560, 280, {ay:'62%', rx:'50deg'});
+    rotatable(sc, st, -5, 4);
+    var rows = {}, tw = 50, gx = 6, x0 = 118, sel = 'gov', col = false;
+    K.forEach(function(k, r){
+      flatLabel(st, OSH[k], 0, 40 + r * 58 + 10, x0 - 8, 'text-align:right; font-size:12px');
+      rows[k] = OBY[k].d.map(function(c, j){
+        var kk = kind(c, 10), b = box({w:tw, d:40, x:x0 + j * (tw + gx), y:40 + r * 58, h:kk === 'z' ? 3 : 8 + c[2] * 13, c:COL[kk]});
+        b.addEventListener('click', function(){ if (!M.wasDrag(sc)) { sel = k; draw(); } });
+        st.appendChild(b); return b;
+      });
+    });
+    MSH.forEach(function(m, j){ flatLabel(st, m, x0 + j * (tw + gx) - 6, 12, tw + 12, 'text-align:center; font-size:9.5px'); });
+    var WHY = {
+      est:L('Para o autor, empresas que atraem estrangeiros precisam adotar melhor governança, e a presença deles é um sinal positivo para credores.','For the author, companies that attract foreign investors have to adopt better governance, and their presence is a positive signal for lenders.'),
+      gov:L('Para o autor, num país emergente o governo facilita investimentos e pode baratear a dívida. Aqui, "governo" soma BNDES e fundos de pensão.','For the author, in an emerging country the government facilitates investment and can make debt cheaper. Here, "government" adds up BNDES and pension funds.'),
+      bnd:L('Para o autor, o BNDES capitaliza empresas e oferece dívida com custo bem abaixo do mercado; faz sentido que apareça na dívida de longo prazo.','For the author, BNDES capitalizes companies and offers debt at a cost well below the market; it makes sense that it shows up in long-term debt.'),
+      fp:L('Para o autor, fundos de pensão supervisionam de perto as empresas e costumam investir em setores estratégicos do Estado.','For the author, pension funds closely oversee companies and tend to invest in sectors that are strategic for the state.')
+    };
+    var CH = K.map(function(k){ return [k, {est:L('Estrangeiros','Foreign investors'), gov:L('Governo','Government'), bnd:'BNDES', fp:L('Fundos de pensão','Pension funds')}[k]]; });
+    $('fo-chips').innerHTML = CH.map(function(c){ return '<button data-k="' + c[0] + '" aria-pressed="' + (c[0] === sel) + '">' + c[1] + '</button>'; }).join('');
+    function draw(){
+      pressed($('fo-chips'), 'k', col ? '' : sel);
+      $('fo-col').setAttribute('aria-pressed', String(col));
+      K.forEach(function(k){ rows[k].forEach(function(b, j){ b.classList.toggle('dim', !col && k !== sel); b.classList.toggle('col', col && j === 4); if (col) b.classList.toggle('dim', j !== 4); }); });
+      if (col){
+        $('fo-panel').innerHTML = '<div class="tag">' + MNAME[4] + '</div><h3>' + L('A única régua em que os quatro aparecem','The only yardstick where all four show up') + '</h3><p>' + L('Dívida de longo prazo sobre o valor das ações na bolsa: estrangeiros (5%), governo, BNDES e fundos de pensão (1%), todos para cima. Contagem nossa.','Long-term debt over the stock-market value of the shares: foreign investors (5%), government, BNDES and pension funds (1%), all upward. Our count.') + '</p>';
+        return;
+      }
+      var o = OBY[sel], c = count(o, 10), list = [];
+      o.d.forEach(function(x, j){ if (kind(x, 10) !== 'z') list.push(MNAME[j] + ' ' + new Array(x[2] + 1).join('★')); });
+      $('fo-panel').innerHTML = '<div class="tag">' + L('Tabela ','Table ') + o.tab + ' · ' + ONAME[sel] + '</div><h3>' + L('A dívida sobe em ','Debt goes up in ') + c.p + L(' de 8 réguas',' of 8 yardsticks') + '</h3><p>' + list.join(' · ') + '</p><p>' + WHY[sel] + '</p>';
+    }
+    each($('fo-chips').children, function(b){ b.addEventListener('click', function(){ sel = b.dataset.k; col = false; draw(); }); });
+    $('fo-col').addEventListener('click', function(){ col = !col; draw(); });
+    draw();
+  })();
+
+  /* ================= 11 · O INESPERADO ================= */
+  (function(){
+    var G = [[5, L('Dívida líquida ÷ Ebitda, a dos contratos de empréstimo','Net debt ÷ EBITDA, the loan-contract one')], [1, L('Dívida ÷ ativo, a mais comum nos livros','Debt ÷ assets, the most common in textbooks')], [4, L('Dívida de longo prazo ÷ valor das ações na bolsa','Long-term debt ÷ stock-market value of the shares')]];
+    var answered = false;
+    $('guess').innerHTML = G.map(function(g, i){ return '<button data-i="' + i + '">' + g[1] + '</button>'; }).join('');
+    var CNT = MS.map(function(m, j){ var r = {p:0, n:0}; O.forEach(function(o){ var k = kind(o.d[j], 10); if (k !== 'z') r[k]++; }); return r; });
+    $('ie-rows').innerHTML = MS.map(function(m, j){
+      var c = CNT[j], cells = '';
+      for (var i = 0; i < 9; i++) cells += '<i class="' + (i < c.n ? 'n' : i < c.n + c.p ? 'p' : '') + '"></i>';
+      return '<div class="mrow' + (j === 4 || j === 5 ? ' hl' : '') + '"><span>' + MNAME[j] + '</span><div class="bars">' + cells + '</div><b>' + (c.n + c.p) + '</b></div>';
+    }).join('');
+    each($('guess').children, function(b){
+      b.addEventListener('click', function(){
+        if (answered) return; answered = true;
+        each($('guess').children, function(x){ x.classList.add(+x.dataset.i === 2 ? 'right' : 'wrong'); });
+        $('guess-msg').innerHTML = (+b.dataset.i === 2 ? L('Isso. ','Right. ') : L('Não. ','No. ')) + L('A dívida de longo prazo sobre o valor das ações mudou com 6 dos 9 tipos de dono. A régua dos contratos, dívida líquida sobre Ebitda, só com 3: os três maiores e a família, sempre para baixo.','Long-term debt over the shares’ value changed with 6 of the 9 owner types. The contract yardstick, net debt over EBITDA, with only 3: the top three and the family, always downward.');
+        $('ie-wrap').classList.remove('hide');
+      });
+    });
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
