@@ -1,0 +1,939 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digitizing insurance is not the same as transforming it · PPGA Interativo</title>
+<meta name="description" content="Fernando Hatada's master's dissertation (PPGA Mackenzie, 2021) on the digital transformation of four traditional insurers in Brazil, seen through the value cycle, explained in 11 interactive screens.">
+<link rel="alternate" hreflang="pt-BR" href="../../../dissertacoes/2021-hatada-transformacao-digital-seguros/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><rect x=%2213%22 y=%227%22 width=%226%22 height=%2218%22 fill=%22white%22/><rect x=%227%22 y=%2213%22 width=%2218%22 height=%226%22 fill=%22white%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/motor.css">
+<link rel="stylesheet" href="../../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  :root{
+    --cri:#1f3b73;           /* criação do valor */
+    --cfg:#5b7bb5;           /* configuração do valor */
+    --apr:var(--red);        /* apropriação do valor */
+    --sB:var(--red);         /* Seguradora B (a que mudou o modelo) */
+    --sX:#334155;            /* demais seguradoras */
+    --plan:#94a3b8;
+    --off:#cbd5e1;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .sq{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+  .illus{display:inline-block; font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--red); border:1px solid color-mix(in srgb, var(--red) 40%, white); border-radius:999px; padding:2px 9px; background:color-mix(in srgb, var(--red) 6%, white);}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(1.9rem, 3.8vw, 2.7rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:31em; margin-left:auto; margin-right:auto;}
+  .tripod .face-label{font-size:11px; letter-spacing:.06em;}
+  .tripod .top-label{font-size:14px; letter-spacing:.04em; text-transform:uppercase;}
+  .tripod .policy{transition:none;}
+  @media (max-width:600px){ .tripod .face-label{font-size:13px;} .tripod .top-label{font-size:16px;} }
+
+  /* ---------- Componentes comuns ---------- */
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 20px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.05rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.9rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font:inherit; font-size:.84rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .segs{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:4px 0 12px;}
+  .segs small{font-size:.74rem; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.08em;}
+  .svgbox{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .svgbox text{font-family:var(--sans);}
+  .bars3d .slab{cursor:pointer;}
+  .bars3d .slab.active{--oz:10px;}
+  .bars3d .top-label{color:#fff; font-size:15px;}
+  .bars3d .face-label{font-size:13px; letter-spacing:.04em; text-transform:none;}
+  .bars3d .floor-label{font-size:14px; white-space:nowrap;}
+  @media (max-width:600px){ .bars3d .floor-label{font-size:18px;} .bars3d .top-label{font-size:18px;} }
+  .slab.plan > i{--face:repeating-linear-gradient(45deg, color-mix(in srgb, var(--c) 40%, white) 0 5px, color-mix(in srgb, var(--c) 15%, white) 5px 10px);}
+  .q{font-family:var(--serif); font-style:italic; color:var(--ink); font-size:.98rem;}
+
+  /* ---------- 02 · Caminho da apólice ---------- */
+  .track{display:flex; flex-wrap:wrap; gap:8px; align-items:stretch; margin-top:12px; min-height:150px;}
+  .stp{position:relative; flex:1 1 118px; max-width:160px; background:var(--card); border:1px solid var(--border); border-top:4px solid var(--sc, var(--sX)); border-radius:10px; padding:8px 10px; font-size:.78rem; color:var(--ink-2); line-height:1.3; animation:pop .35s ease;}
+  .stp b{display:block; font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:2px;}
+  .stp.dig{--sc:var(--cfg); background:color-mix(in srgb, var(--cfg) 7%, white);}
+  .stp.new{--sc:var(--red); background:color-mix(in srgb, var(--red) 6%, white); color:var(--ink); max-width:220px;}
+  @keyframes pop{from{transform:scale(.9); opacity:0;}}
+  .clock{display:flex; align-items:center; gap:14px; margin-top:16px; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 16px;}
+  .clock b{font-family:var(--serif); font-size:1.9rem; color:var(--ink); line-height:1; white-space:nowrap;}
+  .clock.fast b{color:var(--red);}
+  .clock span{font-size:.84rem; color:var(--ink-2);}
+  .trk-cap{font-size:.86rem; color:var(--ink-2); margin-top:12px; min-height:3.6em;}
+
+  /* ---------- 03 · Mercado ---------- */
+  #pib-panel{min-height:120px; margin-top:12px;}
+  .chain{display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:14px; font-size:.84rem;}
+  .chain span{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:7px 12px; color:var(--ink);}
+  .chain span.mid{border-color:var(--red); color:var(--red); font-weight:600;}
+  .chain i{font-style:normal; color:var(--muted);}
+
+  /* ---------- 04 · Régua ---------- */
+  #rg-svg .it{cursor:pointer;}
+  #rg-svg .it rect{transition:fill .25s, stroke-width .25s;}
+  #rg-svg .it.on rect{stroke:var(--ink); stroke-width:2.5;}
+  #rg-svg .arr{fill:none; stroke:#94a3b8; stroke-width:2.2;}
+  #rg-svg .vb{font-size:11px; font-weight:800; letter-spacing:.08em; fill:#64748b;}
+  #rg-panel{min-height:150px; margin-top:12px;}
+
+  /* ---------- 05 · Quem foi ouvido ---------- */
+  #who-scene .slab{cursor:pointer;}
+  #who-scene .slab.active{--oz:12px;}
+  #who-panel{min-height:170px; margin-top:12px;}
+  .facts{display:grid; grid-template-columns:auto minmax(0, 1fr); gap:4px 12px; font-size:.82rem; margin-top:8px;}
+  .facts dt{font-weight:700; color:var(--ink); font-size:.7rem; text-transform:uppercase; letter-spacing:.06em; padding-top:2px;}
+  .facts dd{margin:0; color:var(--ink-2);}
+
+  /* ---------- 06 · Criar ---------- */
+  #cr-scene .slab{cursor:pointer;}
+  #cr-scene .slab.dim > i{opacity:.25;}
+  #cr-scene .slab.active{--oz:10px;}
+  #cr-scene .slab.active > i{box-shadow:inset 0 0 0 2px #fff;}
+  #cr-scene .floor-label{font-size:13px; white-space:nowrap;}
+  #cr-scene .floor-label.ins{font-size:22px; font-weight:800; color:var(--ink);}
+  @media (max-width:600px){ #cr-scene .floor-label{font-size:21px;} #cr-scene .floor-label.ins{font-size:28px;} }
+  #cr-panel{min-height:150px; margin-top:12px;}
+  .score{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:8px; margin-top:10px;}
+  .score button{font:inherit; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:8px 6px; cursor:pointer; text-align:center; color:var(--ink-2); font-size:.76rem;}
+  .score button b{display:block; font-family:var(--serif); font-size:1.35rem; color:var(--ink); line-height:1.1;}
+  @media (max-width:600px){ .score button{font-size:.68rem; padding:7px 3px;} .score button b{font-size:1.05rem;} }
+  .score button.hl b{color:var(--red);}
+  .score button[aria-pressed="true"]{border-color:var(--ink); box-shadow:0 0 0 2px var(--ink) inset;}
+
+  /* ---------- 07 · Configurar ---------- */
+  .tasks{display:grid; gap:8px;}
+  .task{display:grid; grid-template-columns:minmax(0,1.2fr) repeat(4, minmax(0,1fr)); gap:6px; align-items:stretch;}
+  .task .tl{font-size:.82rem; font-weight:600; color:var(--ink); display:flex; align-items:center;}
+  .task.hd .tl, .task.hd .ins{font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:700; text-align:center; justify-content:center;}
+  .task.hd .ins.b{color:var(--red);}
+  .cell{border-radius:9px; padding:7px 6px; font-size:.7rem; line-height:1.25; text-align:center; border:1px solid var(--border); background:var(--card); color:var(--ink-2); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background .3s, color .3s, transform .3s;}
+  .cell.self{background:var(--cfg); color:#fff; border-color:var(--cfg);}
+  .cell.mix{background:color-mix(in srgb, var(--cfg) 16%, white); color:var(--ink);}
+  .cell.only{background:#f1f5f9; color:var(--muted);}
+  .cell.on{transform:scale(1.04); box-shadow:0 0 0 2px var(--ink);}
+  #cf-panel{min-height:110px; margin-top:12px;}
+  @media (max-width:600px){ .task{grid-template-columns:minmax(0,1fr) repeat(4, minmax(0,.8fr));} .cell{font-size:.62rem; padding:6px 3px;} .task .tl{font-size:.74rem;} }
+
+  /* ---------- 08 · Capturar ---------- */
+  .apr-cards{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px; margin-top:10px;}
+  .acard{background:var(--card); border:1px solid var(--border); border-left:5px solid var(--sX); border-radius:10px; padding:9px 12px; font-size:.8rem; color:var(--ink-2); animation:pop .35s ease;}
+  .acard.b{border-left-color:var(--red);}
+  .acard.none{opacity:.6;}
+  .acard h4{margin:0 0 3px; font-size:.84rem; color:var(--ink);}
+  .regions{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px; margin-top:10px;}
+  .reg{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:10px 12px; font-size:.8rem; color:var(--ink-2); transition:background .4s, border-color .4s;}
+  .reg h4{margin:0 0 4px; font-size:.86rem; color:var(--ink);}
+  .reg .cov{display:inline-block; font-size:.7rem; font-weight:700; border-radius:999px; padding:2px 9px; margin-top:4px;}
+  .reg .cov.no{background:#f1f5f9; color:var(--muted);}
+  .reg .cov.yes{background:var(--red); color:#fff;}
+  .reg .price{display:block; margin-top:4px; font-size:.74rem; color:var(--muted);}
+
+  /* ---------- 09 · Descoberta ---------- */
+  .bign{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; margin-top:12px;}
+  .bn{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow);}
+  .bn b{display:block; font-family:var(--serif); font-size:1.55rem; color:var(--red); line-height:1.1;}
+  .bn span{font-size:.8rem; color:var(--ink-2);}
+  #sc-scene .floor-label{font-size:14px; white-space:normal;}
+  @media (max-width:600px){ #sc-scene .floor-label{font-size:18px;} }
+  .slider{display:grid; gap:4px; margin-top:10px;}
+  .slider input{width:100%; accent-color:var(--red);}
+  .slider label{font-size:.82rem; color:var(--ink-2);}
+  #sc-out{font-size:.88rem; color:var(--ink); margin-top:8px; min-height:2.8em;}
+
+  /* ---------- 10 · Inesperado ---------- */
+  .guess{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:8px; margin-top:12px;}
+  .guess button{font:inherit; text-align:left; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 12px; cursor:default; color:var(--ink-2); font-size:.76rem; transition:all .3s;}
+  .guess button b{display:block; font-family:var(--serif); font-size:.92rem; color:var(--ink); margin-bottom:2px;}
+  .guess button .age{display:block; font-family:var(--serif); font-size:1.15rem; color:var(--ink); margin-top:4px;}
+  .guess.done button.win{border-color:var(--red); box-shadow:0 0 0 2px var(--red) inset; background:color-mix(in srgb, var(--red) 6%, white);}
+  .guess.done button:not(.win){opacity:.55;}
+  @media (max-width:600px){ .guess{grid-template-columns:repeat(2, minmax(0,1fr));} }
+  #gs-out{min-height:5em; margin-top:12px;}
+  #age-scene .floor-label{font-size:14px; white-space:nowrap;}
+  @media (max-width:600px){ #age-scene .floor-label{font-size:18px;} }
+
+  /* ---------- 11 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:4px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.9rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:6px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:8px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-meta="../../../dissertacoes/2021-hatada-transformacao-digital-seguros/meta.json">
+
+<header class="topbar">
+  <a class="brand" href="../../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../../dissertacoes/2021-hatada-transformacao-digital-seguros/" hreflang="pt-BR" lang="pt-BR" title="Ler em português"><img class="lang-flag" src="../../../assets/bandeira-br.svg" width="17" height="12" alt="">PT</a>
+    <span id="count">01 / 11</span>
+    <button class="nav-btn" id="prev" aria-label="Previous screen">↑</button>
+    <button class="nav-btn" id="next" aria-label="Next screen">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Screen navigation"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Start">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Master's dissertation · PPGA Mackenzie · 2021</div>
+      <h1 class="rv" style="--d:.1s">Digitizing insurance is not the same as transforming it</h1>
+      <p class="sub rv" style="--d:.2s">Four large, traditional Brazilian insurers described how they went through their digital transformation. All of them say they planned it and put the customer at the center, but <strong>only one changed its business model</strong>: it began selling directly, with no broker in between, and delivers the policy in seconds. Explained in 11 screens.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Author:</b> Fernando Hatada</span>
+        <span><b>Advisor:</b> Prof. Dr. Dimária Silva e Meirelles</span>
+        <span><b>Program:</b> Graduate Program in Business Administration (PPGA) · Mackenzie Presbyterian University</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#apolice">Start →</a>
+        <a class="btn ghost" href="#descoberta">Go straight to the finding</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable tripod" id="hero-scene" data-fit="480x380" role="img" aria-label="A tripod with three legs, create, configure and capture value, holds up a platform called business model; a policy drops onto it"></div></div>
+      <p class="cap-legend">The value tripod: the business model rests on <b>creating</b>, <b>configuring</b> and <b>capturing</b> value. The research asks what digital transformation changes in each leg. Drag to rotate.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">Closest UN Sustainable Development Goal</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://sdgs.un.org/goals/goal8" target="_blank" rel="noopener" title="SDG 8 · Decent Work and Economic Growth: Shows how a traditional insurer began serving people who had never had insurance, with the same coverage for everyone, which bears on access to insurance and financial services for all."><b>8</b>Decent Work and Economic Growth</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">scroll<span></span></div>
+</section>
+
+<!-- 02 · CAMINHO DA APÓLICE -->
+<section class="slide" id="apolice" data-label="Digitize vs. transform">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">02</span> The question</div>
+    <h2 class="rv" style="--d:.1s">Putting the old process on a screen does not change the business model</h2>
+    <p class="lede rv" style="--d:.15s">The dissertation separates two things. <strong>Digitizing</strong> is moving what was already done into digital form. <strong>Transforming</strong> is rethinking the business around what the customer wants. Follow a policy's journey in the three ways.</p>
+    <div class="segs rv" style="--d:.2s">
+      <div class="seg" id="trk-seg" role="group" aria-label="Way of selling the policy">
+        <button data-k="old" aria-pressed="true">Before</button>
+        <button data-k="dig" aria-pressed="false">Only digitize</button>
+        <button data-k="new" aria-pressed="false">Transform</button>
+      </div>
+    </div>
+    <div class="track rv" id="trk" style="--d:.25s" aria-live="polite"></div>
+    <div class="grid2" style="gap:20px; align-items:start">
+      <div class="clock rv" id="trk-clock" style="--d:.3s"><b id="trk-time"></b><span id="trk-tlab"></span></div>
+      <p class="trk-cap rv" id="trk-cap" style="--d:.3s"></p>
+    </div>
+    <p class="note">"Before" and "Transform": how the Insurer B interviewee described the old and the new process (sections 5.3 and 6.5). "Only digitize" is <b>our illustration</b> of the dissertation's conclusion: in practice, the other three digitized the model they already had, and the policy still takes a few days (Table 15).</p>
+  </div>
+</section>
+
+<!-- 03 · MERCADO -->
+<section class="slide" id="mercado" data-label="A market of giants">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> The setting</div>
+      <h2 class="rv" style="--d:.1s">Brazilian insurance is large, concentrated and sells through brokers</h2>
+      <p class="lede rv" style="--d:.15s">The sector weighs more and more in the economy, and a few long-established companies, the so-called <em>incumbents</em>, dominate it. By law and by tradition, the product reaches the customer through a broker.</p>
+      <div class="chain rv" style="--d:.2s" aria-label="Traditional chain: insurer, broker, customer"><span>Insurer</span><i>→</i><span class="mid">Broker</span><i>→</i><span>Customer</span></div>
+      <div class="panel rv" id="pib-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable bars3d" id="pib-scene" data-fit="460x340" role="img" aria-label="3D columns of insurance as a share of GDP: 1.86% in 2001, 3.8% in 2019 and the estimated range of 6% to 10%"></div></div>
+      <p class="note">Insurance market as a share of GDP (SUSEP, 2020, cited in section 2.1). The striped column is an industry estimate, not data. Tap a column.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · RÉGUA -->
+<section class="slide" id="regua" data-label="The yardstick">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> The conceptual model</div>
+      <h2 class="rv" style="--d:.1s">The research built a yardstick with 13 items across the three value legs</h2>
+      <p class="lede rv" style="--d:.15s">Drawing on the literature, the author combined Meirelles's (2019) value tripod with Vial's (2019) flow of digital transformation. Technology enables change, but it is not the change.</p>
+      <p class="rv" style="--d:.2s; font-size:.9rem">Tap an item in the diagram.</p>
+      <div class="panel rv" id="rg-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="rg-svg" class="svgbox" viewBox="0 0 560 470" role="img" aria-label="Diagram: digital technologies enable disruption, which triggers a strategic response; technologies allow the value cycle, with six creation items, three configuration items and four capture items"></svg>
+      <p class="note">Figure 7 of the dissertation, redrawn. The technical names are creation, configuration and appropriation of value.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · QUEM FOI OUVIDO -->
+<section class="slide" id="quem" data-label="Four insurers">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> How the research looked · 4 interviews</div>
+      <h2 class="rv" style="--d:.1s">The research heard from the people leading digital transformation at four large insurers</h2>
+      <p class="lede rv" style="--d:.15s">In the middle of the pandemic, the author interviewed online the person leading digital transformation at four traditional general insurers. Three are among the five largest in the country. The conversations were recorded, transcribed and read as narratives.</p>
+      <div class="segs rv" style="--d:.2s">
+        <div class="seg" id="who-seg" role="group" aria-label="Column measure">
+          <button data-k="age" aria-pressed="true">Years in Brazil</button>
+          <button data-k="cli" aria-pressed="false">Customers</button>
+          <button data-k="exp" aria-pressed="false">Interviewee's years in insurance</button>
+        </div>
+      </div>
+      <div class="panel rv" id="who-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable bars3d" id="who-scene" data-fit="460x340" role="img" aria-label="Four 3D columns, one per insurer, A to D, showing the chosen measure"></div></div>
+      <p class="note">Figure 8 and Table 14. Company and personal names are coded in the dissertation (Insurers A to D, E1 to E4). Insurer C's 36 million customers span five countries. Tap a column.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · CRIAR -->
+<section class="slide" id="criar" data-label="Create value">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> First leg · value creation</div>
+      <h2 class="rv" style="--d:.1s">When it comes to creating value, one insurer already does all six items; the others, two at most</h2>
+      <p class="lede rv" style="--d:.15s">Each cube is one yardstick item at one insurer. Tall and solid: already does it. Striped: plans to. Flat on the floor: does not.</p>
+      <div class="score rv" id="cr-score" style="--d:.2s"></div>
+      <div class="panel rv" id="cr-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="cr-scene" data-fit="540x400" role="img" aria-label="3D grid of six value-creation items by four insurers; Insurer B has all six cubes tall"></div></div>
+      <div class="legend"><span><i class="sq" style="background:var(--cri)"></i>does it</span><span><i class="sq" style="background:repeating-linear-gradient(45deg,#a5b4cf 0 3px,#e3e8f1 3px 6px)"></i>plans to</span><span><i class="sq" style="background:#e2e8f0"></i>does not</span></div>
+      <p class="note">Table 15 of the dissertation. The split into "does, plans, does not" and the count are <b>ours</b>, based on each cell's text. Tap a cube or an insurer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · CONFIGURAR -->
+<section class="slide" id="configurar" data-label="Configure value">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Second leg · value configuration</div>
+      <h2 class="rv" style="--d:.1s">Three insurers let customers use their policy on their own, and only one lets them buy it on their own</h2>
+      <p class="lede rv" style="--d:.15s">Configuring value means organizing partners, channels and product management. On partnerships all four say the same thing: they look for partners that speed up their digital ecosystem. The difference shows up in the channels.</p>
+      <p class="rv" style="--d:.2s; font-size:.9rem">Tap a task or a cell.</p>
+      <div class="panel rv" id="cf-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="tasks" id="cf-grid"></div>
+      <div class="legend"><span><i class="sq" style="background:var(--cfg)"></i>digital, customers do it themselves</span><span><i class="sq" style="background:#dfe5f0"></i>several channels, with people in between</span><span><i class="sq" style="background:#f1f5f9; border:1px solid #cbd5e1"></i>insurer only</span></div>
+      <p class="note">Table 16 of the dissertation, redrawn as customer tasks (our reading of the cells).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · CAPTURAR -->
+<section class="slide" id="capturar" data-label="Capture value">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> Third leg · value appropriation</div>
+      <h2 class="rv" style="--d:.1s">Two insurers opened their doors to people who had never had insurance</h2>
+      <p class="lede rv" style="--d:.15s">Capturing value means turning what was created into loyal customers, brand and revenue. The item that most separates the four is <strong>democratization</strong>: reaching the people traditional insurance left out.</p>
+      <div class="segs rv" style="--d:.2s">
+        <div class="seg" id="ap-seg" role="group" aria-label="Value-capture item">
+          <button data-k="dem" aria-pressed="true">Democratize</button>
+          <button data-k="fid" aria-pressed="false">Retain</button>
+          <button data-k="div" aria-pressed="false">Digital dividends</button>
+          <button data-k="coc" aria-pressed="false">Co-create</button>
+        </div>
+      </div>
+      <div class="apr-cards rv" id="ap-cards" style="--d:.25s" aria-live="polite"></div>
+      <p class="note">Table 17 of the dissertation.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel">
+        <div class="tag">How Insurer B did it · illustration</div>
+        <h3>Windstorm cover across all of Brazil</h3>
+        <p style="font-size:.86rem">Many insurers do not sell windstorm cover where windstorms are frequent. B did the opposite: the same coverage for everyone, with a slightly higher price where there is almost no windstorm paying for the losses where there is. The customer base became "one big pool", in the dissertation's words.</p>
+        <div class="seg" id="vd-seg" role="group" aria-label="Pricing approach" style="margin-top:4px">
+          <button data-k="trad" aria-pressed="true">By region</button>
+          <button data-k="hom" aria-pressed="false">Everyone the same</button>
+        </div>
+        <div class="regions" id="vd-reg"></div>
+        <p class="note" style="margin-top:10px"><span class="illus">illustration</span> No figures: the account in section 6.5 gives no prices. "Where windstorms are frequent" and "where there are almost none" follow the interviewee's example (South vs. North, Northeast and Center-West).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · DESCOBERTA -->
+<section class="slide" id="descoberta" data-label="The finding">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> The finding</div>
+      <h2 class="rv" style="--d:.1s">Only the insurer that took the broker out of the way closed the value cycle</h2>
+      <p class="lede rv" style="--d:.15s">Insurer B created an insurtech, a 100% digital insurer born inside it, to sell directly to customers. Creating, configuring and capturing began to reinforce one another, according to the author.</p>
+      <div class="bign rv" style="--d:.2s">
+        <div class="bn"><b>30 days → seconds</b><span>until the policy reaches the customer</span></div>
+        <div class="bn"><b>3×</b><span>production, in less than a year and a half</span></div>
+        <div class="bn"><b>4th → 2nd</b><span>place in the ranking over the same period</span></div>
+        <div class="bn"><b>~50%</b><span>of home-insurance claims paid within 24 hours</span></div>
+      </div>
+      <p class="note">Figures reported by the Insurer B interviewee (sections 5.3 and 6.5); the dissertation includes no documents confirming them.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel">
+        <div class="tag">Why scale makes it cheaper · illustration</div>
+        <p style="font-size:.86rem">In the old model, more customers required more staff to serve them, change policies and dispatch service providers. When customers quote, make changes and upload photos themselves, the structure "does not need to keep pace almost linearly" with growth, the dissertation says. Grow the customer base.</p>
+        <div class="fit-wrap"><div class="scene draggable bars3d" id="sc-scene" data-fit="440x250" role="img" aria-label="Illustrative 3D columns: customer base, structure in the old model and structure in the digital model, as the base grows"></div></div>
+        <div class="slider"><label for="sc-rng">Customer base size: <b id="sc-x">1×</b></label><input type="range" id="sc-rng" min="1" max="5" step="1" value="1"></div>
+        <p id="sc-out" aria-live="polite"></p>
+        <p class="note" style="margin-top:6px"><span class="illus">illustration</span> Made-up heights to show the idea; the dissertation does not measure costs.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · INESPERADO -->
+<section class="slide" id="inesperado" data-label="The unexpected">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> The unexpected</div>
+      <h2 class="rv" style="--d:.1s">A company's age does not explain who changed its model</h2>
+      <p class="lede rv" style="--d:.15s">One might expect the youngest to take the boldest step. Line the four up by age, then by how much they changed their business model.</p>
+      <div class="segs rv" style="--d:.2s">
+        <div class="seg" id="ag-seg" role="group" aria-label="Column order">
+          <button data-k="age" aria-pressed="true">By age</button>
+          <button data-k="chg" aria-pressed="false">By what changed</button>
+        </div>
+      </div>
+      <div class="guess rv" id="gs" style="--d:.25s"></div>
+      <div class="panel rv" id="gs-out" style="--d:.3s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable bars3d" id="age-scene" data-fit="460x320" role="img" aria-label="Four 3D columns with each insurer's age in Brazil, from youngest to oldest"></div></div>
+      <p class="note">Ages from Figure 8; focus and intermediary from Table 14; creation items in practice: our count from Table 15.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · NA PRÁTICA E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="In practice and credits">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> In practice, limits and credits</div>
+    <h2 class="rv" style="--d:.1s">Transforming starts by looking at the customer, not at the structure already in place</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Traditional insurers</h3><p>The author recommends building the business model around customer needs rather than the current structure; creating new platforms with teams of varied backgrounds and digital experience; and offering digital channels for both buying and using the product.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Customers</h3><p>In B's case, customers got their policy in seconds, buying and service at any hour, the price of each coverage in plain view, and access for people traditional insurers turned down. These gains are the insurer's own account.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--cfg)"><h3>Brokers</h3><p>Three of the four kept the broker at the center of sales, and C deliberately avoided conflict with brokers. The research did not hear from brokers; what direct sales mean for them remains open. <i>Our reading.</i></p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:var(--ink-2)"><h3>Researchers</h3><p>Create a scale to measure digital transformation across the three value legs, hear from the other large insurers, or look at one specific product, such as car or life insurance.</p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>What this research does not say</h3>
+        <ul class="limits">
+          <li><b>It cannot be generalized:</b> these are four insurers with different niches, origins and models (three sell through banks). <em>· according to the author</em></li>
+          <li><b>One person per company:</b> each insurer is seen through the account of the person leading the transformation, with different roles from one to the next. <em>· according to the author</em></li>
+          <li><b>Accounts, not measurement:</b> B's results (production, ranking, claims) come from the interview; no financial data were checked. <em>· our observation</em></li>
+          <li><b>No view by product:</b> the insurers spoke about the whole company, not each type of insurance. <em>· according to the author</em></li>
+          <li><b>"Does, plans, does not"</b> is our reading of the comparison tables, not a score given by the author. <em>· our observation</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Credits</h3>
+        <div class="cite">
+          <b>How to cite</b><br>
+          HATADA, Fernando. <em>Transformação digital do mercado de seguros no Brasil: um estudo exploratório em modelos de negócios.</em> Master's dissertation (Business Administration) — Universidade Presbiteriana Mackenzie, São Paulo, 2021. Advisor: Prof. Dr. Dimária Silva e Meirelles.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">This version simplifies the work for a general audience. Insurers and interviewees appear only by the dissertation's codes (A to D, E1 to E4). The full tables, each insurer's value-cycle figure and the references are in the original text (in Portuguese).</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Read the full dissertation (in Portuguese)</a>
+          <a class="btn ghost" href="#capa">↑ Back to start</a>
+          <a class="btn ghost" href="../../../">More research</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent, text){
+    var e = document.createElementNS(SVGNS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (text !== undefined) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function pressSet(group, val){ each(group.children, function(b){ b.setAttribute('aria-pressed', String(b.dataset.k === val)); }); }
+  var small = window.matchMedia('(max-width:600px)');
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  var INS = ['A', 'B', 'C', 'D'];
+  // Figura 8 e Tabela 14
+  var PERFIL = {
+    A:{age:29, cli:12, exp:13, orig:L('estrangeira, privada', 'foreign, private'), cod:'E1', cargo:L('Head de Inovação', 'Head of Innovation'),
+       tec:L('dados, inteligência artificial, telemetria, carro conectado, OCR', 'data, artificial intelligence, telematics, connected car, OCR'),
+       nota:L('Com dados e telemetria, percebe um acidente de carro antes mesmo do aviso do cliente. Para ela, não é físico ou digital: é preciso estar em todos os canais, e o cliente decide.', 'With data and telematics, it can detect a car crash even before the customer reports it. For this insurer, it is not physical or digital: it has to be on every channel, and the customer decides.')},
+    B:{age:48, cli:11, exp:32, orig:L('nacional, com capital público e privado', 'Brazilian, with public and private capital'), cod:'E2', cargo:L('Presidente da unidade de negócios digitais', 'President of the digital business unit'),
+       tec:L('dados, inteligência artificial, celulares, aplicativos, plataforma digital', 'data, artificial intelligence, mobile devices, apps, digital platform'),
+       nota:L('Criou uma insurtech, 100% digital, para vender direto ao cliente. Comprou uma plataforma mundial e a integrou a 37 outros sistemas.', 'Created a 100% digital insurtech to sell directly to customers. It bought a global platform and integrated it with 37 other systems.')},
+    C:{age:37, cli:36, exp:18, orig:L('estrangeira, privada; vende pelo banco parceiro', 'foreign, private; sells through a partner bank'), cod:'E3', cargo:L('Product Manager e Digital Experience', 'Product Manager and Digital Experience'),
+       tec:L('dados, celulares, aplicativos, plataforma digital, nuvem', 'data, mobile devices, apps, digital platform, cloud'),
+       nota:L('Os 36 milhões somam Argentina, Brasil, Chile, México e Uruguai. O canal digital trouxe um público inesperado: seguro de vida contratado por pessoas de 28 anos.', 'The 36 million cover Argentina, Brazil, Chile, Mexico and Uruguay. The digital channel brought an unexpected audience: life insurance bought by 28-year-olds.')},
+    D:{age:125, cli:7, exp:7, orig:L('nacional, privada', 'Brazilian, private'), cod:'E4', cargo:L('Head de Transformação Digital', 'Head of Digital Transformation'),
+       tec:L('dados, aplicativos, plataforma digital, nuvem', 'data, apps, digital platform, cloud'),
+       nota:L('Fez a transformação dentro da estrutura de 125 anos, sem criar empresa paralela. Na pandemia, levou reembolso e telemedicina para o digital.', 'Carried out the transformation inside its 125-year-old structure, without a parallel company. During the pandemic it moved reimbursements and telemedicine online.')}
+  };
+  var METRIC = {
+    age:{t:L('anos de atuação no Brasil', 'years operating in Brazil'), u:L(' anos', ' years'), k:1.1},
+    cli:{t:L('milhões de clientes (Tabela 14)', 'million customers (Table 14)'), u:L(' mi', ' M'), k:3.4},
+    exp:{t:L('anos do entrevistado no mercado de seguros', "interviewee's years in insurance"), u:L(' anos', ' years'), k:3.6}
+  };
+
+  // Tabela 15 · criação do valor. s: 2 = faz, 1 = planeja, 0 = não faz (classificação nossa)
+  var CRIA = [
+    {n:L('Apólice na hora', 'Instant policy'), f:L('Emissão de apólice em tempo real', 'Real-time policy issuance'), c:[
+      [0, L('Emissão no processo tradicional, em alguns dias.', 'Issued through the traditional process, in a few days.')],
+      [2, L('Emissão na hora da compra.', 'Issued at the moment of purchase.')],
+      [0, L('Emissão no processo tradicional, em alguns dias.', 'Issued through the traditional process, in a few days.')],
+      [0, L('Emissão no processo tradicional, em alguns dias.', 'Issued through the traditional process, in a few days.')]]},
+    {n:L('Pague pelo uso', 'Pay per use'), f:L('Seguro pay per use', 'Pay-per-use insurance'), c:[
+      [1, L('Planeja desenvolver o produto.', 'Plans to develop the product.')],
+      [2, L('Oferece seguro de carro pago pela quantidade de quilômetros rodados.', 'Offers car insurance paid by the number of kilometers driven.')],
+      [0, L('Sem planos de desenvolver o produto.', 'No plans to develop the product.')],
+      [0, L('Sem planos de desenvolver o produto.', 'No plans to develop the product.')]]},
+    {n:L('Preço na hora', 'Instant price'), f:L('Precificação em tempo real', 'Real-time pricing'), c:[
+      [0, L('Somente pelo intermediário.', 'Only through the intermediary.')],
+      [2, L('Preço em tempo real e individual para cada cobertura e assistência.', 'Real-time, individual price for each coverage and assistance service.')],
+      [2, L('Preço em tempo real, por pacote de coberturas e assistências.', 'Real-time price, by package of coverage and assistance.')],
+      [0, L('Somente pelo intermediário.', 'Only through the intermediary.')]]},
+    {n:L('Monte o seu', 'Build your own'), f:L('Flexibilidade de coberturas e assistências', 'Flexible coverage and assistance'), c:[
+      [0, L('Oferece pacotes pré-definidos.', 'Offers predefined packages.')],
+      [2, L('O cliente escolhe cada cobertura e assistência.', 'Customers choose each coverage and assistance service.')],
+      [0, L('Oferece pacotes pré-definidos.', 'Offers predefined packages.')],
+      [0, L('Oferece pacotes pré-definidos.', 'Offers predefined packages.')]]},
+    {n:L('Oferta sob medida', 'Tailored offer'), f:L('Oferta de acordo com o perfil do cliente', 'Offer matched to the customer profile'), c:[
+      [1, L('Planejamento futuro.', 'Future plans.')],
+      [2, L('Oferta personalizada pelo perfil do cliente.', 'Offer personalized to the customer profile.')],
+      [2, L('Oferta personalizada pelo perfil do cliente.', 'Offer personalized to the customer profile.')],
+      [1, L('Planejamento futuro.', 'Future plans.')]]},
+    {n:L('Sem intermediário', 'No intermediary'), f:L('Desintermediação', 'Disintermediation'), c:[
+      [0, L('Mantém o intermediário.', 'Keeps the intermediary.')],
+      [2, L('Criou um modelo de venda direta.', 'Created a direct-sales model.')],
+      [0, L('Mantém o intermediário.', 'Keeps the intermediary.')],
+      [0, L('Mantém o intermediário.', 'Keeps the intermediary.')]]}
+  ];
+
+  // Tabela 16 · configuração do valor. v: self = digital sozinho, mix = vários canais com pessoas, only = só a seguradora
+  var CONF = [
+    {t:L('Comprar o seguro', 'Buy the policy'), c:[
+      ['mix', L('vários canais', 'several channels'), L('Múltiplos canais para venda.', 'Multiple sales channels.')],
+      ['self', L('digital, sozinho', 'digital, self-serve'), L('Estrutura digital de autoatendimento para vendas.', 'Digital self-service structure for sales.')],
+      ['mix', L('vários canais', 'several channels'), L('Múltiplos canais para venda.', 'Multiple sales channels.')],
+      ['mix', L('vários canais', 'several channels'), L('Múltiplos canais para venda.', 'Multiple sales channels.')]]},
+    {t:L('Usar e pedir atendimento', 'Use it and get service'), c:[
+      ['mix', L('vários canais', 'several channels'), L('Múltiplos canais para atendimento de uso.', 'Multiple channels for service during use.')],
+      ['self', L('digital, sozinho', 'digital, self-serve'), L('Estrutura digital de autoatendimento no uso.', 'Digital self-service structure during use.')],
+      ['self', L('digital, sozinho', 'digital, self-serve'), L('Estrutura digital para autoatendimento de uso.', 'Digital structure for self-service during use.')],
+      ['self', L('digital, sozinho', 'digital, self-serve'), L('Estrutura digital para autoatendimento de uso.', 'Digital structure for self-service during use.')]]},
+    {t:L('Gerir o produto', 'Manage the product'), c:[
+      ['only', L('só a seguradora', 'insurer only'), L('A seguradora pode gerir o produto.', 'The insurer can manage the product.')],
+      ['self', L('seguradora e cliente', 'insurer and customer'), L('Seguradora e cliente podem gerir o produto.', 'Insurer and customer can both manage the product.')],
+      ['self', L('seguradora e cliente', 'insurer and customer'), L('Seguradora e cliente podem gerir o produto.', 'Insurer and customer can both manage the product.')],
+      ['self', L('seguradora e cliente', 'insurer and customer'), L('Seguradora e cliente podem gerir o produto.', 'Insurer and customer can both manage the product.')]]}
+  ];
+  var CONF_TXT = [
+    L('Para comprar, só a B montou uma estrutura digital em que o cliente contrata sozinho, a qualquer hora. As outras três vendem por vários canais, com o corretor e o banco no caminho.', 'To buy, only B built a digital structure where customers sign up on their own, at any hour. The other three sell through several channels, with brokers and banks along the way.'),
+    L('No uso, B, C e D já deixam o cliente resolver pelo aplicativo, sem depender de uma pessoa, de horário ou de lugar. A C e a D fizeram isso mesmo mantendo o corretor na venda.', 'During use, B, C and D already let customers sort things out in the app, without depending on a person, office hours or location. C and D did this while keeping brokers for sales.'),
+    L('Gerir o produto de forma digital: as quatro fazem, mas na A só a seguradora mexe; em B, C e D o cliente também pode.', 'Managing the product digitally: all four do it, but at A only the insurer can make changes; at B, C and D the customer can too.')
+  ];
+
+  // Tabela 17 · apropriação do valor
+  var APR = {
+    dem:[[0, L('Sem estratégias definidas para expansão.', 'No defined expansion strategy.')],
+         [1, L('Mesmas coberturas e assistências para todos; aceita clientes recusados pelas tradicionais e gente que faz seguro pela primeira vez.', 'The same coverage and assistance for everyone; accepts customers turned down by traditional insurers and people buying insurance for the first time.')],
+         [0, L('Sem estratégias definidas para expansão.', 'No defined expansion strategy.')],
+         [1, L('Abriu um nicho que não atendia: antes só a classe A, agora clientes de tíquete médio menor.', 'Opened a niche it did not serve before: once only the wealthiest customers, now customers with a lower average ticket.')]],
+    fid:[[1, L('Oferta preditiva de produtos para fidelizar.', 'Predictive product offers to build loyalty.')],
+         [1, L('Experiência, comunicação simples, agilidade no atendimento, postura diferente das concorrentes, 100% digital.', 'Experience, simple communication, fast service, a stance unlike traditional competitors, 100% digital.')],
+         [1, L('Experiência, agilidade no atendimento e experiência digital inovadora no uso.', 'Experience, fast service and an innovative digital experience during use.')],
+         [1, L('Experiência, agilidade no atendimento e experiência digital inovadora no uso.', 'Experience, fast service and an innovative digital experience during use.')]],
+    div:[[1, L('Experimentos feitos em paralelo pelos escritórios de inovação, com resultados compartilhados entre países.', 'Experiments run in parallel by innovation offices, with results shared across countries.')],
+         [1, L('Primeira seguradora digital, primeira insurtech da cadeia inteira, primeira a vender direto; marca e plataforma digital.', 'First digital insurer, first insurtech covering the whole chain, first to sell directly; brand and digital platform.')],
+         [1, L('Jornada digital e experiência digital de uso.', 'Digital journey and digital user experience.')],
+         [1, L('Jornada digital, experiência digital de uso e experiência da marca.', 'Digital journey, digital user experience and brand experience.')]],
+    coc:[[1, L('Envolve o cliente e o intermediário na criação.', 'Involves the customer and the intermediary in creation.')],
+         [1, L('Envolve o cliente na criação.', 'Involves the customer in creation.')],
+         [0, L('Envolve o intermediário na criação.', 'Involves the intermediary in creation.')],
+         [1, L('Envolve o cliente e o intermediário na criação.', 'Involves the customer and the intermediary in creation.')]]
+  };
+  var APR_TXT = {
+    dem:L('Só B e D foram atrás de quem estava fora do seguro.', 'Only B and D went after people who were left out of insurance.'),
+    fid:L('As quatro dizem fidelizar com experiência e agilidade; a B soma comunicação simples e operação 100% digital.', 'All four say they build loyalty through experience and speed; B adds simple communication and a 100% digital operation.'),
+    div:L('Dividendos digitais são ganhos que vêm de ser digital: marca, dados, pioneirismo. A B foi a primeira em três frentes.', 'Digital dividends are gains that come from being digital: brand, data, being first. B was first on three fronts.'),
+    coc:L('Só a B cria produtos com o cliente sem o intermediário no meio; a C cria só com o intermediário (as agências do banco).', 'Only B creates products with customers without the intermediary in between; C creates only with the intermediary (the bank branches).')
+  };
+
+  /* ================= 01 · CAPA: tripé ================= */
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 300, 300, {ay:'66%', rx:'60deg'});
+    var LEGS = [[150, 40, 'var(--cfg)', L('configurar', 'configure')], [50, 210, 'var(--cri)', L('criar', 'create')], [250, 210, 'var(--apr)', L('capturar', 'capture')]];
+    LEGS.forEach(function(g){ st.appendChild(box({w:44, d:44, h:130, x:g[0] - 22, y:g[1] - 22, c:g[2], label:g[3]})); });
+    st.appendChild(box({w:250, d:230, h:16, x:28, y:22, z:130, c:'#334155', top:L('modelo de negócio', 'business model')}));
+    var pol = box({w:58, d:76, h:6, x:121, y:97, z:300, c:'#ffffff', cls:'policy'});
+    st.appendChild(pol);
+    var t0 = null;
+    M.onTick(function(t){
+      if (M.reduce){ pol.style.setProperty('--z', '146px'); return; }
+      if (t0 === null) t0 = t;
+      var p = ((t - t0) / 4200) % 1, z = p < .45 ? 300 - (154 * (p / .45) * (p / .45)) : 146;
+      pol.style.setProperty('--z', z + 'px');
+    });
+    rotatable(sc, st, -30, 14);
+  })();
+
+  /* ================= 02 · Caminho da apólice ================= */
+  (function(){
+    var OLD = [
+      [L('vendedor', 'salesperson'), L('pede muitos dados ao cliente, pessoalmente', 'asks the customer for lots of data, in person')],
+      [L('boleto', 'bank slip'), L('cliente paga no banco', 'customer pays at the bank')],
+      [L('proposta', 'proposal'), L('junta a proposta com o boleto pago', 'proposal attached to the paid slip')],
+      [L('malote', 'courier pouch'), L('papéis seguem para a seguradora', 'paperwork goes to the insurer')],
+      [L('conferência', 'checking'), L('equipe confere os cálculos', 'staff check the calculations')],
+      [L('redigitação', 'retyping'), L('tudo é digitado de novo no sistema', 'everything is typed into the system again')],
+      [L('impressão', 'printing'), L('a apólice é impressa', 'the policy is printed')],
+      [L('Correios', 'mail'), L('apólice vai pelo correio', 'policy goes by post')]
+    ];
+    var DIG = [
+      [L('vendedor', 'salesperson'), L('preenche um formulário na tela', 'fills in an on-screen form')],
+      [L('boleto em PDF', 'PDF bank slip'), L('cliente paga pelo celular', 'customer pays by phone')],
+      [L('proposta', 'proposal'), L('vai por e-mail com o comprovante', 'sent by email with the receipt')],
+      [L('fila interna', 'internal queue'), L('a proposta espera a vez', 'the proposal waits its turn')],
+      [L('conferência', 'checking'), L('equipe ainda confere os cálculos', 'staff still check the calculations')],
+      [L('cadastro', 'data entry'), L('dados passam de um sistema a outro', 'data move from one system to another')],
+      [L('apólice em PDF', 'PDF policy'), L('gerada depois da análise', 'issued after review')],
+      [L('e-mail', 'email'), L('chega ao cliente dias depois', 'reaches the customer days later')]
+    ];
+    var NEW = [
+      [L('o cliente', 'the customer'), L('cota e contrata sozinho, 24 horas por dia, 7 dias por semana', 'gets a quote and signs up alone, 24 hours a day, 7 days a week')],
+      [L('débito', 'direct debit'), L('dados importados, sem digitar e sem boleto', 'data imported, no typing and no bank slip')],
+      [L('apólice', 'policy'), L('chega em segundos; alterações também saem na hora', 'arrives in seconds; changes are instant too')]
+    ];
+    var MODES = {
+      old:{s:OLD, cls:'', time:L('≈ 30 dias', '≈ 30 days'), lab:L('até a apólice chegar (cerca de 15 dias só de trabalho interno)', 'until the policy arrives (about 15 days of internal work alone)'), fast:false,
+           cap:L('Cada mudança na apólice reiniciava o fluxo. Sinistros seguiam o mesmo ritmo: o cheque ia pelo correio, em 30 dias na melhor das hipóteses.', 'Every change to the policy restarted the flow. Claims moved at the same pace: the check went by post, in 30 days at best.')},
+      dig:{s:DIG, cls:'dig', time:L('alguns dias', 'a few days'), lab:L('os mesmos passos, agora em telas', 'the same steps, now on screens'), fast:false,
+           cap:L('Tudo ficou digital, mas o modelo é o mesmo: o corretor no meio, a equipe conferindo, a espera. É o que a dissertação chama de digitalização.', 'Everything is digital, but the model is the same: the broker in between, staff checking, the wait. This is what the dissertation calls digitization.')},
+      new:{s:NEW, cls:'new', time:L('segundos', 'seconds'), lab:L('depois da compra, a apólice já está com o cliente', 'after purchase, the policy is already with the customer'), fast:true,
+           cap:L('Os passos sumiram porque o modelo mudou: venda direta, sem intermediário, e o cliente faz o que antes dependia de várias equipes.', 'The steps disappeared because the model changed: direct sales, no intermediary, and the customer does what used to depend on several teams.')}
+    };
+    function show(k){
+      var m = MODES[k];
+      $('trk').innerHTML = m.s.map(function(s, i){ return '<div class="stp ' + m.cls + '" style="animation-delay:' + (i * 0.05) + 's"><b>' + (i + 1) + ' · ' + s[0] + '</b>' + s[1] + '</div>'; }).join('');
+      $('trk-time').textContent = m.time; $('trk-tlab').textContent = m.lab; $('trk-cap').textContent = m.cap;
+      $('trk-clock').classList.toggle('fast', m.fast);
+    }
+    each($('trk-seg').children, function(b){ b.addEventListener('click', function(){ pressSet($('trk-seg'), b.dataset.k); show(b.dataset.k); }); });
+    show('old');
+  })();
+
+  /* ================= 03 · Mercado ================= */
+  (function(){
+    var BARS = [
+      {k:'2001', v:1.86, t:L('1,86% do PIB em 2001', '1.86% of GDP in 2001'), p:L('Peso do mercado de seguros no Produto Interno Bruto no começo da série citada pela dissertação.', 'Weight of the insurance market in Gross Domestic Product at the start of the series cited in the dissertation.')},
+      {k:'2019', v:3.8, t:L('3,8% do PIB em 2019', '3.8% of GDP in 2019'), p:L('O peso dobrou em menos de 20 anos. Até setembro de 2020, o faturamento do setor chegou a R$ 198,1 bilhões (CNseg, 2020).', 'The share doubled in under 20 years. Through September 2020, the sector\'s revenue reached R$198.1 billion (CNseg, 2020).')},
+      {k:L('estimativa', 'estimate'), v:10, lo:6, t:L('6% a 10%: o potencial estimado', '6% to 10%: the estimated potential'), p:L('Estimativas do setor apontam esse potencial para os próximos anos (SUSEP, 2020). É projeção, não dado.', 'Industry estimates point to this potential in the coming years (SUSEP, 2020). It is a projection, not data.')}
+    ];
+    var sc = $('pib-scene'), st = makeStage(sc, 330, 130, {ay:'70%', rx:'60deg'}), bl = [];
+    BARS.forEach(function(b, j){
+      var x = 20 + j * 110, s = b.lo ? box({w:70, d:70, h:b.v * 20, x:x, y:30, c:'var(--red)', cls:'plan', top:'6–10%'}) : box({w:70, d:70, h:b.v * 20, x:x, y:30, c:j ? 'var(--navy)' : '#64748b', top:M.fmt(b.v, b.v === 1.86 ? 2 : 1) + '%'});
+      st.appendChild(s); bl.push(s);
+      flatLabel(st, b.k, x - 10, 112, 90);
+      s.addEventListener('click', function(){ if (M.wasDrag(sc)) return; pick(j); });
+    });
+    function pick(j){
+      bl.forEach(function(s, i){ s.classList.toggle('active', i === j); });
+      var b = BARS[j];
+      $('pib-panel').innerHTML = '<div class="tag">' + L('Peso no PIB', 'Share of GDP') + '</div><h3>' + b.t + '</h3><p>' + b.p + '</p><p style="font-size:.82rem; color:var(--muted)">' + L('E é concentrado: as cinco maiores seguradoras têm quase metade dos clientes dos ramos gerais (Valor Econômico, 2020). Nesse cenário surgem as <em>insurtechs</em>, empresas de tecnologia que vendem seguro e prometem cortar o intermediário.', 'And it is concentrated: the five largest insurers hold almost half of all general-insurance customers (Valor Econômico, 2020). In this setting, <em>insurtechs</em> emerge: technology companies that sell insurance and promise to cut out the intermediary.') + '</p>';
+    }
+    rotatable(sc, st, -24, 8);
+    pick(1);
+  })();
+
+  /* ================= 04 · Régua (Figura 7) ================= */
+  (function(){
+    var svg = $('rg-svg'), MOB = small.matches;
+    var TD = [
+      [L('Resposta estratégica', 'Strategic response'), L('A empresa decide mudar e põe a transformação digital na estratégia, criando negócios digitais. Ela depende das tecnologias.', 'The company decides to change and puts digital transformation into its strategy, creating digital businesses. It depends on technology.')],
+      [L('Disrupção', 'Disruption'), L('O que muda lá fora: expectativas e comportamento do cliente, concorrência e dados disponíveis. A disrupção provoca a resposta.', 'What changes outside: customer expectations and behavior, competition and available data. Disruption triggers the response.')],
+      [L('Tecnologias digitais', 'Digital technologies'), L('Redes sociais, celular, plataformas, big data e análise de dados. Elas possibilitam a disrupção e permitem o ciclo do valor, mas sozinhas são só digitalização.', 'Social media, mobile, platforms, big data and analytics. They enable disruption and allow the value cycle, but on their own they are only digitization.')]
+    ];
+    var CR = [[L('Apólice na hora', 'Instant policy'), L('Emitir a apólice em tempo real, no momento da compra.', 'Issue the policy in real time, at the moment of purchase.')],
+              [L('Pague pelo uso', 'Pay per use'), L('O cliente paga só pelo uso, liga e desliga o seguro quando quer.', 'Customers pay only for use, switching cover on and off when they want.')],
+              [L('Preço na hora', 'Instant price'), L('O cliente vê o preço na hora, sem esperar uma pessoa responder.', 'Customers see the price instantly, without waiting for a person to reply.')],
+              [L('Monte o seu', 'Build your own'), L('Escolher coberturas e assistências uma a uma, em vez de pacotes fechados.', 'Choose coverage and assistance one by one, instead of fixed packages.')],
+              [L('Oferta sob medida', 'Tailored offer'), L('Usar dados para oferecer o produto certo para cada perfil, na hora em que ele precisa.', 'Use data to offer the right product to each profile, when it is needed.')],
+              [L('Sem intermediário', 'No intermediary'), L('Vender direto, sem o corretor no meio, aproximando seguradora e cliente.', 'Sell directly, with no broker in between, bringing insurer and customer closer.')]];
+    var CF = [[L('Parcerias', 'Partnerships'), L('Escolher parceiros e fornecedores que acelerem o ecossistema digital.', 'Choose partners and suppliers that speed up the digital ecosystem.')],
+              [L('Todos os canais', 'Every channel'), L('Omnichannel: estar em todos os canais e deixar o cliente escolher como ser atendido.', 'Omnichannel: be on every channel and let customers choose how to be served.')],
+              [L('Gestão digital', 'Digital management'), L('Gerir o produto de forma digital, inclusive pelo próprio cliente.', 'Manage the product digitally, including by customers themselves.')]];
+    var AP = [[L('Democratizar', 'Democratize'), L('Levar seguro a quem não tinha acesso.', 'Bring insurance to people who had no access.')],
+              [L('Fidelizar', 'Retain'), L('Manter o cliente pela experiência.', 'Keep customers through experience.')],
+              [L('Dividendos digitais', 'Digital dividends'), L('Ganhos de ser digital: marca, dados, pioneirismo.', 'Gains from being digital: brand, data, being first.')],
+              [L('Cocriar', 'Co-create'), L('Criar produtos com uma comunidade de clientes.', 'Create products with a community of customers.')]];
+    var COL = {cr:'#1f3b73', cf:'#5b7bb5', ap:'#e80734'};
+    var ITEMS = [], FS = MOB ? 14 : 12;
+    var defs = el('defs', {}, svg), mk = el('marker', {id:'ah', viewBox:'0 0 10 10', refX:8, refY:5, markerWidth:7, markerHeight:7, orient:'auto'}, defs);
+    el('path', {d:'M0 0 L10 5 L0 10 z', fill:'#94a3b8'}, mk);
+    function hd(x, y, t, c, a){ el('text', {x:x, y:y, 'text-anchor':a || 'middle', 'class':'hd', 'font-size':MOB ? 14 : 12, 'font-weight':'800', fill:c}, svg, t); }
+    function arr(d, dash){ var a = {d:d, 'class':'arr', 'marker-end':'url(#ah)'}; if (dash) a['stroke-dasharray'] = '5 5'; el('path', a, svg); }
+    function vb(x, y, t){ el('text', {x:x, y:y, 'class':'vb'}, svg, t); }
+    if (!MOB){
+      TD.forEach(function(t, i){ ITEMS.push({g:'td', x:14, y:30 + i * 120, w:160, h:54, n:t[0], d:t[1]}); });
+      hd(377, 22, L('O CICLO DO VALOR', 'THE VALUE CYCLE'), '#0f172a');
+      el('rect', {x:205, y:32, width:345, height:428, rx:16, fill:'none', stroke:'#e2e8f0', 'stroke-width':2}, svg);
+      hd(300, 56, L('CRIAR · 6', 'CREATE · 6'), COL.cr); hd(300, 268, L('CONFIGURAR · 3', 'CONFIGURE · 3'), COL.cf); hd(465, 56, L('CAPTURAR · 4', 'CAPTURE · 4'), COL.ap);
+      CR.forEach(function(a, i){ ITEMS.push({g:'cr', x:225, y:64 + i * 30, w:150, h:25, n:a[0], d:a[1]}); });
+      CF.forEach(function(a, i){ ITEMS.push({g:'cf', x:225, y:276 + i * 30, w:150, h:25, n:a[0], d:a[1]}); });
+      AP.forEach(function(a, i){ ITEMS.push({g:'ap', x:390, y:64 + i * 30, w:150, h:25, n:a[0], d:a[1]}); });
+      arr('M94 268 V200'); arr('M94 148 V80'); arr('M174 290 C 190 290, 190 200, 205 200');
+      vb(104, 240, L('POSSIBILITA', 'ENABLES')); vb(104, 118, L('PROVOCA', 'TRIGGERS')); vb(150, 228, L('PERMITE', 'ALLOWS'));
+      arr('M380 150 C 395 210, 395 240, 380 262', true); arr('M380 392 C 450 400, 470 300, 465 190', true);
+      el('text', {x:388, y:428, 'font-size':'10.5', fill:'#64748b'}, svg, L('a transformação digital como', 'digital transformation as'));
+      el('text', {x:388, y:442, 'font-size':'10.5', fill:'#64748b'}, svg, L('posicionamento estratégico', 'strategic positioning'));
+    } else {
+      svg.setAttribute('viewBox', '0 0 360 700');
+      TD.forEach(function(t, i){ ITEMS.push({g:'td', x:30, y:14 + i * 74, w:300, h:44, n:t[0], d:t[1]}); });
+      arr('M180 160 V134'); arr('M180 86 V60');
+      vb(190, 152, L('POSSIBILITA', 'ENABLES')); vb(190, 78, L('PROVOCA', 'TRIGGERS'));
+      arr('M180 206 V240'); vb(190, 230, L('PERMITE', 'ALLOWS'));
+      el('rect', {x:6, y:244, width:348, height:448, rx:16, fill:'none', stroke:'#e2e8f0', 'stroke-width':2}, svg);
+      hd(180, 270, L('O CICLO DO VALOR', 'THE VALUE CYCLE'), '#0f172a');
+      hd(20, 300, L('CRIAR · 6', 'CREATE · 6'), COL.cr, 'start');
+      CR.forEach(function(a, i){ ITEMS.push({g:'cr', x:18 + (i % 2) * 166, y:310 + Math.floor(i / 2) * 38, w:158, h:32, n:a[0], d:a[1]}); });
+      hd(20, 444, L('CONFIGURAR · 3', 'CONFIGURE · 3'), COL.cf, 'start');
+      CF.forEach(function(a, i){ ITEMS.push({g:'cf', x:18 + (i % 2) * 166, y:454 + Math.floor(i / 2) * 38, w:158, h:32, n:a[0], d:a[1]}); });
+      hd(20, 550, L('CAPTURAR · 4', 'CAPTURE · 4'), COL.ap, 'start');
+      AP.forEach(function(a, i){ ITEMS.push({g:'ap', x:18 + (i % 2) * 166, y:560 + Math.floor(i / 2) * 38, w:158, h:32, n:a[0], d:a[1]}); });
+      el('text', {x:180, y:680, 'text-anchor':'middle', 'font-size':'12', fill:'#64748b'}, svg, L('criar → configurar → capturar → criar…', 'create → configure → capture → create…'));
+    }
+    var nodes = [];
+    ITEMS.forEach(function(it, i){
+      var g = el('g', {'class':'it', tabindex:0, role:'button'}, svg), td = it.g === 'td';
+      var fill = td ? '#f1f5f9' : 'color-mix(in srgb, ' + COL[it.g] + ' 12%, white)';
+      el('rect', {x:it.x, y:it.y, width:it.w, height:it.h, rx:td ? 12 : 7, fill:fill, stroke:td ? '#94a3b8' : COL[it.g], 'stroke-width':1.2}, g);
+      el('text', {x:it.x + it.w / 2, y:it.y + it.h / 2 + (td ? 5 : 4), 'text-anchor':'middle', 'font-size':td ? FS + 2 : FS, 'font-weight':td ? 800 : 600, fill:'#0f172a'}, g, it.n);
+      g.addEventListener('click', function(){ pick(i); });
+      g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); pick(i); } });
+      nodes.push(g);
+    });
+    var GN = {td:L('Transformação digital', 'Digital transformation'), cr:L('Criar valor (criação)', 'Create value (creation)'), cf:L('Configurar valor (configuração)', 'Configure value (configuration)'), ap:L('Capturar valor (apropriação)', 'Capture value (appropriation)')};
+    function pick(i){
+      nodes.forEach(function(n, j){ n.classList.toggle('on', i === j); });
+      var it = ITEMS[i];
+      $('rg-panel').innerHTML = '<div class="tag">' + GN[it.g] + '</div><h3>' + it.n + '</h3><p>' + it.d + '</p>';
+    }
+    pick(2);
+  })();
+
+  /* ================= 05 · Quem foi ouvido ================= */
+  (function(){
+    var sc = $('who-scene'), st = makeStage(sc, 360, 120, {ay:'74%', rx:'60deg'}), bl = [], metric = 'age', sel = 'B';
+    INS.forEach(function(k, j){
+      var b = box({w:60, d:60, h:10, x:14 + j * 90, y:30, c:k === 'B' ? 'var(--red)' : 'var(--navy)', top:''});
+      st.appendChild(b); bl.push(b);
+      flatLabel(st, k, j * 90 - 6, 100, 100);
+      b.addEventListener('click', function(){ if (M.wasDrag(sc)) return; sel = k; show(); });
+    });
+    function show(){
+      var m = METRIC[metric];
+      INS.forEach(function(k, j){
+        var v = PERFIL[k][metric];
+        bl[j].style.setProperty('--h', Math.max(8, v * m.k * (metric === 'age' ? 1 : 1)) + 'px');
+        bl[j].querySelector('.top-label') ? bl[j].querySelector('.top-label').textContent = v : bl[j].querySelector('.f-top').innerHTML = '<span class="top-label">' + v + '</span>';
+        bl[j].classList.toggle('active', k === sel);
+      });
+      var p = PERFIL[sel];
+      $('who-panel').innerHTML = '<div class="tag">' + L('Seguradora ', 'Insurer ') + sel + ' · ' + p[metric] + m.u + ' · ' + m.t + '</div>' +
+        '<dl class="facts"><dt>' + L('Origem', 'Origin') + '</dt><dd>' + p.orig + ', ' + p.age + L(' anos no Brasil', ' years in Brazil') + '</dd>' +
+        '<dt>' + L('Entrevista', 'Interview') + '</dt><dd>' + p.cod + ' · ' + p.cargo + ' · ' + p.exp + L(' anos no setor', ' years in insurance') + '</dd>' +
+        '<dt>' + L('Tecnologias', 'Technologies') + '</dt><dd>' + p.tec + '</dd></dl><p style="font-size:.84rem; margin-top:8px">' + p.nota + '</p>';
+    }
+    each($('who-seg').children, function(b){ b.addEventListener('click', function(){ metric = b.dataset.k; pressSet($('who-seg'), metric); show(); }); });
+    rotatable(sc, st, -22, 8);
+    show();
+  })();
+
+  /* ================= 06 · Criar valor ================= */
+  (function(){
+    var sc = $('cr-scene'), st = makeStage(sc, 450, 330, {ay:'58%', rx:'58deg'}), cubes = [], selI = null, selR = null;
+    var H = [3, 14, 32];
+    INS.forEach(function(k, j){
+      flatLabel(st, k, 162 + j * 72 - 8, -34, 60, '').classList.add('ins');
+    });
+    CRIA.forEach(function(r, i){
+      flatLabel(st, r.n, -30, 14 + i * 52, 170, 'text-align:right;');
+      r.c.forEach(function(c, j){
+        var col = j === 1 ? 'var(--red)' : 'var(--cri)';
+        var b = box({w:44, d:40, h:H[c[0]], x:170 + j * 72, y:4 + i * 52, c:c[0] ? col : '#cbd5e1', cls:c[0] === 1 ? 'plan' : ''});
+        b.dataset.i = i; b.dataset.j = j;
+        st.appendChild(b); cubes.push(b);
+        b.addEventListener('click', function(){ if (M.wasDrag(sc)) return; selR = i; selI = j; show(); });
+      });
+    });
+    var cnt = INS.map(function(k, j){ var f = 0, p = 0; CRIA.forEach(function(r){ if (r.c[j][0] === 2) f++; else if (r.c[j][0] === 1) p++; }); return [f, p]; });
+    $('cr-score').innerHTML = INS.map(function(k, j){ return '<button data-j="' + j + '" class="' + (j === 1 ? 'hl' : '') + '" aria-pressed="false"><b>' + cnt[j][0] + L(' de 6', ' of 6') + '</b>' + L('Seguradora ', 'Insurer ') + k + (cnt[j][1] ? '<br>+' + cnt[j][1] + L(' planeja', ' planned') : '<br>&nbsp;') + '</button>'; }).join('');
+    each($('cr-score').children, function(b){ b.addEventListener('click', function(){ var j = +b.dataset.j; selI = selI === j && selR === null ? null : j; selR = null; show(); }); });
+    var ST = [L('não faz', 'does not'), L('planeja', 'plans to'), L('faz', 'does it')];
+    function show(){
+      cubes.forEach(function(b){
+        var i = +b.dataset.i, j = +b.dataset.j;
+        var on = selR !== null ? (i === selR && j === selI) : (selI !== null ? j === selI : false);
+        var dim = selR !== null ? false : (selI !== null && j !== selI);
+        b.classList.toggle('active', on); b.classList.toggle('dim', dim);
+      });
+      each($('cr-score').children, function(b){ b.setAttribute('aria-pressed', String(+b.dataset.j === selI)); });
+      if (selR !== null){
+        var r = CRIA[selR], c = r.c[selI];
+        $('cr-panel').innerHTML = '<div class="tag">' + L('Seguradora ', 'Insurer ') + INS[selI] + ' · ' + ST[c[0]] + '</div><h3>' + r.f + '</h3><p>' + c[1] + '</p><p style="font-size:.8rem; color:var(--muted)">' + L('Nas quatro: ', 'Across the four: ') + r.c.map(function(x, j){ return INS[j] + ' ' + ST[x[0]]; }).join(' · ') + '</p>';
+      } else if (selI !== null){
+        var k = INS[selI];
+        $('cr-panel').innerHTML = '<div class="tag">' + L('Seguradora ', 'Insurer ') + k + '</div><h3>' + cnt[selI][0] + L(' de 6 itens já em prática', ' of 6 items already in practice') + '</h3><p>' + CRIA.filter(function(r){ return r.c[selI][0] === 2; }).map(function(r){ return r.n; }).join(', ').replace(/^$/, L('nenhum', 'none')) + (cnt[selI][1] ? L('. Planeja: ', '. Plans: ') + CRIA.filter(function(r){ return r.c[selI][0] === 1; }).map(function(r){ return r.n.toLowerCase(); }).join(', ') : '') + '.</p>';
+      } else {
+        $('cr-panel').innerHTML = '<div class="tag">' + L('Tabela 15', 'Table 15') + '</div><h3>' + L('A B faz tudo; A e D ainda não fazem nenhum', 'B does it all; A and D do none yet') + '</h3><p>' + L('As quatro dizem que criam valor pondo o cliente no centro. Mas só a B entrega a apólice na hora, mostra o preço de cada cobertura e já vende o seguro pago por quilômetro. A C faz dois itens; A e D, nenhum, com planos para dois e um.', 'All four say they create value by putting the customer at the center. But only B delivers the policy instantly, shows the price of each coverage and already sells insurance paid by the kilometer. C does two items; A and D do none, with plans for two and one.') + '</p>';
+      }
+    }
+    rotatable(sc, st, -8, 6);
+    show();
+  })();
+
+  /* ================= 07 · Configurar ================= */
+  (function(){
+    var g = $('cf-grid'), sel = null;
+    var h = '<div class="task hd"><div class="tl"></div>' + INS.map(function(k){ return '<div class="ins' + (k === 'B' ? ' b' : '') + '">' + k + '</div>'; }).join('') + '</div>';
+    CONF.forEach(function(r, i){
+      h += '<div class="task" data-i="' + i + '"><button class="tl" style="border:0; background:none; padding:0; cursor:pointer; text-align:left; font:inherit; font-size:.82rem; font-weight:600; color:var(--ink)" data-r="' + i + '">' + r.t + ' →</button>' +
+        r.c.map(function(c, j){ return '<button class="cell ' + c[0] + '" data-i="' + i + '" data-j="' + j + '">' + c[1] + '</button>'; }).join('') + '</div>';
+    });
+    g.innerHTML = h;
+    function show(i, j){
+      each(g.querySelectorAll('.cell'), function(c){ c.classList.toggle('on', +c.dataset.i === i && (j === undefined || +c.dataset.j === j)); });
+      if (j === undefined){ $('cf-panel').innerHTML = '<div class="tag">' + CONF[i].t + '</div><p>' + CONF_TXT[i] + '</p>'; }
+      else { $('cf-panel').innerHTML = '<div class="tag">' + L('Seguradora ', 'Insurer ') + INS[j] + ' · ' + CONF[i].t + '</div><h3>' + CONF[i].c[j][1] + '</h3><p>' + L('Na tabela: ', 'In the table: ') + CONF[i].c[j][2] + '</p>'; }
+    }
+    each(g.querySelectorAll('.cell'), function(c){ c.addEventListener('click', function(){ show(+c.dataset.i, +c.dataset.j); }); });
+    each(g.querySelectorAll('[data-r]'), function(c){ c.addEventListener('click', function(){ show(+c.dataset.r); }); });
+    show(1);
+  })();
+
+  /* ================= 08 · Capturar ================= */
+  (function(){
+    function show(k){
+      $('ap-cards').innerHTML = APR[k].map(function(c, j){ return '<div class="acard' + (j === 1 ? ' b' : '') + (c[0] ? '' : ' none') + '"><h4>' + L('Seguradora ', 'Insurer ') + INS[j] + '</h4>' + c[1] + '</div>'; }).join('') + '<p style="grid-column:1/-1; font-size:.84rem; color:var(--ink); margin:4px 0 0">' + APR_TXT[k] + '</p>';
+    }
+    each($('ap-seg').children, function(b){ b.addEventListener('click', function(){ pressSet($('ap-seg'), b.dataset.k); show(b.dataset.k); }); });
+    show('dem');
+    var REG = [
+      {n:L('Onde há muito vendaval', 'Where windstorms are frequent'), ex:L('ex.: Sul', 'e.g. South')},
+      {n:L('Onde quase não há vendaval', 'Where there are almost none'), ex:L('ex.: Norte, Nordeste, Centro-Oeste', 'e.g. North, Northeast, Center-West')}
+    ];
+    var VD = {
+      trad:[[0, L('sem cobertura de vendaval', 'no windstorm cover'), L('a seguradora deixa de vender: o risco dá prejuízo', 'the insurer stops selling it: the risk loses money')],
+            [0, L('cobertura que quase ninguém compra', 'cover almost nobody buys'), L('preço calculado só para aquela região', 'price set for that region alone')]],
+      hom:[[1, L('com cobertura de vendaval', 'windstorm cover included'), L('o mesmo produto do resto do país', 'the same product as the rest of the country')],
+           [1, L('com cobertura de vendaval', 'windstorm cover included'), L('preço um pouco acima, que ajuda a pagar as perdas de onde há vendaval', 'a slightly higher price that helps pay for losses where windstorms happen')]]
+    };
+    function vd(k){
+      $('vd-reg').innerHTML = REG.map(function(r, i){ var c = VD[k][i]; return '<div class="reg"><h4>' + r.n + '</h4><span style="font-size:.72rem; color:var(--muted)">' + r.ex + '</span><br><span class="cov ' + (c[0] ? 'yes' : 'no') + '">' + c[1] + '</span><span class="price">' + c[2] + '</span></div>'; }).join('');
+    }
+    each($('vd-seg').children, function(b){ b.addEventListener('click', function(){ pressSet($('vd-seg'), b.dataset.k); vd(b.dataset.k); }); });
+    vd('trad');
+  })();
+
+  /* ================= 09 · Descoberta: escala ================= */
+  (function(){
+    var sc = $('sc-scene'), st = makeStage(sc, 360, 100, {ay:'76%', rx:'60deg'});
+    var C = box({w:60, d:60, h:20, x:10, y:20, c:'var(--navy)', top:''}), T = box({w:60, d:60, h:20, x:150, y:20, c:'#64748b', top:''}), D = box({w:60, d:60, h:20, x:290, y:20, c:'var(--red)', top:''});
+    [C, T, D].forEach(function(b){ st.appendChild(b); });
+    flatLabel(st, L('carteira', 'customers'), -10, 88, 100);
+    flatLabel(st, L('estrutura antiga', 'old structure'), 130, 88, 100);
+    flatLabel(st, L('estrutura digital', 'digital structure'), 270, 88, 100);
+    function set(x){
+      var hc = 26 * x, ht = 26 * x, hd = 26 * (1 + (x - 1) * 0.25);
+      C.style.setProperty('--h', hc + 'px'); T.style.setProperty('--h', ht + 'px'); D.style.setProperty('--h', hd + 'px');
+      $('sc-x').textContent = x + '×';
+      $('sc-out').innerHTML = x === 1 ? L('Mesma carteira, mesma estrutura. Arraste para crescer.', 'Same customer base, same structure. Drag to grow.') :
+        L('Com a carteira ' + x + ' vezes maior, a estrutura antiga cresce junto; a digital cresce bem menos, e o custo por cliente cai. Por isso, diz o entrevistado, dá para vender mais barato e crescer mais.', 'With a customer base ' + x + ' times larger, the old structure grows along with it; the digital one grows much less, and the cost per customer falls. That is why, the interviewee says, it can sell for less and grow more.');
+    }
+    $('sc-rng').addEventListener('input', function(){ set(+this.value); });
+    rotatable(sc, st, -20, 7);
+    set(1);
+  })();
+
+  /* ================= 10 · Inesperado ================= */
+  (function(){
+    // Tabela 14 (resposta estratégica) e contagem nossa da Tabela 15
+    var RESP = {
+      A:[L('foco parcial', 'partial focus'), L('escritório global próprio', 'own global office'), L('manteve o intermediário', 'kept the intermediary')],
+      B:[L('foco principal', 'main focus'), L('apoio de consultoria', 'consulting support'), L('retirou o intermediário', 'removed the intermediary')],
+      C:[L('foco parcial', 'partial focus'), L('apoio de consultoria', 'consulting support'), L('manteve o intermediário', 'kept the intermediary')],
+      D:[L('foco parcial', 'partial focus'), L('apoio de consultoria', 'consulting support'), L('manteve o intermediário', 'kept the intermediary')]
+    };
+    var DONE = {A:0, B:6, C:2, D:0};
+    var ORDER = {age:['A', 'C', 'B', 'D'], chg:['B', 'C', 'A', 'D']};
+    var sc = $('age-scene'), st = makeStage(sc, 360, 110, {ay:'74%', rx:'60deg'}), bl = {}, lb = {};
+    INS.forEach(function(k){
+      var b = box({w:56, d:56, h:10, x:0, y:26, c:k === 'B' ? 'var(--red)' : '#94a3b8', top:' '});
+      b.style.transition = 'left .6s cubic-bezier(.2,.8,.2,1), --h .6s, transform .55s';
+      st.appendChild(b); bl[k] = b;
+      lb[k] = flatLabel(st, k, 0, 92, 96); lb[k].style.transition = 'left .6s cubic-bezier(.2,.8,.2,1)';
+    });
+    $('gs').innerHTML = INS.map(function(k){ var r = RESP[k]; return '<button data-k="' + k + '"' + (k === 'B' ? ' class="win"' : '') + ' tabindex="-1"><b>' + L('Seguradora ', 'Insurer ') + k + '</b>' + r[0] + '<br>' + r[2] + '<span class="age">' + PERFIL[k].age + L(' anos', ' yrs') + '</span></button>'; }).join('');
+    $('gs').classList.add('done');
+    function show(m){
+      ORDER[m].forEach(function(k, j){
+        bl[k].style.left = (14 + j * 90) + 'px'; lb[k].style.left = (j * 90 - 6) + 'px';
+        var v = m === 'age' ? PERFIL[k].age : DONE[k];
+        bl[k].style.setProperty('--h', Math.max(4, m === 'age' ? v * 1.25 : v * 24) + 'px');
+        bl[k].querySelector('.top-label').textContent = m === 'age' ? v : v + '/6';
+      });
+      $('gs-out').innerHTML = m === 'age' ?
+        '<div class="tag">' + L('Pela idade', 'By age') + '</div><h3>' + L('A B é a segunda mais velha, com 48 anos', 'B is the second oldest, at 48 years') + '</h3><p>' + L('A mais nova (A, 29 anos) e a mais velha (D, 125 anos) mantiveram o corretor no centro da venda.', 'The youngest (A, 29 years) and the oldest (D, 125 years) both kept the broker at the center of sales.') + '</p>' :
+        '<div class="tag">' + L('Pelo que mudou · itens de criação em prática (contagem nossa)', 'By what changed · creation items in practice (our count)') + '</div><h3>' + L('A B vai para o topo; a idade não acompanha', 'B jumps to the top; age does not follow') + '</h3><p>' + L('Só a B pôs a transformação digital como foco principal e tirou o intermediário. Todas dizem pôr o cliente no centro; só uma entrega isso de imediato, conclui o autor.', 'Only B made digital transformation its main focus and removed the intermediary. All say they put the customer at the center; only one delivers this right away, the author concludes.') + '</p>';
+    }
+    each($('ag-seg').children, function(b){ b.addEventListener('click', function(){ pressSet($('ag-seg'), b.dataset.k); show(b.dataset.k); }); });
+    rotatable(sc, st, -22, 8);
+    show('age');
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
