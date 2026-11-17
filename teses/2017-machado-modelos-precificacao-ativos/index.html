@@ -1,0 +1,813 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poucos ingredientes explicam a bolsa · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Daniel José Machado (PPGA Mackenzie) compara 15 modelos que explicam o sobe e desce de 259 ações brasileiras de 1996 a 2016: o retorno do mercado mais o dólar ficou em primeiro lugar, à frente de modelos com até oito fatores. Explicada em 11 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2017-machado-modelos-precificacao-ativos/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><path d=%22M6 24h20M9 24V15h5v9M14 24V9h5v15M19 24v-6h5v6%22 fill=%22none%22 stroke=%22white%22 stroke-width=%222%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --mkt:var(--navy);   /* fator mercado */
+    --dol:var(--red);    /* fator dólar */
+    --firm:#64748b;      /* fatores de empresa (tamanho, valor) */
+    --eco:#94a3b8;       /* fatores da economia */
+    --weak:#b45309;
+  }
+  .mkt-t{color:var(--mkt); font-weight:700;} .dol-t{color:var(--dol); font-weight:700;}
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .ill{display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--weak); border:1px solid color-mix(in srgb, var(--weak) 45%, white); border-radius:999px; padding:2px 9px; margin-bottom:6px;}
+  .sw{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:7px 15px; font-size:.84rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 14px; font-size:.82rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .ctrls{display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; margin:4px 0 12px;}
+  .ctrls .lab{font-size:.74rem; color:var(--muted); font-weight:600; letter-spacing:.06em; text-transform:uppercase;}
+  .legend{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:.78rem; color:var(--ink-2); margin-top:8px;}
+  svg text{font-family:var(--sans);}
+
+  /* 01 · capa */
+  #capa h1{font-size:clamp(1.9rem, 3.4vw, 2.4rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .disc{font-size:.76rem; color:var(--muted); margin-top:10px;}
+  .cap-legend{font-size:.76rem; color:var(--muted); margin-top:6px; text-align:center; line-height:1.4;}
+  .pod .top-label{font-size:22px; font-weight:900; color:#fff;}
+  .pod .face-label{font-size:12.5px; font-weight:800; white-space:normal; text-align:center; line-height:1.15; padding:0 6px; color:#fff;}
+  .pod .floor-label{font-size:13px; font-weight:700; line-height:1.15;}
+  .pod .floor-label small{display:block; font-weight:500; color:var(--muted); font-size:11.5px;}
+
+  /* 02 · ingredientes */
+  #ing-scene .slab{cursor:pointer;}
+  #ing-scene .slab.active{--oz:16px;}
+  #ing-scene .top-label{font-size:13px; font-weight:800; color:#fff;}
+  #ing-scene .floor-label{font-size:12px;}
+  #ing-panel{min-height:150px; margin-top:10px;}
+  .fam{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.78rem; color:var(--ink-2); margin-top:4px;}
+
+  /* 03 · receitas */
+  .models{display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:6px;}
+  .models button{border:1px solid var(--border); background:var(--card); border-radius:10px; padding:7px 10px; font-size:.78rem; text-align:left; cursor:pointer; color:var(--ink-2); line-height:1.25;}
+  .models button b{display:block; font-size:.66rem; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; font-weight:700;}
+  .models button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .models button[aria-pressed="true"] b{color:#cbd5e1;}
+  .slots{display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; margin:4px 0 12px;}
+  .slot{border:2px dashed var(--border); border-radius:12px; padding:10px 6px; text-align:center; font-size:.78rem; color:var(--muted); transition:all .3s; min-height:62px; display:flex; flex-direction:column; justify-content:center;}
+  .slot b{display:block; font-family:var(--serif); font-size:.95rem;}
+  .slot.on{border-style:solid; color:#fff; background:var(--c); border-color:var(--c);}
+  #rc-panel{min-height:96px;}
+
+  /* 04 · dados */
+  #sec-scene .slab{cursor:pointer;}
+  #sec-scene .slab.active{--oz:14px;}
+  #sec-scene .top-label{font-size:12px; font-weight:800; color:var(--ink);}
+  #sec-scene .floor-label{font-size:10.5px; font-weight:700;}
+  .facts{display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; margin-top:10px;}
+  .facts div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 12px; font-size:.76rem; color:var(--ink-2); line-height:1.3;}
+  .facts b{display:block; font-family:var(--serif); font-size:1.35rem; color:var(--ink);}
+  #sec-panel{min-height:64px; margin-top:8px;}
+  .periods{display:grid; gap:6px; margin-top:12px;}
+  .periods div{display:grid; grid-template-columns:150px 1fr; gap:10px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .periods i{display:block; height:18px; border-radius:5px; background:var(--neutral);}
+  .periods .all i{background:var(--ink);}
+
+  /* 05 · balança */
+  #bl-svg{width:100%; display:block;}
+  #bl-svg .beam{transition:transform .8s cubic-bezier(.2,.8,.2,1);}
+  #bl-panel{min-height:96px; margin-top:8px;}
+  .formula{font-family:var(--serif); font-size:.95rem; color:var(--ink); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px; text-align:center; margin:6px 0 10px;}
+  .formula .e{color:var(--mkt); font-weight:700;} .formula .m{color:var(--dol); font-weight:700;}
+  #bl-pick{max-width:100%; font-size:.86rem; padding:7px 10px; border-radius:10px; border:1px solid var(--border); background:var(--card); color:var(--ink);}
+
+  /* 06 · ranking */
+  #rk-svg{width:100%; display:block;}
+  #rk-svg .row{cursor:pointer;}
+  #rk-svg .row rect.b{transition:width .7s cubic-bezier(.2,.8,.2,1);}
+  #rk-svg .row{transition:transform .7s cubic-bezier(.2,.8,.2,1);}
+  #rk-panel{min-height:70px; margin-top:8px;}
+
+  /* 07 · pódios */
+  #pd-panel{min-height:70px; margin-top:8px;}
+
+  /* 08 · empate */
+  .duo{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;}
+  .duo div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px; font-size:.8rem; color:var(--ink-2); line-height:1.35; border-top:5px solid var(--c);}
+  .duo b{display:block; font-family:var(--serif); font-size:1.5rem; color:var(--ink); font-variant-numeric:tabular-nums;}
+  #tie-svg{width:100%; display:block;}
+  #tie-panel{min-height:80px; margin-top:8px;}
+
+  /* 09 · dólar */
+  #dl-svg{width:100%; display:block;}
+  #dl-svg .bar{cursor:pointer;}
+  #dl-panel{min-height:90px; margin-top:8px;}
+
+  /* 10 · economia */
+  .hm{width:100%; border-collapse:separate; border-spacing:3px; font-size:.74rem;}
+  .hm th{font-weight:700; color:var(--muted); font-size:.68rem; padding:2px; text-align:center;}
+  .hm th:first-child{text-align:left;}
+  .hm td{background:#eef2f6; border-radius:5px; text-align:center; padding:5px 2px; color:#94a3b8; cursor:pointer;}
+  .hm td:first-child{background:transparent; text-align:left; color:var(--ink); font-weight:600; cursor:default;}
+  .hm td.s{background:var(--red); color:#fff; font-weight:700;}
+  .hm td.on{outline:2px solid var(--ink); outline-offset:-1px;}
+  #hm-panel{min-height:64px; margin-top:8px;}
+  .lastrow{display:grid; gap:6px; margin-top:12px;}
+  .lastrow div{display:grid; grid-template-columns:1fr auto; gap:10px; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:7px 12px; font-size:.8rem; color:var(--ink-2);}
+  .lastrow b{color:var(--ink); font-variant-numeric:tabular-nums;}
+
+  /* 11 · prática + limites */
+  .cards3{display:grid; grid-template-columns:1fr; gap:10px; margin-top:10px;}
+  @media (min-width:760px){ .cards3{grid-template-columns:repeat(3, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.95rem; margin-bottom:6px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:4px; font-size:.78rem; line-height:1.42; color:var(--ink-2);}
+  .pcard em{font-style:normal; font-size:.7rem; color:var(--muted);}
+  .warn{margin-top:12px; background:#fff5f6; border:1px solid color-mix(in srgb, var(--red) 30%, white); border-radius:12px; padding:10px 14px; font-size:.82rem; color:var(--ink-2);}
+  .warn b{color:var(--red);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:12px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.08rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:8px 0 0; padding:0; list-style:none;}
+  .limits li{padding:7px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.8rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.72rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.5; margin-top:8px;}
+  .cite b{color:var(--ink);}
+  .also{font-size:.8rem; margin-top:10px; color:var(--ink-2);}
+  .also a{color:var(--red); font-weight:600;}
+  @media (max-width:600px){ #rk-svg text{font-size:14px !important;} #dl-svg text{font-size:14px !important;} #bl-svg text{font-size:19px !important;} #tie-svg text{font-size:19px !important;} .hm{font-size:.66rem;} .hm td{padding:4px 1px;} }
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2017-machado-modelos-precificacao-ativos/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 11</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2017</div>
+      <h1 class="rv" style="--d:.1s">Para explicar a bolsa brasileira, o mercado e o dólar bastaram</h1>
+      <p class="sub rv" style="--d:.2s">A tese comparou <strong>15 modelos</strong>, com 1 a 8 fatores, para explicar o sobe e desce de <strong>259 ações</strong> mês a mês, de 1996 a 2016. Venceu o mais enxuto que dava conta: o retorno do mercado mais o dólar. O velho CAPM, só com o mercado, ficou à frente dos modelos clássicos com mais fatores. Explicada em 11 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Daniel José Machado</span>
+        <span><b>Orientador:</b> Prof. Dr. Wilson Toshiro Nakamura</span>
+        <span><b>Coorientador:</b> Prof. Dr. Emerson Fernandes Marçal</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#ingredientes">Começar →</a>
+        <a class="btn ghost" href="#ranking">Ir direto ao resultado</a>
+      </div>
+      <p class="disc rv" style="--d:.45s">Esta página explica uma pesquisa. Não é recomendação de investimento.</p>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable pod" id="hero-scene" data-fit="480x320" role="img" aria-label="Pódio 3D: no alto, mercado + dólar; nos dois degraus laterais, empatados na mesma altura, mercado + tamanho e só o mercado (CAPM)"></div></div>
+      <div class="cap-legend">Pódio de 1996 a 2016 pelo critério BIC da tese (menor nota = melhor): 7.630, 7.668,27 e 7.668,30. Os dois degraus laterais têm a mesma altura porque a diferença entre eles é de 0,03 ponto.</div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Compara as réguas usadas para medir o risco e o retorno das ações brasileiras, base de decisões de investimento e do custo de capital das empresas."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · INGREDIENTES -->
+<section class="slide" id="ingredientes" data-label="Oito candidatos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> A pergunta</div>
+      <h2 class="rv" style="--d:.1s">Oito candidatos a explicar por que as ações sobem e descem</h2>
+      <p class="lede rv" style="--d:.15s">Um modelo de precificação é como uma receita: junta alguns ingredientes (os <em>fatores</em>) para explicar o retorno de uma ação. A tese testou oito, de três famílias. Toque num pote.</p>
+      <div class="fam rv" style="--d:.2s">
+        <span><span class="sw" style="background:var(--mkt)"></span>Mercado</span>
+        <span><span class="sw" style="background:var(--firm)"></span>Tipo de empresa (Fama e French)</span>
+        <span><span class="sw" style="background:var(--eco)"></span>Economia (APT)</span>
+        <span><span class="sw" style="background:var(--dol)"></span>Dólar (acréscimo do autor)</span>
+      </div>
+      <p class="note rv" style="--d:.25s">Todos os fatores entram como surpresas do mês, padronizadas (média zero e desvio-padrão um), como pede a teoria do APT (seção 5 da tese).</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="fit-wrap"><div class="scene draggable" id="ing-scene" data-fit="480x290" role="img" aria-label="Prateleira 3D com oito potes coloridos por família: mercado, tamanho, valor, produção, juros, crédito, inflação e dólar"></div></div>
+      <div class="panel" id="ing-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · RECEITAS -->
+<section class="slide" id="receitas" data-label="15 receitas">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> Os modelos</div>
+      <h2 class="rv" style="--d:.1s">A tese testou 15 receitas, de 1 a 8 ingredientes</h2>
+      <p class="lede rv" style="--d:.15s">Três receitas são clássicas: o <b>CAPM</b> (só o mercado), os <b>3 fatores de Fama e French</b> e o <b>APT</b> com quatro fatores da economia. As outras misturam ingredientes, até a receita com os oito.</p>
+      <div class="models rv" style="--d:.2s" id="rc-list"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="slots" id="rc-slots"></div>
+      <div class="panel" id="rc-panel" aria-live="polite"></div>
+      <p class="note">Cada receita foi estimada com e sem uma constante (um retorno fixo próprio de cada carteira), para três períodos. Figura 14 da tese.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · DADOS -->
+<section class="slide" id="dados" data-label="259 ações">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Como olhou</div>
+      <h2 class="rv" style="--d:.1s">259 ações em 13 carteiras de setor, mês a mês por 21 anos</h2>
+      <p class="lede rv" style="--d:.15s">O autor juntou as ações mais negociadas da bolsa de São Paulo em 13 carteiras, uma por setor, e mediu o retorno real de cada uma (ganho mais dividendos, descontada a inflação).</p>
+      <div class="facts rv" style="--d:.2s">
+        <div><b>259</b>ações (ordinárias e preferenciais)</div>
+        <div><b>203</b>empresas</div>
+        <div><b>252</b>meses, de jan/1996 a dez/2016</div>
+        <div><b>15 × 2</b>modelos (com e sem constante), estimados juntos para as 13 carteiras (SUR)</div>
+      </div>
+      <div class="periods rv" style="--d:.25s">
+        <div><span>1996–2002 · 84 meses</span><i style="width:33.3%"></i></div>
+        <div><span>2003–2016 · 168 meses</span><i style="width:66.7%; margin-left:33.3%"></i></div>
+        <div class="all"><span>1996–2016 · 252 meses</span><i style="width:100%"></i></div>
+      </div>
+      <p class="note">Para 2003–2016, a tese repete tudo com 7 carteiras e 3 fatores prontos do NEFIN (centro de pesquisa da USP), para comparar. Começar em 1996 evita a turbulência de antes do Plano Real.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="fit-wrap"><div class="scene draggable" id="sec-scene" data-fit="500x300" role="img" aria-label="Treze colunas 3D, uma por setor, com o número de ações de cada carteira: de 10 (mineração, papel e celulose) a 40 (finanças)"></div></div>
+      <div class="panel" id="sec-panel" aria-live="polite"></div>
+      <p class="cap-legend">Altura proporcional ao número de ações (Quadro 1 da tese). Toque numa coluna.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · A RÉGUA -->
+<section class="slide" id="regua" data-label="A régua">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Como comparar</div>
+      <h2 class="rv" style="--d:.1s">A régua premia quem erra menos e cobra multa por ingrediente a mais</h2>
+      <p class="lede rv" style="--d:.15s">Pôr mais um ingrediente numa receita nunca piora o ajuste ao passado, nem que a melhora venha só do acaso. Por isso a tese usa o critério BIC: a nota soma o erro do modelo e uma multa por número estimado. <b>Menor nota é melhor.</b></p>
+      <div class="formula rv" style="--d:.2s">nota = <span class="e">erro</span> + <span class="m">multa</span><br><small style="font-family:var(--sans); font-size:.76rem; color:var(--muted)">cada fator a mais = 13 números novos (um por carteira) × 5,53 pontos</small></div>
+      <p class="note rv" style="--d:.25s">O erro e a multa de cada modelo foram separados por nós a partir das notas da tese (Figuras 15 e 16): multa = números estimados × ln(252 meses). Conta nossa.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="ctrls"><span class="lab">Compare com o CAPM:</span><select id="bl-pick" aria-label="Modelo comparado com o CAPM"></select></div>
+      <svg id="bl-svg" viewBox="0 0 520 260" role="img" aria-label="Balança: de um lado, quanto o erro caiu em relação ao CAPM; do outro, quanto a multa subiu"></svg>
+      <div class="panel" id="bl-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · RANKING -->
+<section class="slide" id="ranking" data-label="O resultado">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> O resultado · 1996–2016</div>
+      <h2 class="rv" style="--d:.1s">Mercado e dólar ficaram em 1º; o CAPM, à frente dos clássicos com mais fatores</h2>
+      <p class="lede rv" style="--d:.15s">Nos 21 anos, a receita de dois ingredientes (mercado + dólar) teve a menor nota. Atrás dela, praticamente empatados, mercado + tamanho e o CAPM. Os 3 fatores de Fama e French e os APT ficaram depois.</p>
+      <div class="ctrls rv" style="--d:.2s">
+        <span class="lab">Régua</span><div class="seg" id="rk-crit"></div>
+      </div>
+      <div class="ctrls rv" style="--d:.22s">
+        <span class="lab">Constante</span><div class="seg" id="rk-const"></div>
+      </div>
+      <div class="panel rv" style="--d:.25s" id="rk-panel" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <svg id="rk-svg" viewBox="0 0 560 470" role="img" aria-label="Barras horizontais com a distância de cada um dos 15 modelos até o primeiro colocado; barra menor é melhor"></svg>
+      <div class="legend">
+        <span><span class="sw" style="background:var(--dol)"></span>com dólar</span>
+        <span><span class="sw" style="background:var(--mkt)"></span>com mercado, sem dólar</span>
+        <span><span class="sw" style="background:#cbd5e1"></span>sem o mercado</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · PÓDIOS -->
+<section class="slide" id="podios" data-label="Pódios por período">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Outros recortes</div>
+      <h2 class="rv" style="--d:.1s">Em todos os recortes, o pódio ficou com receitas de até três ingredientes, todas com o mercado</h2>
+      <p class="lede rv" style="--d:.15s">De 1996 a 2002, o dólar venceu; de 2003 a 2016, o CAPM. Nos dados do NEFIN, mercado + tamanho. Esses três quase sempre dividem o pódio.</p>
+      <div class="ctrls rv" style="--d:.2s"><div class="chips" id="pd-per" style="margin:0"></div></div>
+      <div class="ctrls rv" style="--d:.22s"><span class="lab">Constante</span><div class="seg" id="pd-const"></div></div>
+      <div class="panel rv" style="--d:.25s" id="pd-panel" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="fit-wrap"><div class="scene draggable pod" id="pd-scene" data-fit="480x320" role="img" aria-label="Pódio 3D que muda com o período escolhido"></div></div>
+      <div class="cap-legend">Degraus pela posição no critério BIC (Figura 16); degraus com diferença menor que 1 ponto ficam na mesma altura.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · EMPATE -->
+<section class="slide" id="empate" data-label="O inesperado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> O inesperado</div>
+      <h2 class="rv" style="--d:.1s">O fator tamanho empatou com o CAPM por 0,03 ponto</h2>
+      <p class="lede rv" style="--d:.15s">Pôr o tamanho da empresa na receita diminuiu o erro quase exatamente o valor da multa que ele custou. Na régua mais branda (AIC), que multa menos, o tamanho passa à frente com folga.</p>
+      <div class="duo rv" style="--d:.2s">
+        <div style="--c:var(--firm)"><b id="tie-a">7.668,27</b>mercado + tamanho</div>
+        <div style="--c:var(--mkt)"><b id="tie-b">7.668,30</b>só mercado (CAPM)</div>
+      </div>
+      <div class="ctrls rv" style="--d:.25s; margin-top:12px"><span class="lab">Régua</span><div class="seg" id="tie-crit"></div></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <svg id="tie-svg" viewBox="0 0 520 230" role="img" aria-label="Duas barras: quanto o erro caiu ao pôr o tamanho e quanto a multa subiu"></svg>
+      <div class="panel" id="tie-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · DÓLAR -->
+<section class="slide" id="dolar" data-label="Quem o dólar mexe">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Setor por setor · 1996–2016</div>
+      <h2 class="rv" style="--d:.1s">Quando o dólar subiu, mineração e papel subiram junto; finanças, metalurgia, energia e construção caíram</h2>
+      <p class="lede rv" style="--d:.15s">No modelo vencedor, cada carteira tem dois pesos: quanto ela anda com o mercado e quanto anda com o dólar. O mercado puxa todas para o mesmo lado; o dólar separa os setores.</p>
+      <div class="ctrls rv" style="--d:.2s"><div class="seg" id="dl-seg"></div></div>
+      <div class="panel rv" style="--d:.25s" id="dl-panel" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <svg id="dl-svg" viewBox="0 0 520 430" role="img" aria-label="Barras divergentes com o peso de cada setor no fator escolhido"></svg>
+      <div class="legend">
+        <span><span class="sw" style="background:var(--mkt)"></span>sobe junto</span>
+        <span><span class="sw" style="background:var(--dol)"></span>anda ao contrário</span>
+        <span><span class="sw" style="background:#e2e8f0"></span>sem efeito claro (p ≥ 0,05)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · ECONOMIA SOZINHA -->
+<section class="slide" id="economia" data-label="Sem o mercado">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> O outro extremo</div>
+      <h2 class="rv" style="--d:.1s">Sem o retorno do mercado, as receitas foram para o fim da fila</h2>
+      <p class="lede rv" style="--d:.15s">O APT clássico, só com produção, juros, crédito e inflação, ficou em último. Nos 21 anos, só 3 das 52 ligações entre esses fatores e as carteiras tiveram p abaixo de 0,10.</p>
+      <div class="lastrow rv" style="--d:.2s" id="last3"></div>
+      <p class="note">Notas BIC com constante, 1996–2016 (Figuras 15 e 16; APT-4F na Tabela 47). Para comparar: o 1º colocado teve 7.630.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <table class="hm" id="hm" aria-label="Mapa de calor: 13 carteiras por 4 fatores da economia; em vermelho, as ligações com p menor que 0,10"></table>
+      <div class="panel" id="hm-panel" aria-live="polite"></div>
+      <p class="cap-legend">APT com 4 fatores, com constante, 1996–2016 (Tabela 47). Em vermelho, p &lt; 0,10. Contagem nossa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> E daí? Limites e créditos</div>
+    <h2 class="rv" style="--d:.1s">O CAPM continua útil, e o dólar merece um lugar na receita brasileira</h2>
+    <div class="cards3">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--navy)"><h3>Para quem estuda ou ensina finanças</h3><ul><li>O retorno do mercado é imprescindível: sem ele, todo modelo vai para o fim da fila. <em>(autor)</em></li><li>Mais fatores não é sinônimo de modelo melhor; a régua precisa cobrar pelos excessos. <em>(autor)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--red)"><h3>Para analistas e empresas</h3><ul><li>O CAPM segue como ferramenta prática de expectativa de retorno, e a melhoria que vale buscar é nesse uso. <em>(autor)</em></li><li>No Brasil, olhar quanto cada setor anda com o dólar pode completar o retrato do risco (tela 09). <em>(leitura nossa)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.25s; --pc:#64748b"><h3>Próximos passos</h3><ul><li>Testar outros fatores: consumo das famílias, preço do petróleo, desemprego, empréstimos do BNDES. <em>(autor)</em></li><li>Separar energia elétrica de petróleo e bancos de seguradoras em carteiras próprias. <em>(autor)</em></li></ul></div>
+    </div>
+    <div class="warn rv" style="--d:.3s"><b>Não é recomendação de investimento.</b> A tese explica o sobe e desce do passado (1996 a 2016) de carteiras de setor; não prevê retornos nem simula carteiras ou custos de operação.</div>
+    <div class="end">
+      <div class="rv" style="--d:.2s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Explicar não é prever.</b> Os modelos descrevem como as carteiras andaram junto com os fatores no mesmo mês; não dizem o retorno de amanhã. <em>· observação nossa</em></li>
+          <li><b>Ranking, não teste de diferença.</b> A régua ordena os modelos; diferenças de poucos pontos, como a do empate da tela 08, não separam um modelo do outro. <em>· observação nossa</em></li>
+          <li><b>Carteiras de setor, não ações uma a uma.</b> Os resultados valem para as 13 carteiras médias de cada setor. <em>· observação nossa</em></li>
+          <li><b>Um recorte do CAPM.</b> Ficaram de fora o CAPM condicional e o intertemporal, o modelo de 5 fatores de Fama e French e ações de fora da bolsa de São Paulo. <em>· segundo o autor</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.25s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          MACHADO, Daniel José. <em>Comparando modelos alternativos de precificação de ativos: uma análise para o mercado brasileiro.</em> Tese (Doutorado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2017. Orientador: Prof. Dr. Wilson Toshiro Nakamura. Coorientador: Prof. Dr. Emerson Fernandes Marçal.
+        </div>
+        <p style="margin-top:10px; font-size:.78rem">Tese aprovada em 1º de novembro de 2017. Dados da Economatica, do Banco Central, do IBGE e do NEFIN; regressões aparentemente não relacionadas (SUR) no MATLAB R2017a, com classificação pelos critérios AIC e BIC. Esta versão simplifica o trabalho para o público em geral.</p>
+        <p class="also">Leia também: <a href="../../teses/2025-silva-esg-custo-capital-brics/">Silva (2025)</a>, do mesmo orientador, sobre nota ESG e custo do capital; e <a href="../../teses/2019-teixeira-fundos-imobiliarios-diversificacao/">Teixeira (2019)</a>, CAPM e 3 fatores em fundos imobiliários.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable, ramp = M.ramp;
+  var EN = M.lang === 'en';
+  function L(p, e){ return EN ? e : p; }
+  function n0(v){ return fmt(v, 0); }
+  function segInit(el, items, cur, fn){
+    el.innerHTML = items.map(function(t, i){ return '<button data-v="' + i + '" aria-pressed="' + (i === cur) + '">' + t + '</button>'; }).join('');
+    each(el.children, function(b){ b.addEventListener('click', function(){ each(el.children, function(x){ x.setAttribute('aria-pressed', x === b); }); fn(+b.dataset.v); }); });
+  }
+
+  /* ================= DADOS DA TESE ================= */
+  // Fatores (seção 5): k = sigla, f = família (mkt, firm, eco, dol)
+  var F = [
+    {k:'MKT', n:L('Mercado', 'Market'), f:'mkt', t:L('Quanto a bolsa como um todo (a carteira das 259 ações) rendeu acima do CDI no mês. É o único ingrediente do CAPM.', 'How much the market as a whole (the portfolio of the 259 stocks) returned above the CDI interbank rate that month. It is the CAPM’s only ingredient.'), s:L('CAPM, Sharpe (1964) e Lintner (1965)', 'CAPM, Sharpe (1964) and Lintner (1965)')},
+    {k:'SMB', n:L('Tamanho', 'Size'), f:'firm', t:L('Retorno das empresas pequenas menos o das grandes (pelo valor de mercado). Mede se as pequenas pagam um prêmio.', 'Return of small companies minus that of large ones (by market value). It measures whether small firms pay a premium.'), s:L('3 fatores, Fama e French (1992)', '3 factors, Fama and French (1992)')},
+    {k:'HML', n:L('Valor', 'Value'), f:'firm', t:L('Retorno das empresas com patrimônio contábil alto em relação ao preço na bolsa menos o das com patrimônio baixo.', 'Return of companies with high book value relative to their market price minus that of companies with low book value.'), s:L('3 fatores, Fama e French (1992)', '3 factors, Fama and French (1992)')},
+    {k:'Prod', n:L('Produção', 'Output'), f:'eco', t:L('Variação mensal do PIB, que cobre indústria, comércio e serviços.', 'Monthly change in GDP, covering industry, trade and services.'), s:L('APT, Chen, Roll e Ross (1986)', 'APT, Chen, Roll and Ross (1986)')},
+    {k:'Tjur', n:L('Juros', 'Interest'), f:'eco', t:L('Juro real: o CDI descontada a inflação do mês (IGP-DI).', 'Real interest: the CDI rate net of that month’s inflation (IGP-DI index).'), s:L('APT, Chen, Roll e Ross (1986)', 'APT, Chen, Roll and Ross (1986)')},
+    {k:'Rcre', n:L('Crédito', 'Credit'), f:'eco', t:L('Risco de crédito: o juro do capital de giro para empresas menos o CDI.', 'Credit risk: the working-capital loan rate for companies minus the CDI rate.'), s:L('APT, Chen, Roll e Ross (1986)', 'APT, Chen, Roll and Ross (1986)')},
+    {k:'Infl', n:L('Inflação', 'Inflation'), f:'eco', t:L('Inflação inesperada: a taxa do CDB prefixado menos o CDI.', 'Unexpected inflation: the fixed-rate bank deposit (CDB) rate minus the CDI rate.'), s:L('APT, Chen, Roll e Ross (1986)', 'APT, Chen, Roll and Ross (1986)')},
+    {k:'Dolar', n:L('Dólar', 'Dollar'), f:'dol', t:L('Variação do dólar em reais no mês (taxa PTAX do Banco Central). Ingrediente acrescentado pelo autor.', 'Monthly change in the dollar against the real (Central Bank PTAX rate). An ingredient added by the author.'), s:L('acréscimo do autor', 'the author’s addition')}
+  ];
+  var FC = {mkt:'var(--mkt)', firm:'var(--firm)', eco:'var(--eco)', dol:'var(--dol)'};
+  var FI = {}; F.forEach(function(f, i){ FI[f.k] = i; });
+
+  // 15 modelos (Figura 14). a/b = AIC/BIC 1996–2016 com constante; xa/xb = sem constante (Figuras 15 e 16; Tabelas 7, 11, 39, 47)
+  var MD = [
+    {id:'capm', n:L('Só mercado (CAPM)', 'Market alone (CAPM)'), g:'CAPM', f:['MKT'], src:'Sharpe (1964), Lintner (1965)', a:7576.53, b:7668.30, xa:7570.64, xb:7616.52},
+    {id:'smb', n:L('Mercado + tamanho', 'Market + size'), g:L('Mistura', 'Mix'), f:['MKT','SMB'], src:L('autor, a partir de Fama e French', 'author, from Fama and French'), a:7530.62, b:7668.27, xa:7524.77, xb:7616.54},
+    {id:'hml', n:L('Mercado + valor', 'Market + value'), g:L('Mistura', 'Mix'), f:['MKT','HML'], src:L('autor, a partir de Fama e French', 'author, from Fama and French'), a:7591, b:7729, xa:7586, xb:7677},
+    {id:'smbhml', n:L('Tamanho + valor', 'Size + value'), g:L('Mistura', 'Mix'), f:['SMB','HML'], src:L('autor, a partir de Fama e French', 'author, from Fama and French'), a:8180, b:8317, xa:8158, xb:8250},
+    {id:'prod', n:L('Mercado + produção', 'Market + output'), g:L('Mistura', 'Mix'), f:['MKT','Prod'], src:L('autor', 'author'), a:7594, b:7732, xa:7588, xb:7680},
+    {id:'tjur', n:L('Mercado + juros', 'Market + interest'), g:L('Mistura', 'Mix'), f:['MKT','Tjur'], src:L('autor', 'author'), a:7588, b:7725, xa:7582, xb:7673},
+    {id:'rcre', n:L('Mercado + crédito', 'Market + credit'), g:L('Mistura', 'Mix'), f:['MKT','Rcre'], src:L('autor', 'author'), a:7589, b:7726, xa:7583, xb:7675},
+    {id:'infl', n:L('Mercado + inflação', 'Market + inflation'), g:L('Mistura', 'Mix'), f:['MKT','Infl'], src:L('autor', 'author'), a:7590, b:7728, xa:7585, xb:7676},
+    {id:'dol', n:L('Mercado + dólar', 'Market + dollar'), g:L('Mistura', 'Mix'), f:['MKT','Dolar'], src:L('autor', 'author'), a:7492.55, b:7630.2, xa:7487, xb:7579},
+    {id:'ff3', n:L('3 fatores (Fama e French)', '3 factors (Fama and French)'), g:L('Clássico', 'Classic'), f:['MKT','SMB','HML'], src:'Fama e French (1992)'.replace(' e ', EN ? ' and ' : ' e '), a:7544, b:7728, xa:7539, xb:7676},
+    {id:'apt4', n:L('APT 4 (só economia)', 'APT 4 (economy only)'), g:L('Clássico', 'Classic'), f:['Prod','Tjur','Rcre','Infl'], src:L('Ross (1976); Chen, Roll e Ross (1986)', 'Ross (1976); Chen, Roll and Ross (1986)'), a:8278.63, b:8508.04, xa:8256.59, xb:8440.12},
+    {id:'apt5', n:L('APT 5 (economia + mercado)', 'APT 5 (economy + market)'), g:'APT', f:['MKT','Prod','Tjur','Rcre','Infl'], src:L('Shor, Bonomo e Pereira (2002)', 'Shor, Bonomo and Pereira (2002)'), a:7627, b:7902, xa:7622, xb:7851},
+    {id:'apt6', n:L('APT 6 (+ dólar)', 'APT 6 (+ dollar)'), g:'APT', f:['MKT','Prod','Tjur','Rcre','Infl','Dolar'], src:L('autor', 'author'), a:7540, b:7861, xa:7536, xb:7811},
+    {id:'apt7', n:L('APT 7 (sem mercado)', 'APT 7 (no market)'), g:'APT', f:['Prod','Tjur','Rcre','Infl','Dolar','SMB','HML'], src:L('autor', 'author'), a:8111, b:8478, xa:8090, xb:8411},
+    {id:'apt8', n:L('APT 8 (todos)', 'APT 8 (all)'), g:'APT', f:['MKT','SMB','HML','Prod','Tjur','Rcre','Infl','Dolar'], src:L('autor', 'author'), a:7505, b:7918, xa:7501, xb:7868}
+  ];
+  var LN = Math.log(252);
+  MD.forEach(function(m){
+    m.k = m.f.length;
+    m.p = 13 * (m.k + 1); m.xp = 13 * m.k;          // números estimados com e sem constante
+    m.err = m.a - 2 * m.p; m.xerr = m.xa - 2 * m.xp; // erro (−2 log-verossimilhança), conta nossa
+    m.col = m.f.indexOf('Dolar') >= 0 ? 'var(--dol)' : (m.f.indexOf('MKT') >= 0 ? 'var(--mkt)' : '#cbd5e1');
+  });
+  var BYID = {}; MD.forEach(function(m){ BYID[m.id] = m; m.sn = m.n; });
+  var SN = {capm:L('CAPM (só mercado)', 'CAPM (market only)'), ff3:L('3 fatores (F&F)', '3 factors (F&F)'), apt4:L('APT 4 (economia)', 'APT 4 (economy)'), apt5:L('APT 5 (+ mercado)', 'APT 5 (+ market)')};
+  Object.keys(SN).forEach(function(k){ BYID[k].sn = SN[k]; });
+  var NARROW = window.matchMedia('(max-width:600px)').matches;
+
+  // 13 carteiras (Quadro 1) e pesos no modelo mercado + dólar, 1996–2016, com constante (Tabela 39)
+  var S = [
+    {k:'ALIB', n:L('Alimentos e bebidas', 'Food and beverages'), q:18, m:0.060906, mp:0.376, d:0.061744, dp:0.369},
+    {k:'COME', n:L('Comércio atacado e varejo', 'Wholesale and retail'), q:23, m:0.57295, mp:0, d:-0.026945, dp:0.628},
+    {k:'CONS', n:L('Construção e engenharia', 'Construction and engineering'), q:21, m:0.30499, mp:0, d:-0.14657, dp:0.0207},
+    {k:'ELET', n:L('Eletroeletrônicos', 'Electronics'), q:11, m:0.30537, mp:0, d:-0.037054, dp:0.569},
+    {k:'ENER', n:L('Energia elétrica, gás e petróleo', 'Electricity, gas and oil'), q:32, m:0.93036, mp:0, d:-0.055469, dp:0.0042},
+    {k:'FINA', n:L('Bancos, financeiras e seguradoras', 'Banks, finance and insurance'), q:40, m:0.55993, mp:0, d:-0.16479, dp:0.0016},
+    {k:'META', n:L('Metalurgia, siderurgia e transformação', 'Metals, steel and manufacturing'), q:28, m:0.52233, mp:0, d:-0.16677, dp:0.0021},
+    {k:'MINE', n:L('Mineração', 'Mining'), q:10, m:0.43042, mp:0, d:0.33912, dp:0.00000004},
+    {k:'PAPE', n:L('Papel e celulose', 'Pulp and paper'), q:10, m:0.28612, mp:0.00002, d:0.13727, dp:0.039},
+    {k:'QUIM', n:L('Química e petroquímica', 'Chemicals and petrochemicals'), q:14, m:0.31546, mp:0, d:-0.085946, dp:0.180},
+    {k:'TELE', n:L('Telecomunicações', 'Telecommunications'), q:11, m:0.49932, mp:0, d:0.066018, dp:0.272},
+    {k:'TEXT', n:L('Vestuário, calçados e têxteis', 'Apparel, footwear and textiles'), q:19, m:0.43608, mp:0, d:-0.080616, dp:0.182},
+    {k:'TRAN', n:L('Transporte e logística', 'Transport and logistics'), q:22, m:0.31543, mp:0, d:-0.0070536, dp:0.913}
+  ];
+
+  // APT 4 fatores, 1996–2016, com constante (Tabela 47): p-valores [Prod, Tjur, Rcre, Infl] e coeficientes
+  var H = [
+    [[0.7959,0.01657],[0.0065,-0.18137],[0.3907,0.057311],[0.1064,0.10548]],
+    [[0.3189,0.065041],[0.7987,0.017304],[0.8326,0.014373],[0.6208,-0.032914]],
+    [[0.4159,0.053206],[0.6797,0.02808],[0.3527,0.063341],[0.2570,0.075597]],
+    [[0.6961,-0.025474],[0.7721,-0.01964],[0.6445,0.031361],[0.1101,-0.10626]],
+    [[0.1894,0.085038],[0.3448,0.063661],[0.9569,0.0036478],[0.8672,-0.011051]],
+    [[0.5989,0.034339],[0.9212,0.0067126],[0.9365,0.0054176],[0.6087,-0.034078]],
+    [[0.6639,0.028376],[0.9442,0.0047502],[0.7376,0.022809],[0.4228,-0.053381]],
+    [[0.2853,-0.06963],[0.4248,0.054088],[0.3541,0.062946],[0.8754,-0.010424]],
+    [[0.8694,-0.010783],[0.4459,-0.051983],[0.2866,0.072846],[0.8332,0.014087]],
+    [[0.5640,-0.037629],[0.6827,-0.02772],[0.7952,0.017641],[0.0955,-0.11088]],
+    [[0.6812,-0.026792],[0.8893,-0.0094364],[0.3515,0.063333],[0.6558,-0.02964]],
+    [[0.8225,0.014591],[0.3127,0.068286],[0.0644,0.12541],[0.4580,0.049233]],
+    [[0.3099,0.066326],[0.4962,0.046215],[0.9954,0.00039361],[0.8709,0.010821]]
+  ];
+
+  // Pódios BIC por período (Figura 16): [com constante, sem constante], cada um com 3 [id, nota]
+  var PD = [
+    {n:'1996–2002', t:L('84 meses · 13 carteiras', '84 months · 13 portfolios'), c:[[['dol',2380],['capm',2428],['smb',2451]], [['dol',2394],['capm',2444],['hml',2458]]]},
+    {n:'2003–2016', t:L('168 meses · 13 carteiras', '168 months · 13 portfolios'), c:[[['capm',4469],['smb',4476],['dol',4504]], [['capm',4423],['smb',4430],['dol',4460]]]},
+    {n:L('2003–2016 NEFIN', '2003–2016 NEFIN'), t:L('168 meses · 7 carteiras e fatores do NEFIN', '168 months · NEFIN’s 7 portfolios and factors'), c:[[['smb',3204],['capm',3210],['ff3',3217]], [['smb',3176],['capm',3182],['ff3',3189]]]},
+    {n:'1996–2016', t:L('252 meses · 13 carteiras', '252 months · 13 portfolios'), c:[[['dol',7630.2],['smb',7668.27],['capm',7668.30]], [['dol',7579],['capm',7616.52],['smb',7616.54]]]}
+  ];
+
+  function fmtN(v, d){ var s = Math.abs(v).toFixed(d).split('.'); s[0] = s[0].replace(/\B(?=(\d{3})+(?!\d))/g, EN ? ',' : '.'); return (v < 0 ? '−' : '') + s[0] + (s[1] ? (EN ? '.' : ',') + s[1] : ''); }
+  function fmtScore(v){ return fmtN(v, Math.round(v * 100) % 100 === 0 ? 0 : 2); }
+  function shortN(id){ return BYID[id].n; }
+
+  /* ================= PÓDIO 3D (capa e tela 07) ================= */
+  function podium(sc, items){
+    // items: [[id, nota], ...] em ordem; posição 1 no centro
+    var st = sc._st;
+    if (!st){ st = sc._st = makeStage(sc, 390, 150, {ay:'70%'}); rotatable(sc, st, -18, 8); }
+    st.querySelectorAll('.slab, .floor-label').forEach(function(e){ e.remove(); });
+    var H3 = [150, 105, 70], X = [140, 10, 270], W = 110;
+    var h = [H3[0], H3[1], H3[2]];
+    if (Math.abs(items[1][1] - items[0][1]) < 1) h[1] = h[0];
+    if (Math.abs(items[2][1] - items[1][1]) < 1) h[2] = h[1];
+    var lbl = ['1º', '2º', '3º'];
+    if (EN) lbl = ['1st', '2nd', '3rd'];
+    items.forEach(function(it, i){
+      var m = BYID[it[0]];
+      var b = box({w:W, d:80, x:X[i], y:30, z:0, h:h[i], c:m.col === '#cbd5e1' ? '#64748b' : m.col, top:lbl[i], label:m.n});
+      st.appendChild(b);
+      flatLabel(st, (EN ? 'score ' : 'nota ') + fmtScore(it[1]), X[i] - 8, 122, W + 16);
+    });
+  }
+
+  /* ================= 01 · CAPA ================= */
+  podium($('hero-scene'), PD[3].c[0]);
+
+  /* ================= 02 · INGREDIENTES ================= */
+  (function(){
+    var sc = $('ing-scene'), st = makeStage(sc, 420, 170, {ay:'66%'});
+    rotatable(sc, st, -22, 7);
+    var jars = [];
+    F.forEach(function(f, i){
+      var col = i % 4, row = Math.floor(i / 4);
+      var b = box({w:70, d:56, x:col * 106 + 6, y:row * 84 + 4, z:0, h:row ? 62 : 78, c:FC[f.f], top:f.k});
+      b.setAttribute('role', 'button'); b.setAttribute('tabindex', '0'); b.setAttribute('aria-label', f.n);
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)) show(i); });
+      b.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(i); } });
+      st.appendChild(b); jars.push(b);
+    });
+    function show(i){
+      jars.forEach(function(j, k){ j.classList.toggle('active', k === i); });
+      var f = F[i];
+      $('ing-panel').innerHTML = '<div class="tag" style="color:' + FC[f.f] + '">' + f.k + ' · ' + f.s + '</div><h3>' + f.n + '</h3><p>' + f.t + '</p>';
+    }
+    show(7);
+  })();
+
+  /* ================= 03 · RECEITAS ================= */
+  (function(){
+    var list = $('rc-list'), order = ['capm','ff3','apt4','apt5','dol','smb','hml','smbhml','prod','tjur','rcre','infl','apt6','apt7','apt8'];
+    list.innerHTML = order.map(function(id){ var m = BYID[id]; return '<button data-id="' + id + '" aria-pressed="false"><b>' + m.g + ' · ' + m.k + (m.k > 1 ? L(' fatores', ' factors') : L(' fator', ' factor')) + '</b>' + m.n + '</button>'; }).join('');
+    $('rc-slots').innerHTML = F.map(function(f){ return '<div class="slot" data-k="' + f.k + '" style="--c:' + FC[f.f] + '"><b>' + f.k + '</b>' + f.n + '</div>'; }).join('');
+    function show(id){
+      var m = BYID[id];
+      each(list.children, function(b){ b.setAttribute('aria-pressed', b.dataset.id === id); });
+      each($('rc-slots').children, function(s){ s.classList.toggle('on', m.f.indexOf(s.dataset.k) >= 0); });
+      $('rc-panel').innerHTML = '<div class="tag">' + L('Origem: ', 'Source: ') + m.src + '</div><h3>' + m.n + '</h3><p>' + m.k + (m.k > 1 ? L(' ingredientes', ' ingredients') : L(' ingrediente', ' ingredient')) + L(' → ', ' → ') + m.p + L(' números a estimar com constante (', ' numbers to estimate with a constant (') + (m.k + 1) + L(' por carteira × 13 carteiras).', ' per portfolio × 13 portfolios).') + '</p>';
+    }
+    each(list.children, function(b){ b.addEventListener('click', function(){ show(b.dataset.id); }); });
+    show('capm');
+  })();
+
+  /* ================= 04 · DADOS ================= */
+  (function(){
+    var sc = $('sec-scene'), st = makeStage(sc, 450, 90, {ay:'72%'});
+    rotatable(sc, st, -16, 6);
+    var cols = [];
+    S.forEach(function(s, i){
+      var b = box({w:26, d:30, x:i * 34 + 4, y:20, z:0, h:s.q * 4.2, c:ramp('var(--navy)', i % 2 ? 4 : 1, 8), top:'' + s.q});
+      b.setAttribute('role', 'button'); b.setAttribute('tabindex', '0'); b.setAttribute('aria-label', s.n + ': ' + s.q);
+      b.addEventListener('click', function(){ if (!M.wasDrag(sc)) show(i); });
+      b.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(i); } });
+      st.appendChild(b); cols.push(b);
+      flatLabel(st, s.k, i * 34 - 2, 56, 38);
+    });
+    function show(i){
+      cols.forEach(function(c, k){ c.classList.toggle('active', k === i); });
+      var s = S[i];
+      $('sec-panel').innerHTML = '<div class="tag">' + s.k + '</div><p><b>' + s.n + '</b>: ' + s.q + L(' ações na carteira.', ' stocks in the portfolio.') + '</p>';
+    }
+    show(5);
+  })();
+
+  /* ================= 05 · BALANÇA ================= */
+  (function(){
+    var pick = $('bl-pick'), base = BYID.capm;
+    var opts = ['apt8','dol','smb','ff3','apt5','apt6','hml','prod','tjur','rcre','infl','smbhml','apt4','apt7'];
+    pick.innerHTML = opts.map(function(id){ return '<option value="' + id + '">' + BYID[id].n + '</option>'; }).join('');
+    function draw(id){
+      var m = BYID[id];
+      var dErr = base.err - m.err;                 // quanto o erro caiu (positivo = caiu)
+      var dPen = (m.p - base.p) * LN;              // multa a mais
+      var net = m.b - base.b;                      // diferença de nota (BIC)
+      var ang = Math.max(-14, Math.min(14, (dPen - dErr) / 18));
+      var sc = 0.22;                                // px por ponto
+      var o = '<line x1="260" y1="60" x2="260" y2="232" stroke="#94a3b8" stroke-width="6"/><path d="M215,240 h90 l-12,-12 h-66 z" fill="#94a3b8"/>';
+      o += '<g class="beam" style="transform-origin:260px 60px; transform:rotate(' + ang + 'deg)">';
+      o += '<line x1="70" y1="60" x2="450" y2="60" stroke="var(--ink)" stroke-width="6" stroke-linecap="round"/><circle cx="260" cy="60" r="8" fill="var(--ink)"/>';
+      function pan(x, val, col, lab){
+        var hh = Math.max(4, Math.abs(val) * sc);
+        var s = '<line x1="' + x + '" y1="60" x2="' + (x - 50) + '" y2="128" stroke="#94a3b8" stroke-width="2"/><line x1="' + x + '" y1="60" x2="' + (x + 50) + '" y2="128" stroke="#94a3b8" stroke-width="2"/>';
+        s += '<rect x="' + (x - 34) + '" y="' + (128 - hh) + '" width="68" height="' + hh + '" rx="6" fill="' + col + '"' + (val < 0 ? ' fill-opacity=".35"' : '') + '/>';
+        s += '<path d="M' + (x - 58) + ',128 h116 q-8,16 -24,16 h-68 q-16,0 -24,-16 z" fill="#cbd5e1"/>';
+        s += '<text x="' + x + '" y="164" text-anchor="middle" style="font-size:14px; font-weight:800; fill:' + col + '">' + (val < 0 ? '−' : '') + fmt(Math.abs(val), 0) + '</text>';
+        s += '<text x="' + x + '" y="182" text-anchor="middle" style="font-size:12px; fill:var(--muted)">' + lab + '</text>';
+        return s;
+      }
+      o += pan(120, dErr, 'var(--mkt)', dErr >= 0 ? L('erro que caiu', 'error removed') : L('erro que subiu', 'error added'));
+      o += pan(400, dPen, 'var(--dol)', dPen >= 0 ? L('multa a mais', 'extra fine') : L('multa a menos', 'smaller fine'));
+      o += '</g>';
+      o += '<text x="260" y="22" text-anchor="middle" style="font-size:15px; font-weight:800; fill:var(--ink)">' + m.n + L(' × CAPM', ' vs CAPM') + '</text>';
+      $('bl-svg').innerHTML = o;
+      var verdict = net < -1 ? L('<b>Vale a pena:</b> o erro caiu mais do que a multa subiu; a nota fica ', '<b>Worth it:</b> the error fell more than the fine rose; the score is ') + fmt(-net, 0) + L(' pontos melhor que a do CAPM.', ' points better than the CAPM’s.')
+        : (Math.abs(net) <= 1 ? L('<b>Empate:</b> o erro caiu praticamente o mesmo que a multa subiu.', '<b>A tie:</b> the error fell by almost exactly what the fine rose.')
+        : L('<b>Não compensa:</b> a multa subiu mais do que o erro caiu; a nota fica ', '<b>Not worth it:</b> the fine rose more than the error fell; the score is ') + fmt(net, 0) + L(' pontos pior que a do CAPM.', ' points worse than the CAPM’s.'));
+      $('bl-panel').innerHTML = '<p>' + verdict + '</p><p style="font-size:.78rem; color:var(--muted)">' + L('Notas BIC (1996–2016, com constante): ', 'BIC scores (1996–2016, with a constant): ') + m.n + ' ' + fmtScore(m.b) + L(' · CAPM ', ' · CAPM ') + fmtScore(base.b) + L('. Erro e multa: conta nossa.', '. Error and fine: our calculation.') + '</p>';
+    }
+    pick.addEventListener('change', function(){ draw(pick.value); });
+    draw('apt8');
+  })();
+
+  /* ================= 06 · RANKING ================= */
+  (function(){
+    var crit = 1, cons = 0, sel = 'dol', rows = {};
+    var svg = $('rk-svg'), RH = 30, VW = NARROW ? 400 : 560, X0 = NARROW ? 184 : 200, WMAX = VW - X0 - 64;
+    svg.setAttribute('viewBox', '0 0 ' + VW + ' 470');
+    var o = '';
+    MD.forEach(function(m){
+      o += '<g class="row" data-id="' + m.id + '" tabindex="0" role="button" aria-label="' + m.n + '"><rect x="0" y="0" width="' + VW + '" height="' + (RH - 3) + '" rx="6" fill="transparent" class="bg"/>' +
+        '<text class="pos" x="2" y="19" style="font-size:12px; font-weight:800; fill:var(--muted)"></text>' +
+        '<text x="' + (X0 - 8) + '" y="19" text-anchor="end" style="font-size:13px; fill:var(--ink)">' + m.sn + '</text>' +
+        '<rect class="b" x="' + X0 + '" y="5" height="' + (RH - 13) + '" rx="4" width="0" fill="' + m.col + '"/>' +
+        '<text class="v" x="' + X0 + '" y="19" style="font-size:12px; font-weight:700; fill:var(--ink-2)"></text></g>';
+    });
+    svg.innerHTML = o;
+    each(svg.querySelectorAll('.row'), function(g){
+      rows[g.dataset.id] = g;
+      g.addEventListener('click', function(){ sel = g.dataset.id; draw(); });
+      g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); sel = g.dataset.id; draw(); } });
+    });
+    function score(m){ return crit ? (cons ? m.xb : m.b) : (cons ? m.xa : m.a); }
+    function exact(m){ // desempate pela conta erro + multa
+      var p = cons ? m.xp : m.p, e = cons ? m.xerr : m.err;
+      return e + p * (crit ? LN : 2);
+    }
+    function draw(){
+      var arr = MD.slice().sort(function(a, b){ return (score(a) - score(b)) || (exact(a) - exact(b)); });
+      var best = score(arr[0]), worst = score(arr[arr.length - 1]);
+      arr.forEach(function(m, i){
+        var g = rows[m.id], d = score(m) - best, w = Math.max(3, d / (worst - best) * WMAX);
+        g.setAttribute('transform', 'translate(0,' + (i * RH + 6) + ')');
+        g.querySelector('.pos').textContent = (i + 1) + (EN ? '' : 'º');
+        g.querySelector('rect.b').setAttribute('width', w);
+        var v = g.querySelector('.v');
+        v.setAttribute('x', X0 + w + 6);
+        v.textContent = i === 0 ? L('líder · ', 'leader · ') + fmtScore(score(m)) : '+' + fmt(d, d < 1 ? 2 : 0);
+        g.querySelector('.bg').setAttribute('fill', m.id === sel ? '#eef2f6' : 'transparent');
+      });
+      var m = BYID[sel], pos = arr.indexOf(m) + 1;
+      $('rk-panel').innerHTML = '<div class="tag">' + (crit ? 'BIC' : 'AIC') + ' · ' + (cons ? L('sem constante', 'no constant') : L('com constante', 'with a constant')) + '</div><p><b>' + m.n + '</b>: ' + pos + L('º lugar, nota ', (pos === 1 ? 'st' : pos === 2 ? 'nd' : pos === 3 ? 'rd' : 'th') + ' place, score ') + fmtScore(score(m)) + '. ' + m.k + (m.k > 1 ? L(' fatores', ' factors') : L(' fator', ' factor')) + '.</p>' +
+        (crit ? '' : '<p style="font-size:.8rem; color:var(--muted)">' + L('O AIC cobra multa menor (2 pontos por número estimado, contra 5,53 no BIC). Por ele, o APT com os 8 fatores sobe para 2º lugar.', 'AIC charges a smaller fine (2 points per estimated number, against 5.53 in BIC). On it, the APT with all 8 factors climbs to 2nd place.') + '</p>');
+    }
+    segInit($('rk-crit'), [L('BIC (rígida)', 'BIC (strict)'), L('AIC (branda)', 'AIC (mild)')], 0, function(v){ crit = v ? 0 : 1; draw(); });
+    segInit($('rk-const'), [L('com', 'with'), L('sem', 'without')], 0, function(v){ cons = v; draw(); });
+    draw();
+  })();
+
+  /* ================= 07 · PÓDIOS ================= */
+  (function(){
+    var per = 3, cons = 0, sc = $('pd-scene');
+    var ch = $('pd-per');
+    ch.innerHTML = PD.map(function(p, i){ return '<button class="chip" data-i="' + i + '" aria-pressed="' + (i === per) + '">' + p.n + '</button>'; }).join('');
+    each(ch.children, function(b){ b.addEventListener('click', function(){ per = +b.dataset.i; each(ch.children, function(x){ x.setAttribute('aria-pressed', x === b); }); draw(); }); });
+    function draw(){
+      var p = PD[per], items = p.c[cons];
+      podium(sc, items);
+      var names = items.map(function(it){ return '<b>' + shortN(it[0]) + '</b> (' + fmtScore(it[1]) + ')'; });
+      $('pd-panel').innerHTML = '<div class="tag">' + p.n + ' · ' + p.t + ' · ' + (cons ? L('sem constante', 'no constant') : L('com constante', 'with a constant')) + '</div><p>' + names.join(' · ') + '</p>';
+    }
+    segInit($('pd-const'), [L('com', 'with'), L('sem', 'without')], 0, function(v){ cons = v; draw(); });
+    draw();
+  })();
+
+  /* ================= 08 · EMPATE ================= */
+  (function(){
+    var crit = 1, a = BYID.smb, c = BYID.capm;
+    c.err = 2 * 3762.27; a.err = 2 * 3726.31;   // −2 × log-verossimilhança (Tabelas 7 e 11)
+    function draw(){
+      var dErr = c.err - a.err, dPen = (a.p - c.p) * (crit ? LN : 2);
+      var sa = crit ? a.b : a.a, sc = crit ? c.b : c.a;
+      $('tie-a').textContent = fmtN(sa, 2); $('tie-b').textContent = fmtN(sc, 2);
+      var mx = 80, W = 300, o = '';
+      [[L('erro que caiu ao pôr o tamanho', 'error removed by adding size'), dErr, 'var(--mkt)'], [L('multa a mais (13 números novos)', 'extra fine (13 new numbers)'), dPen, 'var(--dol)']].forEach(function(r, i){
+        var y = 40 + i * 90, w = r[1] / mx * W;
+        o += '<text x="20" y="' + (y - 10) + '" style="font-size:14px; fill:var(--ink-2)">' + r[0] + '</text>';
+        o += '<rect x="20" y="' + y + '" width="' + W + '" height="34" rx="6" fill="#f1f5f9"/>';
+        o += '<rect x="20" y="' + y + '" width="' + w + '" height="34" rx="6" fill="' + r[2] + '" style="transition:width .7s"/>';
+        o += '<text x="' + (28 + w) + '" y="' + (y + 23) + '" style="font-size:18px; font-weight:800; fill:var(--ink)">' + fmt(r[1], 2) + '</text>';
+      });
+      $('tie-svg').innerHTML = o;
+      var diff = sc - sa;
+      $('tie-panel').innerHTML = crit
+        ? '<p>' + L('Na régua BIC, a diferença entre as notas é de ', 'On the BIC yardstick, the scores differ by ') + fmt(diff, 2) + L(' ponto: é um empate. Em 2003–2016 e nos dados do NEFIN, mercado + tamanho também ficou colado no CAPM (tela 07).', ' points: a tie. In 2003–2016 and in the NEFIN data, market + size also stayed right next to the CAPM (screen 07).') + '</p><p style="font-size:.78rem; color:var(--muted)">' + L('Erro e multa separados por nós a partir das Tabelas 7 e 11 (log-verossimilhança −3.762,27 e −3.726,31).', 'Error and fine split by us from Tables 7 and 11 (log-likelihood −3,762.27 and −3,726.31).') + '</p>'
+        : '<p>' + L('Na régua AIC, cada número estimado custa só 2 pontos; os 13 números do tamanho custam 26, e o erro cai 71,92. Mercado + tamanho fica ', 'On the AIC yardstick, each estimated number costs only 2 points; size’s 13 numbers cost 26, and the error falls 71.92. Market + size comes out ') + fmt(diff, 2) + L(' pontos à frente do CAPM.', ' points ahead of the CAPM.') + '</p>';
+    }
+    segInit($('tie-crit'), [L('BIC (rígida)', 'BIC (strict)'), L('AIC (branda)', 'AIC (mild)')], 0, function(v){ crit = v ? 0 : 1; draw(); });
+    draw();
+  })();
+
+  /* ================= 09 · DÓLAR ================= */
+  (function(){
+    var f = 'd', sel = 7;
+    function draw(){
+      var arr = S.map(function(s, i){ return {s:s, i:i, v:s[f], p:s[f + 'p']}; }).sort(function(a, b){ return b.v - a.v; });
+      var VW = NARROW ? 380 : 520, X0 = VW / 2 + 10, sc = (VW / 2 - 76) / (f === 'd' ? 0.34 : 0.93), RH = 31, o = '';
+      $('dl-svg').setAttribute('viewBox', '0 0 ' + VW + ' 430');
+      o += '<line x1="' + X0 + '" y1="4" x2="' + X0 + '" y2="' + (arr.length * RH + 4) + '" stroke="#94a3b8"/>';
+      arr.forEach(function(r, k){
+        var y = k * RH + 8, w = r.v * sc, sig = r.p < 0.05;
+        var col = !sig ? '#e2e8f0' : (r.v > 0 ? 'var(--mkt)' : 'var(--dol)');
+        var x = w >= 0 ? X0 : X0 + w;
+        o += '<g class="bar" data-i="' + r.i + '" tabindex="0" role="button" aria-label="' + r.s.n + '"><rect x="0" y="' + (y - 4) + '" width="' + VW + '" height="' + (RH - 2) + '" rx="6" fill="' + (r.i === sel ? '#eef2f6' : 'transparent') + '"/>';
+        o += '<rect x="' + x + '" y="' + y + '" width="' + Math.max(2, Math.abs(w)) + '" height="' + (RH - 10) + '" rx="4" fill="' + col + '"/>';
+        var lx = w >= 0 ? X0 - 8 : X0 + 8, anc = w >= 0 ? 'end' : 'start';
+        o += '<text x="' + lx + '" y="' + (y + 15) + '" text-anchor="' + anc + '" style="font-size:12.5px; fill:var(--ink)">' + r.s.k + '</text>';
+        var vx = w >= 0 ? X0 + w + 6 : X0 + w - 6, va = w >= 0 ? 'start' : 'end';
+        o += '<text x="' + vx + '" y="' + (y + 15) + '" text-anchor="' + va + '" style="font-size:12px; font-weight:700; fill:var(--ink-2)">' + (r.v < 0 ? '−' : '+') + fmt(Math.abs(r.v), 2) + '</text></g>';
+      });
+      $('dl-svg').innerHTML = o;
+      each($('dl-svg').querySelectorAll('.bar'), function(g){
+        g.addEventListener('click', function(){ sel = +g.dataset.i; draw(); });
+        g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); sel = +g.dataset.i; draw(); } });
+      });
+      var s = S[sel], v = s[f], p = s[f + 'p'];
+      var ptxt = p < 0.001 ? L('p < 0,001', 'p < 0.001') : 'p = ' + fmt(p, 3);
+      var what = f === 'd'
+        ? (p >= 0.05 ? L('Sem efeito claro do dólar nesta carteira.', 'No clear dollar effect on this portfolio.') : (v > 0 ? L('Quando o dólar sobe além do esperado, esta carteira tende a subir junto.', 'When the dollar rises more than expected, this portfolio tends to rise with it.') : L('Quando o dólar sobe além do esperado, esta carteira tende a cair.', 'When the dollar rises more than expected, this portfolio tends to fall.')))
+        : (p >= 0.05 ? L('Esta carteira quase não acompanha o mercado.', 'This portfolio barely follows the market.') : L('Esta carteira sobe e desce junto com a bolsa.', 'This portfolio goes up and down with the market.'));
+      $('dl-panel').innerHTML = '<div class="tag">' + s.k + ' · ' + s.q + L(' ações', ' stocks') + '</div><p><b>' + s.n + '</b>: ' + L('peso ', 'weight ') + (v < 0 ? '−' : '+') + fmt(Math.abs(v), 3) + ' (' + ptxt + '). ' + what + '</p>' +
+        (f === 'd' && (s.k === 'MINE' || s.k === 'PAPE') ? '<p style="font-size:.78rem; color:var(--muted)">' + L('Mineração e celulose vendem muito ao exterior, em dólar. Leitura nossa; a tese não interpreta os setores.', 'Mining and pulp sell heavily abroad, in dollars. Our reading; the thesis does not interpret the sectors.') + '</p>' : '') +
+        '<p style="font-size:.76rem; color:var(--muted)">' + L('Pesos em desvios-padrão (fatores e retornos padronizados). Tabela 39.', 'Weights in standard deviations (standardized factors and returns). Table 39.') + '</p>';
+    }
+    segInit($('dl-seg'), [L('Peso do dólar', 'Dollar weight'), L('Peso do mercado', 'Market weight')], 0, function(v){ f = v ? 'm' : 'd'; draw(); });
+    draw();
+  })();
+
+  /* ================= 10 · ECONOMIA ================= */
+  (function(){
+    var FK = ['Prod','Tjur','Rcre','Infl'];
+    var t = '<tr><th>' + L('Carteira', 'Portfolio') + '</th>' + FK.map(function(k){ return '<th>' + F[FI[k]].n + '</th>'; }).join('') + '</tr>';
+    var cnt = 0;
+    S.forEach(function(s, i){
+      t += '<tr><td>' + s.k + '</td>' + H[i].map(function(c, j){ var sg = c[0] < 0.10; if (sg) cnt++; return '<td class="' + (sg ? 's' : '') + '" data-i="' + i + '" data-j="' + j + '" tabindex="0">' + (sg ? fmt(c[0], 3) : '·') + '</td>'; }).join('') + '</tr>';
+    });
+    $('hm').innerHTML = t;
+    function show(i, j){
+      each($('hm').querySelectorAll('td[data-i]'), function(td){ td.classList.toggle('on', +td.dataset.i === i && +td.dataset.j === j); });
+      var c = H[i][j], s = S[i];
+      $('hm-panel').innerHTML = '<p><b>' + s.n + ' × ' + F[FI[FK[j]]].n + '</b>: ' + L('peso ', 'weight ') + (c[1] < 0 ? '−' : '+') + fmt(Math.abs(c[1]), 3) + ', p = ' + fmt(c[0], 3) + '. ' + (c[0] < 0.10 ? L('Uma das 3 ligações com p abaixo de 0,10.', 'One of the 3 links with p below 0.10.') : L('Sem ligação clara.', 'No clear link.')) + '</p>';
+    }
+    each($('hm').querySelectorAll('td[data-i]'), function(td){
+      td.addEventListener('click', function(){ show(+td.dataset.i, +td.dataset.j); });
+      td.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(+td.dataset.i, +td.dataset.j); } });
+    });
+    show(0, 1);
+    var last = ['smbhml','apt7','apt4'].map(function(id){ var m = BYID[id]; return '<div><span>' + m.n + '</span><b>' + fmtScore(m.b) + '</b></div>'; });
+    $('last3').innerHTML = last.join('');
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
