@@ -1,0 +1,873 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O que acontece depois da estreia na bolsa? · PPGA Interativo</title>
+<meta name="description" content="A dissertação de mestrado de Wellington Lopes de Souza (PPGA Mackenzie, 2016) sobre o desempenho das ações de 253 empresas que abriram capital no Brasil e nos EUA entre 2006 e 2011, do primeiro dia de negociação até três anos depois, explicada em 12 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/dissertacoes/2016-souza-ipos-brasil-eua/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia%22 font-size=%2213%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>IPO</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta dissertação. */
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  :root{
+    --br:var(--red);    /* IPOs no Brasil */
+    --us:var(--navy);   /* IPOs nos EUA */
+    --idx:#94a3b8;      /* índice de referência */
+    --off:#cbd5e1;
+  }
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+  .ilus{display:inline-block; font-size:.64rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:4px;}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.82rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:11px 13px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.2rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.75rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  .scene .floor-label{font-size:14px;}
+  .rng{display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; margin-top:10px; font-size:.84rem; color:var(--ink-2);}
+  .rng input{width:100%; accent-color:var(--red);}
+  .rng b{font-family:var(--serif); color:var(--ink); min-width:4.5em; text-align:right;}
+  .svgbox{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .svgbox text{font-family:var(--sans);}
+  @media (max-width:600px){ .svgbox text{font-size:18px !important;} .svgbox text.sm{font-size:14px !important;} #pn-svg text.v{font-size:14px !important;} #ex-svg text.nm{font-size:16px !important;} }
+  .warn{font-size:.74rem; color:#92400e; background:#fef3c7; border-radius:8px; padding:6px 10px; margin-top:10px;}
+  .ok{color:#166534; font-weight:700;}
+  .no{color:var(--muted); font-weight:700;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(2rem, 3.8vw, 2.7rem);}
+  .meta{display:grid; gap:2px; margin-top:18px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:34em; margin-left:auto; margin-right:auto;}
+  #hero-h{font-family:var(--serif); text-align:center; font-size:1.05rem; color:var(--ink); min-height:1.6em;}
+  #hero-h b{color:var(--red); font-size:1.3rem;}
+  #hero-scene{perspective:2200px;}
+  #hero-scene .slab{transition:transform .55s cubic-bezier(.2,.8,.2,1), --h .9s;}
+  #hero-scene .top-label{font-size:20px; font-family:var(--serif);}
+  #hero-scene .floor-label{font-size:16px;}
+
+  /* ---------- 02 · O que é ---------- */
+  .terms{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px;}
+  .terms button{border:1px solid var(--border); background:var(--card); border-radius:9px; padding:7px 11px; font-size:.82rem; cursor:pointer; color:var(--ink);}
+  .terms button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  #term-panel{min-height:140px; margin-top:10px;}
+  #tl-svg .st{cursor:pointer;}
+
+  /* ---------- 03 · Amostra ---------- */
+  #yr-scene{perspective:2400px;}
+  #yr-scene .slab{transition:transform .5s cubic-bezier(.2,.8,.2,1), --h .6s;}
+  #yr-scene .slab.dim > i{opacity:.25;}
+  #yr-scene .top-label{font-size:15px;}
+  #yr-scene .floor-label{font-size:14px;}
+  #yr-panel{min-height:104px; margin-top:10px;}
+
+  /* ---------- 04 · Tamanho ---------- */
+  .hb{display:grid; gap:7px; margin-top:10px;}
+  .hb .row{display:grid; grid-template-columns:150px 1fr; gap:10px; align-items:center; font-size:.8rem; color:var(--ink-2);}
+  .hb .tr{position:relative; height:24px; background:#eef2f7; border-radius:6px;}
+  .hb .tr i{position:absolute; left:0; top:3px; height:18px; border-radius:4px; transition:width .6s;}
+  .hb .tr span{position:absolute; top:3px; font-size:.74rem; font-weight:700; white-space:nowrap; transition:left .6s;}
+  @media (max-width:520px){ .hb .row{grid-template-columns:1fr; gap:2px;} }
+
+  /* ---------- 05 · Como medir ---------- */
+  .calc{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+  .calc .c{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 12px; border-top:4px solid var(--cc);}
+  .calc .c .k{font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--muted);}
+  .calc .c b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink);}
+  .calc .c span{display:block; font-size:.74rem; color:var(--ink-2); line-height:1.4;}
+
+  /* ---------- 06 · Dia 1 ---------- */
+  #d1-scene{perspective:2200px;}
+  #d1-scene .slab{transition:transform .5s cubic-bezier(.2,.8,.2,1), --h .7s, --z .7s;}
+  #d1-scene .top-label{font-size:20px; font-family:var(--serif);}
+  #d1-scene .floor-label{font-size:16px;}
+  #d1-scene .slab.neg > i{background-image:repeating-linear-gradient(45deg, rgb(255 255 255 / .45) 0 6px, transparent 6px 12px);}
+  #d1-panel{min-height:110px; margin-top:10px;}
+  .chips{display:flex; flex-wrap:wrap; gap:5px; margin-top:8px;}
+  .chips span{font-size:.72rem; border-radius:999px; padding:3px 9px; border:1px solid var(--border); background:var(--card); color:var(--ink-2);}
+  .chips span b{font-weight:700;}
+  .chips .cbr{border-color:var(--br);}
+  .chips .cus{border-color:var(--us);}
+
+  /* ---------- 07 · Primeiros meses ---------- */
+  #ex-panel{min-height:70px; margin-top:10px;}
+
+  /* ---------- 08 · A virada ---------- */
+  .big2{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+  .big2 div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 12px; border-top:4px solid var(--cc);}
+  .big2 b{display:block; font-family:var(--serif); font-size:1.7rem; color:var(--ink); line-height:1.1;}
+  .big2 span{display:block; font-size:.76rem; color:var(--ink-2); line-height:1.4; margin-top:3px;}
+
+  /* ---------- 09 · Recortes ---------- */
+  #pn-panel{min-height:90px; margin-top:10px;}
+
+  /* ---------- 10 · O inesperado ---------- */
+  .guess{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;}
+  .guess button{border:1px solid var(--border); background:var(--card); border-radius:9px; padding:7px 12px; font-size:.82rem; cursor:pointer; color:var(--ink);}
+  .guess button:hover{border-color:var(--ink);}
+  #guess-res{font-size:.84rem; color:var(--ink-2); margin-top:8px; min-height:1.4em;}
+
+  /* ---------- 11 · Estreia × longo prazo ---------- */
+  .cases{display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; margin-top:12px;}
+  .case{background:var(--card); border:1px solid var(--border); border-radius:11px; padding:8px 11px; font-size:.76rem; color:var(--ink-2); line-height:1.4;}
+  .case b{display:block; font-size:.86rem; color:var(--ink);}
+  .case .v{font-family:var(--serif); font-weight:700;}
+
+  /* ---------- 12 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.76rem; line-height:1.45; color:var(--ink-2);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.77rem; color:var(--ink-2); line-height:1.42;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/dissertacoes/2016-souza-ipos-brasil-eua/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 12</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Dissertação de mestrado · PPGA Mackenzie · 2016</div>
+      <h1 class="rv" style="--d:.1s">O que acontece com as ações depois da estreia na bolsa?</h1>
+      <p class="sub rv" style="--d:.2s">Entre 2006 e 2011, 104 empresas brasileiras e 149 americanas abriram capital. A pesquisa acompanhou as ações delas do primeiro dia de negociação até três anos depois e comparou cada uma com o índice da própria bolsa. Explicada em 12 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Wellington Lopes de Souza</span>
+        <span><b>Orientador:</b> Prof. Dr. Denis Forte</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#ipo">Começar →</a>
+        <a class="btn ghost" href="#virada">Ir direto ao resultado</a>
+      </div>
+      <p class="warn rv" style="--d:.45s">Divulgação de pesquisa acadêmica; não é recomendação de investimento.</p>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div id="hero-h" aria-live="off"></div>
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="500x330" role="img" aria-label="Três colunas: estreias no Brasil, o índice (sempre 1) e estreias nos EUA; a altura mostra quanto patrimônio as estreias geraram em relação ao índice, de 30 dias a 3 anos depois da estreia"></div></div>
+      <p class="cap-legend">Altura = patrimônio das estreias dividido pelo do índice (Wealth Relative, Gráfico 9). Acima de 1, as estreias ganharam do índice; abaixo, perderam.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://brasil.un.org/pt-br/sdgs/8" target="_blank" rel="noopener" title="ODS 8 · Trabalho decente e crescimento econômico: Compara como as bolsas do Brasil e dos EUA receberam as empresas que abriram capital e o que essas estreias entregaram a quem investiu nelas."><b>8</b>Trabalho decente e crescimento econômico</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · O QUE É -->
+<section class="slide" id="ipo" data-label="Abrir capital">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O assunto</div>
+      <h2 class="rv" style="--d:.1s">Abrir capital é vender pedaços da empresa na bolsa pela primeira vez</h2>
+      <p class="lede rv" style="--d:.15s">Essa estreia se chama IPO, sigla em inglês de oferta pública inicial de ações. A pesquisa olha duas perguntas: quanto a ação sobe já no primeiro dia e se, nos anos seguintes, ela rende mais ou menos que a bolsa como um todo. Toque em cada termo.</p>
+      <div class="terms rv" id="terms" style="--d:.2s" role="group" aria-label="Escolha o termo"></div>
+      <div class="panel rv" id="term-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="tl-svg" class="svgbox" viewBox="0 0 560 230" role="img" aria-label="Linha do tempo de uma estreia: preço de oferta, primeiro dia, primeiros três meses e três anos"></svg>
+      <div class="stats">
+        <div class="stat"><b>152</b><span>estreias na bolsa brasileira de 2004 a 2014, que levantaram R$ 153,8 bilhões</span></div>
+        <div class="stat"><b>17</b><span>estreias no Brasil de 2000 a 2003, só R$ 2,2 bilhões</span></div>
+        <div class="stat"><b>20% → 11%</b><span>fatia dos EUA nas estreias do mundo, de 1995–2001 para 2002–2011</span></div>
+      </div>
+      <p class="note">Dados da BM&amp;FBovespa e de Jensen, Marshall e Jahera (2012), citados na introdução. Nos EUA, a Lei Sarbanes-Oxley, de 2002, endureceu as regras de governança para quem quer abrir capital.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · AMOSTRA -->
+<section class="slide" id="amostra" data-label="253 estreias">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> Os dados</div>
+      <h2 class="rv" style="--d:.1s">Sete em cada dez estreias aconteceram em 2006 e 2007</h2>
+      <p class="lede rv" style="--d:.15s">A pesquisa reuniu as estreias de 2006 a 2011 na bolsa brasileira e na NYSE e na Nasdaq, as duas grandes bolsas americanas. Os dois anos de euforia concentram a maioria. No Brasil, só 2007 teve 54 estreias, mais da metade da amostra.</p>
+      <div class="seg rv" id="yr-seg" style="--d:.2s" role="group" aria-label="Escolha a divisão">
+        <button data-m="0" aria-pressed="true">Por ano</button>
+        <button data-m="1" aria-pressed="false">Por setor</button>
+      </div>
+      <div class="panel rv" id="yr-panel" style="--d:.25s" aria-live="polite"></div>
+      <p class="note">Base Compustat (e Economatica no Brasil). Saíram 18 empresas brasileiras (122 → 104), quase todas por fusão, compra ou fechamento de capital, e 19 americanas (168 → 149), por falta ou inconsistência de dados. A Tarpon saiu por ter subido 105,21% na estreia, um caso fora da curva.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="yr-scene" data-fit="560x340" role="img" aria-label="Pares de colunas com o número de estreias no Brasil e nos EUA por ano ou por setor"></div></div>
+      <div class="legend" style="justify-content:center"><span><i class="dot" style="background:var(--br)"></i>Brasil (104)</span><span><i class="dot" style="background:var(--us)"></i>EUA (149)</span><span>toque numa coluna</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · TAMANHO -->
+<section class="slide" id="tamanho" data-label="Ofertas maiores">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Os dois mercados</div>
+      <h2 class="rv" style="--d:.1s">No Brasil, quem chega à bolsa são as empresas grandes</h2>
+      <p class="lede rv" style="--d:.15s">A oferta média brasileira foi de R$ 956,5 milhões; a americana, de US$ 258,6 milhões. Para o autor, num mercado mais novo e com menos negócios, como o brasileiro, abrir capital fica restrito às grandes empresas. Nos EUA, muitas empresas pequenas e médias estreiam, sobretudo na Nasdaq.</p>
+      <div class="stats rv" style="--d:.2s">
+        <div class="stat"><b>R$ 956,5 mi</b><span>oferta média no Brasil</span></div>
+        <div class="stat"><b>US$ 387,5 mi</b><span>oferta média na NYSE</span></div>
+        <div class="stat"><b>US$ 165,6 mi</b><span>oferta média na Nasdaq</span></div>
+      </div>
+      <p class="note">Valores históricos, cada um na moeda do país; a dissertação não converte. Fontes: seção 4.1 e Tabela 2. Para os EUA, os valores das três maiores seguem o texto (a Tabela 1 troca os da Spirit e da Douglas Emmett).</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="tm-seg" role="group" aria-label="Escolha o país">
+        <button data-m="0" aria-pressed="true">Maiores no Brasil</button>
+        <button data-m="1" aria-pressed="false">Maiores nos EUA</button>
+      </div>
+      <div class="hb" id="tm-bars" aria-live="polite"></div>
+      <p class="note" id="tm-note"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · COMO MEDIR -->
+<section class="slide" id="medida" data-label="Como medir">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Como medir</div>
+      <h2 class="rv" style="--d:.1s">Uma ação só foi bem se subiu mais que a bolsa no mesmo período</h2>
+      <p class="lede rv" style="--d:.15s">Subir 20% num ano em que a bolsa subiu 40% é ficar para trás. Por isso a pesquisa compara cada ação com o índice do seu mercado: o Ibovespa no Brasil e o S&amp;P 500 nos EUA. A diferença é o retorno anormal. Mexa nos dois controles.</p>
+      <div class="rng rv" style="--d:.2s"><span>A ação subiu</span><input type="range" id="m-r" min="-60" max="150" step="5" value="20" aria-label="Quanto a ação subiu"><b id="m-rv"></b></div>
+      <div class="rng rv" style="--d:.22s"><span>O índice subiu</span><input type="range" id="m-m" min="-40" max="80" step="5" value="40" aria-label="Quanto o índice subiu"><b id="m-mv"></b></div>
+      <p class="note"><span class="ilus">ilustração</span> Números inventados. A conta é a da equação 3: (1 + retorno da ação) ÷ (1 + retorno do índice) − 1, com preços ajustados por dividendos e desdobramentos.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="m-svg" class="svgbox" viewBox="0 0 560 220" role="img" aria-label="Duas barras: quanto viraram 100 aplicados na ação e 100 aplicados no índice"></svg>
+      <div class="calc" id="m-calc" aria-live="polite"></div>
+      <div class="panel" style="margin-top:12px"><div class="tag">E para um país inteiro?</div><p>A pesquisa faz a mesma conta com a média de todas as estreias de cada país: é o <b>Wealth Relative</b> (riqueza relativa). Ele divide o patrimônio de quem pôs dinheiro igual em cada estreia pelo de quem pôs no índice. Acima de 1, as estreias ganharam; abaixo de 1, perderam.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · DIA 1 -->
+<section class="slide" id="dia1" data-label="O primeiro dia">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> O primeiro dia · Tabelas 3 a 7</div>
+      <h2 class="rv" style="--d:.1s">Na estreia, as ações americanas subiram cinco vezes mais</h2>
+      <p class="lede rv" style="--d:.15s">É como um ingresso vendido abaixo do que o público aceitaria pagar: no primeiro dia, o preço sobe. Esse salto se chama <i>underpricing</i>. Foi de 3,33% em média no Brasil e de 16,6% nos EUA. E ele muda com o humor do mercado. Escolha a fase.</p>
+      <div class="seg rv" id="d1-seg" style="--d:.2s" role="group" aria-label="Escolha a fase">
+        <button data-p="0" aria-pressed="true">Todas</button>
+        <button data-p="1" aria-pressed="false">Euforia 2006–07</button>
+        <button data-p="2" aria-pressed="false">Antes da crise</button>
+        <button data-p="3" aria-pressed="false">2008</button>
+        <button data-p="4" aria-pressed="false">Depois da crise</button>
+      </div>
+      <div class="panel rv" id="d1-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="d1-scene" data-fit="460x320" role="img" aria-label="Duas colunas com a alta média no primeiro dia de negociação, no Brasil e nos EUA, para a fase escolhida"></div></div>
+      <div class="legend" style="justify-content:center"><span><i class="dot" style="background:var(--br)"></i>Brasil</span><span><i class="dot" style="background:var(--us)"></i>EUA</span><span>listrado e abaixo do chão: queda no 1º dia</span></div>
+      <p class="note">Crise = quebra do banco Lehman Brothers, em 15/09/2008. Em todas as fases, a diferença entre os dois países passou no teste estatístico (p &lt; 0,05). Em 2008 houve só 13 estreias, sem teste próprio; a média é a da Tabela 7 (conferida por nós com a lista).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · PRIMEIROS MESES -->
+<section class="slide" id="meses" data-label="Os primeiros meses">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> Os primeiros meses · Gráficos 13 a 16</div>
+      <h2 class="rv" style="--d:.1s">Nos dois primeiros meses, cada ação vai para um lado</h2>
+      <p class="lede rv" style="--d:.15s">Depois do primeiro dia, as médias dos dois países ficam perto de zero e a diferença entre elas não passa no teste. O motivo é a dispersão: algumas ações disparam e outras despencam. Veja as três melhores e as três piores de cada país, já descontado o índice.</p>
+      <div class="seg rv" id="ex-c" style="--d:.2s" role="group" aria-label="Escolha o país">
+        <button data-c="0" aria-pressed="true">Brasil</button>
+        <button data-c="1" aria-pressed="false">EUA</button>
+      </div>
+      <div class="seg rv" id="ex-m" style="--d:.22s; margin-left:6px" role="group" aria-label="Escolha o mês">
+        <button data-m="0" aria-pressed="true">Mês 1</button>
+        <button data-m="1" aria-pressed="false">Mês 2</button>
+      </div>
+      <div class="panel rv" id="ex-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="ex-svg" class="svgbox" viewBox="0 0 560 300" role="img" aria-label="Barras horizontais com os três maiores e os três menores retornos anormais do mês escolhido"></svg>
+      <p class="note">Retorno anormal acumulado desde a estreia (Gráficos 13 a 16). Nomes como aparecem nos gráficos da dissertação.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · A VIRADA -->
+<section class="slide" id="virada" data-label="Três anos depois">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> A descoberta · Gráfico 9 · 253 estreias</div>
+      <h2 class="rv" style="--d:.1s">Em três anos, as estreias brasileiras perderam para o índice e as americanas ganharam</h2>
+      <p class="lede rv" style="--d:.15s">Nos primeiros 90 dias, os dois países andam juntos, perto de 1. A partir do primeiro ano, os caminhos se abrem. Nos EUA, quem pôs dinheiro igual em cada estreia terminou com 31% mais patrimônio do que teria no índice. No Brasil, com 8% menos. Arraste o tempo.</p>
+      <div class="rng rv" style="--d:.2s"><span>Tempo desde a estreia</span><input type="range" id="wr-rng" min="0" max="5" step="1" value="5" aria-label="Tempo desde a estreia"><b id="wr-v"></b></div>
+      <div class="big2 rv" id="wr-big" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="wr-svg" class="svgbox" viewBox="0 0 560 300" role="img" aria-label="Duas linhas do Wealth Relative do Brasil e dos EUA, de 30 dias a 3 anos, com a linha do índice em 1"></svg>
+      <p class="note">O autor lê o Brasil como destruição de valor no longo prazo, em linha com estudos clássicos, e os EUA como o contrário. Outra régua da dissertação, a média do retorno anormal de cada ação, dá no Brasil −10,5% no 1º ano e −13,1% no 2º, mas +2,0% no 3º; nos EUA, +22,1%, +28,5% e +35,1% (Tabela 3). Do 3º mês ao 3º ano, a diferença entre os países passou no teste.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · RECORTES -->
+<section class="slide" id="recortes" data-label="Recortes">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Recortes · Tabelas 3, 4, 8, 9, 12 e 13</div>
+      <h2 class="rv" style="--d:.1s">A distância entre os países se repete em quase todo recorte</h2>
+      <p class="lede rv" style="--d:.15s">O autor dividiu as estreias de vários jeitos: só os anos de euforia, ofertas pequenas e grandes, indústria e serviços. Em cada linha, o retorno médio além do índice, do primeiro dia ao terceiro ano. O sinal ✓ marca as diferenças que passaram no teste.</p>
+      <div class="seg rv" id="pn-seg" style="--d:.2s" role="group" aria-label="Escolha o recorte"></div>
+      <div class="panel rv" id="pn-panel" style="--d:.25s" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="pn-svg" class="svgbox" viewBox="0 0 560 330" role="img" aria-label="Para cada momento, duas barras com o retorno médio além do índice no Brasil e nos EUA"></svg>
+      <div class="legend" style="justify-content:center"><span><i class="dot" style="background:var(--br)"></i>Brasil</span><span><i class="dot" style="background:var(--us)"></i>EUA</span><span><span class="ok">✓</span> diferença confirmada (p &lt; 0,05)</span><span><span class="no">≈</span> sem diferença clara</span></div>
+      <p class="note">Médias simples em %, com o teste t de diferença de médias de cada tabela. As tabelas marcam níveis de significância que nem sempre batem com o t impresso; aqui mostramos só se passou ou não a 5%.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · O INESPERADO -->
+<section class="slide" id="inesperado" data-label="Depois da crise">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> O inesperado · Tabelas 5 e 6</div>
+      <h2 class="rv" style="--d:.1s">Quem estreou no Brasil depois da crise de 2008 ganhou do índice</h2>
+      <p class="lede rv" style="--d:.15s">O autor separou as estreias de antes e de depois da quebra do Lehman Brothers. Antes, 78 no Brasil e 116 nos EUA; depois, 26 e 33. Aposte antes de ver: depois da crise, as estreias brasileiras ficaram abaixo do Ibovespa, empatadas ou acima?</p>
+      <div class="guess rv" id="guess" style="--d:.2s">
+        <button data-g="0">Abaixo</button>
+        <button data-g="1">Empatadas</button>
+        <button data-g="2">Acima</button>
+      </div>
+      <div id="guess-res" aria-live="polite"></div>
+      <div class="seg rv" id="cr-seg" style="--d:.25s; margin-top:8px" role="group" aria-label="Escolha o período">
+        <button data-p="0" aria-pressed="true">Antes da crise</button>
+        <button data-p="1" aria-pressed="false">Depois da crise</button>
+      </div>
+      <p class="note">Para o autor, o Brasil saiu cedo da recessão (gastos públicos, desonerações, crédito), e o dinheiro farto no mundo procurou o país, o que acabou valorizando demais as ações. Em 2009, o Ibovespa subiu 74% e o S&amp;P 500, 21,6%. É a explicação dele, não um teste.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="cr-svg" class="svgbox" viewBox="0 0 560 320" role="img" aria-label="Barras com o retorno médio além do índice no 3º mês e nos anos 1, 2 e 3, Brasil e EUA, antes ou depois da crise"></svg>
+      <div class="panel" id="cr-panel" style="margin-top:10px" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · ESTREIA × LONGO PRAZO -->
+<section class="slide" id="estreia" data-label="Estreia forte">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> Estreia e longo prazo · Tabelas 10 e 11</div>
+      <h2 class="rv" style="--d:.1s">No Brasil, subir muito na estreia não garantiu um bom terceiro ano</h2>
+      <p class="lede rv" style="--d:.15s">O autor vê no Brasil uma relação inversa: quem estreou em alta perdeu força depois. As estreias foram divididas ao meio pelo salto do primeiro dia. No 3º ano, a metade que menos subiu na estreia estava 22,7% acima do Ibovespa; a que mais subiu, 18,7% abaixo. Nos EUA, as duas metades ficaram parecidas.</p>
+      <div class="seg rv" id="hl-seg" style="--d:.2s" role="group" aria-label="Escolha o país">
+        <button data-c="0" aria-pressed="true">Brasil</button>
+        <button data-c="1" aria-pressed="false">EUA</button>
+      </div>
+      <div class="cases rv" style="--d:.25s">
+        <div class="case"><b>Autometal</b>estreia <span class="v">−5,36%</span> · 3 anos <span class="v">+92,15%</span></div>
+        <div class="case"><b>Hypermarcas</b>estreia <span class="v">−1,76%</span> · 3 anos <span class="v">+152,5%</span></div>
+        <div class="case"><b>Profarma</b>estreia <span class="v">+14,4%</span> · 3 anos <span class="v">−61,9%</span></div>
+        <div class="case"><b>Bematech</b>estreia <span class="v">+12,1%</span> · 3 anos <span class="v">−60,9%</span></div>
+      </div>
+      <p class="note">Exemplos da indústria brasileira citados pelo autor (Gráfico 19). 3 anos = retorno anormal acumulado.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="hl-svg" class="svgbox" viewBox="0 0 560 300" role="img" aria-label="Duas linhas: retorno médio além do índice da metade que menos subiu e da metade que mais subiu na estreia, do 3º mês ao 3º ano"></svg>
+      <div class="legend" style="justify-content:center"><span><svg width="26" height="8" aria-hidden="true"><line x1="0" y1="4" x2="26" y2="4" stroke="#94a3b8" stroke-width="3" stroke-dasharray="6 3"/></svg> metade que menos subiu na estreia</span><span><svg width="26" height="8" aria-hidden="true"><line x1="0" y1="4" x2="26" y2="4" stroke="#334155" stroke-width="3"/></svg> metade que mais subiu na estreia</span></div>
+      <div class="panel" id="hl-panel" style="margin-top:10px" aria-live="polite"></div>
+      <p class="note">Comparação nossa entre as metades: a dissertação testa só Brasil contra EUA, não uma metade contra a outra. No 1º ano, as duas metades brasileiras estavam parecidas (−11,4% e −9,7%).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Na prática e limites">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> Na prática · limites · créditos</div>
+    <h2 class="rv" style="--d:.1s">O que a comparação ensina a quem investe, abre capital ou regula</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--red)"><h3>Quem investe</h3><p>Entre 2006 e 2011, comprar na estreia no Brasil rendeu pouco no primeiro dia e, na média, ficou atrás do Ibovespa em três anos, com ações indo para lados muito diferentes. Isso descreve aquele período, não promete nada para o próximo.</p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--navy)"><h3>Empresas que pensam em abrir capital</h3><p>O momento pesa. Na euforia de 2006 e 2007 o salto da estreia foi maior; na crise, menor. O autor liga isso às janelas de oportunidade: empresas e bancos aproveitam fases de otimismo para vender ações.</p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ink-2)"><h3>Bolsa e reguladores</h3><p>O autor sugere que as regras mais duras de governança dos EUA (Lei Sarbanes-Oxley, de 2002) podem ter melhorado o perfil de quem abre capital lá, e liga o resultado brasileiro a mais assimetria de informação e mais conflitos de interesse num mercado mais novo. São hipóteses, não testes.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#5b6f96"><h3>Pesquisadores</h3><p>Próximos passos sugeridos: medir se a Lei Sarbanes-Oxley de fato mudou o desempenho das estreias americanas e quanto o cenário econômico de cada país pesa no resultado das estreias.</p></div>
+    </div>
+    <p class="warn rv" style="--d:.3s">Esta página divulga uma pesquisa acadêmica; não é recomendação de investimento. Resultados passados não garantem resultados futuros.</p>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Um período curto e agitado.</b> Estreias de 2006 a 2011, com uma euforia e uma crise mundial no meio; 2008 teve só 13 estreias nos dois países. <em>· segundo os dados do autor</em></li>
+          <li><b>Médias com muita dispersão.</b> Cada ação pesa igual, e o desvio-padrão do 3º ano passa de 90 pontos nos dois países: poucos casos extremos mexem bastante nas médias. <em>· observação nossa</em></li>
+          <li><b>Comparação com o índice geral.</b> Cada ação é medida contra o Ibovespa ou o S&amp;P 500, não contra empresas parecidas de setor e tamanho. E as empresas que sumiram por fusão, compra ou fechamento de capital ficaram de fora. <em>· observação nossa</em></li>
+          <li><b>As causas são hipóteses.</b> Lei Sarbanes-Oxley, assimetria de informação e cenário econômico aparecem como explicações do autor; a pesquisa compara médias, não testa causas. Também não desconta custos de corretagem nem impostos. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          SOUZA, Wellington Lopes de. <em>Avaliação de performance em IPOs: uma análise comparativa entre Brasil e Estados Unidos.</em> Dissertação (Mestrado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2016. Orientador: Prof. Dr. Denis Forte.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Dados da Standard &amp; Poor's Compustat e da Economatica; estatísticas no Stata. A capa traz 2015 e a ficha catalográfica, 2016. Esta versão simplifica o trabalho para o público em geral; as fórmulas e as tabelas completas estão no texto original.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a dissertação completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, reduce = M.reduce, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  function sgn(v, d){ return (v < 0 ? '−' : '+') + fmt(Math.abs(v), d === undefined ? 1 : d); }
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent){ var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+  function txt(parent, x, y, s, css, cls){ var t = el('text', {x:x, y:y}, parent); t.textContent = s; if (css) t.setAttribute('style', css); if (cls) t.setAttribute('class', cls); return t; }
+  function seg(id, fn){ var g = $(id); each(g.querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ each(g.querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); fn(b); }); }); }
+  var BR = '#e80734', US = '#1f3b73', MUT = '#64748b', INK = '#0f172a';
+
+  /* ================= DADOS DA DISSERTAÇÃO ================= */
+  // Gráfico 9: Wealth Relative por horizonte
+  var HZ = [L('30 dias', '30 days'), L('60 dias', '60 days'), L('90 dias', '90 days'), L('1 ano', '1 year'), L('2 anos', '2 years'), L('3 anos', '3 years')];
+  var WRB = [1.00, 1.01, 0.99, 0.89, 0.87, 0.92];
+  var WRU = [1.02, 1.04, 1.07, 1.23, 1.27, 1.31];
+  // Gráfico 1: estreias por ano (2006–2011)
+  var YEARS = [2006, 2007, 2008, 2009, 2010, 2011];
+  var NYB = [20, 54, 4, 5, 10, 11], NYU = [50, 57, 9, 12, 12, 9];
+  // Gráficos 2 e 3: por setor [agronegócio, indústria, serviços, varejo]
+  var SEC = [L('Agronegócio', 'Agribusiness'), L('Indústria', 'Industry'), L('Serviços', 'Services'), L('Varejo', 'Retail')];
+  var NSB = [5, 25, 68, 6], NSU = [0, 51, 87, 11];
+  // Tabela 2 e texto (seção 4.1): maiores ofertas
+  var TOPB = [['Santander Brasil', 2009, 13182], ['Visanet (Cielo)', 2009, 8397], ['OGX Petróleo', 2008, 6711], ['Redecard', 2007, 4642], ['OSX Brasil', 2010, 2481], ['HRT Petróleo', 2010, 2450]];
+  var TOPU = [['Mastercard', 2006, 2399.3], ['Spirit Aerosystems', 2006, 1432.2], ['Douglas Emmett', 2006, 1386], ['Interactive Brokers', 2007, 1247], ['American Water Works', 2008, 1200], ['VMware', 2007, 960]];
+  // Primeiro dia: média do underpricing [Brasil, EUA, N Brasil, N EUA] (Tabelas 3, 4, 5, 7, 6)
+  var D1 = [
+    {n:L('Todas as estreias', 'All debuts'), b:3.33, db:2, u:16.6, du:1, nb:104, nu:149, tb:'3'},
+    {n:L('Euforia de 2006 e 2007', 'The 2006–2007 boom'), b:4.4, db:1, u:19.1, du:1, nb:74, nu:107, tb:'4'},
+    {n:L('Antes da crise (até 15/09/2008)', 'Before the crisis (to 15/09/2008)'), b:4.0, db:1, u:18.3, du:1, nb:78, nu:116, tb:'5'},
+    {n:L('O ano de 2008', 'The year 2008'), b:-2.11, db:2, u:8.76, du:2, nb:4, nu:9, tb:'7'},
+    {n:L('Depois da crise', 'After the crisis'), b:1.2, db:1, u:10.8, du:1, nb:26, nu:33, tb:'6'}
+  ];
+  var IPO08 = [['A. H. Belo', 'u', 0.0], ['American Capital Agency', 'u', -3.3], ['American Water Works', 'u', -4.2], ['Colfax', 'u', 16.7], ['Energy Recovery', 'u', 15.6], ['GT Advanced Technologies', 'u', -11.6], ['Hypermarcas', 'b', -1.8], ['Intrepid Potash', 'u', 57.5], ['IPC Healthcare', 'u', 28.0], ['Le Lis Blanc', 'b', -20.0], ['Nutriplant', 'b', 5.0], ['OGX Petróleo', 'b', 8.3], ['Rackspace Hosting', 'u', -19.9]];
+  // Gráficos 13 a 16: três maiores e três menores retornos anormais [nome, %]
+  var EXT = [
+    [[['Laep', -25.38], ['CR2', -21.09], ['Agrenco', -19.87], ['Eztec', 23.22], ['Tegma', 21.05], ['Sierra Brasil', 16.72]],
+     [['OGX', -32.56], ['Estácio', -23.37], ['OSX', -23.32], ['HRT', 41.55], ['BR Malls', 32.04], ['HJHSF', 31.29]]],
+    [[['Vonage', -40.41], ['AH Belo Corp', -22.28], ['Orion', -19.80], ['Titan Machinery', 83.39], ['American Railcar', 31.68], ['ExlService', 31.27]],
+     [['Vonage', -52.71], ['Ulta Salon', -43.00], ['NetSuite', -18.93], ['Titan Machinery', 79.29], ['VMware', 54.14], ['Intrepid Potash', 51.68]]]
+  ];
+  // Tabela 3, Mês 1 e Mês 2: médias e t
+  var MM = [[-0.333, 1.705, 1.35], [0.664, 3.997, 1.43]];
+  // Painéis: médias [Dia 1, Mês 1, Mês 2, Mês 3, Ano 1, Ano 2, Ano 3], Brasil e EUA, e se a diferença passou no teste a 5%
+  var ROWS = [L('Dia 1', 'Day 1'), L('Mês 1', 'Month 1'), L('Mês 2', 'Month 2'), L('Mês 3', 'Month 3'), L('Ano 1', 'Year 1'), L('Ano 2', 'Year 2'), L('Ano 3', 'Year 3')];
+  var PN = [
+    {k:'A', t:L('Todas', 'All'), nb:104, nu:149, tb:3, b:[3.33,-0.333,0.664,-0.581,-10.53,-13.05,2.01], u:[16.6,1.705,3.997,7.350,22.10,28.45,35.13], s:[1,0,0,1,1,1,1],
+     d:L('As 253 estreias. Depois do primeiro dia, a diferença some por dois meses e volta a partir do 3º mês, com o Brasil abaixo do índice até o 2º ano.', 'All 253 debuts. After the first day, the difference vanishes for two months and returns from month 3, with Brazil below the index until year 2.')},
+    {k:'B', t:L('Euforia 2006–07', 'Boom 2006–07'), nb:74, nu:107, tb:4, b:[4.4,-1.13,-1.59,-4.49,-26.55,-38.81,-30.37], u:[19.1,2.51,4.66,9.98,26.25,33.42,42.17], s:[1,0,1,1,1,1,1],
+     d:L('Só quem estreou na euforia. Aqui a distância é a maior de todas: no 2º ano, o Brasil estava 38,8% abaixo do Ibovespa e os EUA, 33,4% acima do S&P 500. A diferença já aparece no 2º mês.', 'Only the boom-time debuts. Here the gap is the biggest of all: in year 2, Brazil was 38.8% below the Ibovespa and the US 33.4% above the S&P 500. The difference already shows in month 2.')},
+    {k:'E', t:L('Ofertas menores', 'Smaller offerings'), nb:48, nu:64, tb:8, b:[2.2,-1.03,1.36,-0.55,-14.36,-23.16,-7.67], u:[18.2,3.36,4.90,9.29,24.83,25.17,30.70], s:[1,0,0,1,1,1,1],
+     d:L('Ofertas abaixo de R$ 529,2 milhões no Brasil e de US$ 148,5 milhões nos EUA. O padrão se repete: o Brasil fica abaixo do índice nos três anos.', 'Offerings below R$ 529.2 million in Brazil and US$ 148.5 million in the US. The pattern repeats: Brazil stays below the index in all three years.')},
+    {k:'F', t:L('Ofertas maiores', 'Larger offerings'), nb:55, nu:84, tb:9, b:[4.4,0.514,0.08,-0.28,-6.52,-3.67,11.12], u:[15.0,0.443,3.37,6.20,20.58,31.62,39.10], s:[1,0,0,0,0,1,0],
+     d:L('As ofertas grandes. A diferença só passa no teste no primeiro dia e no 2º ano: segundo o autor, por causa de casos muito diferentes entre si, como Santander, Visanet e OGX.', 'The large offerings. The difference only passes the test on the first day and in year 2: according to the author, because of very different cases, such as Santander, Visanet and OGX.')},
+    {k:'I', t:L('Indústria', 'Industry'), nb:25, nu:51, tb:12, b:[0.48,0.359,7.79,5.03,-6.59,-7.07,-25.38], u:[11.8,2.483,7.37,9.31,27.65,24.76,36.62], s:[1,0,0,0,1,0,1],
+     d:L('Só empresas industriais. Poucos casos no Brasil (25). No 3º ano, a indústria brasileira estava 25,4% abaixo do Ibovespa.', 'Industrial companies only. Few cases in Brazil (25). In year 3, Brazilian industry was 25.4% below the Ibovespa.')},
+    {k:'J', t:L('Serviços', 'Services'), nb:68, nu:87, tb:13, b:[4.69,-0.662,-2.47,-2.44,-11.99,-17.27,7.60], u:[16.4,1.322,2.02,6.26,19.98,28.99,34.22], s:[1,0,0,1,1,1,0],
+     d:L('Só empresas de serviços, o maior grupo nos dois países. Mesmo desenho do total: Brasil abaixo do índice até o 2º ano, EUA acima.', 'Service companies only, the largest group in both countries. Same shape as the total: Brazil below the index until year 2, the US above.')}
+  ];
+  // Tabelas 5 e 6: antes e depois da crise [Mês 3, Ano 1, Ano 2, Ano 3]
+  var CR = [
+    {b:[-4.55,-24.88,-34.05,-22.49], u:[8.90,24.70,32.73,43.06], nb:78, nu:116},
+    {b:[11.33,32.50,49.95,75.56], u:[1.89,12.94,13.42,7.25], nb:26, nu:33}
+  ];
+  // Tabelas 10 e 11: metades pelo salto da estreia [Mês 3, Ano 1, Ano 2, Ano 3]
+  var HL = [
+    {lo:[-1.41,-11.38,-8.92,22.73], hi:[0.254,-9.68,-17.18,-18.70], dlo:0.48, dhi:6.2, n:52},
+    {lo:[7.28,27.58,23.55,37.24], hi:[7.418,16.69,33.29,33.05], dlo:6.2, dhi:26.9, n:'74/75'}
+  ];
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 330, 120, {ay:'76%', rx:'60deg'});
+    rotatable(sc, st, -22, 9);
+    var K = 150;
+    var a = box({w:86, d:86, x:0, y:16, h:WRB[0] * K, c:'var(--br)', top:' '});
+    var m = box({w:70, d:70, x:128, y:24, h:K, c:'var(--idx)', top:fmt(1, 2)});
+    var b = box({w:86, d:86, x:240, y:16, h:WRU[0] * K, c:'var(--us)', top:' '});
+    st.appendChild(a); st.appendChild(m); st.appendChild(b);
+    flatLabel(st, L('Brasil', 'Brazil'), -14, 112, 114);
+    flatLabel(st, L('índice', 'index'), 112, 112, 102);
+    flatLabel(st, L('EUA', 'US'), 226, 112, 114);
+    var last = -1;
+    function show(i){
+      a.style.setProperty('--h', (WRB[i] * K) + 'px'); b.style.setProperty('--h', (WRU[i] * K) + 'px');
+      a.querySelector('.top-label').textContent = fmt(WRB[i], 2);
+      b.querySelector('.top-label').textContent = fmt(WRU[i], 2);
+      $('hero-h').innerHTML = L('Estreias × índice, ', 'Debuts × index, ') + '<b>' + HZ[i] + '</b>' + L(' depois', ' later');
+    }
+    show(5);
+    if (!reduce) M.onTick(function(t){ var i = Math.floor(t / 1.6) % 8; i = Math.min(i, 5); if (i !== last){ last = i; show(i); } });
+  })();
+
+  /* ================= 02 · O QUE É ================= */
+  (function(){
+    var T = [
+      {n:'IPO', s:0, h:L('Oferta pública inicial de ações', 'Initial public offering'), p:L('A empresa deixa de ser de capital fechado e passa a ter ações negociadas na bolsa. Na oferta primária, entram ações novas e o dinheiro vai para a empresa; na secundária, os sócios antigos vendem parte das suas.', 'The company stops being privately held and its shares start trading on the exchange. In a primary offering, new shares are sold and the money goes to the company; in a secondary one, the existing owners sell part of theirs.')},
+      {n:L('Preço de oferta', 'Offer price'), s:0, h:L('Como o preço é decidido', 'How the price is set'), p:L('No bookbuilding, o banco que organiza a oferta pergunta a grandes investidores (fundos, seguradoras) quantas ações comprariam a cada faixa de preço. No Brasil, é o método mais usado desde 2003; nos EUA, desde 1994.', 'In bookbuilding, the bank running the offering asks big investors (funds, insurers) how many shares they would buy at each price range. In Brazil it has been the most common method since 2003; in the US, since 1994.')},
+      {n:'Underpricing', s:1, h:L('O salto do primeiro dia', 'The first-day jump'), p:L('Quanto o preço sobe no primeiro dia de negociação em relação ao preço de oferta. Se sobe muito, a ação foi vendida barata: a empresa deixou dinheiro na mesa e quem comprou na oferta ganhou na largada.', 'How much the price rises on the first trading day relative to the offer price. If it rises a lot, the share was sold cheaply: the company left money on the table and those who bought in the offering gained at the start.')},
+      {n:'Underperformance', s:3, h:L('Ficar atrás no longo prazo', 'Falling behind in the long run'), p:L('Quando, nos anos seguintes, a ação rende menos que a bolsa como um todo. Estudos clássicos, como os de Ritter (1991), encontraram isso em várias épocas: quem abre capital costuma decepcionar depois.', 'When, in the following years, the share earns less than the market as a whole. Classic studies, such as Ritter (1991), found this in several periods: companies that go public often disappoint later.')},
+      {n:L('Índice de referência', 'Benchmark index'), s:2, h:L('A régua de comparação', 'The comparison yardstick'), p:L('O Ibovespa, no Brasil, e o S&P 500, nos EUA, resumem o sobe e desce das principais ações de cada bolsa. A pesquisa mede cada estreia contra o índice do seu país, a partir do fechamento do dia da oferta.', 'The Ibovespa in Brazil and the S&P 500 in the US summarize the ups and downs of each market\'s main shares. The research measures each debut against its country\'s index, starting from the close on the offering day.')}
+    ];
+    var STG = [[L('Oferta', 'Offering'), L('preço definido', 'price set')], [L('Dia 1', 'Day 1'), L('1º pregão', '1st trading day')], [L('Meses 1–3', 'Months 1–3'), L('curto prazo', 'short run')], [L('Anos 1–3', 'Years 1–3'), L('longo prazo', 'long run')]];
+    var svg = $('tl-svg'), cur = 0;
+    function draw(){
+      svg.innerHTML = '';
+      var on = T[cur].s, X = [70, 210, 350, 490];
+      el('line', {x1:40, x2:530, y1:110, y2:110, stroke:'#cbd5e1', 'stroke-width':4}, svg);
+      // linha de preço ilustrativa
+      var pts = [[40,150],[70,150],[110,118],[150,122],[210,112],[260,128],[300,104],[350,120],[400,96],[450,132],[490,116],[530,124]];
+      el('polyline', {points:pts.map(function(p){ return p.join(','); }).join(' '), fill:'none', stroke:'#94a3b8', 'stroke-width':2, 'stroke-dasharray':'4 4'}, svg);
+      STG.forEach(function(s, i){
+        var g = el('g', {class:'st', tabindex:0}, svg);
+        el('circle', {cx:X[i], cy:110, r:i === on ? 17 : 12, fill:i === on ? BR : '#fff', stroke:i === on ? BR : US, 'stroke-width':3}, g);
+        txt(g, X[i], 62, s[0], 'font-size:15px; font-weight:700; text-anchor:middle; fill:' + (i === on ? BR : INK));
+        txt(g, X[i], 84, s[1], 'font-size:12px; text-anchor:middle; fill:' + MUT, 'sm');
+        g.addEventListener('click', function(){ var j = T.findIndex(function(t){ return t.s === i; }); pick(j); });
+      });
+      txt(svg, 280, 190, L('O salto do 1º dia é o underpricing; os anos seguintes dizem se houve underperformance', 'The day-1 jump is the underpricing; the following years tell whether there was underperformance'), 'font-size:12px; text-anchor:middle; fill:' + MUT, 'sm');
+      txt(svg, 280, 210, L('linha tracejada: preço inventado, só para ilustrar', 'dashed line: made-up price, for illustration only'), 'font-size:11px; text-anchor:middle; fill:#94a3b8', 'sm');
+    }
+    var g = $('terms');
+    T.forEach(function(t, i){ var b = document.createElement('button'); b.textContent = t.n; b.addEventListener('click', function(){ pick(i); }); g.appendChild(b); });
+    function pick(i){
+      cur = i;
+      each(g.children, function(b, j){ b.setAttribute('aria-pressed', j === i ? 'true' : 'false'); });
+      $('term-panel').innerHTML = '<div class="tag">' + T[i].n + '</div><h3>' + T[i].h + '</h3><p>' + T[i].p + '</p>';
+      draw();
+    }
+    pick(0);
+  })();
+
+  /* ================= 03 · AMOSTRA ================= */
+  (function(){
+    var sc = $('yr-scene'), st = makeStage(sc, 520, 110, {ay:'80%', rx:'58deg'});
+    rotatable(sc, st, -16, 7);
+    var K = 3.3, mode = 0, sel = 1;
+    function set(vb, vu, labels, gap, w){
+      var arr = [];
+      vb.forEach(function(v, i){
+        var x = i * gap;
+        var a = box({w:w, d:44, x:x, y:22, h:Math.max(v * K, 0.6), c:'var(--br)', top:String(v)});
+        var b = box({w:w, d:44, x:x + w + 4, y:22, h:Math.max(vu[i] * K, 0.6), c:'var(--us)', top:String(vu[i])});
+        [a, b].forEach(function(s){ s.addEventListener('click', function(){ if (!M.wasDrag(sc)){ sel = i; render(); } }); st.appendChild(s); });
+        var l = flatLabel(st, labels[i], x - 10, 76, w * 2 + 24);
+        arr.push([a, b, l]);
+      });
+      return arr;
+    }
+    var Y = set(NYB, NYU, YEARS.map(String), 88, 36);
+    var S = set(NSB, NSU, SEC, 132, 46);
+    function render(){
+      [Y, S].forEach(function(g, gi){ g.forEach(function(p, i){ p.forEach(function(e){ e.style.display = gi === mode ? '' : 'none'; }); p[0].classList.toggle('dim', gi === mode && i !== sel); p[1].classList.toggle('dim', gi === mode && i !== sel); }); });
+      var h;
+      if (mode === 0){
+        var tb = NYB[sel], tu = NYU[sel];
+        h = '<div class="tag">' + YEARS[sel] + '</div><h3>' + tb + L(' estreias no Brasil · ', ' debuts in Brazil · ') + tu + L(' nos EUA', ' in the US') + '</h3><p>' +
+          L('São ', 'That is ') + fmt(tb / 104 * 100, 0) + L('% das estreias brasileiras e ', '% of the Brazilian debuts and ') + fmt(tu / 149 * 100, 0) + L('% das americanas da amostra (conta nossa).', '% of the American ones in the sample (our calculation).') + '</p>' +
+          (sel < 2 ? '<p style="font-size:.78rem; color:var(--muted)">' + L('2006 e 2007 juntos: 72% de todas as estreias (71% no Brasil, 72% nos EUA).', '2006 and 2007 together: 72% of all debuts (71% in Brazil, 72% in the US).') + '</p>' : sel === 2 ? '<p style="font-size:.78rem; color:var(--muted)">' + L('No ano da crise, as estreias quase pararam nos dois países.', 'In the crisis year, debuts nearly stopped in both countries.') + '</p>' : '');
+      } else {
+        var pb = [5, 24, 65, 6][sel], pu = [0, 34, 58, 7][sel];
+        h = '<div class="tag">' + SEC[sel] + '</div><h3>' + NSB[sel] + L(' no Brasil (', ' in Brazil (') + pb + '%) · ' + NSU[sel] + L(' nos EUA (', ' in the US (') + pu + '%)</h3><p>' +
+          L('Nos dois países, a maioria das estreias é de empresas de serviços. A indústria vem em segundo. Não houve estreia do agronegócio na amostra americana.', 'In both countries, most debuts are service companies. Industry comes second. There was no agribusiness debut in the US sample.') + '</p>';
+      }
+      $('yr-panel').innerHTML = h;
+    }
+    seg('yr-seg', function(b){ mode = +b.dataset.m; sel = mode === 0 ? 1 : 2; render(); });
+    render();
+  })();
+
+  /* ================= 04 · TAMANHO ================= */
+  (function(){
+    function draw(m){
+      var arr = m ? TOPU : TOPB, mx = arr[0][2] * 1.25, c = m ? 'var(--us)' : 'var(--br)', cur = m ? 'US$ ' : 'R$ ';
+      $('tm-bars').innerHTML = arr.map(function(r){
+        var w = r[2] / mx * 100, v = Math.round(r[2]).toLocaleString(EN ? 'en-US' : 'pt-BR') + (EN ? ' m' : ' mi');
+        return '<div class="row"><span>' + r[0] + ' · ' + r[1] + '</span><div class="tr"><i style="width:' + w + '%; background:' + c + '"></i><span style="left:calc(' + w + '% + 6px); color:' + c + '">' + cur + v + '</span></div></div>';
+      }).join('');
+      $('tm-note').textContent = m ?
+        L('As três maiores ofertas americanas foram de 2006. A maior, a da Mastercard, foi menor que as cinco maiores brasileiras em números absolutos, mas as moedas são diferentes.', 'The three largest American offerings were in 2006. The largest, Mastercard\'s, was smaller in raw numbers than the five largest Brazilian ones, but the currencies differ.') :
+        L('No Brasil, as grandes ofertas vieram sobretudo a partir de 2008. Só o Santander respondeu por 42% do dinheiro das estreias de 2008 e 2009, segundo a introdução.', 'In Brazil, the big offerings came mainly from 2008 on. Santander alone accounted for 42% of the money raised by debuts in 2008 and 2009, according to the introduction.');
+    }
+    draw(0); seg('tm-seg', function(b){ draw(+b.dataset.m); });
+  })();
+
+  /* ================= 05 · COMO MEDIR ================= */
+  (function(){
+    var svg = $('m-svg');
+    function upd(){
+      var r = +$('m-r').value, m = +$('m-m').value;
+      var va = 100 * (1 + r / 100), vm = 100 * (1 + m / 100), ar = ((1 + r / 100) / (1 + m / 100) - 1) * 100;
+      $('m-rv').textContent = (r > 0 ? '+' : r < 0 ? '−' : '') + Math.abs(r) + '%';
+      $('m-mv').textContent = (m > 0 ? '+' : m < 0 ? '−' : '') + Math.abs(m) + '%';
+      svg.innerHTML = '';
+      var mx = 260, X = function(v){ return 150 + v / mx * 380; };
+      [[L('100 na ação', '100 in the share'), va, BR, 60], [L('100 no índice', '100 in the index'), vm, '#94a3b8', 130]].forEach(function(row){
+        txt(svg, 140, row[3] + 22, row[0], 'font-size:14px; text-anchor:end; fill:' + INK);
+        el('rect', {x:150, y:row[3], width:Math.max(X(row[1]) - 150, 1), height:34, rx:5, fill:row[2]}, svg);
+        txt(svg, X(row[1]) + 8, row[3] + 23, fmt(row[1], 0), 'font-size:15px; font-weight:700; fill:' + row[2]);
+      });
+      el('line', {x1:X(100), x2:X(100), y1:40, y2:182, stroke:INK, 'stroke-dasharray':'4 4'}, svg);
+      txt(svg, X(100), 32, L('o que foi aplicado', 'amount invested'), 'font-size:11px; text-anchor:middle; fill:' + MUT, 'sm');
+      txt(svg, 280, 210, L('Valores ao fim do período', 'Values at the end of the period'), 'font-size:11px; text-anchor:middle; fill:' + MUT, 'sm');
+      var good = ar > 0.05, bad = ar < -0.05;
+      $('m-calc').innerHTML =
+        '<div class="c" style="--cc:' + (good ? 'var(--navy)' : 'var(--red)') + '"><span class="k">' + L('Retorno anormal', 'Abnormal return') + '</span><b>' + sgn(ar, 1) + '%</b><span>' + (good ? L('a ação ganhou do índice', 'the share beat the index') : bad ? L('a ação perdeu para o índice', 'the share lost to the index') : L('empatou com o índice', 'level with the index')) + '</span></div>' +
+        '<div class="c" style="--cc:#94a3b8"><span class="k">' + L('Ação ÷ índice', 'Share ÷ index') + '</span><b>' + fmt(va / vm, 2) + '</b><span>' + L('mesma ideia do Wealth Relative, mas para uma ação só', 'same idea as the Wealth Relative, but for a single share') + '</span></div>';
+    }
+    $('m-r').addEventListener('input', upd); $('m-m').addEventListener('input', upd); upd();
+  })();
+
+  /* ================= 06 · DIA 1 ================= */
+  (function(){
+    var sc = $('d1-scene'), st = makeStage(sc, 300, 120, {ay:'70%', rx:'60deg'});
+    rotatable(sc, st, -20, 8);
+    var K = 9;
+    var a = box({w:96, d:96, x:10, y:14, h:10, c:'var(--br)', top:' '});
+    var b = box({w:96, d:96, x:190, y:14, h:10, c:'var(--us)', top:' '});
+    st.appendChild(a); st.appendChild(b);
+    flatLabel(st, L('Brasil', 'Brazil'), 0, 116, 116); flatLabel(st, L('EUA', 'US'), 180, 116, 116);
+    function set(s, v, dd){
+      var h = Math.max(Math.abs(v) * K, 2);
+      s.style.setProperty('--h', h + 'px');
+      s.style.setProperty('--z', (v < 0 ? -h : 0) + 'px');
+      s.classList.toggle('neg', v < 0);
+      s.querySelector('.top-label').textContent = sgn(v, dd) + '%';
+    }
+    function show(p){
+      var d = D1[p];
+      set(a, d.b, d.db); set(b, d.u, d.du);
+      var h = '<div class="tag">' + d.n + ' · ' + L('Tabela ', 'Table ') + d.tb + '</div><h3>' + L('Brasil ', 'Brazil ') + sgn(d.b, d.db) + '% · ' + L('EUA ', 'US ') + sgn(d.u, d.du) + '%</h3>';
+      h += '<p>' + L('Quem comprou R$ 100 no preço de oferta tinha, no fim do primeiro dia, ', 'Someone who bought 100 at the offer price had, at the end of the first day, ') + 'R$ ' + fmt(100 + d.b, 2) + L(' no Brasil e ', ' in Brazil and ') + 'US$ ' + fmt(100 + d.u, 2) + L(' nos EUA (média de ', ' in the US (average of ') + d.nb + L(' e ', ' and ') + d.nu + L(' estreias).', ' debuts).') + '</p>';
+      if (p === 3){
+        h += '<p style="font-size:.78rem; color:var(--muted)">' + L('As 13 estreias de 2008 e o salto de cada uma:', 'The 13 debuts of 2008 and each one\'s jump:') + '</p><div class="chips">' + IPO08.map(function(x){ return '<span class="' + (x[1] === 'b' ? 'cbr' : 'cus') + '">' + x[0] + ' <b>' + sgn(x[2], 1) + '%</b></span>'; }).join('') + '</div>';
+      } else if (p === 1){
+        h += '<p style="font-size:.78rem; color:var(--muted)">' + L('Na euforia, o salto foi o maior nos dois países. O autor liga isso ao excesso de otimismo dos mercados aquecidos.', 'During the boom, the jump was the biggest in both countries. The author links this to the excess optimism of hot markets.') + '</p>';
+      } else if (p === 4){
+        h += '<p style="font-size:.78rem; color:var(--muted)">' + L('Depois da crise, o salto caiu nos dois países: é o mercado frio.', 'After the crisis, the jump fell in both countries: a cold market.') + '</p>';
+      }
+      $('d1-panel').innerHTML = h;
+    }
+    show(0); seg('d1-seg', function(btn){ show(+btn.dataset.p); });
+  })();
+
+  /* ================= 07 · PRIMEIROS MESES ================= */
+  (function(){
+    var c = 0, m = 0, svg = $('ex-svg');
+    function draw(){
+      var arr = EXT[c][m], col = c ? US : BR;
+      svg.innerHTML = '';
+      var mn = -60, mx = 90, X = function(v){ return 150 + (v - mn) / (mx - mn) * 370; };
+      [-50, -25, 0, 25, 50, 75].forEach(function(t){
+        el('line', {x1:X(t), x2:X(t), y1:20, y2:270, stroke:t === 0 ? INK : '#e2e8f0', 'stroke-width':t === 0 ? 1.5 : 1}, svg);
+        txt(svg, X(t), 290, (t > 0 ? '+' : t < 0 ? '−' : '') + Math.abs(t) + '%', 'font-size:11px; text-anchor:middle; fill:' + MUT);
+      });
+      var order = arr.slice().sort(function(p, q){ return q[1] - p[1]; });
+      order.forEach(function(r, i){
+        var y = 30 + i * 40, x0 = X(0), x1 = X(r[1]);
+        el('rect', {x:Math.min(x0, x1), y:y, width:Math.abs(x1 - x0), height:26, rx:4, fill:col, opacity:r[1] < 0 ? 0.55 : 1}, svg);
+        txt(svg, 140, y + 18, r[0], 'font-size:13px; text-anchor:end; fill:' + INK, 'nm');
+        txt(svg, r[1] < 0 ? x1 - 6 : x1 + 6, y + 18, sgn(r[1], 2) + '%', 'font-size:13px; font-weight:700; fill:' + col + '; text-anchor:' + (r[1] < 0 ? 'end' : 'start'));
+      });
+      var mm = MM[m];
+      $('ex-panel').innerHTML = '<div class="tag">' + (m ? L('Mês 2', 'Month 2') : L('Mês 1', 'Month 1')) + ' · ' + L('médias da Tabela 3', 'Table 3 averages') + '</div><p>' + L('Brasil ', 'Brazil ') + '<b>' + sgn(mm[0], 2) + '%</b> · ' + L('EUA ', 'US ') + '<b>' + sgn(mm[1], 2) + '%</b>. <span class="no">≈</span> ' + L('Sem diferença clara entre os países (t = ', 'No clear difference between the countries (t = ') + fmt(mm[2], 2) + L('). Ela só aparece a partir do 3º mês.', '). It only appears from month 3.') + '</p>';
+    }
+    seg('ex-c', function(b){ c = +b.dataset.c; draw(); });
+    seg('ex-m', function(b){ m = +b.dataset.m; draw(); });
+    draw();
+  })();
+
+  /* ================= 08 · A VIRADA ================= */
+  (function(){
+    var svg = $('wr-svg');
+    var X = function(i){ return 70 + i * 82; }, Y = function(v){ return 250 - (v - 0.8) / (1.4 - 0.8) * 220; };
+    function draw(cur){
+      svg.innerHTML = '';
+      [0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4].forEach(function(t){
+        el('line', {x1:56, x2:540, y1:Y(t), y2:Y(t), stroke:Math.abs(t - 1) < 0.001 ? '#94a3b8' : '#eef2f7', 'stroke-width':Math.abs(t - 1) < 0.001 ? 3 : 1, 'stroke-dasharray':Math.abs(t - 1) < 0.001 ? '7 5' : ''}, svg);
+        txt(svg, 48, Y(t) + 4, fmt(t, 1), 'font-size:11px; text-anchor:end; fill:' + MUT);
+      });
+      txt(svg, X(3) + 41, Y(1) - 7, L('índice = 1', 'index = 1'), 'font-size:12px; text-anchor:middle; fill:#64748b; font-weight:600');
+      el('rect', {x:X(cur) - 30, y:18, width:60, height:240, rx:8, fill:'#f1f5f9'}, svg);
+      [[WRU, US, L('EUA', 'US')], [WRB, BR, L('Brasil', 'Brazil')]].forEach(function(s){
+        el('polyline', {points:s[0].map(function(v, i){ return X(i) + ',' + Y(v); }).join(' '), fill:'none', stroke:s[1], 'stroke-width':3.5}, svg);
+        s[0].forEach(function(v, i){
+          el('circle', {cx:X(i), cy:Y(v), r:i === cur ? 8 : 5, fill:s[1], stroke:'#fff', 'stroke-width':2}, svg);
+          if (i === cur) txt(svg, X(i) + 12, Y(v) + (s[1] === US ? -8 : 18), fmt(v, 2), 'font-size:15px; font-weight:700; fill:' + s[1]);
+        });
+        txt(svg, X(5) + 14, Y(s[0][5]) + 4, s[2], 'font-size:12px; font-weight:700; fill:' + s[1]);
+      });
+      HZ.forEach(function(h, i){ txt(svg, X(i), 282, h, 'font-size:12px; text-anchor:middle; fill:' + (i === cur ? INK : MUT) + '; font-weight:' + (i === cur ? 700 : 400)); });
+    }
+    function upd(){
+      var i = +$('wr-rng').value;
+      $('wr-v').textContent = HZ[i];
+      draw(i);
+      function line(v, idx, cc, name){
+        var p = Math.round((v - 1) * 100);
+        return '<div style="--cc:' + cc + '"><b>' + fmt(v, 2) + '</b><span>' + name + ': ' + (p === 0 ? L('empatado com o ', 'level with the ') + idx : (p > 0 ? fmt(p, 0) + L('% mais patrimônio que no ', '% more wealth than in the ') : fmt(-p, 0) + L('% menos patrimônio que no ', '% less wealth than in the ')) + idx) + '</span></div>';
+      }
+      $('wr-big').innerHTML = line(WRB[i], 'Ibovespa', 'var(--br)', L('Brasil', 'Brazil')) + line(WRU[i], 'S&P 500', 'var(--us)', L('EUA', 'US'));
+    }
+    $('wr-rng').addEventListener('input', upd); upd();
+  })();
+
+  /* ================= 09 · RECORTES ================= */
+  (function(){
+    var g = $('pn-seg'), svg = $('pn-svg');
+    PN.forEach(function(p, i){ var b = document.createElement('button'); b.textContent = p.t; b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'); b.dataset.i = i; g.appendChild(b); });
+    function draw(i){
+      var p = PN[i];
+      svg.innerHTML = '';
+      var mn = -45, mx = 45, X = function(v){ return 130 + (Math.max(mn, Math.min(mx, v)) - mn) / (mx - mn) * 360; };
+      [-40, -20, 0, 20, 40].forEach(function(t){
+        el('line', {x1:X(t), x2:X(t), y1:12, y2:304, stroke:t === 0 ? INK : '#eef2f7', 'stroke-width':t === 0 ? 1.5 : 1}, svg);
+        txt(svg, X(t), 322, (t > 0 ? '+' : t < 0 ? '−' : '') + Math.abs(t) + '%', 'font-size:11px; text-anchor:middle; fill:' + MUT);
+      });
+      ROWS.forEach(function(r, j){
+        var y = 16 + j * 41;
+        txt(svg, 10, y + 22, r, 'font-size:13px; fill:' + INK + '; font-weight:600');
+        [[p.b[j], BR, 0], [p.u[j], US, 17]].forEach(function(v){
+          var x0 = X(0), x1 = X(v[0]);
+          el('rect', {x:Math.min(x0, x1), y:y + v[2], width:Math.max(Math.abs(x1 - x0), 1.5), height:14, rx:3, fill:v[1]}, svg);
+          var lx = v[0] < 0 ? Math.min(x0, x1) - 4 : Math.max(x0, x1) + 4;
+          txt(svg, lx, y + v[2] + 12, sgn(v[0], 1), 'font-size:11px; font-weight:600; fill:' + v[1] + '; text-anchor:' + (v[0] < 0 ? 'end' : 'start'), 'v');
+        });
+        txt(svg, 540, y + 23, p.s[j] ? '✓' : '≈', 'font-size:17px; text-anchor:middle; font-weight:700; fill:' + (p.s[j] ? '#166534' : '#94a3b8'));
+      });
+      var nsig = p.s.reduce(function(a, b){ return a + b; }, 0);
+      $('pn-panel').innerHTML = '<div class="tag">' + L('Painel ', 'Panel ') + p.k + ' · ' + L('Tabela ', 'Table ') + p.tb + ' · ' + p.nb + L(' no Brasil, ', ' in Brazil, ') + p.nu + L(' nos EUA', ' in the US') + '</div><p>' + p.d + '</p><p style="font-size:.78rem; color:var(--muted)">' + nsig + L(' de 7 momentos com diferença confirmada.', ' of 7 moments with a confirmed difference.') + '</p>';
+    }
+    seg('pn-seg', function(b){ draw(+b.dataset.i); });
+    draw(0);
+  })();
+
+  /* ================= 10 · O INESPERADO ================= */
+  (function(){
+    var svg = $('cr-svg'), per = 0, LB = [L('Mês 3', 'Month 3'), L('Ano 1', 'Year 1'), L('Ano 2', 'Year 2'), L('Ano 3', 'Year 3')];
+    function draw(){
+      var d = CR[per];
+      svg.innerHTML = '';
+      var mn = -40, mx = 80, Y = function(v){ return 260 - (v - mn) / (mx - mn) * 230; };
+      [-40, -20, 0, 20, 40, 60, 80].forEach(function(t){
+        el('line', {x1:50, x2:545, y1:Y(t), y2:Y(t), stroke:t === 0 ? INK : '#eef2f7', 'stroke-width':t === 0 ? 1.5 : 1}, svg);
+        txt(svg, 44, Y(t) + 4, (t > 0 ? '+' : t < 0 ? '−' : '') + Math.abs(t) + '%', 'font-size:11px; text-anchor:end; fill:' + MUT);
+      });
+      LB.forEach(function(l, j){
+        var x = 80 + j * 118;
+        [[d.b[j], BR, 0], [d.u[j], US, 42]].forEach(function(v){
+          var y0 = Y(0), y1 = Y(v[0]);
+          el('rect', {x:x + v[2], y:Math.min(y0, y1), width:38, height:Math.max(Math.abs(y1 - y0), 1.5), rx:3, fill:v[1]}, svg);
+          txt(svg, x + v[2] + 19, v[0] < 0 ? y1 + 15 : y1 - 6, sgn(v[0], 1), 'font-size:12px; font-weight:700; text-anchor:middle; fill:' + v[1]);
+        });
+        txt(svg, x + 40, 300, l, 'font-size:13px; text-anchor:middle; fill:' + INK);
+      });
+      txt(svg, 545, 18, per ? L('depois da crise · 26 BR, 33 EUA', 'after the crisis · 26 BR, 33 US') : L('antes da crise · 78 BR, 116 EUA', 'before the crisis · 78 BR, 116 US'), 'font-size:12px; text-anchor:end; fill:' + MUT);
+      $('cr-panel').innerHTML = per ?
+        '<div class="tag">' + L('Depois da crise · Tabela 6', 'After the crisis · Table 6') + '</div><p>' + L('O jogo virou: no 3º ano, as estreias brasileiras estavam 75,6% acima do Ibovespa, e as americanas, só 7,3% acima do S&P 500. A diferença passou no teste do 3º mês ao 3º ano. São poucas estreias, e a dispersão é grande.', 'The tables turned: in year 3, Brazilian debuts were 75.6% above the Ibovespa, and American ones only 7.3% above the S&P 500. The difference passed the test from month 3 to year 3. There are few debuts, and the spread is large.') + '</p>' :
+        '<div class="tag">' + L('Antes da crise · Tabela 5', 'Before the crisis · Table 5') + '</div><p>' + L('Antes da crise, o desenho do total, ainda mais forte: o Brasil abaixo do Ibovespa em todos os momentos, os EUA acima do S&P 500. A diferença passou no teste em todos eles.', 'Before the crisis, the overall pattern, even stronger: Brazil below the Ibovespa at every moment, the US above the S&P 500. The difference passed the test at all of them.') + '</p>';
+    }
+    seg('cr-seg', function(b){ per = +b.dataset.p; draw(); });
+    var gs = $('guess');
+    each(gs.querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){
+        var g = +b.dataset.g;
+        $('guess-res').innerHTML = (g === 2 ? '<b>' + L('Acertou.', 'Right.') + '</b> ' : '<b>' + L('Não foi o que aconteceu.', 'That is not what happened.') + '</b> ') + L('Depois da crise, as estreias brasileiras ficaram acima do Ibovespa e acima das americanas. Veja o gráfico.', 'After the crisis, Brazilian debuts ended up above the Ibovespa and above the American ones. See the chart.');
+        per = 1; each($('cr-seg').querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed', x.dataset.p === '1' ? 'true' : 'false'); }); draw();
+      });
+    });
+    draw();
+  })();
+
+  /* ================= 11 · ESTREIA × LONGO PRAZO ================= */
+  (function(){
+    var svg = $('hl-svg'), c = 0, LB = [L('Mês 3', 'Month 3'), L('Ano 1', 'Year 1'), L('Ano 2', 'Year 2'), L('Ano 3', 'Year 3')];
+    var X = function(i){ return 90 + i * 140; }, Y = function(v){ return 250 - (v + 30) / 75 * 220; };
+    function draw(){
+      var d = HL[c], col = c ? US : BR;
+      svg.innerHTML = '';
+      [-30, -15, 0, 15, 30, 45].forEach(function(t){
+        el('line', {x1:56, x2:545, y1:Y(t), y2:Y(t), stroke:t === 0 ? INK : '#eef2f7', 'stroke-width':t === 0 ? 1.5 : 1}, svg);
+        txt(svg, 48, Y(t) + 4, (t > 0 ? '+' : t < 0 ? '−' : '') + Math.abs(t) + '%', 'font-size:11px; text-anchor:end; fill:' + MUT);
+      });
+      [[d.lo, 0.45, '6 3', L('metade que menos subiu na estreia', 'half that rose least on debut')], [d.hi, 1, '', L('metade que mais subiu na estreia', 'half that rose most on debut')]].forEach(function(s, k){
+        el('polyline', {points:s[0].map(function(v, i){ return X(i) + ',' + Y(v); }).join(' '), fill:'none', stroke:col, 'stroke-width':3.5, opacity:s[1], 'stroke-dasharray':s[2]}, svg);
+        s[0].forEach(function(v, i){
+          el('circle', {cx:X(i), cy:Y(v), r:5.5, fill:col, opacity:s[1], stroke:'#fff', 'stroke-width':2}, svg);
+          if (i === 3 || i === 1) txt(svg, X(i) + (i === 3 ? -10 : 0), Y(v) + (v > (k ? d.lo[i] : d.hi[i]) ? -10 : 18), sgn(v, 1) + '%', 'font-size:12px; font-weight:700; text-anchor:' + (i === 3 ? 'end' : 'middle') + '; fill:' + col);
+        });
+      });
+      LB.forEach(function(l, i){ txt(svg, X(i), 288, l, 'font-size:12px; text-anchor:middle; fill:' + INK); });
+      $('hl-panel').innerHTML = '<div class="tag">' + (c ? L('EUA · 74 e 75 estreias', 'US · 74 and 75 debuts') : L('Brasil · 52 e 52 estreias', 'Brazil · 52 and 52 debuts')) + '</div><p>' + L('Salto médio na estreia: ', 'Average debut jump: ') + sgn(d.dlo, c ? 1 : 2) + L('% na metade de baixo e ', '% in the bottom half and ') + sgn(d.dhi, 1) + L('% na de cima. ', '% in the top half. ') +
+        (c ? L('Nos EUA, as duas metades terminam o 3º ano perto uma da outra (+37,2% e +33,1%), e o autor não vê a relação inversa ali.', 'In the US, the two halves end year 3 close to each other (+37.2% and +33.1%), and the author does not see the inverse relationship there.') : L('No Brasil, as linhas se cruzam depois do 2º ano: a metade que estreou em alta termina 18,7% abaixo do índice.', 'In Brazil, the lines cross after year 2: the half that debuted high ends 18.7% below the index.')) + '</p>';
+    }
+    seg('hl-seg', function(b){ c = +b.dataset.c; draw(); });
+    draw();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
