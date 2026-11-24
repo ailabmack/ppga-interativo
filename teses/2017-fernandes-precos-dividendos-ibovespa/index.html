@@ -1,0 +1,776 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O preço das ações segue os dividendos? · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Ricardo Antonio Fernandes (PPGA Mackenzie, 2017) sobre preços, dividendos e a racionalidade da bolsa brasileira em 30 anos de Ibovespa, explicada em 11 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2017-fernandes-precos-dividendos-ibovespa/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2223%22 font-family=%22Georgia%22 font-size=%2218%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>P</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --price:var(--navy);   /* preço das ações / Ibovespa */
+    --div:var(--red);      /* dividendos */
+    --gray:#94a3b8;
+  }
+  .note{font-size:.76rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:12px; line-height:1.45;}
+  .note b{color:var(--ink-2);}
+  .ilus{display:inline-block; font-size:.62rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:18px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.82rem; cursor:pointer; color:var(--ink-2); font-family:inherit;}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.74rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  svg text{font-family:var(--sans);}
+  .svgbox{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .warn{font-size:.76rem; color:var(--muted); margin-top:10px;}
+  .warn b{color:var(--red);}
+  .read{font-size:.86rem; color:var(--ink-2); min-height:2.8em; margin-top:10px;}
+  .read b{color:var(--ink);}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(1.7rem, 2.8vw, 2.15rem);}
+  html[lang="en"] #capa h1{font-size:clamp(1.8rem, 2.9vw, 2.2rem);}
+  .meta{display:grid; gap:2px; margin-top:16px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.76rem; color:var(--muted); text-align:center; margin-top:6px; max-width:36em; margin-left:auto; margin-right:auto;}
+  #hero-scene{perspective:1600px;}
+  #hero-scene .slab{cursor:pointer;}
+  #hero-scene .slab.active{--ox:58px;}
+  #hero-scene .slab.glass > i{--face:rgb(148 163 184 / .14); box-shadow:inset 0 0 0 1.5px rgb(100 116 139 / .8);}
+  #hero-scene .slab .f-front .face-label{font-size:20px; letter-spacing:0; font-family:var(--serif);}
+  #hero-scene .slab.glass .f-front .face-label{color:var(--ink-2);}
+  .pick{display:flex; justify-content:center; gap:6px; flex-wrap:wrap; margin-top:6px;}
+  .pick button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:5px 11px; font-family:inherit; font-size:.76rem; cursor:pointer; color:var(--ink-2);}
+  .pick button[aria-pressed="true"]{border-color:var(--red); color:var(--red); font-weight:600;}
+  #hero-read{font-size:.82rem; color:var(--ink-2); text-align:center; min-height:4.2em; margin-top:6px;}
+  .key{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; font-size:.72rem; color:var(--muted); margin-top:4px;}
+  .key i{display:inline-block; width:11px; height:11px; border-radius:3px; vertical-align:-1px; margin-right:4px;}
+
+  /* ---------- 02 · Galinha ---------- */
+  .eggs{display:flex; flex-wrap:wrap; gap:3px; margin-top:10px; min-height:120px; align-content:flex-start;}
+  .eggs i{width:10px; height:13px; border-radius:50% 50% 50% 50% / 60% 60% 40% 40%; background:var(--div); display:block;}
+  .eggs i.part{opacity:.4;}
+  .slider{width:100%; margin-top:10px; accent-color:var(--red);}
+  .marks{display:flex; justify-content:space-between; font-size:.7rem; color:var(--muted);}
+  .marks button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:4px 9px; font-family:inherit; font-size:.72rem; cursor:pointer; color:var(--ink-2);}
+  .big{font-family:var(--serif); font-size:2rem; color:var(--ink); line-height:1.1;}
+  .big small{font-family:var(--sans); font-size:.84rem; color:var(--muted);}
+
+  /* ---------- 03 · Camadas ---------- */
+  #emh-scene .slab{cursor:pointer;}
+  #emh-scene .slab.active{--oz:26px;}
+  #emh-scene .slab .f-front .face-label{font-size:11px; letter-spacing:.08em;}
+
+  /* ---------- 04 · Grade de testes ---------- */
+  .tgrid{display:grid; gap:3px; margin-top:12px; font-size:.74rem;}
+  .tgrid .h{font-weight:700; color:var(--ink-2); text-align:center; font-size:.68rem; line-height:1.15; align-self:end;}
+  .tgrid .rh{color:var(--ink-2); font-weight:600; align-self:center; font-size:.72rem;}
+  .tgrid i{display:block; height:22px; border-radius:5px; font-style:normal; text-align:center; line-height:22px; font-size:.66rem; font-weight:700;}
+  .tgrid i.s{background:var(--red); color:#fff;}
+  .tgrid i.n{background:#e2e8f0; color:var(--muted);}
+  .tally{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; font-size:.76rem; color:var(--ink-2);}
+  .tally span{background:var(--card); border:1px solid var(--border); border-radius:999px; padding:4px 10px;}
+  .tally b{color:var(--red);}
+
+  /* ---------- 05 · 124 trimestres ---------- */
+  .qgrid{display:grid; grid-template-columns:38px repeat(4, 1fr); gap:2px; font-size:.62rem; max-width:340px; margin:0 auto;}
+  .qgrid .y{color:var(--muted); text-align:right; padding-right:4px; line-height:11px;}
+  .qgrid i{display:block; height:11px; border-radius:2px; background:#cbd5e1; transition:background .3s;}
+  .qgrid i.on{background:var(--red);}
+  .qgrid i.on2{background:var(--navy);}
+  .qgrid .qh{text-align:center; color:var(--muted); font-weight:600;}
+  @media (max-width:600px){ .qgrid{max-width:100%;} }
+
+  /* ---------- 06 · Coleira ---------- */
+  .legend{display:flex; gap:14px; flex-wrap:wrap; font-size:.74rem; color:var(--muted); margin-top:6px;}
+  .legend i{display:inline-block; width:16px; height:3px; border-radius:2px; vertical-align:3px; margin-right:5px;}
+
+  /* ---------- 07 · Multiplicador ---------- */
+  #theta-scene .slab{cursor:pointer;}
+  #theta-scene .slab.active{--oz:14px;}
+  #theta-scene .slab.glass > i{--face:rgb(148 163 184 / .14); box-shadow:inset 0 0 0 1.5px rgb(100 116 139 / .8);}
+  #theta-scene .slab .f-front .face-label{font-size:15px; letter-spacing:0;}
+  #theta-scene .slab.glass .f-front .face-label{color:var(--ink-2);}
+
+  /* ---------- 08 · Mão dupla ---------- */
+  #gr-svg .arrow{transition:opacity .4s, stroke-width .4s;}
+
+  /* ---------- 10 · 2001 × 2017 ---------- */
+  .tl{position:relative; margin-top:14px;}
+  .tl .row{display:grid; grid-template-columns:150px 1fr; gap:10px; align-items:center; margin-bottom:10px; cursor:pointer;}
+  .tl .row .nm{font-size:.78rem; color:var(--ink-2); font-weight:600; line-height:1.25;}
+  .tl .row .tr{position:relative; height:26px; background:#f1f5f9; border-radius:6px;}
+  .tl .row .tr i{position:absolute; top:0; bottom:0; border-radius:6px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; color:#fff; font-style:normal; font-size:.7rem; font-weight:700;}
+  .tl .row.active .nm{color:var(--red);}
+  .tl .row.active .tr{box-shadow:0 0 0 2px var(--red);}
+  .tl .axis{display:flex; justify-content:space-between; margin-left:160px; font-size:.68rem; color:var(--muted);}
+  @media (max-width:600px){ .tl .row{grid-template-columns:1fr; gap:3px;} .tl .axis{margin-left:0;} }
+
+  /* ---------- 11 · Fim ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.78rem; line-height:1.45; color:var(--ink-2);}
+  .pcard p em{font-style:normal; font-size:.68rem; color:var(--muted);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:14px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.76rem; color:var(--ink-2); line-height:1.42;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.78rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+  .also{font-size:.8rem; margin-top:10px; color:var(--muted);}
+  .also a{color:var(--red); font-weight:600;}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2017-fernandes-precos-dividendos-ibovespa/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 11</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2017</div>
+      <h1 class="rv" style="--d:.1s">Em 30 anos de Ibovespa, preço e dividendos andaram juntos, mas não como num mercado racional</h1>
+      <p class="sub rv" style="--d:.2s">Se o preço de uma ação é o valor de hoje dos dividendos que ela vai pagar, os dois seguem regras precisas. A tese testou essas regras no Ibovespa, de 1986 a 2016, por dois caminhos. Explicada em 11 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autoria:</b> Ricardo Antonio Fernandes</span>
+        <span><b>Orientador:</b> Prof. Dr. Leonardo Fernando Cruz Basso</span>
+        <span><b>Coorientador:</b> Prof. Dr. Emerson Fernandes Marçal</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#galinha">Começar →</a>
+        <a class="btn ghost" href="#limite">Ir à descoberta</a>
+      </div>
+      <p class="warn rv" style="--d:.45s"><b>Não é recomendação de investimento.</b> A página explica uma pesquisa acadêmica sobre como os preços se formam; a tese não testa estratégias de compra e venda.</p>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="480x330" role="img" aria-label="Uma torre de cinco blocos, as cinco peças do modelo testadas na tese: três de baixo, azuis, passaram; a quarta, de vidro, ficou inconclusiva; a de cima, vermelha, foi rejeitada"></div></div>
+      <div class="key"><span><i style="background:var(--navy)"></i>passou</span><span><i style="background:#e2e8f0; box-shadow:inset 0 0 0 1px #64748b"></i>inconclusivo</span><span><i style="background:var(--red)"></i>rejeitado</span></div>
+      <div class="pick" id="hero-pick" role="group" aria-label="Escolha uma peça"></div>
+      <p id="hero-read" aria-live="polite"></p>
+      <p class="cap-legend">As cinco peças do modelo de valor presente, de baixo para cima (Tabelas 3 a 20). Toque num bloco ou num botão; arraste para girar.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-10"><a href="https://brasil.un.org/pt-br/sdgs/10" target="_blank" rel="noopener" title="ODS 10 · Redução das desigualdades: Testa se os preços da bolsa brasileira refletem o valor dos dividendos, informação útil para acompanhar e regular o mercado de capitais."><b>10</b>Redução das desigualdades</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · GALINHA -->
+<section class="slide" id="galinha" data-label="Quanto vale uma ação">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> A pergunta · o modelo de valor presente</div>
+      <h2 class="rv" style="--d:.1s">Uma ação vale o que ela vai pagar, trazido para hoje</h2>
+      <p class="lede rv" style="--d:.15s">Pense numa galinha que bota um ovo por trimestre, para sempre. Quanto ela vale? Depende de quanto você exige ganhar por trimestre para esperar pelos ovos. Com ações é igual: os ovos são os dividendos, e o preço deveria ser o valor de hoje de todos eles.</p>
+      <p class="rv" style="--d:.2s">Esse é o modelo de valor presente de Campbell e Shiller (1987), a régua da tese. Se os investidores formam preços assim, com <b>expectativas racionais</b>, preço e dividendos ficam presos um ao outro por regras que dá para testar.</p>
+      <p class="note rv" style="--d:.25s">A galinha é analogia nossa. A conta (valor = dividendo ÷ taxa) é a que a tese usa para ligar o multiplicador à taxa de desconto (seção 3.2.1).</p>
+    </div>
+    <div class="rv panel" style="--d:.2s">
+      <h3>Quanto vale a galinha?</h3>
+      <p>Escolha quanto você exige ganhar por trimestre, acima da inflação.</p>
+      <input class="slider" id="hen-r" type="range" min="0.5" max="3.2" step="0.01" value="1.23" aria-label="Taxa de desconto por trimestre">
+      <div class="marks" id="hen-marks"></div>
+      <div style="display:flex; gap:16px; align-items:flex-end; margin-top:12px; flex-wrap:wrap">
+        <div class="big" id="hen-v"></div>
+        <div style="font-size:.82rem; color:var(--ink-2); flex:1; min-width:180px" id="hen-t"></div>
+      </div>
+      <div class="eggs" id="hen-eggs" aria-hidden="true"></div>
+      <p class="note">Cada ovo = o dividendo de um trimestre. Os três botões são as taxas que a tese tira dos dados (Tabela 9).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · MERCADO EFICIENTE -->
+<section class="slide" id="eficiente" data-label="Mercado eficiente">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> O conceito · hipótese de mercados eficientes</div>
+      <h2 class="rv" style="--d:.1s">Num mercado eficiente, o preço já conta tudo o que se sabe, e só notícia nova o mexe</h2>
+      <p class="lede rv" style="--d:.15s">Se ninguém tem vantagem na informação, não sobra lucro fácil: o preço fica perto do valor justo e as surpresas são imprevisíveis. A literatura separa três versões, conforme a informação que o preço já carrega.</p>
+      <div class="panel rv" style="--d:.2s" id="emh-panel" aria-live="polite"></div>
+      <p class="note rv" style="--d:.25s">Malkiel e Fama (1970) e Fama (1991), na revisão da tese. Segundo a tese, os trabalhos empíricos costumam testar a forma semiforte.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="emh-scene" data-fit="480x330" role="img" aria-label="Três camadas empilhadas: fraca na base, semiforte no meio, forte no topo; cada uma acrescenta informação"></div></div>
+      <div class="pick" id="emh-pick" role="group" aria-label="Escolha uma camada"></div>
+      <p class="cap-legend">Cada camada inclui a de baixo. Toque para ver o que o preço já carrega.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · O TESTE MUDA A RESPOSTA -->
+<section class="slide" id="testes" data-label="Testes discordam">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> O problema · estudos em outros mercados</div>
+      <h2 class="rv" style="--d:.1s">Em outros mercados, o teste escolhido muda a resposta</h2>
+      <p class="lede rv" style="--d:.15s">Na revisão, a tese reúne dois estudos que perguntam se os preços andam como um “passeio aleatório” (sem padrão para prever). Na Ásia, três testes dizem que há padrão nos 14 países, e um quarto (ADF) diz que não há em nenhum.</p>
+      <p class="rv" style="--d:.2s">Por isso a tese não confia num caminho só: testa o modelo de valor presente com o método clássico e com um teste alternativo, mais recente.</p>
+      <p class="note rv" style="--d:.25s">Tabelas 1 (Europa, Borges, 2010) e 2 (Ásia, Hamid et al., 2010). Totais por teste: contagem nossa.</p>
+    </div>
+    <div class="rv panel" style="--d:.2s">
+      <div class="seg" id="tg-seg" role="group" aria-label="Escolha a região e o período">
+        <button type="button" data-m="0" aria-pressed="true">Ásia, mensal 2004–2009</button>
+        <button type="button" data-m="1" aria-pressed="false">Europa, diário 1993–2007</button>
+        <button type="button" data-m="2" aria-pressed="false">Europa, mensal 1993–2007</button>
+      </div>
+      <div class="tgrid" id="tg" role="table" aria-label="Países por teste: passeio aleatório rejeitado?"></div>
+      <div class="tally" id="tg-tally"></div>
+      <p class="note"><b style="color:var(--red)">Sim</b> = o teste rejeitou o passeio aleatório (achou padrão). <b>Não</b> = não rejeitou.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · DADOS -->
+<section class="slide" id="dados" data-label="124 trimestres">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Como a pesquisa olhou · base de dados</div>
+      <h2 class="rv" style="--d:.1s">O autor remontou 30 anos do Ibovespa, ação por ação, para separar preço e dividendos</h2>
+      <p class="lede rv" style="--d:.15s">O Ibovespa é a carteira das ações mais negociadas da bolsa. Com os retornos diários de todas as ações que passaram por ele, com e sem proventos, o autor isolou quanto veio de dividendos e quanto veio de preço, e juntou tudo em trimestres, descontada a inflação.</p>
+      <div class="stats rv" style="--d:.2s">
+        <div class="stat"><b>124</b><span>trimestres, de 1986 a 2016</span></div>
+        <div class="stat"><b>7.849</b><span>dias de retornos na base</span></div>
+        <div class="stat"><b>IGP-DI</b><span>índice de inflação usado, a preços de dez/2016</span></div>
+      </div>
+      <p class="note rv" style="--d:.25s">Seção 3.1 e Apêndice 1. A série de dividendos inclui os juros sobre capital próprio. Ações que mudaram de código e não tinham equivalente foram trocadas pelo próprio índice.</p>
+    </div>
+    <div class="rv panel" style="--d:.2s">
+      <div class="seg" id="q-seg" role="group" aria-label="Destaque">
+        <button type="button" data-m="0" aria-pressed="true">Temporada de dividendos</button>
+        <button type="button" data-m="1" aria-pressed="false">A virada de 1996</button>
+        <button type="button" data-m="2" aria-pressed="false">Estudo de 2001</button>
+      </div>
+      <p class="read" id="q-read" aria-live="polite"></p>
+      <div class="qgrid" id="qgrid" aria-hidden="true"></div>
+      <p class="note">Um quadradinho por trimestre (linhas = anos; colunas = 1º a 4º trimestre). Mostra a estrutura da base, não os valores.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · COLEIRA -->
+<section class="slide" id="coleira" data-label="Andam juntos">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> O que encontrou · teste clássico, passo 1</div>
+      <h2 class="rv" style="--d:.1s">Preço e dividendos vagueiam, mas como dono e cachorro na coleira: nunca se afastam muito</h2>
+      <p class="lede rv" style="--d:.15s">Cada série sozinha não tem um nível para onde volta (tem “raiz unitária”). Mas uma combinação das duas volta sempre para perto da média: é a <b>cointegração</b>, a primeira exigência do modelo. Ela passou.</p>
+      <div class="stats rv" style="--d:.2s">
+        <div class="stat"><b>−6,390</b><span>teste de Engle-Granger nos resíduos; o limite a 1% é −3,502</span></div>
+        <div class="stat"><b>30,30</b><span>teste de Johansen para “nenhuma ligação”; o limite a 5% é 15,41</span></div>
+        <div class="stat"><b>82,3</b><span>rejeita que os dividendos fiquem parados num nível (p = 0,0000)</span></div>
+      </div>
+      <p class="note rv" style="--d:.25s">Tabelas 3, 4, 5 e 8. Os testes de raiz unitária discordaram sobre os dividendos (a forte concentração no 2º trimestre confunde os testes); o teste de Johansen da Tabela 4 desempatou. A coleira é analogia nossa.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg class="svgbox" id="leash-svg" viewBox="0 0 560 280" role="img" aria-label="Duas linhas que vagueiam ao longo do tempo: com coleira, a vermelha segue a azul de perto; sem coleira, cada uma vai para um lado"></svg>
+      <div class="legend"><span><i style="background:var(--navy)"></i>dono (preço)</span><span><i style="background:var(--red)"></i>cachorro (dividendos × multiplicador)</span><span><span class="ilus">ilustração</span></span></div>
+      <div class="ctas" style="margin-top:10px">
+        <div class="seg" id="leash-seg" role="group" aria-label="Coleira">
+          <button type="button" data-m="1" aria-pressed="true">Com coleira</button>
+          <button type="button" data-m="0" aria-pressed="false">Sem coleira</button>
+        </div>
+        <button class="btn small" id="leash-new" type="button">↻ Novo passeio</button>
+      </div>
+      <p class="note">Passeios sorteados no seu navegador para mostrar a ideia; não são os dados da tese.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · MULTIPLICADOR -->
+<section class="slide" id="multiplicador" data-label="O multiplicador">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> O que encontrou · teste clássico, passo 2</div>
+      <h2 class="rv" style="--d:.1s">O preço vale de 80 a 130 dividendos trimestrais, conforme a conta</h2>
+      <p class="lede rv" style="--d:.15s">Esse multiplicador diz quantos “ovos” cabem no preço e, invertido, qual taxa de desconto o mercado usa. A tese tentou três formas de estimá-lo; a terceira, pelo retorno médio do Ibovespa, não formou uma combinação estável e saiu da análise.</p>
+      <div class="panel rv" style="--d:.2s" id="theta-panel" aria-live="polite"></div>
+      <p class="note rv" style="--d:.25s">Tabelas 7, 8, 9 e 10; correlações na seção 3.2.1. Anos de dividendos = multiplicador ÷ 4, conta nossa.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="theta-scene" data-fit="480x340" role="img" aria-label="Três colunas com a altura do multiplicador: Johansen 127,5, Engle-Granger 81,3 e a média amostral 33,3, esta de vidro porque foi descartada"></div></div>
+      <div class="pick" id="theta-pick" role="group" aria-label="Escolha a estimativa"></div>
+      <p class="cap-legend">Altura = multiplicador (quantos dividendos trimestrais cabem no preço). Arraste para girar.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · MÃO DUPLA -->
+<section class="slide" id="maodupla" data-label="Mão dupla">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> O que encontrou · quem antecipa quem</div>
+      <h2 class="rv" style="--d:.1s">O preço deveria antecipar os dividendos, e só isso; nas três versões, deu mão dupla</h2>
+      <p class="lede rv" style="--d:.15s">Se o preço é a previsão dos dividendos, o desvio do preço deve ajudar a prever os dividendos que vêm. O contrário não deveria acontecer. O teste de Granger achou as duas setas, por isso a tese chama o resultado de <b>inconclusivo</b>.</p>
+      <div class="seg rv" style="--d:.2s" id="gr-seg" role="group" aria-label="Escolha a versão do teste">
+        <button type="button" data-m="0" aria-pressed="true">Retorno constante · Johansen</button>
+        <button type="button" data-m="1" aria-pressed="false">Retorno constante · Engle-Granger</button>
+        <button type="button" data-m="2" aria-pressed="false">Retorno que varia com os juros</button>
+      </div>
+      <p class="note rv" style="--d:.25s">Tabelas 13 e 19. Na versão com juros, a tese usa a razão dividendo/preço e os juros reais (Selic) menos o crescimento dos dividendos; ela lembra que esse teste é uma implicação mais fraca do modelo.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg class="svgbox" id="gr-svg" viewBox="0 0 560 300" role="img" aria-label="Dois nós ligados por duas setas: a de cima, esperada pela teoria; a de baixo, a que não deveria existir"></svg>
+      <p class="read" id="gr-read" aria-live="polite"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · DESCOBERTA -->
+<section class="slide" id="limite" data-label="A descoberta">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> A descoberta · teste de Johansen e Swensen (1998)</div>
+      <h2 class="rv" style="--d:.1s">No teste alternativo, o modelo de preço racional é rejeitado com folga, para qualquer taxa de desconto</h2>
+      <p class="lede rv" style="--d:.15s">Em vez de olhar uma seta de cada vez, esse teste confere todas as regras do modelo juntas. Ainda não tinha sido aplicado a dados brasileiros. A conta dá um número; quanto maior, mais longe os dados estão do modelo.</p>
+      <p class="rv" style="--d:.2s">Com fatores de desconto de 0,95 a 0,99 por trimestre, o número ficou entre 122 e 144. Se o modelo valesse, passar de 15,5 já seria raro (5 vezes em 100).</p>
+      <p class="note rv" style="--d:.25s">Tabela 20 (qui-quadrado com 8 graus de liberdade, p-valor 0,0000 em todos). O limite de 15,51 (5%) e a curva são conta nossa a partir da mesma distribuição.</p>
+    </div>
+    <div class="rv panel" style="--d:.2s">
+      <svg id="chi-svg" viewBox="0 0 560 260" style="width:100%; display:block" role="img" aria-label="Curva do que se esperaria se o modelo valesse, concentrada abaixo de 20, com o limite em 15,5 e o resultado da tese bem à direita, perto de 130"></svg>
+      <label for="chi-d" style="font-size:.82rem; color:var(--ink-2); display:block; margin-top:8px">Fator de desconto por trimestre: <b id="chi-dv"></b></label>
+      <input class="slider" id="chi-d" type="range" min="0" max="4" step="1" value="0">
+      <p class="read" id="chi-read" aria-live="polite"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · 2001 × 2017 -->
+<section class="slide" id="contraste" data-label="2001 × 2017">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> O inesperado · a mesma bolsa, outra conclusão</div>
+      <h2 class="rv" style="--d:.1s">Com a mesma bolsa e mais que o dobro do tempo, a conclusão de um estudo de 2001 se inverteu</h2>
+      <p class="lede rv" style="--d:.15s">Anchite e Issler (2001) usaram o Ibovespa de 1986 a 1998 e concluíram que os dados eram favoráveis ao preço racional. Esta tese seguiu o mesmo roteiro com 30 anos de dados e chegou ao contrário, como Campbell e Shiller (1987) nos Estados Unidos.</p>
+      <div class="panel rv" style="--d:.2s" id="tl-panel" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="tl" id="tl" role="list"></div>
+      <div class="tl"><div class="axis"><span>1955</span><span>1975</span><span>1995</span><span>2016</span></div></div>
+      <p class="note">Toque numa linha. Períodos das seções 2.3, 2.4 e 3.1; o período exato das ações nos EUA não é informado na tese, por isso a barra é só dos títulos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Prática e limites">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> E daí? · limites · créditos</div>
+    <h2 class="rv" style="--d:.1s">Preço e dividendos estão ligados, mas o preço da bolsa carrega mais do que a conta dos dividendos</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--navy)"><h3>Investidores</h3><p>No longo prazo, preço e dividendos não se largam; no caminho, o preço se afasta do que os dividendos justificariam. Isso não quer dizer lucro fácil: a tese não testa estratégias nem custos. <em>· leitura nossa</em></p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--red)"><h3>Quem acompanha o mercado</h3><p>Mudanças de regra mexem nos dados: depois de 1996, com os juros sobre capital próprio, as empresas passaram a pagar mais aos acionistas. Comparar períodos exige levar isso em conta. <em>· leitura nossa</em></p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ink-2)"><h3>Pesquisadores</h3><p>O autor sugere modelar o choque de 1996, testar o VAR cointegrado das séries originais e olhar para finanças comportamentais, com investidores que seguem os fundamentos e outros que seguem os gráficos.</p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#5b6f96"><h3>Professores e estudantes</h3><p>Um bom exemplo de que a resposta depende do método e do período: o mesmo modelo, na mesma bolsa, passou num estudo e foi rejeitado no outro. <em>· leitura nossa</em></p></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.2s">
+        <h3>O que esta pesquisa não diz</h3>
+        <ul class="limits">
+          <li><b>Mercado ou modelo?</b> Como a própria tese lembra, rejeitar pode querer dizer que o mercado não é racional ou que o modelo de equilíbrio está errado; o teste não separa as duas coisas. E uma rejeição estatística pode ter pouco peso econômico. <em>· segundo o autor</em></li>
+          <li><b>O choque de 1996.</b> O modelo não trata a mudança tributária que fez os pagamentos aos acionistas crescerem; o autor aponta isso como a principal limitação, ao lado de não ter explorado outras metodologias. <em>· segundo o autor</em></li>
+          <li><b>Um índice, médias por trimestre.</b> O teste é para a carteira do Ibovespa como um todo, não para cada ação, e a versão com juros supõe que só a Selic faz o retorno exigido variar. <em>· observação nossa</em></li>
+          <li><b>Quantas ligações?</b> Uma das tabelas de Johansen (Tabela 5) também rejeita “no máximo uma ligação”, o que não combina com duas séries que vagueiam; a página se apoia no teste de Engle-Granger e na ligação única estimada na Tabela 7. <em>· observação nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.3s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          FERNANDES, Ricardo Antonio. <em>Comparando modelos alternativos de precificação de ativos: uma análise do mercado brasileiro.</em> Tese (Doutorado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2017. Orientador: Prof. Dr. Leonardo Fernando Cruz Basso. Coorientador: Prof. Dr. Emerson Fernandes Marçal.
+        </div>
+        <p style="margin-top:10px; font-size:.78rem">Aprovada em 29 de novembro de 2017. A tese também traz as fórmulas dos dois testes e a lista de todas as carteiras do Ibovespa de 1986 a 2016. <b>Não é recomendação de investimento.</b></p>
+        <p class="also">Leia também: <a href="../../teses/2017-machado-modelos-precificacao-ativos/">O mercado e o dólar bastaram para explicar o sobe e desce das ações brasileiras</a> (Machado, 2017), outra tese do mesmo ano sobre modelos de precificação.</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, a, txt){ var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); if (txt !== undefined) e.textContent = txt; return e; }
+  function seg(id, fn){
+    var g = $(id);
+    each(g.querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){
+        each(g.querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        fn(+b.dataset.m);
+      });
+    });
+  }
+  function pills(box_, items, fn){
+    var bs = items.map(function(t, k){
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = t; b.setAttribute('aria-pressed', 'false');
+      b.addEventListener('click', function(){ fn(k); }); box_.appendChild(b); return b;
+    });
+    return function(k){ bs.forEach(function(b, i){ b.setAttribute('aria-pressed', i === k ? 'true' : 'false'); }); };
+  }
+
+  /* ================= DADOS DA TESE ================= */
+  // Peças do modelo de valor presente (tela 1). st: 'ok' | 'inc' | 'no'
+  var PIECES = [
+    {st:'ok', n:L('Séries que vagueiam', 'Wandering series'), t:L('Preço e dividendos não voltam a um nível fixo (raiz unitária), como o modelo supõe. Tabelas 3, 4, 14 e 15.', 'Prices and dividends do not return to a fixed level (unit root), as the model assumes. Tables 3, 4, 14 and 15.')},
+    {st:'ok', n:L('Andam juntos', 'Move together'), t:L('Uma combinação dos dois é estável: estão ligados no longo prazo (cointegração). Tabelas 5, 8 e 17.', 'A combination of the two is stable: they are linked in the long run (cointegration). Tables 5, 8 and 17.')},
+    {st:'ok', n:L('Mesma proporção', 'Same proportion'), t:L('Na escala de logaritmo, a ligação é de um para um, como o modelo prevê (p = 0,5429, não rejeitado). Tabela 16.', 'On a log scale, the link is one to one, as the model predicts (p = 0.5429, not rejected). Table 16.')},
+    {st:'inc', n:L('Quem antecipa quem', 'Who anticipates whom'), t:L('Só o preço deveria antecipar os dividendos; o teste de Granger deu mão dupla nas três versões. Inconclusivo. Tabelas 13 e 19.', 'Only the price should anticipate dividends; the Granger test went both ways in all three versions. Inconclusive. Tables 13 and 19.')},
+    {st:'no', n:L('Todas as regras juntas', 'All rules together'), t:L('O teste de Johansen e Swensen rejeita o modelo de expectativas racionais com folga para todos os fatores de desconto (p = 0,0000). Tabela 20.', 'The Johansen and Swensen test rejects the rational expectations model by a wide margin for every discount factor (p = 0.0000). Table 20.')}
+  ];
+  // Multiplicador θ e taxa trimestral real implícita (Tabela 9); correlação com o Ibovespa (seção 3.2.1)
+  var THETA = [
+    {n:'Johansen', v:127.538, r:0.7841, cor:0.39, ok:true},
+    {n:'Engle-Granger', v:81.346, r:1.2293, cor:0.76, ok:true},
+    {n:L('Retorno médio', 'Average return'), v:33.342, r:2.9991, ok:false}
+  ];
+  // Granger (Tabelas 13 e 19): [χ², p] ida (esperada) e volta (não deveria)
+  var GR = [
+    {a:L('Desvio do preço', 'Price gap'), b:L('Variação dos dividendos', 'Change in dividends'), fw:[75.549, '0,000', '0.000'], bw:[13.898, '0,003', '0.003'], lv:L('Johansen (multiplicador 127,5)', 'Johansen (multiplier 127.5)')},
+    {a:L('Desvio do preço', 'Price gap'), b:L('Variação dos dividendos', 'Change in dividends'), fw:[73.929, '0,000', '0.000'], bw:[8.2716, '0,041', '0.041'], lv:L('Engle-Granger (multiplicador 81,3)', 'Engle-Granger (multiplier 81.3)')},
+    {a:L('Razão dividendo/preço', 'Dividend/price ratio'), b:L('Juros − crescimento dos dividendos', 'Interest − dividend growth'), fw:[26.955, '0,000', '0.000'], bw:[9.3495, '0,025', '0.025'], lv:L('retorno exigido que varia com a Selic', 'required return that varies with the Selic rate')}
+  ];
+  // Johansen-Swensen (Tabela 20): fator de desconto → estatística (χ², 8 gl)
+  var JS = [[0.95, 122.25], [0.96, 127.29], [0.97, 132.14], [0.98, 137.06], [0.99, 144.36]];
+  var CRIT5 = 15.507; // conta nossa: χ²(8) a 5%
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene');
+    var st = makeStage(sc, 220, 220, {ay:'76%', rx:'60deg'});
+    rotatable(sc, st, -32, 10);
+    var H = 42, slabs = [];
+    PIECES.forEach(function(p, k){
+      var c = p.st === 'ok' ? 'var(--navy)' : p.st === 'no' ? 'var(--red)' : '#94a3b8';
+      var s = box({w:150, d:150, x:35, y:35, z:k * (H + 4), h:H, c:c, cls:p.st === 'inc' ? 'glass' : '', label:String(k + 1)});
+      s.addEventListener('click', function(){ if (!M.wasDrag(sc)) show(k); });
+      st.appendChild(s); slabs.push(s);
+    });
+    var setP = pills($('hero-pick'), PIECES.map(function(p, k){ return (k + 1) + '. ' + p.n; }), show);
+    function show(k){
+      slabs.forEach(function(s, i){ s.classList.toggle('active', i === k); });
+      setP(k);
+      var p = PIECES[k], tag = p.st === 'ok' ? L('passou', 'passed') : p.st === 'no' ? L('rejeitado', 'rejected') : L('inconclusivo', 'inconclusive');
+      $('hero-read').innerHTML = '<b>' + (k + 1) + '. ' + p.n + '</b> · <b style="color:' + (p.st === 'no' ? 'var(--red)' : p.st === 'ok' ? 'var(--navy)' : 'var(--muted)') + '">' + tag + '</b><br>' + p.t;
+    }
+    show(4);
+  })();
+
+  /* ================= 02 · GALINHA ================= */
+  (function(){
+    var r = $('hen-r'), marks = $('hen-marks');
+    var M3 = [[0.7841, 'Johansen'], [1.2293, 'Engle-Granger'], [2.9991, L('retorno médio', 'avg. return')]];
+    M3.forEach(function(m){
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = fmt(m[0], 2) + '% · ' + m[1];
+      b.addEventListener('click', function(){ r.value = m[0]; draw(); }); marks.appendChild(b);
+    });
+    function draw(){
+      var v = +r.value, n = 100 / v;
+      $('hen-v').innerHTML = fmt(n, 0) + ' <small>' + L('ovos', 'eggs') + '</small>';
+      $('hen-t').innerHTML = L('Exigindo <b>' + fmt(v, 2) + '%</b> por trimestre, a galinha vale o mesmo que ' + fmt(n, 0) + ' ovos na mão hoje, ou cerca de ' + fmt(n / 4, 0) + ' anos de postura.', 'Requiring <b>' + fmt(v, 2) + '%</b> per quarter, the hen is worth the same as ' + fmt(n, 0) + ' eggs in hand today, or about ' + fmt(n / 4, 0) + ' years of laying.');
+      var e = $('hen-eggs'), whole = Math.floor(n), html = '';
+      for (var i = 0; i < whole; i++) html += '<i></i>';
+      if (n - whole > 0.2) html += '<i class="part"></i>';
+      e.innerHTML = html;
+    }
+    r.addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 03 · CAMADAS DA EFICIÊNCIA ================= */
+  (function(){
+    var F = [
+      {n:L('Fraca', 'Weak'), c:'#5b6f96', t:L('O preço já carrega os <b>preços e retornos passados</b>. Olhar o gráfico do passado não dá vantagem.', 'The price already carries <b>past prices and returns</b>. Looking at past charts gives no edge.')},
+      {n:L('Semiforte', 'Semi-strong'), c:'var(--navy)', t:L('Além do passado, <b>toda informação pública</b>: balanços, anúncios de dividendos, notícias. É a versão que os estudos costumam testar, e a que está em jogo nesta tese, que usa preços e dividendos públicos.', 'Besides the past, <b>all public information</b>: financial statements, dividend announcements, news. This is the version studies usually test, and the one at stake in this thesis, which uses public prices and dividends.')},
+      {n:L('Forte', 'Strong'), c:'var(--red)', t:L('Até a <b>informação interna</b>, que só quem está dentro das empresas conhece, já estaria no preço.', 'Even <b>inside information</b>, known only to people within the companies, would already be in the price.')}
+    ];
+    var sc = $('emh-scene'), st = makeStage(sc, 240, 240, {ay:'72%', rx:'60deg'});
+    rotatable(sc, st, -30, 10);
+    var slabs = [];
+    F.forEach(function(f, k){
+      var w = 220 - k * 50, s = box({w:w, d:w, x:(240 - w) / 2, y:(240 - w) / 2, z:k * 44, h:40, c:f.c, label:f.n});
+      s.addEventListener('click', function(){ if (!M.wasDrag(sc)) show(k); });
+      st.appendChild(s); slabs.push(s);
+    });
+    var setP = pills($('emh-pick'), F.map(function(f){ return f.n; }), show);
+    function show(k){
+      slabs.forEach(function(s, i){ s.classList.toggle('active', i === k); });
+      setP(k);
+      $('emh-panel').innerHTML = '<h3>' + L('Forma ', '') + F[k].n.toLowerCase() + L('', ' form') + '</h3><p>' + F[k].t + '</p>';
+    }
+    show(1);
+  })();
+
+  /* ================= 04 · GRADE DE TESTES ================= */
+  (function(){
+    var TESTS = [L('Correlação serial', 'Serial correlation'), L('Run test', 'Run test'), 'ADF', L('Razão de variâncias', 'Variance ratio')];
+    var ASIA = [L('Paquistão', 'Pakistan'), L('Índia', 'India'), L('Sri Lanka', 'Sri Lanka'), 'China', L('Coreia do Sul', 'South Korea'), L('Hong Kong', 'Hong Kong'), L('Indonésia', 'Indonesia'), L('Malásia', 'Malaysia'), L('Filipinas', 'Philippines'), L('Singapura', 'Singapore'), L('Tailândia', 'Thailand'), L('Taiwan', 'Taiwan'), L('Japão', 'Japan'), L('Austrália', 'Australia')];
+    var EUR = [L('França', 'France'), L('Alemanha', 'Germany'), L('Reino Unido', 'UK'), L('Grécia', 'Greece'), 'Portugal', L('Espanha', 'Spain')];
+    // linhas = país; colunas = testes (1 = Sim, passeio aleatório rejeitado)
+    var SETS = [
+      {c:ASIA, v:ASIA.map(function(){ return [1, 1, 0, 1]; })},
+      // Europa, diário 1993–2007 (Tabela 1): por teste, países F, A, UK, G, P, E
+      {c:EUR, t:[[0,1,1,1,1,1],[0,0,0,0,0,0],[0,0,0,1,1,0],[0,0,1,1,1,0]]},
+      // Europa, mensal 1993–2007
+      {c:EUR, t:[[0,0,0,0,1,0],[0,0,0,1,1,0],[0,0,0,0,0,0],[1,0,0,0,0,0]]}
+    ];
+    SETS.forEach(function(s){ if (s.t) s.v = s.c.map(function(_, i){ return s.t.map(function(col){ return col[i]; }); }); });
+    var g = $('tg');
+    g.style.gridTemplateColumns = 'minmax(84px, 1.3fr) repeat(4, 1fr)';
+    function draw(m){
+      var s = SETS[m], h = '<span></span>';
+      TESTS.forEach(function(t){ h += '<span class="h" role="columnheader">' + t + '</span>'; });
+      s.c.forEach(function(c, i){
+        h += '<span class="rh" role="rowheader">' + c + '</span>';
+        s.v[i].forEach(function(x){ h += '<i class="' + (x ? 's' : 'n') + '" role="cell">' + (x ? L('Sim', 'Yes') : L('Não', 'No')) + '</i>'; });
+      });
+      g.innerHTML = h;
+      var tl = TESTS.map(function(t, j){ var n = s.v.reduce(function(a, r){ return a + r[j]; }, 0); return '<span>' + t + ': <b>' + n + '</b> ' + L('de', 'of') + ' ' + s.c.length + '</span>'; });
+      $('tg-tally').innerHTML = tl.join('');
+    }
+    seg('tg-seg', draw);
+    draw(0);
+  })();
+
+  /* ================= 05 · 124 TRIMESTRES ================= */
+  (function(){
+    var g = $('qgrid'), cells = [];
+    var h = '<span></span>';
+    ['1º', '2º', '3º', '4º'].forEach(function(q, i){ h += '<span class="qh">' + (EN ? ['Q1', 'Q2', 'Q3', 'Q4'][i] : q) + '</span>'; });
+    g.innerHTML = h;
+    for (var y = 1986; y <= 2016; y++){
+      var lab = document.createElement('span'); lab.className = 'y'; lab.textContent = (y % 5 === 0 || y === 1986 || y === 2016) ? y : ''; g.appendChild(lab);
+      for (var q = 1; q <= 4; q++){ var c = document.createElement('i'); c.dataset.y = y; c.dataset.q = q; g.appendChild(c); cells.push(c); }
+    }
+    var TXT = [
+      L('<b>Dividendos se concentram no 2º trimestre</b>, ano após ano: a série sobe do 1º para o 2º e cai do 2º para o 3º. Essa sazonalidade confundiu os testes de raiz unitária.', '<b>Dividends concentrate in the 2nd quarter</b>, year after year: the series rises from the 1st to the 2nd and falls from the 2nd to the 3rd. This seasonality confused the unit root tests.'),
+      L('<b>A partir de 1996</b>, mudanças nos impostos e a criação dos juros sobre capital próprio fizeram os pagamentos aos acionistas crescerem bastante. A tese não modela esse choque e o cita como sua principal limitação.', '<b>From 1996 on</b>, tax changes and the creation of interest on equity made payouts to shareholders grow a lot. The thesis does not model this shock and cites it as its main limitation.'),
+      L('<b>O estudo de Anchite e Issler (2001)</b> usou de 1986 a 1998 (52 trimestres, conta nossa). Esta tese vai até 2016: 124 trimestres, mais que o dobro.', '<b>The Anchite and Issler (2001) study</b> used 1986 to 1998 (52 quarters, our count). This thesis goes up to 2016: 124 quarters, more than twice as many.')
+    ];
+    function draw(m){
+      cells.forEach(function(c){
+        var y = +c.dataset.y, q = +c.dataset.q;
+        c.className = '';
+        if (m === 0 && q === 2) c.className = 'on';
+        if (m === 1) c.className = y >= 1996 ? 'on' : 'on2';
+        if (m === 2) c.className = y <= 1998 ? 'on2' : '';
+      });
+      $('q-read').innerHTML = TXT[m];
+    }
+    seg('q-seg', draw);
+    draw(0);
+  })();
+
+  /* ================= 06 · COLEIRA (ilustração) ================= */
+  (function(){
+    var svg = $('leash-svg'), tied = 1, N = 124, X0 = 30, X1 = 540, Y0 = 250, Y1 = 30;
+    var seed = 7;
+    function rnd(){ seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+    function gauss(){ var u = rnd() || 1e-9, v = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+    var A, B;
+    function gen(){
+      A = [0]; B = [0]; var e = 0, w = 0;
+      for (var i = 1; i < N; i++){
+        A.push(A[i - 1] + gauss());
+        e = 0.6 * e + gauss() * 0.9;            // desvio que volta à média
+        w = w + gauss();                         // passeio independente
+        B.push(tied ? A[i] + e : w);
+      }
+    }
+    function draw(){
+      svg.innerHTML = '';
+      var all = A.concat(B), lo = Math.min.apply(null, all) - 1, hi = Math.max.apply(null, all) + 1;
+      function x(i){ return X0 + i / (N - 1) * (X1 - X0); }
+      function y(v){ return Y0 - (v - lo) / (hi - lo) * (Y0 - Y1); }
+      svg.appendChild(el('line', {x1:X0, y1:Y0 + 8, x2:X1, y2:Y0 + 8, stroke:'#cbd5e1'}));
+      svg.appendChild(el('text', {x:X0, y:Y0 + 24, 'font-size':11, fill:'#64748b'}, L('tempo (124 trimestres)', 'time (124 quarters)')));
+      for (var i = 0; i < N; i += 6) svg.appendChild(el('line', {x1:x(i), y1:y(A[i]), x2:x(i), y2:y(B[i]), stroke:'#cbd5e1', 'stroke-width':1.2}));
+      function path(s){ return s.map(function(v, i){ return (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1); }).join(' '); }
+      svg.appendChild(el('path', {d:path(A), fill:'none', stroke:'var(--navy)', 'stroke-width':2.6}));
+      svg.appendChild(el('path', {d:path(B), fill:'none', stroke:'var(--red)', 'stroke-width':2.2}));
+      var gap = A.map(function(v, i){ return Math.abs(v - B[i]); }), mx = Math.max.apply(null, gap);
+      svg.appendChild(el('text', {x:X1, y:22, 'font-size':12, fill:'#334155', 'text-anchor':'end', 'font-weight':600}, (tied ? L('Com coleira: maior distância ', 'On a leash: largest gap ') : L('Sem coleira: maior distância ', 'No leash: largest gap ')) + fmt(mx, 1)));
+    }
+    var base = 7;
+    seg('leash-seg', function(m){ tied = m; seed = base; gen(); draw(); });
+    $('leash-new').addEventListener('click', function(){ base = Math.floor(Math.random() * 2147483646) + 1; seed = base; gen(); draw(); });
+    gen(); draw();
+  })();
+
+  /* ================= 07 · MULTIPLICADOR ================= */
+  (function(){
+    var sc = $('theta-scene'), st = makeStage(sc, 300, 140, {ay:'78%', rx:'60deg'});
+    rotatable(sc, st, -24, 9);
+    var K = 1.5, slabs = [];
+    THETA.forEach(function(t, k){
+      var s = box({w:70, d:70, x:12 + k * 98, y:35, h:t.v * K, c:k === 0 ? 'var(--navy)' : k === 1 ? '#5b6f96' : '#94a3b8', cls:t.ok ? '' : 'glass', label:fmt(t.v, 1)});
+      s.addEventListener('click', function(){ if (!M.wasDrag(sc)) show(k); });
+      st.appendChild(s); slabs.push(s);
+      flatLabel(st, t.n, 2 + k * 98, 112, 90, 'font-size:13px;');
+    });
+    var setP = pills($('theta-pick'), THETA.map(function(t){ return t.n; }), show);
+    function show(k){
+      slabs.forEach(function(s, i){ s.classList.toggle('active', i === k); });
+      setP(k);
+      var t = THETA[k];
+      var h = '<h3>' + t.n + ': ' + fmt(t.v, 1) + '</h3><p>' + L('O preço equivale a cerca de <b>' + fmt(t.v, 0) + ' dividendos trimestrais</b>, uns ' + fmt(t.v / 4, 0) + ' anos de dividendos. Taxa real implícita: <b>' + fmt(t.r, 2) + '% por trimestre</b>.', 'The price equals about <b>' + fmt(t.v, 0) + ' quarterly dividends</b>, some ' + fmt(t.v / 4, 0) + ' years of dividends. Implied real rate: <b>' + fmt(t.r, 2) + '% per quarter</b>.') + '</p>';
+      if (t.ok) h += '<p>' + L('A série teórica do modelo com esse multiplicador acompanha o Ibovespa com correlação de <b>' + fmt(t.cor, 2) + '</b>' + (k === 0 ? ', fraca.' : ', a maior encontrada.'), 'The model’s theoretical series with this multiplier tracks the Ibovespa with a correlation of <b>' + fmt(t.cor, 2) + '</b>' + (k === 0 ? ', a weak one.' : ', the highest found.')) + '</p>';
+      else h += '<p>' + L('Com esse multiplicador, a combinação de preço e dividendos <b>não ficou estável</b> em nenhum dos testes, então ela saiu da análise.', 'With this multiplier, the combination of price and dividends <b>was not stable</b> in any test, so it was dropped from the analysis.') + '</p>';
+      $('theta-panel').innerHTML = h;
+    }
+    show(0);
+  })();
+
+  /* ================= 08 · MÃO DUPLA ================= */
+  (function(){
+    var svg = $('gr-svg');
+    function draw(m){
+      var g = GR[m]; svg.innerHTML = '';
+      var defs = el('defs', {});
+      ['n', 'r'].forEach(function(k){
+        var mk = el('marker', {id:'ah-' + k, viewBox:'0 0 10 10', refX:8, refY:5, markerWidth:5, markerHeight:5, orient:'auto-start-reverse'});
+        mk.appendChild(el('path', {d:'M0,0 L10,5 L0,10 z', fill:k === 'n' ? 'var(--navy)' : 'var(--red)'}));
+        defs.appendChild(mk);
+      });
+      svg.appendChild(defs);
+      function node(x, t, c){
+        svg.appendChild(el('rect', {x:x - 95, y:110, width:190, height:72, rx:14, fill:'#fff', stroke:c, 'stroke-width':2.5}));
+        var words = t.split(' '), l1 = [], l2 = [];
+        words.forEach(function(w){ (l1.join(' ').length + w.length < 17 && !l2.length ? l1 : l2).push(w); });
+        svg.appendChild(el('text', {x:x, y:l2.length ? 140 : 151, 'text-anchor':'middle', 'font-size':16, 'font-weight':700, fill:'#0f172a'}, l1.join(' ')));
+        if (l2.length) svg.appendChild(el('text', {x:x, y:160, 'text-anchor':'middle', 'font-size':16, 'font-weight':700, fill:'#0f172a'}, l2.join(' ')));
+      }
+      node(115, g.a, 'var(--navy)'); node(445, g.b, 'var(--red)');
+      svg.appendChild(el('path', {class:'arrow', d:'M120,104 C200,40 360,40 440,104', fill:'none', stroke:'var(--navy)', 'stroke-width':6, 'marker-end':'url(#ah-n)'}));
+      svg.appendChild(el('path', {class:'arrow', d:'M440,188 C360,252 200,252 120,188', fill:'none', stroke:'var(--red)', 'stroke-width':4, 'stroke-dasharray':'9 6', 'marker-end':'url(#ah-r)'}));
+      svg.appendChild(el('text', {x:280, y:34, 'text-anchor':'middle', 'font-size':15, fill:'#1f3b73', 'font-weight':700}, L('esperada · χ² = ', 'expected · χ² = ') + fmt(g.fw[0], 1) + ' · p = ' + (EN ? g.fw[2] : g.fw[1])));
+      svg.appendChild(el('text', {x:280, y:278, 'text-anchor':'middle', 'font-size':15, fill:'#be123c', 'font-weight':700}, L('não deveria existir · χ² = ', 'should not exist · χ² = ') + fmt(g.bw[0], 1) + ' · p = ' + (EN ? g.bw[2] : g.bw[1])));
+      var p = parseFloat(g.bw[2]);
+      $('gr-read').innerHTML = L('Versão (' + g.lv + '): a seta esperada passa com folga (p = ' + g.fw[1] + '). A seta de volta também passa a 5% (p = ' + g.bw[1] + ')' + (p < 0.01 ? ' e até a 1%.' : ', embora não a 1%.') + ' Resultado: <b>inconclusivo</b>.', 'Version (' + g.lv + '): the expected arrow passes easily (p = ' + g.fw[2] + '). The return arrow also passes at 5% (p = ' + g.bw[2] + ')' + (p < 0.01 ? ' and even at 1%.' : ', though not at 1%.') + ' Result: <b>inconclusive</b>.');
+    }
+    seg('gr-seg', draw);
+    draw(0);
+  })();
+
+  /* ================= 09 · DESCOBERTA (χ²) ================= */
+  (function(){
+    var svg = $('chi-svg'), X0 = 40, X1 = 540, Y0 = 210, Y1 = 30, XMAX = 160;
+    function f(x){ return x <= 0 ? 0 : Math.pow(x, 3) * Math.exp(-x / 2) / 96; } // densidade χ²(8)
+    var FMAX = f(6);
+    function x(v){ return X0 + v / XMAX * (X1 - X0); }
+    function y(d){ return Y0 - d / FMAX * (Y0 - Y1) * 0.92; }
+    var dyn = el('g', {});
+    (function base(){
+      svg.appendChild(el('line', {x1:X0, y1:Y0, x2:X1, y2:Y0, stroke:'#94a3b8'}));
+      [0, 20, 40, 60, 80, 100, 120, 140, 160].forEach(function(v){
+        svg.appendChild(el('line', {x1:x(v), y1:Y0, x2:x(v), y2:Y0 + 5, stroke:'#94a3b8'}));
+        svg.appendChild(el('text', {x:x(v), y:Y0 + 18, 'text-anchor':'middle', 'font-size':13, fill:'#64748b'}, v));
+      });
+      var d = 'M' + x(0) + ' ' + Y0, area = '';
+      for (var v = 0; v <= XMAX; v += 0.5) d += ' L' + x(v).toFixed(1) + ' ' + y(f(v)).toFixed(1);
+      svg.appendChild(el('path', {d:d + ' L' + x(XMAX) + ' ' + Y0 + ' Z', fill:'rgb(31 59 115 / .14)', stroke:'var(--navy)', 'stroke-width':2}));
+      svg.appendChild(el('line', {x1:x(CRIT5), y1:Y1 - 6, x2:x(CRIT5), y2:Y0, stroke:'#334155', 'stroke-width':1.6, 'stroke-dasharray':'4 3'}));
+      svg.appendChild(el('text', {x:x(CRIT5) + 5, y:Y1 + 2, 'font-size':13.5, fill:'#334155', 'font-weight':600}, L('limite 5%: ', '5% threshold: ') + fmt(CRIT5, 1)));
+      svg.appendChild(el('text', {x:x(4), y:Y0 - 96, 'font-size':11, fill:'#1f3b73'}, L('se o modelo valesse', 'if the model held')));
+      svg.appendChild(el('text', {x:X1, y:Y0 + 36, 'text-anchor':'end', 'font-size':11, fill:'#64748b'}, L('estatística do teste (χ², 8 graus de liberdade)', 'test statistic (χ², 8 degrees of freedom)')));
+      svg.appendChild(dyn);
+    })();
+    var r = $('chi-d');
+    function draw(){
+      var k = +r.value, v = JS[k][1]; dyn.innerHTML = '';
+      JS.forEach(function(j, i){ dyn.appendChild(el('circle', {cx:x(j[1]), cy:Y0 - 8, r:i === k ? 0 : 3, fill:'#fca5a5'})); });
+      dyn.appendChild(el('line', {x1:x(v), y1:Y1 + 30, x2:x(v), y2:Y0, stroke:'var(--red)', 'stroke-width':4}));
+      dyn.appendChild(el('circle', {cx:x(v), cy:Y0, r:7, fill:'var(--red)'}));
+      dyn.appendChild(el('text', {x:x(v), y:Y1 + 22, 'text-anchor':'middle', 'font-size':15, fill:'var(--red)', 'font-weight':700}, L('tese: ', 'thesis: ') + fmt(v, 2)));
+      $('chi-dv').textContent = fmt(JS[k][0], 2);
+      $('chi-read').innerHTML = L('Com fator ' + fmt(JS[k][0], 2) + ', o teste dá <b>' + fmt(v, 2) + '</b>, cerca de <b>' + fmt(v / CRIT5, 0) + ' vezes</b> o limite de 5% (conta nossa). p-valor na tese: 0,0000.', 'With factor ' + fmt(JS[k][0], 2) + ', the test gives <b>' + fmt(v, 2) + '</b>, about <b>' + fmt(v / CRIT5, 0) + ' times</b> the 5% threshold (our calculation). p-value in the thesis: 0.0000.');
+    }
+    r.addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 10 · 2001 × 2017 ================= */
+  (function(){
+    var Y0 = 1955, Y1 = 2016;
+    var S = [
+      {n:L('Campbell e Shiller (1987) · EUA, títulos', 'Campbell and Shiller (1987) · US, bonds'), a:1959, b:1983, c:'#5b6f96', v:L('rejeitado', 'rejected'),
+       t:L('Testaram o modelo em títulos (1959–1983) e em ações dos EUA. Rejeitaram nos dois casos; nas ações, a distância entre preço e dividendos variou mais e durou mais.', 'They tested the model on bonds (1959–1983) and on US stocks. They rejected it in both cases; for stocks, the gap between prices and dividends varied more and lasted longer.')},
+      {n:L('Anchite e Issler (2001) · Ibovespa', 'Anchite and Issler (2001) · Ibovespa'), a:1986, b:1998.99, c:'#94a3b8', v:L('a favor', 'in favor'),
+       t:L('Também acharam mão dupla no teste de Granger, mas o teste decisivo deles (Wald) não rejeitou o modelo com retornos constantes. Concluíram que os dados eram favoráveis ao preço racional.', 'They also found a two-way result in the Granger test, but their decisive test (Wald) did not reject the model with constant returns. They concluded that the data favored rational prices.')},
+      {n:L('Esta tese (2017) · Ibovespa', 'This thesis (2017) · Ibovespa'), a:1986, b:2016.99, c:'var(--red)', v:L('rejeitado', 'rejected'),
+       t:L('Granger inconclusivo nas três versões e rejeição forte no teste de Johansen e Swensen. Para o autor, a diferença pode vir do método e da série mais longa.', 'Granger inconclusive in all three versions and a strong rejection in the Johansen and Swensen test. For the author, the difference may come from the method and the longer series.')}
+    ];
+    var tl = $('tl'), rows = [];
+    S.forEach(function(s, k){
+      var r = document.createElement('div'); r.className = 'row'; r.setAttribute('role', 'listitem'); r.tabIndex = 0;
+      var a = Math.max(s.a, Y0), l = (a - Y0) / (Y1 + 1 - Y0) * 100, w = (s.b - a) / (Y1 + 1 - Y0) * 100;
+      r.innerHTML = '<span class="nm">' + s.n + '</span><span class="tr"><i style="left:' + l + '%; width:' + w + '%; background:' + s.c + '">' + s.v + '</i></span>';
+      r.addEventListener('click', function(){ show(k); });
+      r.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(k); } });
+      tl.appendChild(r); rows.push(r);
+    });
+    function show(k){
+      rows.forEach(function(r, i){ r.classList.toggle('active', i === k); });
+      var s = S[k];
+      $('tl-panel').innerHTML = '<h3>' + s.n + '</h3><p>' + s.t + '</p>';
+    }
+    show(1);
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
