@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suppliers, customers and corporate debt · PPGA Interativo</title>
+<meta name="description" content="The doctoral thesis of José Milton Almeida da Silva (PPGA Mackenzie) on whether suppliers, customers and employees help explain how much companies owe, explained in 11 interactive screens.">
+<link rel="alternate" hreflang="pt-BR" href="../../../teses/2016-silva-fornecedores-clientes-estrutura-capital/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><path d=%22M7 22 L9 11 L13 16 L16 9 L19 16 L23 11 L25 22 Z%22 fill=%22white%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/motor.css">
+<link rel="stylesheet" href="../../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --sup:var(--navy);     /* fornecedores */
+    --cus:#5b7bb4;         /* clientes */
+    --emp:#334155;         /* empregados */
+    --debt:var(--red);     /* dívida */
+    --weak:#b45309;
+  }
+  .sup-t{color:var(--sup); font-weight:700;} .cus-t{color:var(--cus); font-weight:700;} .debt-t{color:var(--debt); font-weight:700;}
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .ill{display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--weak); border:1px solid color-mix(in srgb, var(--weak) 45%, white); border-radius:999px; padding:2px 9px; margin-bottom:6px;}
+  .sw{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px 16px; box-shadow:var(--shadow);}
+  .panel .tag{font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:4px;}
+  .panel p{margin:0 0 6px; font-size:.86rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:18px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 12px; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .ctrls{display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; justify-content:center; margin:4px 0 10px;}
+  .zleg{display:flex; flex-wrap:wrap; justify-content:center; gap:4px 16px; font-size:.78rem; color:var(--ink-2); margin-top:4px;}
+  .range{width:100%; accent-color:var(--red);}
+  .sl{display:grid; gap:4px; margin:6px 0 8px;}
+  .sl label{font-size:.84rem; color:var(--ink-2);}
+  .sl label b{color:var(--ink);}
+  svg text{font-family:var(--sans);}
+  .slab.dim > i{opacity:.3;}
+  .floor-label{font-size:12px;}
+  .facts{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:12px;}
+  .facts div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 11px; font-size:.74rem; color:var(--ink-2); line-height:1.3;}
+  .facts b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink);}
+  .sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
+  @media (max-width:600px){
+    .facts{grid-template-columns:1fr 1fr;}
+    #sm-svg text, #rg-svg text, #mx-svg text, #sz-svg text, #pc-svg text{font-size:20px !important;}
+    #sm-svg text.s, #rg-svg text.s, #mx-svg text.s, #sz-svg text.s, #pc-svg text.s{font-size:16px !important;}
+  }
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(1.65rem, 2.7vw, 2.2rem);}
+  #capa .sub{font-size:1rem;}
+  .meta{display:grid; gap:2px; margin-top:16px; font-size:.86rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.76rem; color:var(--muted); margin-top:4px; text-align:center; line-height:1.4;}
+  #cap-read{text-align:center; font-size:.9rem; color:var(--ink-2); margin:4px 0 0; min-height:3em; line-height:1.4;}
+  #cap-read b{color:var(--ink);}
+  #hero-scene .slab{cursor:pointer;}
+
+  /* ---------- 02 · Promessa ---------- */
+  .pgrid{display:grid; gap:8px;}
+  .pbtn{display:block; width:100%; text-align:left; font:inherit; color:inherit; background:var(--card); border:1px solid var(--border); border-left:6px solid var(--pc); border-radius:12px; padding:9px 14px; cursor:pointer;}
+  .pbtn[aria-pressed="true"]{box-shadow:var(--shadow); border-color:var(--ink); border-left-color:var(--pc);}
+  .pbtn h3{font-size:.95rem; margin:0 0 2px; color:var(--ink);}
+  .pbtn p{font-size:.8rem; margin:0; color:var(--ink-2); line-height:1.4;}
+  #pr-svg{width:100%; display:block;}
+  #pr-out{font-size:.86rem; color:var(--ink-2); min-height:2.8em; margin-top:4px;}
+  #pr-out b{color:var(--ink);}
+
+  /* ---------- 03 · Apostas ---------- */
+  .hgrid{display:grid; gap:7px;}
+  .hcard{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 13px; border-left:6px solid var(--hc); display:grid; grid-template-columns:auto 1fr; gap:2px 12px; align-items:start;}
+  .hcard .h{font-family:var(--serif); font-weight:900; font-size:1.05rem; color:var(--hc); grid-row:span 2;}
+  .hcard b{font-size:.88rem; color:var(--ink);}
+  .hcard span{font-size:.76rem; color:var(--ink-2); line-height:1.35;}
+  .betbox{margin-top:12px; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px;}
+  .betbox p{font-size:.86rem; margin:0 0 6px; color:var(--ink);}
+  .opts{display:flex; flex-wrap:wrap; gap:6px;}
+  .opts button{border:1px solid var(--border); background:var(--bg-soft); border-radius:9px; padding:7px 12px; font-size:.82rem; cursor:pointer; color:var(--ink-2); font-weight:600;}
+  .opts button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  #bet-ok{font-size:.78rem; color:var(--muted); margin-top:6px; min-height:1.2em;}
+
+  /* ---------- 04 · Matriz ---------- */
+  #mx-svg{width:100%; display:block;}
+  #mx-out{font-size:.88rem; color:var(--ink-2); margin-top:6px; min-height:2.8em;}
+  #mx-out b{color:var(--ink);}
+
+  /* ---------- 05 · Amostra ---------- */
+  #sm-svg{width:100%; display:block;}
+  .tops{display:grid; gap:4px; margin-top:10px; font-size:.78rem; color:var(--ink-2);}
+  .tops div{display:grid; grid-template-columns:1fr auto; gap:8px; border-bottom:1px dashed var(--border); padding-bottom:3px;}
+  .tops b{color:var(--ink);}
+
+  /* ---------- 06 · Réguas ---------- */
+  #rg-svg{width:100%; display:block;}
+  .rlist{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;}
+  .rlist div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 11px; font-size:.74rem; color:var(--ink-2); line-height:1.35; border-top:4px solid var(--rc);}
+  .rlist b{display:block; font-size:.82rem; color:var(--ink); margin-bottom:2px;}
+  @media (max-width:600px){ .rlist{grid-template-columns:1fr;} }
+
+  /* ---------- 07 · Fornecedores (tabuleiro) ---------- */
+  #bd-read{text-align:center; font-size:.88rem; color:var(--ink-2); margin-top:4px; min-height:2.8em; line-height:1.4;}
+  #bd-read b{color:var(--ink);}
+  #bd-scene .slab{cursor:pointer;}
+  .floor-label.rl{font-weight:700; color:var(--ink-2); text-align:center;}
+  .floor-label.sg{font-weight:700; text-align:right; line-height:1.15;}
+  .tally{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px;}
+  .tally div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 12px; font-size:.76rem; color:var(--ink-2); line-height:1.35;}
+  .tally b{display:block; font-family:var(--serif); font-size:1.3rem; color:var(--ink);}
+
+  /* ---------- 08 · Tamanho ---------- */
+  #sz-svg{width:100%; display:block;}
+  #sz-out{font-size:.86rem; color:var(--ink-2); margin-top:6px; min-height:2.8em;}
+  #sz-out b{color:var(--ink);}
+
+  /* ---------- 09 · Clientes ---------- */
+  #pc-svg{width:100%; display:block;}
+  #pc-out{font-size:.86rem; color:var(--ink-2); margin-top:6px; min-height:2.8em;}
+  #pc-out b{color:var(--ink);}
+  #bet-rev{margin-top:10px; font-size:.84rem; color:var(--ink-2); background:var(--bg-soft); border:1px dashed var(--neutral); border-radius:10px; padding:8px 12px;}
+  #bet-rev b{color:var(--ink);}
+
+  /* ---------- 10 · Outras peças ---------- */
+  .fgrid{display:grid; gap:8px;}
+  .fcard{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 12px; cursor:pointer; text-align:left; font:inherit; color:inherit; display:block; width:100%;}
+  .fcard[aria-pressed="true"]{border-color:var(--ink); box-shadow:var(--shadow);}
+  .fcard h3{font-size:.88rem; margin:0 0 3px; color:var(--ink); display:flex; justify-content:space-between; gap:8px;}
+  .fcard h3 span{font-family:var(--sans); font-size:.7rem; font-weight:700; color:var(--muted); white-space:nowrap;}
+  .strip{display:grid; grid-template-columns:repeat(24, 1fr); gap:2px; margin:4px 0 3px;}
+  .strip.s12{grid-template-columns:repeat(12, 1fr);}
+  .strip i{display:block; height:12px; border-radius:3px; background:#e2e8f0;}
+  .strip i.c{background:var(--navy);} .strip i.x{background:var(--red);}
+  .fcard p{font-size:.72rem; margin:0; color:var(--ink-2);}
+  #fx-panel{margin-top:10px; min-height:96px;}
+
+  /* ---------- 11 · Na prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:10px;}
+  @media (min-width:760px){ .cards4{grid-template-columns:repeat(3, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:10px 13px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:4px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:3px; font-size:.76rem; line-height:1.4; color:var(--ink-2);}
+  .pcard em{font-style:normal; font-size:.7rem; color:var(--muted);}
+  .end{display:grid; grid-template-columns:1fr; gap:20px; margin-top:14px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:36px;} }
+  .end h3{font-size:1.04rem; margin-bottom:4px;}
+  .limits{display:grid; gap:5px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 11px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.77rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.78rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 13px; line-height:1.5; margin-top:6px;}
+  .cite b{color:var(--ink);}
+  .also{font-size:.78rem; margin-top:8px; color:var(--ink-2);}
+  .also a{color:var(--red); font-weight:600;}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-meta="../../../teses/2016-silva-fornecedores-clientes-estrutura-capital/meta.json">
+
+<header class="topbar">
+  <a class="brand" href="../../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../../teses/2016-silva-fornecedores-clientes-estrutura-capital/" hreflang="pt-BR" lang="pt-BR" title="Ler em português"><img class="lang-flag" src="../../../assets/bandeira-br.svg" width="17" height="12" alt="">PT</a>
+    <span id="count">01 / 11</span>
+    <button class="nav-btn" id="prev" aria-label="Previous screen">↑</button>
+    <button class="nav-btn" id="next" aria-label="Next screen">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Screen navigation"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Start">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Doctoral thesis · PPGA Mackenzie · 2016</div>
+      <h1 class="rv" style="--d:.1s">Suppliers that invest in research go with less indebted companies, but only among durable-goods makers</h1>
+      <p class="sub rv" style="--d:.2s">The thesis looked at <strong>521 listed companies in the United Kingdom</strong>, from 2005 to 2014, and asked whether those who sell to them and those who buy from them help explain how much they owe. The expected link showed up with the suppliers of durable-goods makers; with customers and employees, it did not. Explained in 11 screens.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Author:</b> José Milton Almeida da Silva</span>
+        <span><b>Advisor:</b> Prof. Dr. Wilson Toshiro Nakamura</span>
+        <span><b>Program:</b> Graduate Program in Business Administration (PPGA) · Mackenzie Presbyterian University</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#promessa">Start →</a>
+        <a class="btn ghost" href="#fornecedores">Skip to the result</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="500x300" role="img" aria-label="Three blocks in a row: suppliers, the company with a red layer of debt on top, and customers"></div></div>
+      <p id="cap-read" aria-live="polite"></p>
+      <div class="cap-legend">Illustrative drawing of the chain. Tap a block; drag to rotate.</div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">Closest UN Sustainable Development Goals</span>
+        <ul class="ods">
+          <li class="ods-9"><a href="https://sdgs.un.org/goals/goal9" target="_blank" rel="noopener" title="SDG 9 · Industry, Innovation and Infrastructure: Shows how suppliers’ research and development is linked to the way industrial companies finance themselves."><b>9</b>Industry, Innovation and Infrastructure</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">scroll<span></span></div>
+</section>
+
+<!-- 02 · A PROMESSA -->
+<section class="slide" id="promessa" data-label="The idea">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> The idea</div>
+      <h2 class="rv" style="--d:.1s">Whoever invests in a partnership loses a lot if the partner goes bust</h2>
+      <p class="lede rv" style="--d:.15s">A supplier that develops a custom part, a customer that depends on spare parts, an employee who learns something that only counts there: all of them lose if the company fails. Titman (1984) suggested that, so as not to scare these partners away, the company keeps little debt, as a promise that it will last.</p>
+      <div class="pgrid rv" style="--d:.2s" id="pr-cards"></div>
+      <p class="note rv" style="--d:.25s">Source: sections 1.1, 2.7.2 and 3.4 (Titman, 1984; Titman and Wessels, 1988; Maksimovic and Titman, 1991). The part, spare-parts and skill examples are ours.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <span class="ill">Illustration of the idea</span>
+      <div class="sl"><label for="pr-s">Company debt (over assets): <b id="pr-v"></b></label><input class="range" id="pr-s" type="range" min="0" max="90" step="5" value="20"></div>
+      <svg id="pr-svg" viewBox="0 0 560 250" role="img" aria-label="Three bars showing how willing suppliers, customers and employees are to invest in the partnership, falling as debt rises"></svg>
+      <div id="pr-out" aria-live="polite"></div>
+      <p class="note">The bars only draw the theory’s reasoning; they are not data from the thesis.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · AS APOSTAS -->
+<section class="slide" id="apostas" data-label="The bets">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> The question</div>
+      <h2 class="rv" style="--d:.1s">Five bets: three partners and two traits of the company itself</h2>
+      <p class="lede rv" style="--d:.15s">Studies of US companies (Kale and Shahrur, 2007; Banerjee, Dasgupta and Kim, 2008) found less debt when partners invest more in the relationship. The thesis wanted to know whether this also holds in the United Kingdom.</p>
+      <div class="betbox rv" style="--d:.2s">
+        <p><b>Your bet:</b> with which partner will the “more investment, less debt” link show up?</p>
+        <div class="opts" id="bet-opts"></div>
+        <div id="bet-ok" aria-live="polite"></div>
+      </div>
+      <p class="note rv" style="--d:.25s">Source: sections 1.1 and 3.4, Chart 7. The thesis measures partners’ investment by spending on research and development (R&amp;D).</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="hgrid" id="h-cards"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · A MATRIZ -->
+<section class="slide" id="matriz" data-label="How to measure">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> The method</div>
+      <h2 class="rv" style="--d:.1s">Partners were measured by sector, using the table of who buys from whom in the economy</h2>
+      <p class="lede rv" style="--d:.15s">Companies do not say who their suppliers are. The thesis used the United Kingdom input-output table for 2010 (127 sectors), which shows how much each sector buys from every other. Each company thus inherits the typical suppliers and customers of its sector.</p>
+      <p class="rv" style="--d:.2s; font-size:.88rem">“Suppliers’ R&amp;D” is the average research spending of the supplier sectors, weighted by how much the company buys from each. Move the weight of one supplier in a made-up company.</p>
+      <p class="note rv" style="--d:.25s">Source: sections 3.1 and 3.2 (equations 1 and 4; each sector’s R&amp;D = R&amp;D spending ÷ assets). The same calculation, weighted by sales, gives customers’ R&amp;D. The example’s sectors and values are illustrative.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <span class="ill">Illustration</span>
+      <div class="sl"><label for="mx-s">Share of purchases from electronics: <b id="mx-v"></b></label><input class="range" id="mx-s" type="range" min="0" max="80" step="5" value="30"></div>
+      <svg id="mx-svg" viewBox="0 0 560 250" role="img" aria-label="Three supplier sectors with their weight in purchases and their research spending; on the right, the weighted average"></svg>
+      <div id="mx-out" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · AMOSTRA -->
+<section class="slide" id="amostra" data-label="The sample">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Who was included</div>
+      <h2 class="rv" style="--d:.1s">521 British companies, and only one in five makes durable goods</h2>
+      <p class="lede rv" style="--d:.15s">Listed UK companies in the Compustat database with some R&amp;D spending were included, without banks and utilities. The sample leans towards services and technology, so the thesis split it into three groups: durable goods (machinery, electronics, vehicles), non-durable goods (food, chemicals, medicines) and others.</p>
+      <div class="facts rv" style="--d:.2s">
+        <div><b>521</b>companies</div>
+        <div><b>10 years</b>2005 to 2014</div>
+        <div><b>5,210</b>company-year records</div>
+      </div>
+      <p class="note rv" style="--d:.25s">Source: sections 3.1 and 4.1, Tables 1 and 2. The customer sample has 443 companies: 78 that sell over 25% to final consumers, whose customers cannot be measured, were dropped.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <svg id="sm-svg" viewBox="0 0 560 230" role="img" aria-label="Two stacked bars: supplier sample (98 durable, 83 non-durable, 340 others) and customer sample (97, 73 and 273)"></svg>
+      <div class="zleg"><span><span class="sw" style="background:#e80734"></span>durable goods</span><span><span class="sw" style="background:#1f3b73"></span>non-durable goods</span><span><span class="sw" style="background:#cbd5e1"></span>others (services, technology)</span></div>
+      <div class="tops" id="tops"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · QUATRO RÉGUAS -->
+<section class="slide" id="reguas" data-label="Four debt yardsticks">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> What is measured</div>
+      <h2 class="rv" style="--d:.1s">Debt was measured in four ways, and the average runs from 10% to 59%</h2>
+      <p class="lede rv" style="--d:.15s">All debts (including to suppliers) or only long-term loans; divided by balance-sheet assets or by the company’s value with shares at stock-market prices. Using all four tests whether the result survives a change of yardstick.</p>
+      <div class="rlist rv" style="--d:.2s">
+        <div style="--rc:var(--navy)"><b>Balance-sheet yardstick</b>debt ÷ assets recorded on the balance sheet</div>
+        <div style="--rc:var(--red)"><b>Market yardstick</b>debt ÷ (assets with equity replaced by the stock-market value of the shares)</div>
+      </div>
+      <p class="note rv" style="--d:.25s">Source: Chart 5, Tables 3 and 4 (means of the supplier sample). The market yardsticks sit lower because, on average, shares are worth more than book equity.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="ctrls"><div class="seg" id="rg-seg"></div></div>
+      <svg id="rg-svg" viewBox="0 0 560 250" role="img" aria-label="Four bars with the average debt on each yardstick for the chosen group"></svg>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · FORNECEDORES -->
+<section class="slide" id="fornecedores" data-label="Suppliers">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> The finding · suppliers</div>
+      <h2 class="rv" style="--d:.1s">Among durable-goods makers, more research-oriented suppliers went with less debt on all four yardsticks</h2>
+      <p class="lede rv" style="--d:.15s">Each square on the board is one test: a group of companies on one debt yardstick. In durables, all four pieces are blue: the more suppliers spend on R&amp;D, the less the company owes. In non-durables, two went the other way.</p>
+      <div class="tally rv" style="--d:.2s">
+        <div><b>4 of 4</b>tests in durables: less debt</div>
+        <div><b>0 of 4</b>in durables before the error correction</div>
+      </div>
+      <p class="note rv" style="--d:.25s">Source: Tables 23, 25, 27 and 29 (after the correction, by feasible generalized least squares) and 22, 24, 26 and 28 (fixed effects, before). Standing piece = passed the test at 5%; height shows the strength of the test (1 to 3 stars), not the size of the effect.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="ctrls"><div class="seg" id="bd-seg"></div></div>
+      <div class="fit-wrap"><div class="scene draggable" id="bd-scene" data-fit="520x330" role="img" aria-label="Board with 3 rows (durable, non-durable, others) and 4 columns (debt yardsticks); standing blue pieces mean less debt, red ones more debt, flat squares no difference"></div></div>
+      <div class="zleg"><span><span class="sw" style="background:#1f3b73"></span>less debt</span><span><span class="sw" style="background:#e80734"></span>more debt</span><span><span class="sw" style="background:#cbd5e1"></span>no difference in the test</span></div>
+      <div id="bd-read" aria-live="polite"></div>
+      <ul class="sr" id="bd-list"></ul>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · TAMANHO -->
+<section class="slide" id="tamanho" data-label="How much">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> The size of the link</div>
+      <h2 class="rv" style="--d:.1s">In durables, the gap reaches about 10 points of assets on the broadest yardstick</h2>
+      <p class="lede rv" style="--d:.15s">Compare two durable-goods makers whose suppliers differ in R&amp;D. How much does expected debt change? Move the suppliers’ R&amp;D slider, in standard deviations around the group average.</p>
+      <p class="note rv" style="--d:.25s">Our calculation: coefficient from Tables 23, 25, 27 and 29 × standard deviation of suppliers’ R&amp;D in durables (0.273, Table 4), added to each yardstick’s mean (Table 4). It assumes a straight-line relationship with everything else equal; it does not show cause.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <span class="ill">Our calculation</span>
+      <div class="sl"><label for="sz-s">Suppliers’ R&amp;D: <b id="sz-v"></b></label><input class="range" id="sz-s" type="range" min="-1" max="1" step="0.1" value="1"></div>
+      <svg id="sz-svg" viewBox="0 0 560 260" role="img" aria-label="Four bars with expected debt on each yardstick; a mark shows the group average"></svg>
+      <div id="sz-out" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · CLIENTES -->
+<section class="slide" id="clientes" data-label="Customers">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> The unexpected · customers</div>
+      <h2 class="rv" style="--d:.1s">With customers, when there was a link, it went with more debt</h2>
+      <p class="lede rv" style="--d:.15s">The bet was the same: customers that spend more on R&amp;D would want a company with little debt. In 8 of the 12 tests there was no difference; in the other 4, all in durables and “others”, debt was higher.</p>
+      <div id="bet-rev" class="rv" style="--d:.2s" aria-live="polite"></div>
+      <p class="note rv" style="--d:.25s">Source: Tables 31, 33, 35 and 37 (after the correction). Before the correction (Tables 30, 32, 34 and 36), none of the customer tests passed. The thesis notes that it measures customers by sector, not one by one.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <svg id="pc-svg" viewBox="0 0 560 300" role="img" aria-label="Grid of 3 groups by 4 yardsticks with the sign of customers’ R&amp;D: four red squares (more debt), the rest grey"></svg>
+      <div id="pc-out" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · OUTRAS PEÇAS -->
+<section class="slide" id="outras" data-label="Employees and other pieces">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> The other bets</div>
+      <h2 class="rv" style="--d:.1s">More research-oriented employees also went with more debt, not less</h2>
+      <p class="lede rv" style="--d:.15s">Each strip holds the tests of one piece: blue confirmed the bet, red went the other way, grey did not pass the test. Employees (H3) went against the bet in 7 of 12 tests. Asset turnover went with more debt; product uniqueness barely stood out.</p>
+      <div class="panel rv" style="--d:.2s" id="fx-panel" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="fgrid" id="fx-grid"></div>
+      <p class="note">Source: Tables 23 to 37 (after the correction), test at 5%. Order within each strip: durables, non-durables, others, on the four yardsticks; 24-square strips show the supplier sample first and then the customer sample. Our counts.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · NA PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="In practice and credits">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> So what?</div>
+    <h2 class="rv" style="--d:.1s">The supplier chain enters the debt equation, at least among durable-goods makers</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--navy)"><h3>For finance managers</h3><ul><li>In durables, companies with more research-oriented suppliers owed less, on all four yardsticks. <em>(screen 07)</em></li><li>When deciding how much to borrow, it is worth thinking about who depends on the company to invest. <em>(our reading)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--red)"><h3>For company analysts</h3><ul><li>The link changed sign across groups and yardsticks; looking at sector and yardstick avoids generalizing. <em>(screens 07 and 10)</em></li><li>With customers and employees, the result was the opposite of what US studies found. <em>(thesis)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.25s; --pc:#64748b"><h3>For researchers</h3><ul><li>Repeat with Brazilian or Latin American companies and with models that follow changes over time. <em>(thesis)</em></li><li>Build more precise measures of partners; in Brazil, the challenge is that companies rarely disclose R&amp;D spending. <em>(thesis)</em></li></ul></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.3s">
+        <h3>What this research does not say</h3>
+        <ul class="limits">
+          <li><b>Partners by sector.</b> Suppliers and customers come from the sector’s 2010 table, not from each company’s own relationships; the same table was used for every year. <em>· according to the thesis</em></li>
+          <li><b>Small sample.</b> At most 4,401 records, against 76,290 and 34,716 in the US studies, and with many services and technology companies. <em>· according to the thesis</em></li>
+          <li><b>Sensitive to method.</b> The supplier result in durables only appeared after the error correction; and the employees’ sign on total debt flipped from negative to positive with it. <em>· our observation</em></li>
+          <li><b>Turnover is not vertical integration.</b> The thesis uses sales ÷ assets as a sign of vertical integration and says the more integrated company has lower turnover; so higher turnover with more debt does not show that integrating leads to more debt. <em>· our reading</em></li>
+          <li><b>Extreme values.</b> The data were not treated for extreme values; one company has total debt of 58 times its assets. <em>· our observation (Table 3)</em></li>
+          <li><b>Association, not cause.</b> The models do not say whether suppliers lead the company to owe less or whether something else explains both. <em>· our observation</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.35s">
+        <h3>Credits</h3>
+        <div class="cite">
+          <b>How to cite</b><br>
+          SILVA, José Milton Almeida da. <em>As características dos fornecedores e clientes influenciam a estrutura de capital das empresas?</em> Doctoral thesis (Business Administration), Universidade Presbiteriana Mackenzie, São Paulo, 2016. Advisor: Prof. Dr. Wilson Toshiro Nakamura.
+        </div>
+        <p style="margin-top:8px; font-size:.76rem">Data from Compustat Global Vantage and the input-output table of the UK Office for National Statistics. Financial support from Mackenzie Presbyterian University. This version simplifies the work for a general audience.</p>
+        <p class="also">See also, by the same advisor: <a href="../../../en/teses/2018-silva-diversificacao-estrutura-capital/">Silva (2018)</a>, diversification and debt; and <a href="../../../en/teses/2018-jones-caixa-endividamento-brasil/">Jones (2018)</a>, cash and debt.</p>
+        <div class="ctas" style="margin-top:10px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Read the full thesis (in Portuguese)</a>
+          <a class="btn ghost" href="#capa">↑ Back to start</a>
+          <a class="btn ghost" href="../../../en/">More research</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, rotatable = M.rotatable, flatLabel = M.flatLabel;
+  var EN = M.lang === 'en';
+  function L(p, e){ return EN ? e : p; }
+  function sg(v, d){ var s = fmt(Math.abs(v), d); return (v < 0 ? '−' : (v > 0 ? '+' : '')) + s; }
+  function segInit(el, items, cur, fn){
+    el.innerHTML = items.map(function(t, i){ return '<button data-v="' + i + '" aria-pressed="' + (i === cur) + '">' + t + '</button>'; }).join('');
+    each(el.children, function(b){ b.addEventListener('click', function(){ each(el.children, function(x){ x.setAttribute('aria-pressed', x === b); }); fn(+b.dataset.v); }); });
+  }
+  var NS = 'http://www.w3.org/2000/svg';
+  function svgEl(tag, attrs, txt){ var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); if (txt !== undefined) e.textContent = txt; return e; }
+  function rulLabel(svg, x, y, i){ var p = RUL[i].split(' · '); svg.appendChild(svgEl('text', {x:x, y:y, 'font-size':14, 'font-weight':700, 'text-anchor':'end', fill:'#0f172a'}, p[0])); svg.appendChild(svgEl('text', {x:x, y:y + 16, 'font-size':11, 'text-anchor':'end', fill:'#64748b', class:'s'}, p[1])); }
+  var NAVY = '#1f3b73', RED = '#e80734', GREY = '#cbd5e1', CUS = '#5b7bb4', INK = '#0f172a', MUTED = '#64748b';
+
+  /* ================= DADOS DA TESE ================= */
+  var SEG = [L('Bens duráveis', 'Durable goods'), L('Não duráveis', 'Non-durable goods'), L('Outros', 'Others')];
+  var SEGs = [L('duráveis', 'durables'), L('não duráveis', 'non-durables'), L('outros', 'others')];
+  var RUL = [L('Total · balanço', 'Total · book'), L('Longo prazo · balanço', 'Long-term · book'), L('Total · mercado', 'Total · market'), L('Longo prazo · mercado', 'Long-term · market')];
+  var RULs = [L('Total<br>balanço', 'Total<br>book'), L('Longo<br>balanço', 'Long-term<br>book'), L('Total<br>mercado', 'Total<br>market'), L('Longo<br>mercado', 'Long-term<br>market')];
+  // [coeficiente, estrelas] por grupo (duráveis, não duráveis, outros) × régua (ETC, ELC, ETM, ELM)
+  // Depois da correção (MQGF): Tabelas 23, 25, 27, 29 (fornecedores) e 31, 33, 35, 37 (clientes)
+  var MQ = {
+    PDF:[[[-0.3662,2],[-0.2204,3],[-0.1709,3],[-0.1392,3]], [[0.7822,2],[0.7176,3],[-0.0392,0],[0.0776,0]], [[-0.1392,0],[0.0037,0],[-0.1016,1],[0.0052,0]]],
+    PDE:[[[5.9429,3],[8.1712,3],[3.8079,3],[3.7105,3]], [[0.2510,0],[0.2123,0],[-0.8248,0],[1.0618,3]], [[0.2165,0],[0.1874,1],[0.3039,3],[-0.0237,0]]],
+    VERTF:[[[-0.0171,0],[-0.0595,1],[0.1244,3],[-0.0246,0]], [[0.2080,3],[0.0755,2],[0.0712,3],[0.0017,0]], [[0.0195,3],[-0.0007,0],[0.0075,3],[-0.0016,0]]],
+    SINGF:[[[-0.0131,0],[-0.0126,2],[-0.0049,0],[-0.0042,0]], [[0.0034,3],[0.0027,3],[0.0003,0],[-0.00001,0]], [[-0.0004,0],[-0.0003,0],[-0.0001,0],[-0.00001,0]]],
+    PDC:[[[0.8243,3],[0.1841,1],[0.0264,0],[0.0176,0]], [[0.1443,0],[0.0083,0],[-0.0637,0],[-0.0522,0]], [[-0.0366,0],[0.1750,3],[0.0242,0],[0.1097,3]]],
+    VERTC:[[[0.1046,0],[-0.0148,0],[0.1501,3],[0.0003,0]], [[0.2079,3],[0.0972,2],[0.0512,2],[0.0126,0]], [[0.2120,3],[0.0272,2],[0.0798,3],[-0.0089,1]]],
+    SINGC:[[[0.0036,1],[0.0009,0],[0.0010,0],[0.0002,0]], [[0.0030,2],[0.0026,2],[0.0001,0],[-0.0001,0]], [[-0.0002,0],[-0.0001,0],[-0.00001,0],[-0.00001,0]]]
+  };
+  // Antes da correção (efeitos fixos): Tabelas 22, 24, 26, 28
+  var FE = {
+    PDF:[[[0.0532,0],[-0.0299,0],[-0.0123,0],[-0.0307,0]], [[0.7382,0],[1.5444,2],[0.6948,1],[0.8224,3]], [[0.0437,0],[0.0702,0],[-0.1386,0],[-0.0711,0]]]
+  };
+  // Tabelas 3 e 4: dívida média (fração do ativo), amostra dos fornecedores [ETC, ELC, ETM, ELM]
+  var MEANS = [[0.589, 0.157, 0.365, 0.096], [0.619, 0.133, 0.392, 0.086], [0.587, 0.198, 0.372, 0.116], [0.580, 0.153, 0.355, 0.094]];
+  var SD_PDF_DUR = 0.273; // Tabela 4
+  var BET = null;
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 460, 120, {ay:'66%'});
+    rotatable(sc, st, -18, 10);
+    var parts = [
+      {x:10, h:90, c:NAVY, n:L('Fornecedores', 'Suppliers'), col:'var(--sup)', t:L('<b>Fornecedores</b>: quanto mais o setor que vende para a empresa gasta com pesquisa, mais ele investe sob medida para ela.', '<b>Suppliers</b>: the more the sector selling to the company spends on research, the more it invests tailor-made for it.')},
+      {x:175, h:70, c:'#94a3b8', n:L('Empresa', 'Company'), col:INK, t:L('<b>A empresa</b> e sua dívida (camada vermelha). A pergunta: os parceiros ajudam a explicar o tamanho dessa camada?', '<b>The company</b> and its debt (red layer). The question: do partners help explain the size of this layer?')},
+      {x:340, h:60, c:CUS, n:L('Clientes', 'Customers'), col:'var(--cus)', t:L('<b>Clientes</b>: setores que compram da empresa e que também podem depender dela para investir.', '<b>Customers</b>: sectors that buy from the company and may also depend on it to invest.')}
+    ];
+    var blocks = [];
+    parts.forEach(function(p, i){
+      var arr = [box({w:100, d:70, x:p.x, y:16, h:p.h, c:p.c})];
+      if (i === 1) arr.push(box({w:100, d:70, x:p.x, y:16, z:p.h + 2, h:50, c:RED, label:L('dívida', 'debt')}));
+      arr.forEach(function(b){ b.dataset.g = i; st.appendChild(b); });
+      blocks.push(arr);
+      flatLabel(st, p.n, p.x - 10, 100, 120, 'text-align:center; font-weight:700; font-size:15px; color:' + p.col);
+    });
+    flatLabel(st, '→', 125, 40, 40, 'text-align:center; font-size:22px; color:#94a3b8');
+    flatLabel(st, '→', 290, 40, 40, 'text-align:center; font-size:22px; color:#94a3b8');
+    var read = $('cap-read');
+    function pick(i){
+      blocks.forEach(function(arr, k){ arr.forEach(function(b){ b.classList.toggle('dim', k !== i); }); });
+      read.innerHTML = parts[i].t;
+    }
+    sc.addEventListener('click', function(e){ if (M.wasDrag(sc)) return; var s = e.target.closest('.slab'); if (s && s.dataset.g !== undefined) pick(+s.dataset.g); });
+    read.innerHTML = L('Quem vende para a empresa, a empresa e quem compra dela. <b>Toque num bloco.</b>', 'Who sells to the company, the company and who buys from it. <b>Tap a block.</b>');
+  })();
+
+  /* ================= 02 · A PROMESSA ================= */
+  (function(){
+    var P = [
+      {k:'sup', c:NAVY, n:L('Fornecedor', 'Supplier'), ex:L('desenvolve uma peça que só serve para esta empresa', 'develops a part that only fits this company'), lose:L('fica com a peça e a máquina paradas', 'is left with the part and an idle machine')},
+      {k:'cus', c:CUS, n:L('Cliente', 'Customer'), ex:L('compra um equipamento e depende de reposição e assistência', 'buys equipment and depends on spare parts and service'), lose:L('fica sem peças e sem garantia', 'is left without parts or warranty')},
+      {k:'emp', c:'#334155', n:L('Empregado', 'Employee'), ex:L('aprende um ofício que só vale nesta empresa', 'learns a craft that is only worth something at this company'), lose:L('perde o emprego e o valor do que aprendeu', 'loses the job and the value of what was learned')}
+    ];
+    var cards = $('pr-cards'), sel = 0;
+    cards.innerHTML = P.map(function(p, i){ return '<button class="pbtn" style="--pc:' + p.c + '" data-i="' + i + '" aria-pressed="' + (i === 0) + '"><h3>' + p.n + '</h3><p>' + p.ex + '.</p></button>'; }).join('');
+    each(cards.children, function(b){ b.addEventListener('click', function(){ sel = +b.dataset.i; each(cards.children, function(x){ x.setAttribute('aria-pressed', x === b); }); draw(); }); });
+    var s = $('pr-s'), v = $('pr-v'), svg = $('pr-svg'), out = $('pr-out');
+    function draw(){
+      var d = +s.value; v.textContent = d + '%';
+      svg.innerHTML = '';
+      var X0 = 150, WID = 380;
+      P.forEach(function(p, i){
+        var y = 24 + i * 64, will = Math.max(0.08, 1 - Math.pow(d / 90, 1.4) * (0.8 + i * 0.05)), on = i === sel;
+        svg.appendChild(svgEl('text', {x:X0 - 10, y:y + 24, 'font-size':14, 'font-weight':700, 'text-anchor':'end', fill:on ? INK : MUTED}, p.n));
+        svg.appendChild(svgEl('rect', {x:X0, y:y + 6, width:WID, height:28, rx:5, fill:'#f1f5f9', stroke:on ? INK : 'none'}));
+        svg.appendChild(svgEl('rect', {x:X0, y:y + 6, width:WID * will, height:28, rx:5, fill:p.c, 'fill-opacity':on ? 1 : 0.45}));
+      });
+      svg.appendChild(svgEl('text', {x:X0, y:226, 'font-size':12, fill:MUTED, class:'s'}, L('disposição a investir na parceria →', 'willingness to invest in the partnership →')));
+      var p = P[sel];
+      out.innerHTML = d <= 30
+        ? L('Com pouca dívida, o risco de quebra parece baixo: o <b>' + p.n.toLowerCase() + '</b> topa investir.', 'With little debt, the risk of failure looks low: the <b>' + p.n.toLowerCase() + '</b> is willing to invest.')
+        : L('Com dívida alta, o <b>' + p.n.toLowerCase() + '</b> teme a quebra, pois ' + p.lose + ', e hesita em investir.', 'With high debt, the <b>' + p.n.toLowerCase() + '</b> fears a failure, because it ' + p.lose + ', and hesitates to invest.');
+    }
+    s.addEventListener('input', draw); draw();
+  })();
+
+  /* ================= 03 · APOSTAS ================= */
+  (function(){
+    var H = [
+      ['H1', NAVY, L('Fornecedores', 'Suppliers'), L('Fornecedores que gastam mais com P&D → empresa com menos dívida.', 'Suppliers that spend more on R&D → company with less debt.')],
+      ['H2', CUS, L('Clientes', 'Customers'), L('Clientes que gastam mais com P&D → empresa com menos dívida.', 'Customers that spend more on R&D → company with less debt.')],
+      ['H3', '#334155', L('Empregados', 'Employees'), L('Empresa que paga mais salários e gasta mais com P&D (empregados especializados) → menos dívida.', 'Company that pays more in wages and spends more on R&D (specialized employees) → less debt.')],
+      ['H4', '#94a3b8', L('Verticalização', 'Vertical integration'), L('Empresa que produz seus próprios insumos depende menos dos parceiros → mais dívida.', 'Company that makes its own inputs depends less on partners → more debt.')],
+      ['H5', '#94a3b8', L('Produto singular', 'Unique product'), L('Quanto mais a empresa gasta com P&D sobre as vendas (produto difícil de copiar) → menos dívida.', 'The more the company spends on R&D relative to sales (product hard to copy) → less debt.')]
+    ];
+    $('h-cards').innerHTML = H.map(function(h){ return '<div class="hcard" style="--hc:' + h[1] + '"><span class="h">' + h[0] + '</span><b>' + h[2] + '</b><span>' + h[3] + '</span></div>'; }).join('');
+    var opts = $('bet-opts'), ok = $('bet-ok');
+    var K = [['sup', L('Fornecedores', 'Suppliers')], ['cus', L('Clientes', 'Customers')], ['emp', L('Empregados', 'Employees')], ['none', L('Nenhum', 'None')]];
+    opts.innerHTML = K.map(function(k){ return '<button data-k="' + k[0] + '" aria-pressed="false">' + k[1] + '</button>'; }).join('');
+    each(opts.children, function(b){ b.addEventListener('click', function(){
+      BET = b.dataset.k;
+      each(opts.children, function(x){ x.setAttribute('aria-pressed', x === b); });
+      ok.textContent = L('Aposta registrada. Confira nas telas 07 a 09.', 'Bet recorded. Check it on screens 07 to 09.');
+      if (window.__betRev) window.__betRev();
+    }); });
+  })();
+
+  /* ================= 04 · A MATRIZ ================= */
+  (function(){
+    var s = $('mx-s'), v = $('mx-v'), svg = $('mx-svg'), out = $('mx-out');
+    var S = [[L('Eletrônicos', 'Electronics'), 0.60, RED], [L('Aço', 'Steel'), 0.10, NAVY], [L('Transporte', 'Transport'), 0.04, '#94a3b8']];
+    function draw(){
+      var e = +s.value / 100, rest = 1 - e, w = [e, rest * 0.6, rest * 0.4];
+      v.textContent = Math.round(e * 100) + '%';
+      svg.innerHTML = '';
+      var tot = 0, X0 = 130, WID = 230;
+      S.forEach(function(r, i){
+        var y = 20 + i * 62; tot += w[i] * r[1];
+        svg.appendChild(svgEl('text', {x:X0 - 10, y:y + 18, 'font-size':14, 'font-weight':700, 'text-anchor':'end', fill:INK}, r[0]));
+        svg.appendChild(svgEl('text', {x:X0 - 10, y:y + 35, 'font-size':11, 'text-anchor':'end', fill:MUTED, class:'s'}, L('P&D ', 'R&D ') + fmt(r[1], 2)));
+        svg.appendChild(svgEl('rect', {x:X0, y:y + 4, width:WID, height:28, rx:5, fill:'#f1f5f9'}));
+        svg.appendChild(svgEl('rect', {x:X0, y:y + 4, width:WID * w[i], height:28, rx:5, fill:r[2]}));
+        svg.appendChild(svgEl('text', {x:X0 + WID * w[i] + 6, y:y + 23, 'font-size':13, 'font-weight':700, fill:INK}, Math.round(w[i] * 100) + '%'));
+      });
+      svg.appendChild(svgEl('text', {x:X0, y:206, 'font-size':12, fill:MUTED, class:'s'}, L('peso nas compras', 'weight in purchases')));
+      var cx = 470, H = 170, h = tot / 0.6 * H;
+      svg.appendChild(svgEl('rect', {x:cx - 35, y:20, width:70, height:H, rx:6, fill:'#f1f5f9'}));
+      svg.appendChild(svgEl('rect', {x:cx - 35, y:20 + H - h, width:70, height:Math.max(h, 2), rx:6, fill:NAVY}));
+      svg.appendChild(svgEl('text', {x:cx, y:14 + H - h, 'font-size':16, 'font-weight':700, 'text-anchor':'middle', fill:INK}, fmt(tot, 2)));
+      svg.appendChild(svgEl('text', {x:cx, y:212, 'font-size':12, 'font-weight':700, 'text-anchor':'middle', fill:NAVY}, L('P&D dos', 'Suppliers’')));
+      svg.appendChild(svgEl('text', {x:cx, y:228, 'font-size':12, 'font-weight':700, 'text-anchor':'middle', fill:NAVY}, L('fornecedores', 'R&D')));
+      out.innerHTML = L('Média pesada: ' + S.map(function(r, i){ return Math.round(w[i] * 100) + '% × ' + fmt(r[1], 2); }).join(' + ') + ' = <b>' + fmt(tot, 2) + '</b>. Quanto mais a empresa compra de setores que pesquisam, maior o número.', 'Weighted average: ' + S.map(function(r, i){ return Math.round(w[i] * 100) + '% × ' + fmt(r[1], 2); }).join(' + ') + ' = <b>' + fmt(tot, 2) + '</b>. The more the company buys from research-heavy sectors, the higher the number.');
+    }
+    s.addEventListener('input', draw); draw();
+  })();
+
+  /* ================= 05 · AMOSTRA ================= */
+  (function(){
+    var svg = $('sm-svg');
+    var B = [[L('Amostra dos fornecedores', 'Supplier sample'), 521, [98, 83, 340]], [L('Amostra dos clientes', 'Customer sample'), 443, [97, 73, 273]]];
+    var COL = [RED, NAVY, GREY], X0 = 20, WID = 520;
+    B.forEach(function(b, i){
+      var y = 34 + i * 104, x = X0;
+      svg.appendChild(svgEl('text', {x:X0, y:y - 8, 'font-size':14, 'font-weight':700, fill:INK}, b[0]));
+      svg.appendChild(svgEl('text', {x:X0 + WID, y:y - 8, 'font-size':12, 'text-anchor':'end', fill:MUTED, class:'s'}, b[1] + L(' empresas', ' companies')));
+      b[2].forEach(function(n, k){
+        var w = WID * n / b[1];
+        svg.appendChild(svgEl('rect', {x:x, y:y, width:Math.max(w - 1, 0), height:40, rx:4, fill:COL[k]}));
+        svg.appendChild(svgEl('text', {x:x + w / 2, y:y + 25, 'font-size':13, 'font-weight':700, 'text-anchor':'middle', fill:k === 2 ? '#334155' : '#fff'}, n));
+        svg.appendChild(svgEl('text', {x:x + w / 2, y:y + 58, 'font-size':11, 'text-anchor':'middle', fill:MUTED, class:'s'}, fmt(n / b[1] * 100, 1) + '%'));
+        x += w;
+      });
+    });
+    var T = [[L('Informação e comunicação', 'Information and communication'), 135, 25.9], [L('P&D em biotecnologia e ciências naturais', 'R&D in biotechnology and natural sciences'), 47, 9.0], [L('Equipamentos eletrônicos e de comunicação', 'Electronic and communication equipment'), 33, 6.3], [L('Químicos e plásticos básicos', 'Basic chemicals and plastics'), 31, 6.0], [L('Recursos humanos, limpeza e segurança', 'Human resources, cleaning and security'), 31, 6.0]];
+    $('tops').innerHTML = '<b>' + L('Maiores setores (amostra dos fornecedores)', 'Largest sectors (supplier sample)') + '</b>' + T.map(function(t){ return '<div><span>' + t[0] + '</span><b>' + t[1] + ' · ' + fmt(t[2], 1) + '%</b></div>'; }).join('');
+  })();
+
+  /* ================= 06 · QUATRO RÉGUAS ================= */
+  (function(){
+    var svg = $('rg-svg');
+    var GR = [L('Todas', 'All'), SEG[0], SEG[1], SEG[2]];
+    var COL = [NAVY, NAVY, RED, RED];
+    function draw(g){
+      svg.innerHTML = '';
+      var X0 = 180, WID = 330, m = MEANS[g];
+      RUL.forEach(function(r, i){
+        var y = 18 + i * 54, val = m[i];
+        rulLabel(svg, X0 - 10, y + 17, i);
+        svg.appendChild(svgEl('rect', {x:X0, y:y + 4, width:WID, height:30, rx:5, fill:'#f1f5f9'}));
+        svg.appendChild(svgEl('rect', {x:X0, y:y + 4, width:WID * val, height:30, rx:5, fill:COL[i], 'fill-opacity':i % 2 ? 0.6 : 1}));
+        svg.appendChild(svgEl('text', {x:X0 + WID * val + 6, y:y + 25, 'font-size':14, 'font-weight':700, fill:INK}, fmt(val * 100, 1) + '%'));
+      });
+      svg.appendChild(svgEl('text', {x:X0 + WID, y:240, 'font-size':11, 'text-anchor':'end', fill:MUTED, class:'s'}, L('a barra cinza inteira = 100% do ativo', 'the whole grey bar = 100% of assets')));
+    }
+    segInit($('rg-seg'), GR, 0, draw); draw(0);
+  })();
+
+  /* ================= 07 · FORNECEDORES (tabuleiro) ================= */
+  (function(){
+    var sc = $('bd-scene'), st = makeStage(sc, 480, 260, {ay:'60%', rx:'50deg'});
+    rotatable(sc, st, -8, 6);
+    var CW = 82, CD = 58, X0 = 110, Y0 = 8, cells = [];
+    for (var r = 0; r < 3; r++){
+      flatLabel(st, SEG[r], -6, Y0 + r * 74 + 14, 108, 'font-weight:700; font-size:15px; line-height:1.1; text-align:right; color:' + (r === 0 ? NAVY : '#334155'));
+      for (var c = 0; c < 4; c++){
+        var b = box({w:CW, d:CD, x:X0 + c * 92, y:Y0 + r * 74, h:4, c:GREY});
+        b.style.transition = 'all .6s ease';
+        b.dataset.r = r; b.dataset.c = c;
+        st.appendChild(b); cells.push(b);
+      }
+    }
+    RUL.forEach(function(t, c){ var l = flatLabel(st, '', X0 + c * 92 - 6, Y0 + 3 * 74 - 4, CW + 12, 'text-align:center; font-weight:700; font-size:14px; color:#334155; line-height:1.15'); l.innerHTML = RULs[c]; });
+    var read = $('bd-read'), list = $('bd-list'), mode = 0;
+    function data(){ return mode === 0 ? MQ.PDF : FE.PDF; }
+    function cellTxt(r, c){
+      var d = data()[r][c], sig = d[1] > 0;
+      return '<b>' + SEG[r] + ' · ' + RUL[c] + '</b>: ' + L('coeficiente ', 'coefficient ') + sg(d[0], 4) + (sig ? ' (' + '*'.repeat(d[1]) + ') · ' + (d[0] < 0 ? L('menos dívida', 'less debt') : L('mais dívida', 'more debt')) : L(' · não passou no teste', ' · did not pass the test'));
+    }
+    function set(m){
+      mode = m;
+      var D = data();
+      cells.forEach(function(b){
+        var d = D[+b.dataset.r][+b.dataset.c], sig = d[1] > 0;
+        b.style.setProperty('--h', (sig ? 14 + d[1] * 16 : 4) + 'px');
+        b.style.setProperty('--c', sig ? (d[0] < 0 ? NAVY : RED) : GREY);
+        b.classList.remove('active');
+      });
+      list.innerHTML = cells.map(function(b){ return '<li>' + cellTxt(+b.dataset.r, +b.dataset.c).replace(/<[^>]+>/g, '') + '</li>'; }).join('');
+      read.innerHTML = m === 0
+        ? L('<b>Depois da correção:</b> duráveis com as quatro peças azuis; não duráveis com duas vermelhas; nos outros, uma azul. Toque numa casa.', '<b>After the correction:</b> durables with all four pieces blue; non-durables with two red; in others, one blue. Tap a square.')
+        : L('<b>Antes da correção (efeitos fixos):</b> nenhuma peça nos duráveis; nos não duráveis, três vermelhas. Toque numa casa.', '<b>Before the correction (fixed effects):</b> no pieces in durables; in non-durables, three red. Tap a square.');
+    }
+    sc.addEventListener('click', function(e){
+      if (M.wasDrag(sc)) return;
+      var s = e.target.closest('.slab'); if (!s || s.dataset.r === undefined) return;
+      cells.forEach(function(b){ b.classList.toggle('active', b === s); });
+      read.innerHTML = cellTxt(+s.dataset.r, +s.dataset.c) + '.';
+    });
+    segInit($('bd-seg'), [L('Depois da correção', 'After the correction'), L('Antes (efeitos fixos)', 'Before (fixed effects)')], 0, set);
+    set(0);
+  })();
+
+  /* ================= 08 · TAMANHO ================= */
+  (function(){
+    var s = $('sz-s'), v = $('sz-v'), svg = $('sz-svg'), out = $('sz-out');
+    var B = MQ.PDF[0].map(function(d){ return d[0]; }), MN = MEANS[1];
+    function draw(){
+      var k = +s.value;
+      v.textContent = k === 0 ? L('na média do grupo', 'at the group average') : (k > 0 ? '+' : '−') + fmt(Math.abs(k), 1) + (Math.abs(k) === 1 ? L(' desvio-padrão', ' standard deviation') : L(' desvio-padrão', ' standard deviations'));
+      svg.innerHTML = '';
+      var X0 = 180, WID = 330, MAX = 0.8;
+      RUL.forEach(function(r, i){
+        var y = 14 + i * 56, d = B[i] * SD_PDF_DUR * k, val = MN[i] + d;
+        rulLabel(svg, X0 - 10, y + 17, i);
+        svg.appendChild(svgEl('rect', {x:X0, y:y + 4, width:WID, height:30, rx:5, fill:'#f1f5f9'}));
+        svg.appendChild(svgEl('rect', {x:X0, y:y + 4, width:Math.max(WID * val / MAX, 0), height:30, rx:5, fill:d < 0 ? NAVY : (d > 0 ? RED : '#94a3b8')}));
+        var mx = X0 + WID * MN[i] / MAX;
+        svg.appendChild(svgEl('line', {x1:mx, x2:mx, y1:y, y2:y + 38, stroke:INK, 'stroke-width':2, 'stroke-dasharray':'3 2'}));
+        svg.appendChild(svgEl('text', {x:X0 + WID * Math.max(val, MN[i]) / MAX + 8, y:y + 20, 'font-size':13, 'font-weight':700, fill:INK}, fmt(val * 100, 1) + '%'));
+        svg.appendChild(svgEl('text', {x:X0 + WID * Math.max(val, MN[i]) / MAX + 8, y:y + 35, 'font-size':11, fill:MUTED, class:'s'}, sg(d * 100, 1) + L(' p.p.', ' pts')));
+      });
+      svg.appendChild(svgEl('text', {x:X0, y:250, 'font-size':11, fill:MUTED, class:'s'}, L('linha tracejada = média dos duráveis', 'dashed line = durables average')));
+      var d0 = B[0] * SD_PDF_DUR * k;
+      out.innerHTML = k === 0
+        ? L('Na média do grupo, a dívida total no balanço é de <b>' + fmt(MN[0] * 100, 1) + '%</b> do ativo.', 'At the group average, total book debt is <b>' + fmt(MN[0] * 100, 1) + '%</b> of assets.')
+        : L('Com fornecedores ' + (k > 0 ? 'mais' : 'menos') + ' voltados à pesquisa, a dívida total no balanço ' + (k > 0 ? 'cai' : 'sobe') + ' <b>' + fmt(Math.abs(d0 * 100), 1) + ' pontos</b> do ativo, de ' + fmt(MN[0] * 100, 1) + '% para ' + fmt((MN[0] + d0) * 100, 1) + '%.', 'With ' + (k > 0 ? 'more' : 'less') + ' research-oriented suppliers, total book debt ' + (k > 0 ? 'falls' : 'rises') + ' by <b>' + fmt(Math.abs(d0 * 100), 1) + ' points</b> of assets, from ' + fmt(MN[0] * 100, 1) + '% to ' + fmt((MN[0] + d0) * 100, 1) + '%.');
+    }
+    s.addEventListener('input', draw); draw();
+  })();
+
+  /* ================= 09 · CLIENTES ================= */
+  (function(){
+    var svg = $('pc-svg'), out = $('pc-out'), D = MQ.PDC;
+    var X0 = 156, CW = 100, CH = 62, Y0 = 46, rects = [];
+    RUL.forEach(function(r, c){
+      var t = svgEl('text', {x:X0 + c * CW + CW / 2, y:20, 'font-size':12, 'font-weight':700, 'text-anchor':'middle', fill:'#334155', class:'s'}, RUL[c].split(' · ')[0]);
+      svg.appendChild(t);
+      svg.appendChild(svgEl('text', {x:X0 + c * CW + CW / 2, y:36, 'font-size':11, 'text-anchor':'middle', fill:MUTED, class:'s'}, RUL[c].split(' · ')[1]));
+    });
+    D.forEach(function(row, r){
+      svg.appendChild(svgEl('text', {x:X0 - 10, y:Y0 + r * (CH + 8) + CH / 2 + 5, 'font-size':13, 'font-weight':700, 'text-anchor':'end', fill:INK}, [L('Bens duráveis', 'Durables'), L('Não duráveis', 'Non-durables'), L('Outros', 'Others')][r]));
+      row.forEach(function(d, c){
+        var sig = d[1] > 0, x = X0 + c * CW + 4, y = Y0 + r * (CH + 8);
+        var g = svgEl('g', {style:'cursor:pointer'});
+        var re = svgEl('rect', {x:x, y:y, width:CW - 8, height:CH, rx:8, fill:sig ? (d[0] > 0 ? RED : NAVY) : '#e2e8f0', stroke:'none', 'stroke-width':3});
+        g.appendChild(re);
+        g.appendChild(svgEl('text', {x:x + (CW - 8) / 2, y:y + 28, 'font-size':15, 'font-weight':700, 'text-anchor':'middle', fill:sig ? '#fff' : '#334155'}, sg(d[0], 2)));
+        g.appendChild(svgEl('text', {x:x + (CW - 8) / 2, y:y + 47, 'font-size':11, 'text-anchor':'middle', fill:sig ? '#fff' : MUTED, class:'s'}, sig ? '*'.repeat(d[1]) : L('não passou', 'did not pass')));
+        g.addEventListener('click', function(){ rects.forEach(function(q){ q.setAttribute('stroke', 'none'); }); re.setAttribute('stroke', INK); out.innerHTML = '<b>' + SEG[r] + ' · ' + RUL[c] + '</b>: ' + (sig ? L('clientes com mais P&D andaram com <b>mais</b> dívida, o contrário da aposta.', 'customers with more R&D went with <b>more</b> debt, the opposite of the bet.') : L('sem diferença no teste.', 'no difference in the test.')); });
+        rects.push(re); svg.appendChild(g);
+      });
+    });
+    svg.appendChild(svgEl('text', {x:X0, y:Y0 + 3 * (CH + 8) + 14, 'font-size':11, fill:MUTED, class:'s'}, L('vermelho = mais dívida; cinza = sem diferença', 'red = more debt; grey = no difference')));
+    out.innerHTML = L('Toque numa casa para ler o teste.', 'Tap a square to read the test.');
+    var rev = $('bet-rev');
+    function betRev(){
+      var tail = L(' Só os fornecedores, e só nos bens duráveis, mostraram a ligação “mais investimento, menos dívida” (tela 07).', ' Only suppliers, and only in durable goods, showed the “more investment, less debt” link (screen 07).');
+      if (!BET){ rev.innerHTML = L('Você não apostou na tela 03.', 'You did not bet on screen 03.') + tail; return; }
+      var M2 = {sup:L('<b>Acertou</b>, com ressalva: valeu nos bens duráveis.', '<b>Right</b>, with a caveat: it held in durable goods.'), cus:L('<b>Não foi</b>: com clientes, a ligação foi com mais dívida.', '<b>Not quite</b>: with customers, the link went with more debt.'), emp:L('<b>Não foi</b>: com empregados, também mais dívida (tela 10).', '<b>Not quite</b>: with employees, more debt too (screen 10).'), none:L('<b>Quase</b>: nos duráveis, os fornecedores mostraram a ligação.', '<b>Almost</b>: in durables, suppliers showed the link.')};
+      rev.innerHTML = L('Sua aposta: ', 'Your bet: ') + M2[BET] + tail;
+    }
+    window.__betRev = betRev; betRev();
+  })();
+
+  /* ================= 10 · OUTRAS PEÇAS ================= */
+  (function(){
+    function flat(a){ return a.reduce(function(x, r){ return x.concat(r); }, []); }
+    var FX = [
+      {n:L('Empregados (H3)', 'Employees (H3)'), exp:-1, d:flat(MQ.PDE), what:L('salários do setor sobre as vendas × gasto com P&D da própria empresa; empregados especializados perderiam mais numa quebra', 'sector wages over sales × the company’s own R&D spending; specialized employees would lose more in a failure'),
+        extra:L('Nos duráveis, a dívida total no balanço saía <b>negativa</b> (−6,87) no modelo antes da correção e <b>positiva</b> (+5,94) depois.', 'In durables, total book debt came out <b>negative</b> (−6.87) in the model before the correction and <b>positive</b> (+5.94) after.')},
+      {n:L('Giro do ativo (H4)', 'Asset turnover (H4)'), exp:1, d:flat(MQ.VERTF).concat(flat(MQ.VERTC)), what:L('vendas ÷ ativo, que a tese usa como sinal de verticalização; a tese apostava em mais dívida', 'sales ÷ assets, which the thesis uses as a sign of vertical integration; the thesis bet on more debt'),
+        extra:L('A tese diz que a empresa mais verticalizada tem giro <b>menor</b>; então este resultado não mostra que verticalizar leva a dever mais (leitura nossa).', 'The thesis says the more integrated company has <b>lower</b> turnover; so this result does not show that integrating leads to more debt (our reading).')},
+      {n:L('Produto singular (H5)', 'Unique product (H5)'), exp:-1, d:flat(MQ.SINGF).concat(flat(MQ.SINGC)), what:L('gasto com P&D ÷ vendas; produto difícil de copiar deixaria os parceiros mais expostos', 'R&D spending ÷ sales; a hard-to-copy product would leave partners more exposed'),
+        extra:L('Os coeficientes são minúsculos (no máximo 0,013 em módulo), porque a medida varia muito entre empresas.', 'The coefficients are tiny (at most 0.013 in absolute value), because the measure varies a lot across companies.')}
+    ];
+    var grid = $('fx-grid'), panel = $('fx-panel'), cards = [];
+    FX.forEach(function(f, i){
+      f.k = f.d.map(function(x){ return x[1] === 0 ? 'n' : ((x[0] > 0 ? 1 : -1) === f.exp ? 'c' : 'x'); });
+      f.nc = f.k.filter(function(x){ return x === 'c'; }).length; f.nx = f.k.filter(function(x){ return x === 'x'; }).length;
+      var b = document.createElement('button');
+      b.className = 'fcard'; b.setAttribute('aria-pressed', 'false');
+      b.innerHTML = '<h3>' + f.n + '<span>' + L('aposta: ', 'bet: ') + (f.exp > 0 ? L('mais dívida', 'more debt') : L('menos dívida', 'less debt')) + '</span></h3><div class="strip' + (f.d.length === 12 ? ' s12' : '') + '">' + f.k.map(function(x){ return '<i class="' + x + '"></i>'; }).join('') + '</div><p>' + f.nc + L(' confirmaram · ', ' confirmed · ') + f.nx + L(' ao contrário · ', ' the other way · ') + (f.d.length - f.nc - f.nx) + L(' não passaram', ' did not pass') + '</p>';
+      b.addEventListener('click', function(){ pick(i); });
+      grid.appendChild(b); cards.push(b);
+    });
+    function pick(i){
+      var f = FX[i];
+      cards.forEach(function(c, k){ c.setAttribute('aria-pressed', k === i); });
+      panel.innerHTML = '<div class="tag">' + f.n + '</div><p>' + L('O que mede: ', 'What it measures: ') + f.what + '.</p><p><b>' + f.nc + L(' a favor da aposta, ', ' for the bet, ') + f.nx + L(' contra', ' against') + '</b>' + L(', em ', ', out of ') + f.d.length + L(' testes.', ' tests.') + '</p><p style="font-size:.8rem; color:var(--muted)">' + f.extra + '</p>';
+    }
+    pick(0);
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
