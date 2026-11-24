@@ -1,0 +1,916 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Depois de 4 meses, o palpite mais simples da inflação fica para trás · PPGA Interativo</title>
+<meta name="description" content="A tese de doutorado de Maurício Mesquita Bortoluzzo (PPGA Mackenzie, 2017) sobre modelos de previsão da inflação brasileira (IPCA), explicada em 13 telas interativas.">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="../../en/teses/2017-bortoluzzo-previsao-inflacao/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><text x=%2216%22 y=%2223%22 font-family=%22Georgia%22 font-size=%2218%22 font-weight=%22700%22 fill=%22white%22 text-anchor=%22middle%22>%</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/motor.css">
+<link rel="stylesheet" href="../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --var:var(--navy);     /* modelos com dados da economia (VAR) */
+    --ar1:var(--red);      /* palpite simples AR(1) */
+    --ar12:#334155;        /* palpite do calendário AR(12) com sazonais */
+    --dis:#5b6f96;         /* modelos desagregados */
+  }
+  .note{font-size:.76rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:12px; line-height:1.45;}
+  .note b{color:var(--ink-2);}
+  .ilus{display:inline-block; font-size:.62rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fef3c7; color:#92400e; border-radius:5px; padding:2px 7px; vertical-align:2px;}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:-1px;}
+  .legend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:8px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1.02rem; margin-bottom:6px; color:var(--ink);}
+  .panel p{margin:0 0 8px; font-size:.88rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.82rem; cursor:pointer; color:var(--ink-2); font-family:inherit;}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .seg.hz button{padding:6px 9px; min-width:32px;}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px;}
+  .stat b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink); line-height:1.2;}
+  .stat span{font-size:.74rem; color:var(--muted); line-height:1.35; display:block;}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} }
+  svg text{font-family:var(--sans);}
+  .svgbox{width:100%; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px;}
+  .quote{font-family:var(--serif); font-size:1.02rem; color:var(--ink); border-left:4px solid var(--red); padding:4px 0 4px 14px; margin:14px 0 0;}
+  .lbl{font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--muted); margin:14px 0 6px;}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(1.85rem, 3.1vw, 2.3rem);}
+  html[lang="en"] #capa h1{font-size:clamp(1.8rem, 2.9vw, 2.2rem);}
+  .meta{display:grid; gap:2px; margin-top:16px; font-size:.88rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px; max-width:36em; margin-left:auto; margin-right:auto;}
+  #hero-scene{perspective:1800px;}
+  #hero-scene .slab{cursor:pointer;}
+  #hero-scene .slab.glass > i{--face:rgb(232 7 52 / .07); box-shadow:inset 0 0 0 1.5px rgb(232 7 52 / .55);}
+  #hero-scene .slab.glass.sel > i{--face:rgb(232 7 52 / .16); box-shadow:inset 0 0 0 2px var(--red);}
+  #hero-read{min-height:3.2em; font-size:.9rem; text-align:center; margin:8px auto 0; max-width:34em;}
+
+  /* ---------- 02 · Por que importa ---------- */
+  .why{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .why button{text-align:left; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; cursor:pointer; display:flex; gap:10px; align-items:flex-start;}
+  .why button svg{flex:0 0 32px;}
+  .why button b{display:block; font-size:.9rem; color:var(--ink);}
+  .why button span{font-size:.76rem; color:var(--muted); line-height:1.35; display:block;}
+  .why button[aria-pressed="true"]{border-color:var(--red); box-shadow:0 0 0 2px color-mix(in srgb, var(--red) 25%, transparent);}
+
+  /* ---------- 03 · Linha do tempo ---------- */
+  #tl-svg .ev{cursor:pointer;}
+  #tl-svg .ev:focus{outline:none;}
+  #tl-svg .ev:focus circle, #tl-svg .ev.on circle{stroke:var(--ink); stroke-width:3;}
+  #tl-panel{margin-top:12px; min-height:120px;}
+
+  /* ---------- 04 · Corrida justa ---------- */
+  .range{width:100%; accent-color:var(--red); margin-top:10px;}
+  .rulers{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:16px;}
+  @media (max-width:700px){ .rulers{grid-template-columns:1fr;} }
+  .ruler{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 14px; border-top:4px solid var(--rc, var(--ink));}
+  .ruler h3{font-size:.9rem; margin-bottom:4px;}
+  .ruler p{font-size:.78rem; margin:0; line-height:1.45; color:var(--ink-2);}
+
+  /* ---------- 05 · Decifrador ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:6px;}
+  .chips button{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:3px 9px; font-size:.74rem; cursor:pointer; color:var(--ink-2);}
+  #competidores h2{font-size:clamp(1.5rem, 2.8vw, 2.1rem);}
+  #competidores .panel .lbl{margin:10px 0 4px;}
+  .chips button[aria-pressed="true"]{background:var(--navy); border-color:var(--navy); color:#fff;}
+  .chips.m button[aria-pressed="true"]{background:var(--ink); border-color:var(--ink);}
+  .fam{font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--muted); margin:7px 0 4px;}
+  .code{font-family:var(--serif); font-size:1.7rem; font-weight:900; color:var(--navy); letter-spacing:.01em; word-break:break-all;}
+  .code .p1{color:var(--muted);} .code .p3{color:var(--red);}
+
+  /* ---------- 06 · Erro por horizonte ---------- */
+  #err-panel{margin-top:12px;}
+  .rank{list-style:none; margin:0; padding:0; display:grid; gap:3px;}
+  .rank{grid-template-columns:1fr 1fr; column-gap:18px;}
+  .rank li{display:grid; grid-template-columns:1.4em 1fr auto; gap:6px; font-size:.74rem; color:var(--ink-2); align-items:center; line-height:1.25;}
+  .rank li i{display:block; height:5px; border-radius:3px; background:var(--neutral); margin-top:2px;}
+  @media (max-width:520px){ .rank{grid-template-columns:1fr;} }
+  #err-panel{padding:10px 16px;}
+  #err-panel h3{margin-bottom:4px;}
+  .rank li.hl{font-weight:700; color:var(--ink);}
+
+  /* ---------- 07 · Grupo dos melhores (grade 3D) ---------- */
+  #grid-scene{perspective:1600px;}
+  #grid-scene .slab{cursor:pointer;}
+  #grid-scene .slab.sel .f-top{box-shadow:inset 0 0 0 2px var(--ink);}
+  #grid-panel{margin-top:12px; min-height:118px;}
+  .bigcount{font-family:var(--serif); font-size:2.4rem; font-weight:900; color:var(--navy); line-height:1;}
+  .bigcount small{font-size:1rem; color:var(--muted); font-weight:400;}
+
+  /* ---------- 08 · Calendário (SPA) ---------- */
+  #spa-panel{margin-top:12px;}
+
+  /* ---------- 09 · Subestimar custa mais ---------- */
+  .months{display:grid; grid-template-columns:repeat(12, 1fr); gap:4px; margin-top:10px;}
+  .months div{border-radius:8px; padding:8px 0 6px; text-align:center; font-size:.72rem; line-height:1.2; border:1.5px solid var(--border); color:var(--muted); background:var(--card); transition:all .3s;}
+  .months div b{display:block; font-size:.9rem; color:inherit;}
+  .months div.in{background:var(--red); border-color:var(--red); color:#fff;}
+  @media (max-width:560px){ .months{grid-template-columns:repeat(6, 1fr);} }
+  .split{display:grid; gap:8px; margin-top:12px;}
+  .split .row{display:grid; grid-template-columns:7.5em 1fr; gap:8px; align-items:center; font-size:.78rem; color:var(--ink-2);}
+  .split .bar{display:flex; height:22px; border-radius:6px; overflow:hidden; font-size:.7rem; font-weight:700; color:#fff;}
+  .split .bar span{display:flex; align-items:center; justify-content:center;}
+
+  /* ---------- 10 · Janelas ---------- */
+  #win-panel{margin-top:12px; min-height:96px;}
+  #win-svg .w{cursor:pointer;}
+
+  /* ---------- 11 · Cesta ---------- */
+  #basket-scene{perspective:1500px;}
+  #basket-panel{margin-top:12px;}
+
+  /* ---------- 12-13 · Na prática e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px;}
+  @media (min-width:700px){ .cards4{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:14px 16px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.95rem; margin-bottom:6px; color:var(--ink);}
+  .pcard p{margin:0; font-size:.8rem; line-height:1.5; color:var(--ink-2);}
+  .pcard em{font-style:normal; font-size:.68rem; color:var(--muted);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:18px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.15fr .85fr; gap:40px;} }
+  .end h3{font-size:1.05rem; margin-bottom:4px;}
+  .limits{display:grid; gap:6px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 12px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.78rem; color:var(--ink-2); line-height:1.42;}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.68rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; line-height:1.55; margin-top:6px;}
+  .cite b{color:var(--ink);}
+  .also{font-size:.8rem; margin-top:10px; color:var(--muted);}
+  .also a{color:var(--red); font-weight:600;}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../en/teses/2017-bortoluzzo-previsao-inflacao/" hreflang="en" lang="en" title="Read in English"><img class="lang-flag" src="../../assets/bandeira-gb.svg" width="24" height="12" alt="">EN</a>
+    <span id="count">01 / 13</span>
+    <button class="nav-btn" id="prev" aria-label="Tela anterior">↑</button>
+    <button class="nav-btn" id="next" aria-label="Próxima tela">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Navegação entre telas"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Início">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Tese de doutorado · PPGA Mackenzie · 2017</div>
+      <h1 class="rv" style="--d:.1s">Para a inflação de um ano, quase todos os 155 modelos superaram o palpite mais simples</h1>
+      <p class="sub rv" style="--d:.2s">A tese pôs 155 modelos para prever o IPCA de 1 a 12 meses à frente, mês a mês, de 2007 a 2015. Depois de 4 meses, o palpite mais simples ficou para trás. Mas um palpite que só olha o calendário nunca foi batido com segurança, e a melhor previsão veio de quem desmontou a cesta do IPCA em 52 itens. Explicada em 13 telas.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Autor:</b> Maurício Mesquita Bortoluzzo</span>
+        <span><b>Orientador:</b> Prof. Dr. Leonardo Fernando Cruz Basso</span>
+        <span><b>Coorientador:</b> Prof. Dr. Emerson Fernandes Marçal</span>
+        <span><b>Programa:</b> Pós-Graduação em Administração de Empresas · Universidade Presbiteriana Mackenzie</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#porque">Começar →</a>
+        <a class="btn ghost" href="#grupo">Ver os 155 modelos</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="540x330" role="img" aria-label="Doze caixas de vidro vermelho, uma por horizonte de 1 a 12 meses, da altura do erro típico do palpite mais simples; dentro de cada uma, uma coluna azul, o erro do melhor modelo a 12 meses. Nos primeiros meses a coluna azul é do tamanho do vidro ou maior; depois fica bem abaixo."></div></div>
+      <p id="hero-read" aria-live="polite"></p>
+      <p class="cap-legend">Vidro vermelho: erro típico do palpite mais simples, o AR(1). Coluna azul: o modelo que errou menos a 12 meses (IPC-Fipe, sem cortes). Altura = erro típico em pontos percentuais da inflação acumulada (conta nossa a partir da Tabela 2). Toque numa caixa; arraste para girar.</p>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">ODS da ONU mais próximos</span>
+        <ul class="ods">
+          <li class="ods-17"><a href="https://brasil.un.org/pt-br/sdgs/17" target="_blank" rel="noopener" title="ODS 17 · Parcerias e meios de implementação: Compara formas de prever a inflação brasileira, informação de que o Banco Central, empresas e famílias dependem para manter a estabilidade econômica."><b>17</b>Parcerias e meios de implementação</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">role<span></span></div>
+</section>
+
+<!-- 02 · POR QUE IMPORTA -->
+<section class="slide" id="porque" data-label="Por que importa">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> O problema · Introdução</div>
+      <h2 class="rv" style="--d:.1s">Quem assina um contrato de longo prazo aposta na inflação que ainda vai acontecer</h2>
+      <p class="lede rv" style="--d:.15s">Salários, financiamentos, dívidas e a política do Banco Central dependem do que a inflação vai fazer. A tese lembra que, nos estudos com dados dos Estados Unidos, quase nenhum indicador da economia vence com folga dois palpites simples: repetir o que a inflação acabou de fazer, ou quase isso.</p>
+      <p class="quote rv" style="--d:.2s">O mês que vem parecido com este. Esse palpite, o AR(1), é o adversário das telas a seguir.</p>
+      <p class="note rv" style="--d:.25s">No Brasil, Carlo e Marçal (2016) já tinham batido esses palpites prevendo separadamente cada pedaço do índice e somando no fim. A tese compara os dois caminhos: modelos com dados da economia e previsões feitas pedaço a pedaço.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="why" id="why" role="group" aria-label="Por que prever a inflação importa"></div>
+      <div class="panel" id="why-panel" style="margin-top:12px" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · LINHA DO TEMPO -->
+<section class="slide" id="tempo" data-label="Duas décadas agitadas">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> O cenário · Seção 3.3</div>
+      <h2 class="rv" style="--d:.1s">De 1995 a 2015, a inflação brasileira levou vários trancos</h2>
+      <p class="lede rv" style="--d:.15s">Crises, eleição e mudanças de política deslocam o nível da inflação de repente. Para quem prevê, cada tranco é um mês fora da curva que pode enganar o modelo. Por isso parte dos modelos da tese marca sozinha esses meses atípicos à medida que os dados chegam.</p>
+      <p class="note rv" style="--d:.2s">Os dados começam em janeiro de 1995: antes do Plano Real, a inflação passou de 1.000% ao ano e, segundo a tese, os números anteriores ficam impossíveis de usar.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="tl-svg" class="svgbox" viewBox="0 0 560 210" role="group" aria-label="Linha do tempo de 1994 a 2015 com sete marcos; toque em cada um"></svg>
+      <div class="panel" id="tl-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · CORRIDA JUSTA -->
+<section class="slide" id="corrida" data-label="Uma corrida justa">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">04</span> Como a pesquisa olhou · Seções 3 e 3.4</div>
+    <h2 class="rv" style="--d:.1s">Cada modelo previu os 12 meses seguintes usando só o que já tinha acontecido</h2>
+    <div class="grid2" style="align-items:start">
+      <div class="rv" style="--d:.15s">
+        <p class="lede">A tese simulou o dia a dia de quem prevê. Com os dados de janeiro de 1995 a dezembro de 2006 (144 meses), cada modelo previu a inflação acumulada de 1 a 12 meses à frente. Depois, entrava mais um mês nos dados, o modelo era refeito e previa de novo. Assim até dezembro de 2015: 96 meses de previsões para comparar.</p>
+        <p class="note">A tese chama isso de pseudo tempo real: os dados usados são os revisados, não exatamente os que estavam publicados em cada mês.</p>
+      </div>
+      <div class="rv" style="--d:.2s">
+        <svg id="win-run" class="svgbox" viewBox="0 0 560 150" role="img" aria-label="Faixa de 1995 a 2015: a parte azul são os meses que o modelo já conhece; a vermelha, os 12 meses que ele tenta prever"></svg>
+        <input type="range" class="range" id="run-range" min="0" max="96" value="0" aria-label="Mês em que a previsão é feita">
+        <p id="run-read" style="font-size:.86rem; margin-top:6px" aria-live="polite"></p>
+      </div>
+    </div>
+    <div class="lbl rv" style="--d:.25s">Três réguas para julgar quem previu melhor</div>
+    <div class="rulers rv" style="--d:.3s">
+      <div class="ruler" style="--rc:var(--navy)"><h3>Tamanho do erro (MSE)</h3><p>A média dos erros ao quadrado: errar 2 pontos pesa quatro vezes errar 1. Quanto menor, melhor. Nas telas, mostramos a raiz, o erro típico em pontos percentuais (conta nossa).</p></div>
+      <div class="ruler" style="--rc:var(--red)"><h3>Grupo dos melhores (MCS)</h3><p>Separa os modelos que não dá para distinguir do melhor dos que ficam claramente atrás, com 90% de confiança. Quem fica fora do grupo perdeu de verdade, não por azar.</p></div>
+      <div class="ruler" style="--rc:var(--ar12)"><h3>Alguém bate o adversário? (SPA)</h3><p>Pergunta se pelo menos um modelo é melhor que um palpite de referência, sem se deixar enganar por quem acertou por sorte entre tantos tentando.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · OS COMPETIDORES -->
+<section class="slide" id="competidores" data-label="155 competidores">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">05</span> Os modelos · Quadros 1 a 3</div>
+      <h2 class="rv" style="--d:.1s">22 combinações de dados vezes 7 jeitos de enxugar o modelo dão 154 competidores, mais o palpite simples</h2>
+      <p class="lede rv" style="--d:.15s">Cada modelo junta a inflação com outras séries (outros índices de preços, juros, produção, dívida pública…) e olha os últimos 12 meses de todas. É informação demais; então um algoritmo, o Autometrics, parte do modelo grande e vai cortando o que não ajuda. Alguns jeitos também marcam meses fora da curva.</p>
+      <p class="note rv" style="--d:.2s">Monte um modelo ao lado e veja o nome que ele recebe na tese. Esses nomes voltam nas próximas telas. Na mesma coleção está o palpite do calendário: a inflação dos últimos 12 meses e o mês do ano, sem nenhum dado da economia.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel">
+        <div class="lbl" style="margin-top:0">1 · Escolha os dados</div>
+        <div id="dec-groups"></div>
+        <div class="lbl">2 · Escolha como enxugar (IIS, SIS, DIIS: formas de marcar meses atípicos)</div>
+        <div class="chips m" id="dec-methods" role="group" aria-label="Método"></div>
+        <div class="lbl">Nome na tese</div>
+        <div class="code" id="dec-code" aria-live="polite"></div>
+        <p id="dec-read" style="font-size:.84rem; margin-top:6px"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · ERRO POR HORIZONTE -->
+<section class="slide" id="erro" data-label="Erro mês a mês">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> Resultado · Tabela 2</div>
+      <h2 class="rv" style="--d:.1s">No mês seguinte todos empatam; a diferença aparece quando o prazo cresce</h2>
+      <p class="lede rv" style="--d:.15s">Um mês à frente, o palpite simples erra tanto quanto os melhores (cerca de 0,2 ponto). A 12 meses, ele erra 1,6 ponto na inflação acumulada, contra 1,3 dos melhores. O palpite do calendário acompanha os melhores do começo ao fim.</p>
+      <p class="note rv" style="--d:.2s">Leitura nossa: se a inflação de 12 meses foi 6%, um erro típico de 1,3 ponto quer dizer prever algo entre 4,7% e 7,3%. Os erros são a raiz do MSE da Tabela 2 (conta nossa). A linha MDPISpreads7 tem os mesmos números de MSpreads7 na tese; mostramos uma só.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="err-svg" class="svgbox" viewBox="0 0 560 270" role="img" aria-label="Gráfico de linhas do erro típico de 1 a 12 meses: a linha vermelha do palpite simples sobe mais que as outras"></svg>
+      <div class="lbl">Meses à frente</div>
+      <div class="seg hz" id="err-h" role="group" aria-label="Meses à frente"></div>
+      <div class="panel" id="err-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · GRUPO DOS MELHORES -->
+<section class="slide" id="grupo" data-label="139 de 155">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> A descoberta · Tabelas 3 e A.1</div>
+      <h2 class="rv" style="--d:.1s">A partir de 4 meses, o palpite simples sai do grupo dos melhores e não volta mais</h2>
+      <p class="lede rv" style="--d:.15s">Cada bloco é um dos 155 modelos. De pé e azul, ele está no grupo dos melhores naquele prazo; deitado e cinza, ficou claramente atrás. O bloco vermelho é o palpite simples: dentro até 3 meses, fora de 4 a 12. A 12 meses, 139 modelos seguem no grupo.</p>
+      <div class="lbl rv" style="--d:.2s">Meses à frente</div>
+      <div class="seg hz rv" style="--d:.2s" id="grid-h" role="group" aria-label="Meses à frente"></div>
+      <div class="rv" style="--d:.25s; margin-top:14px"><div class="bigcount" id="grid-count"></div></div>
+      <p class="note rv" style="--d:.3s">Contagem nossa na lista completa da Tabela A.1 (grupo dos melhores com 90% de confiança). Altura do bloco: quanto mais alto, mais folga o modelo tem para ficar no grupo.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="fit-wrap"><div class="scene draggable" id="grid-scene" data-fit="600x380" role="img" aria-label="Grade 3D com 155 blocos: 22 colunas de dados por 7 jeitos de enxugar, mais o bloco vermelho do palpite simples na frente"></div></div>
+      <div class="legend"><span><i class="dot" style="background:var(--navy)"></i>no grupo dos melhores</span><span><i class="dot" style="background:var(--neutral)"></i>fora do grupo</span><span><i class="dot" style="background:var(--red)"></i>palpite simples, AR(1)</span></div>
+      <div class="panel" id="grid-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · O CALENDÁRIO -->
+<section class="slide" id="calendario" data-label="O calendário resiste">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> O inesperado · Tabelas 5 e 17</div>
+      <h2 class="rv" style="--d:.1s">Nenhum modelo com dados da economia bateu com segurança o palpite que olha o calendário</h2>
+      <p class="lede rv" style="--d:.15s">O teste SPA pergunta: algum dos 155 é melhor que este palpite? Contra o palpite simples, a resposta é sim a partir de 2 meses. Contra o palpite do calendário (12 meses de inflação e o mês do ano), só no 1º mês. Os dados da economia não acrescentaram uma vitória clara sobre a memória da própria inflação.</p>
+      <p class="note rv" style="--d:.2s">Barra abaixo da linha de 0,10: o palpite foi batido naquele prazo. Na base menor (40 meses), que inclui as previsões por itens de outro estudo, o calendário passa a ser batido de 1 a 10 meses.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="spa-base" role="group" aria-label="Base de comparação">
+        <button aria-pressed="true" data-m="0">155 modelos · 96 meses</button>
+        <button aria-pressed="false" data-m="1">+ previsões por itens · 40 meses</button>
+      </div>
+      <svg id="spa-svg" class="svgbox" viewBox="0 0 560 300" style="margin-top:10px" role="img" aria-label="Barras do valor-p do teste SPA de 1 a 12 meses para os dois palpites, com a linha de 0,10"></svg>
+      <div class="panel" id="spa-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · SUBESTIMAR CUSTA MAIS -->
+<section class="slide" id="assimetria" data-label="Errar para baixo">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> Sensibilidade · Seção 4.1, Tabelas 6 a 11</div>
+      <h2 class="rv" style="--d:.1s">Quando prever inflação de menos custa mais caro, o palpite simples volta ao grupo dos melhores</h2>
+      <p class="lede rv" style="--d:.15s">Para um banco central ou uma empresa, prever inflação abaixo da que acontece pode doer mais do que prever acima. A tese refez o grupo dos melhores dando peso 1,5, 2 e 3 vezes maior aos erros para baixo. Quanto maior o peso, mais meses o palpite simples passa a fazer parte do grupo.</p>
+      <div class="lbl rv" style="--d:.2s">Errar para baixo pesa…</div>
+      <div class="seg rv" style="--d:.2s" id="asym-w" role="group" aria-label="Peso do erro para baixo">
+        <button aria-pressed="true" data-m="0">igual</button>
+        <button aria-pressed="false" data-m="1">1,5×</button>
+        <button aria-pressed="false" data-m="2">2×</button>
+        <button aria-pressed="false" data-m="3">3×</button>
+      </div>
+      <div class="months rv" style="--d:.25s" id="asym-months" aria-live="polite"></div>
+      <p id="asym-read" class="rv" style="--d:.3s; font-size:.86rem; margin-top:10px" aria-live="polite"></p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="panel">
+        <h3>Por que o palpite simples ganha com isso</h3>
+        <p>Conta nossa a partir das Tabelas 2, 7, 9 e 11 (12 meses): quanto do erro ao quadrado de cada palpite veio de prever acima e quanto de prever abaixo da inflação que aconteceu.</p>
+        <div class="split" id="asym-split"></div>
+        <p style="font-size:.8rem; margin-top:12px">O palpite simples errava sobretudo para cima. Quando o erro para cima passa a pesar menos que o erro para baixo, a conta dele melhora e ele volta ao grupo dos melhores (leitura nossa; a tese não mostra o sinal dos erros).</p>
+      </div>
+      <p class="note">Mês vermelho: o palpite simples está no grupo dos melhores naquele prazo (valor-p do grupo dos melhores no mês, Tabelas 3, 6, 8 e 10).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · JANELAS DE 2 ANOS -->
+<section class="slide" id="janelas" data-label="Janelas de 2 anos">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">10</span> Robustez · Figura 6</div>
+      <h2 class="rv" style="--d:.1s">Com só dois anos para julgar, o vencedor muda e o palpite simples já ficou em segundo</h2>
+      <p class="lede rv" style="--d:.15s">A tese repetiu a comparação a 12 meses em sete janelas de dois anos. O palpite simples foi o pior em seis delas. Na última, 2014 e 2015, quando a inflação subiu para 10,67%, todos erraram muito e ele teve o segundo menor erro. Em cinco das sete janelas, o primeiro lugar mudou de dono.</p>
+      <p class="note rv" style="--d:.2s">Valores lidos do gráfico da Figura 6 (aproximados), em MSE × 10⁴. A faixa azul vai do menor ao maior erro dos outros 11 modelos da figura. O autor conclui que uma amostra bem menor poderia dar resultados completamente diferentes.</p>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <svg id="win-svg" class="svgbox" viewBox="0 0 560 310" role="group" aria-label="Gráfico das sete janelas: faixa azul dos 11 modelos e linha vermelha do palpite simples; toque em uma janela"></svg>
+      <div class="panel" id="win-panel" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · CESTA DESMONTADA -->
+<section class="slide" id="cesta" data-label="52 itens">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv"><span class="n">11</span> Modelos desagregados · Tabelas 12 a 17</div>
+      <h2 class="rv" style="--d:.1s">Prever cada um dos 52 itens do IPCA e somar errou menos em todos os prazos</h2>
+      <p class="lede rv" style="--d:.15s">A tese juntou às suas previsões as de outro estudo (Carlo e Marçal, 2016), que prevê pedaços do índice separadamente. Num período mais curto, de 40 meses, o SARIMA-52, que prevê os 52 itens um a um, teve o menor erro de 1 a 12 meses, e nenhum teste conseguiu dizer que alguém o superou.</p>
+      <div class="panel rv" style="--d:.2s">
+        <h3>E a média de todos os modelos?</h3>
+        <p>Fazer a média das previsões (simples, ou pesando quem errou menos nos últimos 12 meses) deu um resultado bom, não o melhor: 30º e 24º lugar entre 157 a 12 meses, mas sempre dentro do grupo dos melhores e nunca batidas no teste SPA.</p>
+      </div>
+    </div>
+    <div class="rv" style="--d:.2s">
+      <div class="seg" id="basket-mode" role="group" aria-label="Como prever">
+        <button aria-pressed="false" data-m="0">O índice inteiro</button>
+        <button aria-pressed="true" data-m="1">52 itens, um a um</button>
+      </div>
+      <div class="fit-wrap" style="margin-top:6px"><div class="scene draggable" id="basket-scene" data-fit="520x250" role="img" aria-label="Um bloco que representa o IPCA se desmonta em 52 blocos menores, um por item da cesta"></div></div>
+      <div class="lbl">Erro típico em pontos percentuais, base de 40 meses (conta nossa, Tabela 15)</div>
+      <div class="seg hz" id="basket-h" role="group" aria-label="Meses à frente"></div>
+      <svg id="basket-svg" class="svgbox" viewBox="0 0 400 190" style="margin-top:8px" role="img" aria-label="Barras do erro típico: previsão por 52 itens, melhor modelo com dados da economia, palpite do calendário e palpite simples"></svg>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · NA PRÁTICA -->
+<section class="slide" id="pratica" data-label="Na prática">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">12</span> E daí? · Considerações finais</div>
+    <h2 class="rv" style="--d:.1s">Qual modelo é o melhor depende do prazo, do período e do custo de errar para cada lado</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--navy)"><h3>Quem prevê inflação</h3><p>Dados da economia ajudam a bater o palpite mais simples a partir de alguns meses, mas o palpite do calendário é um adversário mais honesto. Prever os itens do IPCA separadamente foi o caminho mais preciso. <em>· segundo o autor</em></p></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--red)"><h3>Banco Central e mercado</h3><p>Se subestimar a inflação custa mais caro, um modelo bem simples pode estar entre os melhores. A régua usada para julgar muda o vencedor. <em>· segundo o autor</em></p></div>
+      <div class="pcard rv" style="--d:.25s; --pc:var(--ar12)"><h3>Empresas e famílias</h3><p>Mesmo os melhores modelos erraram, em média, mais de 1 ponto na inflação de 12 meses. Ao reajustar contratos ou planejar dívidas, vale trabalhar com uma margem, não com um número só. <em>· leitura nossa</em></p></div>
+      <div class="pcard rv" style="--d:.3s; --pc:var(--dis)"><h3>Pesquisadores</h3><p>Avaliar modelos em poucos anos engana: o ranking muda de janela para janela. O autor sugere testar outros tipos de modelo (não lineares, FAVAR), janelas móveis e dados como eram publicados na época. <em>· segundo o autor</em></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 · LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Limites e créditos">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">13</span> Limites · créditos</div>
+    <h2 class="rv" style="--d:.1s">O que a pesquisa não diz</h2>
+    <div class="end">
+      <div class="rv" style="--d:.15s">
+        <ul class="limits">
+          <li><b>Uma família de modelos.</b> Todos os 155 são do mesmo tipo (VAR irrestrito). Modelos não lineares ou com fatores podem se sair diferente. <em>· segundo o autor</em></li>
+          <li><b>Dados revisados.</b> Os modelos usaram os números já corrigidos, não os que estavam publicados em cada mês; a corrida não é exatamente a que um analista viveu. <em>· segundo o autor</em></li>
+          <li><b>Previsões por itens em 40 meses.</b> A vitória do SARIMA-52 vem de um período mais curto, com testes de menor poder. Falta ver se ela se repete em outras janelas. <em>· segundo o autor</em></li>
+          <li><b>Padrões sem teste.</b> A impressão de que os métodos que enxugam o modelo vão melhor em prazos curtos, e os modelos completos em prazos longos, não foi testada. <em>· segundo o autor</em></li>
+          <li><b>Período de 2007 a 2015.</b> O próprio autor mostra que o vencedor muda com o período julgado; outros anos podem contar outra história. <em>· leitura nossa</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.2s">
+        <h3>Créditos</h3>
+        <div class="cite">
+          <b>Como citar</b><br>
+          BORTOLUZZO, Maurício Mesquita. <em>Uma investigação sobre modelos de previsão da inflação brasileira.</em> Tese (Doutorado em Administração de Empresas), Universidade Presbiteriana Mackenzie, São Paulo, 2017. Orientador: Prof. Dr. Leonardo Fernando Cruz Basso. Coorientador: Prof. Dr. Emerson Fernandes Marçal.
+        </div>
+        <p style="margin-top:10px; font-size:.8rem">Erros em pontos percentuais, contagens e o peso de cada lado do erro são contas nossas a partir das tabelas da tese. Previsões por itens: dados de Carlo e Marçal (2016), cedidos ao autor.</p>
+        <p class="also">Leia também: <a href="../../teses/2020-costa-redes-neurais-cambio/">Uma rede com memória contra o “amanhã igual a hoje”</a> (Costa, 2020), do mesmo orientador, e <a href="../../teses/2023-genin-projecao-cambio/">previsão do câmbio</a> (Genin, 2023).</p>
+        <div class="ctas" style="margin-top:12px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Ler a tese completa</a>
+          <a class="btn ghost" href="#capa">↑ Voltar ao início</a>
+          <a class="btn ghost" href="../../">Outras pesquisas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, flatLabel = M.flatLabel, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  function L(pt, en){ return EN ? en : pt; }
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, a, txt){ var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); if (txt !== undefined) e.textContent = txt; return e; }
+  function clear(n){ while (n.firstChild) n.removeChild(n.firstChild); }
+  function seg(id, fn){
+    var g = $(id);
+    each(g.querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){
+        each(g.querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        fn(+b.dataset.m);
+      });
+    });
+  }
+  function hzSeg(id, init, fn){
+    var g = $(id);
+    for (var h = 1; h <= 12; h++){
+      var b = document.createElement('button'); b.textContent = h; b.dataset.m = h;
+      b.setAttribute('aria-pressed', h === init ? 'true' : 'false');
+      b.setAttribute('aria-label', h + L(h === 1 ? ' mês' : ' meses', h === 1 ? ' month' : ' months'));
+      g.appendChild(b);
+    }
+    seg(id, fn);
+  }
+  function mo(h){ return h + L(h === 1 ? ' mês' : ' meses', h === 1 ? ' month' : ' months'); }
+  function rm(v){ return Math.sqrt(v); }   // MSE×10⁴ → erro típico em pontos percentuais (conta nossa)
+
+  /* ================= DADOS DA TESE ================= */
+  // Tabela 2: MSE × 10⁴ da inflação acumulada, 1 a 12 meses (MDPISpreads7 omitido: idêntico a MSpreads7)
+  var T2 = [
+    {k:'MIPCFIPE7', v:[0.045,0.159,0.300,0.467,0.649,0.800,0.984,1.105,1.174,1.289,1.449,1.605]},
+    {k:'MDPISpreads3', v:[0.033,0.135,0.288,0.472,0.679,0.902,1.113,1.274,1.357,1.427,1.499,1.628]},
+    {k:'MSIGPDI5', v:[0.046,0.189,0.385,0.578,0.758,0.901,1.044,1.168,1.239,1.337,1.491,1.663]},
+    {k:'MSpreads7', v:[0.048,0.157,0.288,0.439,0.599,0.756,0.938,1.091,1.239,1.404,1.560,1.719]},
+    {k:'MIPCFGV5', v:[0.035,0.123,0.266,0.446,0.645,0.843,1.049,1.214,1.340,1.453,1.581,1.759]},
+    {k:'MSpreads1', v:[0.035,0.144,0.329,0.563,0.819,1.067,1.288,1.426,1.490,1.546,1.629,1.763]},
+    {k:'MDPISpreads4', v:[0.036,0.140,0.306,0.510,0.718,0.936,1.154,1.301,1.395,1.486,1.601,1.768]},
+    {k:'MJM0Renda5', v:[0.032,0.135,0.321,0.535,0.777,1.018,1.256,1.419,1.498,1.555,1.652,1.786]},
+    {k:'MAR12_7', v:[0.046,0.151,0.269,0.405,0.557,0.706,0.904,1.066,1.203,1.373,1.556,1.714], role:'ar12'},
+    {k:'MNaive', v:[0.035,0.152,0.360,0.651,0.998,1.366,1.737,2.021,2.211,2.353,2.483,2.658], role:'ar1'}
+  ];
+  // Tabela A.1: valor-p do grupo dos melhores (MCS) dos 155 modelos, por conjunto de dados (linhas) e método (1,3,4,5,6,7,8), 1 a 12 meses
+  var A1 = [[[0.999,0.991,0.629,0.212,0.055,0.051,0.071,0.21,0.504,0.59,0.711,0.612],[1.0,0.995,0.853,0.44,0.306,0.211,0.248,0.324,0.438,0.527,0.583,0.613],[1.0,0.995,0.933,0.842,0.72,0.896,0.638,0.8,0.961,0.992,0.905,0.668],[0.999,0.995,0.747,0.214,0.088,0.045,0.056,0.221,0.348,0.627,0.756,0.715],[0.999,0.995,0.983,0.957,0.969,0.992,0.954,0.949,0.947,0.975,0.919,0.746],[0.975,0.972,0.983,0.982,0.994,0.999,0.999,0.998,1.0,1.0,1.0,1.0],[1.0,0.972,0.762,0.493,0.252,0.17,0.181,0.393,0.44,0.504,0.336,0.314]],[[1.0,0.995,0.95,0.648,0.509,0.459,0.553,0.527,0.459,0.499,0.752,0.576],[1.0,0.995,0.971,0.734,0.867,0.902,0.993,0.997,0.998,0.998,0.967,0.835],[1.0,0.995,0.983,0.878,0.968,0.997,0.999,0.998,0.998,0.998,0.967,0.799],[1.0,0.995,0.989,0.842,0.858,0.977,0.993,0.992,0.995,0.998,0.984,0.907],[1.0,0.994,0.889,0.69,0.808,0.838,0.94,0.857,0.931,0.988,0.915,0.766],[0.081,0.316,0.802,0.878,0.818,0.735,0.846,0.937,0.965,0.985,0.961,0.835],[1.0,0.993,0.843,0.436,0.34,0.356,0.371,0.45,0.435,0.758,0.775,0.643]],[[0.985,0.961,0.896,0.871,0.899,0.949,0.995,0.998,0.998,0.998,0.966,0.811],[0.976,0.995,0.983,0.957,0.968,0.977,0.994,0.992,0.998,0.997,0.96,0.794],[0.952,0.972,0.895,0.89,0.937,0.975,0.991,0.934,0.889,0.926,0.671,0.295],[0.531,0.596,0.628,0.675,0.72,0.891,0.984,0.989,0.992,0.988,0.927,0.835],[0.346,0.421,0.634,0.727,0.777,0.899,0.923,0.9,0.881,0.919,0.822,0.636],[0.767,0.797,0.764,0.563,0.436,0.436,0.508,0.516,0.515,0.386,0.319,0.393],[0.859,0.54,0.385,0.369,0.326,0.221,0.267,0.245,0.211,0.155,0.28,0.457]],[[0.994,0.993,0.983,0.957,0.953,0.977,0.996,0.997,0.998,0.998,0.961,0.794],[0.997,0.992,0.93,0.957,0.967,0.975,0.998,0.998,0.998,0.998,0.966,0.835],[0.996,0.991,0.983,0.975,0.968,0.97,0.97,0.935,0.947,0.943,0.781,0.559],[0.832,0.85,0.786,0.713,0.813,0.966,0.995,0.998,0.998,0.998,0.983,0.907],[0.953,0.9,0.886,0.935,0.968,0.992,0.994,0.978,0.983,0.993,0.941,0.759],[0.76,0.843,0.84,0.67,0.593,0.573,0.773,0.701,0.636,0.536,0.543,0.618],[0.975,0.887,0.822,0.65,0.593,0.566,0.555,0.458,0.162,0.073,0.145,0.292]],[[1.0,0.995,0.894,0.871,0.828,0.813,0.875,0.916,0.792,0.8,0.733,0.62],[1.0,0.995,0.895,0.644,0.326,0.111,0.322,0.276,0.271,0.101,0.033,0.03],[1.0,0.991,0.894,0.836,0.787,0.605,0.565,0.701,0.8,0.846,0.757,0.628],[1.0,0.982,0.93,0.909,0.722,0.459,0.322,0.57,0.616,0.839,0.932,0.835],[0.872,0.992,0.983,0.957,0.968,0.977,0.987,0.975,0.965,0.955,0.91,0.794],[0.049,0.046,0.201,0.326,0.477,0.723,0.836,0.877,0.861,0.85,0.826,0.766],[1.0,0.993,0.91,0.741,0.704,0.556,0.43,0.317,0.293,0.3,0.471,0.559]],[[1.0,0.995,0.895,0.269,0.099,0.042,0.043,0.064,0.101,0.202,0.212,0.206],[0.997,0.405,0.018,0.007,0.006,0.008,0.012,0.052,0.076,0.059,0.02,0.006],[0.796,0.066,0.02,0.03,0.052,0.078,0.125,0.181,0.129,0.271,0.461,0.326],[0.207,0.19,0.068,0.021,0.034,0.018,0.009,0.023,0.033,0.05,0.037,0.025],[0.888,0.506,0.271,0.344,0.323,0.377,0.555,0.415,0.448,0.534,0.478,0.303],[0.933,0.698,0.93,0.957,0.93,0.758,0.61,0.415,0.194,0.111,0.06,0.028],[0.97,0.225,0.127,0.012,0.003,0.001,0.001,0.004,0.018,0.035,0.12,0.124]],[[1.0,0.995,0.93,0.411,0.337,0.146,0.204,0.167,0.219,0.278,0.302,0.243],[0.65,0.909,0.81,0.871,0.828,0.502,0.641,0.954,0.99,0.988,0.878,0.626],[0.898,0.982,0.895,0.871,0.937,0.975,0.993,0.994,0.998,0.998,0.967,0.823],[0.985,0.898,0.631,0.411,0.303,0.346,0.452,0.615,0.751,0.639,0.202,0.087],[1.0,0.993,0.942,0.957,0.953,0.992,0.999,0.998,0.998,0.998,0.959,0.766],[0.983,0.991,0.989,0.982,0.999,1.0,1.0,0.998,0.998,0.998,0.984,0.907],[0.994,0.919,0.762,0.388,0.253,0.246,0.305,0.386,0.454,0.7,0.482,0.36]],[[1.0,0.898,0.596,0.35,0.197,0.211,0.485,0.8,0.987,0.997,0.967,0.877],[1.0,0.946,0.709,0.486,0.211,0.246,0.512,0.902,0.997,0.998,0.967,0.835],[0.999,0.903,0.594,0.242,0.098,0.103,0.269,0.472,0.813,0.89,0.804,0.533],[1.0,0.905,0.599,0.344,0.143,0.072,0.097,0.205,0.44,0.547,0.671,0.421],[0.997,0.941,0.795,0.592,0.509,0.579,0.695,0.937,0.993,0.998,0.984,0.905],[0.872,0.698,0.937,0.957,0.993,0.999,0.999,0.998,0.998,0.998,0.984,0.907],[0.988,0.972,0.548,0.065,0.057,0.125,0.162,0.194,0.347,0.517,0.741,0.766]],[[0.999,0.995,0.989,0.982,0.996,0.999,0.999,0.997,0.99,0.98,0.763,0.539],[0.996,0.982,0.983,0.982,0.985,0.998,0.988,0.777,0.7,0.591,0.202,0.065],[0.997,0.995,0.989,1.0,1.0,0.999,0.999,0.998,0.998,0.997,0.913,0.759],[1.0,0.991,0.983,0.957,0.968,0.896,0.96,0.949,0.871,0.92,0.961,0.835],[0.977,0.919,0.899,0.713,0.579,0.88,0.984,0.954,0.858,0.763,0.711,0.62],[0.815,0.717,0.822,0.871,0.867,0.842,0.886,0.949,0.987,0.978,0.923,0.794],[0.999,0.995,0.989,0.982,0.993,0.978,0.952,0.898,0.812,0.558,0.538,0.529]],[[0.955,0.99,0.68,0.417,0.34,0.341,0.43,0.516,0.592,0.61,0.676,0.589],[0.996,0.995,0.983,0.871,0.858,0.975,0.998,0.998,0.998,0.998,0.96,0.759],[1.0,0.991,0.84,0.659,0.34,0.556,0.54,0.276,0.311,0.711,0.898,0.71],[1.0,0.995,0.989,0.982,0.977,0.944,0.924,0.946,0.973,0.993,0.967,0.841],[0.952,0.991,0.983,0.957,0.967,0.988,0.997,0.997,0.998,0.997,0.967,0.874],[0.214,0.149,0.571,0.614,0.622,0.742,0.952,0.984,0.996,0.997,0.967,0.799],[0.867,0.676,0.325,0.169,0.195,0.108,0.06,0.079,0.191,0.499,0.671,0.759]],[[0.994,0.734,0.138,0.039,0.078,0.115,0.3,0.784,0.961,0.976,0.876,0.659],[0.971,0.829,0.725,0.4,0.305,0.5,0.652,0.846,0.973,0.988,0.879,0.62],[1.0,0.919,0.85,0.846,0.937,0.975,0.993,0.992,0.995,0.997,0.959,0.811],[0.97,0.843,0.865,0.878,0.953,0.992,0.999,0.998,0.998,0.998,0.984,0.966],[0.947,0.97,0.949,0.946,0.955,0.987,0.993,0.992,0.995,0.997,0.945,0.715],[0.888,0.794,0.666,0.437,0.327,0.368,0.493,0.516,0.504,0.548,0.671,0.708],[0.978,0.572,0.293,0.263,0.257,0.153,0.129,0.46,0.694,0.877,0.932,0.835]],[[1.0,0.995,0.989,0.982,0.996,0.999,0.999,0.998,0.998,0.998,0.922,0.589],[1.0,0.995,0.989,0.982,0.994,0.999,0.999,0.997,0.992,0.993,0.876,0.581],[0.77,0.819,0.93,0.957,0.993,0.999,0.999,0.998,0.998,0.998,0.967,0.811],[1.0,0.995,0.989,0.982,0.999,0.999,0.999,0.998,0.998,0.998,0.967,0.742],[1.0,1.0,1.0,0.982,0.999,0.999,0.999,0.998,0.998,0.997,0.941,0.794],[0.077,0.195,0.68,0.722,0.849,0.907,0.979,0.997,0.998,0.998,0.982,0.907],[1.0,0.995,0.989,0.982,0.985,0.992,0.995,0.997,0.998,0.998,0.984,0.907]],[[1.0,0.782,0.403,0.258,0.112,0.108,0.122,0.276,0.366,0.499,0.192,0.063],[0.997,0.863,0.229,0.152,0.062,0.051,0.067,0.105,0.068,0.016,0.004,0.002],[0.747,0.671,0.588,0.312,0.194,0.143,0.106,0.132,0.116,0.058,0.035,0.033],[0.996,0.863,0.619,0.091,0.032,0.01,0.007,0.071,0.135,0.225,0.28,0.206],[1.0,0.995,0.989,0.957,0.953,0.992,0.998,0.997,0.998,0.997,0.967,0.835],[0.822,0.787,0.812,0.862,0.877,0.875,0.924,0.949,0.966,0.968,0.922,0.799],[0.999,0.582,0.154,0.009,0.004,0.0,0.0,0.001,0.004,0.024,0.073,0.126]],[[0.999,0.995,0.989,0.982,0.999,0.999,0.999,0.998,0.998,0.995,0.781,0.45],[0.998,0.992,0.989,0.982,0.999,0.999,0.999,0.998,0.998,0.997,0.772,0.403],[0.999,0.993,0.971,0.957,0.993,0.999,0.999,0.998,0.998,0.997,0.961,0.811],[0.883,0.805,0.886,0.878,0.867,0.555,0.498,0.459,0.329,0.434,0.576,0.722],[0.971,0.991,0.942,0.92,0.968,0.992,0.996,0.997,0.99,0.977,0.898,0.71],[0.748,0.582,0.812,0.957,0.985,0.979,0.97,0.955,0.947,0.833,0.763,0.708],[0.996,0.964,0.51,0.178,0.007,0.004,0.03,0.101,0.178,0.344,0.45,0.559]],[[1.0,0.995,0.983,0.957,0.937,0.95,0.97,0.986,0.998,0.998,0.932,0.733],[1.0,0.995,0.983,0.936,0.937,0.902,0.957,0.949,0.998,0.998,0.984,0.966],[1.0,0.991,0.929,0.842,0.722,0.896,0.957,0.959,0.998,0.998,0.966,0.835],[0.996,0.991,0.983,0.982,0.993,0.992,0.984,0.937,0.915,0.932,0.656,0.379],[0.996,0.992,0.93,0.871,0.881,0.931,0.968,0.978,0.982,0.988,0.903,0.705],[0.872,0.698,0.937,0.957,0.993,0.999,0.999,0.998,0.998,0.998,0.984,0.907],[0.988,0.972,0.548,0.065,0.057,0.125,0.162,0.194,0.347,0.517,0.741,0.766]],[[0.955,0.991,0.983,0.982,0.993,0.999,0.999,0.998,0.998,0.997,0.932,0.794],[0.999,0.995,0.989,0.982,0.999,0.999,0.999,0.998,0.998,0.997,0.886,0.746],[0.996,0.995,0.989,0.957,0.993,0.999,0.999,0.998,0.998,0.992,0.775,0.626],[0.997,0.991,0.942,0.963,0.994,0.997,0.998,0.997,0.997,0.997,0.967,0.877],[0.994,0.972,0.983,0.957,0.937,0.992,0.999,0.998,0.998,0.997,0.964,0.835],[0.368,0.537,0.906,0.957,0.968,0.975,0.954,0.937,0.904,0.85,0.792,0.733],[0.899,0.782,0.364,0.45,0.457,0.471,0.675,0.592,0.454,0.544,0.72,0.759]],[[0.998,0.995,0.989,0.982,0.996,0.999,0.999,0.998,0.998,0.997,0.765,0.626],[0.999,0.995,0.989,0.982,0.993,0.999,0.999,0.997,0.998,0.993,0.861,0.626],[0.998,0.979,0.983,0.957,0.968,0.997,0.999,0.998,0.998,0.997,0.941,0.794],[1.0,0.995,0.989,0.982,0.998,0.997,0.993,0.983,0.974,0.98,0.91,0.709],[0.736,0.762,0.825,0.789,0.937,0.992,0.998,0.997,0.997,0.977,0.901,0.766],[0.562,0.698,0.932,0.957,0.968,0.966,0.943,0.933,0.883,0.843,0.788,0.73],[0.535,0.164,0.138,0.139,0.191,0.242,0.212,0.086,0.064,0.089,0.191,0.15]],[[0.977,0.653,0.821,0.575,0.479,0.671,0.854,0.57,0.591,0.683,0.507,0.323],[0.976,0.903,0.983,0.951,0.953,0.975,0.988,0.937,0.936,0.957,0.763,0.626],[0.994,0.903,0.333,0.096,0.067,0.136,0.129,0.118,0.108,0.128,0.097,0.073],[0.999,0.992,0.989,0.975,0.953,0.642,0.498,0.3,0.222,0.212,0.195,0.053],[0.937,0.941,0.91,0.851,0.853,0.88,0.924,0.916,0.858,0.851,0.826,0.766],[0.276,0.402,0.844,0.786,0.72,0.685,0.652,0.592,0.507,0.47,0.414,0.375],[0.952,0.405,0.178,0.327,0.203,0.411,0.332,0.229,0.139,0.101,0.027,0.016]],[[0.994,0.85,0.351,0.21,0.391,0.735,0.924,0.912,0.844,0.59,0.212,0.131],[0.999,0.952,0.762,0.73,0.72,0.75,0.809,0.594,0.347,0.129,0.068,0.028],[0.832,0.818,0.462,0.201,0.43,0.813,0.893,0.907,0.82,0.743,0.665,0.601],[0.985,0.908,0.889,0.878,0.86,0.775,0.706,0.739,0.79,0.819,0.747,0.603],[0.997,0.992,0.949,0.957,0.993,0.999,0.999,0.998,0.998,0.988,0.932,0.799],[0.591,0.323,0.329,0.474,0.636,0.631,0.594,0.66,0.724,0.668,0.696,0.643],[0.188,0.015,0.058,0.096,0.234,0.262,0.23,0.224,0.135,0.074,0.044,0.022]],[[1.0,0.995,0.985,0.957,0.953,0.969,0.993,0.978,0.965,0.865,0.632,0.45],[1.0,0.995,0.942,0.739,0.818,0.88,0.952,0.931,0.77,0.358,0.205,0.164],[1.0,0.995,0.856,0.871,0.891,0.944,0.965,0.935,0.883,0.91,0.804,0.651],[0.999,0.991,0.983,0.957,0.881,0.852,0.91,0.935,0.956,0.969,0.927,0.835],[0.952,0.97,0.785,0.779,0.828,0.952,0.988,0.992,0.992,0.991,0.961,0.835],[0.068,0.036,0.09,0.1,0.124,0.098,0.095,0.139,0.196,0.282,0.414,0.493],[1.0,0.982,0.654,0.739,0.509,0.392,0.305,0.223,0.178,0.149,0.191,0.344]],[[0.955,0.819,0.675,0.21,0.059,0.022,0.034,0.079,0.196,0.303,0.412,0.462],[0.602,0.299,0.385,0.277,0.056,0.01,0.006,0.012,0.038,0.105,0.478,0.617],[0.998,0.991,0.698,0.347,0.225,0.069,0.031,0.084,0.247,0.506,0.512,0.44],[1.0,0.993,0.822,0.575,0.44,0.183,0.267,0.482,0.876,0.992,0.964,0.841],[0.598,0.405,0.059,0.015,0.004,0.009,0.055,0.372,0.575,0.851,0.87,0.745],[0.596,0.556,0.881,0.916,0.937,0.88,0.91,0.934,0.947,0.939,0.902,0.811],[0.704,0.2,0.085,0.023,0.002,0.001,0.001,0.006,0.021,0.036,0.06,0.119]],[[1.0,0.995,0.895,0.551,0.671,0.633,0.893,0.898,0.947,0.957,0.879,0.71],[1.0,0.995,0.654,0.149,0.169,0.134,0.208,0.237,0.197,0.11,0.048,0.013],[1.0,0.993,0.914,0.644,0.369,0.206,0.322,0.446,0.487,0.624,0.763,0.712],[0.988,0.935,0.568,0.1,0.034,0.008,0.018,0.089,0.338,0.668,0.733,0.746],[0.999,0.992,0.931,0.734,0.72,0.579,0.43,0.519,0.716,0.851,0.572,0.457],[0.898,0.903,0.983,0.982,0.999,0.999,0.999,1.0,0.998,0.998,0.984,0.907],[0.999,0.991,0.677,0.116,0.042,0.019,0.017,0.048,0.141,0.323,0.456,0.431]]];
+var NAIVE = [0.999, 0.887, 0.495, 0.09, 0.019, 0.006, 0.003, 0.003, 0.004, 0.01, 0.04, 0.071];
+  var GROUPS = [
+    {c:'IPCFIPE', f:0, n:L('IPC da Fipe', 'IPC (Fipe)')}, {c:'IPCFGV', f:0, n:L('IPC da FGV', 'IPC (FGV)')}, {c:'IGPDI', f:0, n:'IGP-DI'},
+    {c:'IPAEP', f:0, n:L('IPA (produtor)', 'IPA (producer prices)')}, {c:'INCC', f:0, n:L('INCC (construção)', 'INCC (construction)')}, {c:'INPC', f:0, n:'INPC'},
+    {c:'S', f:1, n:L('spread de juros de 1 ano', '1-year interest spread')}, {c:'Spreads', f:1, n:L('4 spreads de juros', '4 interest spreads')},
+    {c:'SDPI', f:1, n:L('spread + produção industrial', 'spread + industrial output')}, {c:'SDivida', f:1, n:L('spread + dívida pública', 'spread + public debt')},
+    {c:'SIGPDI', f:1, n:L('spread + IGP-DI', 'spread + IGP-DI')}, {c:'SIPCFGV', f:1, n:L('spread + IPC da FGV', 'spread + IPC (FGV)')}, {c:'SNFSP', f:1, n:L('spread + déficit do governo', 'spread + government deficit')},
+    {c:'DPI', f:2, n:L('produção industrial', 'industrial output')}, {c:'DPISpreads', f:2, n:L('produção + 4 spreads', 'output + 4 spreads')},
+    {c:'DJDPI', f:2, n:L('juros + produção', 'interest + output')}, {c:'DJRDPI', f:2, n:L('juros reais (variação) + produção', 'real interest (change) + output')},
+    {c:'JRDPI', f:2, n:L('juros reais + produção', 'real interest + output')}, {c:'NFSPDPI', f:2, n:L('déficit do governo + produção', 'government deficit + output')},
+    {c:'DividaDPI', f:2, n:L('dívida pública + produção', 'public debt + output')}, {c:'JM0Renda', f:2, n:L('juros + base monetária + renda', 'interest + monetary base + income')},
+    {c:'AR12_', f:3, n:L('só a inflação, 12 meses + mês do ano', 'inflation only, 12 months + month of year')}
+  ];
+  var FAMS = [L('Outros índices de preços', 'Other price indices'), L('Juros (spreads) e combinações', 'Interest spreads and combinations'), L('Produção, juros, governo e moeda', 'Output, interest, government and money'), L('Palpite do calendário', 'Calendar guess')];
+  var METH = [
+    {d:'1', s:'DIIS+IIS', n:L('Autometrics + meses atípicos (DIIS+IIS)', 'Autometrics + unusual months (DIIS+IIS)')},
+    {d:'3', s:'IIS', n:L('Autometrics + meses fora da curva (IIS)', 'Autometrics + off-pattern months (IIS)')},
+    {d:'4', s:'IIS+SIS', n:L('Autometrics + meses atípicos (IIS+SIS)', 'Autometrics + unusual months (IIS+SIS)')},
+    {d:'5', s:L('só Autometrics', 'Autometrics only'), n:L('só Autometrics', 'Autometrics only')},
+    {d:'6', s:'SIS', n:L('Autometrics + meses atípicos (SIS)', 'Autometrics + unusual months (SIS)')},
+    {d:'7', s:L('nenhum corte', 'no pruning'), n:L('nenhum corte (modelo completo)', 'no pruning (full model)')},
+    {d:'8', s:'DIIS', n:L('Autometrics + meses atípicos (DIIS)', 'Autometrics + unusual months (DIIS)')}
+  ];
+  // Tabelas 5 e 17: valor-p consistente do SPA
+  var SPA = [
+    {ar1:[0.660,0.084,0.013,0.001,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.001], ar12:[0.097,0.139,0.594,0.887,0.987,0.996,0.998,0.999,0.999,0.987,0.988,0.944]},
+    {ar1:[0.190,0.124,0.097,0.028,0.005,0.001,0.000,0.000,0.000,0.000,0.000,0.000], ar12:[0.035,0.030,0.024,0.028,0.024,0.026,0.090,0.030,0.020,0.048,0.259,0.212]}
+  ];
+  // Tabelas 3, 6, 8, 10: valor-p do MCS do AR(1) com perda simétrica e assimétrica (α 0,4; 0,33; 0,25)
+  var ASYM = [
+    [0.99,0.88,0.49,0.09,0.01,0.00,0.00,0.00,0.00,0.01,0.04,0.07],
+    [1,0.99,0.83,0.14,0.03,0.01,0.00,0.00,0.00,0.04,0.21,0.39],
+    [0.99,0.99,0.95,0.21,0.06,0.02,0.01,0.01,0.01,0.12,0.5,0.74],
+    [0.99,0.99,0.98,0.39,0.15,0.08,0.04,0.04,0.07,0.36,0.83,0.92]
+  ];
+  // Tabelas 2, 7, 9, 11 (12 meses): MSE e AMSE do AR(1) e do AR(12)
+  var LOSS = {ar1:{mse:2.658, a4:1.221}, ar12:{mse:1.714, a4:0.916}};
+  // Figura 6 (lida do gráfico, aproximada): MSE×10⁴ a 12 meses em janelas de 24 meses
+  var WIN = {end:['2009','2010','2011','2012','2013','2014','2015'],
+    naive:[3.5,3.7,1.9,1.9,1.7,0.9,3.3], lo:[0.85,0.5,0.35,0.5,0.4,0.3,3.25], hi:[1.85,1.7,1.1,1.5,0.85,0.8,4.6]};
+  // Tabela 15: MSE × 10⁴ na base de 40 meses
+  var T15 = [
+    {k:'SARIMA-52', n:L('52 itens, um a um (SARIMA-52)', '52 items, one by one (SARIMA-52)'), c:'var(--dis)', v:[0.016,0.067,0.132,0.192,0.249,0.318,0.381,0.444,0.524,0.592,0.655,0.732]},
+    {k:'MIPAEP3', n:L('melhor com dados da economia (MIPAEP3)', 'best with economic data (MIPAEP3)'), c:'var(--navy)', v:[0.030,0.123,0.248,0.363,0.463,0.574,0.625,0.679,0.722,0.743,0.752,0.786]},
+    {k:'MAR12_7', n:L('palpite do calendário', 'calendar guess'), c:'var(--ar12)', v:[0.037,0.155,0.303,0.437,0.552,0.668,0.739,0.834,0.970,1.090,1.148,1.199]},
+    {k:'MNaive', n:L('palpite simples', 'simple guess'), c:'var(--red)', v:[0.029,0.139,0.328,0.593,0.900,1.227,1.543,1.847,2.135,2.439,2.715,2.968]}
+  ];
+  function inSet(p){ return p > 0.1; }
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var scene = $('hero-scene'), st = makeStage(scene, 430, 70, {ay:'74%', rx:'62deg'});
+    var K = 105, sel = 12, glass = [];   // px por ponto percentual
+    var best = T2[0].v, ar1 = T2[9].v;
+    for (var i = 0; i < 12; i++){
+      var x = i * 36, hb = rm(best[i]) * K, hg = rm(ar1[i]) * K;
+      var g = box({w:28, d:28, x:x, y:20, h:hg, c:'var(--red)', cls:'glass'});
+      var b = box({w:16, d:16, x:x + 6, y:26, h:hb, c:'var(--navy)'});
+      g.dataset.h = b.dataset.h = i + 1;
+      st.appendChild(b); st.appendChild(g); glass.push(g);
+      flatLabel(st, String(i + 1), x, 54, 28, 'font-size:13px');
+    }
+    flatLabel(st, L('meses à frente', 'months ahead'), 120, 74, 190, 'font-size:12px; color:var(--muted); font-weight:600');
+    rotatable(scene, st, -12, 10);
+    function read(){
+      each(glass, function(g){ g.classList.toggle('sel', +g.dataset.h === sel); });
+      var a = rm(ar1[sel - 1]), b = rm(best[sel - 1]);
+      $('hero-read').innerHTML = '<b>' + mo(sel) + L(' à frente', ' ahead') + ':</b> ' + L('palpite simples erra ', 'simple guess misses by ') + fmt(a, 2) + L(' ponto; melhor modelo a 12 meses, ', ' points; best 12-month model, ') + fmt(b, 2) + '. ' +
+        (b >= a ? L('Aqui o palpite simples empata ou ganha.', 'Here the simple guess ties or wins.') : L('O modelo erra ', 'The model misses ') + Math.round((1 - b / a) * 100) + L('% menos.', '% less.'));
+    }
+    scene.addEventListener('click', function(e){
+      if (M.wasDrag(scene)) return;
+      var s = e.target.closest('.slab'); if (!s) return;
+      sel = +s.dataset.h; read();
+    });
+    read();
+  })();
+
+  /* ================= 02 · POR QUE IMPORTA ================= */
+  (function(){
+    var W = [
+      {t:L('Salários', 'Wages'), s:L('reajustes negociados para o ano', 'raises negotiated for the year'), i:'<rect x="4" y="9" width="24" height="15" rx="2" fill="none" stroke="var(--navy)" stroke-width="2.4"/><circle cx="16" cy="16.5" r="3.6" fill="var(--red)"/>', p:L('Contratos de trabalho fixam valores que vão valer meses à frente. Se a inflação vier maior que a prevista, o salário perde poder de compra antes do próximo reajuste.', 'Employment contracts set values that will hold for months. If inflation comes in higher than forecast, wages lose purchasing power before the next raise.')},
+      {t:L('Financiamentos', 'Mortgages'), s:L('prestações de longo prazo', 'long-term payments'), i:'<path d="M5,16 L16,6 L27,16 V27 H5 Z" fill="none" stroke="var(--navy)" stroke-width="2.4"/><rect x="13" y="19" width="6" height="8" fill="var(--red)"/>', p:L('Hipotecas e outros compromissos longos dependem dos valores futuros da inflação, lembra a tese: o custo real da dívida muda com ela.', 'Mortgages and other long commitments depend on future inflation, the thesis notes: the real cost of the debt changes with it.')},
+      {t:L('Dívidas e empresas', 'Debts and firms'), s:L('juros, preços e planos', 'interest, prices and plans'), i:'<path d="M5,25 L12,17 L18,21 L27,9" fill="none" stroke="var(--red)" stroke-width="2.6"/><path d="M21,9 H27 V15" fill="none" stroke="var(--red)" stroke-width="2.6"/>', p:L('Decisões do setor privado sobre dívidas e outros compromissos em reais dependem da inflação que vai vir. A previsão é parte essencial dessas decisões, segundo a introdução da tese.', 'Private-sector decisions on debts and other commitments in reais depend on the inflation to come. The forecast is an essential part of those decisions, according to the thesis introduction.')},
+      {t:L('Banco Central', 'Central bank'), s:L('manter o poder de compra da moeda', 'keep the currency’s purchasing power'), i:'<path d="M4,12 L16,5 L28,12 Z" fill="var(--navy)"/><path d="M7,14 V24 M12,14 V24 M20,14 V24 M25,14 V24" stroke="var(--navy)" stroke-width="2.4"/><rect x="4" y="25" width="24" height="3" fill="var(--red)"/>', p:L('Os bancos centrais têm como objetivo manter a inflação estável. A tese cita que a política monetária funciona melhor com boas previsões e com o anúncio delas ao público.', 'Central banks aim to keep inflation stable. The thesis notes that monetary policy works better with good forecasts and with announcing them to the public.')}
+    ];
+    var g = $('why');
+    W.forEach(function(w, i){
+      var b = document.createElement('button');
+      b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+      b.innerHTML = '<svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">' + w.i + '</svg><div><b>' + w.t + '</b><span>' + w.s + '</span></div>';
+      b.addEventListener('click', function(){ each(g.children, function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); show(i); });
+      g.appendChild(b);
+    });
+    function show(i){ $('why-panel').innerHTML = '<h3>' + W[i].t + '</h3><p>' + W[i].p + '</p>'; }
+    show(0);
+  })();
+
+  /* ================= 03 · LINHA DO TEMPO ================= */
+  (function(){
+    var svg = $('tl-svg');
+    var E = [
+      {y:1994.5, t:L('Plano Real', 'Real Plan'), v:L('antes: > 1.000% ao ano', 'before: > 1,000% a year'), p:L('Entre 1986 e 1994, vários planos contra a inflação fracassaram e ela passou de 1.000% ao ano. O Plano Real mudou tanto a economia que a tese descarta os dados anteriores.', 'Between 1986 and 1994 several anti-inflation plans failed and inflation topped 1,000% a year. The Real Plan changed the economy so much that the thesis discards earlier data.')},
+      {y:1998.7, t:L('Crise russa', 'Russian crisis'), v:L('desvalorização do real', 'real devaluation'), p:L('O calote da dívida russa derrubou o PIB no fim de 1998 e levou a uma desvalorização do real, com efeito sobre a inflação.', 'Russia’s debt default pushed GDP down at the end of 1998 and led to a devaluation of the real, with effects on inflation.')},
+      {y:1999.5, t:L('Tripé', 'Policy tripod'), v:L('metas de inflação', 'inflation targets'), p:L('A partir de 1999, a política passou a se apoiar em equilíbrio das contas públicas, câmbio flutuante e metas de inflação.', 'From 1999 on, policy rested on balanced public accounts, a floating exchange rate and inflation targets.')},
+      {y:2001.5, t:'2001', v:L('inflação de 7,7%', 'inflation of 7.7%'), p:L('Recessão nos Estados Unidos e crise na Argentina levaram o Brasil a uma leve recessão; a inflação chegou a 7,7% no ano.', 'Recession in the US and the Argentine crisis led Brazil into a mild recession; inflation reached 7.7% for the year.')},
+      {y:2002.7, t:L('Eleição', 'Election'), v:L('12,5% em 2002, 9,3% em 2003', '12.5% in 2002, 9.3% in 2003'), p:L('Incertezas com a eleição pioraram as expectativas: a inflação saltou para 12,5% em 2002 e ficou em 9,3% em 2003, até a confirmação de que a política econômica seria mantida.', 'Uncertainty about the election worsened expectations: inflation jumped to 12.5% in 2002 and stayed at 9.3% in 2003, until it was confirmed that economic policy would be kept.')},
+      {y:2008.8, t:L('Crise de 2008', '2008 crisis'), v:L('Nova Matriz Econômica', 'New Economic Matrix'), p:L('Depois da crise financeira, o governo trocou o tripé pela chamada Nova Matriz Econômica: gasto público maior, crédito com juros subsidiados e câmbio administrado.', 'After the financial crisis, the government swapped the tripod for the so-called New Economic Matrix: higher public spending, subsidised credit and a managed exchange rate.')},
+      {y:2015.5, t:'2015', v:L('inflação de 10,67%', 'inflation of 10.67%'), p:L('O desequilíbrio das contas públicas levou a inflação a 10,67% em 2015, com recessão desde meados de 2014. É o último ano das previsões da tese.', 'The public-accounts imbalance pushed inflation to 10.67% in 2015, with recession since mid-2014. It is the last year of the thesis’s forecasts.')}
+    ];
+    var x = function(y){ return 30 + (y - 1994) * 500 / 22; };
+    svg.appendChild(el('rect', {x:x(2007), y:96, width:x(2016) - x(2007), height:14, rx:4, fill:'color-mix(in srgb, var(--red) 18%, white)'}));
+    svg.appendChild(el('text', {x:(x(2007) + x(2016)) / 2, y:126, 'font-size':10.5, fill:'var(--red)', 'text-anchor':'middle', 'font-weight':600}, L('previsões: 2007 a 2015', 'forecasts: 2007 to 2015')));
+    svg.appendChild(el('line', {x1:x(1994), x2:x(2016), y1:103, y2:103, stroke:'var(--ink-2)', 'stroke-width':2}));
+    for (var y = 1995; y <= 2015; y += 5){
+      svg.appendChild(el('line', {x1:x(y), x2:x(y), y1:98, y2:108, stroke:'var(--ink-2)'}));
+      svg.appendChild(el('text', {x:x(y), y:196, 'font-size':11, fill:'var(--muted)', 'text-anchor':'middle'}, y));
+    }
+    var nodes = [], sel = 0;
+    E.forEach(function(e, i){
+      var up = i % 2 === 0, yy = up ? 40 : 160;
+      var g = el('g', {'class':'ev', tabindex:0, role:'button', 'aria-label':e.t});
+      g.appendChild(el('line', {x1:x(e.y), x2:x(e.y), y1:103, y2:yy + (up ? 10 : -10), stroke:'var(--neutral)', 'stroke-width':1.5}));
+      g.appendChild(el('circle', {cx:x(e.y), cy:103, r:7, fill:i === 0 || i === 6 ? 'var(--red)' : 'var(--navy)', stroke:'#fff', 'stroke-width':2}));
+      g.appendChild(el('text', {x:x(e.y), y:up ? yy - 2 : yy + 12, 'font-size':11.5, 'font-weight':700, fill:'var(--ink)', 'text-anchor':'middle'}, e.t));
+      g.addEventListener('click', function(){ sel = i; draw(); });
+      g.addEventListener('keydown', function(ev){ if (ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); sel = i; draw(); } });
+      svg.appendChild(g); nodes.push(g);
+    });
+    function draw(){
+      nodes.forEach(function(n, i){ n.classList.toggle('on', i === sel); });
+      $('tl-panel').innerHTML = '<h3>' + E[sel].t + ' · <span style="color:var(--red); font-weight:600">' + E[sel].v + '</span></h3><p>' + E[sel].p + '</p>';
+    }
+    draw();
+  })();
+
+  /* ================= 04 · CORRIDA JUSTA ================= */
+  (function(){
+    var svg = $('win-run'), r = $('run-range');
+    var MS = L(['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'], ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']);
+    var X0 = 24, W = 512, N = 252, px = W / N;
+    function lab(m){ return MS[m % 12] + '/' + (1995 + Math.floor(m / 12)); }
+    function draw(){
+      var k = +r.value, n = 144 + k;
+      clear(svg);
+      svg.appendChild(el('rect', {x:X0, y:44, width:W, height:30, rx:6, fill:'var(--bg-soft)', stroke:'var(--border)'}));
+      svg.appendChild(el('rect', {x:X0, y:44, width:n * px, height:30, rx:6, fill:'var(--navy)'}));
+      var f = Math.min(12, N - n);
+      if (f > 0) svg.appendChild(el('rect', {x:X0 + n * px, y:44, width:f * px, height:30, fill:'var(--red)'}));
+      for (var y = 1995; y <= 2015; y += 5){
+        var xx = X0 + (y - 1995) * 12 * px;
+        svg.appendChild(el('text', {x:xx, y:96, 'font-size':11, fill:'var(--muted)', 'text-anchor':'middle'}, y));
+      }
+      svg.appendChild(el('text', {x:X0, y:32, 'font-size':12, 'font-weight':700, fill:'var(--navy)'}, L('o modelo aprende com ', 'the model learns from ') + n + L(' meses', ' months')));
+      svg.appendChild(el('text', {x:X0 + W, y:32, 'font-size':12, 'font-weight':700, fill:'var(--red)', 'text-anchor':'end'}, L('e prevê ', 'and forecasts ') + f + L(' meses', ' months')));
+      svg.appendChild(el('text', {x:X0, y:128, 'font-size':11, fill:'var(--muted)'}, L('Arraste o controle abaixo: a janela azul cresce um mês por vez.', 'Drag the slider below: the blue window grows one month at a time.')));
+      $('run-read').innerHTML = L('Previsão feita com dados até <b>', 'Forecast made with data up to <b>') + lab(n - 1) + L('</b>: inflação acumulada de <b>', '</b>: cumulative inflation for <b>') + lab(n) + L('</b> até <b>', '</b> to <b>') + lab(n + f - 1) + '</b>.';
+    }
+    r.addEventListener('input', draw);
+    draw();
+  })();
+
+  /* ================= 05 · DECIFRADOR ================= */
+  (function(){
+    var gsel = 0, msel = 5, wrap = $('dec-groups');
+    FAMS.forEach(function(fn, f){
+      var h = document.createElement('div'); h.className = 'fam'; h.textContent = fn; wrap.appendChild(h);
+      var c = document.createElement('div'); c.className = 'chips'; c.setAttribute('role', 'group'); c.setAttribute('aria-label', fn);
+      GROUPS.forEach(function(g, i){
+        if (g.f !== f) return;
+        var b = document.createElement('button'); b.textContent = g.n; b.dataset.i = i;
+        b.addEventListener('click', function(){ gsel = i; draw(); });
+        c.appendChild(b);
+      });
+      wrap.appendChild(c);
+    });
+    var mw = $('dec-methods');
+    METH.forEach(function(m, j){
+      var b = document.createElement('button'); b.textContent = m.d + ' · ' + m.s; b.dataset.j = j;
+      b.addEventListener('click', function(){ msel = j; draw(); });
+      mw.appendChild(b);
+    });
+    function draw(){
+      each(wrap.querySelectorAll('button'), function(b){ b.setAttribute('aria-pressed', +b.dataset.i === gsel ? 'true' : 'false'); });
+      each(mw.querySelectorAll('button'), function(b){ b.setAttribute('aria-pressed', +b.dataset.j === msel ? 'true' : 'false'); });
+      var g = GROUPS[gsel], m = METH[msel], p = A1[gsel][msel];
+      $('dec-code').innerHTML = '<span class="p1">M</span>' + g.c + '<span class="p3">' + m.d + '</span>';
+      var out = p.map(function(v, h){ return inSet(v) ? null : h + 1; }).filter(Boolean);
+      $('dec-read').innerHTML = '<b>' + g.n + '</b> · ' + m.n + '. ' + (out.length ? L('Ficou fora do grupo dos melhores em ', 'Fell out of the best group at ') + out.join(', ') + L(out.length === 1 ? ' mês' : ' meses', out.length === 1 ? ' month' : ' months') + L(' à frente.', ' ahead.') : L('Ficou no grupo dos melhores de 1 a 12 meses.', 'Stayed in the best group from 1 to 12 months.')) + ' <span style="color:var(--muted)">' + L('(Tabela A.1)', '(Table A.1)') + '</span>';
+    }
+    draw();
+  })();
+
+  /* ================= 06 · ERRO POR HORIZONTE ================= */
+  (function(){
+    var svg = $('err-svg'), H = 12;
+    var x = function(h){ return 56 + (h - 1) * 44; }, y = function(v){ return 236 - v / 1.8 * 210; };
+    function col(r){ return r.role === 'ar1' ? 'var(--red)' : r.role === 'ar12' ? 'var(--ar12)' : 'var(--navy)'; }
+    function name(r){ return r.role === 'ar1' ? L('palpite simples, AR(1)', 'simple guess, AR(1)') : r.role === 'ar12' ? L('palpite do calendário', 'calendar guess') : r.k; }
+    function draw(){
+      clear(svg);
+      for (var v = 0; v <= 1.8001; v += 0.3){
+        svg.appendChild(el('line', {x1:50, x2:546, y1:y(v), y2:y(v), stroke:'var(--border)'}));
+        svg.appendChild(el('text', {x:44, y:y(v) + 4, 'font-size':10.5, fill:'var(--muted)', 'text-anchor':'end'}, fmt(v, 1)));
+      }
+      svg.appendChild(el('text', {x:14, y:18, 'font-size':10.5, fill:'var(--muted)'}, L('erro típico (pontos percentuais)', 'typical miss (percentage points)')));
+      for (var h = 1; h <= 12; h++) svg.appendChild(el('text', {x:x(h), y:256, 'font-size':10.5, fill:'var(--muted)', 'text-anchor':'middle'}, h));
+      svg.appendChild(el('line', {x1:x(H), x2:x(H), y1:y(1.8), y2:236, stroke:'var(--ink)', 'stroke-dasharray':'3 3'}));
+      T2.slice().reverse().forEach(function(r){
+        var d = r.v.map(function(v, i){ return (i ? 'L' : 'M') + x(i + 1) + ' ' + y(rm(v)); }).join(' ');
+        svg.appendChild(el('path', {d:d, fill:'none', stroke:col(r), 'stroke-width':r.role ? 3 : 1.4, opacity:r.role || r.k === 'MIPCFIPE7' ? 1 : 0.45}));
+      });
+      svg.appendChild(el('text', {x:x(12) - 4, y:y(rm(T2[9].v[11])) - 8, 'font-size':11, 'font-weight':700, fill:'var(--red)', 'text-anchor':'end'}, L('palpite simples', 'simple guess')));
+      svg.appendChild(el('text', {x:x(7), y:y(rm(T2[8].v[6])) + 30, 'font-size':11, 'font-weight':700, fill:'var(--ar12)'}, L('calendário e os 8 melhores', 'calendar and the 8 best')));
+      var rows = T2.map(function(r){ return {r:r, e:rm(r.v[H - 1])}; }).sort(function(a, b){ return a.e - b.e; });
+      var mx = rows[rows.length - 1].e;
+      $('err-panel').innerHTML = '<h3>' + mo(H) + L(' à frente', ' ahead') + '</h3><ol class="rank">' + rows.map(function(o, i){
+        return '<li' + (o.r.role ? ' class="hl"' : '') + '><span>' + (i + 1) + '</span><span>' + name(o.r) + '<i style="width:' + (o.e / mx * 100) + '%; background:' + col(o.r) + '"></i></span><span>' + fmt(o.e, 2) + '</span></li>';
+      }).join('') + '</ol>';
+    }
+    hzSeg('err-h', 12, function(h){ H = h; draw(); });
+    draw();
+  })();
+
+  /* ================= 07 · GRUPO DOS MELHORES ================= */
+  (function(){
+    var scene = $('grid-scene'), st = makeStage(scene, 552, 230, {ay:'56%', rx:'50deg'});
+    var H = 12, S = 21, G = 24, blocks = [], sel = null;
+    GROUPS.forEach(function(g, i){
+      METH.forEach(function(m, j){
+        var b = box({w:S, d:S, x:i * G, y:j * G, h:4, c:'var(--navy)'});
+        b.dataset.g = i; b.dataset.m = j; st.appendChild(b); blocks.push(b);
+      });
+    });
+    var nb = box({w:S + 6, d:S + 6, x:(GROUPS.length - 1) * G - 3, y:7 * G + 22, h:4, c:'var(--red)'});
+    nb.dataset.g = -1; st.appendChild(nb); blocks.push(nb);
+    flatLabel(st, L('palpite simples', 'simple guess'), (GROUPS.length - 1) * G - 100, 7 * G + 28, 92, 'font-size:12px; color:var(--red); text-align:right');
+    flatLabel(st, L('← 22 combinações de dados →', '← 22 data combinations →'), 0, -26, GROUPS.length * G, 'font-size:13px; color:var(--muted)');
+    METH.forEach(function(m, j){ flatLabel(st, m.d, -24, j * G + 3, 18, 'font-size:12px; color:var(--muted)'); });
+    flatLabel(st, L('método', 'method'), -70, -26, 64, 'font-size:12px; color:var(--muted); text-align:right');
+    rotatable(scene, st, -6, 6);
+    function pOf(b){ return +b.dataset.g < 0 ? NAIVE[H - 1] : A1[+b.dataset.g][+b.dataset.m][H - 1]; }
+    function draw(){
+      var n = 0;
+      blocks.forEach(function(b){
+        var p = pOf(b), on = inSet(p), naive = +b.dataset.g < 0;
+        if (on) n++;
+        b.style.setProperty('--h', (on ? 8 + p * 46 : 3) + 'px');
+        b.style.setProperty('--c', naive ? 'var(--red)' : on ? (+b.dataset.g === GROUPS.length - 1 ? 'var(--ar12)' : 'var(--navy)') : 'var(--neutral)');
+        b.classList.toggle('sel', b === sel);
+      });
+      $('grid-count').innerHTML = n + ' <small>' + L('de 155 no grupo dos melhores a ', 'of 155 in the best group at ') + mo(H) + '</small>';
+      panel();
+    }
+    function panel(){
+      var p = $('grid-panel');
+      if (!sel){
+        var np = NAIVE[H - 1];
+        p.innerHTML = '<h3>' + L('Palpite simples a ', 'Simple guess at ') + mo(H) + '</h3><p>' + (inSet(np) ? L('Está no grupo dos melhores (valor-p ', 'It is in the best group (p-value ') + fmt(np, 3) + ').' : L('Ficou fora do grupo dos melhores (valor-p ', 'It fell out of the best group (p-value ') + fmt(np, 3) + L(', abaixo de 0,10).', ', below 0.10).')) + '</p><p style="font-size:.8rem">' + L('Toque num bloco para ver qual modelo ele é.', 'Tap a block to see which model it is.') + '</p>';
+        return;
+      }
+      var gi = +sel.dataset.g, v = pOf(sel);
+      if (gi < 0){ sel = null; panel(); return; }
+      var g = GROUPS[gi], m = METH[+sel.dataset.m];
+      p.innerHTML = '<h3>M' + g.c + m.d + '</h3><p><b>' + g.n + '</b> · ' + m.n + '</p><p>' + mo(H) + L(' à frente: ', ' ahead: ') + (inSet(v) ? L('no grupo dos melhores', 'in the best group') : L('fora do grupo dos melhores', 'out of the best group')) + L(' (valor-p ', ' (p-value ') + fmt(v, 3) + ').</p>';
+    }
+    scene.addEventListener('click', function(e){
+      if (M.wasDrag(scene)) return;
+      var s = e.target.closest('.slab'); if (!s) return;
+      sel = +s.dataset.g < 0 ? null : s; draw();
+    });
+    hzSeg('grid-h', 12, function(h){ H = h; draw(); });
+    draw();
+  })();
+
+  /* ================= 08 · SPA ================= */
+  (function(){
+    var svg = $('spa-svg'), base = 0;
+    var x = function(h){ return 60 + (h - 1) * 40; }, y = function(p){ return 240 - p * 200; };
+    function draw(){
+      clear(svg);
+      [0, 0.25, 0.5, 0.75, 1].forEach(function(v){
+        svg.appendChild(el('line', {x1:52, x2:548, y1:y(v), y2:y(v), stroke:'var(--border)'}));
+        svg.appendChild(el('text', {x:46, y:y(v) + 4, 'font-size':10.5, fill:'var(--muted)', 'text-anchor':'end'}, fmt(v, 2)));
+      });
+      svg.appendChild(el('text', {x:14, y:24, 'font-size':10.5, fill:'var(--muted)'}, L('valor-p do teste SPA', 'SPA test p-value')));
+      var d = SPA[base];
+      for (var h = 1; h <= 12; h++){
+        [['ar1', -9, 'var(--red)'], ['ar12', 9, 'var(--ar12)']].forEach(function(s){
+          var p = d[s[0]][h - 1], beaten = p < 0.1;
+          svg.appendChild(el('rect', {x:x(h) + s[1] - 8, y:y(Math.max(p, 0.006)), width:16, height:240 - y(Math.max(p, 0.006)), rx:2, fill:s[2], opacity:beaten ? 0.35 : 1}));
+        });
+        svg.appendChild(el('text', {x:x(h), y:260, 'font-size':10.5, fill:'var(--muted)', 'text-anchor':'middle'}, h));
+      }
+      svg.appendChild(el('line', {x1:52, x2:548, y1:y(0.1), y2:y(0.1), stroke:'var(--ink)', 'stroke-width':1.5, 'stroke-dasharray':'5 4'}));
+      svg.appendChild(el('text', {x:548, y:y(0.1) - 5, 'font-size':10.5, fill:'var(--ink)', 'text-anchor':'end', 'font-weight':600}, '0,10'.replace(',', EN ? '.' : ',')));
+      svg.appendChild(el('text', {x:300, y:284, 'font-size':10.5, fill:'var(--muted)', 'text-anchor':'middle'}, L('meses à frente · barra apagada = palpite batido', 'months ahead · faded bar = guess beaten')));
+      var leg = [[L('palpite simples', 'simple guess'), 'var(--red)'], [L('palpite do calendário', 'calendar guess'), 'var(--ar12)']];
+      leg.forEach(function(l, i){
+        svg.appendChild(el('rect', {x:330 + i * 112 - 60, y:12, width:10, height:10, fill:l[1]}));
+        svg.appendChild(el('text', {x:344 + i * 112 - 60, y:21, 'font-size':10.5, fill:'var(--ink-2)'}, l[0]));
+      });
+      var b1 = d.ar1.map(function(p, i){ return p < 0.1 ? i + 1 : 0; }).filter(Boolean), b12 = d.ar12.map(function(p, i){ return p < 0.1 ? i + 1 : 0; }).filter(Boolean);
+      function span(a){ return a.length ? (a.length > 1 && a[a.length - 1] - a[0] === a.length - 1 ? a[0] + L(' a ', ' to ') + a[a.length - 1] : a.join(', ')) + L(' meses', ' months') : L('nenhum prazo', 'no horizon'); }
+      $('spa-panel').innerHTML = base === 0 ?
+        '<p>' + L('<b>155 modelos, 96 meses (Tabela 5).</b> Palpite simples batido em ', '<b>155 models, 96 months (Table 5).</b> Simple guess beaten at ') + span(b1) + L('. Palpite do calendário batido só no 1º mês', '. Calendar guess beaten only in month 1') + L('; de 2 a 12 meses, ninguém o superou com segurança.', '; from 2 to 12 months, no one safely beat it.') + '</p>' :
+        '<p>' + L('<b>Com as previsões por itens, 40 meses (Tabela 17).</b> Palpite simples batido de ', '<b>With the item forecasts, 40 months (Table 17).</b> Simple guess beaten from ') + b1[0] + L(' a 12 meses. Palpite do calendário batido de 1 a 10 meses. O SARIMA-52 (52 itens) nunca foi batido: valor-p de ', ' to 12 months. Calendar guess beaten from 1 to 10 months. SARIMA-52 (52 items) was never beaten: p-value from ') + fmt(0.637, 3) + L(' a 1.', ' to 1.') + '</p>';
+    }
+    seg('spa-base', function(m){ base = m; draw(); });
+    draw();
+  })();
+
+  /* ================= 09 · ASSIMETRIA ================= */
+  (function(){
+    var w = 0, WTXT = [L('igual', 'the same'), '1,5×', '2×', '3×'];
+    if (EN) WTXT[1] = '1.5×';
+    var mbox = $('asym-months');
+    function draw(){
+      var p = ASYM[w], n = 0;
+      mbox.innerHTML = p.map(function(v, i){ var on = inSet(v); if (on) n++; return '<div class="' + (on ? 'in' : '') + '" title="' + mo(i + 1) + '"><b>' + (i + 1) + '</b>' + fmt(v, 2) + '</div>'; }).join('');
+      $('asym-read').innerHTML = (w === 0 ? L('Com erros para cima e para baixo valendo o mesmo, o palpite simples fica no grupo dos melhores só de 1 a 3 meses.', 'With high and low misses counting the same, the simple guess is in the best group only from 1 to 3 months.') :
+        L('Errar para baixo pesando ', 'With missing low weighing ') + WTXT[w] + L(': o palpite simples fica no grupo dos melhores em ', ': the simple guess is in the best group at ') + n + L(' dos 12 prazos', ' of the 12 horizons') + (w === 3 ? L(' (fora só de 6 a 9 meses).', ' (out only from 6 to 9 months).') : '.'));
+    }
+    seg('asym-w', function(m){ w = m; draw(); });
+    draw();
+    // Conta nossa: AMSE(α=0,4) = 0,4·acima + 0,6·abaixo; MSE = acima + abaixo  →  acima = (0,6·MSE − AMSE)/0,2
+    var sp = $('asym-split');
+    [['ar1', L('palpite simples', 'simple guess')], ['ar12', L('palpite do calendário', 'calendar guess')]].forEach(function(r){
+      var o = LOSS[r[0]], up = (0.6 * o.mse - o.a4) / 0.2, sh = Math.round(up / o.mse * 100);
+      sp.insertAdjacentHTML('beforeend', '<div class="row"><span>' + r[1] + '</span><div class="bar"><span style="width:' + sh + '%; background:var(--red)">' + sh + L('% acima', '% high') + '</span><span style="width:' + (100 - sh) + '%; background:var(--navy)">' + (100 - sh) + L('% abaixo', '% low') + '</span></div></div>');
+    });
+  })();
+
+  /* ================= 10 · JANELAS ================= */
+  (function(){
+    var svg = $('win-svg'), sel = 6;
+    var x = function(i){ return 70 + i * 72; }, y = function(v){ return 260 - v / 5 * 230; };
+    function draw(){
+      clear(svg);
+      for (var v = 0; v <= 5; v++){
+        svg.appendChild(el('line', {x1:56, x2:546, y1:y(v), y2:y(v), stroke:'var(--border)'}));
+        svg.appendChild(el('text', {x:50, y:y(v) + 4, 'font-size':10.5, fill:'var(--muted)', 'text-anchor':'end'}, v));
+      }
+      svg.appendChild(el('text', {x:14, y:18, 'font-size':10.5, fill:'var(--muted)'}, L('MSE × 10⁴ a 12 meses (aproximado)', '12-month MSE × 10⁴ (approximate)')));
+      var top = WIN.hi.map(function(v, i){ return (i ? 'L' : 'M') + x(i) + ' ' + y(v); }).join(' ');
+      var bot = WIN.lo.slice().reverse().map(function(v, i){ return 'L' + x(6 - i) + ' ' + y(v); }).join(' ');
+      svg.appendChild(el('path', {d:top + ' ' + bot + ' Z', fill:'color-mix(in srgb, var(--navy) 22%, white)', stroke:'var(--navy)', 'stroke-width':1}));
+      svg.appendChild(el('path', {d:WIN.naive.map(function(v, i){ return (i ? 'L' : 'M') + x(i) + ' ' + y(v); }).join(' '), fill:'none', stroke:'var(--red)', 'stroke-width':3}));
+      WIN.end.forEach(function(e, i){
+        var g = el('g', {'class':'w', tabindex:0, role:'button', 'aria-label':(+e - 1) + '–' + e});
+        g.appendChild(el('rect', {x:x(i) - 34, y:24, width:68, height:256, fill:i === sel ? 'rgb(15 23 42 / .06)' : 'transparent'}));
+        g.appendChild(el('circle', {cx:x(i), cy:y(WIN.naive[i]), r:i === sel ? 7 : 5, fill:'var(--red)', stroke:'#fff', 'stroke-width':2}));
+        g.appendChild(el('text', {x:x(i), y:296, 'font-size':10.5, fill:i === sel ? 'var(--ink)' : 'var(--muted)', 'font-weight':i === sel ? 700 : 400, 'text-anchor':'middle'}, (+e - 1) + '–' + e.slice(2)));
+        g.addEventListener('click', function(){ sel = i; draw(); });
+        g.addEventListener('keydown', function(ev){ if (ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); sel = i; draw(); } });
+        svg.appendChild(g);
+      });
+      var e = WIN.end[sel];
+      $('win-panel').innerHTML = '<h3>' + L('Janela de ', 'Window from ') + L('jan/', 'Jan ') + (+e - 1) + L(' a dez/', ' to Dec ') + e + '</h3><p>' + (sel === 6 ?
+        L('Todos erraram muito mais. O palpite simples teve o segundo menor erro (≈ 3,3), atrás só do modelo com o IPC da Fipe; os outros ficaram entre ≈ 3,6 e 4,6.', 'Everyone missed by far more. The simple guess had the second smallest miss (≈ 3.3), behind only the IPC-Fipe model; the others ranged from ≈ 3.6 to 4.6.') :
+        L('O palpite simples foi o pior (≈ ', 'The simple guess was the worst (≈ ') + fmt(WIN.naive[sel], 1) + L('), acima de toda a faixa dos outros modelos (≈ ', '), above the whole band of the other models (≈ ') + fmt(WIN.lo[sel], 2) + L(' a ', ' to ') + fmt(WIN.hi[sel], 2) + ').') + '</p>';
+    }
+    draw();
+  })();
+
+  /* ================= 11 · CESTA ================= */
+  (function(){
+    var scene = $('basket-scene'), st = makeStage(scene, 360, 150, {ay:'60%', rx:'58deg'});
+    var mode = 1, H = 12, items = [], s = 18;
+    for (var i = 0; i < 52; i++){
+      var b = box({w:s, d:s, h:18 + (i * 37 % 23), c:M.ramp('var(--dis)', i % 6, 6)});
+      st.appendChild(b); items.push(b);
+    }
+    rotatable(scene, st, -24, 10);
+    function place(){
+      items.forEach(function(b, i){
+        var c = i % 13, r = Math.floor(i / 13);
+        var tight = {x:110 + (i % 8) * s, y:10 + Math.floor(i / 8) * s}, loose = {x:c * 28, y:r * 36};
+        var p = mode ? loose : tight;
+        b.style.left = '0px'; b.style.top = '0px';
+        b.style.setProperty('--ox', p.x + 'px'); b.style.setProperty('--oy', p.y + 'px');
+        b.style.setProperty('--h', (mode ? 18 + (i * 37 % 23) : 46) + 'px');
+        b.style.setProperty('--c', mode ? M.ramp('var(--dis)', i % 6, 6) : 'var(--navy)');
+      });
+    }
+    function bars(){
+      var svg = $('basket-svg'); clear(svg);
+      var mx = 1.8, X = 14, W = 330;
+      T15.forEach(function(r, i){
+        var e = rm(r.v[H - 1]), yy = 22 + i * 44;
+        svg.appendChild(el('text', {x:X, y:yy - 5, 'font-size':12, fill:'var(--ink-2)', 'font-weight':i === 0 ? 700 : 400}, r.n));
+        svg.appendChild(el('rect', {x:X, y:yy, width:e / mx * W, height:16, rx:4, fill:r.c}));
+        svg.appendChild(el('text', {x:X + e / mx * W + 6, y:yy + 13, 'font-size':12, 'font-weight':700, fill:'var(--ink)'}, fmt(e, 2)));
+      });
+    }
+    seg('basket-mode', function(m){ mode = m; place(); });
+    hzSeg('basket-h', 12, function(h){ H = h; bars(); });
+    place(); bars();
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
