@@ -1,0 +1,822 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Do machines and buildings bring more debt? · PPGA Interativo</title>
+<meta name="description" content="The doctoral thesis by George André Willrich Sales (PPGA Mackenzie) on the link between real assets (machinery, buildings and land) and the debt of 255 Brazilian listed companies, from 2007 to 2015, explained in 11 interactive screens.">
+<link rel="alternate" hreflang="pt-BR" href="../../../teses/2016-sales-ativos-reais-divida/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23e80734%22/><path d=%22M7 25V12l6 4v-4l6 4V8h6v17z%22 fill=%22white%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/motor.css">
+<link rel="stylesheet" href="../../../assets/ods.css">
+<style>
+  /* Motor compartilhado em assets/motor.css. Aqui: cores de conceito e componentes desta tese. */
+  :root{
+    --real:var(--navy);   /* ativos reais (PP&E) */
+    --debt:var(--red);    /* dívida */
+    --more:var(--navy);   /* veio com mais dívida */
+    --less:var(--red);    /* veio com menos dívida */
+    --none:#cbd5e1;
+    --weak:#b45309;
+  }
+  @property --h{syntax:'<length>'; inherits:true; initial-value:0px;}
+  @property --z{syntax:'<length>'; inherits:true; initial-value:0px;}
+  .note{font-size:.78rem; color:var(--muted); border-left:3px solid var(--neutral); padding:4px 0 4px 12px; margin-top:14px;}
+  .note b{color:var(--ink-2);}
+  .ill{display:inline-block; font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--weak); border:1px solid color-mix(in srgb, var(--weak) 45%, white); border-radius:999px; padding:2px 9px; margin-bottom:6px;}
+  .sw{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 10px;}
+  .chip{border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 12px; font-size:.8rem; cursor:pointer; color:var(--ink-2); transition:all .2s;}
+  .chip:hover{border-color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px 16px; box-shadow:var(--shadow);}
+  .panel h3{font-size:1rem; margin-bottom:6px; color:var(--ink);}
+  .panel .tag{font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:4px;}
+  .panel p{margin:0 0 6px; font-size:.86rem;}
+  .panel p:last-child{margin-bottom:0;}
+  .seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--card); gap:2px;}
+  .seg button{border:0; background:transparent; border-radius:999px; padding:7px 13px; font-size:.8rem; cursor:pointer; color:var(--ink-2);}
+  .seg button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .leg{display:flex; flex-wrap:wrap; justify-content:center; gap:4px 16px; font-size:.78rem; color:var(--ink-2); margin-top:4px;}
+  svg text{font-family:var(--sans);}
+  .facts{display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; margin-top:12px;}
+  .facts div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 11px; font-size:.74rem; color:var(--ink-2); line-height:1.3;}
+  .facts b{display:block; font-family:var(--serif); font-size:1.25rem; color:var(--ink);}
+  @media (max-width:600px){ .facts{grid-template-columns:1fr 1fr;} }
+  .bigbtn{border:0; background:var(--red); color:#fff; border-radius:999px; padding:9px 18px; font-size:.86rem; font-weight:700; cursor:pointer; margin-top:10px;}
+  .bigbtn.ghost{background:var(--card); color:var(--ink); border:1px solid var(--border);}
+
+  /* ---------- 01 · Capa ---------- */
+  #capa h1{font-size:clamp(1.6rem, 2.6vw, 2.1rem);}
+  #capa .sub{font-size:1rem;}
+  .meta{display:grid; gap:2px; margin-top:16px; font-size:.86rem; color:var(--muted);}
+  .meta b{color:var(--ink); font-weight:600;}
+  .cap-legend{font-size:.76rem; color:var(--muted); margin-top:4px; text-align:center; line-height:1.4;}
+  .cap-ctrl{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:center; margin-top:6px;}
+  #hero-scene .slab{transition:transform .55s cubic-bezier(.2,.8,.2,1), --h .6s ease, --z .6s ease;}
+  #hero-scene .slab .face-label{font-size:10px; letter-spacing:.06em;}
+  #hero-msg{font-size:.84rem; color:var(--ink-2); text-align:center; min-height:2.6em; margin-top:4px;}
+  #hero-msg b{color:var(--ink);}
+  @media (prefers-reduced-motion:reduce){ #hero-scene .slab{transition:none;} }
+
+  /* ---------- 02 · Garantia ---------- */
+  .tiles{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;}
+  .tile{border:1px solid var(--border); background:var(--card); border-radius:12px; padding:8px 6px 7px; cursor:pointer; text-align:center; font-size:.76rem; color:var(--ink-2); line-height:1.25; border-bottom:5px solid var(--tc);}
+  .tile svg{width:52px; height:40px; display:block; margin:0 auto 3px;}
+  .tile[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink);}
+  .tile small{display:block; font-size:.64rem; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; margin-top:2px;}
+  #gr-panel{min-height:150px; margin-top:10px;}
+  @media (max-width:600px){ .tiles{grid-template-columns:repeat(2, 1fr);} }
+
+  /* ---------- 03 · Réguas ---------- */
+  #rg-svg{width:100%; display:block; max-width:520px; margin:0 auto;}
+  #rg-panel{min-height:96px; margin-top:8px;}
+
+  /* ---------- 04 · Dados ---------- */
+  #dt-svg{width:100%; display:block;}
+
+  /* ---------- 05 · Apostas ---------- */
+  .bets{display:grid; grid-template-columns:1fr 1fr; gap:7px;}
+  .bet{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:7px 11px;}
+  .bet h3{font-size:.8rem; margin-bottom:5px; line-height:1.3; font-family:var(--sans); font-weight:600;}
+  .bet h3 i{font-style:normal; color:var(--muted); font-weight:700; margin-right:4px;}
+  .bet .opts{display:flex; gap:5px;}
+  .bet .opts button{border:1px solid var(--border); background:var(--bg-soft); border-radius:8px; padding:4px 10px; font-size:.74rem; cursor:pointer; color:var(--ink-2); font-weight:600;}
+  .bet .opts button[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .bet .res{display:none; font-size:.74rem; color:var(--ink-2); margin-top:5px; padding-top:5px; border-top:1px dashed var(--border);}
+  .bets.show .bet .res{display:block;}
+  .bet .res b.y{color:var(--navy);} .bet .res b.n{color:var(--red);}
+  .bet.hit{border-color:var(--navy);}
+  #bt-score{font-size:.9rem; color:var(--ink-2); margin-top:8px; min-height:1.4em;}
+  #bt-score b{font-family:var(--serif); font-size:1.2rem; color:var(--ink);}
+  @media (max-width:760px){ .bets{grid-template-columns:1fr;} }
+
+  /* ---------- 06 · Descoberta ---------- */
+  #tp-svg{width:100%; display:block; max-width:560px; margin:0 auto;}
+  #tp-panel{min-height:96px; margin-top:8px;}
+
+  /* ---------- 07 · Grade ---------- */
+  .rg{display:grid; gap:3px; font-size:.76rem;}
+  .rg .hd, .rg .row{display:grid; grid-template-columns:minmax(0, 1.7fr) repeat(4, minmax(0, 1fr)); gap:3px; align-items:stretch;}
+  .rg .hd span{font-size:.66rem; letter-spacing:.02em; color:var(--muted); font-weight:700; text-align:center; line-height:1.2; align-self:end;}
+  .rg .row > button.nm{border:1px solid var(--border); background:var(--card); border-radius:7px; padding:3px 8px; text-align:left; font-size:.74rem; color:var(--ink); cursor:pointer; line-height:1.15;}
+  .rg .row > button.nm[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink);}
+  .rg .row.ppe > button.nm{border-left:5px solid var(--real); font-weight:700;}
+  .rg .row.ctl{display:none;}
+  .rg.withctl .row.ctl{display:grid;}
+  .rg .sep{font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:700; margin:4px 0 0;}
+  .rg .sep.ctl{display:none;} .rg.withctl .sep.ctl{display:block;}
+  .cell{border-radius:7px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.72rem; min-height:25px; background:#eef2f7; color:var(--muted);}
+  .cell.up{background:var(--more); color:#fff;}
+  .cell.dn{background:var(--less); color:#fff;}
+  .cell.w1{opacity:.62;} .cell.w2{opacity:.82;}
+  .cell.na{background:transparent; border:1px dashed var(--border);}
+  #gd-panel{min-height:120px; margin-top:8px;}
+  .score{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.8rem; margin-top:8px; color:var(--ink-2);}
+  .score b{font-family:var(--serif); font-size:1.05rem; color:var(--ink);}
+
+  /* ---------- 08 · Tamanho ---------- */
+  #tm-svg{width:100%; display:block; max-width:560px; margin:0 auto;}
+  #tm-panel{min-height:110px; margin-top:8px;}
+
+  /* ---------- 09 · Pares × modelo ---------- */
+  #pr-svg{width:100%; display:block; max-width:540px; margin:0 auto;}
+  #pr-panel{min-height:110px; margin-top:8px;}
+
+  /* ---------- 10 · Brasil ---------- */
+  .why{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:12px;}
+  .why button{border:1px solid var(--border); background:var(--card); border-radius:14px; padding:12px 14px; text-align:left; cursor:pointer; color:var(--ink-2); font-size:.8rem; line-height:1.4; box-shadow:var(--shadow); border-top:5px solid var(--wc, var(--ink)); min-height:136px;}
+  .why button b{display:block; font-family:var(--serif); font-size:.98rem; color:var(--ink); margin-bottom:4px;}
+  .why button .back{display:none;}
+  .why button[aria-pressed="true"] .front{display:none;}
+  .why button[aria-pressed="true"] .back{display:block;}
+  .why button .hint{display:block; margin-top:6px; font-size:.68rem; color:var(--muted); letter-spacing:.06em; text-transform:uppercase;}
+  @media (max-width:900px){ .why{grid-template-columns:1fr 1fr;} }
+  @media (max-width:560px){ .why{grid-template-columns:1fr;} .why button{min-height:0;} }
+
+  /* ---------- 11 · Prática, limites e créditos ---------- */
+  .cards4{display:grid; grid-template-columns:1fr; gap:10px; margin-top:10px;}
+  @media (min-width:760px){ .cards4{grid-template-columns:repeat(2, 1fr);} }
+  @media (min-width:1100px){ .cards4{grid-template-columns:repeat(4, 1fr);} }
+  .pcard{background:var(--card); border-radius:12px; padding:11px 13px; box-shadow:var(--shadow); border-top:5px solid var(--pc, var(--ink));}
+  .pcard h3{font-size:.92rem; margin-bottom:5px; color:var(--ink);}
+  .pcard ul{margin:0; padding-left:16px; display:grid; gap:3px; font-size:.76rem; line-height:1.4; color:var(--ink-2);}
+  .pcard em{font-style:normal; font-size:.7rem; color:var(--muted);}
+  .end{display:grid; grid-template-columns:1fr; gap:22px; margin-top:14px;}
+  @media (min-width:920px){ .end{grid-template-columns:1.1fr .9fr; gap:40px;} }
+  .end h3{font-size:1.04rem; margin-bottom:4px;}
+  .limits{display:grid; gap:5px; margin:6px 0 0; padding:0; list-style:none;}
+  .limits li{padding:6px 11px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:.77rem; color:var(--ink-2);}
+  .limits li b{color:var(--ink);}
+  .limits li em{font-style:normal; font-size:.7rem; color:var(--muted); white-space:nowrap;}
+  .cite{font-size:.78rem; color:var(--muted); background:var(--card); border:1px solid var(--border); border-radius:12px; padding:11px 13px; line-height:1.5; margin-top:6px;}
+  .cite b{color:var(--ink);}
+  .also{font-size:.8rem; margin-top:10px; color:var(--ink-2);}
+  .also a{color:var(--red); font-weight:600;}
+</style>
+<!-- Contagem anônima de visitas (GoatCounter, sem cookies) -->
+<script data-goatcounter="https://ppga-interativo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-meta="../../../teses/2016-sales-ativos-reais-divida/meta.json">
+
+<header class="topbar">
+  <a class="brand" href="../../"><span class="sq">PPGA</span><span>PPGA<br>Interativo</span></a>
+  <div class="counter">
+    <a class="lang" href="../../../teses/2016-sales-ativos-reais-divida/" hreflang="pt-BR" lang="pt-BR" title="Ler em português"><img class="lang-flag" src="../../../assets/bandeira-br.svg" width="17" height="12" alt="">PT</a>
+    <span id="count">01 / 11</span>
+    <button class="nav-btn" id="prev" aria-label="Previous screen">↑</button>
+    <button class="nav-btn" id="next" aria-label="Next screen">↓</button>
+  </div>
+</header>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots" aria-label="Screen navigation"></nav>
+
+<main>
+
+<!-- 01 · CAPA -->
+<section class="slide" id="capa" data-label="Start">
+  <div class="inner grid2 wide-right">
+    <div>
+      <div class="kicker rv">Doctoral thesis · PPGA Mackenzie · 2016</div>
+      <h1 class="rv" style="--d:.1s">In Brazilian companies, owning more machinery and buildings did not bring more debt</h1>
+      <p class="sub rv" style="--d:.2s">Lenders like collateral they can seize and resell. That is why studies in the United States find that companies with more plants and equipment can borrow more. The author followed <strong>255 companies</strong> on the Brazilian stock exchange from 2007 to 2015, and that link did not show up in any of the four debt measures. Explained in 11 screens.</p>
+      <div class="meta rv" style="--d:.3s">
+        <span><b>Author:</b> George André Willrich Sales</span>
+        <span><b>Advisor:</b> Prof. Dr. Wilson Toshiro Nakamura</span>
+        <span><b>Program:</b> Graduate Program in Business Administration (PPGA) · Mackenzie Presbyterian University</span>
+      </div>
+      <div class="ctas rv" style="--d:.4s">
+        <a class="btn" href="#garantia">Start →</a>
+        <a class="btn ghost" href="#descoberta">Go straight to the result</a>
+      </div>
+    </div>
+    <div class="rv" style="--d:.3s">
+      <span class="ill">Made-up company, for illustration</span>
+      <div class="fit-wrap"><div class="scene draggable" id="hero-scene" data-fit="440x250" role="img" aria-label="Balance sheet of a made-up company in blocks: on the left what it owns (cash, inventory, receivables, machinery and buildings, brands), on the right where the money came from (short-term debt, long-term debt, owners). The button adds machinery and buildings."></div></div>
+      <div class="leg"><span>left: <b>what the company owns</b></span><span>right: <b>where the money came from</b></span></div>
+      <div class="cap-ctrl"><div class="seg" id="hero-seg"></div><button class="bigbtn" id="hero-btn" style="margin-top:0">+ machinery and buildings</button></div>
+      <div id="hero-msg" aria-live="polite"></div>
+      <div class="cap-legend">Made-up numbers. Drag to rotate.</div>
+      <div class="ods-wrap rv" style="--d:.45s">
+        <span class="ods-h">Closest UN Sustainable Development Goals</span>
+        <ul class="ods">
+          <li class="ods-8"><a href="https://sdgs.un.org/goals/goal8" target="_blank" rel="noopener" title="SDG 8 · Decent Work and Economic Growth: Studies what gives Brazilian companies access to credit and shows that machinery and buildings, on their own, did not explain how much they owe."><b>8</b>Decent Work and Economic Growth</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">scroll<span></span></div>
+</section>
+
+<!-- 02 · GARANTIA -->
+<section class="slide" id="garantia" data-label="Collateral">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">02</span> The idea</div>
+      <h2 class="rv" style="--d:.1s">Lenders lend more to whoever offers something they can seize and resell</h2>
+      <p class="lede rv" style="--d:.15s">It is the logic of pawning a watch or financing a car. In a company, the “real” assets, the ones you can touch, are machinery, buildings and land. Accounting calls this group <b>PP&amp;E</b> (plant, property and equipment). The thesis calls them <b>real assets</b>.</p>
+      <p class="rv" style="--d:.2s; font-size:.9rem">Tap an asset to see what the literature reviewed by the author says about it as collateral.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="tiles" id="gr-tiles"></div>
+      <div class="panel" id="gr-panel" aria-live="polite"></div>
+      <p class="note">Source: sections 1.1 and 2 of the thesis (Hart and Moore, 1994; Shleifer and Vishny, 1992; Acharya et al., 2007; Gavazza, 2011; Campello and Giambona, 2012). The split into “real assets” and “the rest” is the thesis’s; the drawings are ours.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · RÉGUAS -->
+<section class="slide" id="reguas" data-label="Four measures">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">03</span> What was measured</div>
+      <h2 class="rv" style="--d:.1s">Debt was measured in four ways</h2>
+      <p class="lede rv" style="--d:.15s">“How much the company owes” depends on the measure. Debt due within a year is not the same as debt spread over several years, and debt can be compared with everything the company owns or only with the owners’ money. The author tested all four.</p>
+      <div class="rv" style="--d:.2s"><div class="seg" id="rg-seg"></div></div>
+      <div class="panel rv" style="--d:.25s" id="rg-panel" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <span class="ill">Schematic balance sheet</span>
+      <svg id="rg-svg" viewBox="0 0 520 330" role="img" aria-label="Balance sheet in two columns: what the company owns (total assets) and where the money came from (short-term debt, long-term debt and owners’ equity). The chosen measure colors what goes on top and at the bottom of the division."></svg>
+      <p class="note">Source: section 3.3 (γ1 to γ4). Block sizes are made up.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · DADOS -->
+<section class="slide" id="dados" data-label="The data">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">04</span> Who was included</div>
+      <h2 class="rv" style="--d:.1s">255 listed companies, followed for nine years, with gaps in the data</h2>
+      <p class="lede rv" style="--d:.15s">The author used the Compustat database at Mackenzie’s finance lab and left out banks, insurers and other financial firms, whose debt works differently. The plan was to separate buildings, land and machinery, but fewer than half of the companies had those numbers. So the three became a single block, PP&amp;E.</p>
+      <div class="facts rv" style="--d:.2s">
+        <div><b>255</b>non-financial companies</div>
+        <div><b>9</b>years, 2007 to 2015</div>
+        <div><b>18</b>factors tested together</div>
+        <div><b>4</b>debt measures</div>
+      </div>
+      <p class="rv" style="--d:.25s; font-size:.86rem; margin-top:12px">Each company was compared with itself over the years (fixed-effects panel): what changes inside the company counts, while each one’s own way of being is set aside.</p>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="chips" id="dt-chips"></div>
+      <svg id="dt-svg" viewBox="0 0 580 360" role="img" aria-label="Bars showing how many of the 255 companies had each piece of information. Buildings, land and machinery appear striped because they were merged into PP&amp;E."></svg>
+      <p class="note">Source: Table 1 (companies with each item available in the 2007–2015 series) and section 3.2.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · APOSTAS -->
+<section class="slide" id="apostas" data-label="Ten bets">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">05</span> The hypotheses</div>
+    <h2 class="rv" style="--d:.1s">The author made ten bets. How many do you think held up?</h2>
+    <p class="lede rv" style="--d:.15s; max-width:none">They come from two classic theories: the <b>pecking order</b> (the company uses its own profit first, then borrows) and the <b>trade-off</b> (debt saves taxes but raises the risk of going bust). Mark “yes” or “no”, then check.</p>
+    <div class="bets rv" style="--d:.2s" id="bt-list"></div>
+    <div class="rv" style="--d:.25s"><button class="bigbtn" id="bt-go">Show what the thesis found</button> <span id="bt-score" aria-live="polite"></span></div>
+    <p class="note rv" style="--d:.3s">Source: section 3.1 (hypotheses 1 to 10) and Tables 5 to 8. “Held up” when the sign is the expected one and the coefficient is more than 1.96 standard errors away from zero (5%); we redid this calculation for every row. Score counted by us.</p>
+  </div>
+</section>
+
+<!-- 06 · DESCOBERTA -->
+<section class="slide" id="descoberta" data-label="The finding">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">06</span> The central result</div>
+      <h2 class="rv" style="--d:.1s">In none of the four measures did machinery and buildings go with more debt</h2>
+      <p class="lede rv" style="--d:.15s">This was the thesis’s main goal. In all four measures, the PP&amp;E sign even came out on the opposite side (less debt), but always too close to zero to say anything. Adding long-term receivables to PP&amp;E changed nothing either.</p>
+      <div class="rv" style="--d:.2s"><div class="seg" id="tp-seg"></div></div>
+      <div class="panel rv" style="--d:.25s" id="tp-panel" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <svg id="tp-svg" viewBox="0 0 560 330" role="img" aria-label="For each debt measure, a dot shows how far from zero the coefficient landed, measured in standard errors. The grey band in the middle is the zone of no clear difference."></svg>
+      <div class="leg"><span><span class="sw" style="background:#e2e8f0"></span>no clear difference</span><span><span class="sw" style="background:var(--more)"></span>more debt</span><span><span class="sw" style="background:var(--less)"></span>less debt</span></div>
+      <p class="note">Source: Tables 5 to 8. Distance = coefficient ÷ standard error, our calculation. We show distance rather than effect size because the debt measure in the annexes has out-of-scale numbers (see the limits).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · GRADE -->
+<section class="slide" id="grade" data-label="All factors">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">07</span> The 18 factors</div>
+      <h2 class="rv" style="--d:.1s">Almost the whole balance sheet stayed silent</h2>
+      <p class="lede rv" style="--d:.15s">Cash, investments, receivables, brands, profit: none moved clearly with debt. The firm signals were company <b>size</b> and the share of liabilities owed to <b>banks</b>. Inventory and interest expenses gave weak signals that switch sides depending on the measure.</p>
+      <div class="panel rv" style="--d:.2s" id="gd-panel" aria-live="polite"></div>
+      <div class="rv" style="--d:.25s; margin-top:8px"><button class="chip" id="gd-ctl" aria-pressed="false">Also show the 5 debt-side factors</button></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="rg" id="gd-grid"></div>
+      <div class="leg"><span><span class="sw" style="background:var(--more)"></span>↑ more debt</span><span><span class="sw" style="background:var(--less)"></span>↓ less debt</span><span><span class="sw" style="background:#eef2f7"></span>— no clear difference</span></div>
+      <p class="note">Source: Tables 5 to 8. Stars redone by us (coefficient ÷ standard error): *** 1%, ** 5%, * 10%. Tap a factor’s name.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · TAMANHO -->
+<section class="slide" id="tamanho" data-label="Size">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">08</span> What did show up</div>
+      <h2 class="rv" style="--d:.1s">Larger companies owed more in the long term</h2>
+      <p class="lede rv" style="--d:.15s">When a company grows in assets, long-term debt grows with it, and debt weighs more against the owners’ money. For short-term debt and for total debt over assets, size made no difference.</p>
+      <div class="chips rv" style="--d:.2s" id="tm-chips"></div>
+      <div class="panel rv" style="--d:.25s" id="tm-panel" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <div class="seg" id="tm-seg" style="margin-bottom:8px"></div>
+      <svg id="tm-svg" viewBox="0 0 560 300" role="img" aria-label="Bars for each debt measure, to the right when the factor came with more debt and to the left when it came with less; the grey band is the zone of no clear difference."></svg>
+      <p class="note">Source: Tables 6 and 8 (size = logarithm of total assets; banks = debt owed to banks ÷ total liabilities) and section 4.2. Distance in standard errors, our calculation.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · PARES × MODELO -->
+<section class="slide" id="pares" data-label="The unexpected">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker rv"><span class="n">09</span> The unexpected</div>
+      <h2 class="rv" style="--d:.1s">Looking at pairs alone, machinery seemed to lengthen debt. In the model, the signal fades</h2>
+      <p class="lede rv" style="--d:.15s">In the annex’s correlation table, companies with more PP&amp;E had a larger share of liabilities in the long term and a smaller one in the short term, as the theory expects. But PP&amp;E also moves with other balance-sheet items. When the model puts everything together, almost nothing is left for it.</p>
+      <div class="rv" style="--d:.2s"><div class="seg" id="pr-seg"></div></div>
+      <div class="panel rv" style="--d:.25s" id="pr-panel" aria-live="polite"></div>
+    </div>
+    <div class="rv" style="--d:.25s">
+      <svg id="pr-svg" viewBox="0 0 540 330" role="img" aria-label="Bars with PP&amp;E’s correlation with other balance-sheet items, or with the distance from zero in the model, depending on the choice."></svg>
+      <p class="note">Source: Annex II (correlation matrix) and Tables 5 and 6. Comparing the two readings is <b>our reading</b>; they use different scales and are not on the same axis. In the annex, short- and long-term debt are shares of total liabilities, not of assets.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · BRASIL -->
+<section class="slide" id="brasil" data-label="Why here?">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">10</span> The author’s explanations</div>
+    <h2 class="rv" style="--d:.1s">Credit in Brazil follows other rules</h2>
+    <p class="lede rv" style="--d:.15s">The author notes that in Brazil the cost of and access to debt depend heavily on where the money comes from, not just on collateral. Flip the cards. None of these explanations was tested with the thesis’s data.</p>
+    <div class="why rv" style="--d:.2s" id="wy-cards"></div>
+    <p class="note rv" style="--d:.25s">Source: sections 1.2, 4.1 and 4.2 of the thesis (with Brito, Corrar and Batistella, 2007; Brito and Lima, 2005; Nakamura, Martin and Kimura, 2004). These are the author’s hypotheses for the result, not findings.</p>
+  </div>
+</section>
+
+<!-- 11 · PRÁTICA, LIMITES E CRÉDITOS -->
+<section class="slide" id="creditos" data-label="Practice, limits and credits">
+  <div class="inner">
+    <div class="kicker rv"><span class="n">11</span> So what?</div>
+    <h2 class="rv" style="--d:.1s">What remains, for whom, and what this research does not say</h2>
+    <div class="cards4">
+      <div class="pcard rv" style="--d:.15s; --pc:var(--navy)"><h3>For finance managers</h3><ul><li>Owning plants and equipment was not enough to owe more in this sample. <em>(screen 06)</em></li><li>Size mattered more for long-term debt. <em>(screen 08)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.2s; --pc:var(--red)"><h3>For banks and lenders</h3><ul><li>Understanding the role of collateral helps shape corporate policies, especially in crises like the one that began in 2015. <em>(author)</em></li><li>Discounting receivables may be playing the role a machine would. <em>(author’s hypothesis)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.25s; --pc:#334155"><h3>For economic policymakers</h3><ul><li>More studies on collateral and debt can serve policymakers. <em>(author)</em></li><li>Subsidized credit and foreign-exchange lines may weigh more than collateral. <em>(our reading of section 1.2)</em></li></ul></div>
+      <div class="pcard rv" style="--d:.3s; --pc:#64748b"><h3>For researchers</h3><ul><li>Link debt to the actual collateral in each contract, not only to balance-sheet totals. <em>(author)</em></li><li>Separate buildings, land and machinery when data allow. <em>(our reading of Table 1)</em></li></ul></div>
+    </div>
+    <div class="end">
+      <div class="rv" style="--d:.35s">
+        <h3>Limits</h3>
+        <ul class="limits">
+          <li><b>Incomplete data.</b> Not every company had each item for all nine years, and buildings, land and machinery had to be merged. <em>· according to the author</em></li>
+          <li><b>No interest rates, inflation or subsidized credit in the model.</b> The author says these features of the Brazilian market were not controlled for. <em>· according to the author</em></li>
+          <li><b>Numbers that call for caution.</b> In the annexes, the debt measure has a standard deviation in the trillions, which a ratio would not have (a sign of extreme values); two of the four tables repeat the column of another kind of model (random effects); and some printed p-values do not match coefficient ÷ standard error, which we redid. That is why we show no effect sizes. <em>· our note</em></li>
+          <li><b>“No relationship” is not “zero relationship”.</b> With data like these, a small effect can go unnoticed. <em>· our note</em></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.4s">
+        <h3>Credits</h3>
+        <div class="cite">
+          <b>How to cite</b><br>
+          SALES, George André Willrich. <em>Influência de ativos reais na estrutura de capital</em>. Doctoral thesis (Business Administration), Universidade Presbiteriana Mackenzie, São Paulo, 2016. Advisor: Prof. Dr. Wilson Toshiro Nakamura.
+        </div>
+        <p style="margin-top:8px; font-size:.76rem">Committee: Wilson Toshiro Nakamura, Leonardo Fernando Cruz Basso and Luiz Carlos Jacob Perera (Mackenzie), Elionor Farah Jreige Weffort and Claudio Parisi (Fecap). This version simplifies the work for a general audience.</p>
+        <p class="also">Read also, on company debt: <a href="../../teses/2019-mamede-novos-determinantes-divida/">Mamede (2019)</a>, new factors in U.S. companies’ debt.</p>
+        <div class="ctas" style="margin-top:10px">
+          <a class="btn" id="full-text" href="#" target="_blank" rel="noopener" style="display:none">Read the full thesis (in Portuguese)</a>
+          <a class="btn ghost" href="#capa">↑ Back to start</a>
+          <a class="btn ghost" href="../../">Other research</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../../../assets/motor.js"></script>
+<script>
+(function(){
+  "use strict";
+  var M = Motor, $ = M.$, each = M.each, fmt = M.fmt;
+  var box = M.box, makeStage = M.makeStage, rotatable = M.rotatable;
+  var EN = M.lang === 'en';
+  var NARROW = window.innerWidth < 600;
+  function L(p, e){ return EN ? e : p; }
+  function segInit(el, items, cur, fn){
+    el.innerHTML = items.map(function(t, i){ return '<button data-v="' + i + '" aria-pressed="' + (i === cur) + '">' + t + '</button>'; }).join('');
+    each(el.children, function(b){ b.addEventListener('click', function(){ each(el.children, function(x){ x.setAttribute('aria-pressed', x === b); }); fn(+b.dataset.v); }); });
+  }
+  function chipInit(el, items, cur, fn){
+    el.innerHTML = items.map(function(t, i){ return '<button class="chip" data-v="' + i + '" aria-pressed="' + (i === cur) + '">' + t + '</button>'; }).join('');
+    each(el.children, function(b){ b.addEventListener('click', function(){ each(el.children, function(x){ x.setAttribute('aria-pressed', x === b); }); fn(+b.dataset.v); }); });
+  }
+
+  /* ================= DADOS DA TESE ================= */
+  // [coeficiente, erro-padrão] por régua: γ1 (Tab. 5), γ2 (Tab. 6), γ3 (Tab. 7), γ4 (Tab. 8). null = fator fora do modelo.
+  var D = {"caixa": [[8.849781, 8.271508], [4.095836, 6.948072], [13.40921, 11.60644], [6.479539, 10.50279]], "aplic": [[-9.06053, 8.320614], [-5.829809, 6.48779], [-12.46367, 11.66427], [-5.465028, 9.807025]], "dccp": [[1.361356, 2.294049], [6.20255, 5.760492], [2.280082, 3.117271], [8.40478, 8.707633]], "estoque": [[-9.670039, 5.679732], [-1.302601, 7.2058], [-13.8416, 8.037462], [0.5184347, 10.89238]], "dclp": [[-1.034394, 1.386474], [8.285019, 7.028133], [-1.426911, 2.209781], [10.7171, 10.62381]], "ppe": [[-1.539448, 1.398038], [-4.236148, 4.501457], [-1.522478, 1.959917], [-2.98265, 6.80446]], "ppe_dclp": [null, [-3.96359, 3.266713], null, null], "intang": [[-1.949018, 1.734218], [-4.322896, 4.868749], [-2.391355, 2.531952], [-3.856896, 7.359663]], "tam": [[0.2511097, 0.9545098], [9.527122, 2.427995], [-0.5199979, 1.451778], [12.694, 3.670188]], "valor": [[-0.5567196, 0.3714728], [-0.3265779, 0.6239033], [-0.9134806, 0.5688073], [-0.2686064, 0.9431001]], "ebitda": [[-2.077551, 1.798532], null, [-3.673909, 2.853472], [-5.951145, 4.938004]], "lucro": [[1.640949, 1.704356], [0.6209451, 2.907247], [3.466269, 2.772352], [1.669592, 4.394631]], "juros": [[7.254938, 4.316832], [-16.50999, 9.523782], [11.61164, 6.735697], [-21.58147, 14.39627]], "bancos": [[-2.361958, 2.120902], [-6.532091, 1.93608], [-3.015339, 3.024642], [-8.706816, 2.926603]], "e_cp": [[3.595193, 1.823141], [7.418071, 4.493361], [2.991129, 2.535845], [7.4371, 6.79222]], "e_lp": [[0.2572835, 2.028874], [11.65107, 41.83976], [1.306437, 4.572979], [6.973523, 63.24551]], "e_ln": [[0.1787793, 0.805301], [-7.466921, 1.984154], [1.261473, 1.295648], [-9.492763, 2.999272]], "e_fin": [[4.850978, 3.66221], [-6.825109, 41.77536], [7.07233, 6.974539], [0.4179626, 63.14816]], "e_trib": [[0.3509503, 1.132653], [-1.319251, 7.300105], [-0.1254882, 1.958815], [-4.503154, 11.03493]]};
+  function tv(c){ return c ? c[0] / c[1] : null; }
+  function lev(c){ if (!c) return -1; var t = Math.abs(tv(c)); return t >= 2.576 ? 3 : t >= 1.96 ? 2 : t >= 1.645 ? 1 : 0; }
+  function sgn(c){ return lev(c) > 0 ? (c[0] > 0 ? 1 : -1) : 0; }
+  function stars(l){ return l > 0 ? new Array(l + 1).join('*') : ''; }
+  var RG = [
+    {s:'γ1', n:L('Dívida de curto prazo ÷ ativo', 'Short-term debt ÷ assets'), sh:L('curta ÷ ativo', 'short ÷ assets')},
+    {s:'γ2', n:L('Dívida de longo prazo ÷ ativo', 'Long-term debt ÷ assets'), sh:L('longa ÷ ativo', 'long ÷ assets')},
+    {s:'γ3', n:L('Dívida total ÷ ativo', 'Total debt ÷ assets'), sh:L('total ÷ ativo', 'total ÷ assets')},
+    {s:'γ4', n:L('Dívida total ÷ patrimônio dos sócios', 'Total debt ÷ owners’ equity'), sh:L('total ÷ sócios', 'total ÷ equity')}
+  ];
+  var F = {
+    caixa:{n:L('Caixa', 'Cash'), g:0, d:L('Dinheiro em caixa ÷ ativo total.', 'Cash ÷ total assets.')},
+    aplic:{n:L('Aplicações financeiras', 'Financial investments'), g:0, d:L('Aplicações ÷ ativo total. Anda quase junto com o caixa (correlação 0,81 no Anexo II).', 'Investments ÷ total assets. Moves almost in step with cash (correlation 0.81 in Annex II).')},
+    dccp:{n:L('Recebíveis de curto prazo', 'Short-term receivables'), g:0, d:L('O que clientes devem à empresa e vence em até um ano ÷ ativo total.', 'What customers owe the company, due within a year ÷ total assets.')},
+    estoque:{n:L('Estoque', 'Inventory'), g:0, d:L('Estoque ÷ ativo total. Veio com <b>menos</b> dívida de curto prazo e total, só a 10%; nas outras réguas, sem sinal.', 'Inventory ÷ total assets. Came with <b>less</b> short-term and total debt, only at 10%; no signal in the other measures.')},
+    dclp:{n:L('Recebíveis de longo prazo', 'Long-term receivables'), g:0, d:L('O que outros devem à empresa e vence depois de um ano ÷ ativo total.', 'What others owe the company, due after one year ÷ total assets.')},
+    ppe:{n:L('Máquinas, prédios e terrenos (PP&amp;E)', 'Machinery, buildings and land (PP&amp;E)'), g:0, d:L('Valor líquido do PP&amp;E ÷ ativo total. É o ativo real, foco da tese.', 'Net PP&amp;E ÷ total assets. This is the real asset, the thesis’s focus.')},
+    ppe_dclp:{n:L('PP&amp;E + recebíveis de longo prazo', 'PP&amp;E + long-term receivables'), g:0, d:L('Os dois somados ÷ ativo total; entrou só no modelo da dívida de longo prazo (hipótese 9).', 'Both added ÷ total assets; included only in the long-term debt model (hypothesis 9).')},
+    intang:{n:L('Marcas e outros intangíveis', 'Brands and other intangibles'), g:0, d:L('Intangíveis (fora o ágio) ÷ ativo total.', 'Intangibles (excluding goodwill) ÷ total assets.')},
+    tam:{n:L('Tamanho (ativo total)', 'Size (total assets)'), g:1, d:L('Logaritmo do ativo total.', 'Logarithm of total assets.')},
+    valor:{n:L('Valor de mercado', 'Market value'), g:1, d:L('Logaritmo do valor da empresa na data. Anda junto com o ativo total (0,89).', 'Logarithm of the company’s value on the date. Moves with total assets (0.89).')},
+    ebitda:{n:L('Geração de caixa (EBITDA)', 'Cash generation (EBITDA)'), g:2, d:L('EBITDA ÷ receita. Não entrou no modelo da dívida de longo prazo.', 'EBITDA ÷ revenue. Not included in the long-term debt model.')},
+    lucro:{n:L('Lucro líquido', 'Net income'), g:2, d:L('Lucro líquido ÷ receita.', 'Net income ÷ revenue.')},
+    juros:{n:L('Despesas com juros', 'Interest expense'), g:2, d:L('Juros pagos ÷ receita. Sinais fracos (10%), para cima no curto prazo e no total, para baixo no longo prazo.', 'Interest paid ÷ revenue. Weak signals (10%), upward for short-term and total debt, downward for long-term debt.')},
+    bancos:{n:L('Dívida com bancos', 'Debt owed to banks'), g:2, d:L('Dívida com bancos ÷ passivo total.', 'Debt owed to banks ÷ total liabilities.')},
+    e_cp:{n:L('Parte curta do passivo', 'Short-term share of liabilities'), g:3, d:L('Passivo circulante ÷ passivo total. Mede quase a mesma coisa que a régua de curto prazo, por isso o sinal é esperado.', 'Current liabilities ÷ total liabilities. Measures almost the same thing as the short-term measure, so the signal is expected.')},
+    e_lp:{n:L('Parte longa do passivo', 'Long-term share of liabilities'), g:3, d:L('Passivo não circulante ÷ passivo total.', 'Non-current liabilities ÷ total liabilities.')},
+    e_ln:{n:L('Tamanho da dívida', 'Size of debt'), g:3, d:L('Logaritmo do endividamento total.', 'Logarithm of total debt.')},
+    e_fin:{n:L('Dívida financeira longa', 'Long-term financial debt'), g:3, d:L('Dívida financeira de longo prazo ÷ passivo total; quase idêntica à parte longa (0,99).', 'Long-term financial debt ÷ total liabilities; almost identical to the long-term share (0.99).')},
+    e_trib:{n:L('Dívida com impostos', 'Tax debt'), g:3, d:L('Dívida tributária de longo prazo ÷ passivo total.', 'Long-term tax debt ÷ total liabilities.')}
+  };
+  var ORDER = ['ppe', 'ppe_dclp', 'caixa', 'aplic', 'dccp', 'estoque', 'dclp', 'intang', 'tam', 'valor', 'ebitda', 'lucro', 'juros', 'bancos'];
+  var CTL = ['e_cp', 'e_lp', 'e_ln', 'e_fin', 'e_trib'];
+  // Tabela 1: empresas com cada informação (de 255)
+  var T1 = [
+    [0, L('Caixa', 'Cash'), 221], [0, L('Aplicações financeiras', 'Financial investments'), 227], [0, L('Recebíveis de curto prazo', 'Short-term receivables'), 228], [0, L('Estoque', 'Inventory'), 190], [0, L('Recebíveis de longo prazo', 'Long-term receivables'), 91],
+    [0, 'PP&E', 220, 'ppe'], [0, L('Construções', 'Buildings'), 82, 'x'], [0, L('Terrenos', 'Land'), 89, 'x'], [0, L('Máquinas e equipamentos', 'Machinery and equipment'), 121, 'x'], [0, L('Ágio (goodwill)', 'Goodwill'), 96], [0, L('Outros intangíveis', 'Other intangibles'), 204],
+    [1, L('Dívida de longo prazo', 'Long-term debt'), 206], [1, L('Dívida de curto prazo', 'Short-term debt'), 229], [1, L('Dívida financeira curta', 'Short-term financial debt'), 73], [1, L('Dívida financeira longa', 'Long-term financial debt'), 204], [1, L('Impostos a pagar, curto', 'Taxes payable, short-term'), 20], [1, L('Impostos a pagar, longo', 'Taxes payable, long-term'), 142],
+    [2, L('Folha de pagamento', 'Payroll'), 39], [2, L('Despesa de juros', 'Interest expense'), 229], [2, L('Receita de juros', 'Interest income'), 229]
+  ];
+  // Hipóteses (seção 3.1) e a régua/fator em que cada uma foi lida
+  var H = [
+    {n:1, t:L('Mais geração de caixa (EBITDA), menos dívida total', 'More cash generation (EBITDA), less total debt'), k:'ebitda', r:2, e:-1},
+    {n:2, t:L('Mais caixa e aplicações, menos dívida de curto prazo', 'More cash and investments, less short-term debt'), k:'caixa', r:0, e:-1, k2:'aplic'},
+    {n:3, t:L('Empresa maior, mais dívida total', 'Larger company, more total debt'), k:'tam', r:2, e:1},
+    {n:4, t:L('Empresa maior, mais dívida de longo prazo', 'Larger company, more long-term debt'), k:'tam', r:1, e:1},
+    {n:5, t:L('Empresa maior, menos dívida de curto prazo', 'Larger company, less short-term debt'), k:'tam', r:0, e:-1},
+    {n:6, t:L('Mais PP&amp;E, mais dívida total', 'More PP&amp;E, more total debt'), k:'ppe', r:2, e:1},
+    {n:7, t:L('Mais PP&amp;E, mais dívida de longo prazo', 'More PP&amp;E, more long-term debt'), k:'ppe', r:1, e:1},
+    {n:8, t:L('Mais PP&amp;E, menos dívida de curto prazo', 'More PP&amp;E, less short-term debt'), k:'ppe', r:0, e:-1},
+    {n:9, t:L('Mais PP&amp;E + recebíveis longos, mais dívida', 'More PP&amp;E + long-term receivables, more debt'), k:'ppe_dclp', r:1, e:1},
+    {n:10, t:L('Mais caixa, recebíveis curtos e estoque, mais dívida de curto prazo', 'More cash, short-term receivables and inventory, more short-term debt'), k:'estoque', r:0, e:1, multi:['caixa', 'aplic', 'dccp', 'estoque']}
+  ];
+  // Anexo II: correlações do PP&E (netPPE) com outros itens
+  var CORR = [
+    [L('Parte curta do passivo', 'Short-term share of liabilities'), -0.32879, 1],
+    [L('Parte longa do passivo', 'Long-term share of liabilities'), 0.16444, 1],
+    [L('Recebíveis de curto prazo', 'Short-term receivables'), -0.39284, 0],
+    [L('Recebíveis de longo prazo', 'Long-term receivables'), -0.32184, 0],
+    [L('Outros intangíveis', 'Other intangibles'), -0.29581, 0],
+    [L('Aplicações financeiras', 'Financial investments'), -0.28821, 0],
+    [L('Estoque', 'Inventory'), -0.27557, 0],
+    [L('Caixa', 'Cash'), -0.20038, 0]
+  ];
+
+  /* ================= 01 · CAPA ================= */
+  (function(){
+    var sc = $('hero-scene'), st = makeStage(sc, 400, 150, {ay:'60%', rx:'58deg'});
+    rotatable(sc, st, -24, 8);
+    var U = 1.55; // px por unidade
+    var A = [
+      {k:'cx', n:L('caixa', 'cash'), v:12, c:'#94a3b8'},
+      {k:'rc', n:L('recebíveis', 'receivables'), v:16, c:'#7c8aa0'},
+      {k:'es', n:L('estoque', 'inventory'), v:12, c:'#64748b'},
+      {k:'pp', n:'PP&E', v:40, c:'var(--real)'},
+      {k:'in', n:L('marcas', 'brands'), v:10, c:'#475569'}
+    ];
+    var P = [
+      {k:'dc', n:L('dívida curta', 'short debt'), v:20, c:'color-mix(in srgb, var(--red) 60%, white)'},
+      {k:'dl', n:L('dívida longa', 'long debt'), v:35, c:'var(--debt)'},
+      {k:'pl', n:L('sócios', 'owners'), v:35, c:'#cbd5e1'}
+    ];
+    function stack(list, x){
+      return list.map(function(o){
+        var b = box({w:120, d:84, x:x, y:30, z:0, h:10, c:o.c, label:o.n});
+        st.appendChild(b); o.el = b; return o;
+      });
+    }
+    stack(A, 30); stack(P, 250);
+    var mode = 0, extra = 0;
+    function lay(list, add){
+      var z = 0;
+      list.forEach(function(o){
+        var v = o.v + (add[o.k] || 0), h = v * U;
+        o.el.style.setProperty('--z', z + 'px'); o.el.style.setProperty('--h', h + 'px');
+        z += h;
+      });
+    }
+    function draw(){
+      var aa = {pp:extra}, pa = mode === 0 ? {dl:extra * 0.6, pl:extra * 0.4} : {pl:extra};
+      lay(A, aa); lay(P, pa);
+      var msg;
+      if (!extra) msg = L('Toque em <b>+ máquinas e prédios</b> e veja o que acontece com a dívida.', 'Tap <b>+ machinery and buildings</b> and see what happens to debt.');
+      else if (mode === 0) msg = L('<b>O que a teoria espera:</b> com mais bens para dar em garantia, a dívida de longo prazo cresce junto.', '<b>What the theory expects:</b> with more assets to pledge, long-term debt grows too.');
+      else msg = L('<b>O que a tese encontrou:</b> mais máquinas e prédios não andaram com mais dívida. No desenho, o bloco dos sócios cresce só para o balanço fechar.', '<b>What the thesis found:</b> more machinery and buildings did not go with more debt. In the drawing, the owners’ block grows only so the balance sheet adds up.');
+      $('hero-msg').innerHTML = msg;
+    }
+    segInit($('hero-seg'), [L('O que a teoria espera', 'What theory expects'), L('O que a tese encontrou', 'What the thesis found')], 0, function(v){ mode = v; draw(); });
+    $('hero-btn').addEventListener('click', function(){
+      extra = extra ? 0 : 22;
+      this.textContent = extra ? L('voltar ao início', 'reset') : L('+ máquinas e prédios', '+ machinery and buildings');
+      draw();
+    });
+    draw();
+  })();
+
+  /* ================= 02 · GARANTIA ================= */
+  (function(){
+    var IC = {
+      maq:'<g fill="none" stroke="var(--real)" stroke-width="3"><circle cx="26" cy="20" r="9"/><circle cx="26" cy="20" r="3"/></g><g fill="var(--real)"><rect x="24" y="6" width="4" height="5"/><rect x="24" y="29" width="4" height="5"/><rect x="12" y="18" width="5" height="4"/><rect x="35" y="18" width="5" height="4"/></g>',
+      pre:'<path d="M8 36V16l10 6v-6l10 6V8h10v28z" fill="var(--real)"/><rect x="31" y="12" width="4" height="4" fill="#fff"/>',
+      ter:'<path d="M4 34h44" stroke="var(--real)" stroke-width="3"/><path d="M8 34l10-12 8 8 8-10 10 14z" fill="color-mix(in srgb, var(--real) 70%, white)"/><path d="M36 8v12" stroke="var(--red)" stroke-width="2.5"/><path d="M36 8l9 3-9 3z" fill="var(--red)"/>',
+      est:'<g fill="#94a3b8" stroke="#64748b" stroke-width="1.5"><rect x="8" y="20" width="14" height="14"/><rect x="24" y="20" width="14" height="14"/><rect x="16" y="6" width="14" height="14"/></g>',
+      rec:'<rect x="10" y="6" width="28" height="30" rx="3" fill="#fff" stroke="#64748b" stroke-width="2"/><path d="M15 14h18M15 20h18M15 26h11" stroke="#94a3b8" stroke-width="2"/><circle cx="36" cy="32" r="7" fill="var(--red)"/><text x="36" y="35.5" text-anchor="middle" style="font-size:9px; font-weight:800; fill:#fff">$</text>',
+      mar:'<path d="M26 5l5.5 11 12 1.7-8.7 8.5 2 12L26 32.6 15.2 38.2l2-12L8.5 17.7l12-1.7z" fill="#cbd5e1" stroke="#64748b" stroke-width="1.5"/>'
+    };
+    var G = [
+      {k:'maq', t:L('Máquinas', 'Machinery'), real:1, p:L('Bem real. Para Shleifer e Vishny (1992), vale mais como garantia quando outras empresas do mesmo setor podem comprá-lo. Gavazza (2011) mostra que bens com mercado de revenda ativo são mais fáceis de realocar.', 'Real asset. For Shleifer and Vishny (1992), it is worth more as collateral when other companies in the same industry can buy it. Gavazza (2011) shows that assets with an active resale market are easier to redeploy.')},
+      {k:'pre', t:L('Prédios', 'Buildings'), real:1, p:L('Bem real. É o tipo de bem que o credor consegue reaver num processo de falência, por isso a teoria espera que sustente mais dívida (Hart e Moore, 1994).', 'Real asset. It is the kind of asset a lender can recover in bankruptcy, so theory expects it to support more debt (Hart and Moore, 1994).')},
+      {k:'ter', t:L('Terrenos', 'Land'), real:1, p:L('Bem real. Mas Acharya et al. (2007) lembram que bens reais perdem valor quando precisam ser vendidos às pressas, numa crise do setor inteiro.', 'Real asset. But Acharya et al. (2007) note that real assets lose value when they must be sold in a hurry, during an industry-wide crisis.')},
+      {k:'est', t:L('Estoque', 'Inventory'), real:0, p:L('Dá para tocar, mas gira rápido e não está no PP&amp;E. A tese o põe junto com caixa e recebíveis, como bem de liquidez imediata ligado à dívida de curto prazo (hipótese 10).', 'You can touch it, but it turns over fast and is not part of PP&amp;E. The thesis groups it with cash and receivables, as an immediately liquid asset tied to short-term debt (hypothesis 10).')},
+      {k:'rec', t:L('Recebíveis', 'Receivables'), real:0, p:L('O que os clientes devem. No Brasil, podem ser antecipados no banco (desconto de duplicatas, FIDC, securitização), o que, para o autor, pode tirar o peso deles como garantia.', 'What customers owe. In Brazil they can be cashed in early at a bank (invoice discounting, receivables funds, securitization), which, for the author, may take away their weight as collateral.')},
+      {k:'mar', t:L('Marcas', 'Brands'), real:0, p:L('Intangível: não há o que pegar se a empresa quebrar. Entrou no modelo como “outros intangíveis”.', 'Intangible: there is nothing to seize if the company goes bust. It entered the model as “other intangibles”.')}
+    ];
+    var el = $('gr-tiles');
+    el.innerHTML = G.map(function(g, i){ return '<button class="tile" data-v="' + i + '" aria-pressed="' + (i === 0) + '" style="--tc:' + (g.real ? 'var(--real)' : '#cbd5e1') + '"><svg viewBox="0 0 52 40" aria-hidden="true">' + IC[g.k] + '</svg>' + g.t + '<small>' + (g.real ? L('ativo real', 'real asset') : L('o resto', 'the rest')) + '</small></button>'; }).join('');
+    function show(i){
+      var g = G[i];
+      $('gr-panel').innerHTML = '<div class="tag">' + (g.real ? L('ativo real · entra no PP&amp;E', 'real asset · part of PP&amp;E') : L('fora do PP&amp;E', 'outside PP&amp;E')) + '</div><h3>' + g.t + '</h3><p>' + g.p + '</p>';
+    }
+    each(el.children, function(b){ b.addEventListener('click', function(){ each(el.children, function(x){ x.setAttribute('aria-pressed', x === b); }); show(+b.dataset.v); }); });
+    show(0);
+  })();
+
+  /* ================= 03 · RÉGUAS ================= */
+  (function(){
+    var svg = $('rg-svg');
+    var TX = [
+      L('Quanto do que a empresa tem foi pago com dívida que vence em até um ano. Pela teoria, quem tem mais máquinas e prédios deveria ter <b>menos</b> desta.', 'How much of what the company owns was paid for with debt due within a year. By the theory, companies with more machinery and buildings should have <b>less</b> of it.'),
+      L('Quanto foi pago com dívida de mais de um ano. É a régua em que a garantia mais deveria aparecer: o objetivo principal da tese.', 'How much was paid for with debt over one year. This is the measure where collateral should show up most: the thesis’s main goal.'),
+      L('As duas dívidas juntas, comparadas com tudo o que a empresa tem.', 'Both debts together, compared with everything the company owns.'),
+      L('A dívida inteira comparada só com o dinheiro dos sócios (patrimônio líquido). Sobe rápido quando o patrimônio é pequeno.', 'All the debt compared only with the owners’ money (equity). Rises fast when equity is small.')
+    ];
+    function draw(r){
+      var o = '', X1 = 60, X2 = 300, W = 160, Y0 = 40, H = 230;
+      var dc = 60, dl = 85, pl = H - dc - dl;
+      var num = r === 0 ? ['dc'] : r === 1 ? ['dl'] : ['dc', 'dl'];
+      var den = r === 3 ? 'pl' : 'at';
+      function blk(id, x, y, h, txt, base){
+        var on = num.indexOf(id) >= 0, isDen = den === id;
+        var fill = on ? 'var(--red)' : isDen && id === 'pl' ? '#cbd5e1' : base;
+        o += '<rect x="' + x + '" y="' + y + '" width="' + W + '" height="' + h + '" rx="6" fill="' + fill + '"' + (isDen ? ' stroke="var(--ink)" stroke-width="3" stroke-dasharray="7 5"' : ' stroke="#fff" stroke-width="2"') + '/>';
+        o += '<text x="' + (x + W / 2) + '" y="' + (y + h / 2 + 5) + '" text-anchor="middle" style="font-size:14px; font-weight:700; fill:' + (on ? '#fff' : 'var(--ink)') + '">' + txt + '</text>';
+      }
+      o += '<text x="' + (X1 + W / 2) + '" y="28" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--muted)">' + L('O QUE TEM', 'WHAT IT OWNS') + '</text>';
+      o += '<text x="' + (X2 + W / 2) + '" y="28" text-anchor="middle" style="font-size:13px; font-weight:700; fill:var(--muted)">' + L('DE ONDE VEIO', 'WHERE IT CAME FROM') + '</text>';
+      blk('at', X1, Y0, H, L('ativo total', 'total assets'), '#e2e8f0');
+      blk('dc', X2, Y0, dc, L('dívida curta', 'short-term debt'), '#f1f5f9');
+      blk('dl', X2, Y0 + dc, dl, L('dívida longa', 'long-term debt'), '#f1f5f9');
+      blk('pl', X2, Y0 + dc + dl, pl, L('sócios (patrimônio)', 'owners (equity)'), '#f1f5f9');
+      var nt = r === 0 ? L('dívida curta', 'short-term debt') : r === 1 ? L('dívida longa', 'long-term debt') : L('dívida total', 'total debt');
+      var dt = r === 3 ? L('patrimônio', 'equity') : L('ativo total', 'total assets');
+      o += '<text x="260" y="300" text-anchor="middle" style="font-family:var(--serif); font-size:20px; font-weight:900; fill:var(--ink)">' + RG[r].s + ' = <tspan fill="var(--red)">' + nt + '</tspan> ÷ ' + dt + '</text>';
+      o += '<text x="260" y="322" text-anchor="middle" style="font-size:12px; fill:var(--muted)">' + L('vermelho em cima da divisão · contorno tracejado embaixo', 'red on top of the division · dashed outline at the bottom') + '</text>';
+      svg.innerHTML = o;
+      $('rg-panel').innerHTML = '<div class="tag" style="text-transform:none">' + L('régua ', 'measure ') + RG[r].s + '</div><h3>' + RG[r].n + '</h3><p>' + TX[r] + '</p>';
+    }
+    segInit($('rg-seg'), RG.map(function(x){ return x.s + ' · ' + x.sh; }), 1, draw);
+    draw(1);
+  })();
+
+  /* ================= 04 · DADOS ================= */
+  (function(){
+    var svg = $('dt-svg');
+    var GN = [L('O que tem', 'What it owns'), L('O que deve', 'What it owes'), L('Resultado', 'Results')];
+    function draw(g){
+      var rows = T1.filter(function(r){ return r[0] === g; });
+      var VW = NARROW ? 420 : 580, X0 = NARROW ? 150 : 190, X1 = NARROW ? 330 : 470, rh = 30, Y0 = 34, o = '';
+      o += '<defs><pattern id="dt-str" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="#e2e8f0"/><rect width="3" height="7" fill="var(--real)"/></pattern></defs>';
+      o += '<line x1="' + X1 + '" y1="20" x2="' + X1 + '" y2="' + (Y0 + rows.length * rh) + '" stroke="var(--ink)" stroke-dasharray="4 4"/>';
+      o += '<text x="' + X1 + '" y="14" text-anchor="middle" style="font-size:12px; font-weight:700; fill:var(--ink)">255</text>';
+      rows.forEach(function(r, i){
+        var y = Y0 + i * rh, w = (X1 - X0) * r[2] / 255;
+        var fill = r[3] === 'ppe' ? 'var(--real)' : r[3] === 'x' ? 'url(#dt-str)' : '#94a3b8';
+        o += '<text x="' + (X0 - 8) + '" y="' + (y + 15) + '" text-anchor="end" style="font-size:' + (NARROW ? 11.5 : 12.5) + 'px; fill:var(--ink-2)' + (r[3] ? '; font-weight:700' : '') + '">' + r[1] + '</text>';
+        o += '<rect x="' + X0 + '" y="' + (y + 3) + '" width="' + (X1 - X0) + '" height="' + (rh - 9) + '" rx="4" fill="#f1f5f9"/>';
+        o += '<rect x="' + X0 + '" y="' + (y + 3) + '" width="' + w + '" height="' + (rh - 9) + '" rx="4" fill="' + fill + '"/>';
+        o += '<text x="' + (X0 + w + 6) + '" y="' + (y + 16) + '" style="font-size:12px; font-weight:700; fill:var(--ink)">' + r[2] + '</text>';
+      });
+      if (g === 0){
+        var yb = Y0 + 6 * rh;
+        o += '<path d="M' + (X1 + 26) + ' ' + (yb + 4) + 'h10v' + (3 * rh - 10) + 'h-10" fill="none" stroke="var(--real)" stroke-width="2"/>';
+        o += '<text x="' + (X1 + 44) + '" y="' + (yb + 1.5 * rh - 6) + '" style="font-size:11px; font-weight:700; fill:var(--real)">' + L('viraram', 'merged') + '</text>';
+        o += '<text x="' + (X1 + 44) + '" y="' + (yb + 1.5 * rh + 8) + '" style="font-size:11px; font-weight:700; fill:var(--real)">PP&amp;E</text>';
+      }
+      svg.setAttribute('viewBox', '0 0 ' + VW + ' ' + (Y0 + rows.length * rh + 8));
+      svg.innerHTML = o;
+    }
+    chipInit($('dt-chips'), GN, 0, draw);
+    draw(0);
+  })();
+
+  /* ================= 05 · APOSTAS ================= */
+  (function(){
+    var list = $('bt-list'), guess = {};
+    function result(h){
+      var keys = h.multi || (h.k2 ? [h.k, h.k2] : [h.k]);
+      var ok = keys.some(function(k){ var c = D[k][h.r]; return sgn(c) === h.e && lev(c) >= 2; });
+      var det = keys.map(function(k){ var c = D[k][h.r], t = tv(c); return F[k].n + ' ' + fmt(t, 2) + stars(lev(c)); }).join(' · ');
+      return {ok:ok, det:det};
+    }
+    list.innerHTML = H.map(function(h){
+      var r = result(h);
+      return '<div class="bet" data-n="' + h.n + '"><h3><i>H' + h.n + '</i>' + h.t + '</h3><div class="opts"><button data-g="1" aria-pressed="false">' + L('sim', 'yes') + '</button><button data-g="0" aria-pressed="false">' + L('não', 'no') + '</button></div>'
+        + '<div class="res">' + (r.ok ? '<b class="y">' + L('Confirmou.', 'Held up.') + '</b> ' : '<b class="n">' + L('Não confirmou.', 'Did not hold up.') + '</b> ') + L('Régua ', 'Measure ') + RG[h.r].s + ': ' + L('distância do zero ', 'distance from zero ') + r.det + '</div></div>';
+    }).join('');
+    each(list.querySelectorAll('.bet'), function(b){
+      each(b.querySelectorAll('.opts button'), function(x){
+        x.addEventListener('click', function(){ each(b.querySelectorAll('.opts button'), function(y){ y.setAttribute('aria-pressed', y === x); }); guess[b.dataset.n] = +x.dataset.g; });
+      });
+    });
+    $('bt-go').addEventListener('click', function(){
+      list.classList.add('show');
+      var conf = 0, hits = 0, n = 0;
+      H.forEach(function(h){
+        var r = result(h); if (r.ok) conf++;
+        if (guess[h.n] !== undefined){ n++; if (guess[h.n] === (r.ok ? 1 : 0)) hits++; }
+        var el = list.querySelector('[data-n="' + h.n + '"]'); el.classList.toggle('hit', r.ok);
+      });
+      $('bt-score').innerHTML = L('Confirmaram: ', 'Held up: ') + '<b>' + conf + L(' de ', ' of ') + H.length + '</b>' + (n ? L(' · você acertou ', ' · you got ') + hits + L(' de ', ' of ') + n : '');
+    });
+  })();
+
+  /* ================= 06 · DESCOBERTA (distâncias do zero) ================= */
+  function tplot(svg, vals, opt){
+    opt = opt || {};
+    var VW = NARROW ? 380 : 560, X0 = NARROW ? 96 : 150, X1 = VW - (NARROW ? 44 : 68), MX = 5, rh = opt.rh || 62, Y0 = 36, o = '';
+    function X(t){ return X0 + (X1 - X0) * (Math.max(-MX, Math.min(MX, t)) + MX) / (2 * MX); }
+    var hgt = Y0 + vals.length * rh + 44;
+    o += '<rect x="' + X(-1.96) + '" y="' + (Y0 - 14) + '" width="' + (X(1.96) - X(-1.96)) + '" height="' + (vals.length * rh + 8) + '" fill="#e2e8f0" rx="6"/>';
+    o += '<rect x="' + X(-1.645) + '" y="' + (Y0 - 14) + '" width="' + (X(1.645) - X(-1.645)) + '" height="' + (vals.length * rh + 8) + '" fill="#cfd8e3" rx="6"/>';
+    o += '<line x1="' + X(0) + '" y1="' + (Y0 - 18) + '" x2="' + X(0) + '" y2="' + (Y0 + vals.length * rh - 2) + '" stroke="var(--ink)" stroke-width="1.5"/>';
+    o += '<text x="' + X(0) + '" y="16" text-anchor="middle" style="font-size:11px; fill:var(--muted)">0</text>';
+    o += '<text x="' + X(-3.6) + '" y="16" text-anchor="middle" style="font-size:11px; font-weight:700; fill:var(--less)">← ' + L('menos dívida', 'less debt') + '</text>';
+    o += '<text x="' + X(3.6) + '" y="16" text-anchor="middle" style="font-size:11px; font-weight:700; fill:var(--more)">' + L('mais dívida', 'more debt') + ' →</text>';
+    vals.forEach(function(v, i){
+      var y = Y0 + i * rh + rh / 2 - 12;
+      o += '<text x="' + (X0 - 12) + '" y="' + (y - 2) + '" text-anchor="end" style="font-size:13px; font-weight:700; fill:var(--ink)">' + v.a + '</text>';
+      o += '<text x="' + (X0 - 12) + '" y="' + (y + 14) + '" text-anchor="end" style="font-size:11.5px; fill:var(--muted)">' + v.b + '</text>';
+      if (v.c === null){
+        o += '<text x="' + X(0) + '" y="' + (y + 5) + '" text-anchor="middle" style="font-size:12px; fill:var(--muted); font-style:italic">' + L('fora deste modelo', 'not in this model') + '</text>';
+        return;
+      }
+      var t = tv(v.c), l = lev(v.c), s = sgn(v.c), col = s > 0 ? 'var(--more)' : s < 0 ? 'var(--less)' : '#64748b';
+      o += '<line x1="' + X(0) + '" y1="' + y + '" x2="' + X(t) + '" y2="' + y + '" stroke="' + col + '" stroke-width="3"/>';
+      o += '<circle cx="' + X(t) + '" cy="' + y + '" r="9" fill="' + col + '" stroke="#fff" stroke-width="2"/>';
+      o += '<text x="' + (X(t) + (t >= 0 ? 15 : -15)) + '" y="' + (y + 4.5) + '" text-anchor="' + (t >= 0 ? 'start' : 'end') + '" style="font-size:12.5px; font-weight:800; fill:' + col + '">' + fmt(t, 2) + stars(l) + '</text>';
+    });
+    o += '<text x="' + X(0) + '" y="' + (hgt - 22) + '" text-anchor="middle" style="font-size:11px; fill:var(--muted)">' + L('faixa cinza: menos de 1,96 erro-padrão do zero', 'grey band: less than 1.96 standard errors from zero') + '</text>';
+    o += '<text x="' + X(0) + '" y="' + (hgt - 8) + '" text-anchor="middle" style="font-size:11px; fill:var(--muted)">' + L('(parte escura: menos de 1,645)', '(dark part: less than 1.645)') + '</text>';
+    svg.setAttribute('viewBox', '0 0 ' + VW + ' ' + hgt);
+    svg.innerHTML = o;
+  }
+  (function(){
+    var OPT = [
+      {k:'ppe', b:L('PP&amp;E', 'PP&amp;E'), p:L('<b>Nenhum ponto sai da faixa cinza.</b> Os quatro ficaram do lado de “menos dívida”, mas perto demais do zero para afirmar isso. Nos Estados Unidos, Campello e Giambona (2012) acharam o contrário: mais PP&amp;E, mais dívida.', '<b>No dot leaves the grey band.</b> All four landed on the “less debt” side, but too close to zero to claim it. In the United States, Campello and Giambona (2012) found the opposite: more PP&amp;E, more debt.')},
+      {k:'ppe_dclp', b:L('PP&amp;E + recebíveis longos', 'PP&amp;E + long-term receivables'), p:L('A soma entrou só no modelo da dívida de longo prazo, e também ficou na faixa. O autor sugere que o desconto de recebíveis (FIDC, duplicatas) pode explicar por quê.', 'The sum entered only the long-term debt model, and also stayed in the band. The author suggests receivables discounting (receivables funds, invoices) may explain why.')},
+      {k:'tam', b:L('Tamanho, para comparar', 'Size, for comparison'), p:L('Assim é um sinal claro: o tamanho sai longe da faixa na dívida de longo prazo e na dívida ÷ patrimônio. Mais na tela 08.', 'This is what a clear signal looks like: size lands far from the band for long-term debt and for debt ÷ equity. More on screen 08.')}
+    ];
+    function draw(i){
+      var k = OPT[i].k;
+      tplot($('tp-svg'), RG.map(function(r, j){ return {a:r.s, b:r.sh, c:D[k][j]}; }));
+      $('tp-panel').innerHTML = '<div class="tag">' + OPT[i].b + '</div><p>' + OPT[i].p + '</p>';
+    }
+    segInit($('tp-seg'), OPT.map(function(o){ return o.b; }), 0, draw);
+    draw(0);
+  })();
+
+  /* ================= 07 · GRADE ================= */
+  (function(){
+    var grid = $('gd-grid'), cur = 'ppe';
+    var GT = [L('O que a empresa tem', 'What the company owns'), L('Porte', 'Size'), L('Resultado e quem empresta', 'Results and who lends'), L('Lado da dívida (controles)', 'Debt side (controls)')];
+    function row(k, ctl){
+      var cells = D[k].map(function(c){
+        if (!c) return '<span class="cell na">·</span>';
+        var l = lev(c), s = sgn(c);
+        return '<span class="cell ' + (s > 0 ? 'up' : s < 0 ? 'dn' : '') + (l === 1 ? ' w1' : l === 2 ? ' w2' : '') + '">' + (s > 0 ? '↑' : s < 0 ? '↓' : '—') + stars(l) + '</span>';
+      }).join('');
+      return '<div class="row' + (k === 'ppe' || k === 'ppe_dclp' ? ' ppe' : '') + (ctl ? ' ctl' : '') + '"><button class="nm" data-k="' + k + '" aria-pressed="' + (k === cur) + '">' + F[k].n + '</button>' + cells + '</div>';
+    }
+    var h = '<div class="hd"><span></span>' + RG.map(function(r){ return '<span>' + r.s + '<br>' + r.sh + '</span>'; }).join('') + '</div>';
+    var lastG = -1;
+    ORDER.forEach(function(k){ if (F[k].g !== lastG){ lastG = F[k].g; h += '<div class="sep">' + GT[lastG] + '</div>'; } h += row(k); });
+    h += '<div class="sep ctl">' + GT[3] + '</div>';
+    CTL.forEach(function(k){ h += row(k, true); });
+    grid.innerHTML = h;
+    function show(k){
+      cur = k;
+      each(grid.querySelectorAll('button.nm'), function(b){ b.setAttribute('aria-pressed', b.dataset.k === k); });
+      var lines = D[k].map(function(c, j){
+        if (!c) return '<span style="color:var(--muted)">' + RG[j].s + ': ' + L('fora do modelo', 'not in model') + '</span>';
+        var s = sgn(c);
+        return '<span>' + RG[j].s + ': <b>' + (s > 0 ? L('mais dívida', 'more debt') : s < 0 ? L('menos dívida', 'less debt') : L('sem diferença clara', 'no clear difference')) + '</b> (' + fmt(c[0], 2) + ' ÷ ' + fmt(c[1], 2) + ' = ' + fmt(tv(c), 2) + stars(lev(c)) + ')</span>';
+      }).join('<br>');
+      $('gd-panel').innerHTML = '<div class="tag">' + GT[F[k].g] + '</div><h3>' + F[k].n + '</h3><p>' + F[k].d + '</p><p style="font-size:.78rem">' + lines + '</p>';
+    }
+    grid.addEventListener('click', function(e){ var b = e.target.closest('button.nm'); if (b) show(b.dataset.k); });
+    $('gd-ctl').addEventListener('click', function(){
+      var on = this.getAttribute('aria-pressed') !== 'true';
+      this.setAttribute('aria-pressed', on); grid.classList.toggle('withctl', on);
+      this.textContent = on ? L('Esconder os fatores do lado da dívida', 'Hide the debt-side factors') : L('Mostrar também os 5 fatores do lado da dívida', 'Also show the 5 debt-side factors');
+    });
+    show('ppe');
+  })();
+
+  /* ================= 08 · TAMANHO ================= */
+  (function(){
+    var why = [
+      {t:L('Menos desconfiança', 'Less mistrust'), p:L('Empresas maiores resolvem com menos custo a falta de informação entre quem empresta e quem toma emprestado.', 'Larger companies deal more cheaply with the information gap between lenders and borrowers.')},
+      {t:L('Dinheiro mais barato', 'Cheaper money'), p:L('Pagam, em proporção, menos para buscar dinheiro fora, e têm mais acesso a bancos de fomento e de desenvolvimento.', 'They pay proportionally less to raise outside money and have more access to development banks.')},
+      {t:L('Menos risco', 'Less risk'), p:L('Costumam ser mais diversificadas, com menor risco de negócio e menor custo de falência.', 'They tend to be more diversified, with lower business risk and lower bankruptcy costs.')}
+    ];
+    function showW(i){ $('tm-panel').innerHTML = '<div class="tag">' + L('explicação citada pelo autor', 'explanation cited by the author') + '</div><h3>' + why[i].t + '</h3><p>' + why[i].p + '</p><p style="font-size:.74rem; color:var(--muted)">' + L('Nakamura, Martin e Kimura (2004), seção 4.2 da tese.', 'Nakamura, Martin and Kimura (2004), section 4.2 of the thesis.') + '</p>'; }
+    chipInit($('tm-chips'), why.map(function(w){ return w.t; }), 0, showW);
+    showW(0);
+    var K = [{k:'tam', b:L('Tamanho', 'Size')}, {k:'bancos', b:L('Dívida com bancos', 'Debt owed to banks')}];
+    function draw(i){
+      tplot($('tm-svg'), RG.map(function(r, j){ return {a:r.s, b:r.sh, c:D[K[i].k][j]}; }), {rh:56});
+      if (i === 1) $('tm-panel').innerHTML = '<div class="tag">' + L('outro sinal firme', 'another firm signal') + '</div><h3>' + L('Mais dívida com bancos, menos dívida de longo prazo', 'More debt owed to banks, less long-term debt') + '</h3><p>' + L('Quando uma parte maior do passivo era devida a bancos, a dívida de longo prazo sobre o ativo e a dívida sobre o patrimônio eram menores. A tese não explica esse sinal; ele aparece na tabela.', 'When a larger share of liabilities was owed to banks, long-term debt over assets and debt over equity were lower. The thesis does not explain this signal; it shows up in the table.') + '</p>';
+      else showW(0);
+    }
+    segInit($('tm-seg'), K.map(function(x){ return x.b; }), 0, draw);
+    draw(0);
+  })();
+
+  /* ================= 09 · PARES × MODELO ================= */
+  (function(){
+    var svg = $('pr-svg');
+    function pairs(){
+      var VW = NARROW ? 400 : 540, X0 = NARROW ? 150 : 210, X1 = VW - 20, Xm = (X0 + X1) / 2, rh = 34, Y0 = 40, o = '';
+      function X(r){ return Xm + (X1 - X0) / 2 * r / 0.5; }
+      o += '<text x="' + (Xm - 6) + '" y="18" text-anchor="end" style="font-size:11px; font-weight:700; fill:var(--muted)">← ' + L('opostos', 'opposite') + '</text>';
+      o += '<text x="' + (Xm + 6) + '" y="18" style="font-size:11px; font-weight:700; fill:var(--muted)">' + L('juntos', 'together') + ' →</text>';
+      o += '<line x1="' + Xm + '" y1="26" x2="' + Xm + '" y2="' + (Y0 + CORR.length * rh + 6) + '" stroke="var(--ink)"/>';
+      CORR.forEach(function(c, i){
+        var y = Y0 + i * rh + (i >= 2 ? 14 : 0), x = X(c[1]);
+        if (i === 2) o += '<text x="12" y="' + (y - 6) + '" style="font-size:10.5px; letter-spacing:.08em; font-weight:700; fill:var(--muted)">' + L('O PP&amp;E DIVIDE ESPAÇO COM…', 'PP&amp;E SHARES SPACE WITH…') + '</text>';
+        var col = c[2] ? 'var(--debt)' : '#94a3b8';
+        o += '<text x="' + (X0 - 10) + '" y="' + (y + 15) + '" text-anchor="end" style="font-size:' + (NARROW ? 11 : 12.5) + 'px; fill:var(--ink-2)' + (c[2] ? '; font-weight:700' : '') + '">' + c[0] + '</text>';
+        o += '<rect x="' + Math.min(x, Xm) + '" y="' + (y + 3) + '" width="' + Math.abs(x - Xm) + '" height="' + (rh - 12) + '" rx="3" fill="' + col + '"/>';
+        o += '<text x="' + (c[1] >= 0 ? x + 6 : Xm + 6) + '" y="' + (y + 18) + '" text-anchor="start" style="font-size:12px; font-weight:700; fill:var(--ink)">' + fmt(c[1], 2) + '</text>';
+      });
+      svg.setAttribute('viewBox', '0 0 ' + VW + ' ' + (Y0 + CORR.length * rh + 26));
+      svg.innerHTML = o;
+      $('pr-panel').innerHTML = '<div class="tag">' + L('aos pares · Anexo II', 'in pairs · Annex II') + '</div><p>' + L('Mais PP&amp;E andou com uma parte <b>menor</b> do passivo no curto prazo (−0,33) e uma parte <b>maior</b> no longo (0,16): o desenho que a teoria espera. Mas o PP&amp;E também anda ao contrário dos recebíveis, dos intangíveis, das aplicações e do estoque. Quem tem fábrica tem menos do resto.', 'More PP&amp;E went with a <b>smaller</b> short-term share of liabilities (−0.33) and a <b>larger</b> long-term share (0.16): the pattern the theory expects. But PP&amp;E also moves against receivables, intangibles, investments and inventory. Whoever has a plant has less of the rest.') + '</p>';
+    }
+    function model(){
+      tplot(svg, [{a:'γ1', b:RG[0].sh, c:D.ppe[0]}, {a:'γ2', b:RG[1].sh, c:D.ppe[1]}], {rh:90});
+      $('pr-panel').innerHTML = '<div class="tag">' + L('no modelo · Tabelas 5 e 6', 'in the model · Tables 5 and 6') + '</div><p>' + L('Com os 18 fatores juntos e cada empresa comparada com ela mesma, o PP&amp;E não se separa do zero nem na dívida curta nem na longa. Uma leitura possível (nossa): o que a máquina “explicava” sozinha já está nos outros itens do balanço, ou em quem a empresa é.', 'With all 18 factors together and each company compared with itself, PP&amp;E does not separate from zero for either short- or long-term debt. One possible reading (ours): what the machine “explained” on its own is already in the other balance-sheet items, or in who the company is.') + '</p>';
+    }
+    segInit($('pr-seg'), [L('Aos pares', 'In pairs'), L('No modelo', 'In the model')], 0, function(v){ v ? model() : pairs(); });
+    pairs();
+  })();
+
+  /* ================= 10 · BRASIL ================= */
+  (function(){
+    var C = [
+      {c:'var(--red)', f:L('Juros altos por muito tempo', 'High interest rates for a long time'), b:L('Com a taxa básica alta, o custo da dívida pesa e as empresas brasileiras tendem a dever pouco. O dinheiro gerado dentro da empresa vira a primeira fonte.', 'With a high base rate, debt is costly and Brazilian companies tend to borrow little. Money generated inside the company becomes the first source.')},
+      {c:'var(--navy)', f:L('Bancos de fomento', 'Development banks'), b:L('BNDES e outros bancos de desenvolvimento emprestam a taxas menores para fins específicos. O custo depende da fonte, não só do risco ou da garantia de quem toma.', 'BNDES and other development banks lend at lower rates for specific purposes. The cost depends on the source, not only on the borrower’s risk or collateral.')},
+      {c:'#334155', f:L('Linhas em dólar', 'Dollar credit lines'), b:L('ACC, ACE e FINIMP dão a exportadores e importadores acesso a juros internacionais. Quem tem acesso a elas depende do que vende, não do que tem em máquinas.', 'ACC, ACE and FINIMP give exporters and importers access to international rates. Who can use them depends on what they sell, not on their machinery.')},
+      {c:'#64748b', f:L('Mercado de capitais estreito', 'A narrow capital market'), b:L('Controle acionário concentrado e pouca oferta de crédito de longo prazo, como apontam Brito, Corrar e Batistella (2007).', 'Concentrated ownership and little long-term credit supply, as Brito, Corrar and Batistella (2007) point out.')},
+      {c:'#94a3b8', f:L('Recebíveis viram dinheiro', 'Receivables turn into cash'), b:L('Desconto de duplicatas, FIDC e securitização antecipam o que os clientes devem. Para o autor, isso pode explicar por que somar recebíveis ao PP&amp;E não ajudou (hipótese 9).', 'Invoice discounting, receivables funds and securitization bring forward what customers owe. For the author, this may explain why adding receivables to PP&amp;E did not help (hypothesis 9).')},
+      {c:'#cbd5e1', f:L('Contas mais confiáveis só depois de 2007', 'More reliable accounts only after 2007'), b:L('Com o valor justo e os testes de recuperação do valor dos ativos, os números dos bens ficaram mais precisos. Por isso o período começa em 2007, mas ainda faltaram dados.', 'With fair value and impairment tests, asset figures became more precise. That is why the period starts in 2007, but data were still missing.')}
+    ];
+    var el = $('wy-cards');
+    el.innerHTML = C.map(function(c, i){ return '<button aria-pressed="false" style="--wc:' + c.c + '"><span class="front"><b>' + c.f + '</b><span class="hint">' + L('toque para ver', 'tap to see') + '</span></span><span class="back"><b>' + c.f + '</b>' + c.b + '</span></button>'; }).join('');
+    each(el.children, function(b){ b.addEventListener('click', function(){ b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true'); }); });
+  })();
+
+  M.init();
+})();
+</script>
+</body>
+</html>
